@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,23 +23,18 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     private static final String TAG = "MainActivity";
 
-    private enum FragmentWrapper {
-        ALFA    (0, AlfaFragment.class,    R.string.alfa_title),
-        BRAVO   (1, BravoFragment.class,   R.string.bravo_title),
-        CHARLIE (2, CharlieFragment.class, R.string.charlie_title);
-
-        private int index;
+    private class FragmentWrapper {
+        private Fragment fragment;
         private Class fragmentClass;
-        private int titleId;
+        private String title;
 
-        private FragmentWrapper(int index, Class fragmentClass, int titleId) {
-            this.index = index;
+        private FragmentWrapper(Context context, Class fragmentClass, Integer titleId) {
             this.fragmentClass = fragmentClass;
-            this.titleId = titleId;
+            if (titleId!=null)
+                title = context.getResources().getString(titleId);
         }
 
-        private String getTitle(Context context) {
-            String title = context.getResources().getString(titleId);
+        public String toString() {
             return(title);
         }
     }
@@ -46,33 +42,32 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     private DrawerLayout drawer;
     private ActionBarDrawerToggle toggle;
 
-    private static final int NFRAGMENTS = FragmentWrapper.values().length;
-    private Fragment fragments[] = new Fragment[NFRAGMENTS];
-
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.main);
 
+        // Initialize drawer
         drawer = (DrawerLayout) findViewById(R.id.drawer);
         toggle = new ActionBarDrawerToggle(this, drawer, R.drawable.ic_drawer,
-                                                                 R.string.drawer_open, R.string.drawer_close);
+                                           R.string.drawer_open, R.string.drawer_close);
         drawer.setDrawerListener(toggle);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
-        /* fill adapter with fragment titles */
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.drawer_item);
-        for(FragmentWrapper fw : FragmentWrapper.values())
-            adapter.add(fw.getTitle(this));
+        // Fill adapter with fragment titles
+        ArrayAdapter<FragmentWrapper> adapter = new ArrayAdapter<FragmentWrapper>(this, R.layout.drawer_item);
+        adapter.add(new FragmentWrapper(this, AlfaFragment.class,    R.string.alfa_title));
+        adapter.add(new FragmentWrapper(this, BravoFragment.class,   R.string.bravo_title));
+        adapter.add(new FragmentWrapper(this, CharlieFragment.class, R.string.charlie_title));
 
-        /* initialize list view */
+        // Initialize list view
         ListView navigate = (ListView) findViewById(R.id.navigate);
         navigate.setAdapter(adapter);
         navigate.setOnItemClickListener(this);
 
-        /* select initial fragment */
-        selectSingleFragment(FragmentWrapper.BRAVO.index);
+        // Select initial fragment
+        selectSingleFragment(new FragmentWrapper(this, SplashFragment.class, null), false);
     }
     @Override
     protected void onPostCreate(Bundle bundle) {
@@ -92,21 +87,27 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         return super.onOptionsItemSelected(item);
     }
 
-    public boolean selectSingleFragment(int index) {
-        if (index<0 || index>=NFRAGMENTS) return(false);
+    private boolean selectSingleFragment(FragmentWrapper fw, boolean push) {
+        // Safety check
+        if (fw==null) return(false);
 
-        if (fragments[index]==null)
-            fragments[index] = Fragment.instantiate(this, FragmentWrapper.values()[index].fragmentClass.getName());
+        // Create Fragment if necessary
+        if (fw.fragment == null)
+            fw.fragment = Fragment.instantiate(this, fw.fragmentClass.getName());
 
+        // Swap Fragments
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.content, fragments[index]);
+        transaction.replace(R.id.content, fw.fragment);
+        if (push)
+            transaction.addToBackStack(null);
         transaction.commit();
 
         return(true);
     }
 
     public void onItemClick(AdapterView parent, View view, int position, long id) {
-        if (selectSingleFragment(position))
+        FragmentWrapper fw = (FragmentWrapper) parent.getItemAtPosition(position);
+        if (selectSingleFragment(fw, true))
             drawer.closeDrawers();
     }
 
