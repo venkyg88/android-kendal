@@ -23,6 +23,8 @@ public class DrawerItem {
         }
     }
 
+    public static final int NTYPES = Type.values().length;
+
     public Type type;
 
     public String title;

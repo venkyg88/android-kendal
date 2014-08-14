@@ -26,16 +26,34 @@ public class DrawerAdapter extends BaseAdapter {
         array = new ArrayList<DrawerItem>(16);
     }
 
+    /* Array items */
+
+    @Override
     public int getCount() {
         return(array.size());
     }
 
+    @Override
     public DrawerItem getItem(int position) {
         return(array.get(position));
     }
 
+    @Override
     public long getItemId(int position) {
         return(0);
+    }
+
+    /* View types */
+
+    @Override
+    public int getViewTypeCount() {
+        return (DrawerItem.NTYPES);
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        DrawerItem item = array.get(position);
+        return(item.type.viewType);
     }
 
     public void fill() {
@@ -48,6 +66,7 @@ public class DrawerAdapter extends BaseAdapter {
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, context, 0, R.string.charlie_title, CharlieFragment.class));
     }
 
+    @Override
     public View getView(int position, View view, ViewGroup parent) {
         DrawerItem item = array.get(position);
 
