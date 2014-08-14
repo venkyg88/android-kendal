@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 public class CharlieFragment extends Fragment {
     private static final String TAG = "CharlieFragment";
 
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
         View view = inflater.inflate(R.layout.charlie, container, false);

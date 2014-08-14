@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 public class SplashFragment extends Fragment {
     private static final String TAG = "SplashFragment";
 
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
         View view = inflater.inflate(R.layout.splash, container, false);

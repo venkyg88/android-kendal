@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 public class BravoFragment extends Fragment {
     private static final String TAG = "BravoFragment";
 
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
         View view = inflater.inflate(R.layout.bravo, container, false);

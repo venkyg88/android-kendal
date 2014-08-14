@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 public class AlfaFragment extends Fragment {
     private static final String TAG = "AlfaFragment";
 
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
         View view = inflater.inflate(R.layout.alfa, container, false);
