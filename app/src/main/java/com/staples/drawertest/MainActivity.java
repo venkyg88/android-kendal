@@ -3,17 +3,14 @@ package com.staples.drawertest;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 /**
@@ -22,22 +19,6 @@ import android.widget.ListView;
 public class MainActivity extends Activity implements AdapterView.OnItemClickListener {
 
     private static final String TAG = "MainActivity";
-
-    private class FragmentWrapper {
-        private Fragment fragment;
-        private Class fragmentClass;
-        private String title;
-
-        private FragmentWrapper(Context context, Class fragmentClass, Integer titleId) {
-            this.fragmentClass = fragmentClass;
-            if (titleId!=null)
-                title = context.getResources().getString(titleId);
-        }
-
-        public String toString() {
-            return(title);
-        }
-    }
 
     private DrawerLayout drawer;
     private ActionBarDrawerToggle toggle;
@@ -55,19 +36,15 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
-        // Fill adapter with fragment titles
-        ArrayAdapter<FragmentWrapper> adapter = new ArrayAdapter<FragmentWrapper>(this, R.layout.drawer_item);
-        adapter.add(new FragmentWrapper(this, AlfaFragment.class,    R.string.alfa_title));
-        adapter.add(new FragmentWrapper(this, BravoFragment.class,   R.string.bravo_title));
-        adapter.add(new FragmentWrapper(this, CharlieFragment.class, R.string.charlie_title));
-
         // Initialize list view
         ListView navigate = (ListView) findViewById(R.id.navigate);
+        DrawerAdapter adapter = new DrawerAdapter(this);
+        adapter.fill();
         navigate.setAdapter(adapter);
         navigate.setOnItemClickListener(this);
 
         // Select initial fragment
-        selectSingleFragment(new FragmentWrapper(this, SplashFragment.class, null), false);
+        selectSingleFragment(new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, 0, SplashFragment.class), false);
     }
     @Override
     protected void onPostCreate(Bundle bundle) {
@@ -87,17 +64,17 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         return super.onOptionsItemSelected(item);
     }
 
-    private boolean selectSingleFragment(FragmentWrapper fw, boolean push) {
+    private boolean selectSingleFragment(DrawerItem item, boolean push) {
         // Safety check
-        if (fw==null) return(false);
+        if (item==null || item.fragmentClass==null) return(false);
 
         // Create Fragment if necessary
-        if (fw.fragment == null)
-            fw.fragment = Fragment.instantiate(this, fw.fragmentClass.getName());
+        if (item.fragment == null)
+            item.fragment = Fragment.instantiate(this, item.fragmentClass.getName());
 
         // Swap Fragments
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.content, fw.fragment);
+        transaction.replace(R.id.content, item.fragment);
         if (push)
             transaction.addToBackStack(null);
         transaction.commit();
@@ -106,9 +83,11 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     }
 
     public void onItemClick(AdapterView parent, View view, int position, long id) {
-        FragmentWrapper fw = (FragmentWrapper) parent.getItemAtPosition(position);
-        if (selectSingleFragment(fw, true))
-            drawer.closeDrawers();
+        DrawerItem item = (DrawerItem) parent.getItemAtPosition(position);
+        if (item.fragmentClass!=null) {
+            if (selectSingleFragment(item, true))
+                drawer.closeDrawers();
+        }
     }
 
     @Override

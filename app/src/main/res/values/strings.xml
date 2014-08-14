@@ -5,7 +5,9 @@
     <string name="action_drawer">Navigate</string>
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>
-    /* Fragment titles */
+    <!-- Drawer titles -->
+    <string name="account_title">Account</string>
+    <string name="products_title">Products</string>
     <string name="alfa_title">Alfa\nFragment</string>
     <string name="bravo_title">Bravo\nFragment</string>
     <string name="charlie_title">Charlie\nFragment</string>
