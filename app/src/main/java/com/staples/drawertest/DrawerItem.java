@@ -52,4 +52,12 @@ public class DrawerItem {
         }
         this.fragmentClass = fragmentClass;
     }
+
+    public DrawerItem(Type type, String title, Fragment fragment) {
+        this.type = type;
+        this.title = title;
+        if (fragment!=null)
+            this.fragmentClass = fragment.getClass();
+        this.fragment = fragment;
+    }
 }
