@@ -2,17 +2,8 @@ package com.staples.drawertest;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import com.google.gson.Gson;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * Created by pyhre001 on 8/15/14.
@@ -20,69 +11,55 @@ import java.io.InputStreamReader;
 public class TopCategoryFiller extends AsyncTask<DrawerAdapter, Void, Integer> {
     private static final String TAG = "TopCategoryFiller";
 
-    private static final String API_STRING = "http://sapi.staples.com";
+    private static final String API_STRING = "http://sapi.staples.com/v1";
+
     private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+//    private static final String CLIENT_ID = "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ";
+
+    // US English
+    private static final String CATALOG_ID = "10051";
+    private static final String ZIPCODE = "01010";
+    private static final String LOCALE = "en_US";
+
+    // Canada French
+//    private static final String CATALOG_ID = "20051";
+//    private static final String ZIPCODE = "H3L1K7";
+//    private static final String LOCALE = "fr_CA";
+
     private static final String topCategoriesUrl = API_STRING +
-                                                   "/v1/10001/category/top?catalogId=10051&zipCode=01010&client_id=" +
-                                                   CLIENT_ID +
-                                                   "&locale=en_US";
+                                                   "/10001/category/top" +
+                                                   "?client_id=" + CLIENT_ID +
+                                                   "&catalogId=" + CATALOG_ID +
+                                                   "&zipCode=" + ZIPCODE +
+                                                   "&locale=" + LOCALE;
 
-    static Gson gson = new Gson();
-
-    public class JSONResponse {
+    public static class TopCategoryResponse extends JSONResponse{
         public CategoryDetail[] Category;
     }
 
-    public class CategoryDetail {
+    public static class CategoryDetail {
         public Description[] description;
         public int childCount;
     }
 
-    public class Description {
+    public static class Description {
         public String text;
     }
 
-    private InputStream retrieveStream(String url) {
-
-        DefaultHttpClient client = new DefaultHttpClient();
-        HttpGet getRequest = new HttpGet(url);
-
-        try {
-
-            HttpResponse getResponse = client.execute(getRequest);
-
-            final int statusCode = getResponse.getStatusLine().getStatusCode();
-
-            if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_BAD_REQUEST) {
-Log.d(TAG, "Bad HTTP response");
-                return null;
-            }
-
-            HttpEntity getResponseEntity = getResponse.getEntity();
-
-            return getResponseEntity.getContent();
-        } catch (IOException e) {
-Log.d(TAG, "IO Exception "+e);
-
-            getRequest.abort();
-        }
-
-        return(null);
-    }
-
     protected Integer doInBackground(DrawerAdapter... adapter) {
-        JSONResponse response;
-
-        try {
-            InputStream source = retrieveStream(topCategoriesUrl);
-if (source==null)
-    Log.d(TAG, "Null source");
-
-            InputStreamReader reader = new InputStreamReader(source);
-            response = gson.fromJson(reader, JSONResponse.class);
+        TopCategoryResponse response = (TopCategoryResponse) JSONResponse.getResponse(topCategoriesUrl, TopCategoryResponse.class);
+        if (response==null) {
+            Log.d(TAG, "JSONResponse was null");
+            return(0);
         }
-        catch(Exception e) {
-Log.d(TAG, "Error "+e);
+        if (response.httpStatusCode!=HttpStatus.SC_OK &&
+                response.httpStatusCode!=500) // TODO Ugly acceptance of HTTP 500 errors
+        {
+            Log.d(TAG, "HTTP returned "+response.httpStatusCode);
+            return(0);
+        }
+        if (response.errors!=null) {
+            Log.d(TAG, "API returned "+response.errors[0].errorMessage);
             return(0);
         }
 
