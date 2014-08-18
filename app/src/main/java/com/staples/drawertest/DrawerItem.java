@@ -27,8 +27,8 @@ public class DrawerItem {
 
     public Type type;
 
-    public String title;
     public Drawable icon;
+    public String title;
 
     public Class fragmentClass;
     public Fragment fragment;

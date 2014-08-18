@@ -28,13 +28,14 @@ public abstract class JSONResponse {
         public String errorMessage;
     }
 
-    private static JSONResponse createDummyResponse(Class responseClass) {
+    private static JSONResponse createErrorResponse(Class responseClass, int error) {
         try
         {
             JSONResponse response = (JSONResponse) responseClass.newInstance();
+            response.httpStatusCode = error;
             return (response);
         } catch (Exception e) {
-            Log.e(TAG, "Can't instantiate dummy response " + e);
+            Log.e(TAG, "Can't instantiate error response " + e);
             return (null);
         }
     }
@@ -47,9 +48,9 @@ public abstract class JSONResponse {
 
         Log.d(TAG, "getResponse "+url);
 
-        try { // TODO Slow network testing, remove for release!
-            Thread.sleep(5000);
-        } catch(Exception e) {}
+//        try { // TODO Slow network testing, remove for release!
+//            Thread.sleep(5000);
+//        } catch(Exception e) {}
 
         DefaultHttpClient client = new DefaultHttpClient();
 
@@ -57,36 +58,32 @@ public abstract class JSONResponse {
         try {
             httpRequest = new HttpGet(url);
         } catch(IllegalArgumentException e) {
-            response = createDummyResponse(responseClass);
-            response.httpStatusCode = 991; // TODO needs a better way
+            response = createErrorResponse(responseClass, 991);
             return(response);
         }
 
         // Handle basic IO errors
         try {
             httpResponse = client.execute(httpRequest);
-        } catch (IOException e) {
+        } catch (Exception e) {
             httpRequest.abort();
-            response = createDummyResponse(responseClass);
-            response.httpStatusCode = 992; // TODO needs a better way
+            response = createErrorResponse(responseClass, 992);
             return(response);
         }
 
         // Handle HTTP errors
         int statusCode = httpResponse.getStatusLine().getStatusCode();
         if (statusCode!= HttpStatus.SC_OK &&
-                statusCode!=500) // TODO Ugly acceptance of HTTP 500 errors
+            statusCode!=HttpStatus.SC_INTERNAL_SERVER_ERROR) // TODO Ugly acceptance of HTTP 500 errors
         {
-            response = createDummyResponse(responseClass);
-            response.httpStatusCode = statusCode;
+            response = createErrorResponse(responseClass, statusCode);
             return(response);
         }
 
         // Handle empty entity
         HttpEntity httpEntity = httpResponse.getEntity();
         if (httpEntity==null) {
-            response = createDummyResponse(responseClass);
-            response.httpStatusCode = 993; // TODO needs a better way;
+            response = createErrorResponse(responseClass, 993);
             return(response);
         }
 
@@ -95,12 +92,19 @@ public abstract class JSONResponse {
             InputStream stream = httpEntity.getContent();
             reader = new InputStreamReader(stream);
         } catch(IOException e) {
-            response = createDummyResponse(responseClass);
-            response.httpStatusCode = 994; // TODO needs a better way;
+            response = createErrorResponse(responseClass, 994);
             return(response);
         }
 
-        response = (JSONResponse) gson.fromJson(reader, responseClass);
+        // Handle parsing errors
+        try {
+            response = (JSONResponse) gson.fromJson(reader, responseClass);
+        } catch(Exception e) {
+            response = createErrorResponse(responseClass, 995);
+            return(response);
+        }
+
+        // Success
         response.httpStatusCode = statusCode;
         return(response);
     }

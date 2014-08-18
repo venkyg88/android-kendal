@@ -13,9 +13,6 @@ public class TopCategoryFiller extends AsyncTask<DrawerAdapter, Void, Integer> {
 
     private static final String API_STRING = "http://sapi.staples.com/v1";
 
-    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
-//    private static final String CLIENT_ID = "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ";
-
     // US English
     private static final String CATALOG_ID = "10051";
     private static final String ZIPCODE = "01010";
@@ -26,12 +23,15 @@ public class TopCategoryFiller extends AsyncTask<DrawerAdapter, Void, Integer> {
 //    private static final String ZIPCODE = "H3L1K7";
 //    private static final String LOCALE = "fr_CA";
 
+    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+//    private static final String CLIENT_ID = "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ";
+
     private static final String topCategoriesUrl = API_STRING +
                                                    "/10001/category/top" +
-                                                   "?client_id=" + CLIENT_ID +
-                                                   "&catalogId=" + CATALOG_ID +
+                                                   "?catalogId=" + CATALOG_ID +
                                                    "&zipCode=" + ZIPCODE +
-                                                   "&locale=" + LOCALE;
+                                                   "&locale=" + LOCALE +
+                                                   "&client_id=" + CLIENT_ID;
 
     public static class TopCategoryResponse extends JSONResponse{
         public CategoryDetail[] Category;
@@ -53,7 +53,7 @@ public class TopCategoryFiller extends AsyncTask<DrawerAdapter, Void, Integer> {
             return(0);
         }
         if (response.httpStatusCode!=HttpStatus.SC_OK &&
-                response.httpStatusCode!=500) // TODO Ugly acceptance of HTTP 500 errors
+                response.httpStatusCode!=HttpStatus.SC_INTERNAL_SERVER_ERROR) // TODO Ugly acceptance of HTTP 500 errors
         {
             Log.d(TAG, "HTTP returned "+response.httpStatusCode);
             return(0);
