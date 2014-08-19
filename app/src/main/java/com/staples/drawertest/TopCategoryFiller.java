@@ -40,6 +40,7 @@ public class TopCategoryFiller extends AsyncTask<DrawerAdapter, Void, Integer> {
     public static class CategoryDetail {
         public Description[] description;
         public int childCount;
+        public String categoryUrl;
     }
 
     public static class Description {
@@ -66,14 +67,8 @@ public class TopCategoryFiller extends AsyncTask<DrawerAdapter, Void, Integer> {
         int count = response.Category.length;
         for(int i=0;i<count;i++) {
             CategoryDetail detail = response.Category[i];
-            StringBuilder name = new StringBuilder(256);
-            name.append(detail.description[0].text);
-            if (detail.childCount>0) {
-                name.append(" (");
-                name.append(detail.childCount);
-                name.append(")");
-            }
-            adapter[0].addCategory(name.toString());
+            String title = detail.description[0].text;
+            adapter[0].addCategory(title, detail.childCount, detail.categoryUrl);
         }
         adapter[0].update();
         Log.d(TAG, "Got " + count + " categories");

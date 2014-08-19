@@ -64,7 +64,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
 
         // Create Fragment if necessary
         if (item.fragment == null)
-            item.fragment = Fragment.instantiate(this, item.fragmentClass.getName());
+            item.instantiate(this);
 
         // Check if Fragment present already
         else {

@@ -21,8 +21,6 @@ public class DrawerAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private ArrayList<DrawerItem> array;
 
-    private Fragment topCategory;
-
     public DrawerAdapter(Context context) {
         super();
         this.context = context;
@@ -68,9 +66,16 @@ public class DrawerAdapter extends BaseAdapter {
             view = inflater.inflate(item.type.layoutId, null);
 
         TextView title = (TextView) view.findViewById(R.id.title);
-        if (title!=null)
-            title.setText(item.title);
-
+        if (title!=null) {
+            if (item.childCount > 0) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(item.title);
+                sb.append(" (");
+                sb.append(item.childCount);
+                sb.append(")");
+                title.setText(sb.toString());
+            } else title.setText(item.title);
+        }
         return(view);
     }
 
@@ -86,10 +91,8 @@ public class DrawerAdapter extends BaseAdapter {
         new TopCategoryFiller().execute(this);
     }
 
-    public void addCategory(String name) {
-        if (topCategory==null)
-            topCategory = Fragment.instantiate(context, TopCategoryFragment.class.getName());
-        DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, name, topCategory);
+    public void addCategory(String title, int childCount, String path) {
+        DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, title, childCount, path, TopCategoryFragment.class);
         array.add(item);
     }
 
