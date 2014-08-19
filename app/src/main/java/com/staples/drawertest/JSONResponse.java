@@ -28,7 +28,7 @@ public abstract class JSONResponse {
         public String errorMessage;
     }
 
-    private static JSONResponse createErrorResponse(Class responseClass, int error) {
+    private static JSONResponse createErrorResponse(Class<? extends JSONResponse> responseClass, int error) {
         try
         {
             JSONResponse response = (JSONResponse) responseClass.newInstance();
@@ -40,7 +40,7 @@ public abstract class JSONResponse {
         }
     }
 
-    public static JSONResponse getResponse (String url, Class responseClass) {
+    public static JSONResponse getResponse (String url, Class<? extends JSONResponse> responseClass) {
         HttpGet httpRequest;
         HttpResponse httpResponse;
         InputStreamReader reader;

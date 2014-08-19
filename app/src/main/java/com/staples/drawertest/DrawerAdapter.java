@@ -94,8 +94,7 @@ public class DrawerAdapter extends BaseAdapter {
     }
 
     public void update() {
-        final DrawerAdapter adapter = this;
-        Runnable runs = new Runnable() {public void run() {adapter.notifyDataSetChanged();}};
+        Runnable runs = new Runnable() {public void run() {DrawerAdapter.this.notifyDataSetChanged();}};
         ((Activity) context).runOnUiThread(runs);
     }
 }
