@@ -1,17 +1,21 @@
 package com.staples.drawertest;
 
+import android.net.Uri;
 import android.util.Log;
 import com.google.gson.Gson;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 /**
  * Created by pyhre001 on 8/18/14.
@@ -21,6 +25,21 @@ public abstract class JSONResponse {
 
     static Gson gson = new Gson();
 
+    private static final String API_STRING = "http://sapi.staples.com/v1";
+
+    // US English
+    private static final String CATALOG_ID = "10051";
+    private static final String ZIPCODE = "01010";
+    private static final String LOCALE = "en_US";
+
+    // Canada French
+//    private static final String CATALOG_ID = "20051";
+//    private static final String ZIPCODE = "H3L1K7";
+//    private static final String LOCALE = "fr_CA";
+
+    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+//    private static final String CLIENT_ID = "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ";
+
     public int httpStatusCode;
     public JSONError errors[];
 
@@ -28,10 +47,28 @@ public abstract class JSONResponse {
         public String errorMessage;
     }
 
+    public static String buildUri(String path) {
+        // Get basic URI
+        Uri uri = Uri.parse(API_STRING+path);
+        Uri.Builder builder = uri.buildUpon();
+
+        // Add required parameters if not present
+        if (uri.getQueryParameter("catalogId")==null)
+            builder.appendQueryParameter("catalogId", CATALOG_ID);
+        if (uri.getQueryParameter("zipCode")==null)
+            builder.appendQueryParameter("zipCode", ZIPCODE);
+        if (uri.getQueryParameter("locale")==null)
+            builder.appendQueryParameter("locale", LOCALE);
+        if (uri.getQueryParameter("client_id")==null)
+            builder.appendQueryParameter("client_id", CLIENT_ID);
+
+        return(builder.toString());
+    }
+
     private static JSONResponse createErrorResponse(Class<? extends JSONResponse> responseClass, int error) {
         try
         {
-            JSONResponse response = (JSONResponse) responseClass.newInstance();
+            JSONResponse response = responseClass.newInstance();
             response.httpStatusCode = error;
             return (response);
         } catch (Exception e) {
@@ -40,13 +77,15 @@ public abstract class JSONResponse {
         }
     }
 
-    public static JSONResponse getResponse (String url, Class<? extends JSONResponse> responseClass) {
+    public static JSONResponse getResponse (String path, Class<? extends JSONResponse> responseClass) {
         HttpGet httpRequest;
         HttpResponse httpResponse;
         InputStreamReader reader;
         JSONResponse response;
 
-        Log.d(TAG, "getResponse "+url);
+        // Make URL
+        String uri = buildUri(path);
+        Log.d(TAG, "getResponse "+uri);
 
 //        try { // TODO Slow network testing, remove for release!
 //            Thread.sleep(5000);
@@ -56,7 +95,7 @@ public abstract class JSONResponse {
 
         // Handle bad URL
         try {
-            httpRequest = new HttpGet(url);
+            httpRequest = new HttpGet(uri);
         } catch(IllegalArgumentException e) {
             response = createErrorResponse(responseClass, 991);
             return(response);
@@ -98,8 +137,9 @@ public abstract class JSONResponse {
 
         // Handle parsing errors
         try {
-            response = (JSONResponse) gson.fromJson(reader, responseClass);
+            response = gson.fromJson(reader, responseClass);
         } catch(Exception e) {
+Log.e(TAG, "Parse error "+e);
             response = createErrorResponse(responseClass, 995);
             return(response);
         }

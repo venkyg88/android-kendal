@@ -77,6 +77,7 @@ public class DrawerItem {
         fragment = Fragment.instantiate(context, fragmentClass.getName());
         Bundle args = new Bundle();
         args.putString("title", title);
+        args.putString("path", path);
         fragment.setArguments(args);
         Log.d(TAG, "setArguments() "+title);
 

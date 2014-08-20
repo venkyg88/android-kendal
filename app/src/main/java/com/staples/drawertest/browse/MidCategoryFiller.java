@@ -1,24 +1,31 @@
-package com.staples.drawertest;
+package com.staples.drawertest.browse;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+
+import com.staples.drawertest.JSONResponse;
+import com.staples.drawertest.browse.CategoryFragment;
 
 import org.apache.http.HttpStatus;
 
 /**
- * Created by pyhre001 on 8/15/14.
+ * Created by pyhre001 on 8/20/14.
  */
-public class TopCategoryFiller extends AsyncTask<DrawerAdapter, Void, Integer> {
-    private static final String TAG = "TopCategoryFiller";
+public class MidCategoryFiller extends AsyncTask<CategoryFragment, Void, Integer> {
+    private static final String TAG = "MidCategoryFiller";
 
-    private static final String TOPCATEGORYPATH = "/10001/category/top";
-
-    public static class TopCategoryResponse extends JSONResponse{
+    public static class MidCategoryResponse extends JSONResponse {
         private CategoryDetail[] Category;
     }
 
     public static class CategoryDetail {
-        private Description[] description;
+        private SubCategoryDetail[] subCategory;
+        private int childCount;
+    }
+
+    public static class SubCategoryDetail {
+        Description[] description;
         private int childCount;
         private String categoryUrl;
     }
@@ -28,8 +35,9 @@ public class TopCategoryFiller extends AsyncTask<DrawerAdapter, Void, Integer> {
         private String text;
     }
 
-    protected Integer doInBackground(DrawerAdapter... adapter) {
-        TopCategoryResponse response = (TopCategoryResponse) JSONResponse.getResponse(TOPCATEGORYPATH, TopCategoryResponse.class);
+    protected Integer doInBackground(CategoryFragment... fragment) {
+        String path = fragment[0].getPath();
+        MidCategoryResponse response = (MidCategoryResponse) JSONResponse.getResponse(path, MidCategoryResponse.class);
         if (response==null) {
             Log.d(TAG, "JSONResponse was null");
             return(0);
@@ -45,15 +53,19 @@ public class TopCategoryFiller extends AsyncTask<DrawerAdapter, Void, Integer> {
             return(0);
         }
 
-        int count = response.Category.length;
+        CategoryAdapter adapter = fragment[0].getAdapter();
+
+        CategoryDetail category = response.Category[0];
+        int count = category.subCategory.length;
         for(int i=0;i<count;i++) {
-            CategoryDetail detail = response.Category[i];
+            SubCategoryDetail detail = category.subCategory[i];
             String title = detail.description[0].name;
             if (title==null)
                 title = detail.description[0].text;
-            adapter[0].addCategory(title, detail.childCount, detail.categoryUrl);
+            Log.d(TAG, "SubCategory: "+title);
+            adapter.addCategory(title);
         }
-        adapter[0].update();
+        adapter.update();
         Log.d(TAG, "Got " + count + " categories");
         return(count);
     }

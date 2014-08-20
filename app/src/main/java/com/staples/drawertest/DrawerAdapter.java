@@ -1,14 +1,15 @@
 package com.staples.drawertest;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.staples.drawertest.browse.CategoryFragment;
+
 import java.util.ArrayList;
 
 /**
@@ -17,14 +18,14 @@ import java.util.ArrayList;
 public class DrawerAdapter extends BaseAdapter {
     private static final String TAG = "DrawerAdapter";
 
-    private Context context;
+    private Activity activity;
     private LayoutInflater inflater;
     private ArrayList<DrawerItem> array;
 
     public DrawerAdapter(Context context) {
         super();
-        this.context = context;
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        activity = (Activity) context;
+        inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         array = new ArrayList<DrawerItem>(16);
     }
 
@@ -82,22 +83,22 @@ public class DrawerAdapter extends BaseAdapter {
     public void fill() {
         // Fill adapter with fragment titles
         array.add(new DrawerItem(DrawerItem.Type.SEARCH));
-        array.add(new DrawerItem(DrawerItem.Type.HEADER, context, 0, R.string.account_title));
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, context, 0, R.string.alfa_title, AlfaFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, context, 0, R.string.bravo_title, BravoFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, context, 0, R.string.charlie_title, CharlieFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.HEADER, context, 0, R.string.products_title));
+        array.add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.account_title));
+        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.alfa_title, AlfaFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.bravo_title, BravoFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.charlie_title, CharlieFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.products_title));
 
         new TopCategoryFiller().execute(this);
     }
 
     public void addCategory(String title, int childCount, String path) {
-        DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, title, childCount, path, TopCategoryFragment.class);
+        DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, title, childCount, path, CategoryFragment.class);
         array.add(item);
     }
 
     public void update() {
         Runnable runs = new Runnable() {public void run() {DrawerAdapter.this.notifyDataSetChanged();}};
-        ((Activity) context).runOnUiThread(runs);
+        activity.runOnUiThread(runs);
     }
 }
