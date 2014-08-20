@@ -30,13 +30,14 @@ public class DrawerItem {
 
     public Type type;
 
+    public Class fragmentClass;
+    public Fragment fragment;
+
+    // Top category
     public Drawable icon;
     public String title;
     public int childCount;
     public String path;
-
-    public Class fragmentClass;
-    public Fragment fragment;
 
     // Constructors
 
@@ -79,7 +80,6 @@ public class DrawerItem {
         args.putString("title", title);
         args.putString("path", path);
         fragment.setArguments(args);
-        Log.d(TAG, "setArguments() "+title);
 
         return(true);
     }

@@ -55,10 +55,10 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
 
         // Select splash fragment
         DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, 0, SplashFragment.class);
-        selectSingleFragment(item, false);
+        selectDrawerItem(item, false);
     }
 
-    private boolean selectSingleFragment(DrawerItem item, boolean push) {
+    private boolean selectDrawerItem(DrawerItem item, boolean push) {
         // Safety check
         if (item==null || item.fragmentClass==null) return(false);
 
@@ -100,7 +100,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
     public void onItemClick(AdapterView parent, View view, int position, long id) {
         DrawerItem item = (DrawerItem) parent.getItemAtPosition(position);
         if (item.fragmentClass!=null) {
-            if (selectSingleFragment(item, true))
+            if (selectDrawerItem(item, true))
                 drawer.closeDrawer(navigate);
         }
     }

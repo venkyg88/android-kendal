@@ -62,8 +62,7 @@ public class MidCategoryFiller extends AsyncTask<CategoryFragment, Void, Integer
             String title = detail.description[0].name;
             if (title==null)
                 title = detail.description[0].text;
-            Log.d(TAG, "SubCategory: "+title);
-            adapter.addCategory(title);
+            adapter.addCategory(title, detail.childCount, detail.categoryUrl);
         }
         adapter.update();
         Log.d(TAG, "Got " + count + " categories");
