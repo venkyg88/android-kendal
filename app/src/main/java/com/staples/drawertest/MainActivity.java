@@ -2,14 +2,12 @@ package com.staples.drawertest;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -49,6 +47,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
         actionBar.setCustomView(R.layout.action_bar);
         View view = actionBar.getCustomView();
         view.findViewById(R.id.action_left_drawer).setOnClickListener(this);
+        view.findViewById(R.id.action_search).setOnClickListener(this);
         view.findViewById(R.id.action_right_drawer).setOnClickListener(this);
 
         // Initialize left drawer listview
@@ -106,6 +105,14 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
                 }
                 else drawerLayout.closeDrawers();
                 break;
+
+            case R.id.action_search: // TODO half baked animation attempt
+                ScaleAnimation animation = new ScaleAnimation(1, 4, 1, 1, view.getWidth(), 0);
+                animation.setDuration(2000);
+                animation.setRepeatMode(Animation.REVERSE);
+                view.startAnimation(animation);
+                break;
+
             case R.id.action_right_drawer:
                 if (!drawerLayout.isDrawerOpen(rightDrawer)) {
                     drawerLayout.closeDrawer(leftDrawer);

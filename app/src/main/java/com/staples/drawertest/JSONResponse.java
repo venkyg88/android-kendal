@@ -7,15 +7,15 @@ import com.google.gson.Gson;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.HashMap;
 
 /**
  * Created by pyhre001 on 8/18/14.
@@ -39,6 +39,8 @@ public abstract class JSONResponse {
 
     private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
 //    private static final String CLIENT_ID = "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ";
+
+    public static HashMap<String, String> hashMap = new HashMap<String, String>();
 
     public transient int httpStatusCode;
     public JSONError errors[];
@@ -81,18 +83,25 @@ public abstract class JSONResponse {
         HttpGet httpRequest;
         HttpResponse httpResponse;
         InputStream stream;
-        InputStreamReader reader;
+        Reader reader;
         JSONResponse response;
 
         // Make URL
         String uri = buildUri(path);
         Log.d(TAG, "getResponse "+uri);
 
+        // Check cache for hit
+        String cache = hashMap.get(uri);
+        if (cache!=null) {
+            Log.d(TAG, "Cache hit");
+            reader = new StringReader(cache);
+            response = parseResponse(reader, responseClass, HttpStatus.SC_OK);
+            return(response);
+        }
+
 //        try { // TODO Slow network testing, remove for release!
 //            Thread.sleep(5000);
 //        } catch(Exception e) {}
-
-        DefaultHttpClient client = new DefaultHttpClient();
 
         // Handle bad URL
         try {
@@ -104,6 +113,7 @@ public abstract class JSONResponse {
 
         // Handle basic IO errors
         try {
+            DefaultHttpClient client = new DefaultHttpClient();
             httpResponse = client.execute(httpRequest);
         } catch (Exception e) {
             httpRequest.abort();
@@ -113,7 +123,7 @@ public abstract class JSONResponse {
 
         // Handle HTTP errors
         int statusCode = httpResponse.getStatusLine().getStatusCode();
-        if (statusCode!= HttpStatus.SC_OK &&
+        if (statusCode!=HttpStatus.SC_OK &&
             statusCode!=HttpStatus.SC_INTERNAL_SERVER_ERROR) // TODO Ugly acceptance of HTTP 500 errors
         {
             response = createErrorResponse(responseClass, statusCode);
@@ -136,20 +146,30 @@ public abstract class JSONResponse {
             return(response);
         }
 
+        // Parse JSON
+        response = parseResponse(reader, responseClass, statusCode);
+
+        // Cache results
+        if (response.httpStatusCode==HttpStatus.SC_OK) {
+            String json = gson.toJson(response);
+            if (json!=null)
+                hashMap.put(uri, json);
+        }
+
+        return(response);
+    }
+
+    public static JSONResponse parseResponse(Reader reader, Class<? extends JSONResponse> responseClass,
+                                             int statusCode) {
+        JSONResponse response;
+
         // Handle parsing errors
         try {
             response = gson.fromJson(reader, responseClass);
-        } catch(Exception e1) {
-            try {
-                byte[] buf = new byte[1024];
-                stream.reset(); // TODO It doesn't seem like you can rewind
-                int n = stream.read(buf);
-                String msg = new String(buf, 0, n);
-                Log.e(TAG, "Parse error "+e1+" -- "+msg);
-            } catch(Exception e2) {}
+        } catch (Exception e) {
 
             response = createErrorResponse(responseClass, 995);
-            return(response);
+            return (response);
         }
 
         // Success
