@@ -13,20 +13,24 @@ public class TopCategoryFiller extends AsyncTask<DrawerAdapter, Void, Integer> {
 
     private static final String TOPCATEGORYPATH = "/10001/category/top";
 
+    // JSON structure
+
     public static class TopCategoryResponse extends JSONResponse{
         private CategoryDetail[] Category;
     }
 
-    public static class CategoryDetail {
+    private static class CategoryDetail {
         private Description[] description;
         private int childCount;
         private String categoryUrl;
     }
 
-    public static class Description {
+    private static class Description {
         private String name;
         private String text;
     }
+
+    // Asynchronous task
 
     protected Integer doInBackground(DrawerAdapter... adapter) {
         TopCategoryResponse response = (TopCategoryResponse) JSONResponse.getResponse(TOPCATEGORYPATH, TopCategoryResponse.class);
@@ -35,7 +39,7 @@ public class TopCategoryFiller extends AsyncTask<DrawerAdapter, Void, Integer> {
             return(0);
         }
         if (response.httpStatusCode!=HttpStatus.SC_OK &&
-                response.httpStatusCode!=HttpStatus.SC_INTERNAL_SERVER_ERROR) // TODO Ugly acceptance of HTTP 500 errors
+            response.httpStatusCode!=HttpStatus.SC_INTERNAL_SERVER_ERROR) // TODO Ugly acceptance of HTTP 500 errors
         {
             Log.d(TAG, "HTTP returned "+response.httpStatusCode);
             return(0);

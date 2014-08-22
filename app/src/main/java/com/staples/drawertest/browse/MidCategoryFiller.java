@@ -15,35 +15,46 @@ import org.apache.http.HttpStatus;
 public class MidCategoryFiller extends AsyncTask<CategoryFragment, Void, Integer> {
     private static final String TAG = "MidCategoryFiller";
 
+    // JSON structure
+
     public static class MidCategoryResponse extends JSONResponse {
         private CategoryDetail[] Category;
     }
 
-    public static class CategoryDetail {
+    private static class CategoryDetail {
         private SubCategoryDetail[] subCategory;
         private int childCount;
+        private FilterGroup filterGroup[];
     }
 
-    public static class SubCategoryDetail {
+    private static class SubCategoryDetail {
         Description[] description;
         private int childCount;
         private String categoryUrl;
     }
 
-    public static class Description {
+    private static class Description {
         private String name;
         private String text;
     }
 
+    private static class FilterGroup {
+        private String name;
+    }
+
+    // Asynchronous task
+
     protected Integer doInBackground(CategoryFragment... fragment) {
         String path = fragment[0].getPath();
         MidCategoryResponse response = (MidCategoryResponse) JSONResponse.getResponse(path, MidCategoryResponse.class);
+
+        // Handle errors
         if (response==null) {
             Log.d(TAG, "JSONResponse was null");
             return(0);
         }
         if (response.httpStatusCode!=HttpStatus.SC_OK &&
-                response.httpStatusCode!=HttpStatus.SC_INTERNAL_SERVER_ERROR) // TODO Ugly acceptance of HTTP 500 errors
+            response.httpStatusCode!=HttpStatus.SC_INTERNAL_SERVER_ERROR) // TODO Ugly acceptance of HTTP 500 errors
         {
             Log.d(TAG, "HTTP returned "+response.httpStatusCode);
             return(0);
@@ -56,16 +67,32 @@ public class MidCategoryFiller extends AsyncTask<CategoryFragment, Void, Integer
         CategoryAdapter adapter = fragment[0].getAdapter();
 
         CategoryDetail category = response.Category[0];
-        int count = category.subCategory.length;
-        for(int i=0;i<count;i++) {
-            SubCategoryDetail detail = category.subCategory[i];
-            String title = detail.description[0].name;
-            if (title==null)
-                title = detail.description[0].text;
-            adapter.addCategory(title, detail.childCount, detail.categoryUrl);
+        int count = 0;
+
+        // Process subcategories
+        if (category.subCategory!=null) {
+            count = category.subCategory.length;
+            for (int i = 0; i < count; i++) {
+                SubCategoryDetail detail = category.subCategory[i];
+                String title = detail.description[0].name;
+                if (title == null)
+                    title = detail.description[0].text;
+                adapter.addCategory(title, detail.childCount, detail.categoryUrl);
+            }
+            Log.d(TAG, "Got " + count + " categories");
         }
-        adapter.update();
-        Log.d(TAG, "Got " + count + " categories");
+
+        // Process filter groups
+        else if (category.filterGroup!=null) {
+            count = category.filterGroup.length;
+            for (int i = 0; i < count; i++) {
+                FilterGroup filterGroup = category.filterGroup[i];
+                adapter.addCategory(filterGroup.name, 0, null);
+            }
+            Log.d(TAG, "Got " + count + " filter groups");
+        }
+
+        if (count>0) adapter.update();
         return(count);
     }
 }

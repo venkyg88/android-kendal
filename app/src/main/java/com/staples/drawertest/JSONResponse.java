@@ -80,6 +80,7 @@ public abstract class JSONResponse {
     public static JSONResponse getResponse (String path, Class<? extends JSONResponse> responseClass) {
         HttpGet httpRequest;
         HttpResponse httpResponse;
+        InputStream stream;
         InputStreamReader reader;
         JSONResponse response;
 
@@ -128,7 +129,7 @@ public abstract class JSONResponse {
 
         // Handle entity IO errors
         try {
-            InputStream stream = httpEntity.getContent();
+            stream = httpEntity.getContent();
             reader = new InputStreamReader(stream);
         } catch(IOException e) {
             response = createErrorResponse(responseClass, 994);
@@ -138,8 +139,15 @@ public abstract class JSONResponse {
         // Handle parsing errors
         try {
             response = gson.fromJson(reader, responseClass);
-        } catch(Exception e) {
-Log.e(TAG, "Parse error "+e);
+        } catch(Exception e1) {
+            try {
+                byte[] buf = new byte[1024];
+                stream.reset(); // TODO It doesn't seem like you can rewind
+                int n = stream.read(buf);
+                String msg = new String(buf, 0, n);
+                Log.e(TAG, "Parse error "+e1+" -- "+msg);
+            } catch(Exception e2) {}
+
             response = createErrorResponse(responseClass, 995);
             return(response);
         }

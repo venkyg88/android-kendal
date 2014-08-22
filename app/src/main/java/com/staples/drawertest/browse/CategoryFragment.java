@@ -38,7 +38,6 @@ public class CategoryFragment extends Fragment
         View view = inflater.inflate(R.layout.category, container, false);
 
         Bundle args = getArguments();
-        Log.d(TAG, "getArguments() " + args);
         String title = args.getString("title");
         ((TextView) view.findViewById(R.id.title)).setText(title);
         path = args.getString("path");
@@ -60,8 +59,6 @@ public class CategoryFragment extends Fragment
             Log.d(TAG, "Category leaf selected " + item.title);
             return;
         }
-
-        // TODO Ugly recurse test
 
         // Make new fragment
         Fragment fragment = Fragment.instantiate(getActivity(), getClass().getName());
