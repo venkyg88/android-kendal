@@ -40,7 +40,7 @@ public abstract class JSONResponse {
     private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
 //    private static final String CLIENT_ID = "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ";
 
-    public int httpStatusCode;
+    public transient int httpStatusCode;
     public JSONError errors[];
 
     public static class JSONError {

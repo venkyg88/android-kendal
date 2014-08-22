@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
@@ -21,9 +22,11 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
 
     private static final String TAG = "MainActivity";
 
-    private DrawerLayout drawer;
-    private ListView navigate;
+    private DrawerLayout drawerLayout;
     private FrameLayout content;
+    private ListView leftDrawer;
+    private View rightDrawer;
+
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -31,9 +34,10 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
         setContentView(R.layout.main);
 
         // Find top-level entities
-        drawer = (DrawerLayout) findViewById(R.id.drawer);
-        navigate = (ListView) findViewById(R.id.navigate);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         content = (FrameLayout) findViewById(R.id.content);
+        leftDrawer = (ListView) findViewById(R.id.left_drawer);
+        rightDrawer =  findViewById(R.id.right_drawer);
 
         // Initialize action bar
         ActionBar actionBar = getActionBar();
@@ -42,16 +46,23 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
 
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.action_bar, null);
-        view.findViewById(R.id.action_drawer).setOnClickListener(this);
-        actionBar.setCustomView(view);
+        actionBar.setCustomView(R.layout.action_bar);
+        View view = actionBar.getCustomView();
+        view.findViewById(R.id.action_left_drawer).setOnClickListener(this);
+        view.findViewById(R.id.action_right_drawer).setOnClickListener(this);
 
-        // Initialize list view
+        // Initialize left drawer listview
         DrawerAdapter adapter = new DrawerAdapter(this);
         adapter.fill();
-        navigate.setAdapter(adapter);
-        navigate.setOnItemClickListener(this);
+        leftDrawer.setAdapter(adapter);
+        leftDrawer.setOnItemClickListener(this);
+
+        // Initialize right drawer listview TODO just hacked for demo
+        ArrayAdapter<String> cartAdapter = new ArrayAdapter<String>(this, R.layout.category_item);
+        ((ListView) rightDrawer.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
+        cartAdapter.add("Apple");
+        cartAdapter.add("Banana");
+        cartAdapter.add("Cantaloupe");
 
         // Select splash fragment
         DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, 0, SplashFragment.class);
@@ -88,9 +99,19 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.action_drawer:
-                if (!drawer.isDrawerOpen(navigate)) drawer.openDrawer(navigate);
-                else drawer.closeDrawer(navigate);
+            case R.id.action_left_drawer:
+                if (!drawerLayout.isDrawerOpen(leftDrawer)) {
+                    drawerLayout.closeDrawer(rightDrawer);
+                    drawerLayout.openDrawer(leftDrawer);
+                }
+                else drawerLayout.closeDrawers();
+                break;
+            case R.id.action_right_drawer:
+                if (!drawerLayout.isDrawerOpen(rightDrawer)) {
+                    drawerLayout.closeDrawer(leftDrawer);
+                    drawerLayout.openDrawer(rightDrawer);
+                }
+                else drawerLayout.closeDrawers();
                 break;
         }
     }
@@ -101,7 +122,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
         DrawerItem item = (DrawerItem) parent.getItemAtPosition(position);
         if (item.fragmentClass!=null) {
             if (selectDrawerItem(item, true))
-                drawer.closeDrawer(navigate);
+                drawerLayout.closeDrawers();
         }
     }
 }

@@ -1,13 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <ImageView
-        android:id="@+id/action_drawer"
+    android:layout_height="match_parent"
+    android:layout_weight="1000">
+    <com.staples.drawertest.SquareButton
+        android:id="@+id/action_left_drawer"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_drawer"
+        android:scaleType="center"
+        android:background="#ff0000"/>
+    <TextView
+        android:id="@+id/action_staples"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:textColor="#000000"
+        android:background="#ffff80"
+        android:text="Staples"/>
+    <com.staples.drawertest.SquareButton
+        android:id="@+id/action_search"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_action_search"
+        android:scaleType="center"
+        android:background="#ffff80"/>
+    <com.staples.drawertest.SquareButton
+        android:id="@+id/action_right_drawer"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:src="@drawable/ic_drawer"
         android:scaleType="center"
         android:background="#ff0000"/>

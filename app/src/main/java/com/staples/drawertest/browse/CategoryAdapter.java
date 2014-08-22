@@ -54,7 +54,15 @@ public class CategoryAdapter extends BaseAdapter {
             view = inflater.inflate(R.layout.category_item, null);
 
         TextView title = (TextView) view.findViewById(R.id.title);
-        title.setText(item.title);
+
+        if (item.childCount > 0) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(item.title);
+            sb.append(" (");
+            sb.append(item.childCount);
+            sb.append(")");
+            title.setText(sb.toString());
+        } else title.setText(item.title);
 
         return(view);
     }
