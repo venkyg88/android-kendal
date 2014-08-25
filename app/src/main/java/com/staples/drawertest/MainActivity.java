@@ -3,20 +3,24 @@ package com.staples.drawertest;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * Created by PyhRe001 on 8/11/14.
  */
-public class MainActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class MainActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener, TextView.OnEditorActionListener {
 
     private static final String TAG = "MainActivity";
 
@@ -24,6 +28,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
     private FrameLayout content;
     private ListView leftDrawer;
     private View rightDrawer;
+    private EditText searchText;
 
 
     @Override
@@ -49,6 +54,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
         view.findViewById(R.id.action_left_drawer).setOnClickListener(this);
         view.findViewById(R.id.action_search).setOnClickListener(this);
         view.findViewById(R.id.action_right_drawer).setOnClickListener(this);
+
+        searchText = (EditText) findViewById(R.id.search_text);
+        searchText.setOnEditorActionListener(this);
 
         // Initialize left drawer listview
         DrawerAdapter adapter = new DrawerAdapter(this);
@@ -106,11 +114,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
                 else drawerLayout.closeDrawers();
                 break;
 
-            case R.id.action_search: // TODO half baked animation attempt
-                ScaleAnimation animation = new ScaleAnimation(1, 4, 1, 1, view.getWidth(), 0);
-                animation.setDuration(2000);
-                animation.setRepeatMode(Animation.REVERSE);
-                view.startAnimation(animation);
+            case R.id.action_search:
+                searchText.setText(null);
+                searchText.setVisibility(View.VISIBLE);
+                searchText.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(searchText, 0);
                 break;
 
             case R.id.action_right_drawer:
@@ -121,6 +130,17 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
                 else drawerLayout.closeDrawers();
                 break;
         }
+    }
+
+    // Search text action
+    @Override
+    public boolean onEditorAction (TextView view, int actionId, KeyEvent event) {
+        Log.d(TAG, "Search for "+searchText.getText());
+        searchText.setVisibility(View.INVISIBLE);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
+        // TODO perform some action on the search text
+        return(true);
     }
 
     // Drawer clicks
