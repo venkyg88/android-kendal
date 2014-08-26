@@ -67,9 +67,11 @@ public class CategoryAdapter extends BaseAdapter {
         return(view);
     }
 
-    public void addCategory(String title, int childCount, String path) {
-        CategoryItem item = new CategoryItem(title, childCount, path);
-        array.add(item);
+    // add and update must be run on the UI thread
+
+    public void add(final CategoryItem item) {
+        Runnable runs = new Runnable() {public void run() {CategoryAdapter.this.array.add(item);}};
+        activity.runOnUiThread(runs);
     }
 
     public void update() {

@@ -82,19 +82,20 @@ public class DrawerAdapter extends BaseAdapter {
 
     public void fill() {
         // Fill adapter with fragment titles
-        array.add(new DrawerItem(DrawerItem.Type.SEARCH));
-        array.add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.account_title));
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.alfa_title, AlfaFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.bravo_title, BravoFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.charlie_title, CharlieFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.products_title));
+        add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.account_title));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.alfa_title, AlfaFragment.class));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.bravo_title, BravoFragment.class));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.charlie_title, CharlieFragment.class));
+        add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.products_title));
 
         new TopCategoryFiller().execute(this);
     }
 
-    public void addCategory(String title, int childCount, String path) {
-        DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, title, childCount, path, CategoryFragment.class);
-        array.add(item);
+    // add and update must be run on the UI thread
+
+    public void add(final DrawerItem item) {
+        Runnable runs = new Runnable() {public void run() {DrawerAdapter.this.array.add(item);}};
+        activity.runOnUiThread(runs);
     }
 
     public void update() {

@@ -3,6 +3,8 @@ package com.staples.drawertest;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.staples.drawertest.browse.CategoryFragment;
+
 import org.apache.http.HttpStatus;
 
 /**
@@ -55,7 +57,8 @@ public class TopCategoryFiller extends AsyncTask<DrawerAdapter, Void, Integer> {
             String title = detail.description[0].name;
             if (title==null)
                 title = detail.description[0].text;
-            adapter[0].addCategory(title, detail.childCount, detail.categoryUrl);
+            DrawerItem item  = new DrawerItem(DrawerItem.Type.FRAGMENT, title, detail.childCount, detail.categoryUrl, CategoryFragment.class);
+            adapter[0].add(item);
         }
         adapter[0].update();
         Log.d(TAG, "Got " + count + " categories");

@@ -77,7 +77,8 @@ public class MidCategoryFiller extends AsyncTask<CategoryFragment, Void, Integer
                 String title = detail.description[0].name;
                 if (title == null)
                     title = detail.description[0].text;
-                adapter.addCategory(title, detail.childCount, detail.categoryUrl);
+                CategoryItem item = new CategoryItem(title, detail.childCount, detail.categoryUrl);
+                adapter.add(item);
             }
             Log.d(TAG, "Got " + count + " categories");
         }
@@ -87,7 +88,8 @@ public class MidCategoryFiller extends AsyncTask<CategoryFragment, Void, Integer
             count = category.filterGroup.length;
             for (int i = 0; i < count; i++) {
                 FilterGroup filterGroup = category.filterGroup[i];
-                adapter.addCategory(filterGroup.name, 0, null);
+                CategoryItem item = new CategoryItem(filterGroup.name, 0, null);
+                adapter.add(item);
             }
             Log.d(TAG, "Got " + count + " filter groups");
         }

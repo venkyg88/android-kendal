@@ -14,8 +14,7 @@ public class DrawerItem {
     public static final String TAG = "DrawerItem";
     public enum Type {
         HEADER   (0, R.layout.drawer_header),
-        FRAGMENT (1, R.layout.drawer_fragment),
-        SEARCH   (2, R.layout.drawer_search);
+        FRAGMENT (1, R.layout.drawer_fragment);
 
         public int viewType;
         public int layoutId;
