@@ -1,6 +1,7 @@
 package com.staples.drawertest;
 
 import android.net.Uri;
+import android.net.http.AndroidHttpClient;
 import android.util.Log;
 import com.google.gson.Gson;
 
@@ -8,7 +9,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +25,13 @@ public abstract class JSONResponse {
 
     static Gson gson = new Gson();
 
-    private static final String API_STRING = "http://sapi.staples.com/v1";
+    private static final String USERAGENT = "Staples Android App";
+    
+    private static final String SERVER = "http://sapi.staples.com";
+    private static final String RECOMMENDATION = "v1";
+    private static final String STORE_ID = "10001";
+
+    private static final String API_STRING = SERVER + "/" + RECOMMENDATION;
 
     // US English
     private static final String CATALOG_ID = "10051";
@@ -80,8 +86,10 @@ public abstract class JSONResponse {
     }
 
     public static JSONResponse getResponse (String path, Class<? extends JSONResponse> responseClass) {
+        AndroidHttpClient client;
         HttpGet httpRequest;
         HttpResponse httpResponse;
+        HttpEntity httpEntity;
         InputStream stream;
         Reader reader;
         JSONResponse response;
@@ -113,7 +121,7 @@ public abstract class JSONResponse {
 
         // Handle basic IO errors
         try {
-            DefaultHttpClient client = new DefaultHttpClient();
+            client = AndroidHttpClient.newInstance(USERAGENT, null);
             httpResponse = client.execute(httpRequest);
         } catch (Exception e) {
             httpRequest.abort();
@@ -131,7 +139,7 @@ public abstract class JSONResponse {
         }
 
         // Handle empty entity
-        HttpEntity httpEntity = httpResponse.getEntity();
+        httpEntity = httpResponse.getEntity();
         if (httpEntity==null) {
             response = createErrorResponse(responseClass, 993);
             return(response);
@@ -139,7 +147,7 @@ public abstract class JSONResponse {
 
         // Handle entity IO errors
         try {
-            stream = httpEntity.getContent();
+            stream = client.getUngzippedContent(httpEntity);
             reader = new InputStreamReader(stream);
         } catch(IOException e) {
             response = createErrorResponse(responseClass, 994);
