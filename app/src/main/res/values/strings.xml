@@ -7,5 +7,6 @@
     <string name="bravo_title">Bravo</string>
     <string name="charlie_title">Charlie</string>
     <string name="search_hint">Search</string>
+    <string name="empty">Nothing found</string>
     <string name="your_cart">Your cart</string>
 </resources>

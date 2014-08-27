@@ -23,10 +23,8 @@ import java.util.HashMap;
 public abstract class JSONResponse {
     private static final String TAG = "JSONResponse";
 
-    static Gson gson = new Gson();
-
     private static final String USERAGENT = "Staples Android App";
-    
+
     private static final String SERVER = "http://sapi.staples.com";
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
@@ -46,7 +44,11 @@ public abstract class JSONResponse {
     private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
 //    private static final String CLIENT_ID = "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ";
 
-    public static HashMap<String, String> hashMap = new HashMap<String, String>();
+    private static AndroidHttpClient client = AndroidHttpClient.newInstance(USERAGENT, null);
+
+    private static Gson gson = new Gson();
+
+    private static HashMap<String, String> hashMap = new HashMap<String, String>();
 
     public transient int httpStatusCode;
     public JSONError errors[];
@@ -86,7 +88,6 @@ public abstract class JSONResponse {
     }
 
     public static JSONResponse getResponse (String path, Class<? extends JSONResponse> responseClass) {
-        AndroidHttpClient client;
         HttpGet httpRequest;
         HttpResponse httpResponse;
         HttpEntity httpEntity;
@@ -121,7 +122,6 @@ public abstract class JSONResponse {
 
         // Handle basic IO errors
         try {
-            client = AndroidHttpClient.newInstance(USERAGENT, null);
             httpResponse = client.execute(httpRequest);
         } catch (Exception e) {
             httpRequest.abort();

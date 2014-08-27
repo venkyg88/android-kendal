@@ -31,6 +31,11 @@ public class CategoryAdapter extends BaseAdapter {
 
     /* Array items */
 
+   @Override
+   public boolean isEmpty() {
+       return(array.size()==0);
+   }
+
     @Override
     public int getCount() {
         return(array.size());

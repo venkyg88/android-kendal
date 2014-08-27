@@ -94,7 +94,8 @@ public class MidCategoryFiller extends AsyncTask<CategoryFragment, Void, Integer
             Log.d(TAG, "Got " + count + " filter groups");
         }
 
-        if (count>0) adapter.update();
+        adapter.update();
+
         return(count);
     }
 }
