@@ -8,11 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.staples.drawertest.NothingFound;
+import com.staples.drawertest.StatusLayout;
 import com.staples.drawertest.R;
 
 /**
@@ -47,7 +46,7 @@ public class CategoryFragment extends Fragment
         ListView categories = (ListView) view.findViewById(R.id.categories);
         categories.setAdapter(adapter);
         categories.setOnItemClickListener(this);
-        NothingFound nothingFound = (NothingFound) view.findViewById(R.id.empty);
+        StatusLayout nothingFound = (StatusLayout) view.findViewById(R.id.empty);
         nothingFound.setAdapter(adapter);
 
         new MidCategoryFiller().execute(this);

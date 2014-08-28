@@ -5,27 +5,27 @@ import android.database.DataSetObserver;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ListAdapter;
-import android.widget.TextView;
 
 /**
  * Created by pyhre001 on 8/27/14.
  */
-public class NothingFound extends TextView {
-    public static final String TAG ="NothingFound";
+public class StatusLayout extends FrameLayout {
+    public static final String TAG ="StatusLayout";
 
     private ListAdapter adapter;
     private Observer observer;
 
-    public NothingFound(Context context) {
+    public StatusLayout(Context context) {
         super(context, null, 0);
     }
 
-    public NothingFound(Context context, AttributeSet attrs) {
+    public StatusLayout(Context context, AttributeSet attrs) {
         super(context, attrs, 0);
     }
 
-    public NothingFound(Context context, AttributeSet attrs, int defStyle) {
+    public StatusLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
@@ -33,9 +33,14 @@ public class NothingFound extends TextView {
         @Override
         public void onChanged() {
             Log.d(TAG, "onChanged");
-            if (adapter!=null && adapter.isEmpty())
-                setVisibility(View.VISIBLE);
-            else setVisibility(View.GONE);
+            if (adapter!=null) {
+                View progress = getChildAt(0);
+                progress.setVisibility(View.GONE);
+                if (adapter.isEmpty()) {
+                    View empty = getChildAt(1);
+                    empty.setVisibility(View.VISIBLE);
+                }
+            }
         }
 
         @Override

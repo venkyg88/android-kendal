@@ -87,7 +87,7 @@ public abstract class JSONResponse {
         }
     }
 
-    public static JSONResponse getResponse (String path, Class<? extends JSONResponse> responseClass) {
+    public static JSONResponse getResponse(String path, Class<? extends JSONResponse> responseClass) {
         HttpGet httpRequest;
         HttpResponse httpResponse;
         HttpEntity httpEntity;
@@ -109,7 +109,7 @@ public abstract class JSONResponse {
         }
 
 //        try { // TODO Slow network testing, remove for release!
-//            Thread.sleep(5000);
+//            Thread.sleep(3000);
 //        } catch(Exception e) {}
 
         // Handle bad URL
@@ -167,8 +167,8 @@ public abstract class JSONResponse {
         return(response);
     }
 
-    public static JSONResponse parseResponse(Reader reader, Class<? extends JSONResponse> responseClass,
-                                             int statusCode) {
+    private static JSONResponse parseResponse(Reader reader, Class<? extends JSONResponse> responseClass,
+                                              int statusCode) {
         JSONResponse response;
 
         // Handle parsing errors
