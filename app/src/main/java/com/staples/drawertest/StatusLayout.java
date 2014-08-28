@@ -35,10 +35,16 @@ public class StatusLayout extends FrameLayout {
             Log.d(TAG, "onChanged");
             if (adapter!=null) {
                 View progress = getChildAt(0);
-                progress.setVisibility(View.GONE);
+                View empty = getChildAt(1);
+                View list = getChildAt(2);
+
+                if (progress!=null) progress.setVisibility(View.GONE);
                 if (adapter.isEmpty()) {
-                    View empty = getChildAt(1);
-                    empty.setVisibility(View.VISIBLE);
+                    if (empty!=null) empty.setVisibility(View.VISIBLE);
+                    if (list!=null) list.setVisibility(View.GONE);
+                } else {
+                    if (empty!=null) empty.setVisibility(View.GONE);
+                    if (list!=null) list.setVisibility(View.VISIBLE);
                 }
             }
         }
@@ -46,6 +52,13 @@ public class StatusLayout extends FrameLayout {
         @Override
         public void onInvalidated() {
             Log.d(TAG, "onInvalidated");
+            View progress = getChildAt(0);
+            View empty = getChildAt(1);
+            View list = getChildAt(2);
+
+            if (progress!=null) progress.setVisibility(View.VISIBLE);
+            if (empty!=null) empty.setVisibility(View.GONE);
+            if (list!=null) list.setVisibility(View.GONE);
         }
     }
 

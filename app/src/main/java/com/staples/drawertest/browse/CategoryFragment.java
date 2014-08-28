@@ -46,7 +46,7 @@ public class CategoryFragment extends Fragment
         ListView categories = (ListView) view.findViewById(R.id.categories);
         categories.setAdapter(adapter);
         categories.setOnItemClickListener(this);
-        StatusLayout nothingFound = (StatusLayout) view.findViewById(R.id.empty);
+        StatusLayout nothingFound = (StatusLayout) view.findViewById(R.id.status_layout);
         nothingFound.setAdapter(adapter);
 
         new MidCategoryFiller().execute(this);
