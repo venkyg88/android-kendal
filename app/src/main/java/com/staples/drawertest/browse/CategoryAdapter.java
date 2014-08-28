@@ -33,7 +33,7 @@ public class CategoryAdapter extends BaseAdapter {
 
    @Override
    public boolean isEmpty() {
-       return(array.size()==0);
+       return(array.isEmpty());
    }
 
     @Override

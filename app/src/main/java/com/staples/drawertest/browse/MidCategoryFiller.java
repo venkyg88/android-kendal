@@ -42,10 +42,7 @@ public class MidCategoryFiller extends AsyncTask<CategoryFragment, Void, Integer
         private String name;
     }
 
-    // Asynchronous task
-
-    protected Integer doInBackground(CategoryFragment... fragment) {
-        String path = fragment[0].getPath();
+    int fill(CategoryAdapter adapter, String path) {
         MidCategoryResponse response = (MidCategoryResponse) JSONResponse.getResponse(path, MidCategoryResponse.class);
 
         // Handle errors
@@ -54,7 +51,7 @@ public class MidCategoryFiller extends AsyncTask<CategoryFragment, Void, Integer
             return(0);
         }
         if (response.httpStatusCode!=HttpStatus.SC_OK &&
-            response.httpStatusCode!=HttpStatus.SC_INTERNAL_SERVER_ERROR) // TODO Ugly acceptance of HTTP 500 errors
+                response.httpStatusCode!=HttpStatus.SC_INTERNAL_SERVER_ERROR) // TODO Ugly acceptance of HTTP 500 errors
         {
             Log.d(TAG, "HTTP returned "+response.httpStatusCode);
             return(0);
@@ -64,14 +61,12 @@ public class MidCategoryFiller extends AsyncTask<CategoryFragment, Void, Integer
             return(0);
         }
 
-        CategoryAdapter adapter = fragment[0].getAdapter();
-
         CategoryDetail category = response.Category[0];
-        int count = 0;
+        if (category==null) return(0);
 
         // Process subcategories
         if (category.subCategory!=null) {
-            count = category.subCategory.length;
+            int count = category.subCategory.length;
             for (int i = 0; i < count; i++) {
                 SubCategoryDetail detail = category.subCategory[i];
                 String title = detail.description[0].name;
@@ -81,21 +76,33 @@ public class MidCategoryFiller extends AsyncTask<CategoryFragment, Void, Integer
                 adapter.add(item);
             }
             Log.d(TAG, "Got " + count + " categories");
+            return(count);
         }
 
         // Process filter groups
-        else if (category.filterGroup!=null) {
-            count = category.filterGroup.length;
+        if (category.filterGroup!=null) {
+            int count = category.filterGroup.length;
             for (int i = 0; i < count; i++) {
                 FilterGroup filterGroup = category.filterGroup[i];
                 CategoryItem item = new CategoryItem(filterGroup.name, 0, null);
                 adapter.add(item);
             }
             Log.d(TAG, "Got " + count + " filter groups");
+            return(count);
         }
 
-        adapter.update();
+        return(0);
+    }
 
+    // Asynchronous task
+
+    protected Integer doInBackground(CategoryFragment... fragment) {
+        CategoryAdapter adapter = fragment[0].getAdapter();
+        String path = fragment[0].getPath();
+
+        int count = fill(adapter, path);
+
+        adapter.update();
         return(count);
     }
 }

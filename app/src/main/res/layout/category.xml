@@ -9,14 +9,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:textSize="20dp"/>
-    <ListView
-        android:id="@+id/categories"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:choiceMode="singleChoice"
-        android:background="#ff0000"/>
-    <TextView
+    <com.staples.drawertest.NothingFound
         android:id="@+id/empty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,4 +17,11 @@
         android:visibility="gone"
         android:textSize="20dp"
         android:text="@string/empty"/>
+    <ListView
+        android:id="@+id/categories"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:choiceMode="singleChoice"
+        android:background="#ff0000"/>
 </LinearLayout>

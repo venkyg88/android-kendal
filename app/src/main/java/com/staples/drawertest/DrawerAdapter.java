@@ -32,6 +32,11 @@ public class DrawerAdapter extends BaseAdapter {
     /* Array items */
 
     @Override
+    public boolean isEmpty() {
+        return(array.isEmpty());
+    }
+
+    @Override
     public int getCount() {
         return(array.size());
     }
@@ -78,6 +83,19 @@ public class DrawerAdapter extends BaseAdapter {
             } else title.setText(item.title);
         }
         return(view);
+    }
+
+    // Enables
+
+    @Override
+    public boolean areAllItemsEnabled () {
+        return(false);
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        DrawerItem item = array.get(position);
+        return(item.type!=DrawerItem.Type.HEADER);
     }
 
     public void fill() {
