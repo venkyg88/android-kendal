@@ -11,7 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.staples.drawertest.StatusLayout;
+import com.staples.drawertest.widget.ListViewWrapper;
 import com.staples.drawertest.R;
 
 /**
@@ -46,7 +46,7 @@ public class CategoryFragment extends Fragment
         ListView categories = (ListView) view.findViewById(R.id.categories);
         categories.setAdapter(adapter);
         categories.setOnItemClickListener(this);
-        StatusLayout nothingFound = (StatusLayout) view.findViewById(R.id.status_layout);
+        ListViewWrapper nothingFound = (ListViewWrapper) view.findViewById(R.id.status_layout);
         nothingFound.setAdapter(adapter);
 
         new MidCategoryFiller().execute(this);

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="1000">
-    <com.staples.drawertest.SquareButton
+    <com.staples.drawertest.widget.SquareButton
         android:id="@+id/action_left_drawer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -32,7 +32,7 @@
             android:maxWidth="200dp"
             android:imeOptions="actionSearch|flagNoExtractUi"/>
     </LinearLayout>-->
-    <com.staples.drawertest.SquareButton
+    <com.staples.drawertest.widget.SquareButton
         android:id="@+id/action_right_drawer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

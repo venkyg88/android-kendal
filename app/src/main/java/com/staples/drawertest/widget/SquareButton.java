@@ -1,11 +1,11 @@
-package com.staples.drawertest;
+package com.staples.drawertest.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
 /**
- * Created by pyhre001 on 8/22/14.
+ * This class is an ImageView constrained to have the width the same as the height.
  */
 public class SquareButton extends ImageView {
     public SquareButton(Context context) {
