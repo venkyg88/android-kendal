@@ -71,6 +71,7 @@ public class CategoryFragment extends Fragment
 
         // Swap fragments
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.animator.push_enter, R.animator.push_exit, R.animator.pop_enter, R.animator.pop_exit);
         transaction.replace(R.id.content, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
