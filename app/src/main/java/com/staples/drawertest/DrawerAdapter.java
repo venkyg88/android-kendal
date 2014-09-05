@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.staples.drawertest.browse.CategoryFragment;
-
 import java.util.ArrayList;
 
 /**
@@ -100,12 +98,22 @@ public class DrawerAdapter extends BaseAdapter {
 
     public void fill() {
         // Fill adapter with fragment titles
-        add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.account_title));
-        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.alfa_title, AlfaFragment.class));
-        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.bravo_title, BravoFragment.class));
-        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.charlie_title, CharlieFragment.class));
-        add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.products_title));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.home_title, ToBeDoneFragment.class));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.feed_title, ToBeDoneFragment.class));
 
+        add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.account_header));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.order_title, ToBeDoneFragment.class));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.reward_title, ToBeDoneFragment.class));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.store_title, ToBeDoneFragment.class));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.profile_title, ToBeDoneFragment.class));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.list_title, ToBeDoneFragment.class));
+
+        add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.account_header));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.ink_title, ToBeDoneFragment.class));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.settings_title, ToBeDoneFragment.class));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.help_title, ToBeDoneFragment.class));
+
+        add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.shop_header));
         new TopCategoryFiller().execute(this);
     }
 

@@ -10,13 +10,13 @@ import android.view.ViewGroup;
 /**
  * Created by PyhRe001 on 8/11/14.
  */
-public class BravoFragment extends Fragment {
-    private static final String TAG = "BravoFragment";
+public class ToBeDoneFragment extends Fragment {
+    private static final String TAG = "ToBeDoneFragment";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
-        View view = inflater.inflate(R.layout.bravo, container, false);
+        View view = inflater.inflate(R.layout.tobedone, container, false);
         return(view);
     }
 }

@@ -115,6 +115,7 @@ public abstract class JSONResponse {
         // Handle bad URL
         try {
             httpRequest = new HttpGet(uri);
+            httpRequest.setHeader("Accept", "application/json");
         } catch(IllegalArgumentException e) {
             response = createErrorResponse(responseClass, 991);
             return(response);

@@ -1,11 +1,24 @@
 <resources>
     <string name="app_name">DrawerTest</string>
-    <!-- Drawer titles -->
-    <string name="account_title">Account</string>
-    <string name="products_title">Products</string>
-    <string name="alfa_title">Alfa</string>
-    <string name="bravo_title">Bravo</string>
-    <string name="charlie_title">Charlie</string>
+    <!-- Drawer header and titles -->
+    <string name="home_title">Home</string>
+    <string name="feed_title">Personal Feed</string>
+
+    <string name="shop_header">Shop</string>
+
+    <string name="account_header">My Account</string>
+    <string name="order_title">Order</string>
+    <string name="reward_title">Reward</string>
+    <string name="store_title">My Store</string>
+    <string name="profile_title">Profile</string>
+    <string name="list_title">List</string>
+
+    <string name="more_header">My Account</string>
+    <string name="ink_title">Ink &amp; Toner Finder</string>
+    <string name="settings_title">Settings</string>
+    <string name="help_title">Help</string>
+
+    <string name="tobedone_title">To Be Done</string>
     <string name="search_hint">Search</string>
     <string name="empty">Nothing found</string>
     <string name="your_cart">Your cart</string>
