@@ -28,7 +28,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
     private View rightDrawer;
     private SearchView searchText;
 
-
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -135,12 +134,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
 
     // SearchView updates
     public boolean onQueryTextChange(String query) {
-        Log.d(TAG, "onQueryTextChange " + query);
+        Log.d(TAG, "Search onQueryTextChange " + query);
         return(true);
     }
 
     public boolean onQueryTextSubmit(String query) {
-        Log.d(TAG,"onQueryTextSubmit "+query);
+        Log.d(TAG,"Search onQueryTextSubmit "+query);
         closeKeyboard();
         return(true);
     }

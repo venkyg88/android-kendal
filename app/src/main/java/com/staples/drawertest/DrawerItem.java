@@ -14,7 +14,8 @@ public class DrawerItem {
     public static final String TAG = "DrawerItem";
     public enum Type {
         HEADER   (0, R.layout.drawer_header),
-        FRAGMENT (1, R.layout.drawer_fragment);
+        FRAGMENT (1, R.layout.drawer_fragment),
+        CATEGORY (2, R.layout.drawer_category);
 
         public int viewType;
         public int layoutId;
@@ -27,14 +28,16 @@ public class DrawerItem {
 
     public static final int NTYPES = Type.values().length;
 
+    // Base type
     public Type type;
+    public String title;
+    public Drawable icon;
 
+    // Fragments & categories
     public Class fragmentClass;
     public Fragment fragment;
 
-    // Top category
-    public Drawable icon;
-    public String title;
+    // Top categories
     public int childCount;
     public String path;
 
@@ -46,6 +49,17 @@ public class DrawerItem {
 
     public DrawerItem(Type type, Context context, int iconId, int titleId) {
         this(type, context, iconId, titleId, null);
+    }
+
+    public boolean isEnabled() {
+        switch (type) {
+            case HEADER:
+                return(false);
+            case CATEGORY:
+                return(path!=null);
+            default:
+                return(true);
+        }
     }
 
     public DrawerItem(Type type, Context context, int iconId, int titleId, Class<? extends Fragment> fragmentClass) {

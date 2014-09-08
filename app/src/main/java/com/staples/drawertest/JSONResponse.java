@@ -9,6 +9,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,6 +51,13 @@ public abstract class JSONResponse {
     private static Gson gson = new Gson();
 
     private static HashMap<String, String> hashMap = new HashMap<String, String>();
+
+//    static {
+//        client = AndroidHttpClient.newInstance(USERAGENT, null);
+//        HttpParams params = client.getParams();
+//        HttpConnectionParams.setConnectionTimeout(params, 5000);
+//        HttpConnectionParams.setSoTimeout(params, 5000);
+//    }
 
     public transient int httpStatusCode;
     public JSONError errors[];
@@ -112,10 +121,17 @@ public abstract class JSONResponse {
 //            Thread.sleep(3000);
 //        } catch(Exception e) {}
 
-        // Handle bad URL
+        client = AndroidHttpClient.newInstance(USERAGENT, null); // TODO a new client should not be necessary
+        HttpParams params = client.getParams();
+        HttpConnectionParams.setConnectionTimeout(params, 5000);
+        HttpConnectionParams.setSoTimeout(params, 5000);
+
+        // Create request and handle bad URL
         try {
             httpRequest = new HttpGet(uri);
             httpRequest.setHeader("Accept", "application/json");
+            httpRequest.setHeader("Accept-Encoding", "gzip");
+            httpRequest.setHeader("Connection", "Keep-Alive");
         } catch(IllegalArgumentException e) {
             response = createErrorResponse(responseClass, 991);
             return(response);

@@ -55,10 +55,13 @@ public class TopCategoryFiller extends AsyncTask<DrawerAdapter, Void, Integer> {
         for(int i=0;i<count;i++) {
             CategoryDetail detail = response.Category[i];
             String title = detail.description[0].name;
-            if (title==null)
+            if (title == null)
                 title = detail.description[0].text;
-            DrawerItem item  = new DrawerItem(DrawerItem.Type.FRAGMENT, title, detail.childCount, detail.categoryUrl, CategoryFragment.class);
-            adapter[0].add(item);
+            DrawerItem item = adapter[0].findItemByTitle(title);
+            if (item != null) {
+                item.childCount = detail.childCount;
+                item.path = detail.categoryUrl;
+            }
         }
         adapter[0].update();
         Log.d(TAG, "Got " + count + " categories");

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">DrawerTest</string>
     <!-- Drawer header and titles -->
@@ -5,6 +6,8 @@
     <string name="feed_title">Personal Feed</string>
 
     <string name="shop_header">Shop</string>
+    <string name="products_title">Products</string>
+    <string name="technology_title">Technology</string>
 
     <string name="account_header">My Account</string>
     <string name="order_title">Order</string>

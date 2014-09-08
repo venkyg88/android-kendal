@@ -2,11 +2,14 @@ package com.staples.drawertest;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.staples.drawertest.browse.CategoryFragment;
 
 import java.util.ArrayList;
 
@@ -39,6 +42,10 @@ public class DrawerAdapter extends BaseAdapter {
         return(array.size());
     }
 
+    public void add(DrawerItem item) {
+       array.add(item);
+    }
+
     @Override
     public DrawerItem getItem(int position) {
         return(array.get(position));
@@ -66,9 +73,16 @@ public class DrawerAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup parent) {
         DrawerItem item = array.get(position);
 
+        // Get a new or recycled view of the right type
         if (view==null)
             view = inflater.inflate(item.type.layoutId, null);
 
+        // Set enable
+        view.setEnabled(item.isEnabled());
+
+        // Set icon TODO
+
+        // Set title
         TextView title = (TextView) view.findViewById(R.id.title);
         if (title!=null) {
             if (item.childCount > 0) {
@@ -93,13 +107,17 @@ public class DrawerAdapter extends BaseAdapter {
     @Override
     public boolean isEnabled(int position) {
         DrawerItem item = array.get(position);
-        return(item.type!=DrawerItem.Type.HEADER);
+        return(item.isEnabled());
     }
 
     public void fill() {
         // Fill adapter with fragment titles
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.home_title, ToBeDoneFragment.class));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.feed_title, ToBeDoneFragment.class));
+
+        add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.shop_header));
+        add(new DrawerItem(DrawerItem.Type.CATEGORY, activity, 0, R.string.products_title, CategoryFragment.class));
+        add(new DrawerItem(DrawerItem.Type.CATEGORY, activity, 0, R.string.technology_title, CategoryFragment.class));
 
         add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.account_header));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.order_title, ToBeDoneFragment.class));
@@ -113,16 +131,20 @@ public class DrawerAdapter extends BaseAdapter {
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.settings_title, ToBeDoneFragment.class));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.help_title, ToBeDoneFragment.class));
 
-        add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.shop_header));
         new TopCategoryFiller().execute(this);
     }
 
-    // add and update must be run on the UI thread
-
-    public void add(final DrawerItem item) {
-        Runnable runs = new Runnable() {public void run() {DrawerAdapter.this.array.add(item);}};
-        activity.runOnUiThread(runs);
+    DrawerItem findItemByTitle(String title) {
+        int n = array.size();
+        for(int i=0;i<n;i++) {
+            DrawerItem item = array.get(i);
+            if (item.title!=null && item.title.equals(title))
+                return(item);
+        }
+        return(null);
     }
+
+    // update must be run on the UI thread
 
     public void update() {
         Runnable runs = new Runnable() {public void run() {DrawerAdapter.this.notifyDataSetChanged();}};

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<EditText xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/search"
-    style="@style/DrawerSearch"
-    android:hint="@string/search_hint"/>
