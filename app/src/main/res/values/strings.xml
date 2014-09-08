@@ -27,7 +27,7 @@
     <string name="settings_title">Settings</string>
     <string name="help_title">Help</string>
 
-    <string name="tobedone_title">To Be Done</string>
+    <string name="tobedone_title">(To be done)</string>
     <string name="search_hint">Search</string>
     <string name="empty">Nothing found</string>
     <string name="your_cart">Your cart</string>

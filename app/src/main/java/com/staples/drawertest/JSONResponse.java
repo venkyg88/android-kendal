@@ -46,7 +46,7 @@ public abstract class JSONResponse {
     private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
 //    private static final String CLIENT_ID = "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ";
 
-    private static AndroidHttpClient client = AndroidHttpClient.newInstance(USERAGENT, null);
+    private static AndroidHttpClient client;
 
     private static Gson gson = new Gson();
 

@@ -84,16 +84,15 @@ public class DrawerItem {
 
     // Fragment instantiation
 
-    public boolean instantiate(Context context) {
-        if (fragment!=null) return(true);
-        if (fragmentClass==null) return(false);
+    public Fragment instantiate(Context context) {
+        if (fragment!=null) return(fragment);
+        if (fragmentClass==null) return(null);
 
         fragment = Fragment.instantiate(context, fragmentClass.getName());
         Bundle args = new Bundle();
         args.putString("title", title);
         args.putString("path", path);
         fragment.setArguments(args);
-
-        return(true);
+        return(fragment);
     }
 }

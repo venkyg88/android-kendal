@@ -2,16 +2,15 @@ package com.staples.drawertest;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -21,15 +20,20 @@ import android.widget.SearchView;
 /**
  * Created by PyhRe001 on 8/11/14.
  */
-public class MainActivity extends Activity implements AdapterView.OnItemClickListener, SearchView.OnQueryTextListener {
+public class MainActivity extends Activity implements AdapterView.OnItemClickListener {
 
     private static final String TAG = "MainActivity";
+
+    private static final String TOPFRAGMENT = "TopFragment";
 
     private DrawerLayout drawerLayout;
     private FrameLayout content;
     private ListView leftDrawer;
     private View rightDrawer;
     private SearchView searchText;
+
+    Fragment topFrag;
+    Fragment bottomFrag;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -77,8 +81,18 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
         // Select splash fragment if first run
         if (bundle == null) {
-            DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, 0, SplashFragment.class);
-            selectDrawerItem(item, false);
+//            DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, 0, SplashFragment.class);
+//            selectDrawerItem(item, false);
+// TODO Hacked test of two fragments in one container
+            topFrag = new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, 0, PersonalFragment.class).instantiate(this);
+            bottomFrag = new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, 0, SplashFragment.class).instantiate(this);
+
+            FragmentManager manager = getFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.add(R.id.content, topFrag);
+            transaction.add(R.id.content, bottomFrag);
+            transaction.commit();
+
         }
     }
 
@@ -90,27 +104,18 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         if (item.fragment == null)
             item.instantiate(this);
 
-            // Check if Fragment present already
-        else {
-            int count = content.getChildCount();
-            for (int i = 0; i < count; i++)
-                if (content.getChildAt(i) == item.fragment.getView())
-                    return (true);
-        }
-
         // Swap Fragments
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.setCustomAnimations(R.animator.push_enter, R.animator.push_exit, R.animator.pop_enter, R.animator.pop_exit);
+        transaction.remove(topFrag);
+        transaction.remove(bottomFrag);
         transaction.replace(R.id.content, item.fragment);
         if (push)
             transaction.addToBackStack(null);
         transaction.commit();
 
         return (true);
-    }
-
-    private void closeKeyboard() {
-//        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//        imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
     }
 
     @Override
@@ -125,19 +130,18 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case android.R.id.home:
-                closeKeyboard();
                 if (!drawerLayout.isDrawerOpen(leftDrawer)) {
                     drawerLayout.closeDrawer(rightDrawer);
                     drawerLayout.openDrawer(leftDrawer);
                 } else drawerLayout.closeDrawers();
                 return(true);
 
-//            case R.id.search_text:
-//                drawerLayout.closeDrawers();
-//                return(true);
+            case R.id.action_search:
+                drawerLayout.closeDrawers();
+                // TODO search
+                return(true);
 
             case R.id.action_right_drawer:
-                closeKeyboard();
                 if (!drawerLayout.isDrawerOpen(rightDrawer)) {
                     drawerLayout.closeDrawer(leftDrawer);
                     drawerLayout.openDrawer(rightDrawer);
@@ -147,18 +151,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    // SearchView updates
-    public boolean onQueryTextChange(String query) {
-        Log.d(TAG, "Search onQueryTextChange " + query);
-        return(true);
-    }
-
-    public boolean onQueryTextSubmit(String query) {
-        Log.d(TAG,"Search onQueryTextSubmit "+query);
-        closeKeyboard();
-        return(true);
     }
 
     // Drawer clicks

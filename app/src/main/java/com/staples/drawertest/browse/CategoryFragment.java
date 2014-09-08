@@ -1,6 +1,7 @@
 package com.staples.drawertest.browse;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
@@ -63,14 +64,15 @@ public class CategoryFragment extends Fragment
         }
 
         // Make new fragment
-        Fragment fragment = Fragment.instantiate(getActivity(), getClass().getName());
+        Fragment fragment = item.instantiate(getActivity());
         Bundle args = new Bundle();
         args.putString("title", item.title);
         args.putString("path", item.path);
         fragment.setArguments(args);
 
         // Swap fragments
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
         transaction.setCustomAnimations(R.animator.push_enter, R.animator.push_exit, R.animator.pop_enter, R.animator.pop_exit);
         transaction.replace(R.id.content, fragment);
         transaction.addToBackStack(null);
