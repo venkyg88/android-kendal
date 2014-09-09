@@ -14,23 +14,24 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
-    @RunWith(RobolectricTestRunner.class)
-public class InstrumentTest extends TestCase {
+@Config(emulateSdk = 18)
+@RunWith(RobolectricTestRunner.class)
+public class InstrumentTest {
     public static final String TAG = "InstrumentTest";
 
     public InstrumentTest() {
-
     }
 
     @Test
     public void testSimple() {
-        Assert.assertEquals(27, 27);
+        Assert.assertTrue(true);
     }
 
     @Test(timeout=1000)
-    public void notFoundAmI() {
-        Assert.assertEquals(10, 10);
+    public void namedWhatever() {
+        Assert.assertEquals(0, 0);
     }
 
     // TopCategoryResponse tests
@@ -54,5 +55,7 @@ public class InstrumentTest extends TestCase {
         Activity activity = Robolectric.buildActivity(MainActivity.class).create().get();
         Assert.assertNotNull(activity);
         Log.d(TAG, "Activity: " + activity);
+        System.out.printf("This is going out to stdout\n");
+        System.err.printf("This is going out to stderr\n");
     }
 }
