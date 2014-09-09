@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.staples.drawertest">
+    package="com.staples.mobile">
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
@@ -7,7 +7,7 @@
         android:icon="@drawable/ic_launcher"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.staples.mobile.MainActivity"
             android:configChanges="orientation"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>

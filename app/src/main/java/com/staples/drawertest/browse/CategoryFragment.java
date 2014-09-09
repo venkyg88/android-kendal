@@ -1,4 +1,4 @@
-package com.staples.drawertest.browse;
+package com.staples.mobile.browse;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -12,8 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.staples.drawertest.widget.ListViewWrapper;
-import com.staples.drawertest.R;
+import com.staples.mobile.widget.ListViewWrapper;
+import com.staples.mobile.R;
 
 /**
  * Created by PyhRe001 on 8/11/14.

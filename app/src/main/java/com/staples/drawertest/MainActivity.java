@@ -1,4 +1,4 @@
-package com.staples.drawertest;
+package com.staples.mobile;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -15,7 +15,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.SearchView;
 
 /**
  * Created by PyhRe001 on 8/11/14.
@@ -30,7 +29,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     private FrameLayout content;
     private ListView leftDrawer;
     private View rightDrawer;
-    private SearchView searchText;
+    private DrawerItem searchItem;
 
     Fragment topFrag;
     Fragment bottomFrag;
@@ -52,20 +51,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         actionBar.setHomeButtonEnabled(true);
         actionBar.setTitle(R.string.staples);
 
-//        actionBar.setDisplayHomeAsUpEnabled(false);
-//        actionBar.setDisplayShowHomeEnabled(false);
-//        actionBar.setDisplayShowCustomEnabled(true);
-//        actionBar.setDisplayShowTitleEnabled(false);
-//
-//        actionBar.setCustomView(R.layout.action_bar);
-//        View view = actionBar.getCustomView();
-//        view.findViewById(R.id.action_left_drawer).setOnClickListener(this);
-//        view.findViewById(R.id.action_right_drawer).setOnClickListener(this);
-//
-//        searchText = (SearchView) findViewById(R.id.search_text);
-//        searchText.setOnSearchClickListener(this);
-//        searchText.setOnQueryTextListener(this);
-
         // Initialize left drawer listview
         DrawerAdapter adapter = new DrawerAdapter(this);
         adapter.fill();
@@ -78,6 +63,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         cartAdapter.add("Apple");
         cartAdapter.add("Banana");
         cartAdapter.add("Cantaloupe");
+
+        // Initialize search drawer item
+        searchItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, R.string.search_title, ToBeDoneFragment.class);
 
         // Select splash fragment if first run
         if (bundle == null) {
@@ -92,7 +80,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             transaction.add(R.id.content, topFrag);
             transaction.add(R.id.content, bottomFrag);
             transaction.commit();
-
         }
     }
 
@@ -138,7 +125,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
             case R.id.action_search:
                 drawerLayout.closeDrawers();
-                // TODO search
+                selectDrawerItem(searchItem, true);
                 return(true);
 
             case R.id.action_right_drawer:

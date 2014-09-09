@@ -1,4 +1,4 @@
-package com.staples.drawertest;
+package com.staples.mobile;
 
 import android.app.Fragment;
 import android.os.Bundle;

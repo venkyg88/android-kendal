@@ -1,4 +1,4 @@
-package com.staples.drawertest.test;
+package com.staples.mobile.test;
 
 import android.app.Instrumentation;
 import android.os.Bundle;

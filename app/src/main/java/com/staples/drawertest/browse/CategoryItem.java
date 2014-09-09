@@ -1,4 +1,4 @@
-package com.staples.drawertest.browse;
+package com.staples.mobile.browse;
 
 import android.app.Fragment;
 import android.content.Context;

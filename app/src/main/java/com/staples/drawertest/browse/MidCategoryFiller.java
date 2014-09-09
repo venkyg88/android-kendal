@@ -1,11 +1,9 @@
-package com.staples.drawertest.browse;
+package com.staples.mobile.browse;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
-import com.staples.drawertest.JSONResponse;
-import com.staples.drawertest.browse.CategoryFragment;
+import com.staples.mobile.JSONResponse;
 
 import org.apache.http.HttpStatus;
 

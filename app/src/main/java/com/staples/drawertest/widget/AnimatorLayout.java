@@ -1,4 +1,4 @@
-package com.staples.drawertest.widget;
+package com.staples.mobile.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;

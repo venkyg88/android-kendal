@@ -1,15 +1,14 @@
-package com.staples.drawertest;
+package com.staples.mobile;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.staples.drawertest.browse.CategoryFragment;
+import com.staples.mobile.browse.CategoryFragment;
 
 import java.util.ArrayList;
 

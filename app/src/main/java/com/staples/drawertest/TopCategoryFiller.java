@@ -1,9 +1,7 @@
-package com.staples.drawertest;
+package com.staples.mobile;
 
 import android.os.AsyncTask;
 import android.util.Log;
-
-import com.staples.drawertest.browse.CategoryFragment;
 
 import org.apache.http.HttpStatus;
 

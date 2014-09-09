@@ -1,4 +1,4 @@
-package com.staples.drawertest.browse;
+package com.staples.mobile.browse;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.staples.drawertest.R;
+import com.staples.mobile.R;
 
 import java.util.ArrayList;
 

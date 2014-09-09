@@ -1,10 +1,8 @@
-package com.staples.drawertest.widget;
+package com.staples.mobile.widget;
 
 import android.content.Context;
 import android.database.DataSetObserver;
-import android.os.Looper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ListAdapter;

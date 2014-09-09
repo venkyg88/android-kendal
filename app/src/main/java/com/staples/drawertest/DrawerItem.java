@@ -1,11 +1,10 @@
-package com.staples.drawertest;
+package com.staples.mobile;
 
 import android.app.Fragment;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 
 /**
 * Created by pyhre001 on 8/14/14.

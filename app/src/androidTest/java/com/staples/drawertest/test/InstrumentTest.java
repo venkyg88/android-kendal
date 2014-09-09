@@ -1,11 +1,11 @@
-package com.staples.drawertest.test;
+package com.staples.mobile.test;
 
 import android.app.Activity;
 import android.util.Log;
 
-import com.staples.drawertest.JSONResponse;
-import com.staples.drawertest.MainActivity;
-import com.staples.drawertest.TopCategoryFiller;
+import com.staples.mobile.JSONResponse;
+import com.staples.mobile.MainActivity;
+import com.staples.mobile.TopCategoryFiller;
 
 import junit.framework.TestCase;
 
