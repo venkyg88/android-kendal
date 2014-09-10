@@ -7,8 +7,6 @@ import com.staples.mobile.JSONResponse;
 import com.staples.mobile.MainActivity;
 import com.staples.mobile.TopCategoryFiller;
 
-import junit.framework.TestCase;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

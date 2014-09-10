@@ -12,8 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.staples.mobile.widget.ListViewWrapper;
 import com.staples.mobile.R;
+import com.staples.mobile.widget.ListViewWrapper;
 
 /**
  * Created by PyhRe001 on 8/11/14.
@@ -23,15 +23,6 @@ public class CategoryFragment extends Fragment
     private static final String TAG = "CategoryFragment";
 
     private CategoryAdapter adapter;
-    private String path;
-
-    public CategoryAdapter getAdapter() {
-        return (adapter);
-    }
-
-    public String getPath() {
-        return (path);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -41,16 +32,16 @@ public class CategoryFragment extends Fragment
         Bundle args = getArguments();
         String title = args.getString("title");
         ((TextView) view.findViewById(R.id.title)).setText(title);
-        path = args.getString("path");
+        String path = args.getString("path");
 
         adapter = new CategoryAdapter(getActivity());
         ListView categories = (ListView) view.findViewById(R.id.categories);
         categories.setAdapter(adapter);
         categories.setOnItemClickListener(this);
-        ListViewWrapper nothingFound = (ListViewWrapper) view.findViewById(R.id.status_layout);
-        nothingFound.setAdapter(adapter);
+        ListViewWrapper wrapper = (ListViewWrapper) view.findViewById(R.id.status_layout);
+        wrapper.setAdapter(adapter);
 
-        new MidCategoryFiller().execute(this);
+        adapter.fill(path);
 
         return (view);
     }
@@ -58,7 +49,8 @@ public class CategoryFragment extends Fragment
     @Override
     public void onItemClick(AdapterView parent, View view, int position, long id) {
         CategoryItem item = (CategoryItem) parent.getItemAtPosition(position);
-        if (item==null || item.path==null) {
+        if (item==null) return;
+        if (item.path==null) {
             Log.d(TAG, "Category leaf selected " + item.title);
             return;
         }

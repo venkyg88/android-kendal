@@ -23,10 +23,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     private static final String TAG = "MainActivity";
 
-    private static final String TOPFRAGMENT = "TopFragment";
-
     private DrawerLayout drawerLayout;
-    private FrameLayout content;
     private ListView leftDrawer;
     private View rightDrawer;
     private DrawerItem searchItem;
@@ -41,7 +38,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
         // Find top-level entities
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        content = (FrameLayout) findViewById(R.id.content);
         leftDrawer = (ListView) findViewById(R.id.left_drawer);
         rightDrawer = findViewById(R.id.right_drawer);
 
@@ -140,7 +136,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         }
     }
 
-    // Drawer clicks
+    // Left drawer listview clicks
     @Override
     public void onItemClick(AdapterView parent, View view, int position, long id) {
         DrawerItem item = (DrawerItem) parent.getItemAtPosition(position);
