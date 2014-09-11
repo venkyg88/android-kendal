@@ -49,6 +49,7 @@ public class MainApplication extends Application {
         public void intercept(RequestFacade request) {
             request.addHeader("Accept", "application/json");
 //            request.addHeader("Accept-encoding", "gzip");
+            request.addHeader("Connection", "Keep-Alive");
         }
     }
 

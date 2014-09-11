@@ -73,12 +73,10 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
 
         EasyOpenApi easyOpenApi = ((MainApplication) activity.getApplication()).getEasyOpenApi();
 
-        // Decode identifier
-        Log.d(TAG, path);
-
-        i = path.indexOf("category/identifier/");
+        // Decode category alphanumeric identifiers
+        i = path.indexOf("/category/identifier/");
         if (i >= 0) {
-            i += "category/identifier/".length();
+            i += "/category/identifier/".length();
             j = path.indexOf('?', i);
             if (j <= 0) j = path.length();
             String identifier = path.substring(i, j);
@@ -86,6 +84,7 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
             return;
         }
 
+        // Decode category numeric identifiers
         i = path.indexOf("parentIdentifier=");
         if (i >= 0) {
             i += "parentIdentifier=".length();
@@ -95,6 +94,10 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
             easyOpenApi.topCategories(RECOMMENDATION, STORE_ID, CATALOG_ID, LOCALE, parentIdentifier, ZIPCODE, CLIENT_ID, this);
             return;
         }
+
+        // No idea what the path is
+        Log.d(TAG, "Unknown path: "+path);
+        notifyDataSetChanged();
     }
 
     public void success(Browse browse, Response response) {
