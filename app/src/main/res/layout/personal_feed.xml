@@ -3,10 +3,4 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Hi User!\nThere are amazing offers for you!\nSee them all."
-        android:background="#00ff00"/>
 </com.staples.mobile.widget.AnimatorLayout>

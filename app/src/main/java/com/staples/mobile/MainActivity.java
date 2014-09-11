@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.ListView;
 
 /**
@@ -27,9 +26,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     private ListView leftDrawer;
     private View rightDrawer;
     private DrawerItem searchItem;
-
-    Fragment topFrag;
-    Fragment bottomFrag;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -63,19 +59,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         // Initialize search drawer item
         searchItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, R.string.search_title, ToBeDoneFragment.class);
 
-        // Select splash fragment if first run
+        // Select landing fragment if first run
         if (bundle == null) {
-//            DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, 0, SplashFragment.class);
-//            selectDrawerItem(item, false);
-// TODO Hacked test of two fragments in one container
-            topFrag = new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, 0, PersonalFragment.class).instantiate(this);
-            bottomFrag = new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, 0, SplashFragment.class).instantiate(this);
-
-            FragmentManager manager = getFragmentManager();
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.add(R.id.content, topFrag);
-            transaction.add(R.id.content, bottomFrag);
-            transaction.commit();
+            DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, 0, LandingFragment.class);
+            selectDrawerItem(item, false);
         }
     }
 
@@ -90,9 +77,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         // Swap Fragments
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.setCustomAnimations(R.animator.push_enter, R.animator.push_exit, R.animator.pop_enter, R.animator.pop_exit);
-        transaction.remove(topFrag);
-        transaction.remove(bottomFrag);
+        if (push)
+            transaction.setCustomAnimations(R.animator.push_enter, R.animator.push_exit, R.animator.pop_enter, R.animator.pop_exit);
         transaction.replace(R.id.content, item.fragment);
         if (push)
             transaction.addToBackStack(null);

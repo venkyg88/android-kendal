@@ -9,7 +9,7 @@
 
     <!-- Drawer header and titles -->
     <string name="home_title">Home</string>
-    <string name="feed_title">Personal Feed</string>
+    <string name="personal_feed_title">Personal Feed</string>
 
     <string name="shop_header">Shop</string>
     <string name="products_title">Products</string>

@@ -15,7 +15,6 @@ import com.staples.mobile.browse.object.Category;
 import com.staples.mobile.browse.object.Description;
 
 import retrofit.Callback;
-import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
@@ -102,7 +101,7 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem> implements Callback<
     public void fill() {
         // Fill adapter with fragment titles
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.home_title, ToBeDoneFragment.class));
-        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.feed_title, ToBeDoneFragment.class));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.personal_feed_title, PersonalFeedFragment.class));
 
         add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.shop_header));
         add(new DrawerItem(DrawerItem.Type.CATEGORY, activity, 0, R.string.products_title, CategoryFragment.class));
