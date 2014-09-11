@@ -9,13 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.staples.mobile.EasyOpenApi;
 import com.staples.mobile.MainApplication;
 import com.staples.mobile.R;
-import com.staples.mobile.object.Browse;
-import com.staples.mobile.object.Category;
-import com.staples.mobile.object.Description;
-import com.staples.mobile.object.FilterGroup;
-import com.staples.mobile.object.SubCategory;
+import com.staples.mobile.browse.object.Browse;
+import com.staples.mobile.browse.object.Category;
+import com.staples.mobile.browse.object.Description;
+import com.staples.mobile.browse.object.FilterGroup;
+import com.staples.mobile.browse.object.SubCategory;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
@@ -25,8 +26,7 @@ import retrofit.client.Response;
 /**
  * Created by pyhre001 on 8/20/14.
  */
-public class CategoryAdapter extends ArrayAdapter<CategoryItem>
-                             implements Callback<Browse> {
+public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callback<Browse> {
     private static final String TAG = "CategoryAdapter";
 
     private static final String RECOMMENDATION = "v1";
@@ -69,12 +69,32 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem>
     }
 
     void fill(String path) {
-        RestAdapter easyOpenApi = ((MainApplication) activity.getApplication()).getEasyOpenApi();
+        int i, j;
 
-        BrowseApi browseApi = easyOpenApi.create(BrowseApi.class);
+        EasyOpenApi easyOpenApi = ((MainApplication) activity.getApplication()).getEasyOpenApi();
 
-        path = "category/identifier/SC2";
-        browseApi.browse(RECOMMENDATION, STORE_ID, path, CATALOG_ID, LOCALE, ZIPCODE, CLIENT_ID, this);
+        // Decode identifier
+        Log.d(TAG, path);
+
+        i = path.indexOf("category/identifier/");
+        if (i >= 0) {
+            i += "category/identifier/".length();
+            j = path.indexOf('?', i);
+            if (j <= 0) j = path.length();
+            String identifier = path.substring(i, j);
+            easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE, ZIPCODE, CLIENT_ID, this);
+            return;
+        }
+
+        i = path.indexOf("parentIdentifier=");
+        if (i >= 0) {
+            i += "parentIdentifier=".length();
+            j = path.indexOf('&', i);
+            if (j <= 0) j = path.length();
+            String parentIdentifier = path.substring(i, j);
+            easyOpenApi.topCategories(RECOMMENDATION, STORE_ID, CATALOG_ID, LOCALE, parentIdentifier, ZIPCODE, CLIENT_ID, this);
+            return;
+        }
     }
 
     public void success(Browse browse, Response response) {

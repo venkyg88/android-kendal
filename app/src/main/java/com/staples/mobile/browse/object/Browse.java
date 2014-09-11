@@ -1,4 +1,4 @@
-package com.staples.mobile.object;
+package com.staples.mobile.browse.object;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

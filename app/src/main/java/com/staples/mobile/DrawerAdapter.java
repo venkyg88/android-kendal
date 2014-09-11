@@ -6,19 +6,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.staples.mobile.browse.BrowseApi;
 import com.staples.mobile.browse.CategoryFragment;
-import com.staples.mobile.browse.CategoryItem;
-import com.staples.mobile.object.Browse;
-import com.staples.mobile.object.Category;
-import com.staples.mobile.object.Description;
-import com.staples.mobile.object.FilterGroup;
-import com.staples.mobile.object.SubCategory;
-
-import java.util.ArrayList;
+import com.staples.mobile.browse.object.Browse;
+import com.staples.mobile.browse.object.Category;
+import com.staples.mobile.browse.object.Description;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
@@ -28,7 +22,7 @@ import retrofit.client.Response;
 /**
  * Created by pyhre001 on 8/14/14.
  */
-public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
+public class DrawerAdapter extends ArrayAdapter<DrawerItem> implements Callback<Browse> {
     private static final String TAG = "DrawerAdapter";
 
     private static final String RECOMMENDATION = "v1";
@@ -40,41 +34,15 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
     private static final String ZIPCODE = "01010";
     private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
 
+    private static EasyOpenApi browseApi;
+
     private Activity activity;
     private LayoutInflater inflater;
-    private ArrayList<DrawerItem> array;
 
     public DrawerAdapter(Context context) {
-        super();
+        super(context, 0);
         activity = (Activity) context;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        array = new ArrayList<DrawerItem>(16);
-    }
-
-    /* Array items */
-
-    @Override
-    public boolean isEmpty() {
-        return(array.isEmpty());
-    }
-
-    @Override
-    public int getCount() {
-        return(array.size());
-    }
-
-    public void add(DrawerItem item) {
-       array.add(item);
-    }
-
-    @Override
-    public DrawerItem getItem(int position) {
-        return(array.get(position));
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return(0);
     }
 
     /* Views */
@@ -86,13 +54,13 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
 
     @Override
     public int getItemViewType(int position) {
-        DrawerItem item = array.get(position);
+        DrawerItem item = getItem(position);
         return(item.type.viewType);
     }
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        DrawerItem item = array.get(position);
+        DrawerItem item = getItem(position);
 
         // Get a new or recycled view of the right type
         if (view==null)
@@ -127,7 +95,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
 
     @Override
     public boolean isEnabled(int position) {
-        DrawerItem item = array.get(position);
+        DrawerItem item = getItem(position);
         return(item.isEnabled());
     }
 
@@ -152,11 +120,8 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.settings_title, ToBeDoneFragment.class));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.help_title, ToBeDoneFragment.class));
 
-
-        RestAdapter easyOpenApi = ((MainApplication) activity.getApplication()).getEasyOpenApi();
-        BrowseApi browseApi = easyOpenApi.create(BrowseApi.class);
-        String path = "category/top";
-        browseApi.browse(RECOMMENDATION, STORE_ID, path, CATALOG_ID, LOCALE, ZIPCODE, CLIENT_ID, this);
+        EasyOpenApi easyOpenApi = ((MainApplication) activity.getApplication()).getEasyOpenApi();
+        easyOpenApi.topCategories(RECOMMENDATION, STORE_ID, CATALOG_ID, LOCALE, null, ZIPCODE, CLIENT_ID, this);
     }
 
     public void success(Browse browse, Response response) {
@@ -169,11 +134,14 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
                 Category category = categories[i];
                 Description[] descriptions = category.getDescription();
                 if (descriptions != null && descriptions.length > 0) {
+                    // Get category title
                     Description description = descriptions[0];
                     String title = description.getText();
                     if (title == null) title = description.getDescription();
                     if (title == null)  title = description.getName();
-                        DrawerItem item = findItemByTitle(title);
+
+                    // Match to DrawerItem
+                    DrawerItem item = findItemByTitle(title);
                     if (item != null) {
                         item.childCount = category.getChildCount();
                         item.path = category.getCategoryUrl();
@@ -191,19 +159,12 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
     }
 
     DrawerItem findItemByTitle(String title) {
-        int n = array.size();
+        int n = getCount();
         for(int i=0;i<n;i++) {
-            DrawerItem item = array.get(i);
+            DrawerItem item = getItem(i);
             if (item.title!=null && item.title.equals(title))
                 return(item);
         }
         return(null);
-    }
-
-    // update must be run on the UI thread
-
-    public void update() {
-        Runnable runs = new Runnable() {public void run() {DrawerAdapter.this.notifyDataSetChanged();}};
-        activity.runOnUiThread(runs);
     }
 }

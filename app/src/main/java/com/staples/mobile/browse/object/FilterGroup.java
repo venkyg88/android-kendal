@@ -1,4 +1,4 @@
-package com.staples.mobile.object;
+package com.staples.mobile.browse.object;
 
 /**
  * Created by pyhre001 on 9/10/14.
