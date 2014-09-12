@@ -37,8 +37,8 @@ public class DrawerItem {
     public Fragment fragment;
 
     // Top categories
-    public int childCount;
     public String path;
+    public int childCount;
 
     // Constructors
 

@@ -38,6 +38,8 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
     private static final String ZIPCODE = "01010";
     private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
 
+    private static final int MAXFETCH = 50;
+
     private Activity activity;
     private LayoutInflater inflater;
 
@@ -80,7 +82,8 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
             j = path.indexOf('?', i);
             if (j <= 0) j = path.length();
             String identifier = path.substring(i, j);
-            easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE, ZIPCODE, CLIENT_ID, this);
+            easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
+                                         ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
             return;
         }
 
@@ -91,7 +94,8 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
             j = path.indexOf('&', i);
             if (j <= 0) j = path.length();
             String parentIdentifier = path.substring(i, j);
-            easyOpenApi.topCategories(RECOMMENDATION, STORE_ID, CATALOG_ID, LOCALE, parentIdentifier, ZIPCODE, CLIENT_ID, this);
+            easyOpenApi.topCategories(RECOMMENDATION, STORE_ID, CATALOG_ID, LOCALE, parentIdentifier,
+                                      ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
             return;
         }
 
@@ -116,7 +120,7 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
                         Description description = descriptions[0];
                         String title = description.getName();
                         if (title == null) title = description.getDescription();
-                        CategoryItem item = new CategoryItem(title, subCategory.getChildCount(), subCategory.getCategoryUrl());
+                        CategoryItem item = new CategoryItem(title, subCategory.getCategoryUrl(), subCategory.getChildCount());
                         add(item);
                     }
                 }
@@ -129,7 +133,7 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
                 int count = filterGroups.length;
                 for (int i = 0; i < count; i++) {
                     FilterGroup filterGroup = filterGroups[i];
-                    CategoryItem item = new CategoryItem(filterGroup.getName(), 0, null);
+                    CategoryItem item = new CategoryItem(filterGroup.getName(), null, 0);
                     add(item);
                 }
                 Log.d(TAG, "Got " + count + " filter groups");

@@ -11,13 +11,13 @@ import android.os.Bundle;
 public class CategoryItem {
     public Drawable icon;
     public String title;
-    public int childCount;
     public String path;
+    public int childCount;
 
-    public CategoryItem(String title, int childCount, String path) {
+    public CategoryItem(String title, String path, int childCount) {
         this.title = title;
-        this.childCount = childCount;
         this.path = path;
+        this.childCount = childCount;
     }
 
     // Fragment instantiation

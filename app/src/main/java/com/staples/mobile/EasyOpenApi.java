@@ -21,6 +21,8 @@ public interface EasyOpenApi {
         @Query("parentIdentifier") String parentIdentifier,
         @Query("zipCode") String zipCode,
         @Query("client_id") String client_id,
+        @Query("offset") Integer offset,
+        @Query("limit") Integer limit,
         Callback<Browse> callback
     );
 
@@ -33,6 +35,8 @@ public interface EasyOpenApi {
         @Query("locale") String locale,
         @Query("zipCode") String zipCode,
         @Query("client_id") String client_id,
+        @Query("offset") Integer offset,
+        @Query("limit") Integer limit,
         Callback<Browse> callback
     );
 }

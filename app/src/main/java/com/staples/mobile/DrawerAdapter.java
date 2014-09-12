@@ -33,6 +33,8 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem> implements Callback<
     private static final String ZIPCODE = "01010";
     private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
 
+    private static final int MAXFETCH = 50;
+
     private static EasyOpenApi browseApi;
 
     private Activity activity;
@@ -120,7 +122,8 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem> implements Callback<
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.help_title, ToBeDoneFragment.class));
 
         EasyOpenApi easyOpenApi = ((MainApplication) activity.getApplication()).getEasyOpenApi();
-        easyOpenApi.topCategories(RECOMMENDATION, STORE_ID, CATALOG_ID, LOCALE, null, ZIPCODE, CLIENT_ID, this);
+        easyOpenApi.topCategories(RECOMMENDATION, STORE_ID, CATALOG_ID, LOCALE, null, ZIPCODE,
+                                  CLIENT_ID, null, MAXFETCH, this);
     }
 
     public void success(Browse browse, Response response) {
