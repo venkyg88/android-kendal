@@ -52,7 +52,7 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
         CategoryItem item = getItem(position);
 
         if (view==null)
-            view = inflater.inflate(R.layout.category_item, null);
+            view = inflater.inflate(R.layout.category_item, parent, false);
 
         TextView title = (TextView) view.findViewById(R.id.title);
 

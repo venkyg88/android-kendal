@@ -63,7 +63,7 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem> implements Callback<
 
         // Get a new or recycled view of the right type
         if (view==null)
-            view = inflater.inflate(item.type.layoutId, null);
+            view = inflater.inflate(item.type.layoutId, parent, false);
 
         // Set enable
         view.setEnabled(item.isEnabled());
