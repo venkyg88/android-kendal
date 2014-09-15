@@ -160,7 +160,7 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem> implements Callback<
         notifyDataSetChanged();
     }
 
-    DrawerItem findItemByTitle(String title) {
+    public DrawerItem findItemByTitle(String title) {
         int n = getCount();
         for(int i=0;i<n;i++) {
             DrawerItem item = getItem(i);

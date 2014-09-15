@@ -73,6 +73,7 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
     void fill(String path) {
         int i, j;
 
+        if (path==null) return;
         EasyOpenApi easyOpenApi = ((MainApplication) activity.getApplication()).getEasyOpenApi();
 
         // Decode category alphanumeric identifiers

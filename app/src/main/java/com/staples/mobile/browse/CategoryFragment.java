@@ -26,13 +26,17 @@ public class CategoryFragment extends Fragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        String path = null;
+
         Log.d(TAG, "onCreateView()");
         View view = inflater.inflate(R.layout.category, container, false);
 
         Bundle args = getArguments();
-        String title = args.getString("title");
-        ((TextView) view.findViewById(R.id.title)).setText(title);
-        String path = args.getString("path");
+        if (args!=null) {
+            String title = args.getString("title");
+            ((TextView) view.findViewById(R.id.title)).setText(title);
+            path = args.getString("path");
+        }
 
         adapter = new CategoryAdapter(getActivity());
         ListView categories = (ListView) view.findViewById(R.id.categories);

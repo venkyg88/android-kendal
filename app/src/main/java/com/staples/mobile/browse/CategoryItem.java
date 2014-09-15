@@ -30,5 +30,4 @@ public class CategoryItem {
         fragment.setArguments(args);
         return(fragment);
     }
-
 }

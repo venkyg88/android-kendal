@@ -55,3 +55,11 @@ dependencies {
     }
 }
 
+task showReport {
+    doLast {
+        println("Opening report in browser")
+        java.awt.Desktop.desktop.browse "file://$buildDir/test-report/debug/index.html".toURI()
+    }
+}
+
+test {finalizedBy showReport}

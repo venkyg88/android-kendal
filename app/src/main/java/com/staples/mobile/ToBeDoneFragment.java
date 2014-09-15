@@ -18,9 +18,12 @@ public class ToBeDoneFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
         View view = inflater.inflate(R.layout.tobedone, container, false);
+
         Bundle args = getArguments();
-        String title = args.getString("title");
-        ((TextView) view.findViewById(R.id.title)).setText(title);
+        if (args!=null) {
+            String title = args.getString("title");
+            ((TextView) view.findViewById(R.id.title)).setText(title);
+        }
         return(view);
     }
 }
