@@ -108,6 +108,8 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem> implements Callback<
         add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.shop_header));
         add(new DrawerItem(DrawerItem.Type.CATEGORY, activity, 0, R.string.products_title, CategoryFragment.class));
         add(new DrawerItem(DrawerItem.Type.CATEGORY, activity, 0, R.string.technology_title, CategoryFragment.class));
+        add(new DrawerItem(DrawerItem.Type.CATEGORY, activity, 0, R.string.services_title, CategoryFragment.class));
+        add(new DrawerItem(DrawerItem.Type.CATEGORY, activity, 0, R.string.industry_title, CategoryFragment.class));
 
         add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.account_header));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.order_title, ToBeDoneFragment.class));
@@ -116,7 +118,7 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem> implements Callback<
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.profile_title, ToBeDoneFragment.class));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.list_title, ToBeDoneFragment.class));
 
-        add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.account_header));
+        add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.more_header));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.ink_title, ToBeDoneFragment.class));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.settings_title, ToBeDoneFragment.class));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.help_title, ToBeDoneFragment.class));

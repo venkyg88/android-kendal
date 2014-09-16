@@ -11,9 +11,11 @@
     <string name="home_title">Home</string>
     <string name="personal_feed_title">Personal Feed</string>
 
-    <string name="shop_header">Shop</string>
+    <string name="shop_header">Shop by Category</string>
     <string name="products_title">Products</string>
     <string name="technology_title">Technology</string>
+    <string name="services_title">Services</string>
+    <string name="industry_title">Shop by Industry</string>
 
     <string name="account_header">My Account</string>
     <string name="order_title">Order</string>
@@ -22,7 +24,7 @@
     <string name="profile_title">Profile</string>
     <string name="list_title">List</string>
 
-    <string name="more_header">My Account</string>
+    <string name="more_header">More</string>
     <string name="ink_title">Ink &amp; Toner Finder</string>
     <string name="settings_title">Settings</string>
     <string name="help_title">Help</string>

@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.squareup.okhttp.OkHttpClient;
 
+import java.util.concurrent.TimeUnit;
+
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.android.AndroidLog;
@@ -20,9 +22,10 @@ public class MainApplication extends Application {
 //    private static final String SERVER = "http://10.29.172.60:9100"; // TODO This is the printer!
 
     private static final RestAdapter.LogLevel LOGLEVEL = RestAdapter.LogLevel.BASIC;
-//    private static final RestAdapter.LogLevel LOGLEVEL = RestAdapter.LogLevel.FULL;
 
     private static final String USER_AGENT = "Staples Mobile App 1.0";
+
+    private static final int TIMEOUT = 15; // Seconds
 
     private OkClient okClient;
     private EasyOpenApi easyOpenApi;
@@ -30,14 +33,16 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         OkHttpClient okHttpClient = new OkHttpClient();
+        okHttpClient.setConnectTimeout(TIMEOUT, TimeUnit.SECONDS);
+        okHttpClient.setReadTimeout(TIMEOUT, TimeUnit.SECONDS);
         okClient = new OkClient(okHttpClient);
-
-        createEasyOpenApi();
     }
 
     // EasyOpen API
 
-    private void createEasyOpenApi() {
+    public EasyOpenApi getEasyOpenApi() {
+        if (easyOpenApi!=null) return(easyOpenApi);
+
         RestAdapter.Builder builder = new RestAdapter.Builder();
         builder.setClient(okClient);
         builder.setEndpoint(SERVER);
@@ -47,6 +52,7 @@ public class MainApplication extends Application {
         RestAdapter adapter = builder.build();
 
         easyOpenApi = adapter.create(EasyOpenApi.class);
+        return(easyOpenApi);
     }
 
     private static class EasyOpenInterceptor implements RequestInterceptor {
@@ -56,9 +62,5 @@ public class MainApplication extends Application {
             request.addHeader("Accept", "application/json");
 //            request.addHeader("Connection", "Keep-Alive");
         }
-    }
-
-    public EasyOpenApi getEasyOpenApi() {
-        return(easyOpenApi);
     }
 }
