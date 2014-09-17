@@ -12,7 +12,6 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="com.staples.mobile.MainActivity"
-            android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

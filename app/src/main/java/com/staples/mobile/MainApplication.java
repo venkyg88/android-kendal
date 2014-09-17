@@ -1,5 +1,6 @@
 package com.staples.mobile;
 
+import android.app.Activity;
 import android.app.Application;
 
 import com.squareup.okhttp.OkHttpClient;
@@ -25,6 +26,7 @@ public class MainApplication extends Application {
 
     private OkClient okClient;
     private EasyOpenApi easyOpenApi;
+    private EasyOpenApi mockEasyOpenApi;
 
     @Override
     public void onCreate() {
@@ -58,5 +60,11 @@ public class MainApplication extends Application {
             request.addHeader("Accept", "application/json");
 //            request.addHeader("Connection", "Keep-Alive");
         }
+    }
+
+    public EasyOpenApi getMockEasyOpenApi(Activity activity) {
+        if (mockEasyOpenApi!=null) return(mockEasyOpenApi);
+        mockEasyOpenApi = new MockEasyOpenApi(activity);
+        return(mockEasyOpenApi);
     }
 }

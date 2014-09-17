@@ -13,6 +13,7 @@ import com.staples.mobile.browse.CategoryFragment;
 import com.staples.mobile.browse.object.Browse;
 import com.staples.mobile.browse.object.Category;
 import com.staples.mobile.browse.object.Description;
+import com.staples.mobile.landing.LandingFragment;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -122,7 +123,7 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem> implements Callback<
 
         add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.more_header));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.settings_title, ToBeDoneFragment.class));
-        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.help_title, ToBeDoneFragment.class));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.help_title, LandingFragment.class));
 
         EasyOpenApi easyOpenApi = ((MainApplication) activity.getApplication()).getEasyOpenApi();
         easyOpenApi.topCategories(RECOMMENDATION, STORE_ID, CATALOG_ID, LOCALE, null, ZIPCODE,
