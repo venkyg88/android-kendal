@@ -106,6 +106,8 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem> implements Callback<
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.personal_feed_title, PersonalFeedFragment.class));
 
         add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.shop_header));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.ink_title, ToBeDoneFragment.class));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.school_title, ToBeDoneFragment.class));
         add(new DrawerItem(DrawerItem.Type.CATEGORY, activity, 0, R.string.products_title, CategoryFragment.class));
         add(new DrawerItem(DrawerItem.Type.CATEGORY, activity, 0, R.string.technology_title, CategoryFragment.class));
         add(new DrawerItem(DrawerItem.Type.CATEGORY, activity, 0, R.string.services_title, CategoryFragment.class));
@@ -119,7 +121,6 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem> implements Callback<
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.list_title, ToBeDoneFragment.class));
 
         add(new DrawerItem(DrawerItem.Type.HEADER, activity, 0, R.string.more_header));
-        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.ink_title, ToBeDoneFragment.class));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.settings_title, ToBeDoneFragment.class));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.help_title, ToBeDoneFragment.class));
 
@@ -131,9 +132,9 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem> implements Callback<
     public void success(Browse browse, Response response) {
         Category[] categories = browse.getCategory();
         if (categories!=null) {
-
             // Process categories
             int count = categories.length;
+            int match = 0;
             for (int i = 0; i < count; i++) {
                 Category category = categories[i];
                 Description[] descriptions = category.getDescription();
@@ -149,10 +150,11 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem> implements Callback<
                     if (item != null) {
                         item.childCount = category.getChildCount();
                         item.path = category.getCategoryUrl();
+                        match++;
                     }
                 }
             }
-            Log.d(TAG, "Got " + count + " categories");
+            Log.d(TAG, "Got " + count + " categories, " + match + " matches");
         }
         notifyDataSetChanged();
     }

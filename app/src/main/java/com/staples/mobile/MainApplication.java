@@ -1,7 +1,6 @@
 package com.staples.mobile;
 
 import android.app.Application;
-import android.util.Log;
 
 import com.squareup.okhttp.OkHttpClient;
 
@@ -17,9 +16,6 @@ import retrofit.client.OkClient;
  */
 public class MainApplication extends Application {
     private static final String TAG = "MainApplication";
-
-    private static final String SERVER = "http://sapi.staples.com";
-//    private static final String SERVER = "http://10.29.172.60:9100"; // TODO This is the printer!
 
     private static final RestAdapter.LogLevel LOGLEVEL = RestAdapter.LogLevel.BASIC;
 
@@ -45,7 +41,7 @@ public class MainApplication extends Application {
 
         RestAdapter.Builder builder = new RestAdapter.Builder();
         builder.setClient(okClient);
-        builder.setEndpoint(SERVER);
+        builder.setEndpoint(EasyOpenApi.SERVICE_ENDPOINT);
         builder.setRequestInterceptor(new EasyOpenInterceptor());
         builder.setLogLevel(LOGLEVEL);
         builder.setLog(new AndroidLog(TAG));

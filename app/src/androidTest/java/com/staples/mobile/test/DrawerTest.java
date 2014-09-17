@@ -16,6 +16,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowLog;
+import org.robolectric.util.ActivityController;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
@@ -27,13 +29,23 @@ public class DrawerTest {
 
     @Before
     public void startActivity() {
-        activity = Robolectric.buildActivity(MainActivity.class).create().get();
+        // Redirect logcat to stdout logfile
+        ShadowLog.stream = System.out;
+
+        // Create activity controller
+        ActivityController controller = Robolectric.buildActivity(MainActivity.class);
+
+        // Create activity
+        controller.create();
+        activity = (MainActivity) controller.get();
+
+        // Check for success
         Assert.assertNotNull("Activity should exist", activity);
         application = (MainApplication) activity.getApplication();
         Assert.assertNotNull("Application should exist", application);
     }
 
-    @Test(timeout=1000)
+    @Test(timeout=2000)
     public void testLeftDrawer() throws InterruptedException {
         System.out.println("testLeftDrawer");
         ListView list = (ListView) activity.findViewById(R.id.left_drawer);
@@ -41,13 +53,13 @@ public class DrawerTest {
         DrawerAdapter adapter = (DrawerAdapter) list.getAdapter();
         Assert.assertNotNull("Left drawer should have adapter", adapter);
         int count = adapter.getCount();
-        Assert.assertEquals("Left drawer should have 15 items", 15, count);
+        Assert.assertEquals("Left drawer should have 18 items", 18, count);
 
         // Check that Products DrawerItem is ok
         DrawerItem item = adapter.findItemByTitle("Products");
         Assert.assertNotNull("Products DrawerItem should exist", item);
 
-
+// TODO thread deadlock in Retrofit stalls callbacks
 //        for(;;) {
 //            if (item.path != null && item.childCount > 0) break;
 //            Thread.sleep(100);
