@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.staples.mobile.landing.object.Landing;
+import com.staples.mobile.lms.object.Lms;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -72,8 +72,8 @@ public class MockApiHandler implements InvocationHandler {
         if (callback==null) throw(new RuntimeException("Invoke can not find callback"));
 
         // Handle landing API requests
-        if (name.equals("landing")) {
-            Object objects = loadJsonObjects("landing.json", Landing.class, (Callback<Landing>) callback);
+        if (name.equals("lms")) {
+            Object objects = loadJsonObjects("landing.json", Lms.class, (Callback<Lms>) callback);
             return (objects);
         }
 

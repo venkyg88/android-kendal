@@ -1,13 +1,11 @@
 package com.staples.mobile;
 
 import com.staples.mobile.browse.object.Browse;
-import com.staples.mobile.landing.object.Landing;
+import com.staples.mobile.lms.object.Lms;
 
 import retrofit.Callback;
-import retrofit.client.Response;
 import retrofit.http.EncodedPath;
 import retrofit.http.GET;
-import retrofit.http.Headers;
 import retrofit.http.Query;
 
 /**
@@ -46,9 +44,9 @@ public interface EasyOpenApi {
     );
 
     @GET("/{version}/{storeId}/lms")
-    void landing(
+    void lms(
         @EncodedPath("version") String version,
         @EncodedPath("storeId") String storeId,
-        Callback<Landing> callback
+        Callback<Lms> callback
     );
 }

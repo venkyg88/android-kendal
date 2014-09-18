@@ -1,4 +1,4 @@
-package com.staples.mobile.landing;
+package com.staples.mobile.lms;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -13,7 +13,7 @@ import com.staples.mobile.EasyOpenApi;
 import com.staples.mobile.MainApplication;
 import com.staples.mobile.PagerAdapter;
 import com.staples.mobile.R;
-import com.staples.mobile.landing.object.Landing;
+import com.staples.mobile.lms.object.Lms;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -22,7 +22,7 @@ import retrofit.client.Response;
 /**
  * Created by PyhRe001 on 8/11/14.
  */
-public class LandingFragment extends Fragment implements Callback<Landing> {
+public class LmsFragment extends Fragment implements Callback<Lms> {
     private static final String TAG = "LandingFragment";
 
     private static final String RECOMMENDATION = "v1";
@@ -44,13 +44,13 @@ public class LandingFragment extends Fragment implements Callback<Landing> {
 
         MainApplication application = (MainApplication) getActivity().getApplication();
         EasyOpenApi easyOpenApi = application.getMockEasyOpenApi();
-        easyOpenApi.landing(RECOMMENDATION, STORE_ID, this);
+        easyOpenApi.lms(RECOMMENDATION, STORE_ID, this);
 
         return(view);
     }
 
-    public void success(Landing landing, Response response) {
-        Log.d(TAG, "Success callback "+landing.getProduct()); // TODO just a test
+    public void success(Lms lms, Response response) {
+        Log.d(TAG, "Success callback "+lms.getProduct()); // TODO just a test
     }
 
     public void failure(RetrofitError retrofitError) {

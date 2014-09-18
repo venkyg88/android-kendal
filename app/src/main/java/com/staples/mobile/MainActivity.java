@@ -14,7 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.staples.mobile.landing.LandingFragment;
+import com.staples.mobile.lms.LmsFragment;
 
 /**
  * Created by PyhRe001 on 8/11/14.
@@ -62,7 +62,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
         // Select landing fragment if first run
         if (bundle == null) {
-            DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, 0, LandingFragment.class);
+            DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, 0, LmsFragment.class);
             selectDrawerItem(item, false);
         }
     }

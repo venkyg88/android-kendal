@@ -1,6 +1,5 @@
 package com.staples.mobile.test;
 
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -10,7 +9,7 @@ import com.staples.mobile.EasyOpenApi;
 import com.staples.mobile.MainActivity;
 import com.staples.mobile.MainApplication;
 import com.staples.mobile.R;
-import com.staples.mobile.landing.object.Landing;
+import com.staples.mobile.lms.object.Lms;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,7 +27,7 @@ import retrofit.client.Response;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
-public class ActivityTest implements Callback<Landing> {
+public class ActivityTest implements Callback<Lms> {
     public static final String TAG = "DrawerTest";
 
     private MainActivity activity;
@@ -94,13 +93,13 @@ public class ActivityTest implements Callback<Landing> {
         success = false;
         failure = false;
         EasyOpenApi easyOpenApi = application.getMockEasyOpenApi();
-        easyOpenApi.landing("Ignore", "Ignore", this);
+        easyOpenApi.lms("Ignore", "Ignore", this);
         Thread.sleep(1000);
         Assert.assertTrue("MockLandingApi should have succeeded", success);
         Assert.assertFalse("MockLandingApi should not have failed", failure);
     }
 
-    public void success(Landing landing, Response response) {
+    public void success(Lms lms, Response response) {
         success = true;
     }
 

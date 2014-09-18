@@ -1,9 +1,111 @@
-{"product":"Customer Facing Android App",
-"descriptor":"CFAA",
-"build":0.2,
-"releaseDate":"2014-09-17T20:55:00.000Z",
-"startDate":"2014-09-17T20:55:00.000Z",
-"endDate":"2015-09-17T20:55:00.000Z",
-"dev":true,
-"images":{"server":"cdn.staples.com","path":"p1/$store_id/$catalog_iz/$locale/p3/p4"},
-"pages":{"landing":{"pattern":{"page":"slider","item":"Staples_Class_Item_2014_July"},"form_factor":{"landscape":"add_column+hide_top","small":"default","medium":"default","large":"add_column","xlarge":"add_column+add_column"},"item_pattern_details":{"item":[{"banner":"banner_image1","title":"Printers","promo_text":"we have nice printers","display":"simple","compact_sku":["728583","728581","728585","728589",""],"exploded_sku":[{"sku":"528583","title":"HPÂ® LaserJet Pro M401n Printer","bullet":["Prints up to 35 ppm (mfr specs)","Network Ready; 10/100/1000 Gigabit Ethernet and USB 2.0"],"image":"i10000001.png","price":{"extended":"100.11","list":"200.22","saving":"25%"}},{"sku":"528583","title":"HPÂ® LaserJet Copier","bullet":["Copies up to 35 ppm (mfr specs)","Network Ready","Ethernet and USB 2.0"],"price":{"extended":"100.11","list":"200.22","saving":"25%"},"image":"i10000001.png"}]},{"banner":"banner_image2","title":"Paper Products","promo_text":"paper is good for you","display":"simple","compact_sku":["328583","328581","328585","328589",""],"exploded_sku":[{"sku":"428583","title":"Thick paper","bullet":["100% Cotton","Archive Quality"],"price":"database","image":"j10000001.png"},{"sku":"428583","title":"Thick paper","bullet":["100% Cotton","Archive Quality"],"price":"database","image":"j10000001.png"}]}]}}}}
+{
+  "product": "Customer Facing Android App",
+  "descriptor": "CFAA",
+  "build": 0.2,
+  "releaseDate": "2014-09-17T20:55:00.000Z",
+  "startDate": "2014-09-17T20:55:00.000Z",
+  "endDate": "2015-09-17T20:55:00.000Z",
+  "dev": true,
+  "images": {
+    "server": "cdn.staples.com",
+    "path": "p1\/$store_id\/$catalog_iz\/$locale\/p3\/p4"
+  },
+  "pages": {
+    "landing": {
+      "pattern": {
+        "page": "slider",
+        "item": "Staples_Class_Item_2014_July"
+      },
+      "form_factor": {
+        "landscape": "add_column+hide_top",
+        "small": "default",
+        "medium": "default",
+        "large": "add_column",
+        "xlarge": "add_column+add_column"
+      },
+      "item_pattern_details": {
+        "item": [
+          {
+            "banner": "banner_image1",
+            "title": "Printers",
+            "promo_text": "we have nice printers",
+            "display": "simple",
+            "compact_sku": [
+              "728583",
+              "728581",
+              "728585",
+              "728589",
+              ""
+            ],
+            "exploded_sku": [
+              {
+                "sku": "528583",
+                "title": "HP\u00c2\u00ae LaserJet Pro M401n Printer",
+                "bullet": [
+                  "Prints up to 35 ppm (mfr specs)",
+                  "Network Ready; 10\/100\/1000 Gigabit Ethernet and USB 2.0"
+                ],
+                "image": "i10000001.png",
+                "price": {
+                  "extended": "100.11",
+                  "list": "200.22",
+                  "saving": "25%"
+                }
+              },
+              {
+                "sku": "528583",
+                "title": "HP\u00c2\u00ae LaserJet Copier",
+                "bullet": [
+                  "Copies up to 35 ppm (mfr specs)",
+                  "Network Ready",
+                  "Ethernet and USB 2.0"
+                ],
+                "price": {
+                  "extended": "100.11",
+                  "list": "200.22",
+                  "saving": "25%"
+                },
+                "image": "i10000001.png"
+              }
+            ]
+          },
+          {
+            "banner": "banner_image2",
+            "title": "Paper Products",
+            "promo_text": "paper is good for you",
+            "display": "simple",
+            "compact_sku": [
+              "328583",
+              "328581",
+              "328585",
+              "328589",
+              ""
+            ],
+            "exploded_sku": [
+              {
+                "sku": "428583",
+                "title": "Thick paper",
+                "bullet": [
+                  "100% Cotton",
+                  "Archive Quality"
+                ],
+                "price": "database",
+                "image": "j10000001.png"
+              },
+              {
+                "sku": "428583",
+                "title": "Thick paper",
+                "bullet": [
+                  "100% Cotton",
+                  "Archive Quality"
+                ],
+                "price": "database",
+                "image": "j10000001.png"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
