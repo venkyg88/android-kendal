@@ -51,12 +51,33 @@ public class MockApiHandler implements InvocationHandler {
         return(null);
     }
 
+    private Callback<?> getCallback(Object[] args) {
+        if (args==null) return(null);
+        int argn = args.length;
+        if (argn<1) return(null);
+        Object callback = args[argn-1];
+        if (!(callback instanceof Callback<?>)) return(null);
+        return((Callback<?>) callback);
+    }
+
+    @SuppressWarnings("unchecked")
     public Object invoke(Object proxy, Method method, Object[] args) {
         Log.d(TAG, "Invoke " + method.toString());
 
-        // TODO Really ugly hack just for landing
-        Callback<Landing> callback = (Callback<Landing>) args[2];
-        Object objects = loadJsonObjects("landing.json", Landing.class, callback);
-        return (objects);
+        // Get method name
+        String name = method.getName();
+
+        // Get callback
+        Callback<?> callback =  getCallback(args);
+        if (callback==null) throw(new RuntimeException("Invoke can not find callback"));
+
+        // Handle landing API requests
+        if (name.equals("landing")) {
+            Object objects = loadJsonObjects("landing.json", Landing.class, (Callback<Landing>) callback);
+            return (objects);
+        }
+
+        // Unhandled
+        throw(new RuntimeException("Unhandled mock API call"));
     }
 }

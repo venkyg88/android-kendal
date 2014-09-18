@@ -1,13 +1,16 @@
 package com.staples.mobile.test;
 
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.staples.mobile.DrawerAdapter;
 import com.staples.mobile.DrawerItem;
+import com.staples.mobile.EasyOpenApi;
 import com.staples.mobile.MainActivity;
 import com.staples.mobile.MainApplication;
 import com.staples.mobile.R;
+import com.staples.mobile.landing.object.Landing;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,9 +22,13 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
 import org.robolectric.util.ActivityController;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
-public class DrawerTest {
+public class ActivityTest implements Callback<Landing> {
     public static final String TAG = "DrawerTest";
 
     private MainActivity activity;
@@ -77,5 +84,27 @@ public class DrawerTest {
         Assert.assertNotNull("Right drawer should have adapter", adapter);
         int count = adapter.getCount();
         Assert.assertEquals("Right drawer should have 3 items", 3, count);
+    }
+
+    private boolean success;
+    private boolean failure;
+
+    @Test
+    public void testMockLandingApi() throws InterruptedException{
+        success = false;
+        failure = false;
+        EasyOpenApi easyOpenApi = application.getMockEasyOpenApi();
+        easyOpenApi.landing("Ignore", "Ignore", this);
+        Thread.sleep(1000);
+        Assert.assertTrue("MockLandingApi should have succeeded", success);
+        Assert.assertFalse("MockLandingApi should not have failed", failure);
+    }
+
+    public void success(Landing landing, Response response) {
+        success = true;
+    }
+
+    public void failure(RetrofitError retrofitError) {
+        failure = true;
     }
 }

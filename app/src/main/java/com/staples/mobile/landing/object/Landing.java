@@ -4,9 +4,9 @@ package com.staples.mobile.landing.object;
  * Created by pyhre001 on 9/17/14.
  */
 public class Landing {
-    private Column[] column;
+    private String product;
 
-    public Column[] getColumn() {
-        return column;
+    public String getProduct() {
+        return product;
     }
 }

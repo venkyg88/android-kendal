@@ -50,7 +50,7 @@ public class LandingFragment extends Fragment implements Callback<Landing> {
     }
 
     public void success(Landing landing, Response response) {
-        Log.d(TAG, "Success callback "+landing.getColumn()[0].getName()); // TODO just a test
+        Log.d(TAG, "Success callback "+landing.getProduct()); // TODO just a test
     }
 
     public void failure(RetrofitError retrofitError) {
