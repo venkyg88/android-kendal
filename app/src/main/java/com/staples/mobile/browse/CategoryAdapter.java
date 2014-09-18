@@ -76,7 +76,7 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
         if (path==null) return;
 
         MainApplication application = (MainApplication) activity.getApplication();
-        EasyOpenApi easyOpenApi = application.getMockEasyOpenApi();
+        EasyOpenApi easyOpenApi = application.getEasyOpenApi();
 
         // Decode category alphanumeric identifiers
         i = path.indexOf("/category/identifier/");

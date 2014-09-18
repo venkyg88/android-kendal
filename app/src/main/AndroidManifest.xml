@@ -2,7 +2,7 @@
     package="com.staples.mobile"
     android:versionCode="1"
     android:versionName="1.0">
-    <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="19"/>
+    <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="20"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:name=".MainApplication"

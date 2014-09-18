@@ -26,7 +26,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:+'
     compile 'com.squareup.okhttp:okhttp-urlconnection:+'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
-    compile 'com.google.code.gson:gson:1.7.2'
+    compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.squareup.retrofit:retrofit:1.6.1'
 
     androidTestCompile 'org.hamcrest:hamcrest-integration:1.1'

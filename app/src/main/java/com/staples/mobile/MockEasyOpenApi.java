@@ -32,7 +32,7 @@ public class MockEasyOpenApi implements EasyOpenApi {
         handler = new Handler(Looper.getMainLooper());
     }
 
-    private <T> T loadObjects(String filename, Class<T> responseClass, final Callback callback) {
+    private <T> T loadObjects(String filename, Class<T> responseClass, final Callback<T> callback) {
         try {
             InputStream stream = context.getResources().getAssets().open(filename);
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
@@ -61,7 +61,9 @@ public class MockEasyOpenApi implements EasyOpenApi {
         Integer offset,
         Integer limit,
         Callback<Browse> callback
-    ) {}
+    ) {
+        throw new RuntimeException("Mock API call not implemented");
+    }
 
     public void browseCategories(
         String version,
@@ -74,7 +76,9 @@ public class MockEasyOpenApi implements EasyOpenApi {
         Integer offset,
         Integer limit,
         Callback<Browse> callback
-    ) {}
+    ) {
+        throw new RuntimeException("Mock API call not implemented");
+    }
 
     public void landing(
          String version,

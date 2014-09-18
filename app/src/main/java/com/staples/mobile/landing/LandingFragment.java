@@ -44,7 +44,6 @@ public class LandingFragment extends Fragment implements Callback<Landing> {
 
         MainApplication application = (MainApplication) getActivity().getApplication();
         EasyOpenApi easyOpenApi = application.getMockEasyOpenApi();
-//        EasyOpenApi easyOpenApi = application.getEasyOpenApi(); // To use a real server
         easyOpenApi.landing(RECOMMENDATION, STORE_ID, this);
 
         return(view);
