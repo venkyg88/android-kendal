@@ -37,6 +37,4 @@
     <string name="search_hint">Search</string>
     <string name="empty">Nothing found</string>
     <string name="your_cart">Your cart</string>
-
-    <string name="landing_json">{"column": [ {"name": "Renate"} ] }</string>
 </resources>

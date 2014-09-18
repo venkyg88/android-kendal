@@ -42,14 +42,16 @@ public class LandingFragment extends Fragment implements Callback<Landing> {
         pager = (ViewPager) view.findViewById(R.id.pager);
         pager.setAdapter(adapter);
 
-        EasyOpenApi easyOpenApi = ((MainApplication) getActivity().getApplication()).getMockEasyOpenApi(getActivity());
+        MainApplication application = (MainApplication) getActivity().getApplication();
+        EasyOpenApi easyOpenApi = application.getMockEasyOpenApi();
+//        EasyOpenApi easyOpenApi = application.getEasyOpenApi(); // To use a real server
         easyOpenApi.landing(RECOMMENDATION, STORE_ID, this);
 
         return(view);
     }
 
     public void success(Landing landing, Response response) {
-        Log.d(TAG, "Success callback "+landing.getColumn()[0].getName());
+        Log.d(TAG, "Success callback "+landing.getColumn()[0].getName()); // TODO just a test
     }
 
     public void failure(RetrofitError retrofitError) {

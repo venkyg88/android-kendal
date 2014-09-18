@@ -62,9 +62,9 @@ public class MainApplication extends Application {
         }
     }
 
-    public EasyOpenApi getMockEasyOpenApi(Activity activity) {
+    public EasyOpenApi getMockEasyOpenApi() {
         if (mockEasyOpenApi!=null) return(mockEasyOpenApi);
-        mockEasyOpenApi = new MockEasyOpenApi(activity);
+        mockEasyOpenApi = new MockEasyOpenApi(getApplicationContext());
         return(mockEasyOpenApi);
     }
 }

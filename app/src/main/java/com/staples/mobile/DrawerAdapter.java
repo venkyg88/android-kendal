@@ -125,7 +125,8 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem> implements Callback<
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.settings_title, ToBeDoneFragment.class));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.help_title, LandingFragment.class));
 
-        EasyOpenApi easyOpenApi = ((MainApplication) activity.getApplication()).getEasyOpenApi();
+        MainApplication application = (MainApplication) activity.getApplication();
+        EasyOpenApi easyOpenApi = application.getMockEasyOpenApi();
         easyOpenApi.topCategories(RECOMMENDATION, STORE_ID, CATALOG_ID, LOCALE, null, ZIPCODE,
                                   CLIENT_ID, null, MAXFETCH, this);
     }
