@@ -2,9 +2,13 @@ package com.staples.mobile;
 
 import android.app.Activity;
 import android.app.Application;
+import android.util.Log;
 
 import com.squareup.okhttp.OkHttpClient;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.concurrent.TimeUnit;
 
 import retrofit.RequestInterceptor;
@@ -64,7 +68,10 @@ public class MainApplication extends Application {
 
     public EasyOpenApi getMockEasyOpenApi() {
         if (mockEasyOpenApi!=null) return(mockEasyOpenApi);
-        mockEasyOpenApi = new MockEasyOpenApi(getApplicationContext());
+        InvocationHandler handler = new MockApiHandler(getApplicationContext());
+        mockEasyOpenApi = (EasyOpenApi) Proxy.newProxyInstance(EasyOpenApi.class.getClassLoader(),
+                                                               new Class[] {EasyOpenApi.class},
+                                                               handler);
         return(mockEasyOpenApi);
     }
 }
