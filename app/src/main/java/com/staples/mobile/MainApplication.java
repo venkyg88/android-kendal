@@ -68,7 +68,7 @@ public class MainApplication extends Application {
 
     public EasyOpenApi getMockEasyOpenApi() {
         if (mockEasyOpenApi!=null) return(mockEasyOpenApi);
-        InvocationHandler handler = new MockApiHandler(getApplicationContext());
+        InvocationHandler handler = new MockApiHandler(this);
         mockEasyOpenApi = (EasyOpenApi) Proxy.newProxyInstance(EasyOpenApi.class.getClassLoader(),
                                                                new Class[] {EasyOpenApi.class},
                                                                handler);

@@ -6,106 +6,51 @@
   "startDate": "2014-09-17T20:55:00.000Z",
   "endDate": "2015-09-17T20:55:00.000Z",
   "dev": true,
-  "images": {
-    "server": "cdn.staples.com",
-    "path": "p1\/$store_id\/$catalog_iz\/$locale\/p3\/p4"
+  "style": {
+    "name": "Staples_Modern",
+    "color": {
+      "title1": "blue",
+      "title2": "red",
+      "background1": "233,133,100",
+      "color7": "#00FF00"
+    },
+    "font": {
+      "text1": "Roboto  Bold + Medium",
+      "text2": "Roboto Medium + Medium",
+      "text3": "Roboto Condensed + Small"
+    }
   },
-  "pages": {
-    "landing": {
-      "pattern": {
-        "page": "slider",
-        "item": "Staples_Class_Item_2014_July"
-      },
-      "form_factor": {
+  "image": {
+    "server": "cdn.staples.com",
+    "path": "p1/$store_id/$catalog_id/$locale/p3/p4"
+  },
+  "page": [
+    {
+      "name": "landing",
+      "pattern": "slider",
+      "formFactor": {
         "landscape": "add_column+hide_top",
         "small": "default",
         "medium": "default",
         "large": "add_column",
-        "xlarge": "add_column+add_column"
-      },
-      "item_pattern_details": {
+        "xlarge": "add_column+add_column",
         "item": [
           {
-            "banner": "banner_image1",
-            "title": "Printers",
-            "promo_text": "we have nice printers",
-            "display": "simple",
-            "compact_sku": [
-              "728583",
-              "728581",
-              "728585",
-              "728589",
-              ""
-            ],
-            "exploded_sku": [
-              {
-                "sku": "528583",
-                "title": "HP\u00c2\u00ae LaserJet Pro M401n Printer",
-                "bullet": [
-                  "Prints up to 35 ppm (mfr specs)",
-                  "Network Ready; 10\/100\/1000 Gigabit Ethernet and USB 2.0"
-                ],
-                "image": "i10000001.png",
-                "price": {
-                  "extended": "100.11",
-                  "list": "200.22",
-                  "saving": "25%"
-                }
-              },
-              {
-                "sku": "528583",
-                "title": "HP\u00c2\u00ae LaserJet Copier",
-                "bullet": [
-                  "Copies up to 35 ppm (mfr specs)",
-                  "Network Ready",
-                  "Ethernet and USB 2.0"
-                ],
-                "price": {
-                  "extended": "100.11",
-                  "list": "200.22",
-                  "saving": "25%"
-                },
-                "image": "i10000001.png"
-              }
-            ]
+            "banner": "http://media.staples.com/ipad/Home%20images/pantry_cafetria_big.png",
+            "title": "Pantry & Cafeteria",
+            "bundle_id": "CL140860"
           },
           {
-            "banner": "banner_image2",
-            "title": "Paper Products",
-            "promo_text": "paper is good for you",
-            "display": "simple",
-            "compact_sku": [
-              "328583",
-              "328581",
-              "328585",
-              "328589",
-              ""
-            ],
-            "exploded_sku": [
-              {
-                "sku": "428583",
-                "title": "Thick paper",
-                "bullet": [
-                  "100% Cotton",
-                  "Archive Quality"
-                ],
-                "price": "database",
-                "image": "j10000001.png"
-              },
-              {
-                "sku": "428583",
-                "title": "Thick paper",
-                "bullet": [
-                  "100% Cotton",
-                  "Archive Quality"
-                ],
-                "price": "database",
-                "image": "j10000001.png"
-              }
-            ]
+            "banner": "http://media.staples.com/ipad/Home%20images/pets_big.png",
+            "title": "Pets",
+            "bundle_id": "CL140861"
           }
         ]
       }
+    },
+    {
+      "name": "personal_messaging",
+      "pattern": "list"
     }
-  }
+  ]
 }

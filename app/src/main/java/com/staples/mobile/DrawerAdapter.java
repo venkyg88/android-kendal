@@ -17,19 +17,6 @@ import com.staples.mobile.browse.CategoryFragment;
 public class DrawerAdapter extends ArrayAdapter<DrawerItem>{
     private static final String TAG = "DrawerAdapter";
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
-
-    private static final String CATALOG_ID = "10051";
-    private static final String LOCALE = "en_US";
-
-    private static final String ZIPCODE = "01010";
-    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
-
-    private static final int MAXFETCH = 50;
-
-    private static EasyOpenApi browseApi;
-
     private Activity activity;
     private LayoutInflater inflater;
 

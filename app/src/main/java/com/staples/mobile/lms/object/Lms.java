@@ -3,7 +3,10 @@ package com.staples.mobile.lms.object;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({"product","descriptor","build","releaseDate","startDate","endDate","dev","images","pages"})
+import java.util.ArrayList;
+import java.util.List;
+
+@JsonPropertyOrder({"product","descriptor","build","releaseDate","startDate","endDate","dev","style","image","page"})
 public class Lms {
 
     private String product;
@@ -13,8 +16,9 @@ public class Lms {
     private String startDate;
     private String endDate;
     private Boolean dev;
-    private Images images;
-    private Pages pages;
+    private Style style;
+    private Image image;
+    private List<Page> page = new ArrayList<Page> ();
 
     @JsonProperty("product")
     public String getProduct(){
@@ -79,22 +83,31 @@ public class Lms {
         this.dev = dev;
     }
 
-    @JsonProperty("images")
-    public Images getImages(){
-        return this.images;
+    @JsonProperty("style")
+    public Style getStyle(){
+        return this.style;
     }
 
-    public void setImages(Images images){
-        this.images = images;
+    public void setStyle(Style style){
+        this.style = style;
     }
 
-    @JsonProperty("pages")
-    public Pages getPages(){
-        return this.pages;
+    @JsonProperty("image")
+    public Image getImage(){
+        return this.image;
     }
 
-    public void setPages(Pages pages){
-        this.pages = pages;
+    public void setImage(Image image){
+        this.image = image;
+    }
+
+    @JsonProperty("page")
+    public List<Page> getPage(){
+        return this.page;
+    }
+
+    public void setPage(List<Page> page){
+        this.page = page;
     }
 
 
@@ -102,15 +115,16 @@ public class Lms {
 
     public String toString(){
         StringBuilder builder = new StringBuilder();
-        builder.append("Lms[").append("product : ").append(product).append(",\n")
+        builder.append("JsonClass[").append("product : ").append(product).append(",\n")
                .append("descriptor : ").append(descriptor).append(",\n")
                .append("build : ").append(build).append(",\n")
                .append("releaseDate : ").append(releaseDate).append(",\n")
                .append("startDate : ").append(startDate).append(",\n")
                .append("endDate : ").append(endDate).append(",\n")
                .append("dev : ").append(dev).append(",\n")
-               .append("images : ").append(images).append(",\n")
-               .append("pages : ").append(pages).append(",\n")
+               .append("style : ").append(style).append(",\n")
+               .append("image : ").append(image).append(",\n")
+               .append("page : ").append(page).append(",\n")
                .append("]");
         return builder.toString();
     }

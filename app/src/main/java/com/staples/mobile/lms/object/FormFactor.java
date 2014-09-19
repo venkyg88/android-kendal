@@ -2,10 +2,11 @@ package com.staples.mobile.lms.object;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import java.lang.StringBuilder;
-import java.lang.String;
 
-@JsonPropertyOrder({"landscape","small","medium","large","xlarge"})
+import java.util.ArrayList;
+import java.util.List;
+
+@JsonPropertyOrder({"landscape","small","medium","large","xlarge","item"})
 public class FormFactor {
 
     private String landscape;
@@ -13,6 +14,7 @@ public class FormFactor {
     private String medium;
     private String large;
     private String xlarge;
+    private List<Item> item = new ArrayList<Item> ();
 
     @JsonProperty("landscape")
     public String getLandscape(){
@@ -59,6 +61,15 @@ public class FormFactor {
         this.xlarge = xlarge;
     }
 
+    @JsonProperty("item")
+    public List<Item> getItem(){
+        return this.item;
+    }
+
+    public void setItem(List<Item> item){
+        this.item = item;
+    }
+
 
 
 
@@ -69,6 +80,7 @@ public class FormFactor {
                .append("medium : ").append(medium).append(",\n")
                .append("large : ").append(large).append(",\n")
                .append("xlarge : ").append(xlarge).append(",\n")
+               .append("item : ").append(item).append(",\n")
                .append("]");
         return builder.toString();
     }

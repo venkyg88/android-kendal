@@ -34,7 +34,7 @@
         android:layout_weight="1"
         android:layout_gravity="start"
         android:choiceMode="singleChoice"
-        android:background="#ff0000"/>
+        android:background="#ffffff"/>
     <LinearLayout
         android:id="@+id/right_drawer"
         android:layout_width="180dp"
@@ -54,6 +54,6 @@
             android:layout_weight="1"
             android:layout_gravity="start"
             android:choiceMode="singleChoice"
-            android:background="#ff0000"/>
+            android:background="#ffffff"/>
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

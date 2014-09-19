@@ -4,7 +4,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.staples.mobile.DrawerAdapter;
-import com.staples.mobile.DrawerItem;
 import com.staples.mobile.EasyOpenApi;
 import com.staples.mobile.MainActivity;
 import com.staples.mobile.MainApplication;
@@ -25,8 +24,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-@Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
+@Config(emulateSdk = 18, qualifiers = "port")
 public class ActivityTest implements Callback<Lms> {
     public static final String TAG = "DrawerTest";
 
@@ -34,7 +33,7 @@ public class ActivityTest implements Callback<Lms> {
     private MainApplication application;
 
     @Before
-    public void startActivity() {
+    public void setup() {
         // Redirect logcat to stdout logfile
         ShadowLog.stream = System.out;
 

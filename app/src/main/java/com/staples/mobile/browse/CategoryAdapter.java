@@ -179,7 +179,7 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
     }
 
     public void failure(RetrofitError retrofitError) {
-        Log.d(TAG, "Sorry, failure " + retrofitError);
+        Log.d(TAG, "Failure callback " + retrofitError);
         notifyDataSetChanged();
     }
 }

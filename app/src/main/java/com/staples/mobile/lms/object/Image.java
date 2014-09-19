@@ -2,11 +2,9 @@ package com.staples.mobile.lms.object;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import java.lang.StringBuilder;
-import java.lang.String;
 
 @JsonPropertyOrder({"server","path"})
-public class Images {
+public class Image {
 
     private String server;
     private String path;
@@ -34,7 +32,7 @@ public class Images {
 
     public String toString(){
         StringBuilder builder = new StringBuilder();
-        builder.append("Images[").append("server : ").append(server).append(",\n")
+        builder.append("Image[").append("server : ").append(server).append(",\n")
                .append("path : ").append(path).append(",\n")
                .append("]");
         return builder.toString();
