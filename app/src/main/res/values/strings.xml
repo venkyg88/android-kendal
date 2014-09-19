@@ -7,33 +7,20 @@
     <string name="search">Search</string>
     <string name="right_drawer">Right Drawer</string>
 
-    <!-- Drawer header and titles -->
+    <!-- Drawer header titles -->
     <string name="home_title">Home</string>
     <string name="personal_feed_title">Personal Feed</string>
-
-    <string name="shop_header">Shop by Category</string>
-    <string name="ink_title">Ink &amp; Toner</string>
-    <string name="school_title">Back to School Center</string>
-    <string name="products_title">Products</string>
-    <string name="technology_title">Technology</string>
-    <string name="services_title">Services</string>
-    <string name="industry_title">Shop by Industry</string>
-
-    <string name="account_header">My Account</string>
+    <string name="shop_categories_title">Shop by Category</string>
+    <string name="store_locator_title">Store Locator</string>
+    <string name="weekly_ad_title">Weekly Ad</string>
+    <string name="account_title">Account</string>
+    <string name="signin_title">Sign in</string>
     <string name="order_title">Order</string>
-    <string name="reward_title">Reward</string>
-    <string name="store_title">My Store</string>
     <string name="profile_title">Profile</string>
-    <string name="list_title">List</string>
 
-    <string name="more_header">More</string>
-
-    <string name="settings_title">Settings</string>
-    <string name="help_title">Help</string>
-
-    <string name="search_title">Search</string>
     <string name="tobedone_title">(To be done)</string>
 
+    <string name="search_title">Search</string>
     <string name="search_hint">Search</string>
     <string name="empty">Nothing found</string>
     <string name="your_cart">Your cart</string>

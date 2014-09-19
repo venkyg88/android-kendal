@@ -12,9 +12,8 @@ import android.os.Bundle;
 public class DrawerItem {
     public static final String TAG = "DrawerItem";
     public enum Type {
-        HEADER   (0, R.layout.drawer_header),
-        FRAGMENT (1, R.layout.drawer_fragment),
-        CATEGORY (2, R.layout.drawer_category);
+        ACCOUNT   (0, R.layout.drawer_account),
+        FRAGMENT (1, R.layout.drawer_fragment);
 
         public int viewType;
         public int layoutId;
@@ -36,10 +35,6 @@ public class DrawerItem {
     public Class fragmentClass;
     public Fragment fragment;
 
-    // Top categories
-    public String path;
-    public int childCount;
-
     // Constructors
 
     public DrawerItem(Type type) {
@@ -48,17 +43,6 @@ public class DrawerItem {
 
     public DrawerItem(Type type, Context context, int iconId, int titleId) {
         this(type, context, iconId, titleId, null);
-    }
-
-    public boolean isEnabled() {
-        switch (type) {
-            case HEADER:
-                return(false);
-            case CATEGORY:
-                return(path!=null);
-            default:
-                return(true);
-        }
     }
 
     public DrawerItem(Type type, Context context, int iconId, int titleId, Class<? extends Fragment> fragmentClass) {
@@ -73,13 +57,6 @@ public class DrawerItem {
         this.fragmentClass = fragmentClass;
     }
 
-    public DrawerItem(Type type, String title, int childCount, String path, Class<? extends Fragment> fragmentClass) {
-        this.type = type;
-        this.title = title;
-        this.childCount = childCount;
-        this.path = path;
-        this.fragmentClass = fragmentClass;
-    }
 
     // Fragment instantiation
 
@@ -90,7 +67,6 @@ public class DrawerItem {
         fragment = Fragment.instantiate(context, fragmentClass.getName());
         Bundle args = new Bundle();
         args.putString("title", title);
-        args.putString("path", path);
         fragment.setArguments(args);
         return(fragment);
     }

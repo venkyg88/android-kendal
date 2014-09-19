@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 
 import com.staples.mobile.EasyOpenApi;
 import com.staples.mobile.MainApplication;
-import com.staples.mobile.PagerAdapter;
 import com.staples.mobile.R;
 import com.staples.mobile.lms.object.Lms;
 
@@ -23,7 +22,7 @@ import retrofit.client.Response;
  * Created by PyhRe001 on 8/11/14.
  */
 public class LmsFragment extends Fragment implements Callback<Lms> {
-    private static final String TAG = "LandingFragment";
+    private static final String TAG = "LmsFragment";
 
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";

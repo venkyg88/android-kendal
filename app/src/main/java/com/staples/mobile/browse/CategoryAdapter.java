@@ -73,10 +73,15 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
     void fill(String path) {
         int i, j;
 
-        if (path==null) return;
-
         MainApplication application = (MainApplication) activity.getApplication();
         EasyOpenApi easyOpenApi = application.getEasyOpenApi();
+
+        // Get top categories
+        if (path==null) {
+            easyOpenApi.topCategories(RECOMMENDATION, STORE_ID, CATALOG_ID, LOCALE, null,
+                                      ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
+            return;
+        }
 
         // Decode category alphanumeric identifiers
         i = path.indexOf("/category/identifier/");
@@ -109,38 +114,65 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
 
     public void success(Browse browse, Response response) {
         Category[] categories = browse.getCategory();
-        if (categories!=null && categories.length>0) {
-            Category category = categories[0];
+        if (categories==null && categories.length<1) {
+            notifyDataSetChanged();
+            return;
+        }
 
-            // Process subcategories
-            SubCategory[] subCategories = category.getSubCategory();
-            if (subCategories != null) {
-                int count = subCategories.length;
-                for (int i = 0; i < count; i++) {
-                    SubCategory subCategory = subCategories[i];
-                    Description[] descriptions = subCategory.getDescription();
-                    if (descriptions != null && descriptions.length > 0) {
-                        Description description = descriptions[0];
-                        String title = description.getName();
-                        if (title == null) title = description.getDescription();
-                        CategoryItem item = new CategoryItem(title, subCategory.getCategoryUrl(), subCategory.getChildCount());
-                        add(item);
-                    }
-                }
-                Log.d(TAG, "Got " + count + " subCategories");
-            }
-
-            // Process filter groups
-            FilterGroup[] filterGroups = category.getFilterGroup();
-            if (filterGroups != null) {
-                int count = filterGroups.length;
-                for (int i = 0; i < count; i++) {
-                    FilterGroup filterGroup = filterGroups[i];
-                    CategoryItem item = new CategoryItem(filterGroup.getName(), null, 0);
+        // Process categories
+        if (categories.length>1) {
+            int count = categories.length;
+            for (int i = 0; i < count; i++) {
+                Category category = categories[i];
+                Description[] descriptions = category.getDescription();
+                if (descriptions != null && descriptions.length > 0) {
+                    // Get category title
+                    Description description = descriptions[0];
+                    String title = description.getText();
+                    if (title == null) title = description.getDescription();
+                    if (title == null) title = description.getName();
+                    CategoryItem item = new CategoryItem(title, category.getCategoryUrl(), category.getChildCount());
                     add(item);
                 }
-                Log.d(TAG, "Got " + count + " filter groups");
             }
+            Log.d(TAG, "Got " + count + " categories");
+            notifyDataSetChanged();
+            return;
+        }
+
+        // Process subcategories
+        Category category = categories[0];
+        SubCategory[] subCategories = category.getSubCategory();
+        if (subCategories != null) {
+            int count = subCategories.length;
+            for (int i = 0; i < count; i++) {
+                SubCategory subCategory = subCategories[i];
+                Description[] descriptions = subCategory.getDescription();
+                if (descriptions != null && descriptions.length > 0) {
+                    Description description = descriptions[0];
+                    String title = description.getName();
+                    if (title == null) title = description.getDescription();
+                    CategoryItem item = new CategoryItem(title, subCategory.getCategoryUrl(), subCategory.getChildCount());
+                    add(item);
+                }
+            }
+            Log.d(TAG, "Got " + count + " subCategories");
+            notifyDataSetChanged();
+            return;
+        }
+
+        // Process filter groups
+        FilterGroup[] filterGroups = category.getFilterGroup();
+        if (filterGroups != null) {
+            int count = filterGroups.length;
+            for (int i = 0; i < count; i++) {
+                FilterGroup filterGroup = filterGroups[i];
+                CategoryItem item = new CategoryItem(filterGroup.getName(), null, 0);
+                add(item);
+            }
+            Log.d(TAG, "Got " + count + " filter groups");
+            notifyDataSetChanged();
+            return;
         }
 
         notifyDataSetChanged();

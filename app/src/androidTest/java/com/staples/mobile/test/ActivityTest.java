@@ -59,19 +59,7 @@ public class ActivityTest implements Callback<Lms> {
         DrawerAdapter adapter = (DrawerAdapter) list.getAdapter();
         Assert.assertNotNull("Left drawer should have adapter", adapter);
         int count = adapter.getCount();
-        Assert.assertEquals("Left drawer should have 18 items", 18, count);
-
-        // Check that Products DrawerItem is ok
-        DrawerItem item = adapter.findItemByTitle("Products");
-        Assert.assertNotNull("Products DrawerItem should exist", item);
-
-// TODO thread deadlock in Retrofit stalls callbacks
-//        for(;;) {
-//            if (item.path != null && item.childCount > 0) break;
-//            Thread.sleep(100);
-//        }
-//        Assert.assertNotNull("Products DrawerItem should have path", item.path);
-//        Assert.assertTrue("Products DrawerItem should have children", item.childCount>0);
+        Assert.assertEquals("Left drawer should have 8 items", 8, count);
     }
 
     @Test

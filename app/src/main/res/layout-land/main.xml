@@ -43,6 +43,7 @@
         android:layout_gravity="end">
         <TextView
             android:id="@+id/checkout"
+            android:layout_width="match_parent"
             style="@style/CartHeader"
             android:text="@string/your_cart"
             android:background="#ffff00"/>
