@@ -10,9 +10,6 @@ import android.widget.TextView;
 
 import com.staples.mobile.R;
 
-/**
- * Created by PyhRe001 on 8/11/14.
- */
 public class PersonalFeedFragment extends Fragment {
     private static final String TAG = "PersonalFeedFragment";
 

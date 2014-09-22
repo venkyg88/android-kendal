@@ -27,6 +27,7 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
     compile 'com.squareup.retrofit:retrofit:1.6.1'
     compile 'com.squareup.retrofit:converter-jackson:1.6.1'
+    compile 'com.squareup.picasso:picasso:2.3.4'
 
     androidTestCompile 'org.hamcrest:hamcrest-integration:1.1'
     androidTestCompile 'org.hamcrest:hamcrest-core:1.1'

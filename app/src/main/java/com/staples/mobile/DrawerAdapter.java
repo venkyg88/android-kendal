@@ -13,9 +13,6 @@ import com.staples.mobile.browse.CategoryFragment;
 import com.staples.mobile.feed.PersonalFeedFragment;
 import com.staples.mobile.lms.LmsFragment;
 
-/**
- * Created by pyhre001 on 8/14/14.
- */
 public class DrawerAdapter extends ArrayAdapter<DrawerItem>{
     private static final String TAG = "DrawerAdapter";
 

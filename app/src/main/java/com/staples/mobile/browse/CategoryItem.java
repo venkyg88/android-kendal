@@ -5,9 +5,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
-/**
- * Created by pyhre001 on 8/20/14.
- */
 public class CategoryItem {
     public Drawable icon;
     public String title;

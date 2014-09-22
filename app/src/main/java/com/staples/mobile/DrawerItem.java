@@ -6,9 +6,6 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
-/**
-* Created by pyhre001 on 8/14/14.
-*/
 public class DrawerItem {
     public static final String TAG = "DrawerItem";
     public enum Type {

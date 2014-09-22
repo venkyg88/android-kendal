@@ -14,9 +14,6 @@ import retrofit.converter.JacksonConverter;
 import retrofit.android.AndroidLog;
 import retrofit.client.OkClient;
 
-/**
- * Created by pyhre001 on 9/10/14.
- */
 public class MainApplication extends Application {
     private static final String TAG = "MainApplication";
 

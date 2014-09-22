@@ -17,9 +17,6 @@ import java.lang.reflect.Method;
 
 import retrofit.Callback;
 
-/**
- * Created by pyhre001 on 9/18/14.
- */
 public class MockApiHandler implements InvocationHandler {
     private static final String TAG = "MockApiHandler";
 
@@ -71,7 +68,7 @@ public class MockApiHandler implements InvocationHandler {
         Callback<?> callback =  getCallback(args);
         if (callback==null) throw(new RuntimeException("Invoke can not find callback"));
 
-        // Handle landing API requests
+        // Handle home API requests
         if (name.equals("lms")) {
             Object objects = loadJsonObjects("landing.json", Lms.class, (Callback<Lms>) callback);
             return (objects);

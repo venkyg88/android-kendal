@@ -15,9 +15,6 @@ import android.widget.TextView;
 import com.staples.mobile.R;
 import com.staples.mobile.widget.ListViewWrapper;
 
-/**
- * Created by PyhRe001 on 8/11/14.
- */
 public class CategoryFragment extends Fragment
              implements AdapterView.OnItemClickListener {
     private static final String TAG = "CategoryFragment";

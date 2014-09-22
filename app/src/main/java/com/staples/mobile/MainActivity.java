@@ -14,11 +14,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.staples.mobile.lms.LmsFragment;
-
-/**
- * Created by PyhRe001 on 8/11/14.
- */
 public class MainActivity extends Activity implements AdapterView.OnItemClickListener {
 
     private static final String TAG = "MainActivity";

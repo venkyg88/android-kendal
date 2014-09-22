@@ -8,9 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-/**
- * Created by PyhRe001 on 8/11/14.
- */
 public class ToBeDoneFragment extends Fragment {
     private static final String TAG = "ToBeDoneFragment";
 

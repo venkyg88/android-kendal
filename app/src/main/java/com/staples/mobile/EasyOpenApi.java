@@ -8,9 +8,6 @@ import retrofit.http.EncodedPath;
 import retrofit.http.GET;
 import retrofit.http.Query;
 
-/**
- * Created by pyhre001 on 9/10/14.
- */
 public interface EasyOpenApi {
     public static final String SERVICE_ENDPOINT = "http://sapi.staples.com";
 //    public static final String SERVICE_ENDPOINT = "http://10.29.172.60:9100"; // The office printer!

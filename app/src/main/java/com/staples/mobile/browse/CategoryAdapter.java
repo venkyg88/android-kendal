@@ -23,9 +23,6 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by pyhre001 on 8/20/14.
- */
 public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callback<Browse> {
     private static final String TAG = "CategoryAdapter";
 
