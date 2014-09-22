@@ -44,6 +44,10 @@
             "banner": "http://media.staples.com/ipad/Home%20images/pets_big.png",
             "title": "Pets",
             "bundle_id": "CL140861"
+          },
+          {
+            "banner": "http://media.staples.com/ipad/Home%20images/pets_big.png",
+            "title": "Marsupials"
           }
         ]
       }

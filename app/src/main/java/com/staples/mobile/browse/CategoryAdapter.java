@@ -124,7 +124,7 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
             int count = categories.length;
             for (int i = 0; i < count; i++) {
                 Category category = categories[i];
-                Description[] descriptions = category.getDescription();
+                Description[] descriptions = category.getDescription1();
                 if (descriptions != null && descriptions.length > 0) {
                     // Get category title
                     Description description = descriptions[0];

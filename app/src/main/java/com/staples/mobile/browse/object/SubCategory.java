@@ -4,19 +4,34 @@ package com.staples.mobile.browse.object;
  * Created by pyhre001 on 9/10/14.
  */
 public class SubCategory {
+    private String catalogId;
     private String categoryUrl;
-    private Description[] description;
     private int childCount;
+    private Description[] description;
+    private String identifier;
+    private boolean navigable;
+
+    public String getCatalogId() {
+        return catalogId;
+    }
 
     public String getCategoryUrl() {
         return categoryUrl;
+    }
+
+    public int getChildCount() {
+        return childCount;
     }
 
     public Description[] getDescription() {
         return description;
     }
 
-    public int getChildCount() {
-        return childCount;
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public boolean isNavigable() {
+        return navigable;
     }
 }

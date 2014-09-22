@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.staples.mobile.browse.CategoryFragment;
+import com.staples.mobile.feed.PersonalFeedFragment;
 
 /**
  * Created by pyhre001 on 8/14/14.

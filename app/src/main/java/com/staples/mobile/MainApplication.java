@@ -1,18 +1,16 @@
 package com.staples.mobile;
 
-import android.app.Activity;
 import android.app.Application;
-import android.util.Log;
 
 import com.squareup.okhttp.OkHttpClient;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.TimeUnit;
 
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
+import retrofit.converter.JacksonConverter;
 import retrofit.android.AndroidLog;
 import retrofit.client.OkClient;
 
@@ -29,6 +27,7 @@ public class MainApplication extends Application {
     private static final int TIMEOUT = 15; // Seconds
 
     private OkClient okClient;
+    private JacksonConverter jackson;
     private EasyOpenApi easyOpenApi;
     private EasyOpenApi mockEasyOpenApi;
 
@@ -38,6 +37,8 @@ public class MainApplication extends Application {
         okHttpClient.setConnectTimeout(TIMEOUT, TimeUnit.SECONDS);
         okHttpClient.setReadTimeout(TIMEOUT, TimeUnit.SECONDS);
         okClient = new OkClient(okHttpClient);
+
+        jackson = new JacksonConverter();
     }
 
     // EasyOpen API
@@ -49,6 +50,7 @@ public class MainApplication extends Application {
         builder.setClient(okClient);
         builder.setEndpoint(EasyOpenApi.SERVICE_ENDPOINT);
         builder.setRequestInterceptor(new EasyOpenInterceptor());
+        builder.setConverter(jackson);
         builder.setLogLevel(LOGLEVEL);
         builder.setLog(new AndroidLog(TAG));
         RestAdapter adapter = builder.build();
