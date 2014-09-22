@@ -60,10 +60,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         // Initialize search drawer item
         searchItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, R.string.search_title, ToBeDoneFragment.class);
 
-        // Select landing fragment if first run
+        // Select first drawer item if first run
         if (bundle == null) {
-            DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, 0, LmsFragment.class);
-            selectDrawerItem(item, false);
+            selectDrawerItem(adapter.getItem(0), false);
         }
     }
 

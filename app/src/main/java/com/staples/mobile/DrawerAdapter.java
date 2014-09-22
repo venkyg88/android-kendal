@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.staples.mobile.browse.CategoryFragment;
 import com.staples.mobile.feed.PersonalFeedFragment;
+import com.staples.mobile.lms.LmsFragment;
 
 /**
  * Created by pyhre001 on 8/14/14.
@@ -61,7 +62,7 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem>{
 
     public void fill() {
         // Fill adapter with fragment titles
-        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.home_title, ToBeDoneFragment.class));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.home_title, LmsFragment.class));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.personal_feed_title, PersonalFeedFragment.class));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.shop_categories_title, CategoryFragment.class));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.store_locator_title, ToBeDoneFragment.class));

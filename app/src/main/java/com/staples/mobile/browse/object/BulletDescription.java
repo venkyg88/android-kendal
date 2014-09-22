@@ -1,16 +1,11 @@
 package com.staples.mobile.browse.object;
 
 /**
- * Created by pyhre001 on 9/10/14.
+ * Created by pyhre001 on 9/22/14.
  */
-public class Description {
-    private String description;
+public class BulletDescription {
     private String name;
     private String text;
-
-    public String getDescription() {
-        return description;
-    }
 
     public String getName() {
         return name;

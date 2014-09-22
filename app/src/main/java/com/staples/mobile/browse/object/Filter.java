@@ -1,17 +1,12 @@
 package com.staples.mobile.browse.object;
 
 /**
- * Created by pyhre001 on 9/10/14.
+ * Created by pyhre001 on 9/22/14.
  */
-public class FilterGroup {
-    private Filter[] filter;
+public class Filter {
     private String id;
     private String name;
     private int productsCount;
-
-    public Filter[] getFilter() {
-        return filter;
-    }
 
     public String getId() {
         return id;

@@ -13,6 +13,7 @@ public class Browse {
     private int recordSetCount;
     private int recordSetStartNumber;
     private int recordSetTotal;
+    private String resourceUrl;
 
     public Category[] getCategory() {
         return category;
@@ -36,5 +37,9 @@ public class Browse {
 
     public int getRecordSetTotal() {
         return recordSetTotal;
+    }
+
+    public String getResourceUrl() {
+        return resourceUrl;
     }
 }
