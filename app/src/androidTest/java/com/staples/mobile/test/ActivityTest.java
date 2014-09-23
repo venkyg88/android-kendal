@@ -39,6 +39,7 @@ public class ActivityTest implements Callback<Lms> {
 
         // Create activity controller
         ActivityController controller = Robolectric.buildActivity(MainActivity.class);
+        Assert.assertNotNull("Robolectric controller should not be null", controller);
 
         // Create activity
         controller.create();

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
@@ -25,9 +26,8 @@ import java.util.List;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-import com.squareup.picasso.Callback;
-
-public class LmsAdapter extends PagerAdapter  implements retrofit.Callback<Lms>, Callback {
+public class LmsAdapter extends PagerAdapter
+                        implements retrofit.Callback<Lms>, com.squareup.picasso.Callback {
     private static final String TAG = "LmsAdapter";
 
     private static final String RECOMMENDATION = "v1";
@@ -36,11 +36,13 @@ public class LmsAdapter extends PagerAdapter  implements retrofit.Callback<Lms>,
     private class Sheet {
         String title;
         String bannerUrl;
+        String identifier;
         View view;
 
-        Sheet(String title, String bannerUrl) {
+        Sheet(String title, String bannerUrl, String identifier) {
             this.title = title;
             this.bannerUrl = bannerUrl;
+            this.identifier = identifier;
         }
     }
 
@@ -66,12 +68,18 @@ public class LmsAdapter extends PagerAdapter  implements retrofit.Callback<Lms>,
     public Object instantiateItem(ViewGroup container, int position) {
         Sheet sheet = array.get(position);
         sheet.view = inflater.inflate(R.layout.lms_page, container, false);
+
+        // Load banner image
         ImageView banner = (ImageView) sheet.view.findViewById(R.id.banner);
-
-
         RequestCreator requestCreator = picasso.load(sheet.bannerUrl);
         requestCreator.into(banner, this);
         requestCreator.fit();
+
+        // Set adapter
+        ProductAdapter adapter = new ProductAdapter(activity);
+        ListView list = (ListView) sheet.view.findViewById(R.id.products);
+        list.setAdapter(adapter);
+        adapter.fill(sheet.identifier);
 
         container.addView(sheet.view);
         return (sheet);
@@ -85,7 +93,7 @@ public class LmsAdapter extends PagerAdapter  implements retrofit.Callback<Lms>,
     }
 
     public boolean isViewFromObject(View view, Object object) {
-        return (view == ((Sheet) object).view);
+        return (view==((Sheet) object).view);
     }
 
     public String getPageTitle(int position) {
@@ -105,7 +113,7 @@ public class LmsAdapter extends PagerAdapter  implements retrofit.Callback<Lms>,
         FormFactor formFactor = page.getFormFactor();
         List<Item> items = formFactor.getItem();
         for (Item item : items) {
-            array.add(new Sheet(item.getTitle(), item.getBanner()));
+            array.add(new Sheet(item.getTitle(), item.getBanner(), item.getBundleId()));
         }
         notifyDataSetChanged();
     }

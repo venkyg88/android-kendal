@@ -15,7 +15,7 @@
       "color7": "#00FF00"
     },
     "font": {
-      "text1": "Roboto  Bold + Medium",
+      "text1": "Roboto Bold + Medium",
       "text2": "Roboto Medium + Medium",
       "text3": "Roboto Condensed + Small"
     }
@@ -38,20 +38,21 @@
           {
             "banner": "http://media.staples.com/ipad/Home%20images/pantry_cafetria_big.png",
             "title": "Pantry & Cafeteria",
-            "bundle_id": "CL140860"
+            "bundleId": "CL140860"
           },
           {
             "banner": "http://media.staples.com/ipad/Home%20images/pets_big.png",
             "title": "Pets",
-            "bundle_id": "CL140861"
+            "bundleId": "CL140861"
           },
           {
-            "banner": "http://media.staples.com/ipad/Home%20images/pets_big.png",
-            "title": "Marsupials"
-          },
+            "banner": "http://us.cdn4.123rf.com/168nwm/iimages/iimages1204/iimages120403320/13424838-illustration-of-an-isolated-cartoon-kangaroo.jpg",
+            "title": "Marsupials",
+            "bundleId": "Kangaroo"          },
           {
-            "banner": "http://media.staples.com/ipad/Home%20images/pets_big.png",
-            "title": "Raptors"
+            "banner": "http://0.tqn.com/y/dinosaurs/1/9/b/g/-/-/achillobatorMM.jpg",
+            "title": "Raptors",
+            "bundleId": "Dinosaurs"
           }
         ]
       }

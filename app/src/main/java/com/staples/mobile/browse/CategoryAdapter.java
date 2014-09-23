@@ -16,6 +16,7 @@ import com.staples.mobile.browse.object.Browse;
 import com.staples.mobile.browse.object.Category;
 import com.staples.mobile.browse.object.Description;
 import com.staples.mobile.browse.object.FilterGroup;
+import com.staples.mobile.browse.object.Product;
 import com.staples.mobile.browse.object.SubCategory;
 
 import retrofit.Callback;
@@ -111,7 +112,7 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
 
     public void success(Browse browse, Response response) {
         Category[] categories = browse.getCategory();
-        if (categories==null && categories.length<1) {
+        if (categories==null || categories.length<1) {
             notifyDataSetChanged();
             return;
         }
@@ -158,13 +159,13 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
             return;
         }
 
-        // Process filter groups
-        FilterGroup[] filterGroups = category.getFilterGroup();
-        if (filterGroups != null) {
-            int count = filterGroups.length;
+        // Process products
+        Product[] products = category.getProduct();
+        if (products != null) {
+            int count = products.length;
             for (int i = 0; i < count; i++) {
-                FilterGroup filterGroup = filterGroups[i];
-                CategoryItem item = new CategoryItem(filterGroup.getName(), null, 0);
+                Product product = products[i];
+                CategoryItem item = new CategoryItem(product.getProductName(), null, 0);
                 add(item);
             }
             Log.d(TAG, "Got " + count + " filter groups");

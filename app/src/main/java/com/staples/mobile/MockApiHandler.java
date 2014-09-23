@@ -68,7 +68,7 @@ public class MockApiHandler implements InvocationHandler {
         Callback<?> callback =  getCallback(args);
         if (callback==null) throw(new RuntimeException("Invoke can not find callback"));
 
-        // Handle home API requests
+        // Handle main API requests
         if (name.equals("lms")) {
             Object objects = loadJsonObjects("landing.json", Lms.class, (Callback<Lms>) callback);
             return (objects);

@@ -8,6 +8,8 @@ public class CategoryAnalytic {
     private String categoryName;
     private String classCode;
     private String className;
+    private String departmentCode;
+    private String departmentName;
     private String superCategoryCode;
     private String superCategoryName;
 
@@ -25,6 +27,14 @@ public class CategoryAnalytic {
 
     public String getClassName() {
         return className;
+    }
+
+    public String getDepartmentCode() {
+        return departmentCode;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
     }
 
     public String getSuperCategoryCode() {

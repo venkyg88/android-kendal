@@ -24,9 +24,11 @@ public class Product {
     private Pricing[] pricing;
     private String productName;
     private String productUrl;
+    private Description[] promotionalOfferExpire;
     private boolean ropisEligible;
     private boolean shipableToStore;
     private String sku;
+    private Image[] smallPromoImage;
     private String staplesDisplayPartNumber;
     private ThumbnailImage[] thumbnailImage;
     private String uniqueId;
@@ -101,6 +103,10 @@ public class Product {
         return productUrl;
     }
 
+    public Description[] getPromotionalOfferExpire() {
+        return promotionalOfferExpire;
+    }
+
     public boolean isRopisEligible() {
         return ropisEligible;
     }
@@ -111,6 +117,10 @@ public class Product {
 
     public String getSku() {
         return sku;
+    }
+
+    public Image[] getSmallPromoImage() {
+        return smallPromoImage;
     }
 
     public String getStaplesDisplayPartNumber() {

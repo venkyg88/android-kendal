@@ -1,44 +1,23 @@
 package com.staples.mobile.lms.object;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({"banner","title","bundleId"})
 public class Item {
-
     private String banner;
     private String title;
     private String bundleId;
 
-    @JsonProperty("banner")
-    public String getBanner(){
-        return this.banner;
+    public String getBanner() {
+        return banner;
     }
 
-    public void setBanner(String banner){
-        this.banner = banner;
+    public String getTitle() {
+        return title;
     }
 
-    @JsonProperty("title")
-    public String getTitle(){
-        return this.title;
+    public String getBundleId() {
+        return bundleId;
     }
-
-    public void setTitle(String title){
-        this.title = title;
-    }
-
-    @JsonProperty("bundle_id")
-    public String getBundleId(){
-        return this.bundleId;
-    }
-
-    public void setBundleId(String bundleId){
-        this.bundleId = bundleId;
-    }
-
-
-
 
     public String toString(){
         StringBuilder builder = new StringBuilder();
@@ -48,5 +27,4 @@ public class Item {
                .append("]");
         return builder.toString();
     }
-
 }

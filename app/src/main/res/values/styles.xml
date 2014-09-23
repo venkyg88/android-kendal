@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+    <style name="AppTheme" parent="android:Theme.Holo.Light">
+        <!--<item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>-->
+    </style>
+    <!-- Needed to prevent flashing of action bar on startup -->
+    <style name="AppTheme.ActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid">
+        <item name="android:displayOptions"></item>
     </style>
     <!-- Main screen drawer graphics -->
     <style name="DrawerStyle">

@@ -1,11 +1,9 @@
 package com.staples.mobile.browse.object;
 
-/**
- * Created by pyhre001 on 9/22/14.
- */
 public class Image {
     private String altText;
     private String name;
+    private ThumbnailImage[] thumbnailImage;
     private String url;
 
     public String getAltText() {
@@ -14,6 +12,10 @@ public class Image {
 
     public String getName() {
         return name;
+    }
+
+    public ThumbnailImage[] getThumbnailImage() {
+        return thumbnailImage;
     }
 
     public String getUrl() {

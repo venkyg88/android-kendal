@@ -4,24 +4,29 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class MainActivity extends Activity implements AdapterView.OnItemClickListener {
+public class MainActivity extends Activity
+                          implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private static final String TAG = "MainActivity";
 
+    private static final Uri STAPLESWEBSITE = Uri.parse("http://m.staples.com/");
+
     private DrawerLayout drawerLayout;
     private ListView leftDrawer;
+    private ViewGroup topper;
     private View rightDrawer;
-    private DrawerItem searchItem;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -31,13 +36,22 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         // Find top-level entities
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawer = (ListView) findViewById(R.id.left_drawer);
+        topper = (ViewGroup) findViewById(R.id.topper);
         rightDrawer = findViewById(R.id.right_drawer);
 
         // Initialize action bar
         ActionBar actionBar = getActionBar();
-        actionBar.setLogo(R.drawable.ic_drawer);
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setTitle(R.string.staples);
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(R.layout.action_bar);
+
+        // Set action bar listeners
+        View view = actionBar.getCustomView();
+        view.findViewById(R.id.left_drawer).setOnClickListener(this);
+        view.findViewById(R.id.website).setOnClickListener(this);
+        view.findViewById(R.id.right_drawer).setOnClickListener(this);
 
         // Initialize left drawer listview
         DrawerAdapter adapter = new DrawerAdapter(this);
@@ -45,15 +59,16 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         leftDrawer.setAdapter(adapter);
         leftDrawer.setOnItemClickListener(this);
 
+        // Initialize topper
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(R.layout.topper, topper);
+
         // Initialize right drawer listview TODO just hacked for demo
         ArrayAdapter<String> cartAdapter = new ArrayAdapter<String>(this, R.layout.category_item);
         ((ListView) rightDrawer.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
         cartAdapter.add("Apple");
         cartAdapter.add("Banana");
         cartAdapter.add("Cantaloupe");
-
-        // Initialize search drawer item
-        searchItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, 0, R.string.search_title, ToBeDoneFragment.class);
 
         // Select first drawer item if first run
         if (bundle == null) {
@@ -79,41 +94,41 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             transaction.addToBackStack(null);
         transaction.commit();
 
-        return (true);
+        return(true);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.actions, menu);
-        return(super.onCreateOptionsMenu(menu));
+    public boolean openWebsite() {
+        Intent intent = new Intent(Intent.ACTION_VIEW, STAPLESWEBSITE);
+        try {
+            startActivity(intent);
+            return (true);
+        } catch(Exception e)  {
+            return(false);
+        }
     }
+
+    // Action bar clicks
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
-        switch (item.getItemId()) {
-            case android.R.id.home:
+    public void onClick(View view) {
+        switch(view.getId()) {
+            case R.id.left_drawer:
                 if (!drawerLayout.isDrawerOpen(leftDrawer)) {
                     drawerLayout.closeDrawer(rightDrawer);
                     drawerLayout.openDrawer(leftDrawer);
                 } else drawerLayout.closeDrawers();
-                return(true);
+                break;
 
-            case R.id.action_search:
-                drawerLayout.closeDrawers();
-                selectDrawerItem(searchItem, true);
-                return(true);
+            case R.id.website:
+                openWebsite();
+                break;
 
-            case R.id.action_right_drawer:
+            case R.id.right_drawer:
                 if (!drawerLayout.isDrawerOpen(rightDrawer)) {
                     drawerLayout.closeDrawer(leftDrawer);
                     drawerLayout.openDrawer(rightDrawer);
                 } else drawerLayout.closeDrawers();
-                return(true);
-
-            default:
-                return super.onOptionsItemSelected(item);
+                break;
         }
     }
 

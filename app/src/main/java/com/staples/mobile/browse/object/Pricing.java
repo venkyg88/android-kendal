@@ -11,7 +11,10 @@ public class Pricing {
     private String buyMoreSaveMoreImage;
     private boolean displayRegularPricing;
     private boolean displayWasPricing;
+    private Product[] freeItem;
     private float finalPrice;
+    private float freeItemTotalSavings;
+    private float listPrice;
     private String unitOfMeasure;
 
     public BuyMoreSaveMoreDetail[] getBuyMoreSaveMoreDetail() {
@@ -30,8 +33,20 @@ public class Pricing {
         return displayWasPricing;
     }
 
+    public Product[] getFreeItem() {
+        return freeItem;
+    }
+
     public float getFinalPrice() {
         return finalPrice;
+    }
+
+    public float getFreeItemTotalSavings() {
+        return freeItemTotalSavings;
+    }
+
+    public float getListPrice() {
+        return listPrice;
     }
 
     public String getUnitOfMeasure() {
