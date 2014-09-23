@@ -7,14 +7,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.EasyOpenApi;
 import com.staples.mobile.MainApplication;
-import com.staples.mobile.R;
 import com.staples.mobile.lms.object.FormFactor;
 import com.staples.mobile.lms.object.Item;
 import com.staples.mobile.lms.object.Lms;
@@ -23,40 +20,25 @@ import com.staples.mobile.lms.object.Page;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class LmsAdapter extends PagerAdapter
-                        implements retrofit.Callback<Lms>, com.squareup.picasso.Callback {
+public class LmsAdapter extends PagerAdapter implements Callback<Lms> {
     private static final String TAG = "LmsAdapter";
 
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
 
-    private class Sheet {
-        String title;
-        String bannerUrl;
-        String identifier;
-        View view;
-
-        Sheet(String title, String bannerUrl, String identifier) {
-            this.title = title;
-            this.bannerUrl = bannerUrl;
-            this.identifier = identifier;
-        }
-    }
-
     private Activity activity;
     private LayoutInflater inflater;
-    private ArrayList<Sheet> array;
-    private Picasso picasso;
+    private ArrayList<LmsItem> array;
 
     public LmsAdapter(Activity activity) {
         super();
         this.activity = activity;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         array = new ArrayList();
-        picasso = Picasso.with(activity);
     }
 
     @Override
@@ -66,34 +48,27 @@ public class LmsAdapter extends PagerAdapter
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        Sheet sheet = array.get(position);
-        sheet.view = inflater.inflate(R.layout.lms_page, container, false);
-
-        // Load banner image
-        ImageView banner = (ImageView) sheet.view.findViewById(R.id.banner);
-        RequestCreator requestCreator = picasso.load(sheet.bannerUrl);
-        requestCreator.into(banner, this);
-        requestCreator.fit();
+        LmsItem item = array.get(position);
+        item.list = new ListView(activity);
 
         // Set adapter
-        ProductAdapter adapter = new ProductAdapter(activity);
-        ListView list = (ListView) sheet.view.findViewById(R.id.products);
-        list.setAdapter(adapter);
-        adapter.fill(sheet.identifier);
+        ProductAdapter adapter = new ProductAdapter(activity, item);
+        item.list.setAdapter(adapter);
+        adapter.fill();
 
-        container.addView(sheet.view);
-        return (sheet);
+        container.addView(item.list);
+        return (item);
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        Sheet sheet = array.get(position);
-        container.removeView(sheet.view);
-        sheet.view = null;
+        LmsItem sheet = array.get(position);
+        container.removeView(sheet.list);
+        sheet.list = null;
     }
 
     public boolean isViewFromObject(View view, Object object) {
-        return (view==((Sheet) object).view);
+        return (view==((LmsItem) object).list);
     }
 
     public String getPageTitle(int position) {
@@ -113,20 +88,12 @@ public class LmsAdapter extends PagerAdapter
         FormFactor formFactor = page.getFormFactor();
         List<Item> items = formFactor.getItem();
         for (Item item : items) {
-            array.add(new Sheet(item.getTitle(), item.getBanner(), item.getBundleId()));
+            array.add(new LmsItem(item.getTitle(), item.getBanner(), item.getBundleId()));
         }
         notifyDataSetChanged();
     }
 
     public void failure(RetrofitError retrofitError) {
         Log.d(TAG, "Failure callback " + retrofitError);
-    }
-
-    // Picasso
-
-    public void onSuccess() {
-    }
-
-    public void onError() {
     }
 }
