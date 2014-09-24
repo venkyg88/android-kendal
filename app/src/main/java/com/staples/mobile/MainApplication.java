@@ -3,6 +3,8 @@ package com.staples.mobile;
 import android.app.Application;
 
 import com.squareup.okhttp.OkHttpClient;
+import com.staples.mobile.easyopen.EasyOpenApi;
+import com.staples.mobile.lms.LmsApi;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;

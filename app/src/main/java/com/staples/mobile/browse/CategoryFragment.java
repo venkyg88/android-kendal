@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.staples.mobile.MainActivity;
 import com.staples.mobile.R;
 import com.staples.mobile.widget.ListViewWrapper;
 
@@ -52,7 +53,7 @@ public class CategoryFragment extends Fragment
         CategoryItem item = (CategoryItem) parent.getItemAtPosition(position);
         if (item==null) return;
         if (item.path==null) {
-            Log.d(TAG, "Category leaf selected " + item.title);
+            ((MainActivity) getActivity()).selectSkuItem("Hi, this is a browsed product"); // TODO
             return;
         }
 

@@ -4,12 +4,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.staples.mobile.DrawerAdapter;
-import com.staples.mobile.EasyOpenApi;
-import com.staples.mobile.LmsApi;
+import com.staples.mobile.lms.LmsApi;
 import com.staples.mobile.MainActivity;
 import com.staples.mobile.MainApplication;
 import com.staples.mobile.R;
-import com.staples.mobile.lms.object.Lms;
+import com.staples.mobile.lms.Lms;
 
 import org.junit.Assert;
 import org.junit.Before;

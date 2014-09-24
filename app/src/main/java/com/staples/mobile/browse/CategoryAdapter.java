@@ -9,18 +9,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.staples.mobile.EasyOpenApi;
+import com.staples.mobile.easyopen.EasyOpenApi;
 import com.staples.mobile.MainApplication;
 import com.staples.mobile.R;
-import com.staples.mobile.browse.object.Browse;
-import com.staples.mobile.browse.object.Category;
-import com.staples.mobile.browse.object.Description;
-import com.staples.mobile.browse.object.FilterGroup;
-import com.staples.mobile.browse.object.Product;
-import com.staples.mobile.browse.object.SubCategory;
+import com.staples.mobile.easyopen.Browse;
+import com.staples.mobile.easyopen.Category;
+import com.staples.mobile.easyopen.Description;
+import com.staples.mobile.easyopen.Product;
+import com.staples.mobile.easyopen.SubCategory;
 
 import retrofit.Callback;
-import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 

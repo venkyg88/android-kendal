@@ -6,9 +6,8 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.staples.mobile.lms.object.Lms;
+import com.staples.mobile.lms.Lms;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

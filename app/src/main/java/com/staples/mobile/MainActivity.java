@@ -16,6 +16,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.staples.mobile.sku.SkuFragment;
+
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener {
 
@@ -27,6 +29,7 @@ public class MainActivity extends Activity
     private ListView leftDrawer;
     private ViewGroup topper;
     private View rightDrawer;
+    private DrawerItem sku;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -58,6 +61,10 @@ public class MainActivity extends Activity
         adapter.fill();
         leftDrawer.setAdapter(adapter);
         leftDrawer.setOnItemClickListener(this);
+
+        // Initialize non-drawer DrawerItems
+        if (sku==null)
+            sku = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.home_title, SkuFragment.class);
 
         // Initialize topper
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -94,6 +101,11 @@ public class MainActivity extends Activity
             transaction.addToBackStack(null);
         transaction.commit();
 
+        return(true);
+    }
+
+    public boolean selectSkuItem(String identifier) {
+        selectDrawerItem(sku, true);
         return(true);
     }
 
