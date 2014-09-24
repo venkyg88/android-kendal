@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.staples.mobile.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:textSize="20dp"/>
-    <com.staples.mobile.widget.ListViewWrapper
+    <com.staples.mobile.cfa.widget.ListViewWrapper
         android:id="@+id/status_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -33,5 +33,5 @@
             android:visibility="gone"
             android:choiceMode="singleChoice"
             android:background="#ffffff"/>
-    </com.staples.mobile.widget.ListViewWrapper>
-</com.staples.mobile.widget.AnimatorLayout>
+    </com.staples.mobile.cfa.widget.ListViewWrapper>
+</com.staples.mobile.cfa.widget.AnimatorLayout>

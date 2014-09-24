@@ -6,9 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.staples.mobile.R;
-import com.staples.mobile.ToBeDoneFragment;
-import com.staples.mobile.browse.CategoryFragment;
-import com.staples.mobile.widget.ListViewWrapper;
+import com.staples.mobile.cfa.ToBeDoneFragment;
+import com.staples.mobile.cfa.browse.CategoryFragment;
+import com.staples.mobile.cfa.widget.ListViewWrapper;
 
 import junit.framework.Assert;
 
