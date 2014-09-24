@@ -104,7 +104,7 @@ public class ProductAdapter extends ArrayAdapter<ProductItem>
     }
 
     void fill() {
-        add(new ProductItem(null, lmsItem.bannerUrl));
+        add(new ProductItem(null, lmsItem.bannerUrl, null));
         MainApplication application = (MainApplication) activity.getApplication();
         EasyOpenApi easyOpenApi = application.getEasyOpenApi();
         easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, lmsItem.identifier, CATALOG_ID, LOCALE,
@@ -126,7 +126,7 @@ public class ProductAdapter extends ArrayAdapter<ProductItem>
             int count = products.length;
             for (int i = 0; i < count; i++) {
                 Product product = products[i];
-                ProductItem item = new ProductItem(product.getProductName(), null);
+                ProductItem item = new ProductItem(product.getProductName(), null, product.getSku());
                 add(item);
             }
             Log.d(TAG, "Got " + count + " products");

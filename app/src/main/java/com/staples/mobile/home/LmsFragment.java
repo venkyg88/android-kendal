@@ -20,7 +20,7 @@ public class LmsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
-        View view = inflater.inflate(R.layout.lms_frame, container, false);
+        View view = inflater.inflate(R.layout.pager_frame, container, false);
 
         adapter = new LmsAdapter((MainActivity) getActivity());
         pager = (ViewPager) view.findViewById(R.id.pager);

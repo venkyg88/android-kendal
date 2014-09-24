@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.staples.mobile.MainApplication;
 import com.staples.mobile.easyopen.EasyOpenApi;
@@ -50,7 +51,10 @@ public class SkuAdapter extends PagerAdapter implements Callback<Lms> {
     public Object instantiateItem(ViewGroup container, int position) {
         SkuItem item = array.get(position);
 
-//        container.addView(item.whatever);
+        item.view = new TextView(activity); // TODO Hacked
+        ((TextView) item.view).setText(item.identifier);
+
+        container.addView(item.view);
         return (item);
     }
 
@@ -71,11 +75,13 @@ public class SkuAdapter extends PagerAdapter implements Callback<Lms> {
 
     // Retrofit EasyOpen API call
 
-    public void fill() {
+    public void fill(String identifier) {
         array.add(new SkuItem("Summary"));
         array.add(new SkuItem("Specifications"));
         array.add(new SkuItem("Reviews"));
         notifyDataSetChanged();
+
+        array.get(0).identifier = identifier;
 
         MainApplication application = (MainApplication) activity.getApplication();
         EasyOpenApi easyOpenApi = application.getEasyOpenApi();

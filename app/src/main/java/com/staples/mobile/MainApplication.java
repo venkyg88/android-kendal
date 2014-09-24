@@ -77,7 +77,7 @@ public class MainApplication extends Application {
 
         RestAdapter.Builder builder = new RestAdapter.Builder();
         builder.setClient(okClient);
-        builder.setEndpoint(EasyOpenApi.SERVICE_ENDPOINT);
+        builder.setEndpoint(LmsApi.SERVICE_ENDPOINT);
         builder.setRequestInterceptor(new StandardInterceptor());
         builder.setConverter(jackson);
         builder.setLogLevel(LOGLEVEL);

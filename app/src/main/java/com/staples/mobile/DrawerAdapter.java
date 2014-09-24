@@ -65,6 +65,7 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem>{
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.store_locator_title, ToBeDoneFragment.class));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.weekly_ad_title, ToBeDoneFragment.class));
         add(new DrawerItem(DrawerItem.Type.ACCOUNT, activity, R.drawable.logo, R.string.account_title));
+        add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.rewards_title, ToBeDoneFragment.class));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.order_title, ToBeDoneFragment.class));
         add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.profile_title, ToBeDoneFragment.class));
     }

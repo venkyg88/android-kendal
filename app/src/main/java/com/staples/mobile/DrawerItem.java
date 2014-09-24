@@ -6,6 +6,8 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import com.staples.mobile.easyopen.Product;
+
 public class DrawerItem {
     public static final String TAG = "DrawerItem";
     public enum Type {
@@ -23,7 +25,7 @@ public class DrawerItem {
 
     public static final int NTYPES = Type.values().length;
 
-    // Base type
+    // Drawer info
     public Type type;
     public String title;
     public Drawable icon;
@@ -31,6 +33,9 @@ public class DrawerItem {
     // Fragments & categories
     public Class fragmentClass;
     public Fragment fragment;
+
+    // For SKU page
+    public String identifier;
 
     // Constructors
 
@@ -54,7 +59,6 @@ public class DrawerItem {
         this.fragmentClass = fragmentClass;
     }
 
-
     // Fragment instantiation
 
     public Fragment instantiate(Context context) {
@@ -63,7 +67,8 @@ public class DrawerItem {
 
         fragment = Fragment.instantiate(context, fragmentClass.getName());
         Bundle args = new Bundle();
-        args.putString("title", title);
+        if (title!=null) args.putString("title", title);
+        if (identifier!=null) args.putSerializable("identifier", identifier);
         fragment.setArguments(args);
         return(fragment);
     }

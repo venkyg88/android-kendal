@@ -20,7 +20,6 @@ import com.staples.mobile.sku.SkuFragment;
 
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener {
-
     private static final String TAG = "MainActivity";
 
     private static final Uri STAPLESWEBSITE = Uri.parse("http://m.staples.com/");
@@ -29,7 +28,10 @@ public class MainActivity extends Activity
     private ListView leftDrawer;
     private ViewGroup topper;
     private View rightDrawer;
-    private DrawerItem sku;
+
+    private DrawerItem storeDrawerItem;
+    private DrawerItem rewardsDrawerItem;
+    private DrawerItem skuDrawerItem;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -58,17 +60,20 @@ public class MainActivity extends Activity
 
         // Initialize left drawer listview
         DrawerAdapter adapter = new DrawerAdapter(this);
-        adapter.fill();
         leftDrawer.setAdapter(adapter);
+        adapter.fill();
         leftDrawer.setOnItemClickListener(this);
 
         // Initialize non-drawer DrawerItems
-        if (sku==null)
-            sku = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.home_title, SkuFragment.class);
+        storeDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.store_info_title, ToBeDoneFragment.class);
+        rewardsDrawerItem = adapter.getItem(6); // TODO Hard-coded alias
+        skuDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.home_title, SkuFragment.class);
 
         // Initialize topper
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.topper, topper);
+        topper.findViewById(R.id.store).setOnClickListener(this);
+        topper.findViewById(R.id.rewards).setOnClickListener(this);
 
         // Initialize right drawer listview TODO just hacked for demo
         ArrayAdapter<String> cartAdapter = new ArrayAdapter<String>(this, R.layout.category_item);
@@ -105,7 +110,8 @@ public class MainActivity extends Activity
     }
 
     public boolean selectSkuItem(String identifier) {
-        selectDrawerItem(sku, true);
+        skuDrawerItem.identifier = identifier;
+        selectDrawerItem(skuDrawerItem, true);
         return(true);
     }
 
@@ -119,7 +125,7 @@ public class MainActivity extends Activity
         }
     }
 
-    // Action bar clicks
+    // Action bar & topper clicks
 
     @Override
     public void onClick(View view) {
@@ -140,6 +146,14 @@ public class MainActivity extends Activity
                     drawerLayout.closeDrawer(leftDrawer);
                     drawerLayout.openDrawer(rightDrawer);
                 } else drawerLayout.closeDrawers();
+                break;
+
+            case R.id.store:
+                selectDrawerItem(storeDrawerItem, true);
+                break;
+
+            case R.id.rewards:
+                selectDrawerItem(rewardsDrawerItem, true);
                 break;
         }
     }

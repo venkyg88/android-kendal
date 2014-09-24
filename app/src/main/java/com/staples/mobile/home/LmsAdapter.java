@@ -105,6 +105,7 @@ public class LmsAdapter extends PagerAdapter implements Callback<Lms>, AdapterVi
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        activity.selectSkuItem("Hello, this is only a test!"); // TODO
+        ProductItem product = (ProductItem) parent.getItemAtPosition(position);
+        activity.selectSkuItem(product.identifier);
     }
 }

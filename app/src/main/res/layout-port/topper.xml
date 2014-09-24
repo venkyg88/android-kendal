@@ -4,11 +4,15 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
     <TextView
+        android:id="@+id/store"
+        style="@style/TopperStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Your store is Kendall Square"
         android:background="#ffcccc"/>
     <TextView
+        android:id="@+id/rewards"
+        style="@style/TopperStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="You have $75 in rewards!"
