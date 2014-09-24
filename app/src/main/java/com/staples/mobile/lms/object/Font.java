@@ -1,9 +1,5 @@
 package com.staples.mobile.lms.object;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-@JsonPropertyOrder({"text1", "text2", "text3"})
 public class Font {
     private String text1;
     private String text2;
@@ -20,5 +16,4 @@ public class Font {
     public String getText3() {
         return text3;
     }
-
 }

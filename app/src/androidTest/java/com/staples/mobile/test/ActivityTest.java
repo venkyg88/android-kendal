@@ -5,6 +5,7 @@ import android.widget.ListView;
 
 import com.staples.mobile.DrawerAdapter;
 import com.staples.mobile.EasyOpenApi;
+import com.staples.mobile.LmsApi;
 import com.staples.mobile.MainActivity;
 import com.staples.mobile.MainApplication;
 import com.staples.mobile.R;
@@ -77,14 +78,14 @@ public class ActivityTest implements Callback<Lms> {
     private boolean failure;
 
     @Test
-    public void testMockLandingApi() throws InterruptedException{
+    public void testMockLmsApi() throws InterruptedException{
         success = false;
         failure = false;
-        EasyOpenApi easyOpenApi = application.getMockEasyOpenApi();
-        easyOpenApi.lms("Ignore", "Ignore", this);
+        LmsApi lmsApi = application.getMockLmsApi();
+        lmsApi.lms("Ignore", "Ignore", this);
         Thread.sleep(1000);
-        Assert.assertTrue("MockLandingApi should have succeeded", success);
-        Assert.assertFalse("MockLandingApi should not have failed", failure);
+        Assert.assertTrue("MockLmsApi should have succeeded", success);
+        Assert.assertFalse("MockLmsApi should not have failed", failure);
     }
 
     public void success(Lms lms, Response response) {

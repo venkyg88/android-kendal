@@ -1,12 +1,8 @@
 package com.staples.mobile.lms.object;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonPropertyOrder({"landscape","small","medium","large","xlarge","item"})
 public class FormFactor {
     private String landscape;
     private String small;

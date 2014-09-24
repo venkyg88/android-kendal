@@ -26,7 +26,8 @@ public class MainApplication extends Application {
     private OkClient okClient;
     private JacksonConverter jackson;
     private EasyOpenApi easyOpenApi;
-    private EasyOpenApi mockEasyOpenApi;
+    private LmsApi lmsApi;
+    private LmsApi mockLmsApi;
 
     @Override
     public void onCreate() {
@@ -38,6 +39,17 @@ public class MainApplication extends Application {
         jackson = new JacksonConverter();
     }
 
+    // Interceptor for standard HTTP headers
+
+    private static class StandardInterceptor implements RequestInterceptor {
+        @Override
+        public void intercept(RequestFacade request) {
+            request.addHeader("User-Agent", USER_AGENT);
+            request.addHeader("Accept", "application/json");
+//            request.addHeader("Connection", "Keep-Alive");
+        }
+    }
+
     // EasyOpen API
 
     public EasyOpenApi getEasyOpenApi() {
@@ -46,7 +58,7 @@ public class MainApplication extends Application {
         RestAdapter.Builder builder = new RestAdapter.Builder();
         builder.setClient(okClient);
         builder.setEndpoint(EasyOpenApi.SERVICE_ENDPOINT);
-        builder.setRequestInterceptor(new EasyOpenInterceptor());
+        builder.setRequestInterceptor(new StandardInterceptor());
         builder.setConverter(jackson);
         builder.setLogLevel(LOGLEVEL);
         builder.setLog(new AndroidLog(TAG));
@@ -56,21 +68,30 @@ public class MainApplication extends Application {
         return(easyOpenApi);
     }
 
-    private static class EasyOpenInterceptor implements RequestInterceptor {
-        @Override
-        public void intercept(RequestFacade request) {
-            request.addHeader("User-Agent", USER_AGENT);
-            request.addHeader("Accept", "application/json");
-//            request.addHeader("Connection", "Keep-Alive");
-        }
+    // LMS API
+
+    public LmsApi getLmsApi() {
+        if (lmsApi!=null) return(lmsApi);
+
+        RestAdapter.Builder builder = new RestAdapter.Builder();
+        builder.setClient(okClient);
+        builder.setEndpoint(EasyOpenApi.SERVICE_ENDPOINT);
+        builder.setRequestInterceptor(new StandardInterceptor());
+        builder.setConverter(jackson);
+        builder.setLogLevel(LOGLEVEL);
+        builder.setLog(new AndroidLog(TAG));
+        RestAdapter adapter = builder.build();
+
+        lmsApi = adapter.create(LmsApi.class);
+        return(lmsApi);
     }
 
-    public EasyOpenApi getMockEasyOpenApi() {
-        if (mockEasyOpenApi!=null) return(mockEasyOpenApi);
+    public LmsApi getMockLmsApi() {
+        if (mockLmsApi!=null) return(mockLmsApi);
         InvocationHandler handler = new MockApiHandler(this);
-        mockEasyOpenApi = (EasyOpenApi) Proxy.newProxyInstance(EasyOpenApi.class.getClassLoader(),
-                                                               new Class[] {EasyOpenApi.class},
-                                                               handler);
-        return(mockEasyOpenApi);
+        mockLmsApi = (LmsApi) Proxy.newProxyInstance(LmsApi.class.getClassLoader(),
+                                                     new Class[] {LmsApi.class},
+                                                     handler);
+        return(mockLmsApi);
     }
 }

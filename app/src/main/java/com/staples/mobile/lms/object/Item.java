@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Item {
     private String banner;
     private String title;
+    @JsonProperty("bundle_id")
     private String bundleId;
 
     public String getBanner() {

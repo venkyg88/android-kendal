@@ -101,7 +101,7 @@ public class ProductAdapter extends ArrayAdapter<ProductItem>
                                      ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
     }
 
-    // Retrofit
+    // Retrofit EasyOpen API call
 
     public void success(Browse browse, Response response) {
         Category[] categories = browse.getCategory();

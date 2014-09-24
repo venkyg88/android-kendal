@@ -5,8 +5,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.staples.mobile.lms.object.Lms;
 
 import java.io.BufferedReader;
@@ -20,13 +21,14 @@ import retrofit.Callback;
 public class MockApiHandler implements InvocationHandler {
     private static final String TAG = "MockApiHandler";
 
-    private static Gson gson = new Gson();
-
     private Context context;
+    private ObjectMapper mapper;
     private Handler handler;
 
     public MockApiHandler(Context context) {
         this.context = context;
+        mapper = new ObjectMapper();
+//        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         handler = new Handler(Looper.getMainLooper());
     }
 
@@ -34,11 +36,13 @@ public class MockApiHandler implements InvocationHandler {
         try {
             InputStream stream = context.getResources().getAssets().open(filename);
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-            final T objects = gson.fromJson(reader, responseClass);
+            final T objects = mapper.readValue(reader, responseClass);
+            reader.close();
+
             Runnable runs = new Runnable() {public void run() {callback.success(objects, null);}};
             handler.post(runs);
             return(objects);
-        } catch(JsonSyntaxException e) {
+        } catch(JsonParseException e) {
             Log.e(TAG, "Could not parse " + filename + " (" + e + ")");
         } catch(Exception e) {
             Log.e(TAG, "Could not load " + filename + " (" + e + ")");

@@ -1,10 +1,6 @@
 package com.staples.mobile.lms.object;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-@JsonPropertyOrder({"title1", "title2", "background1", "color7"})
 public class Color {
-
     private String title1;
     private String title2;
     private String background1;
@@ -29,10 +25,10 @@ public class Color {
     public String toString(){
         StringBuilder builder = new StringBuilder();
         builder.append("Color[").append("title1 : ").append(title1).append(",\n")
-                .append("title2 : ").append(title2).append(",\n")
-                .append("background1 : ").append(background1).append(",\n")
-                .append("color7 : ").append(color7).append(",\n")
-                .append("]");
+               .append("title2 : ").append(title2).append(",\n")
+               .append("background1 : ").append(background1).append(",\n")
+               .append("color7 : ").append(color7).append(",\n")
+               .append("]");
         return builder.toString();
     }
 }

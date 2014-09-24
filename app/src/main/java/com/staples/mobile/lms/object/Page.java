@@ -29,12 +29,12 @@ public class Page {
         this.pattern = pattern;
     }
 
-    @JsonProperty("form_factor")
+//    @JsonProperty("form_factor")
     public FormFactor getFormFactor(){
         return this.formFactor;
     }
 
-    @JsonProperty("form_factor")
+//    @JsonProperty("form_factor")
     public void setFormFactor(FormFactor formFactor){
         this.formFactor = formFactor;
     }

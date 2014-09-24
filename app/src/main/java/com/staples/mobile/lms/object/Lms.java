@@ -1,14 +1,9 @@
 package com.staples.mobile.lms.object;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonPropertyOrder({"product","descriptor","build","releaseDate","startDate","endDate","dev","style","image","page"})
 public class Lms {
-
     private String product;
     private String descriptor;
     private Double build;
@@ -20,113 +15,59 @@ public class Lms {
     private Image image;
     private List<Page> page = new ArrayList<Page> ();
 
-    @JsonProperty("product")
-    public String getProduct(){
-        return this.product;
+    public String getProduct() {
+        return product;
     }
 
-    public void setProduct(String product){
-        this.product = product;
+    public String getDescriptor() {
+        return descriptor;
     }
 
-    @JsonProperty("descriptor")
-    public String getDescriptor(){
-        return this.descriptor;
+    public Double getBuild() {
+        return build;
     }
 
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    public String getReleaseDate() {
+        return releaseDate;
     }
 
-    @JsonProperty("build")
-    public Double getBuild(){
-        return this.build;
+    public String getStartDate() {
+        return startDate;
     }
 
-    public void setBuild(Double build){
-        this.build = build;
+    public String getEndDate() {
+        return endDate;
     }
 
-    @JsonProperty("releaseDate")
-    public String getReleaseDate(){
-        return this.releaseDate;
+    public Boolean getDev() {
+        return dev;
     }
 
-    public void setReleaseDate(String releaseDate){
-        this.releaseDate = releaseDate;
+    public Style getStyle() {
+        return style;
     }
 
-    @JsonProperty("startDate")
-    public String getStartDate(){
-        return this.startDate;
+    public Image getImage() {
+        return image;
     }
 
-    public void setStartDate(String startDate){
-        this.startDate = startDate;
+    public List<Page> getPage() {
+        return page;
     }
-
-    @JsonProperty("endDate")
-    public String getEndDate(){
-        return this.endDate;
-    }
-
-    public void setEndDate(String endDate){
-        this.endDate = endDate;
-    }
-
-    @JsonProperty("dev")
-    public Boolean getDev(){
-        return this.dev;
-    }
-
-    public void setDev(Boolean dev){
-        this.dev = dev;
-    }
-
-    @JsonProperty("style")
-    public Style getStyle(){
-        return this.style;
-    }
-
-    public void setStyle(Style style){
-        this.style = style;
-    }
-
-    @JsonProperty("image")
-    public Image getImage(){
-        return this.image;
-    }
-
-    public void setImage(Image image){
-        this.image = image;
-    }
-
-    @JsonProperty("page")
-    public List<Page> getPage(){
-        return this.page;
-    }
-
-    public void setPage(List<Page> page){
-        this.page = page;
-    }
-
-
-
 
     public String toString(){
         StringBuilder builder = new StringBuilder();
         builder.append("JsonClass[").append("product : ").append(product).append(",\n")
-               .append("descriptor : ").append(descriptor).append(",\n")
-               .append("build : ").append(build).append(",\n")
-               .append("releaseDate : ").append(releaseDate).append(",\n")
-               .append("startDate : ").append(startDate).append(",\n")
-               .append("endDate : ").append(endDate).append(",\n")
-               .append("dev : ").append(dev).append(",\n")
-               .append("style : ").append(style).append(",\n")
-               .append("image : ").append(image).append(",\n")
-               .append("page : ").append(page).append(",\n")
-               .append("]");
+                .append("descriptor : ").append(descriptor).append(",\n")
+                .append("build : ").append(build).append(",\n")
+                .append("releaseDate : ").append(releaseDate).append(",\n")
+                .append("startDate : ").append(startDate).append(",\n")
+                .append("endDate : ").append(endDate).append(",\n")
+                .append("dev : ").append(dev).append(",\n")
+                .append("style : ").append(style).append(",\n")
+                .append("image : ").append(image).append(",\n")
+                .append("page : ").append(page).append(",\n")
+                .append("]");
         return builder.toString();
     }
-
 }

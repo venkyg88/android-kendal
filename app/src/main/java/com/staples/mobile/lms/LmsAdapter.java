@@ -9,8 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.squareup.picasso.Picasso;
-import com.staples.mobile.EasyOpenApi;
+import com.staples.mobile.LmsApi;
 import com.staples.mobile.MainApplication;
 import com.staples.mobile.lms.object.FormFactor;
 import com.staples.mobile.lms.object.Item;
@@ -75,12 +74,12 @@ public class LmsAdapter extends PagerAdapter implements Callback<Lms> {
         return (array.get(position).title);
     }
 
-    // Retrofit
+    // Retrofit LMS API call
 
     public void fill() {
         MainApplication application = (MainApplication) activity.getApplication();
-        EasyOpenApi easyOpenApi = application.getMockEasyOpenApi();
-        easyOpenApi.lms(RECOMMENDATION, STORE_ID, this);
+        LmsApi lmsApi = application.getMockLmsApi();
+        lmsApi.lms(RECOMMENDATION, STORE_ID, this);
     }
 
     public void success(Lms lms, Response response) {
