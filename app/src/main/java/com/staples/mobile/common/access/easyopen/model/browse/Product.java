@@ -25,8 +25,10 @@ public class Product {
     private String productName;
     private String productUrl;
     private Description[] promotionalOfferExpire;
+    private boolean retailOnly;
     boolean retailOnlySpecialOrder;
     private boolean ropisEligible;
+    private int ropisQtyLimit;
     private boolean shipableToStore;
     private String sku;
     private Image[] smallPromoImage;
@@ -108,12 +110,20 @@ public class Product {
         return promotionalOfferExpire;
     }
 
+    public boolean isRetailOnly() {
+        return retailOnly;
+    }
+
     public boolean isRetailOnlySpecialOrder() {
         return retailOnlySpecialOrder;
     }
 
     public boolean isRopisEligible() {
         return ropisEligible;
+    }
+
+    public int getRopisQtyLimit() {
+        return ropisQtyLimit;
     }
 
     public boolean isShipableToStore() {

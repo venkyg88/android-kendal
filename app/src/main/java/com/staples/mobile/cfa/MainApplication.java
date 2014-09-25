@@ -22,11 +22,13 @@ public class MainApplication extends Application {
     private static final RestAdapter.LogLevel LOGLEVEL = RestAdapter.LogLevel.BASIC;
 
     private static final String USER_AGENT = "Staples Mobile App 1.0";
-
     private static final int TIMEOUT = 15; // Seconds
 
+    private static final String wcToken = "3076889%2cltRE8nGUwZZYrJz%2fkvWW%2bPoLHGFHCqa4HtGeSPjbTmG0%2fb9JUOVq%2fq3VUn8uGo8Cfs6UTMFqbZHlIvDa6wDLTX5hCffgyGk4AJQEiuj1ZGL7ipmcRlrazIPHI9zsrYwNxeP7wsNJsJypHgZgGkuIG41xttBCaqUfga24VBmBwG9B9mAWJE5sjU5F15qyInThh%2feHd6J%2b0MoH1A2ye%2f6%2fVg%3d%3d";
+    private static final String wcTrustedToken = "3076889%2czExSs%2b5rB44Tib8tVl5VrmXqXKA%3d";
+
     private OkClient okClient;
-    private JacksonConverter jackson;
+    private JacksonConverter converter;
     private EasyOpenApi easyOpenApi;
     private LmsApi lmsApi;
     private LmsApi mockLmsApi;
@@ -38,7 +40,7 @@ public class MainApplication extends Application {
         okHttpClient.setReadTimeout(TIMEOUT, TimeUnit.SECONDS);
         okClient = new OkClient(okHttpClient);
 
-        jackson = new JacksonConverter();
+        converter = new JacksonConverter();
     }
 
     // Interceptor for standard HTTP headers
@@ -48,6 +50,8 @@ public class MainApplication extends Application {
         public void intercept(RequestFacade request) {
             request.addHeader("User-Agent", USER_AGENT);
             request.addHeader("Accept", "application/json");
+//            request.addHeader("WCToken", wcToken);
+//            request.addHeader("WCTrustedToken", wcTrustedToken);
 //            request.addHeader("Connection", "Keep-Alive");
         }
     }
@@ -61,7 +65,7 @@ public class MainApplication extends Application {
         builder.setClient(okClient);
         builder.setEndpoint(EasyOpenApi.SERVICE_ENDPOINT);
         builder.setRequestInterceptor(new StandardInterceptor());
-        builder.setConverter(jackson);
+        builder.setConverter(converter);
         builder.setLogLevel(LOGLEVEL);
         builder.setLog(new AndroidLog(TAG));
         RestAdapter adapter = builder.build();
@@ -79,7 +83,7 @@ public class MainApplication extends Application {
         builder.setClient(okClient);
         builder.setEndpoint(LmsApi.SERVICE_ENDPOINT);
         builder.setRequestInterceptor(new StandardInterceptor());
-        builder.setConverter(jackson);
+        builder.setConverter(converter);
         builder.setLogLevel(LOGLEVEL);
         builder.setLog(new AndroidLog(TAG));
         RestAdapter adapter = builder.build();

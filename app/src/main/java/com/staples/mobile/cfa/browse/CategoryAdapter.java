@@ -9,10 +9,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.R;
-import com.staples.mobile.common.access.easyopen.model.browse.*;
+import com.staples.mobile.cfa.MainApplication;
+import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.browse.Browse;
+import com.staples.mobile.common.access.easyopen.model.browse.Category;
+import com.staples.mobile.common.access.easyopen.model.browse.Description;
+import com.staples.mobile.common.access.easyopen.model.browse.SubCategory;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -104,6 +107,7 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
         notifyDataSetChanged();
     }
 
+    @Override
     public void success(Browse browse, Response response) {
         Category[] categories = browse.getCategory();
         if (categories==null || categories.length<1) {
@@ -152,24 +156,10 @@ public class CategoryAdapter extends ArrayAdapter<CategoryItem> implements Callb
             notifyDataSetChanged();
             return;
         }
-
-        // Process products
-        Product[] products = category.getProduct();
-        if (products != null) {
-            int count = products.length;
-            for (int i = 0; i < count; i++) {
-                Product product = products[i];
-                CategoryItem item = new CategoryItem(product.getProductName(), null, 0);
-                add(item);
-            }
-            Log.d(TAG, "Got " + count + " filter groups");
-            notifyDataSetChanged();
-            return;
-        }
-
         notifyDataSetChanged();
     }
 
+    @Override
     public void failure(RetrofitError retrofitError) {
         Log.d(TAG, "Failure callback " + retrofitError);
         notifyDataSetChanged();

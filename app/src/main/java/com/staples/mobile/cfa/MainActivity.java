@@ -2,6 +2,7 @@ package com.staples.mobile.cfa;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -32,7 +33,6 @@ public class MainActivity extends Activity
 
     private DrawerItem storeDrawerItem;
     private DrawerItem rewardsDrawerItem;
-    private DrawerItem skuDrawerItem;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -68,7 +68,6 @@ public class MainActivity extends Activity
         // Initialize non-drawer DrawerItems
         storeDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.store_info_title, ToBeDoneFragment.class);
         rewardsDrawerItem = adapter.getItem(6); // TODO Hard-coded alias
-        skuDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.home_title, SkuFragment.class);
 
         // Initialize topper
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -89,6 +88,8 @@ public class MainActivity extends Activity
         }
     }
 
+    // Navigation
+
     private boolean selectDrawerItem(DrawerItem item, boolean push) {
         // Safety check
         if (item == null || item.fragmentClass == null) return (false);
@@ -97,12 +98,16 @@ public class MainActivity extends Activity
         if (item.fragment == null)
             item.instantiate(this);
 
+        return(selectFragment(item.fragment, push));
+    }
+
+    public boolean selectFragment(Fragment fragment, boolean push) {
         // Swap Fragments
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         if (push)
             transaction.setCustomAnimations(R.animator.push_enter, R.animator.push_exit, R.animator.pop_enter, R.animator.pop_exit);
-        transaction.replace(R.id.content, item.fragment);
+        transaction.replace(R.id.content, fragment);
         if (push)
             transaction.addToBackStack(null);
         transaction.commit();
@@ -111,8 +116,9 @@ public class MainActivity extends Activity
     }
 
     public boolean selectSkuItem(String identifier) {
-        skuDrawerItem.identifier = identifier;
-        selectDrawerItem(skuDrawerItem, true);
+        DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.home_title, SkuFragment.class);
+        item.identifier = identifier;
+        selectDrawerItem(item, true);
         return(true);
     }
 

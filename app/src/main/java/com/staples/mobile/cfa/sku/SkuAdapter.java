@@ -47,6 +47,7 @@ public class SkuAdapter extends PagerAdapter implements Callback<Lms> {
 
         item.view = new TextView(activity); // TODO Hacked
         ((TextView) item.view).setText(item.identifier);
+        ((TextView) item.view).setTextSize(20.0f);
 
         container.addView(item.view);
         return (item);
@@ -59,10 +60,12 @@ public class SkuAdapter extends PagerAdapter implements Callback<Lms> {
 
     }
 
+    @Override
     public boolean isViewFromObject(View view, Object object) {
         return (view==((SkuItem) object).view);
     }
 
+    @Override
     public String getPageTitle(int position) {
         return (array.get(position).title);
     }
@@ -83,9 +86,11 @@ public class SkuAdapter extends PagerAdapter implements Callback<Lms> {
 //        easyOpenApi.whatever(RECOMMENDATION, STORE_ID, this);
     }
 
+    @Override
     public void success(Lms lms, Response response) {
     }
 
+    @Override
     public void failure(RetrofitError retrofitError) {
         Log.d(TAG, "Failure callback " + retrofitError);
     }
