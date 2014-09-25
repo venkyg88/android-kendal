@@ -1,4 +1,4 @@
-package com.staples.mobile.common.access.easyopen.model;
+package com.staples.mobile.common.access.easyopen.model.browse;
 
 public class Image {
     private String altText;

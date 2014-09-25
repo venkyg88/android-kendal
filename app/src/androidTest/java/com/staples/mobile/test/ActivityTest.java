@@ -3,11 +3,11 @@ package com.staples.mobile.test;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.staples.mobile.R;
 import com.staples.mobile.cfa.DrawerAdapter;
-import com.staples.mobile.common.access.lms.api.LmsApi;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.MainApplication;
-import com.staples.mobile.R;
+import com.staples.mobile.common.access.lms.api.LmsApi;
 import com.staples.mobile.common.access.lms.model.Lms;
 
 import org.junit.Assert;
@@ -59,7 +59,7 @@ public class ActivityTest implements Callback<Lms> {
         DrawerAdapter adapter = (DrawerAdapter) list.getAdapter();
         Assert.assertNotNull("Left drawer should have adapter", adapter);
         int count = adapter.getCount();
-        Assert.assertEquals("Left drawer should have 8 items", 8, count);
+        Assert.assertEquals("Left drawer should have 9 items", 9, count);
     }
 
     @Test

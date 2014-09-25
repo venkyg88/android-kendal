@@ -1,8 +1,5 @@
-package com.staples.mobile.common.access.easyopen.model;
+package com.staples.mobile.common.access.easyopen.model.browse;
 
-/**
- * Created by pyhre001 on 9/22/14.
- */
 public class CategoryAnalytic {
     private String categoryCode;
     private String categoryName;

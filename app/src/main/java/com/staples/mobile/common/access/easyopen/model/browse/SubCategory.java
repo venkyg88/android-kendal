@@ -1,6 +1,4 @@
-package com.staples.mobile.common.access.easyopen.model;
-
-import com.staples.mobile.common.access.easyopen.model.Description;
+package com.staples.mobile.common.access.easyopen.model.browse;
 
 /**
  * Created by pyhre001 on 9/10/14.

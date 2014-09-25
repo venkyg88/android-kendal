@@ -1,4 +1,4 @@
-package com.staples.mobile.common.access.easyopen.model;
+package com.staples.mobile.common.access.easyopen.model.browse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

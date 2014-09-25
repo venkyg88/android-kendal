@@ -15,9 +15,7 @@ import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.R;
-import com.staples.mobile.common.access.easyopen.model.Browse;
-import com.staples.mobile.common.access.easyopen.model.Category;
-import com.staples.mobile.common.access.easyopen.model.Product;
+import com.staples.mobile.common.access.easyopen.model.browse.*;
 
 import retrofit.RetrofitError;
 import retrofit.client.Response;

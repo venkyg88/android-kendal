@@ -1,4 +1,4 @@
-package com.staples.mobile.common.access.easyopen.model;
+package com.staples.mobile.common.access.easyopen.model.browse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -25,6 +25,7 @@ public class Product {
     private String productName;
     private String productUrl;
     private Description[] promotionalOfferExpire;
+    boolean retailOnlySpecialOrder;
     private boolean ropisEligible;
     private boolean shipableToStore;
     private String sku;
@@ -105,6 +106,10 @@ public class Product {
 
     public Description[] getPromotionalOfferExpire() {
         return promotionalOfferExpire;
+    }
+
+    public boolean isRetailOnlySpecialOrder() {
+        return retailOnlySpecialOrder;
     }
 
     public boolean isRopisEligible() {

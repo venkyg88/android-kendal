@@ -1,8 +1,5 @@
 package com.staples.mobile.common.access.lms.model;
 
-import com.staples.mobile.common.access.lms.model.Color;
-import com.staples.mobile.common.access.lms.model.Font;
-
 public class Style {
     private String name;
     private Color color;

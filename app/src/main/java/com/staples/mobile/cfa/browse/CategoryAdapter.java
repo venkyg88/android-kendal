@@ -12,11 +12,7 @@ import android.widget.TextView;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.R;
-import com.staples.mobile.common.access.easyopen.model.Browse;
-import com.staples.mobile.common.access.easyopen.model.Category;
-import com.staples.mobile.common.access.easyopen.model.Description;
-import com.staples.mobile.common.access.easyopen.model.Product;
-import com.staples.mobile.common.access.easyopen.model.SubCategory;
+import com.staples.mobile.common.access.easyopen.model.browse.*;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
