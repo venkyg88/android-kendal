@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,9 +32,41 @@ public class MainActivity extends Activity
     private ViewGroup topper;
     private View rightDrawer;
 
+    private DrawerItem splashDrawerItem;
     private DrawerItem searchDrawerItem;
     private DrawerItem storeDrawerItem;
     private DrawerItem rewardsDrawerItem;
+
+    public enum Transition {
+        NONE  (0, 0, 0, 0, 0),
+        SLIDE (0, R.animator.push_enter, R.animator.push_exit, R.animator.pop_enter, R.animator.pop_exit);
+
+        private int standard;
+        private int push_enter;
+        private int push_exit;
+        private int pop_enter;
+        private int pop_exit;
+
+        Transition(int standard, int push_enter, int push_exit, int pop_enter, int pop_exit) {
+            this.standard = standard;
+            this.push_enter = push_enter;
+            this.push_exit = push_exit;
+            this.pop_enter = pop_enter;
+            this.pop_exit = pop_exit;
+        }
+
+        public void setAnimation(FragmentTransaction transaction) {
+            if (standard!=0) {
+                transaction.setTransition(standard);
+            }
+            else if (pop_enter!=0 && pop_exit!=0) {
+                transaction.setCustomAnimations(push_enter, push_exit, pop_enter, pop_exit);
+            }
+            else if (push_enter!=0 && push_exit!=0) {
+                transaction.setCustomAnimations(push_enter, push_exit);
+            }
+        }
+    };
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -68,6 +101,7 @@ public class MainActivity extends Activity
         leftDrawer.setOnItemClickListener(this);
 
         // Create non-drawer DrawerItems
+        splashDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, 0, SplashFragment.class);
         searchDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.ic_search, R.string.search_title, ToBeDoneFragment.class);
         storeDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.store_info_title, ToBeDoneFragment.class);
         rewardsDrawerItem = adapter.getItem(6); // TODO Hard-coded alias
@@ -85,31 +119,28 @@ public class MainActivity extends Activity
         cartAdapter.add("Banana");
         cartAdapter.add("Cantaloupe");
 
-        // Select first drawer item if first run
+        // If first time running
         if (bundle == null) {
-            selectDrawerItem(adapter.getItem(0), false);
+            // Show splash page
+            // TODO hide ActionBar
+            topper.setVisibility(View.GONE);
+            selectDrawerItem(splashDrawerItem, Transition.NONE, false);
+
+            // Select first drawer item
+            final DrawerItem item = adapter.getItem(0);
+            Runnable runs = new Runnable() {public void run() {selectDrawerItem(item, Transition.NONE, false);}};
+            Handler handler = new Handler();
+            handler.postDelayed(runs, 2000);
         }
     }
 
     // Navigation
 
-    private boolean selectDrawerItem(DrawerItem item, boolean push) {
-        // Safety check
-        if (item == null || item.fragmentClass == null) return (false);
-
-        // Create Fragment if necessary
-        if (item.fragment == null)
-            item.instantiate(this);
-
-        return(selectFragment(item.fragment, push));
-    }
-
-    public boolean selectFragment(Fragment fragment, boolean push) {
+    public boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
         // Swap Fragments
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        if (push)
-            transaction.setCustomAnimations(R.animator.push_enter, R.animator.push_exit, R.animator.pop_enter, R.animator.pop_exit);
+        if (transition!=null) transition.setAnimation(transaction);
         transaction.replace(R.id.content, fragment);
         if (push)
             transaction.addToBackStack(null);
@@ -118,10 +149,21 @@ public class MainActivity extends Activity
         return(true);
     }
 
+    private boolean selectDrawerItem(DrawerItem item, Transition transition, boolean push) {
+        // Safety check
+        if (item == null || item.fragmentClass == null) return (false);
+
+        // Create Fragment if necessary
+        if (item.fragment == null)
+            item.instantiate(this);
+
+        return(selectFragment(item.fragment, transition, push));
+    }
+
     public boolean selectSkuItem(String identifier) {
         DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.home_title, SkuFragment.class);
         item.identifier = identifier;
-        selectDrawerItem(item, true);
+        selectDrawerItem(item, Transition.SLIDE, true);
         return(true);
     }
 
@@ -152,7 +194,7 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.search:
-                selectDrawerItem(searchDrawerItem, true);
+                selectDrawerItem(searchDrawerItem, Transition.SLIDE, true);
                 break;
 
             case R.id.right_drawer:
@@ -163,11 +205,11 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.store:
-                selectDrawerItem(storeDrawerItem, true);
+                selectDrawerItem(storeDrawerItem, Transition.SLIDE, true);
                 break;
 
             case R.id.rewards:
-                selectDrawerItem(rewardsDrawerItem, true);
+                selectDrawerItem(rewardsDrawerItem, Transition.SLIDE, true);
                 break;
         }
     }
@@ -177,7 +219,7 @@ public class MainActivity extends Activity
     public void onItemClick(AdapterView parent, View view, int position, long id) {
         DrawerItem item = (DrawerItem) parent.getItemAtPosition(position);
         if (item.fragmentClass!=null) {
-            if (selectDrawerItem(item, true))
+            if (selectDrawerItem(item, Transition.SLIDE, true))
                 drawerLayout.closeDrawers();
         }
     }

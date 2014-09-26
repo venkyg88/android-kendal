@@ -61,6 +61,6 @@ public class CategoryFragment extends Fragment
         fragment.setArguments(args);
 
         // Select fragment
-        ((MainActivity) getActivity()).selectFragment(fragment, true);
+        ((MainActivity) getActivity()).selectFragment(fragment, MainActivity.Transition.SLIDE, true);
     }
 }

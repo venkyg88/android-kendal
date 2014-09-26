@@ -91,7 +91,7 @@ public class ProductAdapter extends ArrayAdapter<ProductItem>
                     requestCreator.fit();
                     break;
                 case VIEW_PRODUCT:
-                    view = inflater.inflate(R.layout.category_item, parent, false);
+                    view = inflater.inflate(R.layout.product_item, parent, false);
                     break;
             }
         }
