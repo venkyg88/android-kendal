@@ -31,6 +31,7 @@ public class MainActivity extends Activity
     private ViewGroup topper;
     private View rightDrawer;
 
+    private DrawerItem searchDrawerItem;
     private DrawerItem storeDrawerItem;
     private DrawerItem rewardsDrawerItem;
 
@@ -57,6 +58,7 @@ public class MainActivity extends Activity
         View view = actionBar.getCustomView();
         view.findViewById(R.id.left_drawer).setOnClickListener(this);
         view.findViewById(R.id.website).setOnClickListener(this);
+        view.findViewById(R.id.search).setOnClickListener(this);
         view.findViewById(R.id.right_drawer).setOnClickListener(this);
 
         // Initialize left drawer listview
@@ -65,7 +67,8 @@ public class MainActivity extends Activity
         adapter.fill();
         leftDrawer.setOnItemClickListener(this);
 
-        // Initialize non-drawer DrawerItems
+        // Create non-drawer DrawerItems
+        searchDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.ic_search, R.string.search_title, ToBeDoneFragment.class);
         storeDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.store_info_title, ToBeDoneFragment.class);
         rewardsDrawerItem = adapter.getItem(6); // TODO Hard-coded alias
 
@@ -146,6 +149,10 @@ public class MainActivity extends Activity
 
             case R.id.website:
                 openWebsite();
+                break;
+
+            case R.id.search:
+                selectDrawerItem(searchDrawerItem, true);
                 break;
 
             case R.id.right_drawer:

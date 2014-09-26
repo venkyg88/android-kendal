@@ -26,7 +26,7 @@ public class Product {
     private String productUrl;
     private Description[] promotionalOfferExpire;
     private boolean retailOnly;
-    boolean retailOnlySpecialOrder;
+    private boolean retailOnlySpecialOrder;
     private boolean ropisEligible;
     private int ropisQtyLimit;
     private boolean shipableToStore;

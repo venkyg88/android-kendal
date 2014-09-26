@@ -6,7 +6,7 @@
     android:background="#00ff00">
     <ImageView
         android:id="@+id/left_drawer"
-        android:layout_width="32dp"
+        android:layout_width="@dimen/icon_width"
         android:layout_height="match_parent"
         android:gravity="center"
         android:src="@drawable/ic_drawer"/>
@@ -32,10 +32,16 @@
     <View
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
+    <ImageView
+        android:id="@+id/search"
+        android:layout_width="@dimen/icon_width"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:src="@drawable/ic_search"/>
     <ImageView
         android:id="@+id/right_drawer"
-        android:layout_width="32dp"
+        android:layout_width="@dimen/icon_width"
         android:layout_height="match_parent"
         android:gravity="center"
         android:src="@drawable/ic_drawer"/>
