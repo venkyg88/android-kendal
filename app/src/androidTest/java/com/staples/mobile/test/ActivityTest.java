@@ -10,6 +10,7 @@ import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.common.access.lms.api.LmsApi;
 import com.staples.mobile.common.access.lms.model.Lms;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,20 +30,23 @@ import retrofit.client.Response;
 public class ActivityTest implements Callback<Lms> {
     public static final String TAG = "DrawerTest";
 
+    ActivityController controller;
     private MainActivity activity;
     private MainApplication application;
 
     @Before
-    public void setup() {
+    public void setUp() {
         // Redirect logcat to stdout logfile
         ShadowLog.stream = System.out;
 
         // Create activity controller
-        ActivityController controller = Robolectric.buildActivity(MainActivity.class);
+        controller = Robolectric.buildActivity(MainActivity.class);
         Assert.assertNotNull("Robolectric controller should not be null", controller);
 
         // Create activity
         controller.create();
+        controller.start();
+        controller.visible();
         activity = (MainActivity) controller.get();
 
         // Check for success
@@ -51,7 +55,12 @@ public class ActivityTest implements Callback<Lms> {
         Assert.assertNotNull("Application should exist", application);
     }
 
-    @Test(timeout=2000)
+    @After
+    public void tearDown() {
+        controller.destroy();
+    }
+
+    @Test
     public void testLeftDrawer() throws InterruptedException {
         System.out.println("testLeftDrawer");
         ListView list = (ListView) activity.findViewById(R.id.left_drawer);

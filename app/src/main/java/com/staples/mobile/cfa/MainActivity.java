@@ -39,7 +39,8 @@ public class MainActivity extends Activity
 
     public enum Transition {
         NONE  (0, 0, 0, 0, 0),
-        SLIDE (0, R.animator.push_enter, R.animator.push_exit, R.animator.pop_enter, R.animator.pop_exit);
+        SLIDE (0, R.animator.push_enter, R.animator.push_exit, R.animator.pop_enter, R.animator.pop_exit),
+        FADE (0, R.animator.fade_in, R.animator.fade_out, 0, 0);
 
         private int standard;
         private int push_enter;
@@ -121,16 +122,16 @@ public class MainActivity extends Activity
 
         // If first time running
         if (bundle == null) {
-            // Show splash page
             // TODO hide ActionBar
             topper.setVisibility(View.GONE);
             selectDrawerItem(splashDrawerItem, Transition.NONE, false);
 
-            // Select first drawer item
+            // Robolectric runs postDelayed immediately and can't tolerate queued transactions
+            getFragmentManager().executePendingTransactions();
+
             final DrawerItem item = adapter.getItem(0);
-            Runnable runs = new Runnable() {public void run() {selectDrawerItem(item, Transition.NONE, false);}};
-            Handler handler = new Handler();
-            handler.postDelayed(runs, 2000);
+            Runnable runs = new Runnable() {public void run() {selectDrawerItem(item, Transition.FADE, false);}};
+            new Handler().postDelayed(runs, 2000);
         }
     }
 
@@ -145,7 +146,6 @@ public class MainActivity extends Activity
         if (push)
             transaction.addToBackStack(null);
         transaction.commit();
-
         return(true);
     }
 
@@ -156,7 +156,6 @@ public class MainActivity extends Activity
         // Create Fragment if necessary
         if (item.fragment == null)
             item.instantiate(this);
-
         return(selectFragment(item.fragment, transition, push));
     }
 
