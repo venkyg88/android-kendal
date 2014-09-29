@@ -9,12 +9,15 @@ public class Pricing {
     @JsonProperty("BuyMoreSaveMoreDetail")
     private BuyMoreSaveMoreDetail[] buyMoreSaveMoreDetail;
     private String buyMoreSaveMoreImage;
+    private Discount[] discount;
     private boolean displayRegularPricing;
     private boolean displayWasPricing;
+    private float finalPriceDeduction;
     private Product[] freeItem;
     private float finalPrice;
     private float freeItemTotalSavings;
     private float listPrice;
+    private float price;
     private String unitOfMeasure;
 
     public BuyMoreSaveMoreDetail[] getBuyMoreSaveMoreDetail() {
@@ -25,12 +28,20 @@ public class Pricing {
         return buyMoreSaveMoreImage;
     }
 
+    public Discount[] getDiscount() {
+        return discount;
+    }
+
     public boolean isDisplayRegularPricing() {
         return displayRegularPricing;
     }
 
     public boolean isDisplayWasPricing() {
         return displayWasPricing;
+    }
+
+    public float getFinalPriceDeduction() {
+        return finalPriceDeduction;
     }
 
     public Product[] getFreeItem() {
@@ -47,6 +58,10 @@ public class Pricing {
 
     public float getListPrice() {
         return listPrice;
+    }
+
+    public float getPrice() {
+        return price;
     }
 
     public String getUnitOfMeasure() {

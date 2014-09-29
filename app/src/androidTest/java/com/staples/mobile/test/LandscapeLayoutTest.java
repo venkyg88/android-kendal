@@ -29,10 +29,4 @@ public class LandscapeLayoutTest {
         View view = inflater.inflate(R.layout.main, null);
         Assert.assertNotNull(view);
     }
-
-    @Test
-    public void testCategory() {
-        View view = inflater.inflate(R.layout.category, null);
-        Assert.assertNotNull(view);
-    }
 }

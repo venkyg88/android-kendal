@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 
 public class MainActivity extends Activity
@@ -114,7 +116,7 @@ public class MainActivity extends Activity
         topper.findViewById(R.id.rewards).setOnClickListener(this);
 
         // Initialize right drawer listview TODO just hacked for demo
-        ArrayAdapter<String> cartAdapter = new ArrayAdapter<String>(this, R.layout.category_item);
+        ArrayAdapter<String> cartAdapter = new ArrayAdapter<String>(this, R.layout.drawer_category);
         ((ListView) rightDrawer.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
         cartAdapter.add("Apple");
         cartAdapter.add("Banana");
@@ -157,6 +159,14 @@ public class MainActivity extends Activity
         if (item.fragment == null)
             item.instantiate(this);
         return(selectFragment(item.fragment, transition, push));
+    }
+
+    public boolean selectBundle(String title, String path) {
+        DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, 0, BundleFragment.class);
+        item.title = title;
+        item.path = path;
+        selectDrawerItem(item, Transition.SLIDE, true);
+        return (true);
     }
 
     public boolean selectSkuItem(String identifier) {
@@ -216,10 +226,40 @@ public class MainActivity extends Activity
     // Left drawer listview clicks
     @Override
     public void onItemClick(AdapterView parent, View view, int position, long id) {
+        DrawerAdapter adapter;
+
         DrawerItem item = (DrawerItem) parent.getItemAtPosition(position);
-        if (item.fragmentClass!=null) {
-            if (selectDrawerItem(item, Transition.SLIDE, true))
+        switch(item.type) {
+            case FRAGMENT:
                 drawerLayout.closeDrawers();
+                selectDrawerItem(item, Transition.SLIDE, true);
+                break;
+
+            case BROWSE:
+                adapter = (DrawerAdapter) parent.getAdapter();
+                adapter.setBrowseMode(true);
+                break;
+
+            case BACKTOTOP:
+                adapter = (DrawerAdapter) parent.getAdapter();
+                adapter.setBrowseMode(false);
+                break;
+
+            case STACK:
+                adapter = (DrawerAdapter) parent.getAdapter();
+                adapter.pop(item);
+                break;
+
+            case CATEGORY:
+                String identifier = item.getBundleIdentifier();
+                if (identifier!=null) {
+                    drawerLayout.closeDrawers();
+                    selectBundle(item. title, item.path);
+                } else {
+                    adapter = (DrawerAdapter) parent.getAdapter();
+                    adapter.push(item);
+                }
+                break;
         }
     }
 }
