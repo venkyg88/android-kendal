@@ -95,12 +95,16 @@ public class LmsAdapter extends PagerAdapter implements Callback<Lms>, AdapterVi
             array.add(new LmsItem(item.getTitle(), item.getBanner(), item.getBundleId()));
         }
         notifyDataSetChanged();
+        activity.showMainScreen();
     }
 
     @Override
     public void failure(RetrofitError retrofitError) {
         Log.d(TAG, "Failure callback " + retrofitError);
+        activity.showMainScreen();
     }
+
+    // LMS product item clicks
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

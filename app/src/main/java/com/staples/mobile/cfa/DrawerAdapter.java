@@ -138,12 +138,14 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.order_title, ToBeDoneFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.profile_title, ToBeDoneFragment.class));
 
+        // Fill stack list
         stackList.add(new DrawerItem(DrawerItem.Type.BACKTOTOP, activity, R.drawable.logo, R.string.backtotop_title));
 
-        fill(null); // TODO Needs work!
+        // Fill browse list
+        fill(null);
     }
 
-    public void push(DrawerItem item) {
+    public void pushStack(DrawerItem item) {
         // Push new stack item
         item.type = DrawerItem.Type.STACK;
         stackList.add(item);
@@ -156,7 +158,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
         fill(item.path);
     }
 
-    public void pop(DrawerItem item) {
+    public void popStack(DrawerItem item) {
         // Safety check
         int index = stackList.indexOf(item);
         if (index<0) return;
@@ -167,7 +169,6 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
 
         // Pop stack
         int size = stackList.size();
-        Log.d(TAG, "Index="+index+", Size="+size);
         for(;index<size;) {
             size--;
             DrawerItem dead = (DrawerItem) stackList.remove(size);

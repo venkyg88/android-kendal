@@ -1,6 +1,5 @@
 package com.staples.mobile.cfa;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -11,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,12 +27,13 @@ public class MainActivity extends Activity
 
     private static final Uri STAPLESWEBSITE = Uri.parse("http://m.staples.com/");
 
+    private static final int SURRENDER_TIMEOUT = 5000;
+
     private DrawerLayout drawerLayout;
     private ListView leftDrawer;
     private ViewGroup topper;
     private View rightDrawer;
 
-    private DrawerItem splashDrawerItem;
     private DrawerItem searchDrawerItem;
     private DrawerItem storeDrawerItem;
     private DrawerItem rewardsDrawerItem;
@@ -74,6 +73,18 @@ public class MainActivity extends Activity
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+
+        boolean freshStart = (bundle==null);
+        prepareMainScreen(freshStart);
+    }
+
+    public void showMainScreen() {
+        findViewById(R.id.splash).setVisibility(View.GONE);
+        findViewById(R.id.main).setVisibility(View.VISIBLE);
+    }
+
+    public void prepareMainScreen(boolean freshStart) {
+        // Inflate
         setContentView(R.layout.main);
 
         // Find top-level entities
@@ -82,20 +93,11 @@ public class MainActivity extends Activity
         topper = (ViewGroup) findViewById(R.id.topper);
         rightDrawer = findViewById(R.id.right_drawer);
 
-        // Initialize action bar
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayShowHomeEnabled(false);
-        actionBar.setDisplayUseLogoEnabled(false);
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setCustomView(R.layout.action_bar);
-
         // Set action bar listeners
-        View view = actionBar.getCustomView();
-        view.findViewById(R.id.left_drawer).setOnClickListener(this);
-        view.findViewById(R.id.website).setOnClickListener(this);
-        view.findViewById(R.id.search).setOnClickListener(this);
-        view.findViewById(R.id.right_drawer).setOnClickListener(this);
+        findViewById(R.id.action_left_drawer).setOnClickListener(this);
+        findViewById(R.id.website).setOnClickListener(this);
+        findViewById(R.id.search).setOnClickListener(this);
+        findViewById(R.id.action_right_drawer).setOnClickListener(this);
 
         // Initialize left drawer listview
         DrawerAdapter adapter = new DrawerAdapter(this);
@@ -104,7 +106,6 @@ public class MainActivity extends Activity
         leftDrawer.setOnItemClickListener(this);
 
         // Create non-drawer DrawerItems
-        splashDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, 0, SplashFragment.class);
         searchDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.ic_search, R.string.search_title, ToBeDoneFragment.class);
         storeDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.store_info_title, ToBeDoneFragment.class);
         rewardsDrawerItem = adapter.getItem(6); // TODO Hard-coded alias
@@ -122,24 +123,23 @@ public class MainActivity extends Activity
         cartAdapter.add("Banana");
         cartAdapter.add("Cantaloupe");
 
-        // If first time running
-        if (bundle == null) {
-            // TODO hide ActionBar
-            topper.setVisibility(View.GONE);
-            selectDrawerItem(splashDrawerItem, Transition.NONE, false);
-
-            // Robolectric runs postDelayed immediately and can't tolerate queued transactions
-            getFragmentManager().executePendingTransactions();
-
-            final DrawerItem item = adapter.getItem(0);
-            Runnable runs = new Runnable() {public void run() {selectDrawerItem(item, Transition.FADE, false);}};
-            new Handler().postDelayed(runs, 2000);
+        // Fresh start?
+        if (freshStart) {
+            selectDrawerItem(adapter.getItem(0), Transition.NONE, false);
+            Runnable runs = new Runnable() {public void run() {
+                showMainScreen();}};
+            new Handler().postDelayed(runs, SURRENDER_TIMEOUT);
+        } else {
+            showMainScreen();
         }
     }
 
     // Navigation
 
     public boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
+        // Make sure all drawers are closed
+        drawerLayout.closeDrawers();
+
         // Swap Fragments
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
@@ -177,6 +177,9 @@ public class MainActivity extends Activity
     }
 
     public boolean openWebsite() {
+        // Make sure all drawers are closed
+        drawerLayout.closeDrawers();
+
         Intent intent = new Intent(Intent.ACTION_VIEW, STAPLESWEBSITE);
         try {
             startActivity(intent);
@@ -191,7 +194,7 @@ public class MainActivity extends Activity
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.left_drawer:
+            case R.id.action_left_drawer:
                 if (!drawerLayout.isDrawerOpen(leftDrawer)) {
                     drawerLayout.closeDrawer(rightDrawer);
                     drawerLayout.openDrawer(leftDrawer);
@@ -206,7 +209,7 @@ public class MainActivity extends Activity
                 selectDrawerItem(searchDrawerItem, Transition.SLIDE, true);
                 break;
 
-            case R.id.right_drawer:
+            case R.id.action_right_drawer:
                 if (!drawerLayout.isDrawerOpen(rightDrawer)) {
                     drawerLayout.closeDrawer(leftDrawer);
                     drawerLayout.openDrawer(rightDrawer);
@@ -247,7 +250,7 @@ public class MainActivity extends Activity
 
             case STACK:
                 adapter = (DrawerAdapter) parent.getAdapter();
-                adapter.pop(item);
+                adapter.popStack(item);
                 break;
 
             case CATEGORY:
@@ -257,7 +260,7 @@ public class MainActivity extends Activity
                     selectBundle(item. title, item.path);
                 } else {
                     adapter = (DrawerAdapter) parent.getAdapter();
-                    adapter.push(item);
+                    adapter.pushStack(item);
                 }
                 break;
         }
