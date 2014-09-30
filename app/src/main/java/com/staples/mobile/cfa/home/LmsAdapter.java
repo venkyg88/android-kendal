@@ -11,11 +11,10 @@ import android.widget.ListView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.MainApplication;
-import com.staples.mobile.common.access.lms.model.FormFactor;
 import com.staples.mobile.common.access.lms.model.Item;
 import com.staples.mobile.common.access.lms.model.Lms;
 import com.staples.mobile.common.access.lms.api.LmsApi;
-import com.staples.mobile.common.access.lms.model.Page;
+import com.staples.mobile.common.access.lms.model.Screen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,11 +87,10 @@ public class LmsAdapter extends PagerAdapter implements Callback<Lms>, AdapterVi
 
     @Override
     public void success(Lms lms, Response response) {
-        Page page = lms.getPage().get(0);
-        FormFactor formFactor = page.getFormFactor();
-        List<Item> items = formFactor.getItem();
+        Screen screen = lms.getScreen().get(0);
+        List<Item> items = screen.getItem();
         for (Item item : items) {
-            array.add(new LmsItem(item.getTitle(), item.getBanner(), item.getBundleId()));
+            array.add(new LmsItem(item.getTitle(), item.getBanner(), null));
         }
         notifyDataSetChanged();
         activity.showMainScreen();

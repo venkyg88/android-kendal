@@ -1,31 +1,28 @@
 package com.staples.mobile.common.access.lms.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 
-public class Item {
-    private String banner;
-    private String title;
-    @JsonProperty("bundle_id")
-    private String bundleId;
+public class Item{
+   	private List<Area> area;
+   	private String banner;
+   	private String title;
 
-    public String getBanner() {
-        return banner;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getBundleId() {
-        return bundleId;
-    }
-
-    public String toString(){
-        StringBuilder builder = new StringBuilder();
-        builder.append("Item[").append("banner : ").append(banner).append(",\n")
-               .append("title : ").append(title).append(",\n")
-               .append("bundleId : ").append(bundleId).append(",\n")
-               .append("]");
-        return builder.toString();
-    }
+ 	public List<Area> getArea(){
+		return this.area;
+	}
+	public void setArea(List<Area> area){
+		this.area = area;
+	}
+ 	public String getBanner(){
+		return this.banner;
+	}
+	public void setBanner(String banner){
+		this.banner = banner;
+	}
+ 	public String getTitle(){
+		return this.title;
+	}
+	public void setTitle(String title){
+		this.title = title;
+	}
 }
