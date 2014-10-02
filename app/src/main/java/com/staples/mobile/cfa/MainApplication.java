@@ -25,7 +25,7 @@ public class MainApplication extends Application {
     private static final int TIMEOUT = 15; // Seconds
 
     private static final String wcToken = "3076889%2cltRE8nGUwZZYrJz%2fkvWW%2bPoLHGFHCqa4HtGeSPjbTmG0%2fb9JUOVq%2fq3VUn8uGo8Cfs6UTMFqbZHlIvDa6wDLTX5hCffgyGk4AJQEiuj1ZGL7ipmcRlrazIPHI9zsrYwNxeP7wsNJsJypHgZgGkuIG41xttBCaqUfga24VBmBwG9B9mAWJE5sjU5F15qyInThh%2feHd6J%2b0MoH1A2ye%2f6%2fVg%3d%3d";
-    private static final String wcTrustedToken = "3076889%2czExSs%2b5rB44Tib8tVl5VrmXqXKA%3d";
+    private static final String wcTrustedToken = "3076889%2ccQCBJrw5MN0M6Z5gaEM0cHB%2by%2fw%3d";
 
     private OkClient okClient;
     private JacksonConverter converter;

@@ -29,6 +29,7 @@ public class Product {
     private boolean retailOnlySpecialOrder;
     private boolean ropisEligible;
     private int ropisQtyLimit;
+    private float savings;
     private boolean shipableToStore;
     private String sku;
     private Image[] smallPromoImage;
@@ -124,6 +125,10 @@ public class Product {
 
     public int getRopisQtyLimit() {
         return ropisQtyLimit;
+    }
+
+    public float getSavings() {
+        return savings;
     }
 
     public boolean isShipableToStore() {

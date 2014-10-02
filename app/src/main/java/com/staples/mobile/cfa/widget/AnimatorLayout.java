@@ -20,6 +20,8 @@ public class AnimatorLayout extends LinearLayout {
         super(context, attrs, defStyle);
     }
 
+    // Property modifiers
+
     public void setXFraction(float fraction) {
         int width = getWidth();
         if (width>0) setX(fraction * width);

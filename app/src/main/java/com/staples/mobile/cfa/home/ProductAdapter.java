@@ -91,7 +91,7 @@ public class ProductAdapter extends ArrayAdapter<ProductItem>
                     requestCreator.fit();
                     break;
                 case VIEW_PRODUCT:
-                    view = inflater.inflate(R.layout.category_item, parent, false);
+                    view = inflater.inflate(R.layout.product_item, parent, false);
                     break;
             }
         }
@@ -105,10 +105,10 @@ public class ProductAdapter extends ArrayAdapter<ProductItem>
 
     void fill() {
         add(new ProductItem(null, lmsItem.bannerUrl, null));
-        MainApplication application = (MainApplication) activity.getApplication();
-        EasyOpenApi easyOpenApi = application.getEasyOpenApi();
-        easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, lmsItem.identifier, CATALOG_ID, LOCALE,
-                                     ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
+//        MainApplication application = (MainApplication) activity.getApplication(); // TODO Broken because of new LMS!
+//        EasyOpenApi easyOpenApi = application.getEasyOpenApi();
+//        easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, lmsItem.identifier, CATALOG_ID, LOCALE,
+//                                     ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
     }
 
     // Retrofit EasyOpen API call

@@ -1,73 +1,63 @@
 package com.staples.mobile.common.access.lms.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class Lms {
-    private String product;
-    private String descriptor;
-    private Double build;
-    private String releaseDate;
-    private String startDate;
-    private String endDate;
-    private Boolean dev;
-    private Style style;
-    private Image image;
-    private List<Page> page = new ArrayList<Page> ();
+public class Lms{
+   	private Number build;
+   	private String descriptor;
+   	private boolean dev;
+   	private String endDate;
+   	private String product;
+   	private String releaseDate;
+   	private List<Screen> screen;
+   	private String startDate;
 
-    public String getProduct() {
-        return product;
-    }
-
-    public String getDescriptor() {
-        return descriptor;
-    }
-
-    public Double getBuild() {
-        return build;
-    }
-
-    public String getReleaseDate() {
-        return releaseDate;
-    }
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public Boolean getDev() {
-        return dev;
-    }
-
-    public Style getStyle() {
-        return style;
-    }
-
-    public Image getImage() {
-        return image;
-    }
-
-    public List<Page> getPage() {
-        return page;
-    }
-
-    public String toString(){
-        StringBuilder builder = new StringBuilder();
-        builder.append("JsonClass[").append("product : ").append(product).append(",\n")
-                .append("descriptor : ").append(descriptor).append(",\n")
-                .append("build : ").append(build).append(",\n")
-                .append("releaseDate : ").append(releaseDate).append(",\n")
-                .append("startDate : ").append(startDate).append(",\n")
-                .append("endDate : ").append(endDate).append(",\n")
-                .append("dev : ").append(dev).append(",\n")
-                .append("style : ").append(style).append(",\n")
-                .append("image : ").append(image).append(",\n")
-                .append("page : ").append(page).append(",\n")
-                .append("]");
-        return builder.toString();
-    }
+ 	public Number getBuild(){
+		return this.build;
+	}
+	public void setBuild(Number build){
+		this.build = build;
+	}
+ 	public String getDescriptor(){
+		return this.descriptor;
+	}
+	public void setDescriptor(String descriptor){
+		this.descriptor = descriptor;
+	}
+ 	public boolean getDev(){
+		return this.dev;
+	}
+	public void setDev(boolean dev){
+		this.dev = dev;
+	}
+ 	public String getEndDate(){
+		return this.endDate;
+	}
+	public void setEndDate(String endDate){
+		this.endDate = endDate;
+	}
+ 	public String getProduct(){
+		return this.product;
+	}
+	public void setProduct(String product){
+		this.product = product;
+	}
+ 	public String getReleaseDate(){
+		return this.releaseDate;
+	}
+	public void setReleaseDate(String releaseDate){
+		this.releaseDate = releaseDate;
+	}
+ 	public List<Screen> getScreen(){
+		return this.screen;
+	}
+	public void setScreen(List<Screen> screen){
+		this.screen = screen;
+	}
+ 	public String getStartDate(){
+		return this.startDate;
+	}
+	public void setStartDate(String startDate){
+		this.startDate = startDate;
+	}
 }

@@ -1,0 +1,93 @@
+{
+  "product": "Customer Facing Android App",
+  "descriptor": "CFAA",
+  "build": 0.4,
+  "releaseDate": "2014-09-17T20:55:00.000Z",
+  "startDate": "2014-09-17T20:55:00.000Z",
+  "endDate": "2015-09-17T20:55:00.000Z",
+  "dev": true,
+  "screen": [
+    {
+      "name": "landing",
+      "pattern": "tabbed_slider",
+      "item": [
+        {
+          "title": "Office Supplies",
+          "banner": "http://www.staples-3p.com/s7/is/image/Staples/s0466484_sc7?$catlarge$",
+          "area": [
+            {
+              "name": "Top Furniture Deals",
+              "viewMore": "CL166254",
+              "skuItem": [
+                "136814",
+                "200226"
+              ],
+              "skuList": "CL70203"
+            },
+            {
+              "name": "Office Supplies On Sale",
+              "viewMore": "CL140861",
+              "skuItem": [
+                "136814",
+                "200226"
+              ]
+            },
+            {
+              "name": "Trending Paper Products",
+              "viewMore": "CL206214",
+              "skuList": "CL165557"
+            }
+          ]
+        },
+        {
+          "title": "Wearable Technology",
+          "banner": "http://www.staples.com/sbd/cre/products/wearable-technology/images/38048_940x220_itstime.gif",
+          "area": [
+            {
+              "name": "Top Wearable Deals",
+              "viewMore": "CL211981",
+              "skuList": "CL211900"
+            },
+            {
+              "name": "Wearables On Sale",
+              "viewMore": "CL211981",
+              "skuItem": [
+                "SS2218495",
+                "SS2608694"
+              ]
+            },
+            {
+              "name": "Trending Wearable Products",
+              "viewMore": "CL140861",
+              "skuList": "CL211981"
+            }
+          ]
+        },
+        {
+          "title": "Homewares and Appliances",
+          "banner": "http://www.staples-3p.com/s7/is/image/Staples/s0338030_sc7?$catlarge$",
+          "area": [
+            {
+              "name": "Top Appliance Deals",
+              "viewMore": "CL210338",
+              "skuList": "CL204423"
+            },
+            {
+              "name": "Appliances On Sale",
+              "viewMore": "CL211981",
+              "skuItem": [
+                "SS1063398",
+                "45277"
+              ]
+            },
+            {
+              "name": "Trending Homewares",
+              "viewMore": "CL165542",
+              "skuList": "CL80001"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
