@@ -36,10 +36,10 @@ public class FeedAdapter {
     public void fill() {
 
         MainApplication application = (MainApplication) activity.getApplication();
-        EasyOpenApi easyOpenApi = application.getEasyOpenApi();
+        EasyOpenApi easyOpenApi = application.getEasyOpenApiSecure();
         UserLogin user = new UserLogin("sri","password");
 
-        easyOpenApi.login(user, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<TokenObject>() {
+        easyOpenApi.login(user, RECOMMENDATION, STORE_ID, CLIENT_ID, new Callback<TokenObject>() {
 
                     @Override
                     public void success(TokenObject tokenObject, Response response) {

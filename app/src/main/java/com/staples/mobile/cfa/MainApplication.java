@@ -92,6 +92,23 @@ public class MainApplication extends Application {
         return(lmsApi);
     }
 
+    public EasyOpenApi getEasyOpenApiSecure()
+    {
+        if (easyOpenApi!=null) return(easyOpenApi);
+
+        RestAdapter.Builder builder = new RestAdapter.Builder();
+        builder.setClient(okClient);
+        builder.setEndpoint(EasyOpenApi.SERVICE_ENDPOINT_SECURE);
+        builder.setRequestInterceptor(new StandardInterceptor());
+        builder.setConverter(converter);
+        builder.setLogLevel(LOGLEVEL);
+        builder.setLog(new AndroidLog(TAG));
+        RestAdapter adapter = builder.build();
+
+        easyOpenApi = adapter.create(EasyOpenApi.class);
+        return(easyOpenApi);
+    }
+
     public LmsApi getMockLmsApi() {
         if (mockLmsApi!=null) return(mockLmsApi);
         InvocationHandler handler = new MockApiHandler(this);

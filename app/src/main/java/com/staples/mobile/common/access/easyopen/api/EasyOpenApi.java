@@ -14,6 +14,7 @@ import retrofit.http.Query;
 
 public interface EasyOpenApi {
     public static final String SERVICE_ENDPOINT = "http://sapi.staples.com";
+    public static final String SERVICE_ENDPOINT_SECURE = "https://sapi.staples.com";
 //    public static final String SERVICE_ENDPOINT = "http://api.staples.com";
 //    public static final String SERVICE_ENDPOINT = "http://qapi.staples.com";
 //    public static final String SERVICE_ENDPOINT = "http://10.29.172.60:9100"; // The office printer!
@@ -60,13 +61,12 @@ public interface EasyOpenApi {
             Callback<Sku> callback
     );
 
-    //https://sapi.staples.com/v1/10001/loginidentity?locale=en_US&client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS
+    //https://sapi.staples.com/v1/10001/loginidentity?client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS
     @POST("/{version}/{storeId}/loginidentity")
     public void login(
             @Body UserLogin body,
             @EncodedPath("version") String version,
             @EncodedPath("storeId") String storeId,
-            @Query("locale") String locale,
             @Query("client_id") String client_id,
             Callback<TokenObject> callback
     );
