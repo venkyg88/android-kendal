@@ -34,12 +34,11 @@ public class BundleFragment extends Fragment
             path = args.getString("path");
         }
 
-        adapter = new BundleAdapter(getActivity());
+        ListViewWrapper wrapper = (ListViewWrapper) view.findViewById(R.id.wrapper);
+        adapter = new BundleAdapter(getActivity(), wrapper);
         ListView products = (ListView) view.findViewById(R.id.products);
         products.setAdapter(adapter);
         products.setOnItemClickListener(this);
-        ListViewWrapper wrapper = (ListViewWrapper) view.findViewById(R.id.status_layout);
-        wrapper.setAdapter(adapter);
 
         adapter.fill(path);
 

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.feed.FeedFragment;
 import com.staples.mobile.cfa.home.LmsFragment;
+import com.staples.mobile.cfa.widget.ListViewWrapper;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Category;
@@ -40,6 +41,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
     private static final int MAXFETCH = 50;
 
     private Activity activity;
+    private ListViewWrapper wrapper;
     private LayoutInflater inflater;
 
     private ArrayList<DrawerItem> menuList;
@@ -48,9 +50,10 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
 
     private boolean browseMode;
 
-    public DrawerAdapter(Context context) {
+    public DrawerAdapter(Activity activity, ListViewWrapper wrapper) {
         super();
-        activity = (Activity) context;
+        this.activity = activity;
+        this.wrapper = wrapper;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         menuList = new ArrayList<DrawerItem>();
         stackList = new ArrayList<DrawerItem>();
@@ -127,6 +130,8 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
     }
 
     public void fill() {
+        wrapper.setState(ListViewWrapper.State.ADDING);
+
         // Fill menu list
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.home_title, LmsFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.personal_feed_title, FeedFragment.class));
@@ -185,6 +190,8 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
     void fill(String path) {
         int i, j;
 
+        wrapper.setState(ListViewWrapper.State.ADDING);
+
         MainApplication application = (MainApplication) activity.getApplication();
         EasyOpenApi easyOpenApi = application.getEasyOpenApi();
 
@@ -221,6 +228,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
 
         // No idea what the path is
         Log.d(TAG, "Unknown path: " + path);
+        wrapper.setState(ListViewWrapper.State.NOMORE);
         notifyDataSetChanged();
     }
 
@@ -251,6 +259,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
                 }
             }
             Log.d(TAG, "Got " + count + " categories");
+            wrapper.setState(ListViewWrapper.State.DONE);
             notifyDataSetChanged();
             return;
         }
@@ -274,6 +283,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
                 }
             }
             Log.d(TAG, "Got " + count + " subCategories");
+            wrapper.setState(ListViewWrapper.State.DONE);
             notifyDataSetChanged();
             return;
         }
@@ -283,7 +293,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
     @Override
     public void failure(RetrofitError retrofitError) {
         Log.d(TAG, "Failure callback " + retrofitError);
+        wrapper.setState(ListViewWrapper.State.NOMORE);
         notifyDataSetChanged();
     }
-
 }

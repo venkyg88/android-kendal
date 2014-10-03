@@ -10,12 +10,13 @@ import com.staples.mobile.R;
 
 public class DrawerItem {
     public static final String TAG = "DrawerItem";
+
     public enum Type {
         BROWSE    (0, R.layout.drawer_fragment), // Browse button in menu
         FRAGMENT  (1, R.layout.drawer_fragment), // Action fragment in menu
         ACCOUNT   (2, R.layout.drawer_account),  // Account fragment in menu
         BACKTOTOP (3, R.layout.drawer_fragment), // Back button in browse
-        STACK     (4, R.layout.drawer_stack), // Breadcrumb in browse
+        STACK     (4, R.layout.drawer_stack),    // Breadcrumb in browse
         CATEGORY  (5, R.layout.drawer_category); // Item in browse
 
         public int viewType;
