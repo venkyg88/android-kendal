@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,6 +33,7 @@ public class MainActivity extends Activity
     private ViewGroup topper;
     private View rightDrawer;
 
+    private DrawerItem homeDrawerItem;
     private DrawerItem searchDrawerItem;
     private DrawerItem storeDrawerItem;
     private DrawerItem rewardsDrawerItem;
@@ -95,8 +95,8 @@ public class MainActivity extends Activity
 
         // Set action bar listeners
         findViewById(R.id.action_left_drawer).setOnClickListener(this);
-        findViewById(R.id.website).setOnClickListener(this);
-        findViewById(R.id.search).setOnClickListener(this);
+        findViewById(R.id.action_home).setOnClickListener(this);
+        findViewById(R.id.action_search).setOnClickListener(this);
         findViewById(R.id.action_right_drawer).setOnClickListener(this);
 
         // Initialize left drawer listview
@@ -106,6 +106,7 @@ public class MainActivity extends Activity
         leftDrawer.setOnItemClickListener(this);
 
         // Create non-drawer DrawerItems
+        homeDrawerItem = adapter.getItem(0); // TODO Hard-coded alias
         searchDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.ic_search, R.string.search_title, ToBeDoneFragment.class);
         storeDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.store_info_title, ToBeDoneFragment.class);
         rewardsDrawerItem = adapter.getItem(6); // TODO Hard-coded alias
@@ -113,8 +114,8 @@ public class MainActivity extends Activity
         // Initialize topper
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.topper, topper);
-        topper.findViewById(R.id.store).setOnClickListener(this);
-        topper.findViewById(R.id.rewards).setOnClickListener(this);
+        topper.findViewById(R.id.action_store).setOnClickListener(this);
+        topper.findViewById(R.id.action_rewards).setOnClickListener(this);
 
         // Initialize right drawer listview TODO just hacked for demo
         ArrayAdapter<String> cartAdapter = new ArrayAdapter<String>(this, R.layout.drawer_category);
@@ -125,7 +126,7 @@ public class MainActivity extends Activity
 
         // Fresh start?
         if (freshStart) {
-            selectDrawerItem(adapter.getItem(0), Transition.NONE, false);
+            selectDrawerItem(homeDrawerItem, Transition.NONE, false);
             Runnable runs = new Runnable() {public void run() {
                 showMainScreen();}};
             new Handler().postDelayed(runs, SURRENDER_TIMEOUT);
@@ -176,19 +177,6 @@ public class MainActivity extends Activity
         return(true);
     }
 
-    public boolean openWebsite() {
-        // Make sure all drawers are closed
-        drawerLayout.closeDrawers();
-
-        Intent intent = new Intent(Intent.ACTION_VIEW, STAPLESWEBSITE);
-        try {
-            startActivity(intent);
-            return (true);
-        } catch(Exception e)  {
-            return(false);
-        }
-    }
-
     // Action bar & topper clicks
 
     @Override
@@ -201,11 +189,11 @@ public class MainActivity extends Activity
                 } else drawerLayout.closeDrawers();
                 break;
 
-            case R.id.website:
-                openWebsite();
+            case R.id.action_home:
+                selectDrawerItem(homeDrawerItem, Transition.NONE, true);
                 break;
 
-            case R.id.search:
+            case R.id.action_search:
                 selectDrawerItem(searchDrawerItem, Transition.SLIDE, true);
                 break;
 
@@ -216,17 +204,18 @@ public class MainActivity extends Activity
                 } else drawerLayout.closeDrawers();
                 break;
 
-            case R.id.store:
+            case R.id.action_store:
                 selectDrawerItem(storeDrawerItem, Transition.SLIDE, true);
                 break;
 
-            case R.id.rewards:
+            case R.id.action_rewards:
                 selectDrawerItem(rewardsDrawerItem, Transition.SLIDE, true);
                 break;
         }
     }
 
     // Left drawer listview clicks
+
     @Override
     public void onItemClick(AdapterView parent, View view, int position, long id) {
         DrawerAdapter adapter;
