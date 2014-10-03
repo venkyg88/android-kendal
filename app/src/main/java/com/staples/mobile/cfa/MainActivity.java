@@ -19,6 +19,7 @@ import android.widget.ListView;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
+import com.staples.mobile.cfa.widget.ListViewWrapper;
 
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener {
@@ -29,7 +30,7 @@ public class MainActivity extends Activity
     private static final int SURRENDER_TIMEOUT = 5000;
 
     private DrawerLayout drawerLayout;
-    private ListView leftDrawer;
+    private View leftDrawer;
     private ViewGroup topper;
     private View rightDrawer;
 
@@ -89,7 +90,7 @@ public class MainActivity extends Activity
 
         // Find top-level entities
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        leftDrawer = (ListView) findViewById(R.id.left_drawer);
+        leftDrawer = findViewById(R.id.left_drawer);
         topper = (ViewGroup) findViewById(R.id.topper);
         rightDrawer = findViewById(R.id.right_drawer);
 
@@ -100,10 +101,12 @@ public class MainActivity extends Activity
         findViewById(R.id.action_right_drawer).setOnClickListener(this);
 
         // Initialize left drawer listview
-        DrawerAdapter adapter = new DrawerAdapter(this);
-        leftDrawer.setAdapter(adapter);
+        ListViewWrapper wrapper = (ListViewWrapper) findViewById(R.id.left_drawer);
+        ListView menu = (ListView) wrapper.findViewById(R.id.menu);
+        DrawerAdapter adapter = new DrawerAdapter(this, wrapper);
+        menu.setAdapter(adapter);
         adapter.fill();
-        leftDrawer.setOnItemClickListener(this);
+        menu.setOnItemClickListener(this);
 
         // Create non-drawer DrawerItems
         homeDrawerItem = adapter.getItem(0); // TODO Hard-coded alias

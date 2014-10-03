@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainApplication;
+import com.staples.mobile.cfa.widget.ListViewWrapper;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Category;
@@ -35,11 +36,13 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
     private static final int MAXFETCH = 50;
 
     private Activity activity;
+    private ListViewWrapper wrapper;
     private LayoutInflater inflater;
 
-    public BundleAdapter(Activity activity) {
+    public BundleAdapter(Activity activity, ListViewWrapper wrapper) {
         super(activity, 0);
         this.activity = activity;
+        this.wrapper = wrapper;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -59,6 +62,8 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
     void fill(String path) {
         int i, j;
 
+        wrapper.setState(ListViewWrapper.State.LOADING);
+
         MainApplication application = (MainApplication) activity.getApplication();
         EasyOpenApi easyOpenApi = application.getEasyOpenApi();
 
@@ -75,8 +80,7 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
         }
 
         // No idea what the path is
-        Log.d(TAG, "Unknown path: "+path);
-        notifyDataSetChanged();
+        Log.d(TAG, "Unknown path: " + path);
     }
 
     @Override
@@ -98,16 +102,19 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
                 add(item);
             }
             Log.d(TAG, "Got " + count + " products");
+            wrapper.setState(ListViewWrapper.State.DONE);
             notifyDataSetChanged();
             return;
         }
 
+        wrapper.setState(ListViewWrapper.State.EMPTY);
         notifyDataSetChanged();
     }
 
     @Override
     public void failure(RetrofitError retrofitError) {
         Log.d(TAG, "Failure callback " + retrofitError);
+        wrapper.setState(ListViewWrapper.State.EMPTY);
         notifyDataSetChanged();
     }
 }

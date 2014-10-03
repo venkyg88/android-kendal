@@ -10,28 +10,31 @@
         android:gravity="center_horizontal"
         android:textSize="20dp"/>
     <com.staples.mobile.cfa.widget.ListViewWrapper
-        android:id="@+id/status_layout"
+        android:id="@+id/wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center">
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:visibility="gone"
-            android:textSize="20dp"
-            android:text="@string/empty"/>
+        android:orientation="vertical"
+        android:background="#ffffff">
         <ListView
             android:id="@+id/products"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:visibility="gone"
-            android:choiceMode="singleChoice"
-            android:background="#ffffff"/>
+            android:choiceMode="singleChoice"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center">
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:text="@string/empty"/>
     </com.staples.mobile.cfa.widget.ListViewWrapper>
 </com.staples.mobile.cfa.widget.AnimatorLayout>
