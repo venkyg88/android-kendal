@@ -24,12 +24,14 @@ public class MainApplication extends Application {
     private static final String USER_AGENT = "Staples Mobile App 1.0";
     private static final int TIMEOUT = 15; // Seconds
 
-    private static final String wcToken = "3076889%2cltRE8nGUwZZYrJz%2fkvWW%2bPoLHGFHCqa4HtGeSPjbTmG0%2fb9JUOVq%2fq3VUn8uGo8Cfs6UTMFqbZHlIvDa6wDLTX5hCffgyGk4AJQEiuj1ZGL7ipmcRlrazIPHI9zsrYwNxeP7wsNJsJypHgZgGkuIG41xttBCaqUfga24VBmBwG9B9mAWJE5sjU5F15qyInThh%2feHd6J%2b0MoH1A2ye%2f6%2fVg%3d%3d";
-    private static final String wcTrustedToken = "3076889%2ccQCBJrw5MN0M6Z5gaEM0cHB%2by%2fw%3d";
+    private static String token1;
+    private static String token2;
 
     private OkClient okClient;
     private JacksonConverter converter;
-    private EasyOpenApi easyOpenApi;
+
+    private EasyOpenApi easyOpenInsecureApi;
+    private EasyOpenApi easyOpenSecureApi;
     private LmsApi lmsApi;
     private LmsApi mockLmsApi;
 
@@ -43,35 +45,63 @@ public class MainApplication extends Application {
         converter = new JacksonConverter();
     }
 
-    // Interceptor for standard HTTP headers
+    // Interceptors for standard HTTP headers
 
-    private static class StandardInterceptor implements RequestInterceptor {
+    private static class InsecureInterceptor implements RequestInterceptor {
         @Override
         public void intercept(RequestFacade request) {
             request.addHeader("User-Agent", USER_AGENT);
             request.addHeader("Accept", "application/json");
-//            request.addHeader("WCToken", wcToken);
-//            request.addHeader("WCTrustedToken", wcTrustedToken);
 //            request.addHeader("Connection", "Keep-Alive");
         }
     }
 
+    private static class SecureInterceptor implements RequestInterceptor {
+        @Override
+        public void intercept(RequestFacade request) {
+            request.addHeader("User-Agent", USER_AGENT);
+            request.addHeader("Accept", "application/json");
+            request.addHeader("WCToken", token1);
+            request.addHeader("WCTrustedToken", token2);
+//            request.addHeader("Connection", "Keep-Alive");
+        }
+    }
+
+    public static void setTokens(String wcToken, String wcTrustedToken) {
+        token1 = wcToken;
+        token2 = wcTrustedToken;
+    }
+
     // EasyOpen API
 
-    public EasyOpenApi getEasyOpenApi() {
-        if (easyOpenApi!=null) return(easyOpenApi);
+    public EasyOpenApi getEasyOpenApi(boolean secure) {
+        // Check for existing
+        if (!secure) {
+            if (easyOpenInsecureApi!=null) return(easyOpenInsecureApi);
+        } else {
+            if (easyOpenSecureApi!=null) return(easyOpenSecureApi);
+        }
 
+        // Build API
         RestAdapter.Builder builder = new RestAdapter.Builder();
         builder.setClient(okClient);
-        builder.setEndpoint(EasyOpenApi.SERVICE_ENDPOINT);
-        builder.setRequestInterceptor(new StandardInterceptor());
+        if (!secure) {
+            builder.setEndpoint(EasyOpenApi.INSECURE_ENDPOINT);
+            builder.setRequestInterceptor(new InsecureInterceptor());
+        } else {
+            builder.setEndpoint(EasyOpenApi.SECURE_ENDPOINT);
+            builder.setRequestInterceptor(new SecureInterceptor());
+        }
         builder.setConverter(converter);
         builder.setLogLevel(LOGLEVEL);
         builder.setLog(new AndroidLog(TAG));
         RestAdapter adapter = builder.build();
+        EasyOpenApi api = adapter.create(EasyOpenApi.class);
 
-        easyOpenApi = adapter.create(EasyOpenApi.class);
-        return(easyOpenApi);
+        // Save for later use
+        if (!secure) easyOpenInsecureApi = api;
+        else easyOpenSecureApi = api;
+        return(api);
     }
 
     // LMS API
@@ -81,8 +111,8 @@ public class MainApplication extends Application {
 
         RestAdapter.Builder builder = new RestAdapter.Builder();
         builder.setClient(okClient);
-        builder.setEndpoint(LmsApi.SERVICE_ENDPOINT);
-        builder.setRequestInterceptor(new StandardInterceptor());
+        builder.setEndpoint(LmsApi.INSECURE_ENDPOINT);
+        builder.setRequestInterceptor(new InsecureInterceptor());
         builder.setConverter(converter);
         builder.setLogLevel(LOGLEVEL);
         builder.setLog(new AndroidLog(TAG));

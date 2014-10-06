@@ -106,7 +106,7 @@ public class ProductAdapter extends ArrayAdapter<ProductItem> implements Callbac
     void fill() {
         add(new ProductItem(null, lmsItem.bannerUrl, null));
         MainApplication application = (MainApplication) activity.getApplication(); // TODO Broken because of new LMS!
-        EasyOpenApi easyOpenApi = application.getEasyOpenApi();
+        EasyOpenApi easyOpenApi = application.getEasyOpenApi(false);
         easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, lmsItem.identifier, CATALOG_ID, LOCALE,
                                      ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
     }
