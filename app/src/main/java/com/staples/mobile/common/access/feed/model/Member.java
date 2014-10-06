@@ -1,9 +1,11 @@
-package com.staples.mobile.common.access.feed;
+package com.staples.mobile.common.access.feed.model;
+
+import java.util.List;
 
 /**
  * Created by Avinash Dodda
  */
-public class MemberDetail {
+public class Member {
 
     private String autoLoginFlag;
 
@@ -32,6 +34,16 @@ public class MemberDetail {
     private Reward[] rewardDetails;
 
     private FavouriteListDetail[] favoritesList;
+
+    private List<PreferredStore> preferredStore;
+
+    public List<PreferredStore> getPreferredStore() {
+        return preferredStore;
+    }
+
+    public void setPreferredStore(List<PreferredStore> preferredStore) {
+        this.preferredStore = preferredStore;
+    }
 
     public String getAutoLoginFlag() {
         return autoLoginFlag;

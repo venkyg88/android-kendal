@@ -1,24 +1,43 @@
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ListAdapter;
+import android.widget.GridView;
+import android.widget.LinearLayout;
+
+import com.staples.mobile.R;
 
 /**
  * This class is a ViewGroup wrapper for three child Views:
- * <ol><li>A View for when the list is populating (probably a ProgressBar)</li>
- * <li>A View for when the list is empty (possibly a simple TextView)</li>
- * <li>A View for when the list has items (probably a ListView)</li></ol>
+ * <ol><li>A View for when the list has items (probably a ListView)</li>
+ * <li>A View for when the list is populating (probably a ProgressBar)</li>
+ * <li>A View for when the list is empty (possibly a simple TextView)</li></ol>
  * The child Views are identified by their order in the child View tree.
  */
-public class ListViewWrapper extends FrameLayout {
+public class ListViewWrapper extends LinearLayout {
     public static final String TAG ="ListViewWrapper";
 
-    private ListAdapter adapter;
-    private Observer observer;
+    public enum State {
+        // Used for initial loading of ListView
+        LOADING (View.GONE,    View.VISIBLE, View.GONE),
+        EMPTY   (View.GONE,    View.GONE,    View.VISIBLE),
+        // Used for additional loading of ListView
+        ADDING  (View.VISIBLE, View.VISIBLE, View.GONE),
+        NOMORE  (View.VISIBLE, View.GONE,    View.VISIBLE),
+        // Used for success
+        DONE    (View.VISIBLE, View.GONE,    View.GONE);
+
+        int list;
+        int progress;
+        int empty;
+
+        State(int list, int progress, int empty) {
+            this.list = list;
+            this.progress = progress;
+            this.empty = empty;
+        }
+    }
 
     public ListViewWrapper(Context context) {
         super(context, null, 0);
@@ -32,55 +51,28 @@ public class ListViewWrapper extends FrameLayout {
         super(context, attrs, defStyle);
     }
 
-    public class Observer extends DataSetObserver {
-        @Override
-        public void onChanged() {
-            if (adapter!=null) {
-                View progress = getChildAt(0);
-                View empty = getChildAt(1);
-                View list = getChildAt(2);
+    // General state handling
 
-                if (progress!=null) progress.setVisibility(View.GONE);
-                if (adapter.isEmpty()) {
-                    if (empty!=null) empty.setVisibility(View.VISIBLE);
-                    if (list!=null) list.setVisibility(View.GONE);
-                } else {
-                    if (empty!=null) empty.setVisibility(View.GONE);
-                    if (list!=null) list.setVisibility(View.VISIBLE);
-                }
-            }
-        }
+    public void setState(State state) {
+        View list = getChildAt(0);
+        View progress = getChildAt(1);
+        View empty = getChildAt(2);
 
-        @Override
-        public void onInvalidated() {
-            View progress = getChildAt(0);
-            View empty = getChildAt(1);
-            View list = getChildAt(2);
-
-            if (progress!=null) progress.setVisibility(View.VISIBLE);
-            if (empty!=null) empty.setVisibility(View.GONE);
-            if (list!=null) list.setVisibility(View.GONE);
-        }
+        list.setVisibility(state.list);
+        progress.setVisibility(state.progress);
+        empty.setVisibility(state.empty);
     }
 
-    /**
-     * Sets the adapter to observe for data changes.
-     */
-    public void setAdapter(ListAdapter adapter) {
-        // Safety check
-        if (adapter==this.adapter) return;
+    // Special handling for GridView
 
-        // Unregister old adapter
-        if (this.adapter!=null & observer!=null)
-            this.adapter.unregisterDataSetObserver(observer);
-
-        // Use new adapter
-        this.adapter = adapter;
-
-        // Register new adapter
-        if (this.adapter!=null) {
-            if (observer==null) observer = new Observer();
-            this.adapter.registerDataSetObserver(observer);
+    @Override
+    public void onMeasure(int widthSpec, int heightSpec) {
+        super.onMeasure(widthSpec, heightSpec);
+        View list = getChildAt(0);
+        if (list instanceof GridView) {
+            int width = View.MeasureSpec.getSize(widthSpec);
+            int column = getResources().getDimensionPixelSize(R.dimen.min_column_width);
+            ((GridView) list).setNumColumns(width/column);
         }
     }
 }

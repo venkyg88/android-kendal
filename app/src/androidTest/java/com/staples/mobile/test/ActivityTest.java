@@ -1,5 +1,6 @@
 package com.staples.mobile.test;
 
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -63,10 +64,16 @@ public class ActivityTest implements Callback<Lms> {
     @Test
     public void testLeftDrawer() throws InterruptedException {
         System.out.println("testLeftDrawer");
-        ListView list = (ListView) activity.findViewById(R.id.left_drawer);
-        Assert.assertNotNull("Left drawer should exist", list);
-        DrawerAdapter adapter = (DrawerAdapter) list.getAdapter();
+
+        View drawer = activity.findViewById(R.id.left_drawer);
+        Assert.assertNotNull("Left drawer should exist", drawer);
+
+        ListView menu = (ListView) drawer.findViewById(R.id.menu);
+        Assert.assertNotNull("Left drawer should contain a list", menu);
+
+        DrawerAdapter adapter = (DrawerAdapter) menu.getAdapter();
         Assert.assertNotNull("Left drawer should have adapter", adapter);
+
         int count = adapter.getCount();
         Assert.assertEquals("Left drawer should have 9 items", 9, count);
     }
@@ -74,10 +81,13 @@ public class ActivityTest implements Callback<Lms> {
     @Test
     public void testRightDrawer() {
         System.out.println("testRightDrawer");
+
         ListView list = (ListView) activity.findViewById(R.id.cart_list);
         Assert.assertNotNull("Right drawer should exist", list);
+
         ArrayAdapter adapter = (ArrayAdapter) list.getAdapter();
         Assert.assertNotNull("Right drawer should have adapter", adapter);
+
         int count = adapter.getCount();
         Assert.assertEquals("Right drawer should have 3 items", 3, count);
     }

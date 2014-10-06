@@ -1,4 +1,4 @@
-package com.staples.mobile.common.access.feed;
+package com.staples.mobile.common.access.feed.model;
 
 /**
  * Created by Avinash Dodda

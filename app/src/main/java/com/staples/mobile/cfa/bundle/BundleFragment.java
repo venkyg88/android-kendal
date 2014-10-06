@@ -7,18 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.widget.ListViewWrapper;
 
-public class BundleFragment extends Fragment
-        implements AdapterView.OnItemClickListener {
+public class BundleFragment extends Fragment implements AdapterView.OnItemClickListener {
     private static final String TAG = "BundleFragment";
 
     private BundleAdapter adapter;
+    private GridView products;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -34,12 +34,11 @@ public class BundleFragment extends Fragment
             path = args.getString("path");
         }
 
-        adapter = new BundleAdapter(getActivity());
-        ListView products = (ListView) view.findViewById(R.id.products);
+        ListViewWrapper wrapper = (ListViewWrapper) view.findViewById(R.id.wrapper);
+        products = (GridView) view.findViewById(R.id.products);
+        adapter = new BundleAdapter(getActivity(), wrapper);
         products.setAdapter(adapter);
         products.setOnItemClickListener(this);
-        ListViewWrapper wrapper = (ListViewWrapper) view.findViewById(R.id.status_layout);
-        wrapper.setAdapter(adapter);
 
         adapter.fill(path);
 

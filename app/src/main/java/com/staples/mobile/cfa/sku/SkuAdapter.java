@@ -57,7 +57,6 @@ public class SkuAdapter extends PagerAdapter implements Callback<Lms> {
     public void destroyItem(ViewGroup container, int position, Object object) {
         SkuItem item = array.get(position);
         container.removeView(item.view);
-
     }
 
     @Override
@@ -82,7 +81,7 @@ public class SkuAdapter extends PagerAdapter implements Callback<Lms> {
         array.get(0).identifier = identifier;
 
         MainApplication application = (MainApplication) activity.getApplication();
-        EasyOpenApi easyOpenApi = application.getEasyOpenApi();
+        EasyOpenApi easyOpenApi = application.getEasyOpenApi(false);
 //        easyOpenApi.whatever(RECOMMENDATION, STORE_ID, this);
     }
 

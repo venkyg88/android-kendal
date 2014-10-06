@@ -5,7 +5,8 @@ import android.util.Log;
 
 import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.feed.MemberDetail;
+import com.staples.mobile.common.access.feed.model.Member;
+import com.staples.mobile.common.access.feed.model.MemberDetail;
 import com.staples.mobile.common.access.login.model.TokenObject;
 import com.staples.mobile.common.access.login.model.UserLogin;
 
@@ -31,13 +32,11 @@ public class FeedAdapter {
 
     private EasyOpenApi easyOpenApi;
 
-    private TokenObject token;
-
     public FeedAdapter(Activity activity) {
         super();
         this.activity = activity;
         MainApplication application = (MainApplication) activity.getApplication();
-        easyOpenApi = application.getEasyOpenApiSecure();
+        easyOpenApi = application.getEasyOpenApi(true);
     }
 
     public FeedAdapter()
@@ -46,44 +45,23 @@ public class FeedAdapter {
     }
 
     public void fill() {
-        easyOpenApi.member(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<MemberDetail>() {
-
-            @Override
-            public void success(MemberDetail member, Response response) {
-
-                int code = response.getStatus();
-                String x = member.getUserName();
-                String y = member.getEmailAddress();
-
-                Log.i("Success Name", x);
-                Log.i("Success Email", y);
-                Log.i("Status Code", " " + code);
-            }
-
-            @Override
-            public void failure(RetrofitError retrofitError) {
-                Log.i("Fail Token", " " + retrofitError.getMessage());
-                Log.i("Something More", " "+retrofitError.getUrl() + retrofitError.getResponse());
-
-            }
-        }
-        );
+        getUserTokens();
     }
 
-    public TokenObject getUserTokens()
+    public void getUserTokens()
     {
         UserLogin user = new UserLogin("testuser2","password");
         easyOpenApi.login(user, RECOMMENDATION, STORE_ID, CLIENT_ID, new Callback<TokenObject>() {
 
                     @Override
                     public void success(TokenObject tokenObject, Response response) {
-                        token = tokenObject;
                         int code = response.getStatus();
-                        String x = tokenObject.getWCToken();
-                        String y = tokenObject.getWCTrustedToken();
 
-                        Log.i("Success Token", x);
+                        MainApplication.setTokens(tokenObject.getWCToken(), tokenObject.getWCTrustedToken());
                         Log.i("Status Code", " " + code);
+                        Log.i("wc", tokenObject.getWCToken());
+                        Log.i("wctrusted", tokenObject.getWCTrustedToken());
+                        getMemberData();
                     }
 
                     @Override
@@ -93,6 +71,31 @@ public class FeedAdapter {
                     }
                 }
         );
-       return token;
+    }
+
+    public void getMemberData()
+    {
+        easyOpenApi.member(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<MemberDetail>() {
+
+                    @Override
+                    public void success(MemberDetail memberDetail, Response response) {
+
+                        int code = response.getStatus();
+                        Member member = memberDetail.getMember().get(0);
+
+
+                        Log.i("Success Name", member.getUserName());
+                        Log.i("Success Email", member.getEmailAddress());
+                        Log.i("Status Code", " " + code);
+                    }
+
+                    @Override
+                    public void failure(RetrofitError retrofitError) {
+                        Log.i("Fail Token", " " + retrofitError.getMessage());
+                        Log.i("Something More", " "+retrofitError.getUrl() + retrofitError.getResponse());
+
+                    }
+                }
+        );
     }
 }

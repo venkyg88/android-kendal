@@ -2,7 +2,8 @@ package com.staples.mobile.common.access.easyopen.api;
 
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.sku.Sku;
-import com.staples.mobile.common.access.feed.MemberDetail;
+import com.staples.mobile.common.access.feed.model.Member;
+import com.staples.mobile.common.access.feed.model.MemberDetail;
 import com.staples.mobile.common.access.login.model.TokenObject;
 import com.staples.mobile.common.access.login.model.UserLogin;
 
@@ -14,11 +15,13 @@ import retrofit.http.POST;
 import retrofit.http.Query;
 
 public interface EasyOpenApi {
-    public static final String SERVICE_ENDPOINT = "https://sapi.staples.com";
-    public static final String SERVICE_ENDPOINT_SECURE = "https://api.staples.com";
-//    public static final String SERVICE_ENDPOINT = "http://api.staples.com";
-//    public static final String SERVICE_ENDPOINT = "http://qapi.staples.com";
-//    public static final String SERVICE_ENDPOINT = "http://10.29.172.60:9100"; // The office printer!
+
+
+    public static final String INSECURE_ENDPOINT = "http://sapi.staples.com";
+//    public static final String INSECURE_ENDPOINT = "http://qapi.staples.com";
+//    public static final String INSECURE_ENDPOINT = "http://10.29.172.60:9100"; // The office printer!
+
+    public static final String SECURE_ENDPOINT = "https://sapi.staples.com";
 
     @GET("/{version}/{storeId}/category/top")
     void topCategories(

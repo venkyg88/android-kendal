@@ -73,7 +73,7 @@ public class MockApiHandler implements InvocationHandler {
 
         // Handle main API requests
         if (name.equals("lms")) {
-            Object objects = loadJsonObjects("lms.json", Lms.class, (Callback<Lms>) callback);
+            Object objects = loadJsonObjects("lms_v6.json", Lms.class, (Callback<Lms>) callback);
             return (objects);
         }
 
