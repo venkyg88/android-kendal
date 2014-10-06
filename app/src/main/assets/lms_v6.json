@@ -1,0 +1,44 @@
+{
+  "product": "Customer Facing Android App",
+  "descriptor": "CFAA",
+  "build": 6,
+  "releaseDate": "2014-10-03T20:55:00.000Z",
+  "startDate": "2014-10-03T20:55:00.000Z",
+  "endDate": "2015-09-17T20:55:00.000Z",
+  "dev": true,
+  "screen": [
+    {
+      "name": "landing",
+      "pattern": "gallery",
+      "item": [
+        {
+          "title": "Office Supplies",
+          "banner": "http://www.staples-3p.com/s7/is/image/Staples/s0466484_sc7?$catlarge$",
+          "area": [
+            {
+              "skuList": "CL70203"
+            }
+          ]
+        },
+        {
+          "title": "Wearable Technology",
+          "banner": "http://www.staples.com/sbd/cre/products/wearable-technology/images/38048_940x220_itstime.gif",
+          "area": [
+            {
+              "skuList": "CL211900"
+            }
+          ]
+        },
+        {
+          "title": "Homewares and Appliances",
+          "banner": "http://www.staples-3p.com/s7/is/image/Staples/s0338030_sc7?$catlarge$",
+          "area": [
+            {
+              "skuList": "CL204423"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

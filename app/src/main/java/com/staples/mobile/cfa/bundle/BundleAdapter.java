@@ -7,8 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.widget.ListViewWrapper;
@@ -38,12 +41,14 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
     private Activity activity;
     private ListViewWrapper wrapper;
     private LayoutInflater inflater;
+    private Picasso picasso;
 
     public BundleAdapter(Activity activity, ListViewWrapper wrapper) {
         super(activity, 0);
         this.activity = activity;
         this.wrapper = wrapper;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        picasso = Picasso.with(activity);
     }
 
     @Override
@@ -55,6 +60,11 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
 
         TextView title = (TextView) view.findViewById(R.id.title);
         if (title!=null) title.setText(item.title);
+
+        ImageView image = (ImageView) view.findViewById(R.id.image);
+        RequestCreator requestCreator = picasso.load(item.imageUrl);
+        requestCreator.into(image);
+        requestCreator.fit();
 
         return(view);
     }
@@ -75,7 +85,7 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
             if (j <= 0) j = path.length();
             String identifier = path.substring(i, j);
             easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
-                    ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
+                                         ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
             return;
         }
 
@@ -99,6 +109,7 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
             for (int i = 0; i < count; i++) {
                 Product product = products[i];
                 BundleItem item = new BundleItem(product.getProductName(), product.getSku());
+                item.setImageUrl(product.getThumbnailImage());
                 add(item);
             }
             Log.d(TAG, "Got " + count + " products");
