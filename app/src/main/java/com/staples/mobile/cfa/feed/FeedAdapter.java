@@ -5,8 +5,9 @@ import android.util.Log;
 
 import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.login.TokenObject;
-import com.staples.mobile.common.access.login.UserLogin;
+import com.staples.mobile.common.access.feed.MemberDetail;
+import com.staples.mobile.common.access.login.model.TokenObject;
+import com.staples.mobile.common.access.login.model.UserLogin;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -28,35 +29,70 @@ public class FeedAdapter {
 
     private Activity activity;
 
+    private EasyOpenApi easyOpenApi;
+
+    private TokenObject token;
+
     public FeedAdapter(Activity activity) {
         super();
         this.activity = activity;
+        MainApplication application = (MainApplication) activity.getApplication();
+        easyOpenApi = application.getEasyOpenApiSecure();
+    }
+
+    public FeedAdapter()
+    {
+
     }
 
     public void fill() {
+        easyOpenApi.member(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<MemberDetail>() {
 
-        MainApplication application = (MainApplication) activity.getApplication();
-        EasyOpenApi easyOpenApi = application.getEasyOpenApiSecure();
-        UserLogin user = new UserLogin("sri","password");
+            @Override
+            public void success(MemberDetail member, Response response) {
 
+                int code = response.getStatus();
+                String x = member.getUserName();
+                String y = member.getEmailAddress();
+
+                Log.i("Success Name", x);
+                Log.i("Success Email", y);
+                Log.i("Status Code", " " + code);
+            }
+
+            @Override
+            public void failure(RetrofitError retrofitError) {
+                Log.i("Fail Token", " " + retrofitError.getMessage());
+                Log.i("Something More", " "+retrofitError.getUrl() + retrofitError.getResponse());
+
+            }
+        }
+        );
+    }
+
+    public TokenObject getUserTokens()
+    {
+        UserLogin user = new UserLogin("testuser2","password");
         easyOpenApi.login(user, RECOMMENDATION, STORE_ID, CLIENT_ID, new Callback<TokenObject>() {
 
                     @Override
                     public void success(TokenObject tokenObject, Response response) {
+                        token = tokenObject;
                         int code = response.getStatus();
                         String x = tokenObject.getWCToken();
                         String y = tokenObject.getWCTrustedToken();
 
-                        Log.i("successtoken", x);
+                        Log.i("Success Token", x);
                         Log.i("Status Code", " " + code);
                     }
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
-                        Log.i("failtoken", " " + retrofitError.getMessage());
-
+                        Log.i("Fail Token", " " + retrofitError.getMessage());
+                        Log.i("Something More", " "+retrofitError.getUrl() + retrofitError.getResponse());
                     }
                 }
         );
+       return token;
     }
 }

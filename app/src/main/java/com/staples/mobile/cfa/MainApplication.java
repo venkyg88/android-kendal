@@ -3,8 +3,10 @@ package com.staples.mobile.cfa;
 import android.app.Application;
 
 import com.squareup.okhttp.OkHttpClient;
+import com.staples.mobile.cfa.feed.FeedAdapter;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.lms.api.LmsApi;
+import com.staples.mobile.common.access.login.model.TokenObject;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
@@ -23,9 +25,6 @@ public class MainApplication extends Application {
 
     private static final String USER_AGENT = "Staples Mobile App 1.0";
     private static final int TIMEOUT = 15; // Seconds
-
-    private static final String wcToken = "3076889%2cltRE8nGUwZZYrJz%2fkvWW%2bPoLHGFHCqa4HtGeSPjbTmG0%2fb9JUOVq%2fq3VUn8uGo8Cfs6UTMFqbZHlIvDa6wDLTX5hCffgyGk4AJQEiuj1ZGL7ipmcRlrazIPHI9zsrYwNxeP7wsNJsJypHgZgGkuIG41xttBCaqUfga24VBmBwG9B9mAWJE5sjU5F15qyInThh%2feHd6J%2b0MoH1A2ye%2f6%2fVg%3d%3d";
-    private static final String wcTrustedToken = "3076889%2ccQCBJrw5MN0M6Z5gaEM0cHB%2by%2fw%3d";
 
     private OkClient okClient;
     private JacksonConverter converter;
@@ -53,6 +52,18 @@ public class MainApplication extends Application {
 //            request.addHeader("WCToken", wcToken);
 //            request.addHeader("WCTrustedToken", wcTrustedToken);
 //            request.addHeader("Connection", "Keep-Alive");
+        }
+    }
+
+    private static class StandardInterceptorUpdated implements RequestInterceptor {
+        @Override
+        public void intercept(RequestFacade request) {
+
+            FeedAdapter feedAdapter = new FeedAdapter();
+            TokenObject tokenObject = feedAdapter.getUserTokens();
+            request.addHeader("Content-Type", "application/json");
+            request.addHeader("WCToken", tokenObject.getWCToken());
+            request.addHeader("WCTrustedToken", tokenObject.getWCTrustedToken());
         }
     }
 
@@ -94,12 +105,10 @@ public class MainApplication extends Application {
 
     public EasyOpenApi getEasyOpenApiSecure()
     {
-        if (easyOpenApi!=null) return(easyOpenApi);
-
         RestAdapter.Builder builder = new RestAdapter.Builder();
         builder.setClient(okClient);
         builder.setEndpoint(EasyOpenApi.SERVICE_ENDPOINT_SECURE);
-        builder.setRequestInterceptor(new StandardInterceptor());
+        builder.setRequestInterceptor(new StandardInterceptorUpdated());
         builder.setConverter(converter);
         builder.setLogLevel(LOGLEVEL);
         builder.setLog(new AndroidLog(TAG));

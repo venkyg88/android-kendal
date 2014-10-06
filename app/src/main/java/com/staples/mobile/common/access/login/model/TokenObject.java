@@ -1,16 +1,16 @@
-package com.staples.mobile.common.access.login;
+package com.staples.mobile.common.access.login.model;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by Avinash Dodda
  */
 public class TokenObject {
-
+    @JsonProperty("WCToken")
     private String WCToken;
-
+    @JsonProperty("WCTrustedToken")
     private String WCTrustedToken;
-
     private String personalizationID;
-
     private String userId;
 
     public String getWCToken() {

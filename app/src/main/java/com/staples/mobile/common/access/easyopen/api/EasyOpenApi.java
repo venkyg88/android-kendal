@@ -2,8 +2,9 @@ package com.staples.mobile.common.access.easyopen.api;
 
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.sku.Sku;
-import com.staples.mobile.common.access.login.TokenObject;
-import com.staples.mobile.common.access.login.UserLogin;
+import com.staples.mobile.common.access.feed.MemberDetail;
+import com.staples.mobile.common.access.login.model.TokenObject;
+import com.staples.mobile.common.access.login.model.UserLogin;
 
 import retrofit.Callback;
 import retrofit.http.Body;
@@ -13,8 +14,8 @@ import retrofit.http.POST;
 import retrofit.http.Query;
 
 public interface EasyOpenApi {
-    public static final String SERVICE_ENDPOINT = "http://sapi.staples.com";
-    public static final String SERVICE_ENDPOINT_SECURE = "https://sapi.staples.com";
+    public static final String SERVICE_ENDPOINT = "https://sapi.staples.com";
+    public static final String SERVICE_ENDPOINT_SECURE = "https://api.staples.com";
 //    public static final String SERVICE_ENDPOINT = "http://api.staples.com";
 //    public static final String SERVICE_ENDPOINT = "http://qapi.staples.com";
 //    public static final String SERVICE_ENDPOINT = "http://10.29.172.60:9100"; // The office printer!
@@ -69,5 +70,15 @@ public interface EasyOpenApi {
             @EncodedPath("storeId") String storeId,
             @Query("client_id") String client_id,
             Callback<TokenObject> callback
+    );
+
+//  /v1/{storeId}/member/profile
+    @GET("/{version}/{storeId}/member/profile")
+    void member(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<MemberDetail> callback
     );
 }
