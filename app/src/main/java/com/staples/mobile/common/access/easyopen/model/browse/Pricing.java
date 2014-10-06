@@ -2,13 +2,11 @@ package com.staples.mobile.common.access.easyopen.model.browse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**
- * Created by pyhre001 on 9/22/14.
- */
 public class Pricing {
     @JsonProperty("BuyMoreSaveMoreDetail")
     private BuyMoreSaveMoreDetail[] buyMoreSaveMoreDetail;
     private String buyMoreSaveMoreImage;
+    private Description[] description;
     private Discount[] discount;
     private boolean displayRegularPricing;
     private boolean displayWasPricing;
@@ -18,6 +16,7 @@ public class Pricing {
     private float freeItemTotalSavings;
     private float listPrice;
     private float price;
+    private float savings;
     private String unitOfMeasure;
 
     public BuyMoreSaveMoreDetail[] getBuyMoreSaveMoreDetail() {
@@ -26,6 +25,10 @@ public class Pricing {
 
     public String getBuyMoreSaveMoreImage() {
         return buyMoreSaveMoreImage;
+    }
+
+    public Description[] getDescription() {
+        return description;
     }
 
     public Discount[] getDiscount() {
@@ -62,6 +65,10 @@ public class Pricing {
 
     public float getPrice() {
         return price;
+    }
+
+    public float getSavings() {
+        return savings;
     }
 
     public String getUnitOfMeasure() {

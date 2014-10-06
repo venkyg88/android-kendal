@@ -2,9 +2,6 @@ package com.staples.mobile.common.access.easyopen.model.browse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**
- * Created by pyhre001 on 9/10/14.
- */
 public class Category {
     private String catalogId;
     private CategoryAnalytic[] categoryAnalytic;
