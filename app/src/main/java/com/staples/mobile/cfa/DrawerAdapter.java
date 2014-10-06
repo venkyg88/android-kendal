@@ -193,7 +193,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
         wrapper.setState(ListViewWrapper.State.ADDING);
 
         MainApplication application = (MainApplication) activity.getApplication();
-        EasyOpenApi easyOpenApi = application.getEasyOpenApi();
+        EasyOpenApi easyOpenApi = application.getEasyOpenApi(false);
 
         // Get top categories
         if (path==null) {

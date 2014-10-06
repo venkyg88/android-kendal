@@ -81,7 +81,7 @@ public class SkuAdapter extends PagerAdapter implements Callback<Lms> {
         array.get(0).identifier = identifier;
 
         MainApplication application = (MainApplication) activity.getApplication();
-        EasyOpenApi easyOpenApi = application.getEasyOpenApi();
+        EasyOpenApi easyOpenApi = application.getEasyOpenApi(false);
 //        easyOpenApi.whatever(RECOMMENDATION, STORE_ID, this);
     }
 

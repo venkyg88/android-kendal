@@ -75,7 +75,7 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
         wrapper.setState(ListViewWrapper.State.LOADING);
 
         MainApplication application = (MainApplication) activity.getApplication();
-        EasyOpenApi easyOpenApi = application.getEasyOpenApi();
+        EasyOpenApi easyOpenApi = application.getEasyOpenApi(false);
 
         // Decode category alphanumeric identifiers
         i = path.indexOf("/category/identifier/");
