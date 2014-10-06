@@ -1,8 +1,5 @@
 package com.staples.mobile.common.access.easyopen.model.browse;
 
-/**
- * Created by pyhre001 on 9/10/14.
- */
 public class FilterGroup {
     private Filter[] filter;
     private String id;
