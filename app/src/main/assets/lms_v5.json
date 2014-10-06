@@ -1,7 +1,7 @@
 {
   "product": "Customer Facing Android App",
   "descriptor": "CFAA",
-  "build": 0.4,
+  "build": 5,
   "releaseDate": "2014-09-17T20:55:00.000Z",
   "startDate": "2014-09-17T20:55:00.000Z",
   "endDate": "2015-09-17T20:55:00.000Z",
@@ -65,13 +65,13 @@
         },
         {
           "title": "Homewares and Appliances",
-          "banner": "http://www.staples-3p.com/s7/is/image/Staples/s0338030_sc7?$catlarge$",
+          "banner": "http://www.staples-3p.com/s7/is/image/Staples/s0338030_sc7?$catlarge$"
+        }
+      ],
+      "area": [
+        {
           "area": [
-            {
-              "name": "Top Appliance Deals",
-              "viewMore": "CL210338",
-              "skuList": "CL204423"
-            },
+            {},
             {
               "name": "Appliances On Sale",
               "viewMore": "CL211981",
@@ -89,5 +89,8 @@
         }
       ]
     }
-  ]
+  ],
+  "name": "Top Appliance Deals",
+  "viewMore": "CL210338",
+  "skuList": "CL204423"
 }

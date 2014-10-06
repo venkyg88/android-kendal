@@ -19,11 +19,11 @@ import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Category;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 
+import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ProductAdapter extends ArrayAdapter<ProductItem>
-                            implements retrofit.Callback<Browse>, com.squareup.picasso.Callback {
+public class ProductAdapter extends ArrayAdapter<ProductItem> implements Callback<Browse> {
     private static final String TAG = "ProductAdapter";
 
     private static final int VIEW_BANNER = 0;
@@ -87,7 +87,7 @@ public class ProductAdapter extends ArrayAdapter<ProductItem>
                     view = inflater.inflate(R.layout.banner_item, parent, false);
                     ImageView banner = (ImageView) view.findViewById(R.id.image);
                     RequestCreator requestCreator = picasso.load(item.imageUrl);
-                    requestCreator.into(banner, this);
+                    requestCreator.into(banner);
                     requestCreator.fit();
                     break;
                 case VIEW_PRODUCT:
@@ -105,10 +105,10 @@ public class ProductAdapter extends ArrayAdapter<ProductItem>
 
     void fill() {
         add(new ProductItem(null, lmsItem.bannerUrl, null));
-//        MainApplication application = (MainApplication) activity.getApplication(); // TODO Broken because of new LMS!
-//        EasyOpenApi easyOpenApi = application.getEasyOpenApi();
-//        easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, lmsItem.identifier, CATALOG_ID, LOCALE,
-//                                     ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
+        MainApplication application = (MainApplication) activity.getApplication(); // TODO Broken because of new LMS!
+        EasyOpenApi easyOpenApi = application.getEasyOpenApi();
+        easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, lmsItem.identifier, CATALOG_ID, LOCALE,
+                                     ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
     }
 
     // Retrofit EasyOpen API call
@@ -138,15 +138,5 @@ public class ProductAdapter extends ArrayAdapter<ProductItem>
     public void failure(RetrofitError retrofitError) {
         Log.d(TAG, "Failure callback " + retrofitError);
         notifyDataSetChanged();
-    }
-
-    // Picasso
-
-    @Override
-    public void onSuccess() {
-    }
-
-    @Override
-    public void onError() {
     }
 }

@@ -57,7 +57,6 @@ public class SkuAdapter extends PagerAdapter implements Callback<Lms> {
     public void destroyItem(ViewGroup container, int position, Object object) {
         SkuItem item = array.get(position);
         container.removeView(item.view);
-
     }
 
     @Override
