@@ -120,13 +120,10 @@ public class ProductAdapter extends ArrayAdapter<ProductItem> implements Callbac
 
         Product[] products = categories[0].getProduct();
         if (products != null) {
-            int count = products.length;
-            for (int i = 0; i < count; i++) {
-                Product product = products[i];
+            for(Product product : products) {
                 ProductItem item = new ProductItem(product.getProductName(), null, product.getSku());
                 add(item);
             }
-            Log.d(TAG, "Got " + count + " products");
         }
         notifyDataSetChanged();
     }

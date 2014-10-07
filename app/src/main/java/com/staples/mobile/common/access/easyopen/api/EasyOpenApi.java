@@ -43,17 +43,15 @@ public interface EasyOpenApi {
         Callback<Browse> callback
     );
 
-    //http://qapi.staples.com/v1/10001/product/partnumber/606806?catalogId=10051&locale=en_US&zipCode=01702&client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS
-    //"/{version}/{storeId}/product/partnumber/{productId}?catalogId={catalogId}&locale={locale}&zipCode={zipCode}&client_id={clientId}"
     @GET("/{version}/{storeId}/product/partnumber/{productId}")
     void sku(
-            @EncodedPath("version") String version,
-            @EncodedPath("storeId") String storeId,
-            @EncodedPath("productId") String productId,
-            @Query("catalogId") String catalogId,
-            @Query("locale") String locale,
-            @Query("zipCode") String zipCode,
-            @Query("client_id") String client_id,
-            Callback<Sku> callback
+        @EncodedPath("version") String version,
+        @EncodedPath("storeId") String storeId,
+        @EncodedPath("productId") String productId,
+        @Query("catalogId") String catalogId,
+        @Query("locale") String locale,
+        @Query("zipCode") String zipCode,
+        @Query("client_id") String client_id,
+        Callback<Sku> callback
     );
 }

@@ -7,13 +7,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.staples.mobile.R;
 
 public class RatingStars extends View {
+    public static final String TAG = "RatingStars";
+
     public static Bitmap fullStar;
     public static Bitmap halfStar;
     public static Bitmap emptyStar;
@@ -75,6 +76,7 @@ public class RatingStars extends View {
         float x = getPaddingLeft();
         float y = getPaddingTop();
 
+        // Draw 5 assorted stars
         float f = rating;
         for(int i=0;i<5;i++) {
             if (f>=0.75f) b = fullStar;
@@ -86,7 +88,9 @@ public class RatingStars extends View {
             f -= 1.0f;
         }
 
+        // Draw customer count
+        y += (height-0.9f*paint.ascent())/2.0f; // 0.9 = adjust for internal leading
         String text = " (" + count + ")";
-        canvas.drawText(text, x, y+3*height/4, paint);
+        canvas.drawText(text, x, y, paint);
     }
 }

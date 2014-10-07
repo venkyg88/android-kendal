@@ -7,6 +7,7 @@ public class BundleItem {
     public String identifier;
     public String imageUrl;
     public float price;
+    public String unit;
     public float customerRating;
     public int customerCount;
 
@@ -45,6 +46,7 @@ public class BundleItem {
             float finalPrice = pricing.getFinalPrice();
             if (finalPrice>0.0f) {
                 price = finalPrice;
+                unit = pricing.getUnitOfMeasure();
                 return(price);
             }
         }
