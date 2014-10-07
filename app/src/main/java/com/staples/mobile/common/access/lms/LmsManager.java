@@ -84,6 +84,12 @@ public class LmsManager implements Callback<Lms> {
     }
 
     public Screen getScreen() {
+
+        Log.v(TAG, "LmsManager:getScreen():"
+                + " lms[" + lms + "]"
+                + " this[" + this + "]"
+        );
+
         Screen screen = null;
         if (lms != null) {
             screen = lms.getScreen().get(0);
