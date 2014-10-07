@@ -43,14 +43,12 @@ public class ProductAdapter extends ArrayAdapter<ProductItem> implements Callbac
     private Activity activity;
     private LmsItem lmsItem;
     private LayoutInflater inflater;
-    private Picasso picasso;
 
     public ProductAdapter(Activity activity, LmsItem lmsItem) {
         super(activity, 0);
         this.activity = activity;
         this.lmsItem = lmsItem;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        picasso = Picasso.with(activity);
     }
 
     /* Views */
@@ -86,10 +84,9 @@ public class ProductAdapter extends ArrayAdapter<ProductItem> implements Callbac
                 case VIEW_BANNER:
                     view = inflater.inflate(R.layout.banner_item, parent, false);
                     ImageView banner = (ImageView) view.findViewById(R.id.image);
-                    RequestCreator requestCreator = picasso.load(item.imageUrl);
-                    requestCreator.into(banner);
-                    requestCreator.fit();
+                    Picasso.with(activity).load(item.imageUrl).into(banner);
                     break;
+
                 case VIEW_PRODUCT:
                     view = inflater.inflate(R.layout.product_item, parent, false);
                     break;
