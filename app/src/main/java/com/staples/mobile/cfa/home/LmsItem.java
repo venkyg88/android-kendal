@@ -6,7 +6,7 @@ public class LmsItem {
     String title;
     String bannerUrl;
     String identifier;
-    ListView list;
+    ListView listView;
 
     LmsItem(String title, String bannerUrl, String identifier) {
         this.title = title;

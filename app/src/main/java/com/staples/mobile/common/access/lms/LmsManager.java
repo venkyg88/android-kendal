@@ -63,22 +63,31 @@ public class LmsManager implements Callback<Lms> {
         while (true) {
 
             if (conditional) {
+
                 lmsReadLock.lock();
+
                 if (lms != null) {
-                    if (lmsManagerCallback != null) lmsManagerCallback.onGetLmsResult(true);
+
                     lmsReadLock.unlock();
+
+                    if (lmsManagerCallback != null) lmsManagerCallback.onGetLmsResult(true);
                     break; // while (true)
                 }
                 lmsReadLock.unlock();
             }
-            lmsApi.lms(RECOMMENDATION, STORE_ID, this);
+
+            getLmsWithLock();
+
             break; // while (true)
 
         } // while (true)
     }
 
     public Screen getScreen() {
-        Screen screen = lms.getScreen().get(0);
+        Screen screen = null;
+        if (lms != null) {
+            screen = lms.getScreen().get(0);
+        }
         return (screen);
     }
 
@@ -90,8 +99,8 @@ public class LmsManager implements Callback<Lms> {
                 + " this[" + this + "]"
         );
 
-        lmsWriteLock.lock();
         this.lms = lms;
+
         lmsWriteLock.unlock();
 
         if (lmsManagerCallback != null) lmsManagerCallback.onGetLmsResult(true);
@@ -105,6 +114,22 @@ public class LmsManager implements Callback<Lms> {
             + " this[" + this + "]"
         );
 
+        lmsWriteLock.unlock();
+
         if (lmsManagerCallback != null) lmsManagerCallback.onGetLmsResult(false);
+    }
+
+    private void getLmsWithLock() {
+
+        Log.v(TAG, "LmsManager:getLmsWithLock():"
+                + " lms[" + lms + "]"
+                + " this[" + this + "]"
+        );
+
+        lmsWriteLock.lock();
+
+        lmsApi.lms(RECOMMENDATION, STORE_ID, this);
+
+        return;
     }
 }
