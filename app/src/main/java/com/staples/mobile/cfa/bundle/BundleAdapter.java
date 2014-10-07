@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -15,10 +16,13 @@ import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.widget.ListViewWrapper;
+import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Category;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
+
+import java.text.DecimalFormat;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -38,17 +42,17 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
 
     private static final int MAXFETCH = 50;
 
+    private static final DecimalFormat format = new DecimalFormat("$#.00");
+
     private Activity activity;
     private ListViewWrapper wrapper;
     private LayoutInflater inflater;
-    private Picasso picasso;
 
     public BundleAdapter(Activity activity, ListViewWrapper wrapper) {
         super(activity, 0);
         this.activity = activity;
         this.wrapper = wrapper;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        picasso = Picasso.with(activity);
     }
 
     @Override
@@ -61,10 +65,14 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
         TextView title = (TextView) view.findViewById(R.id.title);
         if (title!=null) title.setText(item.title);
 
+        RatingStars ratingStars = (RatingStars) view.findViewById(R.id.rating);
+        ratingStars.setRating(item.customerRating, item.customerCount);
+
+        TextView price = (TextView) view.findViewById(R.id.price);
+        price.setText(format.format(item.price));
+
         ImageView image = (ImageView) view.findViewById(R.id.image);
-        RequestCreator requestCreator = picasso.load(item.imageUrl);
-        requestCreator.into(image);
-        requestCreator.fit();
+        Picasso.with(activity).load(item.imageUrl).into(image);
 
         return(view);
     }
@@ -109,7 +117,11 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
             for (int i = 0; i < count; i++) {
                 Product product = products[i];
                 BundleItem item = new BundleItem(product.getProductName(), product.getSku());
-                item.setImageUrl(product.getThumbnailImage());
+//                item.setImageUrl(product.getThumbnailImage());
+                item.setImageUrl(product.getImage());
+                item.setPrice(product.getPricing());
+                item.customerRating = product.getCustomerReviewRating();
+                item.customerCount = product.getCustomerReviewCount();
                 add(item);
             }
             Log.d(TAG, "Got " + count + " products");
