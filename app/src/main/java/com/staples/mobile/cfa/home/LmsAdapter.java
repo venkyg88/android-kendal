@@ -26,6 +26,7 @@ import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.common.access.lms.api.LmsApi;
 import com.staples.mobile.common.access.lms.LmsManager.LmsMgrCallback;
 import com.staples.mobile.common.access.lms.LmsManager;
+import com.staples.mobile.common.access.lms.model.Area;
 import com.staples.mobile.common.access.lms.model.Item;
 import com.staples.mobile.common.access.lms.model.Lms;
 import com.staples.mobile.common.access.lms.model.Screen;
@@ -36,6 +37,7 @@ import java.util.List;
 public class LmsAdapter
     extends BaseAdapter
     implements LmsMgrCallback,
+               AdapterView.OnItemClickListener,
                com.squareup.picasso.Callback {
 
     private static final String TAG = "LmsAdapter";
@@ -51,16 +53,27 @@ public class LmsAdapter
 
     private RelativeLayout lmsItemLayout;
 
+    private ListView bundlesListView;
     private LmsItemViewHolder lmsItemViewHolder;
 
-    public LmsAdapter(MainActivity activity) {
+    private Screen screen;
+    private List<Item> items;
+
+    public LmsAdapter(MainActivity activity, View view) {
 
         super();
+
         this.activity = activity;
         resources = MainApplication.application.getResources();
-        layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         lmsItems = new ArrayList();
         lmsManager = new LmsManager();
+
+        layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        bundlesListView = (ListView) view.findViewById(R.id.lsvBundles);
+        bundlesListView.setAdapter(this);
+        bundlesListView.setOnItemClickListener(this);
     }
 
     public void fill() {
@@ -78,10 +91,18 @@ public class LmsAdapter
         );
 
         if (success) {
-            Screen screen = lmsManager.getScreen();
-            List<Item> items = screen.getItem();
+
+            screen = lmsManager.getScreen();
+            items = screen.getItem();
+            LmsItem lmsItem = null;
+            List<Area> areas = null;
+            String skuList = null;
+
             for (Item item : items) {
-                lmsItems.add(new LmsItem(item.getTitle(), item.getBanner(), null));
+                areas = item.getArea();
+                skuList = areas.get(0).getSkuList();
+                lmsItem = new LmsItem(item.getTitle(), item.getBanner(), skuList);
+                lmsItems.add(lmsItem);
             }
             notifyDataSetChanged();
         }
@@ -115,9 +136,11 @@ public class LmsAdapter
                                                         parentViewGroup,
                                                         false);
             convertView = lmsItemLayout;
+
             lmsItemViewHolder = new LmsItemViewHolder();
             lmsItemViewHolder.titleTextView = (TextView) lmsItemLayout.findViewById(R.id.titleTextView);
             lmsItemViewHolder.bannerImageView = (ImageView) lmsItemLayout.findViewById(R.id.categoryImageView);
+
             convertView.setTag(lmsItemViewHolder);
 
         } else { // if (wvConvertView == null)
@@ -156,4 +179,26 @@ public class LmsAdapter
     public void onError() {
         return;
     }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent,
+                            View           clickedView,
+                            int            position,
+                            long           rowId)
+    {
+        Log.v(TAG, "LmsAdapter:onItemClick():"
+                + " position[" + position + "]"
+                + " this[" + this + "]"
+        );
+
+        LmsItem lmsItem = lmsItems.get(position);
+
+        Screen screen = lmsManager.getScreen();
+        String path = "/category/identifier/" + lmsItem.identifier;
+
+        activity.selectBundle(lmsItem.title, path);
+
+        return;
+
+    } // onItemClick()
 }

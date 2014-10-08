@@ -91,9 +91,14 @@ public class LmsManager implements Callback<Lms> {
         );
 
         Screen screen = null;
+
+        lmsReadLock.lock();
+
         if (lms != null) {
             screen = lms.getScreen().get(0);
         }
+        lmsReadLock.unlock();
+
         return (screen);
     }
 

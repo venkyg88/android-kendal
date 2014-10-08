@@ -249,7 +249,7 @@ public class MainActivity extends Activity
                 String identifier = item.getBundleIdentifier();
                 if (identifier!=null) {
                     drawerLayout.closeDrawers();
-                    selectBundle(item. title, item.path);
+                    selectBundle(item.title, item.path);
                 } else {
                     adapter = (DrawerAdapter) parent.getAdapter();
                     adapter.pushStack(item);

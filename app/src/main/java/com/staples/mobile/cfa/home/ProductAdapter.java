@@ -23,7 +23,10 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ProductAdapter extends ArrayAdapter<ProductItem> implements Callback<Browse> {
+public class ProductAdapter
+    extends ArrayAdapter<ProductItem>
+    implements Callback<Browse> {
+
     private static final String TAG = "ProductAdapter";
 
     private static final int VIEW_BANNER = 0;

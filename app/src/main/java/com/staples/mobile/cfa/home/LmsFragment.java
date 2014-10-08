@@ -18,14 +18,12 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.R;
 
 public class LmsFragment
-    extends Fragment
-    implements AdapterView.OnItemClickListener {
+    extends Fragment {
 
     private static final String TAG = "LmsFragment";
 
     private MainActivity activity = null;
     private LmsAdapter lmsAdapter;
-    private ListView bundlesListView;
 
     @Override
     public void onAttach(Activity activity) {
@@ -49,52 +47,9 @@ public class LmsFragment
         );
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
 
-        lmsAdapter = new LmsAdapter(activity);
-
-        bundlesListView = (ListView) view.findViewById(R.id.lsvBundles);
-        bundlesListView.setAdapter(lmsAdapter);
-        bundlesListView.setOnItemClickListener(this);
-
+        lmsAdapter = new LmsAdapter(activity, view);
         lmsAdapter.fill();
 
         return (view);
     }
-
-    /* @@@ STUBBED
-    public Object instantiateItem(ViewGroup container, int position) {
-
-        LmsItem lmsItem = lmsItems.get(position);
-        lmsItem.listView = new ListView(activity);
-
-        // Set adapter
-        ProductAdapter productAdapter = new ProductAdapter(activity, lmsItem);
-        lmsItem.listView.setOnItemClickListener(this);
-
-        lmsItem.listView.setAdapter(productAdapter);
-        productAdapter.fill();
-
-        container.addView(lmsItem.listView);
-
-        return (lmsItem);
-    }
-    @@@ STUBBED */
-
-    @Override
-    public void onItemClick(AdapterView<?> parent,
-                            View           clickedView,
-                            int            position,
-                            long           rowId)
-    {
-        Log.v(TAG, "LmsFragment:onItemClick():"
-                + " position[" + position + "]"
-                + " this[" + this + "]"
-        );
-        /* @@@ STUBBED
-        ProductItem productItem = (ProductItem) parent.getItemAtPosition(position);
-        activity.selectSkuItem(productItem.identifier);
-        @@@ STUBBED */
-
-        return;
-
-    } // onItemClick()
 }
