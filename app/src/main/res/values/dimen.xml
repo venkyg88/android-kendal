@@ -3,4 +3,5 @@
     <dimen name="icon_width">36dp</dimen>
     <dimen name="min_column_width">150dp</dimen>
     <dimen name="sku_row_height">200dp</dimen>
+    <dimen name="price_font_size">20dp</dimen>
 </resources>

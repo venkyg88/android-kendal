@@ -8,21 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.widget.ListViewWrapper;
 import com.staples.mobile.cfa.widget.RatingStars;
+import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Category;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
-
-import java.text.DecimalFormat;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -41,8 +38,6 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
     private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
 
     private static final int MAXFETCH = 50;
-
-    private static final DecimalFormat format = new DecimalFormat("$#.00");
 
     private Activity activity;
     private ListViewWrapper wrapper;
@@ -68,11 +63,11 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
         RatingStars ratingStars = (RatingStars) view.findViewById(R.id.rating);
         ratingStars.setRating(item.customerRating, item.customerCount);
 
-        TextView price = (TextView) view.findViewById(R.id.price);
-        price.setText(format.format(item.price));
+        PriceSticker price = (PriceSticker) view.findViewById(R.id.price);
+        price.setPrice(item.price, item.unit);
 
         ImageView image = (ImageView) view.findViewById(R.id.image);
-        Picasso.with(activity).load(item.imageUrl).into(image);
+        Picasso.with(activity).load(item.imageUrl).error(R.drawable.no_photo).into(image);
 
         return(view);
     }
@@ -113,18 +108,14 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
         Category category = categories[0];
         Product[] products = category.getProduct();
         if (products != null) {
-            int count = products.length;
-            for (int i = 0; i < count; i++) {
-                Product product = products[i];
+            for (Product product : products) {
                 BundleItem item = new BundleItem(product.getProductName(), product.getSku());
-//                item.setImageUrl(product.getThumbnailImage());
                 item.setImageUrl(product.getImage());
                 item.setPrice(product.getPricing());
                 item.customerRating = product.getCustomerReviewRating();
                 item.customerCount = product.getCustomerReviewCount();
                 add(item);
             }
-            Log.d(TAG, "Got " + count + " products");
             wrapper.setState(ListViewWrapper.State.DONE);
             notifyDataSetChanged();
             return;
