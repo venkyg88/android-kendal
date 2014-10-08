@@ -29,8 +29,6 @@ public class BundleFragment extends Fragment implements AdapterView.OnItemClickL
 
         Bundle args = getArguments();
         if (args!=null) {
-            String title = args.getString("title");
-            ((TextView) view.findViewById(R.id.title)).setText(title);
             path = args.getString("path");
         }
 
