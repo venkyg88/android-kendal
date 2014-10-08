@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.bundle;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,12 +44,14 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
     private ListViewWrapper wrapper;
     private LayoutInflater inflater;
     private int layout;
+    private Drawable noPhoto;
 
     public BundleAdapter(Activity activity, ListViewWrapper wrapper) {
         super(activity, 0);
         this.activity = activity;
         this.wrapper = wrapper;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        noPhoto = activity.getResources().getDrawable(R.drawable.no_photo);
     }
 
     public void setLayout(int layout) {
@@ -72,7 +75,8 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
         price.setPrice(item.price, item.unit);
 
         ImageView image = (ImageView) view.findViewById(R.id.image);
-        Picasso.with(activity).load(item.imageUrl).error(R.drawable.no_photo).into(image);
+        if (item.imageUrl==null) image.setImageDrawable(noPhoto);
+        else Picasso.with(activity).load(item.imageUrl).error(noPhoto).into(image);
 
         return(view);
     }
