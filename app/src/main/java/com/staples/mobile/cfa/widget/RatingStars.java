@@ -3,7 +3,6 @@ package com.staples.mobile.cfa.widget;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -102,7 +101,7 @@ public class RatingStars extends View {
 
         Paint paint = new Paint();
         textPaint.setAntiAlias(true);
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setStyle(Paint.Style.FILL);
 
         fullStar = Bitmap.createBitmap(height, height, Bitmap.Config.ARGB_8888);
         canvas.setBitmap(fullStar);
@@ -126,8 +125,6 @@ public class RatingStars extends View {
 
     @Override
     public void onMeasure(int widthSpec, int heightSpec) {
-        int width = (int) textPaint.measureText(" ("+ count + ")");
-        widthSpec =getPaddingLeft() + 5*height + width + getPaddingRight();
         heightSpec = getPaddingTop() + height + getPaddingBottom();
         setMeasuredDimension(widthSpec, heightSpec);
     }
