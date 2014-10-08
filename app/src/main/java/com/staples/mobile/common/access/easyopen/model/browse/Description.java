@@ -1,11 +1,10 @@
 package com.staples.mobile.common.access.easyopen.model.browse;
 
-/**
- * Created by pyhre001 on 9/10/14.
- */
 public class Description {
     private String description;
     private String name;
+    private String promotionalMessageName;
+    private String promotionalMessageText;
     private String text;
 
     public String getDescription() {
@@ -14,6 +13,14 @@ public class Description {
 
     public String getName() {
         return name;
+    }
+
+    public String getPromotionalMessageName() {
+        return promotionalMessageName;
+    }
+
+    public String getPromotionalMessageText() {
+        return promotionalMessageText;
     }
 
     public String getText() {

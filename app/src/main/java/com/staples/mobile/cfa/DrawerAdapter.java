@@ -242,9 +242,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
 
         // Process categories
         if (categories.length>1) {
-            int count = categories.length;
-            for (int i = 0; i < count; i++) {
-                Category category = categories[i];
+            for(Category category : categories){
                 Description[] descriptions = category.getDescription1();
                 if (descriptions != null && descriptions.length > 0) {
                     // Get category title
@@ -258,7 +256,6 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
                     browseList.add(item);
                 }
             }
-            Log.d(TAG, "Got " + count + " categories");
             wrapper.setState(ListViewWrapper.State.DONE);
             notifyDataSetChanged();
             return;
@@ -268,9 +265,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
         Category category = categories[0];
         SubCategory[] subCategories = category.getSubCategory();
         if (subCategories != null) {
-            int count = subCategories.length;
-            for (int i = 0; i < count; i++) {
-                SubCategory subCategory = subCategories[i];
+            for(SubCategory subCategory : subCategories) {
                 Description[] descriptions = subCategory.getDescription();
                 if (descriptions != null && descriptions.length > 0) {
                     Description description = descriptions[0];
@@ -282,7 +277,6 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
                     browseList.add(item);
                 }
             }
-            Log.d(TAG, "Got " + count + " subCategories");
             wrapper.setState(ListViewWrapper.State.DONE);
             notifyDataSetChanged();
             return;

@@ -2,9 +2,6 @@ package com.staples.mobile.common.access.easyopen.model.browse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**
- * Created by pyhre001 on 9/22/14.
- */
 public class Product {
     private boolean bopisEligible;
     private BulletDescription[] bulletDescription;

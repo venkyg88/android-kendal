@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="icon_width">36dp</dimen>
-    <dimen name="min_column_width">150dp</dimen>
+    <dimen name="min_column_width">175dp</dimen>
+    <dimen name="image_square_size">100dp</dimen>
+    <dimen name="price_font_size">20dp</dimen>
+    <dimen name="rating_star_size">12dp</dimen>
 </resources>
