@@ -56,7 +56,7 @@ public class LmsAdapter
     private ListView bundlesListView;
     private LmsItemViewHolder lmsItemViewHolder;
 
-    private Screen screen;
+    private List<Screen> screens;
     private List<Item> items;
 
     public LmsAdapter(MainActivity activity, View view) {
@@ -92,7 +92,8 @@ public class LmsAdapter
 
         if (success) {
 
-            screen = lmsManager.getScreen();
+            screens = lmsManager.getScreen();
+            Screen screen = screens.get(0);
             items = screen.getItem();
             LmsItem lmsItem = null;
             List<Area> areas = null;
@@ -193,7 +194,6 @@ public class LmsAdapter
 
         LmsItem lmsItem = lmsItems.get(position);
 
-        Screen screen = lmsManager.getScreen();
         String path = "/category/identifier/" + lmsItem.identifier;
 
         activity.selectBundle(lmsItem.title, path);

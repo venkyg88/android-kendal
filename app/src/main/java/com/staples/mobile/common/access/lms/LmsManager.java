@@ -11,6 +11,7 @@ import com.staples.mobile.common.access.lms.api.LmsApi;
 import com.staples.mobile.common.access.lms.model.Lms;
 import com.staples.mobile.common.access.lms.model.Screen;
 
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -83,23 +84,23 @@ public class LmsManager implements Callback<Lms> {
         } // while (true)
     }
 
-    public Screen getScreen() {
+    public List<Screen> getScreen() {
 
         Log.v(TAG, "LmsManager:getScreen():"
                 + " lms[" + lms + "]"
                 + " this[" + this + "]"
         );
 
-        Screen screen = null;
+        List<Screen> screens = null;
 
         lmsReadLock.lock();
 
         if (lms != null) {
-            screen = lms.getScreen().get(0);
+            screens = lms.getScreen();
         }
         lmsReadLock.unlock();
 
-        return (screen);
+        return (screens);
     }
 
     @Override
