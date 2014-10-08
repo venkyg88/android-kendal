@@ -17,6 +17,9 @@ import retrofit.android.AndroidLog;
 import retrofit.client.OkClient;
 
 public class MainApplication extends Application {
+
+    public static MainApplication application;
+
     private static final String TAG = "MainApplication";
 
     private static final RestAdapter.LogLevel LOGLEVEL = RestAdapter.LogLevel.BASIC;
@@ -37,6 +40,9 @@ public class MainApplication extends Application {
 
     @Override
     public void onCreate() {
+
+        application = this;
+
         OkHttpClient okHttpClient = new OkHttpClient();
         okHttpClient.setConnectTimeout(TIMEOUT, TimeUnit.SECONDS);
         okHttpClient.setReadTimeout(TIMEOUT, TimeUnit.SECONDS);
