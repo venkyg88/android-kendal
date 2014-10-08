@@ -42,6 +42,7 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
     private Activity activity;
     private ListViewWrapper wrapper;
     private LayoutInflater inflater;
+    private int layout;
 
     public BundleAdapter(Activity activity, ListViewWrapper wrapper) {
         super(activity, 0);
@@ -50,12 +51,16 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
+    public void setLayout(int layout) {
+        this.layout = layout;
+    }
+
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         BundleItem item = getItem(position);
 
         if (view==null)
-            view = inflater.inflate(R.layout.bundle_item, parent, false);
+            view = inflater.inflate(layout, parent, false);
 
         TextView title = (TextView) view.findViewById(R.id.title);
         if (title!=null) title.setText(item.title);

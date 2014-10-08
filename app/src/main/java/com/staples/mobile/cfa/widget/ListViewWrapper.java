@@ -5,8 +5,10 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.bundle.BundleAdapter;
 
 /**
  * This class is a ViewGroup wrapper for three child Views:
@@ -51,7 +53,7 @@ public class ListViewWrapper extends LinearLayout {
         super(context, attrs, defStyle);
     }
 
-    // General state handling
+    // Display state handling
 
     public void setState(State state) {
         View list = getChildAt(0);
@@ -63,16 +65,27 @@ public class ListViewWrapper extends LinearLayout {
         empty.setVisibility(state.empty);
     }
 
-    // Special handling for GridView
-
     @Override
     public void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
+
+        // Special handling for GridView
         View list = getChildAt(0);
         if (list instanceof GridView) {
-            int width = View.MeasureSpec.getSize(widthSpec);
-            int column = getResources().getDimensionPixelSize(R.dimen.min_column_width);
-            ((GridView) list).setNumColumns(width/column);
+            GridView grid = (GridView) list;
+            int viewWidth = View.MeasureSpec.getSize(widthSpec);
+            int colWidth = getResources().getDimensionPixelSize(R.dimen.min_column_width);
+            int n = viewWidth/colWidth;
+            if (n<=0) n = 1;
+            grid.setNumColumns(n);
+
+            // Special handling for BundleAdapter
+            ListAdapter adapter = grid.getAdapter();
+            if (adapter instanceof BundleAdapter) {
+                BundleAdapter bundle = (BundleAdapter) adapter;
+                if (n > 1) bundle.setLayout(R.layout.bundle_item_tall);
+                else bundle.setLayout(R.layout.bundle_item_wide);
+            }
         }
     }
 }
