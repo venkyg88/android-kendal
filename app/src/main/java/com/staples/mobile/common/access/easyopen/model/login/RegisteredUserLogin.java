@@ -1,4 +1,4 @@
-package com.staples.mobile.common.access.login.model;
+package com.staples.mobile.common.access.easyopen.model.login;
 
 /**
  * Created by Avinash Dodda

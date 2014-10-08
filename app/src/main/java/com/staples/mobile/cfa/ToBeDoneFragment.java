@@ -7,10 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.R;
-import com.staples.mobile.common.access.login.model.TokenObject;
 
 public class ToBeDoneFragment extends Fragment {
     private static final String TAG = "ToBeDoneFragment";

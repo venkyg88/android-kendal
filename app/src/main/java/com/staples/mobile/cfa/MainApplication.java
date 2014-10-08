@@ -3,10 +3,8 @@ package com.staples.mobile.cfa;
 import android.app.Application;
 
 import com.squareup.okhttp.OkHttpClient;
-import com.staples.mobile.cfa.feed.FeedAdapter;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.lms.api.LmsApi;
-import com.staples.mobile.common.access.login.model.TokenObject;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;

@@ -5,10 +5,8 @@ import android.util.Log;
 
 import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.feed.model.Member;
-import com.staples.mobile.common.access.feed.model.MemberDetail;
-import com.staples.mobile.common.access.login.model.RegisteredUserLogin;
-import com.staples.mobile.common.access.login.model.TokenObject;
+import com.staples.mobile.common.access.easyopen.model.member.Member;
+import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;

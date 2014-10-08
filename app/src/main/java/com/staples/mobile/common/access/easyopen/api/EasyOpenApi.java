@@ -2,9 +2,9 @@ package com.staples.mobile.common.access.easyopen.api;
 
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.sku.Sku;
-import com.staples.mobile.common.access.feed.model.MemberDetail;
-import com.staples.mobile.common.access.login.model.RegisteredUserLogin;
-import com.staples.mobile.common.access.login.model.TokenObject;
+import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
+import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 
 import retrofit.Callback;
 import retrofit.http.Body;

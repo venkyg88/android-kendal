@@ -5,8 +5,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.login.model.RegisteredUserLogin;
-import com.staples.mobile.common.access.login.model.TokenObject;
+import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
+import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
