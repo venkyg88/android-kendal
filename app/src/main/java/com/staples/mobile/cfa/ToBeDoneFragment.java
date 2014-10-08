@@ -12,11 +12,17 @@ import com.staples.mobile.R;
 
 public class ToBeDoneFragment extends Fragment {
     private static final String TAG = "ToBeDoneFragment";
+    private static String token1;
+    private static String token2;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
         View view = inflater.inflate(R.layout.tobedone, container, false);
+
+        LoginHelper loginHelper = new LoginHelper(getActivity());
+        loginHelper.getRegisteredUserTokens();
 
         Bundle args = getArguments();
         if (args!=null) {

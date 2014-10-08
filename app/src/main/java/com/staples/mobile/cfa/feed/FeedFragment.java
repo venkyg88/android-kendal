@@ -12,9 +12,14 @@ import com.staples.mobile.R;
 
 public class FeedFragment extends Fragment {
     private static final String TAG = "FeedFragment";
+    private FeedAdapter feedAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+
+//        feedAdapter = new FeedAdapter(getActivity());
+//        feedAdapter.fill();
+
         View item;
 
         Log.d(TAG, "onCreateView()");
@@ -36,6 +41,6 @@ public class FeedFragment extends Fragment {
 
         inflater.inflate(R.layout.rewards, group);
 
-        return(group);
+        return (group);
     }
 }

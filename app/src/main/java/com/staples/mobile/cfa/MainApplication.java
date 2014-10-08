@@ -61,8 +61,11 @@ public class MainApplication extends Application {
         public void intercept(RequestFacade request) {
             request.addHeader("User-Agent", USER_AGENT);
             request.addHeader("Accept", "application/json");
-            request.addHeader("WCToken", token1);
-            request.addHeader("WCTrustedToken", token2);
+            if(token1!=null && token2!=null)
+            {
+                request.addHeader("WCToken", token1);
+                request.addHeader("WCTrustedToken", token2);
+            }
 //            request.addHeader("Connection", "Keep-Alive");
         }
     }

@@ -77,6 +77,9 @@ public class MainActivity extends Activity
 
         boolean freshStart = (bundle==null);
         prepareMainScreen(freshStart);
+
+        LoginHelper loginHelper = new LoginHelper(this);
+        loginHelper.getGuestTokens();
     }
 
     public void showMainScreen() {
@@ -226,6 +229,7 @@ public class MainActivity extends Activity
         DrawerItem item = (DrawerItem) parent.getItemAtPosition(position);
         switch(item.type) {
             case FRAGMENT:
+            case ACCOUNT:
                 drawerLayout.closeDrawers();
                 selectDrawerItem(item, Transition.SLIDE, true);
                 break;
