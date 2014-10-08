@@ -7,8 +7,8 @@ import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.feed.model.Member;
 import com.staples.mobile.common.access.feed.model.MemberDetail;
+import com.staples.mobile.common.access.login.model.RegisteredUserLogin;
 import com.staples.mobile.common.access.login.model.TokenObject;
-import com.staples.mobile.common.access.login.model.UserLogin;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -45,33 +45,10 @@ public class FeedAdapter {
     }
 
     public void fill() {
-        getUserTokens();
+        getMemberData();
     }
 
-    public void getUserTokens()
-    {
-        UserLogin user = new UserLogin("testuser2","password");
-        easyOpenApi.login(user, RECOMMENDATION, STORE_ID, CLIENT_ID, new Callback<TokenObject>() {
 
-                    @Override
-                    public void success(TokenObject tokenObject, Response response) {
-                        int code = response.getStatus();
-
-                        MainApplication.setTokens(tokenObject.getWCToken(), tokenObject.getWCTrustedToken());
-                        Log.i("Status Code", " " + code);
-                        Log.i("wc", tokenObject.getWCToken());
-                        Log.i("wctrusted", tokenObject.getWCTrustedToken());
-                        getMemberData();
-                    }
-
-                    @Override
-                    public void failure(RetrofitError retrofitError) {
-                        Log.i("Fail Token", " " + retrofitError.getMessage());
-                        Log.i("Something More", " "+retrofitError.getUrl() + retrofitError.getResponse());
-                    }
-                }
-        );
-    }
 
     public void getMemberData()
     {
@@ -83,16 +60,15 @@ public class FeedAdapter {
                         int code = response.getStatus();
                         Member member = memberDetail.getMember().get(0);
 
-
-                        Log.i("Success Name", member.getUserName());
-                        Log.i("Success Email", member.getEmailAddress());
+                        Log.i("Member Name", member.getUserName());
+                        Log.i("Member Email", member.getEmailAddress());
                         Log.i("Status Code", " " + code);
                     }
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
-                        Log.i("Fail Token", " " + retrofitError.getMessage());
-                        Log.i("Something More", " "+retrofitError.getUrl() + retrofitError.getResponse());
+                        Log.i("Fail message when getting member details", " " + retrofitError.getMessage());
+                        Log.i("URl used to get member details", " "+retrofitError.getUrl());
 
                     }
                 }

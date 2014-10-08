@@ -4,13 +4,13 @@ package com.staples.mobile.common.access.login.model;
  * Created by Avinash Dodda
  */
 
-public class UserLogin {
+public class RegisteredUserLogin {
 
     private String logonId;
 
     private String logonPassword;
 
-    public UserLogin(String logonId, String logonPassword) {
+    public RegisteredUserLogin(String logonId, String logonPassword) {
         this.logonId = logonId;
         this.logonPassword = logonPassword;
     }

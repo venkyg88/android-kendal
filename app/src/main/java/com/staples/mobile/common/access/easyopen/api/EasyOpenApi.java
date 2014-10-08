@@ -2,10 +2,9 @@ package com.staples.mobile.common.access.easyopen.api;
 
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.sku.Sku;
-import com.staples.mobile.common.access.feed.model.Member;
 import com.staples.mobile.common.access.feed.model.MemberDetail;
+import com.staples.mobile.common.access.login.model.RegisteredUserLogin;
 import com.staples.mobile.common.access.login.model.TokenObject;
-import com.staples.mobile.common.access.login.model.UserLogin;
 
 import retrofit.Callback;
 import retrofit.http.Body;
@@ -65,8 +64,8 @@ public interface EasyOpenApi {
 
     //https://sapi.staples.com/v1/10001/loginidentity?client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS
     @POST("/{version}/{storeId}/loginidentity")
-    public void login(
-            @Body UserLogin body,
+    public void registeredUserLogin(
+            @Body RegisteredUserLogin body,
             @EncodedPath("version") String version,
             @EncodedPath("storeId") String storeId,
             @Query("client_id") String client_id,
@@ -81,5 +80,14 @@ public interface EasyOpenApi {
             @Query("locale") String locale,
             @Query("client_id") String client_id,
             Callback<MemberDetail> callback
+    );
+
+    //https://api.staples.com/v1/10001/guestidentity?client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS
+    @POST("/{version}/{storeId}/guestidentity")
+    public void guestLogin(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("client_id") String client_id,
+            Callback<TokenObject> callback
     );
 }

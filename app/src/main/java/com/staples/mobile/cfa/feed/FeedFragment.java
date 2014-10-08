@@ -17,8 +17,8 @@ public class FeedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
 
-        feedAdapter = new FeedAdapter(getActivity());
-        feedAdapter.fill();
+//        feedAdapter = new FeedAdapter(getActivity());
+//        feedAdapter.fill();
 
         View item;
 
