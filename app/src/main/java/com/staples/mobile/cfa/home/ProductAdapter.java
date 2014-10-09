@@ -11,9 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.R;
-import com.staples.mobile.cfa.MainApplication;
+import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Category;
@@ -105,8 +104,7 @@ public class ProductAdapter
 
     void fill() {
         add(new ProductItem(null, lmsItem.bannerUrl, null));
-        MainApplication application = (MainApplication) activity.getApplication(); // TODO Broken because of new LMS!
-        EasyOpenApi easyOpenApi = application.getEasyOpenApi(false);
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, lmsItem.identifier, CATALOG_ID, LOCALE,
                                      ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
     }

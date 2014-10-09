@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
@@ -12,9 +13,6 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by Avinash Raja Dodda.
- */
 public class LoginHelper {
 
     private static final String RECOMMENDATION = "v1";
@@ -24,13 +22,10 @@ public class LoginHelper {
     private Activity activity;
     private EasyOpenApi easyOpenApi;
 
-
     public LoginHelper(Activity activity) {
         this.activity = activity;
-        MainApplication application = (MainApplication) activity.getApplication();
-        easyOpenApi = application.getEasyOpenApi(true);
+        easyOpenApi = Access.getInstance().getEasyOpenApi(true);
     }
-
 
     public void getRegisteredUserTokens()
     {
@@ -40,7 +35,7 @@ public class LoginHelper {
                     @Override
                     public void success(TokenObject tokenObjectReturned, Response response) {
                         int code = response.getStatus();
-                        MainApplication.setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken());
+                        Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken());
                         Toast.makeText(activity, tokenObjectReturned.getWCToken(), Toast.LENGTH_LONG).show();
 
                         Log.i("Status Code", " " + code);
@@ -64,8 +59,8 @@ public class LoginHelper {
                     @Override
                     public void success(TokenObject tokenObjectReturned, Response response) {
                         int code = response.getStatus();
-                        MainApplication.setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken());
-                        Toast.makeText(activity, tokenObjectReturned.getWCToken(), Toast.LENGTH_LONG).show();
+                        Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken());
+                        Toast.makeText(activity, tokenObjectReturned.getWCToken(), Toast.LENGTH_SHORT).show();
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
