@@ -7,7 +7,7 @@ import android.widget.ListView;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.DrawerAdapter;
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.cfa.MainApplication;
+import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.lms.api.LmsApi;
 import com.staples.mobile.common.access.lms.model.Lms;
 
@@ -33,7 +33,6 @@ public class ActivityTest implements Callback<Lms> {
 
     ActivityController controller;
     private MainActivity activity;
-    private MainApplication application;
 
     @Before
     public void setUp() {
@@ -52,8 +51,6 @@ public class ActivityTest implements Callback<Lms> {
 
         // Check for success
         Assert.assertNotNull("Activity should exist", activity);
-        application = (MainApplication) activity.getApplication();
-        Assert.assertNotNull("Application should exist", application);
     }
 
     @After
@@ -99,7 +96,7 @@ public class ActivityTest implements Callback<Lms> {
     public void testMockLmsApi() throws InterruptedException{
         success = false;
         failure = false;
-        LmsApi lmsApi = application.getMockLmsApi();
+        LmsApi lmsApi = Access.getInstance().getMockLmsApi(activity);
         lmsApi.lms("Ignore", "Ignore", this);
         Thread.sleep(1000);
         Assert.assertTrue("MockLmsApi should have succeeded", success);

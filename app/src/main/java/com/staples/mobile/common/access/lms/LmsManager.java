@@ -1,12 +1,8 @@
-/**
- * Created by DowSt001 on 10/06/14.
- */
-
 package com.staples.mobile.common.access.lms;
 
 import android.util.Log;
 
-import com.staples.mobile.cfa.MainApplication;
+import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.lms.api.LmsApi;
 import com.staples.mobile.common.access.lms.model.Lms;
 import com.staples.mobile.common.access.lms.model.Screen;
@@ -53,7 +49,7 @@ public class LmsManager implements Callback<Lms> {
 
     public LmsManager() {
 
-        lmsApi = MainApplication.application.getLmsApi();
+        lmsApi = Access.getInstance().getLmsApi();
     }
 
     public void getLms(LmsMgrCallback lmsManagerCallback,

@@ -1,6 +1,6 @@
-package com.staples.mobile.cfa;
+package com.staples.mobile.common.access;
 
-import android.app.Application;
+import android.content.Context;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -12,23 +12,19 @@ import java.util.concurrent.TimeUnit;
 
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
-import retrofit.converter.JacksonConverter;
 import retrofit.android.AndroidLog;
 import retrofit.client.OkClient;
+import retrofit.converter.JacksonConverter;
 
-public class MainApplication extends Application {
-
-    public static MainApplication application;
-
-    private static final String TAG = "MainApplication";
+public class Access {
+    public static final String TAG = "Access";
 
     private static final RestAdapter.LogLevel LOGLEVEL = RestAdapter.LogLevel.BASIC;
 
     private static final String USER_AGENT = "Staples Mobile App 1.0";
     private static final int TIMEOUT = 15; // Seconds
 
-    private static String token1;
-    private static String token2;
+    private static Access instance;
 
     private OkClient okClient;
     private JacksonConverter converter;
@@ -38,11 +34,19 @@ public class MainApplication extends Application {
     private LmsApi lmsApi;
     private LmsApi mockLmsApi;
 
-    @Override
-    public void onCreate() {
+    private String token1;
+    private String token2;
 
-        application = this;
+    public static Access getInstance() {
+        synchronized(Access.class) {
+            if (instance == null) {
+                instance = new Access();
+            }
+            return (instance);
+        }
+    }
 
+    private Access() {
         OkHttpClient okHttpClient = new OkHttpClient();
         okHttpClient.setConnectTimeout(TIMEOUT, TimeUnit.SECONDS);
         okHttpClient.setReadTimeout(TIMEOUT, TimeUnit.SECONDS);
@@ -53,7 +57,7 @@ public class MainApplication extends Application {
 
     // Interceptors for standard HTTP headers
 
-    private static class InsecureInterceptor implements RequestInterceptor {
+    private class InsecureInterceptor implements RequestInterceptor {
         @Override
         public void intercept(RequestFacade request) {
             request.addHeader("User-Agent", USER_AGENT);
@@ -62,7 +66,7 @@ public class MainApplication extends Application {
         }
     }
 
-    private static class SecureInterceptor implements RequestInterceptor {
+    private class SecureInterceptor implements RequestInterceptor {
         @Override
         public void intercept(RequestFacade request) {
             request.addHeader("User-Agent", USER_AGENT);
@@ -76,7 +80,7 @@ public class MainApplication extends Application {
         }
     }
 
-    public static void setTokens(String wcToken, String wcTrustedToken) {
+    public void setTokens(String wcToken, String wcTrustedToken) {
         token1 = wcToken;
         token2 = wcTrustedToken;
     }
@@ -131,12 +135,12 @@ public class MainApplication extends Application {
         return(lmsApi);
     }
 
-    public LmsApi getMockLmsApi() {
+    public LmsApi getMockLmsApi(Context context) {
         if (mockLmsApi!=null) return(mockLmsApi);
-        InvocationHandler handler = new MockApiHandler(this);
+        InvocationHandler handler = new MockApiHandler(context);
         mockLmsApi = (LmsApi) Proxy.newProxyInstance(LmsApi.class.getClassLoader(),
-                                                     new Class[] {LmsApi.class},
-                                                     handler);
+                new Class[]{LmsApi.class},
+                handler);
         return(mockLmsApi);
     }
 }

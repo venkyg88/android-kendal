@@ -14,6 +14,7 @@ import com.staples.mobile.R;
 import com.staples.mobile.cfa.feed.FeedFragment;
 import com.staples.mobile.cfa.home.LmsFragment;
 import com.staples.mobile.cfa.widget.ListViewWrapper;
+import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Category;
@@ -192,8 +193,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
 
         wrapper.setState(ListViewWrapper.State.ADDING);
 
-        MainApplication application = (MainApplication) activity.getApplication();
-        EasyOpenApi easyOpenApi = application.getEasyOpenApi(false);
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
 
         // Get top categories
         if (path==null) {

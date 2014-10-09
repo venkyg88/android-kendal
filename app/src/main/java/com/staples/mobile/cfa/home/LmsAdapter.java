@@ -2,13 +2,10 @@ package com.staples.mobile.cfa.home;
 
 import android.content.Context;
 import android.content.res.Resources;
-
 import android.util.Log;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -18,17 +15,12 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
-
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.cfa.MainApplication;
-
-import com.staples.mobile.common.access.lms.api.LmsApi;
-import com.staples.mobile.common.access.lms.LmsManager.LmsMgrCallback;
 import com.staples.mobile.common.access.lms.LmsManager;
+import com.staples.mobile.common.access.lms.LmsManager.LmsMgrCallback;
 import com.staples.mobile.common.access.lms.model.Area;
 import com.staples.mobile.common.access.lms.model.Item;
-import com.staples.mobile.common.access.lms.model.Lms;
 import com.staples.mobile.common.access.lms.model.Screen;
 
 import java.util.ArrayList;
@@ -37,8 +29,7 @@ import java.util.List;
 public class LmsAdapter
     extends BaseAdapter
     implements LmsMgrCallback,
-               AdapterView.OnItemClickListener,
-               com.squareup.picasso.Callback {
+               AdapterView.OnItemClickListener {
 
     private static final String TAG = "LmsAdapter";
 
@@ -64,7 +55,7 @@ public class LmsAdapter
         super();
 
         this.activity = activity;
-        resources = MainApplication.application.getResources();
+        resources = activity.getResources();
 
         lmsItems = new ArrayList();
         lmsManager = new LmsManager();
@@ -79,15 +70,15 @@ public class LmsAdapter
     public void fill() {
 
         lmsManager.getLms(this,  // LmsMgrCallback
-                          true); // conditional
+                true); // conditional
     }
 
     @Override
     public void onGetLmsResult(boolean success) {
 
         Log.v(TAG, "LmsAdapter:LmsManager.onGetLmsResult():"
-                + " success[" + success + "]"
-                + " this[" + this + "]"
+                        + " success[" + success + "]"
+                        + " this[" + this + "]"
         );
 
         if (success) {
@@ -161,25 +152,12 @@ public class LmsAdapter
         String bannerUrl = lmsItemSelected.bannerUrl;
         Picasso picasso = Picasso.with(activity);
         RequestCreator requestCreator = picasso.load(bannerUrl);
-        requestCreator.into(lmsItemViewHolder.bannerImageView,
-                            this); // callback
+        requestCreator.into(lmsItemViewHolder.bannerImageView); // callback
         requestCreator.fit();
 
         return (convertView);
 
     } // getView()
-
-    // com.squareup.picasso.Callback.onSuccess()
-
-    public void onSuccess() {
-        return;
-    }
-
-    // com.squareup.picasso.Callback.onError()
-
-    public void onError() {
-        return;
-    }
 
     @Override
     public void onItemClick(AdapterView<?> parent,
