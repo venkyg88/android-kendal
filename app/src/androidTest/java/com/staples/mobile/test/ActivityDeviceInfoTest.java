@@ -7,7 +7,6 @@ package com.staples.mobile.test;
 import android.content.res.Configuration;
 
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.common.device.DeviceInfo;
 
 import org.junit.After;
@@ -28,7 +27,6 @@ public class ActivityDeviceInfoTest {
 
     ActivityController controller;
     private MainActivity activity;
-    private MainApplication application;
 
     @Before
     public void setUp() {
@@ -47,12 +45,12 @@ public class ActivityDeviceInfoTest {
 
         // Check for success
         Assert.assertNotNull("Activity should exist", activity);
-        application = (MainApplication) activity.getApplication();
-        Assert.assertNotNull("Application should exist", application);
     }
 
     @After
-    public void tearDown() { controller.destroy(); }
+    public void tearDown() {
+        controller.destroy();
+    }
 
     @Test
     public void testToString() throws InterruptedException {
