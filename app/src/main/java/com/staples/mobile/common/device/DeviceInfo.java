@@ -7,6 +7,7 @@ package com.staples.mobile.common.device;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
@@ -17,7 +18,7 @@ import java.util.Locale;
  *
  * Provides stats on physical device gathered from DisplayMetrics and Configuration
  */
-public class DeviceStats {
+public class DeviceInfo {
 
     Resources resources;
     DisplayMetrics displayMetrics;
@@ -25,15 +26,79 @@ public class DeviceStats {
 
 
     /** constructor */
-    public DeviceStats(Context c) {
-        this.resources = c.getResources();
+    public DeviceInfo(Resources r) {
+        this.resources = r;
         this.displayMetrics = resources.getDisplayMetrics();
         this.configuration = resources.getConfiguration();
     }
 
+    /** constructor */
+    public DeviceInfo(Context c) {
+        this(c.getResources());
+    }
+
 
     // --------------------------------------------------------------- //
-    // ----------------------- using Resources ------------------------ //
+    // ----------------------- using Build --------------------------- //
+    // --------------------------------------------------------------- //
+
+    /** returns consumer-visible brand name */
+    public String getBrand() {
+        return Build.BRAND;
+    }
+
+    /** returns device's industrial design name */
+    public String getDevice() {
+        return Build.DEVICE;
+    }
+
+    /** returns consumer-visible build ID */
+    public String getDisplay() {
+        return Build.DISPLAY;
+    }
+
+    /** returns manufacturer of the product/hardware */
+    public String getManufacturer() {
+        return Build.MANUFACTURER;
+    }
+
+    /** returns consumer-visible model name */
+    public String getModel() {
+        return Build.MODEL;
+    }
+
+    /** returns consumer-visible product name */
+    public String getProduct() {
+        return Build.PRODUCT;
+    }
+
+    /** returns hardware serial number, if available */
+    public String getSerialNumber() {
+        return Build.SERIAL;
+    }
+
+    /** returns version's development code name */
+    public String getVersionCodeName() {
+        return Build.VERSION.CODENAME;
+    }
+
+    /** returns version's incremental build number */
+    public String getVersionIncrementalBuild() {
+        return Build.VERSION.INCREMENTAL;
+    }
+
+    /** returns version's release name */
+    public String getVersionReleaseName() {
+        return Build.VERSION.RELEASE;
+    }
+
+    /** returns version's SDK level */
+    public int getVersionSdkLevel() {
+        return Build.VERSION.SDK_INT;
+    }
+
+    // --------------------------------------------------------------- //
+    // ----------------------- using Resources ----------------------- //
     // --------------------------------------------------------------- //
 
     /** returns dimension in DP of a dimension resource */
@@ -46,12 +111,6 @@ public class DeviceStats {
     // ------------- using Resources.getConfiguration() --------------- //
     // --------------------------------------------------------------- //
 
-    /** returns orientation of the screen
-     * (Configuration.ORIENTATION_LANDSCAPE or Configuration.ORIENTATION_PORTRAIT)
-     */
-    public int getOrientation() {
-        return configuration.orientation;
-    }
 
     /** returns user preference for the scaling factor for fonts, relative to the base density scaling */
     public float getFontScale() {
@@ -185,10 +244,21 @@ public class DeviceStats {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder
-                .append("-------- Configuration --------")
+                .append("-------- Build --------")
+                .append("\ngetBrand: ").append(getBrand())
+                .append("\ngetDevice: ").append(getDevice())
+                .append("\ngetDisplay: ").append(getDisplay())
+                .append("\ngetManufacturer: ").append(getManufacturer())
+                .append("\ngetModel: ").append(getModel())
+                .append("\ngetProduct: ").append(getProduct())
+                .append("\ngetSerialNumber: ").append(getSerialNumber())
+                .append("\ngetVersionCodeName: ").append(getVersionCodeName())
+                .append("\ngetVersionIncrementalBuild: ").append(getVersionIncrementalBuild())
+                .append("\ngetVersionReleaseName: ").append(getVersionReleaseName())
+                .append("\ngetVersionSdkLevel: ").append(getVersionSdkLevel())
+                .append("\n\n-------- Configuration --------")
                 .append("\ngetLocale: ").append(getLocale())
                 .append("\ngetFontScale: ").append(getFontScale())
-                .append("\ngetOrientation: ").append(getOrientation())
                 .append("\ngetScreenWidthDp: ").append(getScreenWidthDp())
                 .append("\ngetScreenHeightDp: ").append(getScreenHeightDp())
                 .append("\ngetSmallestScreenWidthDp: ").append(getSmallestScreenWidthDp())
@@ -205,16 +275,20 @@ public class DeviceStats {
                 .append("\ngetUiModeType: ").append(getUiModeType())
                 .append("\ngetUiModeNight: ").append(getUiModeNight())
                 .append("\n\n-------- DisplayMetrics --------")
-                .append("\ngetAbsoluteHeightPixels: ").append(getAbsoluteHeightPixels())
-                .append("\ngetAbsoluteWidthPixels: ").append(getAbsoluteWidthPixels())
                 .append("\ngetDensityDpi: ").append(getDensityDpi())
                 .append("\ngetLogicalDensity: ").append(getLogicalDensity())
                 .append("\ngetScaledDensityForFonts: ").append(getScaledDensityForFonts())
                 .append("\ngetExactXDpi: ").append(getExactXDpi())
                 .append("\ngetExactYDpi: ").append(getExactYDpi())
-                .append("\nconvertDpToPixels(14): ").append(convertDpToPixels(14))
-                .append("\nconvertPixelsToDp(14): ").append(convertPixelsToDp(14))
-                .append("\nconvertPixelsToIntegerDp(14): ").append(convertPixelsToIntegerDp(14));
+                .append("\ngetAbsoluteWidthPixels: ").append(getAbsoluteWidthPixels())
+                .append("\ngetAbsoluteHeightPixels: ").append(getAbsoluteHeightPixels())
+                .append("\nconvertPixelsToDp(getAbsoluteWidthPixels()): ").append(convertPixelsToDp(getAbsoluteWidthPixels()))
+                .append("\nconvertPixelsToDp(getAbsoluteHeightPixels()): ").append(convertPixelsToDp(getAbsoluteHeightPixels()))
+                .append("\nconvertPixelsToIntegerDp(getAbsoluteWidthPixels()): ").append(convertPixelsToIntegerDp(getAbsoluteWidthPixels()))
+                .append("\nconvertPixelsToIntegerDp(getAbsoluteHeightPixels()): ").append(convertPixelsToIntegerDp(getAbsoluteHeightPixels()))
+                .append("\nconvertDpToPixels(getScreenWidthDp()): ").append(convertDpToPixels(getScreenWidthDp()))
+                .append("\nconvertDpToPixels(getScreenHeightDp()): ").append(convertDpToPixels(getScreenHeightDp()))
+                .append("\n");
         return stringBuilder.toString();
     }
 
