@@ -1,4 +1,4 @@
-package com.staples.mobile.cfa;
+package com.staples.mobile.common.access;
 
 import android.content.Context;
 import android.os.Handler;

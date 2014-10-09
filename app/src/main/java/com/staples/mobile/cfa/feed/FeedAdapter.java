@@ -3,7 +3,7 @@ package com.staples.mobile.cfa.feed;
 import android.app.Activity;
 import android.util.Log;
 
-import com.staples.mobile.cfa.MainApplication;
+import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
@@ -33,20 +33,16 @@ public class FeedAdapter {
     public FeedAdapter(Activity activity) {
         super();
         this.activity = activity;
-        MainApplication application = (MainApplication) activity.getApplication();
-        easyOpenApi = application.getEasyOpenApi(true);
+        easyOpenApi = Access.getInstance().getEasyOpenApi(true);
     }
 
     public FeedAdapter()
     {
-
     }
 
     public void fill() {
         getMemberData();
     }
-
-
 
     public void getMemberData()
     {

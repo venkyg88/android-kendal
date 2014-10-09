@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.staples.mobile.cfa.MainApplication;
+import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.lms.model.Lms;
 
@@ -80,8 +80,7 @@ public class SkuAdapter extends PagerAdapter implements Callback<Lms> {
 
         array.get(0).identifier = identifier;
 
-        MainApplication application = (MainApplication) activity.getApplication();
-        EasyOpenApi easyOpenApi = application.getEasyOpenApi(false);
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
 //        easyOpenApi.whatever(RECOMMENDATION, STORE_ID, this);
     }
 
