@@ -16,8 +16,9 @@ import com.staples.mobile.R;
 public class RatingStars extends View {
     public static final String TAG = "RatingStars";
 
-    private static final double DELTA = Math.PI/5.0;
-    private static final double FACTOR = 2.0/(Math.sqrt(5.0)+3.0); // I love geometry
+    private static final double DELTA = Math.PI/5.0; // I love geometry
+    private static final double INDENTFACTOR = 2.0/(Math.sqrt(5.0)+3.0); // 0.381966
+    private static final double WIDTHFACTOR = Math.sqrt(2.0*Math.sqrt(5)+10.0)/4.0; // 0.951056
 
     private static final int RED = 0xffff0000;
     private static final int GRAY = 0xffcccccc;
@@ -29,6 +30,7 @@ public class RatingStars extends View {
 
     private static Paint textPaint;
 
+    private static int width;
     private static int height;
 
     private float rating;
@@ -56,8 +58,11 @@ public class RatingStars extends View {
             textPaint.setTextSize(textSize);
             textPaint.setColor(TEXTCOLOR);
 
+            // Metrics
             height = (int) (1.25*textSize);
-            drawStars();
+            width = (int) Math.ceil(WIDTHFACTOR*height);
+            double radius = 0.49*height;
+            drawStars(radius);
         }
     }
 
@@ -67,23 +72,23 @@ public class RatingStars extends View {
         invalidate();
     }
 
-    private void getVertex(double intRadius, double extRadius, int index, PointF p) {
+    private void getVertex(double radius, int index, PointF p) {
         double theta = index*DELTA;
-        if ((index&1)>0) intRadius *= FACTOR;
-        p.x = (float) (intRadius*Math.sin(theta)+extRadius);
-        p.y = (float) (-intRadius*Math.cos(theta)+extRadius);
+        if ((index&1)>0) radius *= INDENTFACTOR;
+        p.x = (float) (radius*Math.sin(theta)+width/2.0);
+        p.y = (float) (-radius*Math.cos(theta)+height/2.0);
     }
 
-    private Path getPath(double intRadius, double extRadius, int start, int end) {
+    private Path getPath(double radius, int start, int end) {
         Path path = new Path();
         PointF p = new PointF();
 
         int index = start;
-        getVertex(intRadius, extRadius, index, p);
+        getVertex(radius, index, p);
         path.moveTo(p.x, p.y);
 
         for(index++;index<=end;index++) {
-            getVertex(intRadius, extRadius, index, p);
+            getVertex(radius, index, p);
             path.lineTo(p.x, p.y);
         }
 
@@ -91,11 +96,8 @@ public class RatingStars extends View {
         return(path);
     }
 
-    private void drawStars() {
+    private void drawStars(double radius) {
         Path path;
-
-        double extRadius = height/2.0f;
-        double intRadius = 0.98*extRadius;
 
         Canvas canvas = new Canvas();
 
@@ -103,23 +105,25 @@ public class RatingStars extends View {
         textPaint.setAntiAlias(true);
         paint.setStyle(Paint.Style.FILL);
 
-        fullStar = Bitmap.createBitmap(height, height, Bitmap.Config.ARGB_8888);
+        fullStar = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         canvas.setBitmap(fullStar);
+        path = getPath(radius, 0, 9);
         paint.setColor(RED);
-        path = getPath(intRadius, extRadius, 0, 9);
         canvas.drawPath(path, paint);
 
-        halfStar = Bitmap.createBitmap(height, height, Bitmap.Config.ARGB_8888);
-        canvas.setBitmap(halfStar);
-        path = getPath(intRadius, extRadius, 5, 10);
-        canvas.drawPath(path, paint);
-        paint.setColor(GRAY);
-        path = getPath(intRadius, extRadius, 0, 5);
-        canvas.drawPath(path, paint);
-
-        emptyStar = Bitmap.createBitmap(height, height, Bitmap.Config.ARGB_8888);
+        emptyStar = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         canvas.setBitmap(emptyStar);
-        path = getPath(intRadius, extRadius, 0, 9);
+        paint.setColor(GRAY);
+        canvas.drawPath(path, paint);
+
+        halfStar = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        canvas.setBitmap(halfStar);
+        path = getPath(radius, 5, 10);
+        paint.setColor(RED);
+        canvas.drawPath(path, paint);
+
+        path = getPath(radius, 0, 5);
+        paint.setColor(GRAY);
         canvas.drawPath(path, paint);
     }
 
@@ -144,7 +148,7 @@ public class RatingStars extends View {
             else b = emptyStar;
             canvas.drawBitmap(b, x, y, null);
 
-            x += height;
+            x += width;
             f -= 1.0f;
         }
 
