@@ -39,7 +39,7 @@ public class DeviceInfo {
 
 
     // --------------------------------------------------------------- //
-    // ----------------------- using Build --------------------------- //
+    // ------------------ using android.os.Build --------------------- //
     // --------------------------------------------------------------- //
 
     /** returns consumer-visible brand name */
@@ -98,7 +98,7 @@ public class DeviceInfo {
     }
 
     // --------------------------------------------------------------- //
-    // ----------------------- using Resources ----------------------- //
+    // ------------ using android.content.res.Resources -------------- //
     // --------------------------------------------------------------- //
 
     /** returns dimension in DP of a dimension resource */
@@ -108,7 +108,7 @@ public class DeviceInfo {
 
 
     // --------------------------------------------------------------- //
-    // ------------- using Resources.getConfiguration() --------------- //
+    // ---------- using android.content.res.Configuration ------------ //
     // --------------------------------------------------------------- //
 
 
@@ -179,7 +179,7 @@ public class DeviceInfo {
 
 
     // --------------------------------------------------------------- //
-    // ------------- using Resources.getDisplayMetrics() -------------- //
+    // ------------- using android.util.DisplayMetrics --------------- //
     // --------------------------------------------------------------- //
 
 
@@ -245,7 +245,7 @@ public class DeviceInfo {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder
                 .append("\nDevice Info:")
-                .append("\n\n-------- Build --------")
+                .append("\n\n-------- from android.os.Build --------")
                 .append("\ngetBrand: ").append(getBrand())
                 .append("\ngetDevice: ").append(getDevice())
                 .append("\ngetDisplay: ").append(getDisplay())
@@ -257,7 +257,7 @@ public class DeviceInfo {
                 .append("\ngetVersionIncrementalBuild: ").append(getVersionIncrementalBuild())
                 .append("\ngetVersionReleaseName: ").append(getVersionReleaseName())
                 .append("\ngetVersionSdkLevel: ").append(getVersionSdkLevel())
-                .append("\n\n-------- Configuration --------")
+                .append("\n\n-------- from android.content.res.Configuration --------")
                 .append("\ngetLocale: ").append(getLocale())
                 .append("\ngetFontScale: ").append(getFontScale())
                 .append("\ngetScreenWidthDp: ").append(getScreenWidthDp())
@@ -275,7 +275,7 @@ public class DeviceInfo {
                 .append("\nisScreenLayoutLong: ").append(isScreenLayoutLong())
                 .append("\ngetUiModeType: ").append(getUiModeType())
                 .append("\ngetUiModeNight: ").append(getUiModeNight())
-                .append("\n\n-------- DisplayMetrics --------")
+                .append("\n\n-------- from android.util.DisplayMetrics --------")
                 .append("\ngetDensityDpi: ").append(getDensityDpi())
                 .append("\ngetLogicalDensity: ").append(getLogicalDensity())
                 .append("\ngetScaledDensityForFonts: ").append(getScaledDensityForFonts())
