@@ -198,7 +198,7 @@ public class DeviceInfo {
         return displayMetrics.densityDpi;
     }
 
-    /** returns logical density of screen which is used for scaling
+    /** returns logical density of screen which is used for scaling (ratio of pixels/DIP)
      * E.g. 1 on 160dpi screen where 1 dip ~= 1 pixel
      *      .75 on 120dpi screen where 1 dip ~= .75 pixel
      *      2 on 320dpi screen where 1 dip ~= 2 pixel
@@ -225,17 +225,17 @@ public class DeviceInfo {
     }
 
     /** converts value in DP to number of pixels */
-    public float convertDpToPixels(int dp) {
+    public float convertDpToPixels(float dp) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, displayMetrics);
     }
 
     /** converts number of pixels to DP units */
-    public float convertPixelsToDp(int pixels) {
+    public float convertPixelsToDp(float pixels) {
         return pixels / displayMetrics.density;
     }
 
     /** converts number of pixels to DP units */
-    public int convertPixelsToIntegerDp(int pixels) {
+    public int convertPixelsToIntegerDp(float pixels) {
         return Math.round(convertPixelsToDp(pixels));
     }
 
@@ -244,7 +244,8 @@ public class DeviceInfo {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder
-                .append("-------- Build --------")
+                .append("\nDevice Info:")
+                .append("\n\n-------- Build --------")
                 .append("\ngetBrand: ").append(getBrand())
                 .append("\ngetDevice: ").append(getDevice())
                 .append("\ngetDisplay: ").append(getDisplay())
