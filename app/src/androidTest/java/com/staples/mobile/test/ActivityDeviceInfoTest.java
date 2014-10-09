@@ -80,12 +80,14 @@ public class ActivityDeviceInfoTest {
         // Configuration methods
         Assert.assertNotNull("Locale should exist", deviceInfo.getLocale());
         Assert.assertNotNull("FontScale should exist", deviceInfo.getFontScale());
+// robolectric emulation returns 0 for ScreenWidthDp, ScreenHeightDp, SmallestScreenWidthDp
 //        Assert.assertNotEquals("ScreenWidthDp should exist", 0, deviceInfo.getScreenWidthDp());
 //        Assert.assertNotEquals("ScreenHeightDp should exist", 0, deviceInfo.getScreenHeightDp());
 //        Assert.assertNotEquals("SmallestScreenWidthDp should exist", 0, deviceInfo.getSmallestScreenWidthDp());
         Assert.assertTrue("Layout size should at least be small",
                 deviceInfo.isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_SMALL));
         Assert.assertNotNull("ScreenLayoutSize should exist", deviceInfo.getScreenLayoutSize());
+// robolectric emulation returns 0 for UiModeType, UiModeNight
 //        Assert.assertNotEquals("UiModeType should exist", 0.0, deviceInfo.getUiModeType());
 //        Assert.assertNotEquals("UiModeNight should exist", 0.0, deviceInfo.getUiModeNight());
 
