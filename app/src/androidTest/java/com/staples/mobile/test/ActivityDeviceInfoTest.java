@@ -4,8 +4,6 @@
 
 package com.staples.mobile.test;
 
-import android.content.res.Configuration;
-
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.common.device.DeviceInfo;
 
@@ -78,20 +76,17 @@ public class ActivityDeviceInfoTest {
         // Configuration methods
         Assert.assertNotNull("Locale should exist", deviceInfo.getLocale());
         Assert.assertNotNull("FontScale should exist", deviceInfo.getFontScale());
-// robolectric emulation returns 0 for ScreenWidthDp, ScreenHeightDp, SmallestScreenWidthDp
-//        Assert.assertNotEquals("ScreenWidthDp should exist", 0, deviceInfo.getScreenWidthDp());
-//        Assert.assertNotEquals("ScreenHeightDp should exist", 0, deviceInfo.getScreenHeightDp());
-//        Assert.assertNotEquals("SmallestScreenWidthDp should exist", 0, deviceInfo.getSmallestScreenWidthDp());
-        Assert.assertTrue("Layout size should at least be small",
-                deviceInfo.isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_SMALL));
+        Assert.assertTrue("Layout size should at least be small", deviceInfo.isLayoutSizeAtLeastSmall());
         Assert.assertNotNull("ScreenLayoutSize should exist", deviceInfo.getScreenLayoutSize());
 // robolectric emulation returns 0 for UiModeType, UiModeNight
 //        Assert.assertNotEquals("UiModeType should exist", 0.0, deviceInfo.getUiModeType());
 //        Assert.assertNotEquals("UiModeNight should exist", 0.0, deviceInfo.getUiModeNight());
 
         // DisplayMetrics methods
-        Assert.assertNotEquals("AbsoluteHeightPixels should exist", 0, deviceInfo.getAbsoluteHeightPixels());
-        Assert.assertNotEquals("AbsoluteWidthPixels should exist", 0, deviceInfo.getAbsoluteWidthPixels());
+        Assert.assertNotEquals("SmallestAbsWidthPixels should exist", 0, deviceInfo.getSmallestAbsWidthPixels());
+        Assert.assertNotEquals("LargestAbsWidthPixels should exist", 0, deviceInfo.getLargestAbsWidthPixels());
+        Assert.assertNotEquals("SmallestAbsWidthDp should exist", 0, deviceInfo.getSmallestAbsWidthDp());
+        Assert.assertNotEquals("LargestAbsWidthDp should exist", 0, deviceInfo.getLargestAbsWidthDp());
         Assert.assertNotEquals("DensityDpi should exist", 0, deviceInfo.getDensityDpi());
         Assert.assertNotEquals("LogicalDensity should exist", 0, deviceInfo.getLogicalDensity());
         Assert.assertNotEquals("ScaledDensityForFonts should exist", 0, deviceInfo.getScaledDensityForFonts());
@@ -100,23 +95,31 @@ public class ActivityDeviceInfoTest {
     }
 
     @Test
+    public void testWidths() throws InterruptedException {
+        DeviceInfo d = new DeviceInfo(activity);
+
+        Assert.assertTrue(d.getSmallestAbsWidthDp() <= d.getLargestAbsWidthDp());
+        Assert.assertTrue(d.getSmallestAbsWidthPixels() <= d.getLargestAbsWidthPixels());
+    }
+
+    @Test
     public void testUnitsConversion() throws InterruptedException {
         DeviceInfo d = new DeviceInfo(activity);
 
         // convert from pixels to db and back to pixels and confirm the same within rounding error
-        Assert.assertEquals(d.getAbsoluteWidthPixels(),
-                d.convertDpToPixels(d.convertPixelsToDp(d.getAbsoluteWidthPixels())), .5);
+        Assert.assertEquals(d.getSmallestAbsWidthPixels(),
+                d.convertDpToPixels(d.convertPixelsToDp(d.getSmallestAbsWidthPixels())), .5);
 
         // if logical density > 1, then # of pixels > # of DPs
         if (d.getLogicalDensity() > 1.0) {
             // confirm that # of pixels > # of DPs
-            Assert.assertTrue(d.getAbsoluteWidthPixels() > d.convertPixelsToDp(d.getAbsoluteWidthPixels()));
+            Assert.assertTrue(d.getSmallestAbsWidthPixels() > d.convertPixelsToDp(d.getSmallestAbsWidthPixels()));
         } else if (d.getLogicalDensity() < 1.0) {
             // confirm that # of pixels < # of DPs
-            Assert.assertTrue(d.getAbsoluteWidthPixels() < d.convertPixelsToDp(d.getAbsoluteWidthPixels()));
+            Assert.assertTrue(d.getSmallestAbsWidthPixels() < d.convertPixelsToDp(d.getSmallestAbsWidthPixels()));
         } else {
             // confirm the same
-            Assert.assertTrue(d.getAbsoluteWidthPixels() == d.convertPixelsToDp(d.getAbsoluteWidthPixels()));
+            Assert.assertTrue(d.getSmallestAbsWidthPixels() == d.convertPixelsToDp(d.getSmallestAbsWidthPixels()));
         }
     }
 

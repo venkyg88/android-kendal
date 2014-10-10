@@ -9,7 +9,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 
 import java.util.Locale;
 
@@ -20,22 +19,92 @@ import java.util.Locale;
  */
 public class DeviceInfo {
 
-    Resources resources;
-    DisplayMetrics displayMetrics;
-    Configuration configuration;
+    // fields populated from android.os.Build
+    private String brand;
+    private String device;
+    private String display;
+    private String manufacturer;
+    private String model;
+    private String product;
+    private String serialNumber;
+    private String versionCodeName;
+    private String versionIncrementalBuild;
+    private String versionReleaseName;
+    private int versionSdkLevel;
 
+    // fields populated from android.content.res.Configuration
+    private float fontScale;
+    private Locale locale;
+    private boolean layoutSizeAtLeastSmall;
+    private boolean layoutSizeAtLeastNormal;
+    private boolean layoutSizeAtLeastLarge;
+    private boolean layoutSizeAtLeastXLarge;
+    private float screenLayoutSize;
+    private boolean screenLayoutLong;
+    private float uiModeType;
+    private float uiModeNight;
 
-    /** constructor */
-    public DeviceInfo(Resources r) {
-        this.resources = r;
-        this.displayMetrics = resources.getDisplayMetrics();
-        this.configuration = resources.getConfiguration();
-    }
+    // fields populated from android.util.DisplayMetrics
+    private int smallestAbsWidthPixels;
+    private int largestAbsWidthPixels;
+    private float smallestAbsWidthDp;
+    private float largestAbsWidthDp;
+    private int densityDpi;
+    private float logicalDensity;
+    private float scaledDensityForFonts;
+    private float exactXDpi;
+    private float exactYDpi;
+
 
     /** constructor */
     public DeviceInfo(Context c) {
         this(c.getResources());
     }
+
+    /** constructor */
+    public DeviceInfo(Resources r) {
+        DisplayMetrics displayMetrics = r.getDisplayMetrics();
+        Configuration configuration = r.getConfiguration();
+
+        // values populated from android.os.Build
+        brand = Build.BRAND;
+        device = Build.DEVICE;
+        display = Build.DISPLAY;
+        manufacturer = Build.MANUFACTURER;
+        model = Build.MODEL;
+        product = Build.PRODUCT;
+        serialNumber = Build.SERIAL;
+        versionCodeName = Build.VERSION.CODENAME;
+        versionIncrementalBuild = Build.VERSION.INCREMENTAL;
+        versionReleaseName = Build.VERSION.RELEASE;
+        versionSdkLevel = Build.VERSION.SDK_INT;
+
+        // fields populated from android.content.res.Configuration
+        fontScale = configuration.fontScale;
+        locale = configuration.locale;
+        layoutSizeAtLeastSmall = configuration.isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_SMALL);
+        layoutSizeAtLeastNormal = configuration.isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_NORMAL);
+        layoutSizeAtLeastLarge = configuration.isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE);
+        layoutSizeAtLeastXLarge = configuration.isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_XLARGE);
+        screenLayoutSize = configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
+        screenLayoutLong = (configuration.screenLayout & Configuration.SCREENLAYOUT_LONG_MASK) ==
+                Configuration.SCREENLAYOUT_LONG_YES;
+        uiModeType = configuration.uiMode & Configuration.UI_MODE_TYPE_MASK;
+        uiModeNight = configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK;
+
+        // values populated from android.util.DisplayMetrics
+        densityDpi = displayMetrics.densityDpi; // IMPORTANT: set density first for use in conversion
+        logicalDensity = displayMetrics.density;
+        smallestAbsWidthPixels = Math.min(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        largestAbsWidthPixels = Math.max(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        smallestAbsWidthDp = convertPixelsToDp(smallestAbsWidthPixels);
+        largestAbsWidthDp = convertPixelsToDp(largestAbsWidthPixels);
+        scaledDensityForFonts = displayMetrics.scaledDensity;
+        exactXDpi = displayMetrics.xdpi;
+        exactYDpi = displayMetrics.ydpi;
+
+    }
+
 
 
     // --------------------------------------------------------------- //
@@ -44,66 +113,57 @@ public class DeviceInfo {
 
     /** returns consumer-visible brand name */
     public String getBrand() {
-        return Build.BRAND;
+        return brand;
     }
 
     /** returns device's industrial design name */
     public String getDevice() {
-        return Build.DEVICE;
+        return device;
     }
 
     /** returns consumer-visible build ID */
     public String getDisplay() {
-        return Build.DISPLAY;
+        return display;
     }
 
     /** returns manufacturer of the product/hardware */
     public String getManufacturer() {
-        return Build.MANUFACTURER;
+        return manufacturer;
     }
 
     /** returns consumer-visible model name */
     public String getModel() {
-        return Build.MODEL;
+        return model;
     }
 
     /** returns consumer-visible product name */
     public String getProduct() {
-        return Build.PRODUCT;
+        return product;
     }
 
     /** returns hardware serial number, if available */
     public String getSerialNumber() {
-        return Build.SERIAL;
+        return serialNumber;
     }
 
     /** returns version's development code name */
     public String getVersionCodeName() {
-        return Build.VERSION.CODENAME;
+        return versionCodeName;
     }
 
     /** returns version's incremental build number */
     public String getVersionIncrementalBuild() {
-        return Build.VERSION.INCREMENTAL;
+        return versionIncrementalBuild;
     }
 
     /** returns version's release name */
     public String getVersionReleaseName() {
-        return Build.VERSION.RELEASE;
+        return versionReleaseName;
     }
 
     /** returns version's SDK level */
     public int getVersionSdkLevel() {
-        return Build.VERSION.SDK_INT;
-    }
-
-    // --------------------------------------------------------------- //
-    // ------------ using android.content.res.Resources -------------- //
-    // --------------------------------------------------------------- //
-
-    /** returns dimension in DP of a dimension resource */
-    public float getDimension(int dimensionResourceId) {
-        return resources.getDimension(dimensionResourceId);
+        return versionSdkLevel;
     }
 
 
@@ -114,44 +174,44 @@ public class DeviceInfo {
 
     /** returns user preference for the scaling factor for fonts, relative to the base density scaling */
     public float getFontScale() {
-        return configuration.fontScale;
+        return fontScale;
     }
 
     /** gets current user preference for the locale, corresponding to locale resource qualifier */
     public Locale getLocale() {
-        return configuration.locale;
+        return locale;
     }
 
-    /** returns current width of the available screen space in dp units */
-    public int getScreenWidthDp() {
-        return configuration.screenWidthDp;
+    /** returns true if current screenLayout is at least small */
+    public boolean isLayoutSizeAtLeastSmall() {
+        return layoutSizeAtLeastSmall;
     }
 
-    /** returns current height of the available screen space in dp units */
-    public int getScreenHeightDp() {
-        return configuration.screenHeightDp;
+    /** returns true if current screenLayout is at least normal */
+    public boolean isLayoutSizeAtLeastNormal() {
+        return layoutSizeAtLeastNormal;
     }
 
-    /** returns the smallest of both screenWidthDp and screenHeightDp in both portrait and landscape */
-    public float getSmallestScreenWidthDp() {
-        return configuration.smallestScreenWidthDp;
+    /** returns true if current screenLayout is at least large */
+    public boolean isLayoutSizeAtLeastLarge() {
+        return layoutSizeAtLeastLarge;
     }
 
-    /** returns true if current screenLayout is at least size (e.g. Configuration.SCREENLAYOUT_SIZE_SMALL) */
-    public boolean isLayoutSizeAtLeast (int size) {
-        return configuration.isLayoutSizeAtLeast(size);
+    /** returns true if current screenLayout is at least extra large */
+    public boolean isLayoutSizeAtLeastXLarge() {
+        return layoutSizeAtLeastXLarge;
     }
 
     /** returns screenLayout size (e.g. Configuration.SCREENLAYOUT_SIZE_SMALL) */
     public float getScreenLayoutSize() {
-        return configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
+        return screenLayoutSize;
     }
 
     /** returns true if screen is wider/taller than normal */
     public boolean isScreenLayoutLong() {
-        return (configuration.screenLayout & Configuration.SCREENLAYOUT_LONG_MASK) ==
-                Configuration.SCREENLAYOUT_LONG_YES;
+        return screenLayoutLong;
     }
+
 
     /** returns UI mode type, may be one of:
      *
@@ -164,7 +224,7 @@ public class DeviceInfo {
      * Configuration.UI_MODE_TYPE_WATCH
      */
     public float getUiModeType() {
-        return configuration.uiMode & Configuration.UI_MODE_TYPE_MASK;
+        return uiModeType;
     }
 
     /** returns UI mode night setting, may be one of:
@@ -174,7 +234,7 @@ public class DeviceInfo {
      * Configuration.UI_MODE_NIGHT_YES
      */
     public float getUiModeNight() {
-        return configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        return uiModeNight;
     }
 
 
@@ -183,19 +243,30 @@ public class DeviceInfo {
     // --------------------------------------------------------------- //
 
 
-    /** returns the absolute height of the display in pixels */
-    public int getAbsoluteHeightPixels() {
-        return displayMetrics.heightPixels;
+    /** returns the absolute width of the longest dimension of the display in pixels */
+    public int getLargestAbsWidthPixels() {
+        return largestAbsWidthPixels;
     }
 
-    /** returns the absolute width of the display in pixels */
-    public int getAbsoluteWidthPixels() {
-        return displayMetrics.widthPixels;
+    /** returns the absolute width of the shortest dimension of the display in pixels */
+    public int getSmallestAbsWidthPixels() {
+        return smallestAbsWidthPixels;
     }
+
+    /** returns the absolute width of the longest dimension of the display in dp */
+    public float getLargestAbsWidthDp() {
+        return largestAbsWidthDp;
+    }
+
+    /** returns the absolute width of the shortest dimension of the display in dp */
+    public float getSmallestAbsWidthDp() {
+        return smallestAbsWidthDp;
+    }
+
 
     /** returns screen density in pixels (dots) per inch */
     public int getDensityDpi() {
-        return displayMetrics.densityDpi;
+        return densityDpi;
     }
 
     /** returns logical density of screen which is used for scaling (ratio of pixels/DIP)
@@ -204,34 +275,40 @@ public class DeviceInfo {
      *      2 on 320dpi screen where 1 dip ~= 2 pixel
     */
     public float getLogicalDensity() {
-        return displayMetrics.density;
+        return logicalDensity;
     }
 
     /** returns scaling factor for fonts, similar to logical density except may be adjusted
      * in smaller increments at runtime based on a user preference for the font size
     */
     public float getScaledDensityForFonts() {
-        return displayMetrics.scaledDensity;
+        return scaledDensityForFonts;
     }
 
     /** returns exact dpi in x direction */
     public float getExactXDpi() {
-        return displayMetrics.xdpi;
+        return exactXDpi;
     }
 
     /** returns exact dpi in y direction */
     public float getExactYDpi() {
-        return displayMetrics.ydpi;
+        return exactYDpi;
     }
+
+
+
+    // --------------------------------------------------------------- //
+    // --------------------- conversion methods ---------------------- //
+    // --------------------------------------------------------------- //
 
     /** converts value in DP to number of pixels */
     public float convertDpToPixels(float dp) {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, displayMetrics);
+        return dp * logicalDensity;
     }
 
     /** converts number of pixels to DP units */
     public float convertPixelsToDp(float pixels) {
-        return pixels / displayMetrics.density;
+        return pixels / logicalDensity;
     }
 
     /** converts number of pixels to DP units */
@@ -239,6 +316,46 @@ public class DeviceInfo {
         return Math.round(convertPixelsToDp(pixels));
     }
 
+    /** converts Dp to number of pixels */
+    public int convertDpToIntegerPixels(float dp) {
+        return Math.round(convertDpToPixels(dp));
+    }
+
+
+    // --------------------------------------------------------------- //
+    // ------------------ varies by configuration -------------------- //
+    // --------------------------------------------------------------- //
+
+    /** returns true if current orientation of the screen is landscape */
+    public boolean isCurrentOrientationLandscape(Resources r) {
+        return Configuration.ORIENTATION_LANDSCAPE == r.getConfiguration().orientation;
+    }
+
+    /** returns true if current orientation of the screen is portrait */
+    public boolean isCurrentOrientationPortrait(Resources r) {
+        return Configuration.ORIENTATION_PORTRAIT == r.getConfiguration().orientation;
+    }
+
+    /** returns current width of the available screen space in dp units */
+    public int getCurrentAvailScreenWidthDp(Resources r) {
+        return r.getConfiguration().screenWidthDp;
+    }
+
+    /** returns current height of the available screen space in dp units */
+    public int getCurrentAvailScreenHeightDp(Resources r) {
+        return r.getConfiguration().screenHeightDp;
+    }
+
+    /** returns the smallest of both screenWidthDp and screenHeightDp in both portrait and landscape */
+    public float getCurrentAvailSmallestScreenWidthDp(Resources r) {
+        return r.getConfiguration().smallestScreenWidthDp;
+    }
+
+
+
+    // --------------------------------------------------------------- //
+    // ------------------------- toString() -------------------------- //
+    // --------------------------------------------------------------- //
 
     /** returns collection of device info */
     public String toString() {
@@ -260,17 +377,10 @@ public class DeviceInfo {
                 .append("\n\n-------- from android.content.res.Configuration --------")
                 .append("\ngetLocale: ").append(getLocale())
                 .append("\ngetFontScale: ").append(getFontScale())
-                .append("\ngetScreenWidthDp: ").append(getScreenWidthDp())
-                .append("\ngetScreenHeightDp: ").append(getScreenHeightDp())
-                .append("\ngetSmallestScreenWidthDp: ").append(getSmallestScreenWidthDp())
-                .append("\nisLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_SMALL): ")
-                .append(isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_SMALL))
-                .append("\nisLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_NORMAL): ")
-                .append(isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_NORMAL))
-                .append("\nisLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE): ")
-                .append(isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE))
-                .append("\nisLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_XLARGE): ")
-                .append(isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_XLARGE))
+                .append("\nisLayoutSizeAtLeastSmall: ").append(isLayoutSizeAtLeastSmall())
+                .append("\nisLayoutSizeAtLeastNormal: ").append(isLayoutSizeAtLeastNormal())
+                .append("\nisLayoutSizeAtLeastLarge: ").append(isLayoutSizeAtLeastLarge())
+                .append("\nisLayoutSizeAtLeastXLarge: ").append(isLayoutSizeAtLeastXLarge())
                 .append("\ngetScreenLayoutSize: ").append(getScreenLayoutSize())
                 .append("\nisScreenLayoutLong: ").append(isScreenLayoutLong())
                 .append("\ngetUiModeType: ").append(getUiModeType())
@@ -281,14 +391,10 @@ public class DeviceInfo {
                 .append("\ngetScaledDensityForFonts: ").append(getScaledDensityForFonts())
                 .append("\ngetExactXDpi: ").append(getExactXDpi())
                 .append("\ngetExactYDpi: ").append(getExactYDpi())
-                .append("\ngetAbsoluteWidthPixels: ").append(getAbsoluteWidthPixels())
-                .append("\ngetAbsoluteHeightPixels: ").append(getAbsoluteHeightPixels())
-                .append("\nconvertPixelsToDp(getAbsoluteWidthPixels()): ").append(convertPixelsToDp(getAbsoluteWidthPixels()))
-                .append("\nconvertPixelsToDp(getAbsoluteHeightPixels()): ").append(convertPixelsToDp(getAbsoluteHeightPixels()))
-                .append("\nconvertPixelsToIntegerDp(getAbsoluteWidthPixels()): ").append(convertPixelsToIntegerDp(getAbsoluteWidthPixels()))
-                .append("\nconvertPixelsToIntegerDp(getAbsoluteHeightPixels()): ").append(convertPixelsToIntegerDp(getAbsoluteHeightPixels()))
-                .append("\nconvertDpToPixels(getScreenWidthDp()): ").append(convertDpToPixels(getScreenWidthDp()))
-                .append("\nconvertDpToPixels(getScreenHeightDp()): ").append(convertDpToPixels(getScreenHeightDp()))
+                .append("\ngetSmallestAbsWidthDp: ").append(getSmallestAbsWidthDp())
+                .append("\ngetLargestAbsWidthDp: ").append(getLargestAbsWidthDp())
+                .append("\ngetSmallestAbsWidthPixels: ").append(getSmallestAbsWidthPixels())
+                .append("\ngetLargestAbsWidthPixels: ").append(getLargestAbsWidthPixels())
                 .append("\n");
         return stringBuilder.toString();
     }
