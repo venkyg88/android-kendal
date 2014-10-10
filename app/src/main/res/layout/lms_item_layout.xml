@@ -11,6 +11,7 @@
 		android:layout_marginBottom="8dp"
 		android:layout_marginTop="4dp"
 		android:text="title"
+        android:textColor="@color/sel_text_list_item"
 		style="@style/TextExtraLargeListItem"
 	/>
 
