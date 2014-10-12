@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!-- Splash screen -->
@@ -58,11 +59,16 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:src="@drawable/ic_search"/>
-            <ImageView
+            <com.staples.mobile.cfa.widget.BadgeImageView
                 android:id="@+id/action_right_drawer"
                 android:layout_width="@dimen/icon_width"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:text=""
+                android:textColor="@android:color/white"
+                android:textSize="16dp"
+                app:textLeftOffset="2dp"
+                app:textBottomOffset="2dp"
                 android:src="@drawable/ic_drawer"/>
         </LinearLayout>
         <android.support.v4.widget.DrawerLayout
