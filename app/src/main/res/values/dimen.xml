@@ -4,5 +4,4 @@
     <dimen name="min_column_width">175dp</dimen>
     <dimen name="image_square_size">100dp</dimen>
     <dimen name="price_font_size">20dp</dimen>
-    <dimen name="rating_star_size">12dp</dimen>
 </resources>

@@ -27,13 +27,7 @@ public class SkuFragment extends Fragment {
             identifier = args.getString("identifier");
         }
 
-        View view = inflater.inflate(R.layout.pager_frame, container, false);
-
-        adapter = new SkuAdapter(getActivity());
-        pager = (ViewPager) view.findViewById(R.id.pager);
-        pager.setAdapter(adapter);
-
-        adapter.fill(identifier);
+        View view = inflater.inflate(R.layout.sku_overview, container, false);
 
         return (view);
     }

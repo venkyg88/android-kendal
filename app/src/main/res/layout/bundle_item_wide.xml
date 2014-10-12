@@ -24,8 +24,7 @@
             android:textSize="16dp"/>
         <com.staples.mobile.cfa.widget.RatingStars
             android:id="@+id/rating"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            style="@style/SmallRatingStars"/>
         <com.staples.mobile.cfa.widget.PriceSticker
             android:id="@+id/price"
             android:layout_width="match_parent"
