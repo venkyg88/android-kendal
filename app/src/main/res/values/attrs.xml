@@ -2,5 +2,11 @@
 <resources>
     <declare-styleable name="RatingStars">
         <attr name="android:textSize"/>
+        <attr name="android:gravity"/>
+        <attr name="noReviews" format="string"/>
+    </declare-styleable>
+    <declare-styleable name="PriceSticker">
+        <attr name="android:textSize"/>
+        <attr name="android:gravity"/>
     </declare-styleable>
 </resources>

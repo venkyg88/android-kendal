@@ -10,6 +10,8 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 
 import com.staples.mobile.R;
@@ -18,7 +20,7 @@ import com.staples.mobile.R;
  * This class does all the drawing required to display a star rating.
  * It supports multiple size configurations (up to MAXCONFIGS).
  * Star and text size is scaled to the android:textSize specified.
- * The main method is setRating(float rating, int count);
+ * The main method is setRating(float rating, int reviews);
  * rating is 0.0 to 5.0 but handles clipping.
  */
 public class RatingStars extends View {
@@ -36,8 +38,10 @@ public class RatingStars extends View {
     private static final Config[] configs = new Config[MAXCONFIGS];
 
     private Config config;
+    private int gravity;
     private float rating;
-    private int count;
+    private int reviews;
+    private String noReviews;
 
     private Rect src = new Rect();
     private Rect dst = new Rect();
@@ -55,6 +59,7 @@ public class RatingStars extends View {
 
         // Preset default attributes
         int textSize = 10;
+        gravity = Gravity.LEFT;
 
         // Get styled attributes
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RatingStars);
@@ -64,6 +69,13 @@ public class RatingStars extends View {
             switch(index) {
                 case R.styleable.RatingStars_android_textSize:
                     textSize = a.getDimensionPixelSize(index, textSize);
+                    break;
+                case R.styleable.RatingStars_android_gravity:
+                    gravity = a.getInt(index, gravity)&Gravity.HORIZONTAL_GRAVITY_MASK;
+                    break;
+                case R.styleable.RatingStars_noReviews:
+                    noReviews = a.getString(index);
+                    break;
             }
         }
         a.recycle();
@@ -85,19 +97,20 @@ public class RatingStars extends View {
 
     private static class Config {
         private int textSize;
-        private int width;
-        private int height;
-        private Bitmap bitmap;
         private Paint textPaint;
+
+        private int starWidth;
+        private int starHeight;
+        private Bitmap starBitmap;
 
         private Config(int textSize) {
             // Metrics
             this.textSize = textSize;
-            height = (int) (1.25 * textSize);
-            width = (int) Math.ceil(WIDTHFACTOR * height);
+            starHeight = (int) (1.25*textSize);
+            starWidth = (int) Math.ceil(WIDTHFACTOR*starHeight);
 
             // Draw stars
-            double radius = height/2.0;
+            double radius = starHeight/2.0;
             drawStars(radius);
 
             // Initialize paint
@@ -111,8 +124,8 @@ public class RatingStars extends View {
         private void getVertex(PointF p, double radius, int index) {
             double theta = index*DELTA;
             if ((index&1)>0) radius *= INDENTFACTOR;
-            p.x = (float) (radius*Math.sin(theta)+width/2.0);
-            p.y = (float) (-radius*Math.cos(theta)+height/2.0);
+            p.x = (float) (radius*Math.sin(theta)+starWidth/2.0);
+            p.y = (float) (-radius*Math.cos(theta)+starHeight/2.0);
         }
 
         private void fillPath(Path path, double radius, int offset, int start, int end) {
@@ -136,8 +149,8 @@ public class RatingStars extends View {
             Canvas canvas = new Canvas();
             Path path = new Path();
 
-            bitmap = Bitmap.createBitmap(3*width, height, Bitmap.Config.ARGB_8888);
-            canvas.setBitmap(bitmap);
+            starBitmap = Bitmap.createBitmap(3* starWidth, starHeight, Bitmap.Config.ARGB_8888);
+            canvas.setBitmap(starBitmap);
 
             Paint paint = new Paint();
             paint.setAntiAlias(true);
@@ -147,60 +160,73 @@ public class RatingStars extends View {
             fillPath(path, radius, 0, 0, 9);
             canvas.drawPath(path, paint);
 
-            fillPath(path, radius, width, 5, 10);
+            fillPath(path, radius, starWidth, 5, 10);
             canvas.drawPath(path, paint);
 
             paint.setColor(GRAYSTAR);
-            fillPath(path, radius, width, 0, 5);
+            fillPath(path, radius, starWidth, 0, 5);
             canvas.drawPath(path, paint);
 
-            fillPath(path, radius, 2*width, 0, 9);
+            fillPath(path, radius, 2*starWidth, 0, 9);
             canvas.drawPath(path, paint);
         }
     }
 
-    public void setRating(float rating, int count) {
+    public void setRating(float rating, int reviews) {
         this.rating = rating;
-        this.count = count;
+        this.reviews = reviews;
         invalidate();
     }
 
     @Override
     public void onMeasure(int widthSpec, int heightSpec) {
-        heightSpec = getPaddingTop()+config.height+getPaddingBottom();
+        heightSpec = getPaddingTop()+config.starHeight+getPaddingBottom();
         setMeasuredDimension(widthSpec, heightSpec);
     }
 
     @Override
     public void onDraw(Canvas canvas) {
-        src.top = 0;
-        src.bottom = config.height;
+        // Get text
+        String text;
+        if (reviews<=0 && noReviews!=null) text = " "+noReviews;
+        else text = " (" + reviews + ")";
 
-        dst.left = getPaddingLeft();
+        // Use gravity to determine left position
+        if (gravity==Gravity.LEFT) {
+            dst.left = getPaddingLeft();
+        } else {
+            config.textPaint.getTextBounds(text, 0, text.length(), dst);
+            int slack = getWidth()-getPaddingLeft()-getPaddingRight()
+                        -5*config.starWidth-(dst.right-dst.left);
+            dst.left = getPaddingLeft();
+            if (gravity==Gravity.CENTER_HORIZONTAL) dst.left += slack/2;
+            else if (gravity==Gravity.RIGHT) dst.left += slack;
+        }
         dst.top = getPaddingTop();
-        dst.bottom = dst.top+config.height;
+        dst.bottom = dst.top+config.starHeight;
 
         // Draw 5 assorted stars
+        src.top = 0;
+        src.bottom = config.starHeight;
         float f = rating;
         for(int i=0;i<5;i++) {
             // Get source rectangle
             if (f>=0.75f) src.left = 0;
-            else if (f>=0.25f) src.left = config.width;
-            else src.left = 2*config.width;
-            src.right = src.left+config.width;
+            else if (f>=0.25f) src.left = config.starWidth;
+            else src.left = 2*config.starWidth;
+            src.right = src.left+config.starWidth;
 
             // Get destination rectangle
-            dst.right = dst.left+config.width;
+            dst.right = dst.left+config.starWidth;
 
             // Draw and increment
-            canvas.drawBitmap(config.bitmap, src, dst, null);
-            dst.left += config.width;
+            canvas.drawBitmap(config.starBitmap, src, dst, null);
+            dst.left += config.starWidth;
             f -= 1.0f;
         }
 
-        // Draw customer count
-        dst.top += (config.height-0.7f*config.textPaint.ascent())/2.0f; // Fudge for visual centering
-        String text = " (" + count + ")";
+        // Draw review count
+        dst.top += (config.starHeight -0.7f*config.textPaint.ascent())/2.0f; // Fudge for visual centering
         canvas.drawText(text, dst.left, dst.top, config.textPaint);
     }
 }

@@ -6,4 +6,7 @@
     <com.staples.mobile.cfa.widget.RatingStars
         android:id="@+id/rating"
         style="@style/LargeRatingStars"/>
+    <com.staples.mobile.cfa.widget.PriceSticker
+        android:id="@+id/pricing"
+        style="@style/LargePriceSticker"/>
 </com.staples.mobile.cfa.widget.AnimatorLayout>

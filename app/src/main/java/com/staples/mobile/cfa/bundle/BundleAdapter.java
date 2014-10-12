@@ -71,8 +71,8 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
         RatingStars ratingStars = (RatingStars) view.findViewById(R.id.rating);
         ratingStars.setRating(item.customerRating, item.customerCount);
 
-        PriceSticker price = (PriceSticker) view.findViewById(R.id.price);
-        price.setPrice(item.price, item.unit);
+        PriceSticker priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
+        priceSticker.setPrice(item.price, item.unit);
 
         ImageView image = (ImageView) view.findViewById(R.id.image);
         if (item.imageUrl==null) image.setImageDrawable(noPhoto);
