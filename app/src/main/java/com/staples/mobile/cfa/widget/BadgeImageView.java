@@ -18,7 +18,9 @@ import com.staples.mobile.R;
 
 /**
  * Created by sutdi001 on 10/10/14.
- * (code drawn from SDK's LabelView example)
+ *
+ * Custom image view that draws text on top of image
+ * (code borrowed from SDK's LabelView example)
  */
 public class BadgeImageView extends ImageView {
     private Paint textPaint;
