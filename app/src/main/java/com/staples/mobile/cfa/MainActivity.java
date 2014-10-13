@@ -15,10 +15,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
+import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.ListViewWrapper;
 
 public class MainActivity extends Activity
@@ -33,6 +35,8 @@ public class MainActivity extends Activity
     private View leftDrawer;
     private ViewGroup topper;
     private View rightDrawer;
+    private BadgeImageView rightDrawerAction;
+    private TextView cartTitle;
 
     private DrawerItem homeDrawerItem;
     private DrawerItem searchDrawerItem;
@@ -96,6 +100,8 @@ public class MainActivity extends Activity
         leftDrawer = findViewById(R.id.left_drawer);
         topper = (ViewGroup) findViewById(R.id.topper);
         rightDrawer = findViewById(R.id.right_drawer);
+        rightDrawerAction = (BadgeImageView)findViewById(R.id.action_right_drawer);
+        cartTitle = (TextView)findViewById(R.id.checkout);
 
         // Set action bar listeners
         findViewById(R.id.action_left_drawer).setOnClickListener(this);
@@ -182,6 +188,17 @@ public class MainActivity extends Activity
         selectDrawerItem(item, Transition.SLIDE, true);
         return(true);
     }
+
+
+    /** set item count indicator on cart icon and cart drawer title */
+    public void setCartItemCount(int count) {
+        // set text of cart icon
+        rightDrawerAction.setText(count == 0? "":String.valueOf(count));
+        // Set text of cart drawer title
+        cartTitle.setText(String.format(getResources().getString(R.string.your_cart), count,
+                count==1? "":"s"));
+    }
+
 
     // Action bar & topper clicks
 
