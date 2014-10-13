@@ -22,6 +22,7 @@ import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Category;
+import com.staples.mobile.common.access.easyopen.model.browse.Image;
 import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 
 import retrofit.Callback;
@@ -86,10 +87,11 @@ public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<Brow
 
         // Set image
         ImageView imageView = (ImageView) view.findViewById(R.id.cartitem_image);
-        if (item.getThumbnailImage() == null) {
+        Image image = item.getImage();
+        if (image == null) {
             imageView.setImageDrawable(noPhoto);
         } else {
-            Picasso.with(activity).load(item.getThumbnailImage().getUrl()).error(noPhoto).into(imageView);
+            Picasso.with(activity).load(image.getUrl()).error(noPhoto).into(imageView);
         }
 
         // Set title

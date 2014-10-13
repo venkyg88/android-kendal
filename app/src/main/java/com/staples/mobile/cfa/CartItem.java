@@ -4,6 +4,7 @@
 
 package com.staples.mobile.cfa;
 
+import com.staples.mobile.common.access.easyopen.model.browse.Image;
 import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 import com.staples.mobile.common.access.easyopen.model.browse.ThumbnailImage;
@@ -36,10 +37,18 @@ public class CartItem {
                 }
             }
         }
-        //List<Pricing> pricings = product.getPricing();
-//        if (pricings != null && pricings.size() > 0) {
-//            return pricings.get(0);
-//        }
+        return null;
+    }
+
+    public Image getImage() {
+        Image[] images = product.getImage();
+        if (images != null) {
+            for(Image image : images) {
+                if (image.getUrl() != null) {
+                    return image;
+                }
+            }
+        }
         return null;
     }
 
@@ -52,10 +61,6 @@ public class CartItem {
                 }
             }
         }
-//        List<ThumbnailImage> images = product.getThumbnailImage();
-//        if (images != null && images.size() > 0) {
-//            return images.get(0);
-//        }
         return null;
     }
 
