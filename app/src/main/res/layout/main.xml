@@ -123,7 +123,7 @@
             <!-- Right drawer (shopping cart) -->
             <LinearLayout
                 android:id="@+id/right_drawer"
-                android:layout_width="200dp"
+                android:layout_width="280dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:layout_gravity="end">
