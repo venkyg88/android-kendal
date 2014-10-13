@@ -28,5 +28,5 @@
     <string name="search_title">Search</string>
     <string name="search_hint">Search</string>
     <string name="empty">Nothing found</string>
-    <string name="your_cart">Your cart</string>
+    <string name="your_cart">Your cart (%1$d item%2$s)</string>
 </resources>
