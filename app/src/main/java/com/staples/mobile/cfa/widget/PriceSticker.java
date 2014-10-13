@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 
 import com.staples.mobile.R;
@@ -20,8 +21,8 @@ public class PriceSticker extends View {
     private static final DecimalFormat format = new DecimalFormat("$0.00");
     private Paint pricePaint;
     private Paint unitPaint;
-    private Rect bounds = new Rect();
 
+    private int gravity;
     private int baseline;
     private int height;
 
@@ -41,6 +42,7 @@ public class PriceSticker extends View {
 
         // Preset default attributes
         int textSize = 10;
+        gravity = Gravity.LEFT;
 
         // Get styled attributes
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PriceSticker);
@@ -50,6 +52,10 @@ public class PriceSticker extends View {
             switch(index) {
                 case R.styleable.PriceSticker_android_textSize:
                     textSize = a.getDimensionPixelSize(index, textSize);
+                    break;
+                case R.styleable.RatingStars_android_gravity:
+                    gravity = a.getInt(index, gravity)&Gravity.HORIZONTAL_GRAVITY_MASK;
+                    break;
             }
         }
         a.recycle();
@@ -72,7 +78,7 @@ public class PriceSticker extends View {
         height = baseline + (int) pricePaint.descent();
     }
 
-    public void setPrice(float price, String unit) {
+    public void setPricing(float price, String unit) {
         this.price = price;
         this.unit = unit;
         invalidate();
@@ -86,16 +92,30 @@ public class PriceSticker extends View {
 
     @Override
     public void onDraw(Canvas canvas) {
-        float x = getPaddingLeft();
-        float y = getPaddingTop()+baseline;
+        String unitText = null;
 
-        String text = format.format(price);
-        pricePaint.getTextBounds(text, 0, text.length(), bounds);
-        canvas.drawText(text, x, y, pricePaint);
+        float slack = getWidth()-getPaddingLeft()-getPaddingRight();
+
+        String priceText = format.format(price);
+        float priceWidth = pricePaint.measureText(priceText, 0, priceText.length());
+        slack -= priceWidth;
 
         if (unit!=null) {
-            x += bounds.right+height/4.0f;
-            canvas.drawText(unit, x, y, unitPaint);
+            unitText = " " + unit;
+            slack -= pricePaint.measureText(unitText, 0, unitText.length());
+        }
+
+        // Apply gravity
+        float x = getPaddingLeft();
+        if (gravity==Gravity.CENTER_HORIZONTAL) x += slack/2.0f;
+        else if (gravity==Gravity.RIGHT) x += slack;
+        float y = getPaddingTop()+baseline;
+
+        // Draw texts
+        canvas.drawText(priceText, x, y, pricePaint);
+        if (unit!=null) {
+            x += priceWidth;
+            canvas.drawText(unitText, x, y, unitPaint);
         }
     }
 }

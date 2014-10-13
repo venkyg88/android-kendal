@@ -14,13 +14,13 @@ import retrofit.http.POST;
 import retrofit.http.Query;
 
 public interface EasyOpenApi {
-
-
     public static final String INSECURE_ENDPOINT = "http://sapi.staples.com";
 //    public static final String INSECURE_ENDPOINT = "http://qapi.staples.com";
 //    public static final String INSECURE_ENDPOINT = "http://10.29.172.60:9100"; // The office printer!
 
     public static final String SECURE_ENDPOINT = "https://sapi.staples.com";
+
+    // Browsing & product details
 
     @GET("/{version}/{storeId}/category/top")
     void topCategories(
@@ -51,7 +51,7 @@ public interface EasyOpenApi {
     );
 
     @GET("/{version}/{storeId}/product/partnumber/{productId}")
-    void sku(
+    void getSkuInfo(
         @EncodedPath("version") String version,
         @EncodedPath("storeId") String storeId,
         @EncodedPath("productId") String productId,
@@ -59,35 +59,36 @@ public interface EasyOpenApi {
         @Query("locale") String locale,
         @Query("zipCode") String zipCode,
         @Query("client_id") String client_id,
+        @Query("offset") Integer offset,
+        @Query("limit") Integer limit,
         Callback<Sku> callback
     );
 
-    //https://sapi.staples.com/v1/10001/loginidentity?client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS
-    @POST("/{version}/{storeId}/loginidentity")
-    public void registeredUserLogin(
-            @Body RegisteredUserLogin body,
-            @EncodedPath("version") String version,
-            @EncodedPath("storeId") String storeId,
-            @Query("client_id") String client_id,
-            Callback<TokenObject> callback
-    );
+    // Logins & profile
 
-//  /v1/{storeId}/member/profile
-    @GET("/{version}/{storeId}/member/profile")
-    void member(
-            @EncodedPath("version") String version,
-            @EncodedPath("storeId") String storeId,
-            @Query("locale") String locale,
-            @Query("client_id") String client_id,
-            Callback<MemberDetail> callback
-    );
-
-    //https://api.staples.com/v1/10001/guestidentity?client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS
     @POST("/{version}/{storeId}/guestidentity")
     public void guestLogin(
-            @EncodedPath("version") String version,
-            @EncodedPath("storeId") String storeId,
-            @Query("client_id") String client_id,
-            Callback<TokenObject> callback
+        @EncodedPath("version") String version,
+        @EncodedPath("storeId") String storeId,
+        @Query("client_id") String client_id,
+        Callback<TokenObject> callback
+    );
+
+    @POST("/{version}/{storeId}/loginidentity")
+    public void registeredUserLogin(
+        @Body RegisteredUserLogin body,
+        @EncodedPath("version") String version,
+        @EncodedPath("storeId") String storeId,
+        @Query("client_id") String client_id,
+        Callback<TokenObject> callback
+    );
+
+    @GET("/{version}/{storeId}/member/profile")
+    void member(
+        @EncodedPath("version") String version,
+        @EncodedPath("storeId") String storeId,
+        @Query("locale") String locale,
+        @Query("client_id") String client_id,
+        Callback<MemberDetail> callback
     );
 }

@@ -18,9 +18,7 @@ import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.browse.Browse;
-import com.staples.mobile.common.access.easyopen.model.browse.Category;
-import com.staples.mobile.common.access.easyopen.model.browse.Product;
+import com.staples.mobile.common.access.easyopen.model.browse.*;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -72,7 +70,7 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
         ratingStars.setRating(item.customerRating, item.customerCount);
 
         PriceSticker priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
-        priceSticker.setPrice(item.price, item.unit);
+        priceSticker.setPricing(item.price, item.unit);
 
         ImageView image = (ImageView) view.findViewById(R.id.image);
         if (item.imageUrl==null) image.setImageDrawable(noPhoto);

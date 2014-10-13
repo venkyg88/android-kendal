@@ -1,21 +1,32 @@
-
 package com.staples.mobile.common.access.easyopen.model.sku;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
-
-public class Sku{
-
-    //You must have this for JACKSON to work! fr GSON I changed product to Product to work as it does not have annotations. This annotation has no effect on the retrofit options.
+public class Sku {
     @JsonProperty("Product")
-   	private List<Product> Product;
- 	public List<Product> getProduct(){
-		return this.Product;
-	}
-	public void setProduct(List<Product> Product){
-		this.Product = Product;
-	}
+   	private Product[] product;
+    private boolean recordSetComplete;
+    private int recordSetCount;
+    private int recordSetStartNumber;
+    private int recordSetTotal;
 
+    public Product[] getProduct() {
+        return product;
+    }
 
+    public boolean isRecordSetComplete() {
+        return recordSetComplete;
+    }
+
+    public int getRecordSetCount() {
+        return recordSetCount;
+    }
+
+    public int getRecordSetStartNumber() {
+        return recordSetStartNumber;
+    }
+
+    public int getRecordSetTotal() {
+        return recordSetTotal;
+    }
 }

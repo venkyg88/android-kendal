@@ -1,48 +1,82 @@
-
 package com.staples.mobile.common.access.easyopen.model.sku;
 
-public class Pricing{
-   	private String buyMoreSaveMoreImage;
-   	private String displayRegularPricing;
-   	private String displayWasPricing;
-   	private String finalPrice;
-   	private String listPrice;
-   	private String unitOfMeasure;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
- 	public String getBuyMoreSaveMoreImage(){
-		return this.buyMoreSaveMoreImage;
-	}
-	public void setBuyMoreSaveMoreImage(String buyMoreSaveMoreImage){
-		this.buyMoreSaveMoreImage = buyMoreSaveMoreImage;
-	}
- 	public String getDisplayRegularPricing(){
-		return this.displayRegularPricing;
-	}
-	public void setDisplayRegularPricing(String displayRegularPricing){
-		this.displayRegularPricing = displayRegularPricing;
-	}
- 	public String getDisplayWasPricing(){
-		return this.displayWasPricing;
-	}
-	public void setDisplayWasPricing(String displayWasPricing){
-		this.displayWasPricing = displayWasPricing;
-	}
- 	public String getFinalPrice(){
-		return this.finalPrice;
-	}
-	public void setFinalPrice(String finalPrice){
-		this.finalPrice = finalPrice;
-	}
- 	public String getListPrice(){
-		return this.listPrice;
-	}
-	public void setListPrice(String listPrice){
-		this.listPrice = listPrice;
-	}
- 	public String getUnitOfMeasure(){
-		return this.unitOfMeasure;
-	}
-	public void setUnitOfMeasure(String unitOfMeasure){
-		this.unitOfMeasure = unitOfMeasure;
-	}
+public class Pricing {
+    @JsonProperty("BuyMoreSaveMoreDetail")
+    private BuyMoreSaveMoreDetail[] buyMoreSaveMoreDetail;
+    private String buyMoreSaveMoreImage;
+    private Description[] description;
+    private Discount[] discount;
+    private boolean displayRegularPricing;
+    private boolean displayWasPricing;
+    private float finalPriceDeduction;
+    private Product[] freeItem;
+    private float finalPrice;
+    private float freeItemTotalSavings;
+    private Image[] image;
+    private float listPrice;
+    private float price;
+    private float savings;
+    private String unitOfMeasure;
+
+    public BuyMoreSaveMoreDetail[] getBuyMoreSaveMoreDetail() {
+        return buyMoreSaveMoreDetail;
+    }
+
+    public String getBuyMoreSaveMoreImage() {
+        return buyMoreSaveMoreImage;
+    }
+
+    public Description[] getDescription() {
+        return description;
+    }
+
+    public Discount[] getDiscount() {
+        return discount;
+    }
+
+    public boolean isDisplayRegularPricing() {
+        return displayRegularPricing;
+    }
+
+    public boolean isDisplayWasPricing() {
+        return displayWasPricing;
+    }
+
+    public float getFinalPriceDeduction() {
+        return finalPriceDeduction;
+    }
+
+    public Product[] getFreeItem() {
+        return freeItem;
+    }
+
+    public float getFinalPrice() {
+        return finalPrice;
+    }
+
+    public float getFreeItemTotalSavings() {
+        return freeItemTotalSavings;
+    }
+
+    public Image[] getImage() {
+        return image;
+    }
+
+    public float getListPrice() {
+        return listPrice;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public float getSavings() {
+        return savings;
+    }
+
+    public String getUnitOfMeasure() {
+        return unitOfMeasure;
+    }
 }
