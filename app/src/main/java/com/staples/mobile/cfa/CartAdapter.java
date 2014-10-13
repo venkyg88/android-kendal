@@ -11,7 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,13 +24,11 @@ import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Category;
 import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 
-import java.util.ArrayList;
-
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class CartAdapter extends BaseAdapter implements Callback<Browse> {
+public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<Browse> {
 
     private static final String TAG = "CartAdapter";
 
@@ -47,18 +45,17 @@ public class CartAdapter extends BaseAdapter implements Callback<Browse> {
 
     private Activity activity;
     private LayoutInflater inflater;
-
-    private ArrayList<CartItem> cartItems;
+    private int cartItemLayoutResId;
 
     private Drawable noPhoto;
 
 
-    public CartAdapter(Activity activity) {
-        super();
+    public CartAdapter(Activity activity, int cartItemLayoutResId) {
+        super(activity, cartItemLayoutResId);
         this.activity = activity;
+        this.cartItemLayoutResId = cartItemLayoutResId;
         noPhoto = activity.getResources().getDrawable(R.drawable.no_photo);
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        cartItems = new ArrayList<CartItem>();
     }
 
 
@@ -66,29 +63,13 @@ public class CartAdapter extends BaseAdapter implements Callback<Browse> {
 
     public int getTotalCount() {
         int totalCount = 0;
-        for (CartItem item : cartItems) {
+        for (int position = 0;  position < getCount();  position++) {
+            CartItem item = getItem(position);
             totalCount += item.getQuantity();
         }
         return totalCount;
     }
 
-    @Override
-    public int getCount() {
-        return cartItems.size();
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return(getItem(position).hashCode());
-    }
-
-    @Override
-    public CartItem getItem(int position) {
-        if (position < cartItems.size()) {
-            return(cartItems.get(position));
-        }
-        return(null);
-    }
 
     /* Views */
 
@@ -98,7 +79,7 @@ public class CartAdapter extends BaseAdapter implements Callback<Browse> {
 
         // Get a new or recycled view of the right type
         if (view == null) {
-            view = inflater.inflate(R.layout.cart_item, parent, false);
+            view = inflater.inflate(cartItemLayoutResId, parent, false);
         }
 
         CartItem item = getItem(position);
@@ -160,7 +141,8 @@ public class CartAdapter extends BaseAdapter implements Callback<Browse> {
         com.staples.mobile.common.access.easyopen.model.browse.Product[] products = category.getProduct();
         if (products != null) {
             for (com.staples.mobile.common.access.easyopen.model.browse.Product product : products) {
-                cartItems.add(new CartItem(product, 1));
+                //cartItems.add(new CartItem(product, 1));
+                add(new CartItem(product, 1));
             }
             notifyDataSetChanged();
             return;

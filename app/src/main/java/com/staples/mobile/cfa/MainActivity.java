@@ -131,8 +131,7 @@ public class MainActivity extends Activity
         topper.findViewById(R.id.action_rewards).setOnClickListener(this);
 
         // Initialize right drawer listview TODO just hacked for demo
-//        ArrayAdapter<String> cartAdapter = new ArrayAdapter<String>(this, R.layout.drawer_category);
-        final CartAdapter cartAdapter = new CartAdapter(this);
+        final CartAdapter cartAdapter = new CartAdapter(this, R.layout.cart_item);
         cartAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
@@ -142,9 +141,6 @@ public class MainActivity extends Activity
         });
         cartAdapter.fill();
         ((ListView) rightDrawer.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
-//        cartAdapter.add("Apple");
-//        cartAdapter.add("Banana");
-//        cartAdapter.add("Cantaloupe");
 
         // Fresh start?
         if (freshStart) {
