@@ -1,11 +1,13 @@
 
 package com.staples.mobile.common.access.easyopen.model.cart;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ViewCart {
-
+    @JsonProperty("Cart")
     private List<Cart> cart = new ArrayList<Cart>();
     private String recordSetComplete;
     private String recordSetCount;

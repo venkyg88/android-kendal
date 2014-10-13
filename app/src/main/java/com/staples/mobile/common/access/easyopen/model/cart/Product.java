@@ -116,12 +116,12 @@ public class Product {
         this.image = image;
     }
 
-    public String getLeadTimeDecription() {
+    public String getLeadTimeDescription() {
         return leadTimeDescription;
     }
 
-    public void setLeadTimeDecription(String leadTimeDecription) {
-        this.leadTimeDescription = leadTimeDecription;
+    public void setLeadTimeDescription(String leadTimeDescription) {
+        this.leadTimeDescription = leadTimeDescription;
     }
 
     public String getManufacturerName() {
