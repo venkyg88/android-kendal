@@ -38,6 +38,7 @@ public class MainActivity extends Activity
     private View rightDrawer;
     private BadgeImageView rightDrawerAction;
     private TextView cartTitle;
+    private CartAdapter cartAdapter;
 
     private DrawerItem homeDrawerItem;
     private DrawerItem searchDrawerItem;
@@ -131,7 +132,7 @@ public class MainActivity extends Activity
         topper.findViewById(R.id.action_rewards).setOnClickListener(this);
 
         // Initialize right drawer listview TODO just hacked for demo
-        final CartAdapter cartAdapter = new CartAdapter(this, R.layout.cart_item);
+        cartAdapter = new CartAdapter(this, R.layout.cart_item);
         cartAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
