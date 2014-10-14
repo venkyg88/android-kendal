@@ -39,13 +39,18 @@
                 android:layout_height="wrap_content"
                 android:text="@string/qty_abbrev"
                 android:textSize="16dp"/>
-            <EditText
+            <Spinner
                 android:id="@+id/cartitem_qty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:numeric="integer"
-                android:imeOptions="actionDone"
                 android:textSize="16dp"/>
+            <!--<EditText-->
+                <!--android:id="@+id/cartitem_qty"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:numeric="integer"-->
+                <!--android:imeOptions="actionDone"-->
+                <!--android:textSize="16dp"/>-->
             <Button
                 android:id="@+id/cartitem_increase_qty"
                 android:layout_width="40dp"

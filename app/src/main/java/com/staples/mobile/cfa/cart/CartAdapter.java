@@ -109,8 +109,8 @@ public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<Brow
         priceSticker.setPrice(item.getFinalPrice(), item.getPriceUnitOfMeasure());
 
         // set quantity
-        EditText qtyView = (EditText) view.findViewById(R.id.cartitem_qty);
-        qtyView.setText(String.valueOf(item.getQuantity()));
+//        EditText qtyView = (EditText) view.findViewById(R.id.cartitem_qty);
+//        qtyView.setText(String.valueOf(item.getQuantity()));
 
         return(view);
     }
