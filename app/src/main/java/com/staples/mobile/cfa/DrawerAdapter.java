@@ -55,7 +55,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
         super();
         this.activity = activity;
         this.wrapper = wrapper;
-        inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = activity.getLayoutInflater();
         menuList = new ArrayList<DrawerItem>();
         stackList = new ArrayList<DrawerItem>();
         browseList = new ArrayList<DrawerItem>();

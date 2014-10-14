@@ -60,9 +60,4 @@ public class SkuImageAdapter extends PagerAdapter {
     public boolean isViewFromObject(View view, Object object) {
         return (view==((SkuImageItem) object).view);
     }
-
-    @Override
-    public String getPageTitle(int position) {
-        return ("Hello"); // TODO
-    }
 }

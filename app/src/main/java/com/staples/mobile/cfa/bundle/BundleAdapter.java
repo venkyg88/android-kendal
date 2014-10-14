@@ -48,7 +48,7 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
         super(activity, 0);
         this.activity = activity;
         this.wrapper = wrapper;
-        inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = activity.getLayoutInflater();
         noPhoto = activity.getResources().getDrawable(R.drawable.no_photo);
     }
 
