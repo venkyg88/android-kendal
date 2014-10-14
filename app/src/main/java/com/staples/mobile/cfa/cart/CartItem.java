@@ -2,7 +2,7 @@
  * Copyright (c) 2014 Staples, Inc. All rights reserved.
  */
 
-package com.staples.mobile.cfa;
+package com.staples.mobile.cfa.cart;
 
 import com.staples.mobile.common.access.easyopen.model.browse.Image;
 import com.staples.mobile.common.access.easyopen.model.browse.Pricing;

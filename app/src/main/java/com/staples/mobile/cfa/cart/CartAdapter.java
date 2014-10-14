@@ -2,7 +2,7 @@
  * Copyright (c) 2014 Staples, Inc. All rights reserved.
  */
 
-package com.staples.mobile.cfa;
+package com.staples.mobile.cfa.cart;
 
 import android.app.Activity;
 import android.content.Context;
@@ -115,7 +115,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<Brow
     }
 
 
-    void fill() {
+    public void fill() {
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
 
         // TODO: query for items in cart
