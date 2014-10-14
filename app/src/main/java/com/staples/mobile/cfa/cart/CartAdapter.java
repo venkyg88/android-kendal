@@ -33,8 +33,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-//public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<ViewCart> {
-public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<Browse> {
+public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<ViewCart> {
+//public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<Browse> {
 
     private static final String TAG = "CartAdapter";
 
@@ -117,67 +117,38 @@ public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<Brow
 
 
     public void fill() {
-        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
 
         // query for items in cart
-//        easyOpenApi.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, this);
+        easyOpenApi.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, this);
 
 
         // temporary: getting data from browse request
-        String identifier = "CL161546";
-        easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
-                ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
+//        String identifier = "CL161546";
+//        easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
+//                ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
 
         notifyDataSetChanged();
     }
 
-//    @Override
-//    public void success(ViewCart viewCart, Response response) {
-//
-//        // TODO: get items returned from cart API
-//
-//        // getting data from viewCart request
-//        List<Cart> cartCollection = viewCart.getCart();
-//        if (cartCollection == null || cartCollection.size() == 0) {
-//            notifyDataSetChanged();
-//            return;
-//        }
-//        Cart cart = cartCollection.get(0);
-//        List<Product> products = cart.getProduct();
-//        if (products != null) {
-//            for (Product product : products) {
-//                add(new CartItem(product));
-//            }
-//            notifyDataSetChanged();
-//            return;
-//        }
-//
-//
-//        notifyDataSetChanged();
-//    }
-//
-//    @Override
-//    public void failure(RetrofitError retrofitError) {
-//        Log.d(TAG, "Failure callback " + retrofitError);
-//        notifyDataSetChanged();
-//    }
-
     @Override
-    public void success(Browse browse, Response response) {
+    public void success(ViewCart viewCart, Response response) {
 
         // TODO: get items returned from cart API
 
-        // temporary: getting data from browse request
-        Category[] categories = browse.getCategory();
-        if (categories==null || categories.length<1) {
+        // getting data from viewCart request
+        List<Cart> cartCollection = viewCart.getCart();
+        if (cartCollection == null || cartCollection.size() == 0) {
             notifyDataSetChanged();
             return;
         }
-        Category category = categories[0];
-        com.staples.mobile.common.access.easyopen.model.browse.Product[] products = category.getProduct();
+        Cart cart = cartCollection.get(0);
+        List<Product> products = cart.getProduct();
         if (products != null) {
-            for (com.staples.mobile.common.access.easyopen.model.browse.Product product : products) {
-                //cartItems.add(new CartItem(product, 1));
+            if (getCount() > 0) {
+                clear();
+            }
+            for (Product product : products) {
                 add(new CartItem(product));
             }
             notifyDataSetChanged();
@@ -193,4 +164,36 @@ public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<Brow
         Log.d(TAG, "Failure callback " + retrofitError);
         notifyDataSetChanged();
     }
+
+//    @Override
+//    public void success(Browse browse, Response response) {
+//
+//        // TODO: get items returned from cart API
+//
+//        // temporary: getting data from browse request
+//        Category[] categories = browse.getCategory();
+//        if (categories==null || categories.length<1) {
+//            notifyDataSetChanged();
+//            return;
+//        }
+//        Category category = categories[0];
+//        com.staples.mobile.common.access.easyopen.model.browse.Product[] products = category.getProduct();
+//        if (products != null) {
+//            for (com.staples.mobile.common.access.easyopen.model.browse.Product product : products) {
+//                //cartItems.add(new CartItem(product, 1));
+//                add(new CartItem(product));
+//            }
+//            notifyDataSetChanged();
+//            return;
+//        }
+//
+//
+//        notifyDataSetChanged();
+//    }
+//
+//    @Override
+//    public void failure(RetrofitError retrofitError) {
+//        Log.d(TAG, "Failure callback " + retrofitError);
+//        notifyDataSetChanged();
+//    }
 }
