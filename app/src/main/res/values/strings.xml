@@ -33,11 +33,8 @@
     <string name="no_reviews">no reviews</string>
 
     <string name="product_description">Product Description</string>
-    <string name="product_description_caps">PRODUCT DESCRIPTION</string>
     <string name="product_specs">Product Specs</string>
-    <string name="product_specs_caps">PRODUCT SPECS</string>
     <string name="customer_reviews">Customer Reviews</string>
-    <string name="customer_reviews_caps">CUSTOMER REVIEWS</string>
 
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
 </resources>

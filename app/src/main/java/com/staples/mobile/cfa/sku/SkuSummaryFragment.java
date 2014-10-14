@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.widget.PagerStripe;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
@@ -34,6 +35,7 @@ public class SkuSummaryFragment extends Fragment implements Callback<Sku> {
     private static final int MAXFETCH = 50;
 
     private SkuImageAdapter adapter;
+    private PagerStripe stripe;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -50,6 +52,8 @@ public class SkuSummaryFragment extends Fragment implements Callback<Sku> {
         ViewPager pager = (ViewPager) view.findViewById(R.id.images);
         adapter = new SkuImageAdapter(getActivity());
         pager.setAdapter(adapter);
+        stripe = (PagerStripe) view.findViewById(R.id.stripe);
+        pager.setOnPageChangeListener(stripe);
 
         Access.getInstance().getEasyOpenApi(false).getSkuInfo(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
                                                               ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
@@ -71,6 +75,7 @@ public class SkuSummaryFragment extends Fragment implements Callback<Sku> {
                     if (url!=null) adapter.add(url);
                 }
             }
+            stripe.setCount(adapter.getCount());
             adapter.notifyDataSetChanged();
 
             ((TextView) view.findViewById(R.id.title)).setText(product.getProductName());
