@@ -1,13 +1,16 @@
 package com.staples.mobile.common.access.easyopen.api;
 
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
-import com.staples.mobile.common.access.easyopen.model.sku.Sku;
-import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.staples.mobile.common.access.easyopen.model.cart.AddUpdateCart;
+import com.staples.mobile.common.access.easyopen.model.cart.ViewCart;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
+import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.staples.mobile.common.access.easyopen.model.sku.Sku;
 
 import retrofit.Callback;
 import retrofit.http.Body;
+import retrofit.http.DELETE;
 import retrofit.http.EncodedPath;
 import retrofit.http.GET;
 import retrofit.http.POST;
@@ -89,5 +92,53 @@ public interface EasyOpenApi {
             @EncodedPath("storeId") String storeId,
             @Query("client_id") String client_id,
             Callback<TokenObject> callback
+    );
+
+    // http://api.staples.com/v1/10001/cart?locale=en_US&zipCode=05251&catalogId=10051&client_id={client-id}
+    @GET("/{version}/{storeId}/cart")
+    void viewCart(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("zipCode") String zipCode,
+            @Query("catalogId") String catalogId,
+            @Query("client_id") String client_id,
+            Callback<ViewCart> callback
+    );
+
+    //http://api.staples.com/v1/10001/cart?locale=en_US&zipCode=05251&catalogId=10051&client_id={client-id}
+    @POST("/{version}/{storeId}/cart")
+    void addToCart(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("zipCode") String zipCode,
+            @Query("catalogId") String catalogId,
+            @Query("client_id") String client_id,
+            Callback<AddUpdateCart> callback
+    );
+
+    //https://api.staples.com/v1/10001/cart?locale=en_US&zipCode=05251&catalogId=10051&client_id={client-id}
+    @POST("/{version}/{storeId}/cart")
+    void updateCart(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("zipCode") String zipCode,
+            @Query("catalogId") String catalogId,
+            @Query("client_id") String client_id,
+            Callback<AddUpdateCart> callback
+    );
+
+    //http://api.staples.com/v1/10001/cart/id/453387856?locale=en_US&client_id={client-id}
+    @DELETE("/{version}/{storeId}/cart/id/{orderItemId}")
+    void deleteFromCart(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @EncodedPath("orderItemId") String orderItemId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            //TODO make delete response model
+            Callback<AddUpdateCart> callback
     );
 }
