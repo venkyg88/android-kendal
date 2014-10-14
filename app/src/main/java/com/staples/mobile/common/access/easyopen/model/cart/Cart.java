@@ -8,10 +8,10 @@ public class Cart {
 
     private String delivery;
     private String orderId;
-    private String preTaxTotal;
+    private float preTaxTotal;
     private List<Product> product = new ArrayList<Product>();
     private String recommendationUrl;
-    private String subTotal;
+    private float subTotal;
     private String totalItems;
     private String webOnly;
 
@@ -31,11 +31,11 @@ public class Cart {
         this.orderId = orderId;
     }
 
-    public String getPreTaxTotal() {
+    public float getPreTaxTotal() {
         return preTaxTotal;
     }
 
-    public void setPreTaxTotal(String preTaxTotal) {
+    public void setPreTaxTotal(float preTaxTotal) {
         this.preTaxTotal = preTaxTotal;
     }
 
@@ -55,11 +55,11 @@ public class Cart {
         this.recommendationUrl = recommendationUrl;
     }
 
-    public String getSubTotal() {
+    public float getSubTotal() {
         return subTotal;
     }
 
-    public void setSubTotal(String subTotal) {
+    public void setSubTotal(float subTotal) {
         this.subTotal = subTotal;
     }
 
