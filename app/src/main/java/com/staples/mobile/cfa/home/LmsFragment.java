@@ -11,9 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.AdapterView;
-import android.widget.ListView;
-
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.R;
 
@@ -45,7 +42,7 @@ public class LmsFragment
         Log.v(TAG, "LmsFragment:onCreateView():"
                 + " this[" + this + "]"
         );
-        View view = inflater.inflate(R.layout.bundle_frame, container, false);
+        View view = inflater.inflate(R.layout.lms_frame, container, false);
 
         lmsAdapter = new LmsAdapter(activity, view);
         lmsAdapter.fill();

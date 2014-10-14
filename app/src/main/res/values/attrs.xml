@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
-  -->
-
 <resources>
+    <declare-styleable name="RatingStars">
+        <attr name="android:textSize"/>
+        <attr name="android:gravity"/>
+        <attr name="noReviews" format="string"/>
+    </declare-styleable>
+    <declare-styleable name="PriceSticker">
+        <attr name="android:textSize"/>
+        <attr name="android:gravity"/>
+    </declare-styleable>
+    <declare-styleable name="PagerStripe">
+        <attr name="stripeThickness" format="dimension"/>
+        <attr name="android:textSize"/>
+    </declare-styleable>
     <declare-styleable name="BadgeImageView">
         <attr name="android:text"/>
         <attr name="android:textSize"/>

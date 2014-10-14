@@ -106,7 +106,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<View
         // TODO: include original price
         // set price
         PriceSticker priceSticker = (PriceSticker) view.findViewById(R.id.cartitem_price);
-        priceSticker.setPrice(item.getFinalPrice(), item.getPriceUnitOfMeasure());
+        priceSticker.setPricing(item.getFinalPrice(), item.getPriceUnitOfMeasure());
 
         // set quantity
 //        EditText qtyView = (EditText) view.findViewById(R.id.cartitem_qty);

@@ -50,7 +50,7 @@ public class ProductAdapter
         super(activity, 0);
         this.activity = activity;
         this.lmsItem = lmsItem;
-        inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = activity.getLayoutInflater();
     }
 
     /* Views */
