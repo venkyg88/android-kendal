@@ -21,10 +21,10 @@ public class ListViewWrapper extends LinearLayout {
     public static final String TAG ="ListViewWrapper";
 
     public enum State {
-        // Used for initial loading of ListView
+        // Used for initial loading of adapters
         LOADING (View.GONE,    View.VISIBLE, View.GONE),
         EMPTY   (View.GONE,    View.GONE,    View.VISIBLE),
-        // Used for additional loading of ListView
+        // Used for additional loading of adapters
         ADDING  (View.VISIBLE, View.VISIBLE, View.GONE),
         NOMORE  (View.VISIBLE, View.GONE,    View.VISIBLE),
         // Used for success
@@ -51,6 +51,17 @@ public class ListViewWrapper extends LinearLayout {
 
     public ListViewWrapper(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+    }
+    // Property modifiers
+
+    public void setXFraction(float fraction) {
+        int width = getWidth();
+        if (width>0) setX(fraction * width);
+    }
+
+    public void setYFraction(float fraction) {
+        int height = getHeight();
+        if (height>0) setY(fraction * height);
     }
 
     // Display state handling

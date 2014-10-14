@@ -18,7 +18,7 @@ import android.widget.ListView;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
-import com.staples.mobile.cfa.sku.SkuFragment;
+import com.staples.mobile.cfa.sku.SkuSummaryFragment;
 import com.staples.mobile.cfa.widget.ListViewWrapper;
 
 public class MainActivity extends Activity
@@ -118,7 +118,7 @@ public class MainActivity extends Activity
         rewardsDrawerItem = adapter.getItem(6); // TODO Hard-coded alias
 
         // Initialize topper
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = getLayoutInflater();
         inflater.inflate(R.layout.topper, topper);
         topper.findViewById(R.id.action_store).setOnClickListener(this);
         topper.findViewById(R.id.action_rewards).setOnClickListener(this);
@@ -177,7 +177,7 @@ public class MainActivity extends Activity
     }
 
     public boolean selectSkuItem(String identifier) {
-        DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.home_title, SkuFragment.class);
+        DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.home_title, SkuSummaryFragment.class);
         item.identifier = identifier;
         selectDrawerItem(item, Transition.SLIDE, true);
         return(true);

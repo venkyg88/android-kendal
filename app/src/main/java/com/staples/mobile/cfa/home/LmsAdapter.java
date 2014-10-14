@@ -60,7 +60,7 @@ public class LmsAdapter
         lmsItems = new ArrayList();
         lmsManager = new LmsManager();
 
-        layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        layoutInflater = activity.getLayoutInflater();
 
         bundlesListView = (ListView) view.findViewById(R.id.lsvBundles);
         bundlesListView.setAdapter(this);

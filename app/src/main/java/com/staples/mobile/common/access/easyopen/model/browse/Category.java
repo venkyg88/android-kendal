@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Category {
     private String catalogId;
-    private CategoryAnalytic[] categoryAnalytic;
+    private Analytic[] categoryAnalytic;
     private String categoryUrl;
     private int childCount;
     private boolean comparable;
@@ -25,7 +25,7 @@ public class Category {
         return catalogId;
     }
 
-    public CategoryAnalytic[] getCategoryAnalytic() {
+    public Analytic[] getCategoryAnalytic() {
         return categoryAnalytic;
     }
 

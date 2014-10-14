@@ -14,6 +14,7 @@ public class Pricing {
     private Product[] freeItem;
     private float finalPrice;
     private float freeItemTotalSavings;
+    private Image[] image;
     private float listPrice;
     private float price;
     private float savings;
@@ -57,6 +58,10 @@ public class Pricing {
 
     public float getFreeItemTotalSavings() {
         return freeItemTotalSavings;
+    }
+
+    public Image[] getImage() {
+        return image;
     }
 
     public float getListPrice() {
