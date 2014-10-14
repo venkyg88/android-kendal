@@ -12,8 +12,8 @@ public class Product {
     private List<BulletDescription> bulletDescription = new ArrayList<BulletDescription>();
     private String classId;
     private String comparable;
-    private String customerReviewCount;
-    private String customerReviewRating;
+    private int customerReviewCount;
+    private float customerReviewRating;
     private String deliveryOnly;
     private String expectedBusinessDayDelivery;
     private String freeShipping;
@@ -27,7 +27,7 @@ public class Product {
     private String priceInCartOnly;
     private List<Pricing> pricing = new ArrayList<Pricing>();
     private String productName;
-    private String quantity;
+    private int quantity;
     private String ropisEligible;
     private String shipableToStore;
     private ShippingInformation shippingInformation;
@@ -68,19 +68,19 @@ public class Product {
         this.comparable = comparable;
     }
 
-    public String getCustomerReviewCount() {
+    public int getCustomerReviewCount() {
         return customerReviewCount;
     }
 
-    public void setCustomerReviewCount(String customerReviewCount) {
+    public void setCustomerReviewCount(int customerReviewCount) {
         this.customerReviewCount = customerReviewCount;
     }
 
-    public String getCustomerReviewRating() {
+    public float getCustomerReviewRating() {
         return customerReviewRating;
     }
 
-    public void setCustomerReviewRating(String customerReviewRating) {
+    public void setCustomerReviewRating(float customerReviewRating) {
         this.customerReviewRating = customerReviewRating;
     }
 
@@ -180,11 +180,11 @@ public class Product {
         this.productName = productName;
     }
 
-    public String getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(String quantity) {
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 

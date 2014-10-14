@@ -6,9 +6,9 @@ public class Pricing {
     private String buyMoreSaveMoreImage;
     private String displayRegularPricing;
     private String displayWasPricing;
-    private String finalPrice;
-    private String price;
-    private String totalOrderItemPrice;
+    private float finalPrice;
+    private float price;
+    private float totalOrderItemPrice;
     private String unitOfMeasure;
 
     public String getBuyMoreSaveMoreImage() {
@@ -35,27 +35,27 @@ public class Pricing {
         this.displayWasPricing = displayWasPricing;
     }
 
-    public String getFinalPrice() {
+    public float getFinalPrice() {
         return finalPrice;
     }
 
-    public void setFinalPrice(String finalPrice) {
+    public void setFinalPrice(float finalPrice) {
         this.finalPrice = finalPrice;
     }
 
-    public String getPrice() {
+    public float getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 
-    public String getTotalOrderItemPrice() {
+    public float getTotalOrderItemPrice() {
         return totalOrderItemPrice;
     }
 
-    public void setTotalOrderItemPrice(String totalOrderItemPrice) {
+    public void setTotalOrderItemPrice(float totalOrderItemPrice) {
         this.totalOrderItemPrice = totalOrderItemPrice;
     }
 

@@ -137,8 +137,6 @@ public interface EasyOpenApi {
             @EncodedPath("storeId") String storeId,
             @EncodedPath("orderItemId") String orderItemId,
             @Query("locale") String locale,
-            @Query("client_id") String client_id,
-            //TODO make delete response model
-            Callback<AddUpdateCart> callback
+            @Query("client_id") String client_id
     );
 }

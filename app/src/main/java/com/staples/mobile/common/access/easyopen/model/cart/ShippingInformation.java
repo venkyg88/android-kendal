@@ -3,7 +3,7 @@ package com.staples.mobile.common.access.easyopen.model.cart;
 
 public class ShippingInformation {
 
-    private Object deliveryAddressSelected;
+    private String deliveryAddressSelected;
     private DeliveryModeAvailable deliveryModeAvailable;
     private String deliveryModeSelected;
     private String deliveryPromotion;
@@ -11,11 +11,11 @@ public class ShippingInformation {
     private String estimatedDeliveryInBusinessDays;
     private String quickShip;
 
-    public Object getDeliveryAddressSelected() {
+    public String getDeliveryAddressSelected() {
         return deliveryAddressSelected;
     }
 
-    public void setDeliveryAddressSelected(Object deliveryAddressSelected) {
+    public void setDeliveryAddressSelected(String deliveryAddressSelected) {
         this.deliveryAddressSelected = deliveryAddressSelected;
     }
 
