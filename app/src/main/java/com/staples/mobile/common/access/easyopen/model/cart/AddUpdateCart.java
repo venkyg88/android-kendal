@@ -4,7 +4,7 @@ package com.staples.mobile.common.access.easyopen.model.cart;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddToCart {
+public class AddUpdateCart {
 
     private List<ItemsAdded> itemsAdded = new ArrayList<ItemsAdded>();
 
