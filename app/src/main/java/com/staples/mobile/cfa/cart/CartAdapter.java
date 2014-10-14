@@ -21,8 +21,8 @@ import com.staples.mobile.R;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.cart.Image;
-import com.staples.mobile.common.access.easyopen.model.cart.Pricing;
+import com.staples.mobile.common.access.easyopen.model.browse.Browse;
+import com.staples.mobile.common.access.easyopen.model.browse.Category;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
 import com.staples.mobile.common.access.easyopen.model.cart.ViewCart;
@@ -33,7 +33,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<ViewCart> {
+//public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<ViewCart> {
+public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<Browse> {
 
     private static final String TAG = "CartAdapter";
 
@@ -91,11 +92,11 @@ public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<View
 
         // Set image
         ImageView imageView = (ImageView) view.findViewById(R.id.cartitem_image);
-        Image image = item.getImage();
-        if (image == null) {
+        String imageUrl = item.getImageUrl();
+        if (imageUrl == null) {
             imageView.setImageDrawable(noPhoto);
         } else {
-            Picasso.with(activity).load(image.getUrl()).error(noPhoto).into(imageView);
+            Picasso.with(activity).load(imageUrl).error(noPhoto).into(imageView);
         }
 
         // Set title
@@ -105,10 +106,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<View
         // TODO: include original price
         // set price
         PriceSticker priceSticker = (PriceSticker) view.findViewById(R.id.cartitem_price);
-        Pricing pricing = item.getPricing();
-        if (pricing != null) {
-            priceSticker.setPrice(item.getFinalPrice(), pricing.getUnitOfMeasure());
-        }
+        priceSticker.setPrice(item.getFinalPrice(), item.getPriceUnitOfMeasure());
 
         // set quantity
         EditText qtyView = (EditText) view.findViewById(R.id.cartitem_qty);
@@ -122,34 +120,65 @@ public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<View
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
 
         // query for items in cart
-        easyOpenApi.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, this);
+//        easyOpenApi.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, this);
 
 
         // temporary: getting data from browse request
-//        String identifier = "CL161546";
-//        easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
-//                ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
+        String identifier = "CL161546";
+        easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
+                ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
 
         notifyDataSetChanged();
     }
 
+//    @Override
+//    public void success(ViewCart viewCart, Response response) {
+//
+//        // TODO: get items returned from cart API
+//
+//        // getting data from viewCart request
+//        List<Cart> cartCollection = viewCart.getCart();
+//        if (cartCollection == null || cartCollection.size() == 0) {
+//            notifyDataSetChanged();
+//            return;
+//        }
+//        Cart cart = cartCollection.get(0);
+//        List<Product> products = cart.getProduct();
+//        if (products != null) {
+//            for (Product product : products) {
+//                add(new CartItem(product));
+//            }
+//            notifyDataSetChanged();
+//            return;
+//        }
+//
+//
+//        notifyDataSetChanged();
+//    }
+//
+//    @Override
+//    public void failure(RetrofitError retrofitError) {
+//        Log.d(TAG, "Failure callback " + retrofitError);
+//        notifyDataSetChanged();
+//    }
+
     @Override
-    public void success(ViewCart viewCart, Response response) {
+    public void success(Browse browse, Response response) {
 
         // TODO: get items returned from cart API
 
-        // getting data from viewCart request
-        List<Cart> cartCollection = viewCart.getCart();
-        if (cartCollection == null || cartCollection.size() == 0) {
+        // temporary: getting data from browse request
+        Category[] categories = browse.getCategory();
+        if (categories==null || categories.length<1) {
             notifyDataSetChanged();
             return;
         }
-        Cart cart = cartCollection.get(0);
-        List<Product> products = cart.getProduct();
+        Category category = categories[0];
+        com.staples.mobile.common.access.easyopen.model.browse.Product[] products = category.getProduct();
         if (products != null) {
-            for (Product product : products) {
+            for (com.staples.mobile.common.access.easyopen.model.browse.Product product : products) {
                 //cartItems.add(new CartItem(product, 1));
-                add(new CartItem(product, 1));
+                add(new CartItem(product));
             }
             notifyDataSetChanged();
             return;
