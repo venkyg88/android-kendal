@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -98,17 +99,17 @@ public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<Brow
         TextView titleTextView = (TextView) view.findViewById(R.id.cartitem_title);
         titleTextView.setText(item.getDescription());
 
+        // TODO: include original price
         // set price
         PriceSticker priceSticker = (PriceSticker) view.findViewById(R.id.cartitem_price);
         Pricing pricing = item.getPricing();
         if (pricing != null) {
-            priceSticker.setPrice(pricing.getFinalPrice(), pricing.getUnitOfMeasure()); // pricing.getFinalPrice()
+            priceSticker.setPrice(pricing.getFinalPrice(), pricing.getUnitOfMeasure());
         }
 
         // set quantity
-        TextView qtyTextView = (TextView) view.findViewById(R.id.cartitem_qty);
-        qtyTextView.setText(""+item.getQuantity());
-
+        EditText qtyView = (EditText) view.findViewById(R.id.cartitem_qty);
+        qtyView.setText(String.valueOf(item.getQuantity()));
 
         return(view);
     }
