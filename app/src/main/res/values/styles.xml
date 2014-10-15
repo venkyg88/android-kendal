@@ -24,6 +24,16 @@
 		<item name="android:textColor">@color/sel_text_list_item</item>
 	</style>
 
+    <!-- Sku styling -->
+
+    <style name="PagerStripe">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">6dp</item>
+        <item name="stripeThickness">3dp</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
     <style name="SkuSummaryTitle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -31,12 +41,11 @@
         <item name="android:textSize">20sp</item>
     </style>
 
-    <style name="SkuSummaryHeader">
+    <style name="SkuNumbers">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">4dp</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textAllCaps">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="LargeRatingStars">
@@ -64,21 +73,21 @@
         <item name="android:textSize">20sp</item>
     </style>
 
-    <style name="PagerStripe">
+    <style name="SkuSummaryHeader">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">6dp</item>
-        <item name="stripeThickness">3dp</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textAllCaps">true</item>
     </style>
 
     <style name="BulletMarkerStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">top|center_horizontal</item>
-        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingTop">9dp</item>
         <item name="android:paddingLeft">6dp</item>
-        <item name="android:paddingRight">4dp</item>
+        <item name="android:paddingRight">3dp</item>
         <item name="android:src">@drawable/bullet</item>
     </style>
     <style name="BulletTextStyle">

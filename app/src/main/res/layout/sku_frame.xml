@@ -28,12 +28,10 @@
             <!-- Info -->
             <TextView
                 android:id="@+id/title"
-                style="@style/SkuSummaryTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:maxLines="3"
-                android:ellipsize="end"/>
+                style="@style/SkuSummaryTitle"/>
+            <TextView
+                android:id="@+id/numbers"
+                style="@style/SkuNumbers"/>
             <com.staples.mobile.cfa.widget.RatingStars
                 android:id="@+id/rating"
                 style="@style/LargeRatingStars"/>

@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.sku;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -45,6 +46,8 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
     private PagerStripe stripe;
     private ViewPager details;
 
+    private boolean shifted;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         String identifier = null;
@@ -71,9 +74,12 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
         SkuPageAdapter pageAdapter = new SkuPageAdapter(getActivity());
         details.setAdapter(pageAdapter);
 
-        pageAdapter.add("Description");
-        pageAdapter.add("Specification");
-        pageAdapter.add("Reviews");
+        // Fill detail pager
+        Resources res = getActivity().getResources();
+        pageAdapter.add(res.getString(R.string.product_description));
+        pageAdapter.add(res.getString(R.string.product_specs));
+        pageAdapter.add(res.getString(R.string.customer_reviews));
+        pageAdapter.add(res.getString(R.string.accessories));
         pageAdapter.notifyDataSetChanged();
 
         // Set initial visibility
@@ -86,6 +92,29 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
                                                               ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
 
         return (frame);
+    }
+
+    private String formatNumbers(Product product) {
+        // Safety check
+        if (product==null) return(null);
+        String skuNumber = product.getSku();
+        String modelNumber = product.getManufacturerPartNumber();
+        if (skuNumber==null && modelNumber==null) return(null);
+
+        Resources res = getActivity().getResources();
+        StringBuilder sb = new StringBuilder();
+        if (skuNumber!=null) {
+            sb.append(res.getString(R.string.item));
+            sb.append(":\u00a0");
+            sb.append(skuNumber);
+        }
+        if (modelNumber!=null) {
+            if (sb.length()>0) sb.append("   ");
+            sb.append(res.getString(R.string.model));
+            sb.append(":\u00a0");
+            sb.append(modelNumber);
+        }
+        return(sb.toString());
     }
 
     @Override
@@ -106,7 +135,9 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
             stripe.setCount(imageAdapter.getCount());
             imageAdapter.notifyDataSetChanged();
 
+            // Add info
             ((TextView) frame.findViewById(R.id.title)).setText(product.getProductName());
+            ((TextView) frame.findViewById(R.id.numbers)).setText(formatNumbers(product));
             ((RatingStars) frame.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
 
             // Add pricing
@@ -130,7 +161,7 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
                 for(BulletDescription bullet : bullets) {
                     String text = bullet.getText();
                     if (text!=null) {
-                        ViewGroup group = (ViewGroup) inflater.inflate(R.layout.bullet_item, block, false);
+                        View group = inflater.inflate(R.layout.bullet_item, block, false);
                         ((TextView) group.findViewById(R.id.bullet)).setText(text);
                         block.addView(group);
                     }
