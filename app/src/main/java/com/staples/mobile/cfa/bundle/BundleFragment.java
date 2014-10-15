@@ -8,11 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.TextView;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.cfa.widget.ListViewWrapper;
+import com.staples.mobile.cfa.widget.DataWrapper;
 
 public class BundleFragment extends Fragment implements AdapterView.OnItemClickListener {
     private static final String TAG = "BundleFragment";
@@ -25,14 +24,14 @@ public class BundleFragment extends Fragment implements AdapterView.OnItemClickL
         String path = null;
 
         Log.d(TAG, "onCreateView()");
-        View view = inflater.inflate(R.layout.bundle, container, false);
+        View view = inflater.inflate(R.layout.bundle_frame, container, false);
 
         Bundle args = getArguments();
         if (args!=null) {
             path = args.getString("path");
         }
 
-        ListViewWrapper wrapper = (ListViewWrapper) view.findViewById(R.id.wrapper);
+        DataWrapper wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
         products = (GridView) view.findViewById(R.id.products);
         adapter = new BundleAdapter(getActivity(), wrapper);
         products.setAdapter(adapter);

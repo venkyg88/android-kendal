@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.staples.mobile.R;
-import com.staples.mobile.cfa.widget.ListViewWrapper;
+import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PagerStripe;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.RatingStars;
@@ -26,8 +26,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SkuSummaryFragment extends Fragment implements Callback<Sku> {
-    private static final String TAG = "SkuSummaryFragment";
+public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClickListener {
+    private static final String TAG = "SkuFragment";
 
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
@@ -40,9 +40,10 @@ public class SkuSummaryFragment extends Fragment implements Callback<Sku> {
 
     private static final int MAXFETCH = 50;
 
-    private ListViewWrapper wrapper;
-    private SkuImageAdapter adapter;
+    private DataWrapper wrapper;
+    private SkuImageAdapter imageAdapter;
     private PagerStripe stripe;
+    private ViewPager details;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -55,20 +56,36 @@ public class SkuSummaryFragment extends Fragment implements Callback<Sku> {
             identifier = args.getString("identifier");
         }
 
-        View view = inflater.inflate(R.layout.sku_summary, container, false);
-        wrapper = (ListViewWrapper) view.findViewById(R.id.wrapper);
-        ViewPager pager = (ViewPager) view.findViewById(R.id.images);
-        adapter = new SkuImageAdapter(getActivity());
-        pager.setAdapter(adapter);
-        stripe = (PagerStripe) view.findViewById(R.id.stripe);
-        pager.setOnPageChangeListener(stripe);
+        View frame = inflater.inflate(R.layout.sku_frame, container, false);
+        wrapper = (DataWrapper) frame.findViewById(R.id.wrapper);
 
-        wrapper.setState(ListViewWrapper.State.LOADING);
+        // Init image pager
+        ViewPager imagePager = (ViewPager) frame.findViewById(R.id.images);
+        imageAdapter = new SkuImageAdapter(getActivity());
+        imagePager.setAdapter(imageAdapter);
+        stripe = (PagerStripe) frame.findViewById(R.id.stripe);
+        imagePager.setOnPageChangeListener(stripe);
+
+        // Init detail pager
+        details = (ViewPager) frame.findViewById(R.id.details);
+        SkuPageAdapter pageAdapter = new SkuPageAdapter(getActivity());
+        details.setAdapter(pageAdapter);
+
+        pageAdapter.add("Description");
+        pageAdapter.add("Specification");
+        pageAdapter.add("Reviews");
+        pageAdapter.notifyDataSetChanged();
+
+        // Set initial visibility
+        wrapper.setState(DataWrapper.State.LOADING);
+        details.setVisibility(View.GONE);
+
+        frame.findViewById(R.id.pricing).setOnClickListener(this); // TODO Hacked for test
 
         Access.getInstance().getEasyOpenApi(false).getSkuInfo(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
                                                               ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
 
-        return (view);
+        return (frame);
     }
 
     @Override
@@ -76,21 +93,21 @@ public class SkuSummaryFragment extends Fragment implements Callback<Sku> {
         Product[] products = sku.getProduct();
         if (products!=null) {
             Product product = products[0];
-            View view = getView();
+            View frame = getView();
 
             // Add images
             Image[] images = product.getImage();
             if (images!=null && images.length>0) {
                 for(Image image : images) {
                     String url = image.getUrl();
-                    if (url!=null) adapter.add(url);
+                    if (url!=null) imageAdapter.add(url);
                 }
             }
-            stripe.setCount(adapter.getCount());
-            adapter.notifyDataSetChanged();
+            stripe.setCount(imageAdapter.getCount());
+            imageAdapter.notifyDataSetChanged();
 
-            ((TextView) view.findViewById(R.id.title)).setText(product.getProductName());
-            ((RatingStars) view.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
+            ((TextView) frame.findViewById(R.id.title)).setText(product.getProductName());
+            ((RatingStars) frame.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
 
             // Add pricing
             Pricing[] pricings = product.getPricing();
@@ -98,7 +115,7 @@ public class SkuSummaryFragment extends Fragment implements Callback<Sku> {
                 for(Pricing pricing : pricings) {
                     float finalPrice = pricing.getFinalPrice();
                     if (finalPrice>0.0f) {
-                        ((PriceSticker) view.findViewById(R.id.pricing)).setPricing(finalPrice, pricing.getUnitOfMeasure());
+                        ((PriceSticker) frame.findViewById(R.id.pricing)).setPricing(finalPrice, pricing.getUnitOfMeasure());
                         break;
                     }
                 }
@@ -109,7 +126,7 @@ public class SkuSummaryFragment extends Fragment implements Callback<Sku> {
             if (bullets!=null) {
                 Activity activity = getActivity();
                 LayoutInflater inflater = activity.getLayoutInflater();
-                ViewGroup block = (ViewGroup) view.findViewById(R.id.description);
+                ViewGroup block = (ViewGroup) frame.findViewById(R.id.description);
                 for(BulletDescription bullet : bullets) {
                     String text = bullet.getText();
                     if (text!=null) {
@@ -121,13 +138,19 @@ public class SkuSummaryFragment extends Fragment implements Callback<Sku> {
             }
 
             // Ready to display
-            wrapper.setState(ListViewWrapper.State.DONE);
+            wrapper.setState(DataWrapper.State.DONE);
         }
     }
 
     @Override
     public void failure(RetrofitError retrofitError) {
         Log.d(TAG, "Failure callback " + retrofitError);
-        wrapper.setState(ListViewWrapper.State.EMPTY);
+        wrapper.setState(DataWrapper.State.EMPTY);
+    }
+
+    @Override
+    public void onClick(View view) {
+        wrapper.setState(DataWrapper.State.GONE);
+        details.setVisibility(View.VISIBLE);
     }
 }

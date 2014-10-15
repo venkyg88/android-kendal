@@ -85,7 +85,7 @@
                     android:layout_weight="1"/>
             </LinearLayout>
             <!-- Left drawer (menu) -->
-            <com.staples.mobile.cfa.widget.ListViewWrapper
+            <com.staples.mobile.cfa.widget.DataWrapper
                 android:id="@+id/left_drawer"
                 android:layout_width="200dp"
                 android:layout_height="match_parent"
@@ -113,7 +113,7 @@
                     android:gravity="center"
                     android:textSize="20dp"
                     android:text="@string/empty"/>
-            </com.staples.mobile.cfa.widget.ListViewWrapper>
+            </com.staples.mobile.cfa.widget.DataWrapper>
             <!-- Right drawer (shopping cart) -->
             <LinearLayout
                 android:id="@+id/right_drawer"
