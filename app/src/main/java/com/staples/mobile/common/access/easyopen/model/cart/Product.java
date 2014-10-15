@@ -1,13 +1,11 @@
 
 package com.staples.mobile.common.access.easyopen.model.cart;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Product {
 
     private boolean bopisEligible;
@@ -34,6 +32,7 @@ public class Product {
     private boolean shipableToStore;
     private ShippingInformation shippingInformation;
     private String sku;
+    private List<SmallInfoImage> smallInfoImage;
     private List<ThumbnailImage> thumbnailImage = new ArrayList<ThumbnailImage>();
     private String uniqueId;
     private boolean upsable;
@@ -246,4 +245,11 @@ public class Product {
         this.upsable = upsable;
     }
 
+    public List<SmallInfoImage> getSmallInfoImage() {
+        return smallInfoImage;
+    }
+
+    public void setSmallInfoImage(List<SmallInfoImage> smallInfoImage) {
+        this.smallInfoImage = smallInfoImage;
+    }
 }

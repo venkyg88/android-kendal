@@ -82,8 +82,8 @@ public class MainActivity extends Activity
 
         LoginHelper loginHelper = new LoginHelper(this);
         loginHelper.setOnLoginCompleteListener(this);
-        //loginHelper.getRegisteredUserTokens();
-        loginHelper.getGuestTokens();
+        loginHelper.getRegisteredUserTokens();
+        //loginHelper.getGuestTokens();
     }
 
     public void showMainScreen() {

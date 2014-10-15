@@ -2,6 +2,9 @@ package com.staples.mobile.common.access.easyopen.api;
 
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.cart.AddUpdateCart;
+import com.staples.mobile.common.access.easyopen.model.cart.CartAddBody;
+import com.staples.mobile.common.access.easyopen.model.cart.CartUpdateBody;
+import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
 import com.staples.mobile.common.access.easyopen.model.cart.ViewCart;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
@@ -110,6 +113,7 @@ public interface EasyOpenApi {
     //http://api.staples.com/v1/10001/cart?locale=en_US&zipCode=05251&catalogId=10051&client_id={client-id}
     @POST("/{version}/{storeId}/cart")
     void addToCart(
+            @Body CartAddBody body,
             @EncodedPath("version") String version,
             @EncodedPath("storeId") String storeId,
             @Query("locale") String locale,
@@ -122,6 +126,7 @@ public interface EasyOpenApi {
     //https://api.staples.com/v1/10001/cart?locale=en_US&zipCode=05251&catalogId=10051&client_id={client-id}
     @POST("/{version}/{storeId}/cart")
     void updateCart(
+            @Body CartUpdateBody body,
             @EncodedPath("version") String version,
             @EncodedPath("storeId") String storeId,
             @Query("locale") String locale,
@@ -138,6 +143,7 @@ public interface EasyOpenApi {
             @EncodedPath("storeId") String storeId,
             @EncodedPath("orderItemId") String orderItemId,
             @Query("locale") String locale,
-            @Query("client_id") String client_id
+            @Query("client_id") String client_id,
+            Callback<DeleteFromCart> callback
     );
 }
