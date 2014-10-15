@@ -52,18 +52,6 @@
                 <!--android:imeOptions="actionDone"-->
                 <!--android:textSize="16dp"/>-->
             <Button
-                android:id="@+id/cartitem_increase_qty"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:text="^"
-            />
-            <Button
-                android:id="@+id/cartitem_decrease_qty"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:text="v"
-                />
-            <Button
                 android:id="@+id/cartitem_delete"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
