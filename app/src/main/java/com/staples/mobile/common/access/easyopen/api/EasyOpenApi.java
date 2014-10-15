@@ -2,11 +2,16 @@ package com.staples.mobile.common.access.easyopen.api;
 
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.cart.AddUpdateCart;
+import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
+import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
+import com.staples.mobile.common.access.easyopen.model.cart.OrderItemId;
 import com.staples.mobile.common.access.easyopen.model.cart.ViewCart;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
 import com.staples.mobile.common.access.easyopen.model.sku.Sku;
+
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.http.Body;
@@ -116,7 +121,11 @@ public interface EasyOpenApi {
             @Query("zipCode") String zipCode,
             @Query("catalogId") String catalogId,
             @Query("client_id") String client_id,
-            Callback<AddUpdateCart> callback
+            Callback<AddUpdateCart> callback,
+            @Body OrderItemId orderItemId,
+            @Body String partNumber_X,
+            @Body int quantity_X,
+            @Body List<OrderItem> orderItem
     );
 
     //https://api.staples.com/v1/10001/cart?locale=en_US&zipCode=05251&catalogId=10051&client_id={client-id}
@@ -128,7 +137,11 @@ public interface EasyOpenApi {
             @Query("zipCode") String zipCode,
             @Query("catalogId") String catalogId,
             @Query("client_id") String client_id,
-            Callback<AddUpdateCart> callback
+            Callback<AddUpdateCart> callback,
+            @Body OrderItemId orderItemId,
+            @Body String partNumber_X,
+            @Body int quantity_X,
+            @Body List<OrderItem> orderItem
     );
 
     //http://api.staples.com/v1/10001/cart/id/453387856?locale=en_US&client_id={client-id}
@@ -138,6 +151,7 @@ public interface EasyOpenApi {
             @EncodedPath("storeId") String storeId,
             @EncodedPath("orderItemId") String orderItemId,
             @Query("locale") String locale,
-            @Query("client_id") String client_id
+            @Query("client_id") String client_id,
+            Callback<DeleteFromCart> callback
     );
 }
