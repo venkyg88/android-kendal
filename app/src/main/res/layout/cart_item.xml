@@ -28,8 +28,7 @@
             android:textSize="16dp"/>
         <com.staples.mobile.cfa.widget.PriceSticker
             android:id="@+id/cartitem_price"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            style="@style/SmallPriceSticker"/>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
