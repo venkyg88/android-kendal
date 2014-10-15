@@ -58,7 +58,7 @@ public class CartItem {
         List<Pricing> pricings = product.getPricing();
         if (pricings != null) {
             for (Pricing pricing : pricings) {
-               if (pricing.getFinalPrice() > 0.0f) {
+                if (pricing.getFinalPrice() > 0.0f) {
                     return pricing;
                 }
             }
@@ -67,12 +67,11 @@ public class CartItem {
     }
 
     public float getFinalPrice() {
-        float price = 0.0f;
         Pricing pricing = getPricing();
         if (pricing != null) {
-            pricing.getFinalPrice();
+            return pricing.getFinalPrice();
         }
-        return price;
+        return 0.0f;
     }
 
     public String getPriceUnitOfMeasure() {
