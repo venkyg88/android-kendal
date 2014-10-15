@@ -31,6 +31,7 @@ public class Access {
 
     private EasyOpenApi easyOpenInsecureApi;
     private EasyOpenApi easyOpenSecureApi;
+    private EasyOpenApi mockEasyOpenApi;
     private LmsApi lmsApi;
     private LmsApi mockLmsApi;
 
@@ -120,6 +121,13 @@ public class Access {
         return(api);
     }
 
+    public EasyOpenApi getMockEasyOpenApi(Context context) {
+        if (mockEasyOpenApi!=null) return(mockEasyOpenApi);
+        InvocationHandler handler = new MockApiHandler(context);
+        mockEasyOpenApi = (EasyOpenApi) Proxy.newProxyInstance(EasyOpenApi.class.getClassLoader(), new Class[]{EasyOpenApi.class}, handler);
+        return(mockEasyOpenApi);
+    }
+
     // LMS API
 
     public LmsApi getLmsApi() {
@@ -141,9 +149,7 @@ public class Access {
     public LmsApi getMockLmsApi(Context context) {
         if (mockLmsApi!=null) return(mockLmsApi);
         InvocationHandler handler = new MockApiHandler(context);
-        mockLmsApi = (LmsApi) Proxy.newProxyInstance(LmsApi.class.getClassLoader(),
-                new Class[]{LmsApi.class},
-                handler);
+        mockLmsApi = (LmsApi) Proxy.newProxyInstance(LmsApi.class.getClassLoader(), new Class[]{LmsApi.class}, handler);
         return(mockLmsApi);
     }
 }
