@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -114,18 +115,23 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         priceSticker.setPricing(item.getFinalPrice(), item.getPriceUnitOfMeasure());
 
         // set quantity
-        Spinner qtySpinner = (Spinner) view.findViewById(R.id.cartitem_qty);
-        QtySpinnerAdapter qtySpinnerAdapter = new QtySpinnerAdapter(activity);
-        qtySpinner.setAdapter(qtySpinnerAdapter);
-        qtySpinner.setSelection(qtySpinnerAdapter.getPosition("" + item.getQuantity()));
-        qtySpinner.setOnItemSelectedListener(new QtySpinnerAdapterItemSelectedListener(position));
+        EditText qtyWidget = (EditText) view.findViewById(R.id.cartitem_qty);
+        qtyWidget.setText("" + item.getQuantity());
+//        Spinner qtySpinner = (Spinner) view.findViewById(R.id.cartitem_qty);
+//        QtySpinnerAdapter qtySpinnerAdapter = new QtySpinnerAdapter(activity);
+//        qtySpinner.setAdapter(qtySpinnerAdapter);
+//        qtySpinner.setSelection(qtySpinnerAdapter.getPosition("" + item.getQuantity()));
+//        qtySpinner.setOnItemSelectedListener(new QtySpinnerAdapterItemSelectedListener(position));
 //        EditText qtyView = (EditText) view.findViewById(R.id.cartitem_qty);
 //        qtyView.setText(String.valueOf(item.getQuantity()));
 
         // add listener to deletion button
         Button deleteButton = (Button)view.findViewById(R.id.cartitem_delete);
-        deleteButton.setOnClickListener(new QtyDeleteButtonListener(position, qtySpinner));
+        deleteButton.setOnClickListener(new QtyDeleteButtonListener(position, qtyWidget));
 
+        // add listener to update button
+        Button updateButton = (Button)view.findViewById(R.id.cartitem_update);
+        updateButton.setOnClickListener(new QtyUpdateButtonListener(position, qtyWidget));
 
         return(view);
     }
@@ -216,56 +222,93 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
 
 
-    // listener class for quantity spinner selection
-    class QtySpinnerAdapterItemSelectedListener implements AdapterView.OnItemSelectedListener {
-
-        int cartItemPosition;
-
-        QtySpinnerAdapterItemSelectedListener(int cartItemPosition) {
-            this.cartItemPosition = cartItemPosition;
-        }
-
-        @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-            CartItem item = getItem(cartItemPosition);
-            int origQty = item.getQuantity();
-            int newQty = origQty;
-
-            String value = ((TextView)view).getText().toString();
-            if (value != null) {
-                if (!value.endsWith("+")) {
-                    try { newQty = Integer.parseInt(value); } catch (NumberFormatException e) {}
-                }
-            }
-            if (newQty != origQty) {
-                updateItemQty(cartItemPosition, newQty);
-            }
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {
-            Toast.makeText(activity, "nothing selected", Toast.LENGTH_SHORT);
-        }
-    }
+//    // listener class for quantity widget selection
+//    class QtySpinnerAdapterItemSelectedListener implements AdapterView.OnItemSelectedListener {
+//
+//        int cartItemPosition;
+//
+//        QtySpinnerAdapterItemSelectedListener(int cartItemPosition) {
+//            this.cartItemPosition = cartItemPosition;
+//        }
+//
+//        @Override
+//        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//            CartItem item = getItem(cartItemPosition);
+//            int origQty = item.getQuantity();
+//            int newQty = origQty;
+//
+//            String value = ((TextView)view).getText().toString();
+//            if (value != null) {
+//                if (!value.endsWith("+")) {
+//                    try { newQty = Integer.parseInt(value); } catch (NumberFormatException e) {}
+//                }
+//            }
+//            if (newQty != origQty) {
+//                updateItemQty(cartItemPosition, newQty);
+//            }
+//        }
+//
+//        @Override
+//        public void onNothingSelected(AdapterView<?> adapterView) {
+//            Toast.makeText(activity, "nothing selected", Toast.LENGTH_SHORT);
+//        }
+//    }
 
 
     // listener class for quantity deletion button
     class QtyDeleteButtonListener implements View.OnClickListener {
 
         int cartItemPosition;
-        Spinner qtySpinner;
+        EditText qtyWidget;
 
-        QtyDeleteButtonListener(int cartItemPosition, Spinner qtySpinner) {
+        QtyDeleteButtonListener(int cartItemPosition, EditText qtyWidget) {
             this.cartItemPosition = cartItemPosition;
-            this.qtySpinner = qtySpinner;
+            this.qtyWidget = qtyWidget;
         }
 
         @Override
         public void onClick(View view) {
             CartItem item = getItem(cartItemPosition);
             item.setQuantity(0);
-            qtySpinner.setSelection(0); // assumes position zero holds "0" value
+//            qtyWidget.setSelection(0); // assumes position zero holds "0" value
+            qtyWidget.setText("0");
+
+            // update cart via API
+            updateItemQty(cartItemPosition, 0);
+
         }
     }
 
+    // listener class for quantity deletion button
+    class QtyUpdateButtonListener implements View.OnClickListener {
+
+        int cartItemPosition;
+        EditText qtyWidget;
+
+        QtyUpdateButtonListener(int cartItemPosition, EditText qtyWidget) {
+            this.cartItemPosition = cartItemPosition;
+            this.qtyWidget = qtyWidget;
+        }
+
+        @Override
+        public void onClick(View view) {
+            CartItem item = getItem(cartItemPosition);
+            int origQty = item.getQuantity();
+            int newQty = origQty;
+
+            String value = ((TextView)view).getText().toString();
+            if (value != null && value.length() > 0) {
+                try { newQty = Integer.parseInt(value); } catch (NumberFormatException e) {}
+            }
+            qtyWidget.setText("" + newQty); // in case value.length() == 0
+
+            if (newQty != origQty) {
+                // update cart via API
+                updateItemQty(cartItemPosition, newQty);
+            }
+
+//            item.setQuantity(qty);
+//            qtyWidget.setText("" + qty);
+        }
+    }
 }
