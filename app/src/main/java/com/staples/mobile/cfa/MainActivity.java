@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
+import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,16 +13,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
+import com.staples.mobile.cfa.cart.CartAdapter;
 import com.staples.mobile.cfa.sku.SkuSummaryFragment;
+import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.ListViewWrapper;
 
 public class MainActivity extends Activity
-                          implements View.OnClickListener, AdapterView.OnItemClickListener {
+                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
     private static final String TAG = "MainActivity";
 
     private static final Uri STAPLESWEBSITE = Uri.parse("http://m.staples.com/");
@@ -33,6 +35,9 @@ public class MainActivity extends Activity
     private View leftDrawer;
     private ViewGroup topper;
     private View rightDrawer;
+    private BadgeImageView rightDrawerAction;
+    private TextView cartTitle;
+    private CartAdapter cartAdapter;
 
     private DrawerItem homeDrawerItem;
     private DrawerItem searchDrawerItem;
@@ -79,6 +84,8 @@ public class MainActivity extends Activity
         prepareMainScreen(freshStart);
 
         LoginHelper loginHelper = new LoginHelper(this);
+        loginHelper.setOnLoginCompleteListener(this);
+        //loginHelper.getRegisteredUserTokens();
         loginHelper.getGuestTokens();
     }
 
@@ -96,6 +103,8 @@ public class MainActivity extends Activity
         leftDrawer = findViewById(R.id.left_drawer);
         topper = (ViewGroup) findViewById(R.id.topper);
         rightDrawer = findViewById(R.id.right_drawer);
+        rightDrawerAction = (BadgeImageView)findViewById(R.id.action_right_drawer);
+        cartTitle = (TextView)findViewById(R.id.checkout);
 
         // Set action bar listeners
         findViewById(R.id.action_left_drawer).setOnClickListener(this);
@@ -123,12 +132,18 @@ public class MainActivity extends Activity
         topper.findViewById(R.id.action_store).setOnClickListener(this);
         topper.findViewById(R.id.action_rewards).setOnClickListener(this);
 
-        // Initialize right drawer listview TODO just hacked for demo
-        ArrayAdapter<String> cartAdapter = new ArrayAdapter<String>(this, R.layout.drawer_category);
+        // Initialize right drawer cart listview
+        cartAdapter = new CartAdapter(this, R.layout.cart_item);
+        cartAdapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                setCartItemCount(cartAdapter.getTotalCount());
+            }
+        });
+//        cartAdapter.fill();  // can't fill cart until login process completes (asynchronous)
+        this.setCartItemCount(0); // initialize count to zero until we're able to fill the cart
         ((ListView) rightDrawer.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
-        cartAdapter.add("Apple");
-        cartAdapter.add("Banana");
-        cartAdapter.add("Cantaloupe");
 
         // Fresh start?
         if (freshStart) {
@@ -138,6 +153,14 @@ public class MainActivity extends Activity
             new Handler().postDelayed(runs, SURRENDER_TIMEOUT);
         } else {
             showMainScreen();
+        }
+    }
+
+    @Override
+    public void onLoginComplete(boolean success, String errMsg) {
+        if (success) {
+            // load cart drawer (requires successful login)
+            cartAdapter.fill();
         }
     }
 
@@ -183,10 +206,22 @@ public class MainActivity extends Activity
         return(true);
     }
 
+
+    /** set item count indicator on cart icon and cart drawer title */
+    public void setCartItemCount(int count) {
+        // set text of cart icon
+        rightDrawerAction.setText(count == 0? "":String.valueOf(count));
+        // Set text of cart drawer title
+        cartTitle.setText(String.format(getResources().getString(R.string.your_cart), count,
+                count==1? "":"s"));
+    }
+
+
     // Action bar & topper clicks
 
     @Override
     public void onClick(View view) {
+
         switch(view.getId()) {
             case R.id.action_left_drawer:
                 if (!drawerLayout.isDrawerOpen(leftDrawer)) {

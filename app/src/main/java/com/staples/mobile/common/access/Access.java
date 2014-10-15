@@ -62,6 +62,9 @@ public class Access {
         public void intercept(RequestFacade request) {
             request.addHeader("User-Agent", USER_AGENT);
             request.addHeader("Accept", "application/json");
+            if(token1!=null) {
+                request.addHeader("WCToken", token1);
+            }
 //            request.addHeader("Connection", "Keep-Alive");
         }
     }
