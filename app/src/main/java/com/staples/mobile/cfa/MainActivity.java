@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,7 +24,7 @@ import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.ListViewWrapper;
 
 public class MainActivity extends Activity
-                          implements View.OnClickListener, AdapterView.OnItemClickListener {
+                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
     private static final String TAG = "MainActivity";
 
     private static final Uri STAPLESWEBSITE = Uri.parse("http://m.staples.com/");
@@ -85,6 +84,8 @@ public class MainActivity extends Activity
         prepareMainScreen(freshStart);
 
         LoginHelper loginHelper = new LoginHelper(this);
+        loginHelper.setOnLoginCompleteListener(this);
+        //loginHelper.getRegisteredUserTokens();
         loginHelper.getGuestTokens();
     }
 
@@ -131,7 +132,7 @@ public class MainActivity extends Activity
         topper.findViewById(R.id.action_store).setOnClickListener(this);
         topper.findViewById(R.id.action_rewards).setOnClickListener(this);
 
-        // Initialize right drawer listview TODO just hacked for demo
+        // Initialize right drawer cart listview
         cartAdapter = new CartAdapter(this, R.layout.cart_item);
         cartAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
@@ -140,7 +141,8 @@ public class MainActivity extends Activity
                 setCartItemCount(cartAdapter.getTotalCount());
             }
         });
-//        cartAdapter.fill();
+//        cartAdapter.fill();  // can't fill cart until login process completes (asynchronous)
+        this.setCartItemCount(0); // initialize count to zero until we're able to fill the cart
         ((ListView) rightDrawer.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
 
         // Fresh start?
@@ -151,6 +153,14 @@ public class MainActivity extends Activity
             new Handler().postDelayed(runs, SURRENDER_TIMEOUT);
         } else {
             showMainScreen();
+        }
+    }
+
+    @Override
+    public void onLoginComplete(boolean success, String errMsg) {
+        if (success) {
+            // load cart drawer (requires successful login)
+            cartAdapter.fill();
         }
     }
 
@@ -211,11 +221,6 @@ public class MainActivity extends Activity
 
     @Override
     public void onClick(View view) {
-
-        // temporary trigger for filling cart drawer (after login process completes)
-        if (cartAdapter.getCount() == 0) {
-            cartAdapter.fill();
-        }
 
         switch(view.getId()) {
             case R.id.action_left_drawer:
