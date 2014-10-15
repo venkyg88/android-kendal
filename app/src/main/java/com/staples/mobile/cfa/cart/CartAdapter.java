@@ -24,9 +24,9 @@ import com.staples.mobile.R;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.browse.Browse;
-import com.staples.mobile.common.access.easyopen.model.browse.Category;
+import com.staples.mobile.common.access.easyopen.model.cart.AddUpdateCart;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
+import com.staples.mobile.common.access.easyopen.model.cart.ItemsAdded;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
 import com.staples.mobile.common.access.easyopen.model.cart.ViewCart;
 
@@ -36,8 +36,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<ViewCart> {
-//public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<Browse> {
+public class CartAdapter extends ArrayAdapter<CartItem> {
 
     private static final String TAG = "CartAdapter";
 
@@ -57,6 +56,9 @@ public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<View
     private int cartItemLayoutResId;
 
     private Drawable noPhoto;
+
+    private ViewCartListener viewCartListener = new ViewCartListener();
+    private AddUpdateCartListener addUpdateCartListener = new AddUpdateCartListener();
 
 
     public CartAdapter(Activity activity, int cartItemLayoutResId) {
@@ -133,82 +135,85 @@ public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<View
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
 
         // query for items in cart
-        easyOpenApi.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, this);
-
-
-        // temporary: getting data from browse request
-//        String identifier = "CL161546";
-//        easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
-//                ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
+        easyOpenApi.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, viewCartListener);
 
         notifyDataSetChanged();
     }
 
-    @Override
-    public void success(ViewCart viewCart, Response response) {
+    public void updateItemQty(int position, int qty) {
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
 
-        // TODO: get items returned from cart API
+        //TODO: waiting on api
+        // update quantity of item in cart
+        //easyOpenApi.updateCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, addUpdateCartListener);
 
-        // getting data from viewCart request
-        List<Cart> cartCollection = viewCart.getCart();
-        if (cartCollection == null || cartCollection.size() == 0) {
-            notifyDataSetChanged();
-            return;
-        }
-        Cart cart = cartCollection.get(0);
-        List<Product> products = cart.getProduct();
-        if (products != null) {
-            if (getCount() > 0) {
-                clear();
+        notifyDataSetChanged();
+    }
+
+    //---------------------------------------//
+    //------------ inner classes ------------//
+    //---------------------------------------//
+
+
+    // listens for completion of view request
+    class ViewCartListener implements Callback<ViewCart> {
+
+        @Override
+        public void success(ViewCart viewCart, Response response) {
+
+            // TODO: get items returned from cart API
+
+            // getting data from viewCart request
+            List<Cart> cartCollection = viewCart.getCart();
+            if (cartCollection == null || cartCollection.size() == 0) {
+                notifyDataSetChanged();
+                return;
             }
-            for (Product product : products) {
-                add(new CartItem(product));
+            Cart cart = cartCollection.get(0);
+            List<Product> products = cart.getProduct();
+            if (products != null) {
+                if (getCount() > 0) {
+                    clear();
+                }
+                for (Product product : products) {
+                    add(new CartItem(product));
+                }
+                notifyDataSetChanged();
+                return;
             }
+
+
             notifyDataSetChanged();
-            return;
         }
 
-
-        notifyDataSetChanged();
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            Log.d(TAG, "Failure callback " + retrofitError);
+            notifyDataSetChanged();
+        }
     }
 
-    @Override
-    public void failure(RetrofitError retrofitError) {
-        Log.d(TAG, "Failure callback " + retrofitError);
-        notifyDataSetChanged();
+    // listens for completion of additions and updates to cart
+    class AddUpdateCartListener implements Callback<AddUpdateCart> {
+
+        @Override
+        public void success(AddUpdateCart addUpdateCart, Response response) {
+
+            // TODO: get items returned from cart API
+
+            // getting data from viewCart request
+//            List<ItemsAdded> itemsAdded = addUpdateCart.getItemsAdded();
+
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            Log.d(TAG, "Failure callback " + retrofitError);
+            notifyDataSetChanged();
+        }
     }
 
-//    @Override
-//    public void success(Browse browse, Response response) {
-//
-//        // TODO: get items returned from cart API
-//
-//        // temporary: getting data from browse request
-//        Category[] categories = browse.getCategory();
-//        if (categories==null || categories.length<1) {
-//            notifyDataSetChanged();
-//            return;
-//        }
-//        Category category = categories[0];
-//        com.staples.mobile.common.access.easyopen.model.browse.Product[] products = category.getProduct();
-//        if (products != null) {
-//            for (com.staples.mobile.common.access.easyopen.model.browse.Product product : products) {
-//                //cartItems.add(new CartItem(product, 1));
-//                add(new CartItem(product));
-//            }
-//            notifyDataSetChanged();
-//            return;
-//        }
-//
-//
-//        notifyDataSetChanged();
-//    }
-//
-//    @Override
-//    public void failure(RetrofitError retrofitError) {
-//        Log.d(TAG, "Failure callback " + retrofitError);
-//        notifyDataSetChanged();
-//    }
 
 
     // listener class for quantity spinner selection
@@ -222,14 +227,29 @@ public class CartAdapter extends ArrayAdapter<CartItem> implements Callback<View
 
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-            Toast.makeText(activity, "item selected", Toast.LENGTH_SHORT);
+            CartItem item = getItem(cartItemPosition);
+            int origQty = item.getQuantity();
+            int newQty = origQty;
+
+            String value = ((TextView)view).getText().toString();
+            if (value != null) {
+                if (!value.endsWith("+")) {
+                    try { newQty = Integer.parseInt(value); } catch (NumberFormatException e) {}
+                }
+            }
+            if (newQty != origQty) {
+                updateItemQty(cartItemPosition, newQty);
+            }
         }
+
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
             Toast.makeText(activity, "nothing selected", Toast.LENGTH_SHORT);
         }
     }
 
+
+    // listener class for quantity deletion button
     class QtyDeleteButtonListener implements View.OnClickListener {
 
         int cartItemPosition;
