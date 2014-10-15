@@ -6,10 +6,10 @@ public class ShippingInformation {
     private String deliveryAddressSelected;
     private DeliveryModeAvailable deliveryModeAvailable;
     private String deliveryModeSelected;
-    private String deliveryPromotion;
+    private boolean deliveryPromotion;
     private Object estimatedDeliveryDate;
-    private String estimatedDeliveryInBusinessDays;
-    private String quickShip;
+    private int estimatedDeliveryInBusinessDays;
+    private boolean quickShip;
 
     public String getDeliveryAddressSelected() {
         return deliveryAddressSelected;
@@ -35,11 +35,11 @@ public class ShippingInformation {
         this.deliveryModeSelected = deliveryModeSelected;
     }
 
-    public String getDeliveryPromotion() {
+    public boolean getDeliveryPromotion() {
         return deliveryPromotion;
     }
 
-    public void setDeliveryPromotion(String deliveryPromotion) {
+    public void setDeliveryPromotion(boolean deliveryPromotion) {
         this.deliveryPromotion = deliveryPromotion;
     }
 
@@ -51,19 +51,19 @@ public class ShippingInformation {
         this.estimatedDeliveryDate = estimatedDeliveryDate;
     }
 
-    public String getEstimatedDeliveryInBusinessDays() {
+    public int getEstimatedDeliveryInBusinessDays() {
         return estimatedDeliveryInBusinessDays;
     }
 
-    public void setEstimatedDeliveryInBusinessDays(String estimatedDeliveryInBusinessDays) {
+    public void setEstimatedDeliveryInBusinessDays(int estimatedDeliveryInBusinessDays) {
         this.estimatedDeliveryInBusinessDays = estimatedDeliveryInBusinessDays;
     }
 
-    public String getQuickShip() {
+    public boolean getQuickShip() {
         return quickShip;
     }
 
-    public void setQuickShip(String quickShip) {
+    public void setQuickShip(boolean quickShip) {
         this.quickShip = quickShip;
     }
 
