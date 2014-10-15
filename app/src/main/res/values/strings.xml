@@ -28,7 +28,8 @@
     <string name="search_title">Search</string>
     <string name="search_hint">Search</string>
     <string name="empty">Nothing found</string>
-    <string name="your_cart">Your cart</string>
+    <string name="your_cart">Your cart (%1$d item%2$s)</string>
+    <string name="cartitem_qty_label">Qty:</string>
     <string name="add_to_cart">Add to cart</string>
     <string name="no_reviews">no reviews</string>
 
