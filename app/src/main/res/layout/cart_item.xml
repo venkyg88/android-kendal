@@ -37,7 +37,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/qty_abbrev"
+                android:text="@string/cartitem_qty_label"
                 android:textSize="16dp"/>
             <Spinner
                 android:id="@+id/cartitem_qty"
