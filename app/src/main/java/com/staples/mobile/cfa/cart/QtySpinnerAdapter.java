@@ -5,8 +5,6 @@
 package com.staples.mobile.cfa.cart;
 
 import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 /**
@@ -14,16 +12,16 @@ import android.widget.ArrayAdapter;
  */
 public class QtySpinnerAdapter extends ArrayAdapter<String> {
 
-
     public QtySpinnerAdapter(Context context) {
         super(context, android.R.layout.simple_spinner_item);
         setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // add items
-        for (int i = 0; i < 10; i++) {
+        int upperLimit = 5;
+        for (int i = 0; i < upperLimit; i++) {
             add(""+i);
         }
+        add(upperLimit + "+");
     }
-
 
 }
