@@ -9,10 +9,10 @@ import java.util.List;
 public class ViewCart {
     @JsonProperty("Cart")
     private List<Cart> cart = new ArrayList<Cart>();
-    private String recordSetComplete;
-    private String recordSetCount;
-    private String recordSetStartNumber;
-    private String recordSetTotal;
+    private boolean recordSetComplete;
+    private int recordSetCount;
+    private int recordSetStartNumber;
+    private int recordSetTotal;
 
     public List<Cart> getCart() {
         return cart;
@@ -22,35 +22,35 @@ public class ViewCart {
         this.cart = cart;
     }
 
-    public String getRecordSetComplete() {
+    public boolean getRecordSetComplete() {
         return recordSetComplete;
     }
 
-    public void setRecordSetComplete(String recordSetComplete) {
+    public void setRecordSetComplete(boolean recordSetComplete) {
         this.recordSetComplete = recordSetComplete;
     }
 
-    public String getRecordSetCount() {
+    public int getRecordSetCount() {
         return recordSetCount;
     }
 
-    public void setRecordSetCount(String recordSetCount) {
+    public void setRecordSetCount(int recordSetCount) {
         this.recordSetCount = recordSetCount;
     }
 
-    public String getRecordSetStartNumber() {
+    public int getRecordSetStartNumber() {
         return recordSetStartNumber;
     }
 
-    public void setRecordSetStartNumber(String recordSetStartNumber) {
+    public void setRecordSetStartNumber(int recordSetStartNumber) {
         this.recordSetStartNumber = recordSetStartNumber;
     }
 
-    public String getRecordSetTotal() {
+    public int getRecordSetTotal() {
         return recordSetTotal;
     }
 
-    public void setRecordSetTotal(String recordSetTotal) {
+    public void setRecordSetTotal(int recordSetTotal) {
         this.recordSetTotal = recordSetTotal;
     }
 

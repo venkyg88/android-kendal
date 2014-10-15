@@ -4,8 +4,8 @@ package com.staples.mobile.common.access.easyopen.model.cart;
 public class Pricing {
 
     private String buyMoreSaveMoreImage;
-    private String displayRegularPricing;
-    private String displayWasPricing;
+    private boolean displayRegularPricing;
+    private boolean displayWasPricing;
     private float finalPrice;
     private float price;
     private float totalOrderItemPrice;
@@ -19,19 +19,19 @@ public class Pricing {
         this.buyMoreSaveMoreImage = buyMoreSaveMoreImage;
     }
 
-    public String getDisplayRegularPricing() {
+    public boolean getDisplayRegularPricing() {
         return displayRegularPricing;
     }
 
-    public void setDisplayRegularPricing(String displayRegularPricing) {
+    public void setDisplayRegularPricing(boolean displayRegularPricing) {
         this.displayRegularPricing = displayRegularPricing;
     }
 
-    public String getDisplayWasPricing() {
+    public boolean getDisplayWasPricing() {
         return displayWasPricing;
     }
 
-    public void setDisplayWasPricing(String displayWasPricing) {
+    public void setDisplayWasPricing(boolean displayWasPricing) {
         this.displayWasPricing = displayWasPricing;
     }
 

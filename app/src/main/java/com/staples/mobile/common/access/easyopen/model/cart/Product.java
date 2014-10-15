@@ -8,15 +8,15 @@ import java.util.List;
 
 public class Product {
 
-    private String bopisEligible;
+    private boolean bopisEligible;
     private List<BulletDescription> bulletDescription = new ArrayList<BulletDescription>();
     private String classId;
-    private String comparable;
+    private boolean comparable;
     private int customerReviewCount;
     private float customerReviewRating;
-    private String deliveryOnly;
+    private boolean deliveryOnly;
     private String expectedBusinessDayDelivery;
-    private String freeShipping;
+    private boolean freeShipping;
     private List<Image> image = new ArrayList<Image>();
     @JsonProperty("leadTimeDecription")
     private String leadTimeDescription;
@@ -24,23 +24,23 @@ public class Product {
     private String manufacturerPartNumber;
     private String orderItemDeleteUrl;
     private String orderItemId;
-    private String priceInCartOnly;
+    private boolean priceInCartOnly;
     private List<Pricing> pricing = new ArrayList<Pricing>();
     private String productName;
     private int quantity;
-    private String ropisEligible;
-    private String shipableToStore;
+    private boolean ropisEligible;
+    private boolean shipableToStore;
     private ShippingInformation shippingInformation;
     private String sku;
     private List<ThumbnailImage> thumbnailImage = new ArrayList<ThumbnailImage>();
     private String uniqueId;
-    private String upsable;
+    private boolean upsable;
 
-    public String getBopisEligible() {
+    public boolean getBopisEligible() {
         return bopisEligible;
     }
 
-    public void setBopisEligible(String bopisEligible) {
+    public void setBopisEligible(boolean bopisEligible) {
         this.bopisEligible = bopisEligible;
     }
 
@@ -60,11 +60,11 @@ public class Product {
         this.classId = classId;
     }
 
-    public String getComparable() {
+    public boolean getComparable() {
         return comparable;
     }
 
-    public void setComparable(String comparable) {
+    public void setComparable(boolean comparable) {
         this.comparable = comparable;
     }
 
@@ -84,11 +84,11 @@ public class Product {
         this.customerReviewRating = customerReviewRating;
     }
 
-    public String getDeliveryOnly() {
+    public boolean getDeliveryOnly() {
         return deliveryOnly;
     }
 
-    public void setDeliveryOnly(String deliveryOnly) {
+    public void setDeliveryOnly(boolean deliveryOnly) {
         this.deliveryOnly = deliveryOnly;
     }
 
@@ -100,11 +100,11 @@ public class Product {
         this.expectedBusinessDayDelivery = expectedBusinessDayDelivery;
     }
 
-    public String getFreeShipping() {
+    public boolean getFreeShipping() {
         return freeShipping;
     }
 
-    public void setFreeShipping(String freeShipping) {
+    public void setFreeShipping(boolean freeShipping) {
         this.freeShipping = freeShipping;
     }
 
@@ -156,11 +156,11 @@ public class Product {
         this.orderItemId = orderItemId;
     }
 
-    public String getPriceInCartOnly() {
+    public boolean getPriceInCartOnly() {
         return priceInCartOnly;
     }
 
-    public void setPriceInCartOnly(String priceInCartOnly) {
+    public void setPriceInCartOnly(boolean priceInCartOnly) {
         this.priceInCartOnly = priceInCartOnly;
     }
 
@@ -188,19 +188,19 @@ public class Product {
         this.quantity = quantity;
     }
 
-    public String getRopisEligible() {
+    public boolean getRopisEligible() {
         return ropisEligible;
     }
 
-    public void setRopisEligible(String ropisEligible) {
+    public void setRopisEligible(boolean ropisEligible) {
         this.ropisEligible = ropisEligible;
     }
 
-    public String getShipableToStore() {
+    public boolean getShipableToStore() {
         return shipableToStore;
     }
 
-    public void setShipableToStore(String shipableToStore) {
+    public void setShipableToStore(boolean shipableToStore) {
         this.shipableToStore = shipableToStore;
     }
 
@@ -236,11 +236,11 @@ public class Product {
         this.uniqueId = uniqueId;
     }
 
-    public String getUpsable() {
+    public boolean getUpsable() {
         return upsable;
     }
 
-    public void setUpsable(String upsable) {
+    public void setUpsable(boolean upsable) {
         this.upsable = upsable;
     }
 

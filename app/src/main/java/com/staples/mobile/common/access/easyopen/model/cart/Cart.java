@@ -12,8 +12,8 @@ public class Cart {
     private List<Product> product = new ArrayList<Product>();
     private String recommendationUrl;
     private float subTotal;
-    private String totalItems;
-    private String webOnly;
+    private int totalItems;
+    private boolean webOnly;
 
     public String getDelivery() {
         return delivery;
@@ -63,19 +63,19 @@ public class Cart {
         this.subTotal = subTotal;
     }
 
-    public String getTotalItems() {
+    public int getTotalItems() {
         return totalItems;
     }
 
-    public void setTotalItems(String totalItems) {
+    public void setTotalItems(int totalItems) {
         this.totalItems = totalItems;
     }
 
-    public String getWebOnly() {
+    public boolean getWebOnly() {
         return webOnly;
     }
 
-    public void setWebOnly(String webOnly) {
+    public void setWebOnly(boolean webOnly) {
         this.webOnly = webOnly;
     }
 }
