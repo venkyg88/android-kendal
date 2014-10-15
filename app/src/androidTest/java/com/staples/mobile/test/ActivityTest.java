@@ -84,9 +84,6 @@ public class ActivityTest implements Callback<Lms> {
 
         ArrayAdapter adapter = (ArrayAdapter) list.getAdapter();
         Assert.assertNotNull("Right drawer should have adapter", adapter);
-
-        int count = adapter.getCount();
-        Assert.assertEquals("Right drawer should have 3 items", 3, count);
     }
 
     private boolean success;
