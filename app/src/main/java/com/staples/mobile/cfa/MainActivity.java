@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.database.DataSetObserver;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
@@ -19,15 +18,13 @@ import android.widget.TextView;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartAdapter;
-import com.staples.mobile.cfa.sku.SkuSummaryFragment;
+import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
-import com.staples.mobile.cfa.widget.ListViewWrapper;
+import com.staples.mobile.cfa.widget.DataWrapper;
 
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
     private static final String TAG = "MainActivity";
-
-    private static final Uri STAPLESWEBSITE = Uri.parse("http://m.staples.com/");
 
     private static final int SURRENDER_TIMEOUT = 5000;
 
@@ -74,7 +71,7 @@ public class MainActivity extends Activity
                 transaction.setCustomAnimations(push_enter, push_exit);
             }
         }
-    };
+    }
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -113,7 +110,7 @@ public class MainActivity extends Activity
         findViewById(R.id.action_right_drawer).setOnClickListener(this);
 
         // Initialize left drawer listview
-        ListViewWrapper wrapper = (ListViewWrapper) findViewById(R.id.left_drawer);
+        DataWrapper wrapper = (DataWrapper) findViewById(R.id.left_drawer);
         ListView menu = (ListView) wrapper.findViewById(R.id.menu);
         DrawerAdapter adapter = new DrawerAdapter(this, wrapper);
         menu.setAdapter(adapter);
@@ -200,7 +197,7 @@ public class MainActivity extends Activity
     }
 
     public boolean selectSkuItem(String identifier) {
-        DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.home_title, SkuSummaryFragment.class);
+        DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.home_title, SkuFragment.class);
         item.identifier = identifier;
         selectDrawerItem(item, Transition.SLIDE, true);
         return(true);

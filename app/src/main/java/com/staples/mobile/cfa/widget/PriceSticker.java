@@ -102,7 +102,7 @@ public class PriceSticker extends View {
 
         if (unit!=null) {
             unitText = " " + unit;
-            slack -= pricePaint.measureText(unitText, 0, unitText.length());
+            slack -= unitPaint.measureText(unitText, 0, unitText.length());
         }
 
         // Apply gravity

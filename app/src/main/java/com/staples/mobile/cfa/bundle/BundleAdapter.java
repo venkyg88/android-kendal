@@ -1,7 +1,6 @@
 package com.staples.mobile.cfa.bundle;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +12,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
-import com.staples.mobile.cfa.widget.ListViewWrapper;
+import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
@@ -39,12 +38,12 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
     private static final int MAXFETCH = 50;
 
     private Activity activity;
-    private ListViewWrapper wrapper;
+    private DataWrapper wrapper;
     private LayoutInflater inflater;
     private int layout;
     private Drawable noPhoto;
 
-    public BundleAdapter(Activity activity, ListViewWrapper wrapper) {
+    public BundleAdapter(Activity activity, DataWrapper wrapper) {
         super(activity, 0);
         this.activity = activity;
         this.wrapper = wrapper;
@@ -82,7 +81,7 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
     void fill(String path) {
         int i, j;
 
-        wrapper.setState(ListViewWrapper.State.LOADING);
+        wrapper.setState(DataWrapper.State.LOADING);
 
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
 
@@ -122,19 +121,19 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
                 item.customerCount = product.getCustomerReviewCount();
                 add(item);
             }
-            wrapper.setState(ListViewWrapper.State.DONE);
+            wrapper.setState(DataWrapper.State.DONE);
             notifyDataSetChanged();
             return;
         }
 
-        wrapper.setState(ListViewWrapper.State.EMPTY);
+        wrapper.setState(DataWrapper.State.EMPTY);
         notifyDataSetChanged();
     }
 
     @Override
     public void failure(RetrofitError retrofitError) {
         Log.d(TAG, "Failure callback " + retrofitError);
-        wrapper.setState(ListViewWrapper.State.EMPTY);
+        wrapper.setState(DataWrapper.State.EMPTY);
         notifyDataSetChanged();
     }
 }
