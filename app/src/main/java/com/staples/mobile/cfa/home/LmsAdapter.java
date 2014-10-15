@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -42,7 +42,7 @@ public class LmsAdapter
     private ArrayList<LmsItem> lmsItems;
     private LmsManager lmsManager;
 
-    private RelativeLayout lmsItemLayout;
+    private LinearLayout lmsItemLayout;
 
     private ListView bundlesListView;
     private LmsItemViewHolder lmsItemViewHolder;
@@ -60,7 +60,7 @@ public class LmsAdapter
         lmsItems = new ArrayList();
         lmsManager = new LmsManager();
 
-        layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        layoutInflater = activity.getLayoutInflater();
 
         bundlesListView = (ListView) view.findViewById(R.id.lsvBundles);
         bundlesListView.setAdapter(this);
@@ -124,7 +124,7 @@ public class LmsAdapter
         if (convertView == null) {
 
             lmsItemLayout =
-                (RelativeLayout) layoutInflater.inflate(R.layout.lms_item_layout,
+                (LinearLayout) layoutInflater.inflate(R.layout.lms_item,
                                                         parentViewGroup,
                                                         false);
             convertView = lmsItemLayout;

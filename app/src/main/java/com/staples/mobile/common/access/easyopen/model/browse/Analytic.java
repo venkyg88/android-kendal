@@ -1,12 +1,13 @@
 package com.staples.mobile.common.access.easyopen.model.browse;
 
-public class CategoryAnalytic {
+public class Analytic {
     private String categoryCode;
     private String categoryName;
     private String classCode;
     private String className;
     private String departmentCode;
     private String departmentName;
+    private String partNumber;
     private String superCategoryCode;
     private String superCategoryName;
 
@@ -32,6 +33,10 @@ public class CategoryAnalytic {
 
     public String getDepartmentName() {
         return departmentName;
+    }
+
+    public String getPartNumber() {
+        return partNumber;
     }
 
     public String getSuperCategoryCode() {

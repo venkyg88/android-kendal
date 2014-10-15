@@ -18,9 +18,7 @@ import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.browse.Browse;
-import com.staples.mobile.common.access.easyopen.model.browse.Category;
-import com.staples.mobile.common.access.easyopen.model.browse.Product;
+import com.staples.mobile.common.access.easyopen.model.browse.*;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -50,7 +48,7 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
         super(activity, 0);
         this.activity = activity;
         this.wrapper = wrapper;
-        inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = activity.getLayoutInflater();
         noPhoto = activity.getResources().getDrawable(R.drawable.no_photo);
     }
 
@@ -71,8 +69,8 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
         RatingStars ratingStars = (RatingStars) view.findViewById(R.id.rating);
         ratingStars.setRating(item.customerRating, item.customerCount);
 
-        PriceSticker price = (PriceSticker) view.findViewById(R.id.price);
-        price.setPrice(item.price, item.unit);
+        PriceSticker priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
+        priceSticker.setPricing(item.price, item.unit);
 
         ImageView image = (ImageView) view.findViewById(R.id.image);
         if (item.imageUrl==null) image.setImageDrawable(noPhoto);
