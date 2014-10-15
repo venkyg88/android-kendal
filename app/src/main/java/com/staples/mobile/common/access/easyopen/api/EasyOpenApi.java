@@ -2,6 +2,7 @@ package com.staples.mobile.common.access.easyopen.api;
 
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.cart.AddUpdateCart;
+import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
 import com.staples.mobile.common.access.easyopen.model.cart.ViewCart;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
@@ -138,6 +139,7 @@ public interface EasyOpenApi {
             @EncodedPath("storeId") String storeId,
             @EncodedPath("orderItemId") String orderItemId,
             @Query("locale") String locale,
-            @Query("client_id") String client_id
+            @Query("client_id") String client_id,
+            Callback<DeleteFromCart> callback
     );
 }

@@ -3,15 +3,15 @@ package com.staples.mobile.common.access.easyopen.model.cart;
 
 public class DeliveryModeAvailable {
 
-    private Object pickUp;
+    private String pickUp;
     private String shipToAddress;
     private String shipToStore;
 
-    public Object getPickUp() {
+    public String getPickUp() {
         return pickUp;
     }
 
-    public void setPickUp(Object pickUp) {
+    public void setPickUp(String pickUp) {
         this.pickUp = pickUp;
     }
 

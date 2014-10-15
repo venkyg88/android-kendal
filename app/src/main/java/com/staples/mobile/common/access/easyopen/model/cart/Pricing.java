@@ -1,12 +1,10 @@
 
 package com.staples.mobile.common.access.easyopen.model.cart;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Pricing {
 
     @JsonProperty("BuyMoreSaveMoreDetail")
@@ -15,6 +13,7 @@ public class Pricing {
     private boolean displayRegularPricing;
     private boolean displayWasPricing;
     private float finalPrice;
+    private float listPrice;
     private float price;
     private float totalOrderItemPrice;
     private String unitOfMeasure;
@@ -81,5 +80,13 @@ public class Pricing {
 
     public void setBuyMoreSaveMoreDetail(List<BuyMoreSaveMoreDetail> buyMoreSaveMoreDetail) {
         this.buyMoreSaveMoreDetail = buyMoreSaveMoreDetail;
+    }
+
+    public float getListPrice() {
+        return listPrice;
+    }
+
+    public void setListPrice(float listPrice) {
+        this.listPrice = listPrice;
     }
 }
