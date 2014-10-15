@@ -140,7 +140,7 @@ public class MainActivity extends Activity
                 setCartItemCount(cartAdapter.getTotalCount());
             }
         });
-        cartAdapter.fill();
+//        cartAdapter.fill();
         ((ListView) rightDrawer.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
 
         // Fresh start?
@@ -211,6 +211,12 @@ public class MainActivity extends Activity
 
     @Override
     public void onClick(View view) {
+
+        // temporary trigger for filling cart drawer (after login process completes)
+        if (cartAdapter.getCount() == 0) {
+            cartAdapter.fill();
+        }
+
         switch(view.getId()) {
             case R.id.action_left_drawer:
                 if (!drawerLayout.isDrawerOpen(leftDrawer)) {
