@@ -140,7 +140,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
         menuList.add(new DrawerItem(DrawerItem.Type.BROWSE, activity, 0&R.drawable.logo, R.string.category_title));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.store_locator_title, ToBeDoneFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.weekly_ad_title, ToBeDoneFragment.class));
-        menuList.add(new DrawerItem(DrawerItem.Type.ACCOUNT, activity, 0&R.drawable.logo, R.string.account_title, ToBeDoneFragment.class));
+        menuList.add(new DrawerItem(DrawerItem.Type.ACCOUNT, activity, 0&R.drawable.logo, R.string.account_title, LoginFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.rewards_title, ToBeDoneFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.order_title, ToBeDoneFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.profile_title, ToBeDoneFragment.class));
