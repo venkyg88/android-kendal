@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PagerStripe;
 import com.staples.mobile.cfa.widget.PriceSticker;
@@ -46,17 +47,16 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
     private PagerStripe stripe;
     private ViewPager details;
 
+    private String sku;
     private boolean shifted;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        String identifier = null;
-
         Log.d(TAG, "onCreateView()");
 
         Bundle args = getArguments();
         if (args!=null) {
-            identifier = args.getString("identifier");
+            sku = args.getString("identifier");
         }
 
         View frame = inflater.inflate(R.layout.sku_frame, container, false);
@@ -87,8 +87,9 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
         details.setVisibility(View.GONE);
 
         frame.findViewById(R.id.pricing).setOnClickListener(this); // TODO Hacked for test
+        frame.findViewById(R.id.add_to_cart).setOnClickListener(this); // TODO Hacked for test
 
-        Access.getInstance().getEasyOpenApi(false).getSkuInfo(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
+        Access.getInstance().getEasyOpenApi(false).getSkuInfo(RECOMMENDATION, STORE_ID, sku, CATALOG_ID, LOCALE,
                                                               ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
 
         return (frame);
@@ -181,7 +182,15 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
 
     @Override
     public void onClick(View view) {
-        wrapper.setState(DataWrapper.State.GONE);
-        details.setVisibility(View.VISIBLE);
+        switch(view.getId()) {
+            case R.id.pricing:
+                wrapper.setState(DataWrapper.State.GONE);
+                details.setVisibility(View.VISIBLE);
+                break;
+            case R.id.add_to_cart:
+                MainActivity activity = (MainActivity) getActivity();
+                activity.addItemToCart(sku);
+                break;
+        }
     }
 }
