@@ -262,4 +262,12 @@ public class Product {
     public void setPromotionalOfferExpire(List<PromotionalOfferExpire> promotionalOfferExpire) {
         this.promotionalOfferExpire = promotionalOfferExpire;
     }
+
+    public List<Image> getSmallPromoImage() {
+        return smallPromoImage;
+    }
+
+    public void setSmallPromoImage(List<Image> smallPromoImage) {
+        this.smallPromoImage = smallPromoImage;
+    }
 }
