@@ -58,7 +58,7 @@
                 android:numeric="integer"
                 android:imeOptions="actionDone"
                 android:selectAllOnFocus="true"
-                android:textSize="16dp"/>
+                android:textSize="20dp"/>
             <Button
                 android:id="@+id/cartitem_delete"
                 android:layout_width="40dp"
