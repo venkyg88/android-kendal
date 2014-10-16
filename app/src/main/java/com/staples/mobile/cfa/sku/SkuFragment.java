@@ -24,6 +24,8 @@ import com.staples.mobile.common.access.easyopen.model.sku.Pricing;
 import com.staples.mobile.common.access.easyopen.model.sku.Product;
 import com.staples.mobile.common.access.easyopen.model.sku.Sku;
 
+import java.util.List;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -47,7 +49,7 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
     private PagerStripe stripe;
     private ViewPager details;
 
-    private String sku;
+    private String identifier;
     private boolean shifted;
 
     @Override
@@ -56,7 +58,7 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
 
         Bundle args = getArguments();
         if (args!=null) {
-            sku = args.getString("identifier");
+            identifier = args.getString("identifier");
         }
 
         View frame = inflater.inflate(R.layout.sku_frame, container, false);
@@ -87,9 +89,9 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
         details.setVisibility(View.GONE);
 
         frame.findViewById(R.id.pricing).setOnClickListener(this); // TODO Hacked for test
-        frame.findViewById(R.id.add_to_cart).setOnClickListener(this); // TODO Hacked for test
+        frame.findViewById(R.id.add_to_cart).setOnClickListener(this);
 
-        Access.getInstance().getEasyOpenApi(false).getSkuInfo(RECOMMENDATION, STORE_ID, sku, CATALOG_ID, LOCALE,
+        Access.getInstance().getEasyOpenApi(false).getSkuInfo(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
                                                               ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
 
         return (frame);
@@ -126,8 +128,8 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
             View frame = getView();
 
             // Add images
-            Image[] images = product.getImage();
-            if (images!=null && images.length>0) {
+            List<Image> images = product.getImage();
+            if (images!=null && images.size()>0) {
                 for(Image image : images) {
                     String url = image.getUrl();
                     if (url!=null) imageAdapter.add(url);
@@ -142,7 +144,7 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
             ((RatingStars) frame.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
 
             // Add pricing
-            Pricing[] pricings = product.getPricing();
+            List<Pricing> pricings = product.getPricing();
             if (pricings!=null) {
                 for(Pricing pricing : pricings) {
                     float finalPrice = pricing.getFinalPrice();
@@ -154,7 +156,7 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
             }
 
             // Add bullets
-            BulletDescription[] bullets = product.getBulletDescription();
+            List<BulletDescription> bullets = product.getBulletDescription();
             if (bullets!=null) {
                 Activity activity = getActivity();
                 LayoutInflater inflater = activity.getLayoutInflater();
@@ -189,7 +191,7 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
                 break;
             case R.id.add_to_cart:
                 MainActivity activity = (MainActivity) getActivity();
-                activity.addItemToCart(sku);
+                activity.addItemToCart(identifier);
                 break;
         }
     }

@@ -1,12 +1,14 @@
 package com.staples.mobile.common.access.easyopen.model.browse;
 
-public class FilterGroup {
-    private Filter[] filter;
-    private String id;
-    private String name;
-    private int productsCount;
+import java.util.List;
 
-    public Filter[] getFilter() {
+public class FilterGroup {
+    List<Filter> filter;
+    String id;
+    String name;
+    int productsCount;
+
+    public List<Filter> getFilter() {
         return filter;
     }
 

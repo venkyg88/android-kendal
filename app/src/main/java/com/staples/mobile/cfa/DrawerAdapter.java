@@ -21,6 +21,7 @@ import com.staples.mobile.common.access.easyopen.model.browse.Description;
 import com.staples.mobile.common.access.easyopen.model.browse.SubCategory;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -233,19 +234,19 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
 
     @Override
     public void success(Browse browse, Response response) {
-        Category[] categories = browse.getCategory();
-        if (categories==null || categories.length<1) {
+        List<Category> categories = browse.getCategory();
+        if (categories==null || categories.size()<1) {
             notifyDataSetChanged();
             return;
         }
 
         // Process categories
-        if (categories.length>1) {
+        if (categories.size()>1) {
             for(Category category : categories){
-                Description[] descriptions = category.getDescription1();
-                if (descriptions != null && descriptions.length > 0) {
+                List<Description> descriptions = category.getDescription1();
+                if (descriptions != null && descriptions.size() > 0) {
                     // Get category title
-                    Description description = descriptions[0];
+                    Description description = descriptions.get(0);
                     String title = description.getText();
                     if (title == null) title = description.getDescription();
                     if (title == null) title = description.getName();
@@ -261,13 +262,13 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
         }
 
         // Process subcategories
-        Category category = categories[0];
-        SubCategory[] subCategories = category.getSubCategory();
+        Category category = categories.get(0);
+        List<SubCategory> subCategories = category.getSubCategory();
         if (subCategories != null) {
             for(SubCategory subCategory : subCategories) {
-                Description[] descriptions = subCategory.getDescription();
-                if (descriptions != null && descriptions.length > 0) {
-                    Description description = descriptions[0];
+                List<Description> descriptions = subCategory.getDescription();
+                if (descriptions != null && descriptions.size() > 0) {
+                    Description description = descriptions.get(0);
                     String title = description.getName();
                     if (title == null) title = description.getDescription();
                     DrawerItem item = new DrawerItem(DrawerItem.Type.CATEGORY, activity, 0, 0);
