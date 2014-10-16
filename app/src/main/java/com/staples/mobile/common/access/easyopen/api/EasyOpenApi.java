@@ -1,11 +1,10 @@
 package com.staples.mobile.common.access.easyopen.api;
 
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
-import com.staples.mobile.common.access.easyopen.model.cart.AddUpdateCart;
-import com.staples.mobile.common.access.easyopen.model.cart.CartAddBody;
-import com.staples.mobile.common.access.easyopen.model.cart.CartUpdateBody;
+import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
+import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
+import com.staples.mobile.common.access.easyopen.model.cart.CartRequestBody;
 import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
-import com.staples.mobile.common.access.easyopen.model.cart.ViewCart;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
@@ -107,33 +106,33 @@ public interface EasyOpenApi {
             @Query("zipCode") String zipCode,
             @Query("catalogId") String catalogId,
             @Query("client_id") String client_id,
-            Callback<ViewCart> callback
+            Callback<CartContents> callback
     );
 
     //http://api.staples.com/v1/10001/cart?locale=en_US&zipCode=05251&catalogId=10051&client_id={client-id}
     @POST("/{version}/{storeId}/cart")
     void addToCart(
-            @Body CartAddBody body,
+            @Body CartRequestBody body,
             @EncodedPath("version") String version,
             @EncodedPath("storeId") String storeId,
             @Query("locale") String locale,
             @Query("zipCode") String zipCode,
             @Query("catalogId") String catalogId,
             @Query("client_id") String client_id,
-            Callback<AddUpdateCart> callback
+            Callback<CartUpdate> callback
     );
 
     //https://api.staples.com/v1/10001/cart?locale=en_US&zipCode=05251&catalogId=10051&client_id={client-id}
     @POST("/{version}/{storeId}/cart")
     void updateCart(
-            @Body CartUpdateBody body,
+            @Body CartRequestBody body,
             @EncodedPath("version") String version,
             @EncodedPath("storeId") String storeId,
             @Query("locale") String locale,
             @Query("zipCode") String zipCode,
             @Query("catalogId") String catalogId,
             @Query("client_id") String client_id,
-            Callback<AddUpdateCart> callback
+            Callback<CartUpdate> callback
     );
 
     //http://api.staples.com/v1/10001/cart/id/453387856?locale=en_US&client_id={client-id}
