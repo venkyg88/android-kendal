@@ -11,12 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -174,6 +173,13 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         return body;
     }
 
+
+    private void hideSoftKeyboard(EditText editText) {
+        InputMethodManager keyboard = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        keyboard.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+    }
+
+
     //---------------------------------------//
     //------------ inner classes ------------//
     //---------------------------------------//
@@ -306,9 +312,11 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void onClick(View view) {
-            CartItem cartItem = getItem(cartItemPosition);
+            hideSoftKeyboard(qtyWidget);
+
 //            qtyWidget.setSelection(0); // assumes position zero holds "0" value
             qtyWidget.setText("0");
+
 
             // update cart via API
 //            updateItemQty(cartItemPosition, 0);
@@ -329,6 +337,8 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void onClick(View view) {
+            hideSoftKeyboard(qtyWidget);
+
             CartItem cartItem = getItem(cartItemPosition);
             int origQty = cartItem.getQuantity();
             int newQty = origQty;
