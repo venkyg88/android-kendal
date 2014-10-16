@@ -10,10 +10,6 @@ android {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-
-        lintOptions {
-            abortOnError false
-        }
     }
 
     packagingOptions {
@@ -75,7 +71,7 @@ task showTest {
     }
 }
 
-task showLint(dependsOn: 'lint') {
+task showLint() {
     doLast {
         println("Opening report in browser")
         java.awt.Desktop.desktop.browse "file://$buildDir/outputs/lint-results.html".toURI()
