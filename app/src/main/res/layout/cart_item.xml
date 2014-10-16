@@ -38,23 +38,44 @@
                 android:layout_height="wrap_content"
                 android:text="@string/cartitem_qty_label"
                 android:textSize="16sp"/>
-            <Spinner
-                android:id="@+id/cartitem_qty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"/>
-            <!--<EditText-->
+            <!--<AutoCompleteTextView-->
                 <!--android:id="@+id/cartitem_qty"-->
                 <!--android:layout_width="wrap_content"-->
                 <!--android:layout_height="wrap_content"-->
+                <!--android:completionThreshold="1"-->
                 <!--android:numeric="integer"-->
                 <!--android:imeOptions="actionDone"-->
                 <!--android:textSize="16dp"/>-->
+            <!--<Spinner-->
+                <!--android:id="@+id/cartitem_qty"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textSize="16dp"/>-->
+            <EditText
+                android:id="@+id/cartitem_qty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numeric="integer"
+                android:imeOptions="actionDone"
+                android:selectAllOnFocus="true"
+                android:layout_marginRight="6dp"
+                android:textSize="20dp"
+                />
             <Button
                 android:id="@+id/cartitem_delete"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:text="x"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="bottom"
+                android:text="X"
+                android:textSize="14dp"
+                />
+            <Button
+                android:id="@+id/cartitem_update"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_gravity="bottom"
+                android:text="@string/update_button"
+                android:textSize="14dp"
                 />
         </LinearLayout>
     </LinearLayout>
