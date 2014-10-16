@@ -19,6 +19,8 @@ import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.browse.*;
 
+import java.util.List;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -103,15 +105,15 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
 
     @Override
     public void success(Browse browse, Response response) {
-        Category[] categories = browse.getCategory();
-        if (categories==null || categories.length<1) {
+        List<Category> categories = browse.getCategory();
+        if (categories==null || categories.size()<1) {
             notifyDataSetChanged();
             return;
         }
 
         // Process products
-        Category category = categories[0];
-        Product[] products = category.getProduct();
+        Category category = categories.get(0);
+        List<Product> products = category.getProduct();
         if (products != null) {
             for (Product product : products) {
                 BundleItem item = new BundleItem(product.getProductName(), product.getSku());

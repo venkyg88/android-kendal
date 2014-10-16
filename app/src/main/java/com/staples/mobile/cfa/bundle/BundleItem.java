@@ -2,6 +2,8 @@ package com.staples.mobile.cfa.bundle;
 
 import com.staples.mobile.common.access.easyopen.model.browse.*;
 
+import java.util.List;
+
 public class BundleItem {
     public String title;
     public String identifier;
@@ -16,7 +18,7 @@ public class BundleItem {
         this.identifier = identifier;
     }
 
-    public String setImageUrl(Image[] images) {
+    public String setImageUrl(List<Image> images) {
         if (images==null) return(null);
         for(Image image : images) {
             String url = image.getUrl();
@@ -28,7 +30,7 @@ public class BundleItem {
         return(null);
     }
 
-    public String setImageUrl(ThumbnailImage[] thumbs) {
+    public String setThumbnailImageUrl(List<ThumbnailImage> thumbs) {
         if (thumbs==null) return(null);
         for(ThumbnailImage thumb : thumbs) {
             String url = thumb.getUrl();
@@ -40,7 +42,7 @@ public class BundleItem {
         return(null);
     }
 
-    public Float setPrice(Pricing[] pricings) {
+    public Float setPrice(List<Pricing> pricings) {
         if (pricings==null) return(null);
         for(Pricing pricing : pricings) {
             float finalPrice = pricing.getFinalPrice();
