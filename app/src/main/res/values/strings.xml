@@ -31,6 +31,7 @@
     <string name="your_cart">Your cart (%1$d item%2$s)</string>
     <string name="cartitem_qty_label">Qty:</string>
     <string name="add_to_cart">Add to cart</string>
+    <string name="update_button">Update</string>
     <string name="no_reviews">no reviews</string>
 
     <string name="product_description">Product Description</string>
