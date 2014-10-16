@@ -121,27 +121,40 @@
                     android:text="@string/empty"/>
             </com.staples.mobile.cfa.widget.DataWrapper>
             <!-- Right drawer (shopping cart) -->
-            <LinearLayout
+            <FrameLayout
                 android:id="@+id/right_drawer"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
                 android:layout_gravity="end">
-                <TextView
-                    android:id="@+id/checkout"
-                    android:layout_width="match_parent"
-                    style="@style/CartHeader"
-                    android:text="@string/your_cart"
-                    android:background="#ffff00"/>
-                <ListView
-                    android:id="@+id/cart_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_gravity="start"
-                    android:choiceMode="singleChoice"
-                    android:background="#ffffff"/>
-            </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/right_drawer_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/checkout"
+                        android:layout_width="match_parent"
+                        style="@style/CartHeader"
+                        android:text="@string/your_cart"
+                        android:background="#ffff00"/>
+                    <ListView
+                        android:id="@+id/cart_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:layout_gravity="start"
+                        android:choiceMode="singleChoice"
+                        android:background="#ffffff"/>
+                </LinearLayout>
+                <ProgressBar
+                    android:id="@+id/cart_progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone"/>
+            </FrameLayout>
+
         </android.support.v4.widget.DrawerLayout>
     </LinearLayout>
 </FrameLayout>

@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +59,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     private Activity activity;
     private LayoutInflater inflater;
     private int cartItemLayoutResId;
+    ProgressBar cartProgressBar;
 
     private Drawable noPhoto;
 
@@ -65,10 +67,11 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     private AddUpdateCartListener addUpdateCartListener = new AddUpdateCartListener();
 
 
-    public CartAdapter(Activity activity, int cartItemLayoutResId) {
+    public CartAdapter(Activity activity, int cartItemLayoutResId, ProgressBar cartProgressBar) {
         super(activity, cartItemLayoutResId);
         this.activity = activity;
         this.cartItemLayoutResId = cartItemLayoutResId;
+        this.cartProgressBar = cartProgressBar;
         noPhoto = activity.getResources().getDrawable(R.drawable.no_photo);
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -142,6 +145,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
     public void fill() {
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+        cartProgressBar.setVisibility(View.VISIBLE);
 
         // query for items in cart
         easyOpenApi.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, viewCartListener);
@@ -154,6 +158,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         cartItem.setProposedQty(newQty); // record the value we're trying to set, update the model upon success
 
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+        cartProgressBar.setVisibility(View.VISIBLE);
 
         //TODO: waiting on api
         // update quantity of item in cart
@@ -190,8 +195,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void success(ViewCart viewCart, Response response) {
-
-            // TODO: get items returned from cart API
+            cartProgressBar.setVisibility(View.GONE);
 
             // getting data from viewCart request
             List<Cart> cartCollection = viewCart.getCart();
@@ -212,12 +216,12 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                 return;
             }
 
-
             notifyDataSetChanged();
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
+            cartProgressBar.setVisibility(View.GONE);
             String msg = "Unable to obtain cart information: " + retrofitError.getMessage();
             Log.d(TAG, msg);
             Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
@@ -231,6 +235,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void success(AddUpdateCart addUpdateCart, Response response) {
+            cartProgressBar.setVisibility(View.GONE);
 
             // determine which items were updated
             List<ItemsAdded> itemsAdded = addUpdateCart.getItemsAdded();
@@ -246,6 +251,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void failure(RetrofitError retrofitError) {
+            cartProgressBar.setVisibility(View.GONE);
             String msg = "Failed Cart Update: " + retrofitError.getMessage();
             Log.d(TAG, msg);
             Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
