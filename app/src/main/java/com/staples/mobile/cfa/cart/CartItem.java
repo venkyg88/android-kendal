@@ -4,18 +4,11 @@
 
 package com.staples.mobile.cfa.cart;
 
-import android.support.annotation.NonNull;
-
 import com.staples.mobile.common.access.easyopen.model.cart.Image;
 import com.staples.mobile.common.access.easyopen.model.cart.Pricing;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
-import com.staples.mobile.common.access.easyopen.model.cart.ThumbnailImage;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 public class CartItem {
     public static final String TAG = "CartItem";
@@ -103,9 +96,9 @@ public class CartItem {
     }
 
     public String getThumbnailImageUrl() {
-        List<ThumbnailImage> images = product.getThumbnailImage();
+        List<Image> images = product.getThumbnailImage();
         if (images != null) {
-            for(ThumbnailImage image : images) {
+            for(Image image : images) {
                 if (image.getUrl() != null) {
                     return image.getUrl();
                 }
