@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.staples.mobile.R;
@@ -130,7 +131,8 @@ public class MainActivity extends Activity
         topper.findViewById(R.id.action_rewards).setOnClickListener(this);
 
         // Initialize right drawer cart listview
-        cartAdapter = new CartAdapter(this, R.layout.cart_item);
+        ProgressBar cartProgressBar = (ProgressBar)rightDrawer.findViewById(R.id.cart_progress_bar);
+        cartAdapter = new CartAdapter(this, R.layout.cart_item, cartProgressBar);
         cartAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
@@ -204,7 +206,7 @@ public class MainActivity extends Activity
     }
 
 
-    /** set item count indicator on cart icon and cart drawer title */
+    /** sets item count indicator on cart icon and cart drawer title */
     public void setCartItemCount(int count) {
         // set text of cart icon
         rightDrawerAction.setText(count == 0? "":String.valueOf(count));
@@ -213,6 +215,11 @@ public class MainActivity extends Activity
                 count==1? "":"s"));
     }
 
+    /** adds an item to the cart */
+    public void addItemToCart(String partNumber) {
+        cartAdapter.addToCart(partNumber);
+        drawerLayout.openDrawer(rightDrawer);
+    }
 
     // Action bar & topper clicks
 

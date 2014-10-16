@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +59,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     private Activity activity;
     private LayoutInflater inflater;
     private int cartItemLayoutResId;
+    ProgressBar cartProgressBar;
 
     private Drawable noPhoto;
 
@@ -65,10 +67,11 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     private AddUpdateCartListener addUpdateCartListener = new AddUpdateCartListener();
 
 
-    public CartAdapter(Activity activity, int cartItemLayoutResId) {
+    public CartAdapter(Activity activity, int cartItemLayoutResId, ProgressBar cartProgressBar) {
         super(activity, cartItemLayoutResId);
         this.activity = activity;
         this.cartItemLayoutResId = cartItemLayoutResId;
+        this.cartProgressBar = cartProgressBar;
         noPhoto = activity.getResources().getDrawable(R.drawable.no_photo);
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -142,6 +145,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
     public void fill() {
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+        cartProgressBar.setVisibility(View.VISIBLE);
 
         // query for items in cart
         easyOpenApi.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, viewCartListener);
@@ -149,13 +153,23 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         notifyDataSetChanged();
     }
 
+    public void addToCart(String partNumber) {
+
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+        cartProgressBar.setVisibility(View.VISIBLE);
+
+        // update quantity of item in cart
+        easyOpenApi.addToCart(createCartRequestBody(partNumber, 1), RECOMMENDATION, STORE_ID,
+                LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, addUpdateCartListener);
+    }
+
     public void updateItemQty(int position, int newQty) {
         CartItem cartItem = getItem(position);
         cartItem.setProposedQty(newQty); // record the value we're trying to set, update the model upon success
 
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+        cartProgressBar.setVisibility(View.VISIBLE);
 
-        //TODO: waiting on api
         // update quantity of item in cart
         easyOpenApi.updateCart(createCartRequestBody(cartItem, newQty), RECOMMENDATION, STORE_ID,
                 LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, addUpdateCartListener);
@@ -173,6 +187,16 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         return body;
     }
 
+    private CartRequestBody createCartRequestBody(String partNumber, int qty) {
+        OrderItem addOrderItem = new OrderItem();
+        addOrderItem.setPartNumber_0(partNumber);
+        addOrderItem.setQuantity_0(qty);
+        List<OrderItem> addOrderItems = new ArrayList<OrderItem>();
+        addOrderItems.add(addOrderItem);
+        CartRequestBody body = new CartRequestBody();
+        body.setOrderItem(addOrderItems);
+        return body;
+    }
 
     private void hideSoftKeyboard(EditText editText) {
         InputMethodManager keyboard = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -190,8 +214,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void success(CartContents cartContents, Response response) {
-
-            // TODO: get items returned from cart API
+            cartProgressBar.setVisibility(View.GONE);
 
             // getting data from cartContent request
             List<Cart> cartCollection = cartContents.getCart();
@@ -212,16 +235,18 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                 return;
             }
 
-
             notifyDataSetChanged();
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
+            cartProgressBar.setVisibility(View.GONE);
             String msg = "Unable to obtain cart information: " + retrofitError.getMessage();
             Log.d(TAG, msg);
             Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
             notifyDataSetChanged();
+
+            // note: workaround to unknown field errors is to annotate model with @JsonIgnoreProperties(ignoreUnknown = true)
         }
     }
 
@@ -231,14 +256,23 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void success(CartUpdate cartUpdate, Response response) {
+            cartProgressBar.setVisibility(View.GONE);
 
             // determine which items were updated
+            int updates = 0;
             List<ItemsAdded> itemsAdded = cartUpdate.getItemsAdded();
+
             for (int i = 0; i < getCount(); i++) {
                 CartItem cartItem = getItem(i);
                 if (isCartItemChanged(cartItem.getOrderItemId(), itemsAdded)) {
                     cartItem.setQuantity(cartItem.getProposedQty());
+                    updates++;
                 }
+            }
+
+            // if no updates, but new ids, then it was an insertion so we need to refill the cart
+            if (updates == 0 && isAtLeastOneItem(itemsAdded)) {
+                fill();
             }
 
             notifyDataSetChanged();
@@ -246,6 +280,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void failure(RetrofitError retrofitError) {
+            cartProgressBar.setVisibility(View.GONE);
             String msg = "Failed Cart Update: " + retrofitError.getMessage();
             Log.d(TAG, msg);
             Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
@@ -258,6 +293,15 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                     if (oid.getOrderItemId().equals(orderItemId)) {
                         return true;
                     }
+                }
+            }
+            return false;
+        }
+
+        private boolean isAtLeastOneItem(List<ItemsAdded> itemsAdded) {
+            for (ItemsAdded itemAdded : itemsAdded) {
+                for (OrderItemId oid : itemAdded.getOrderItemIds()) {
+                    return true; // if any, return true
                 }
             }
             return false;
