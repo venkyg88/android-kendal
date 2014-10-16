@@ -153,13 +153,13 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         notifyDataSetChanged();
     }
 
-    public void addToCart(String partNumber) {
+    public void addToCart(String sku) {
 
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         cartProgressBar.setVisibility(View.VISIBLE);
 
         // update quantity of item in cart
-        easyOpenApi.addToCart(createCartRequestBody(partNumber, 1), RECOMMENDATION, STORE_ID,
+        easyOpenApi.addToCart(createCartRequestBody(sku, 1), RECOMMENDATION, STORE_ID,
                 LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, addUpdateCartListener);
     }
 
@@ -178,7 +178,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     private CartRequestBody createCartRequestBody(CartItem cartItem, int newQty) {
         OrderItem orderItem = new OrderItem();
         orderItem.setOrderItemId(cartItem.getOrderItemId());
-        orderItem.setPartNumber_0(cartItem.getPartNumber());
+        orderItem.setPartNumber_0(cartItem.getSku());
         orderItem.setQuantity_0(newQty);
         List<OrderItem> orderItems = new ArrayList<OrderItem>();
         orderItems.add(orderItem);
@@ -187,9 +187,9 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         return body;
     }
 
-    private CartRequestBody createCartRequestBody(String partNumber, int qty) {
+    private CartRequestBody createCartRequestBody(String sku, int qty) {
         OrderItem addOrderItem = new OrderItem();
-        addOrderItem.setPartNumber_0(partNumber);
+        addOrderItem.setPartNumber_0(sku);
         addOrderItem.setQuantity_0(qty);
         List<OrderItem> addOrderItems = new ArrayList<OrderItem>();
         addOrderItems.add(addOrderItem);
@@ -258,24 +258,20 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         public void success(CartUpdate cartUpdate, Response response) {
             cartProgressBar.setVisibility(View.GONE);
 
-            // determine which items were updated
-            int updates = 0;
-            List<ItemsAdded> itemsAdded = cartUpdate.getItemsAdded();
-
-            for (int i = 0; i < getCount(); i++) {
-                CartItem cartItem = getItem(i);
-                if (isCartItemChanged(cartItem.getOrderItemId(), itemsAdded)) {
-                    cartItem.setQuantity(cartItem.getProposedQty());
-                    updates++;
-                }
-            }
-
-            // if no updates, but new ids, then it was an insertion so we need to refill the cart
-            if (updates == 0 && isAtLeastOneItem(itemsAdded)) {
+            // TODO: find a reliable way to distinguish between responses to add and update
+            if ("Created".equals(response.getReason())) {
                 fill();
+            } else {
+                // determine which items were updated and fix their qty
+                List<ItemsAdded> itemsAdded = cartUpdate.getItemsAdded();
+                for (int i = 0; i < getCount(); i++) {
+                    CartItem cartItem = getItem(i);
+                    if (isCartItemChanged(cartItem.getOrderItemId(), itemsAdded)) {
+                        cartItem.setQuantity(cartItem.getProposedQty());
+                    }
+                }
+                notifyDataSetChanged();
             }
-
-            notifyDataSetChanged();
         }
 
         @Override
@@ -298,14 +294,14 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
             return false;
         }
 
-        private boolean isAtLeastOneItem(List<ItemsAdded> itemsAdded) {
-            for (ItemsAdded itemAdded : itemsAdded) {
-                for (OrderItemId oid : itemAdded.getOrderItemIds()) {
-                    return true; // if any, return true
-                }
-            }
-            return false;
-        }
+//        private boolean isAtLeastOneItem(List<ItemsAdded> itemsAdded) {
+//            for (ItemsAdded itemAdded : itemsAdded) {
+//                for (OrderItemId oid : itemAdded.getOrderItemIds()) {
+//                    return true; // if any, return true
+//                }
+//            }
+//            return false;
+//        }
     }
 
 
