@@ -2,30 +2,32 @@ package com.staples.mobile.common.access.easyopen.model.browse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 public class Category {
-    private String catalogId;
-    private Analytic[] categoryAnalytic;
-    private String categoryUrl;
-    private int childCount;
-    private boolean comparable;
-    private String comparisonUrl;
+    String catalogId;
+    List<Analytic> categoryAnalytic;
+    String categoryUrl;
+    int childCount;
+    boolean comparable;
+    String comparisonUrl;
     @JsonProperty("description")
-    private Description[] description1;
+    List<Description> description1;
     @JsonProperty("Description")
-    private Description[] description2;
-    private FilterGroup filterGroup[];
-    private String identifier;
-    private boolean navigable;
-    private boolean partialResults;
-    private Product[] product;
-    private String recommendationUrl;
-    private SubCategory[] subCategory;
+    List<Description> description2;
+    List<FilterGroup> filterGroup;
+    String identifier;
+    boolean navigable;
+    boolean partialResults;
+    List<Product> product;
+    String recommendationUrl;
+    List<SubCategory> subCategory;
 
     public String getCatalogId() {
         return catalogId;
     }
 
-    public Analytic[] getCategoryAnalytic() {
+    public List<Analytic> getCategoryAnalytic() {
         return categoryAnalytic;
     }
 
@@ -45,15 +47,15 @@ public class Category {
         return comparisonUrl;
     }
 
-    public Description[] getDescription1() {
+    public List<Description> getDescription1() {
         return description1;
     }
 
-    public Description[] getDescription2() {
+    public List<Description> getDescription2() {
         return description2;
     }
 
-    public FilterGroup[] getFilterGroup() {
+    public List<FilterGroup> getFilterGroup() {
         return filterGroup;
     }
 
@@ -69,7 +71,7 @@ public class Category {
         return partialResults;
     }
 
-    public Product[] getProduct() {
+    public List<Product> getProduct() {
         return product;
     }
 
@@ -77,7 +79,7 @@ public class Category {
         return recommendationUrl;
     }
 
-    public SubCategory[] getSubCategory() {
+    public List<SubCategory> getSubCategory() {
         return subCategory;
     }
 }

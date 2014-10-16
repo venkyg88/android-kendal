@@ -18,6 +18,8 @@ import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Category;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 
+import java.util.List;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -113,13 +115,13 @@ public class ProductAdapter
 
     @Override
     public void success(Browse browse, Response response) {
-        Category[] categories = browse.getCategory();
-        if (categories==null || categories.length<1) {
+        List<Category> categories = browse.getCategory();
+        if (categories==null || categories.size()<1) {
             notifyDataSetChanged();
             return;
         }
 
-        Product[] products = categories[0].getProduct();
+        List<Product> products = categories.get(0).getProduct();
         if (products != null) {
             for(Product product : products) {
                 ProductItem item = new ProductItem(product.getProductName(), null, product.getSku());

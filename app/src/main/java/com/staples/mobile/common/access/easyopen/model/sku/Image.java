@@ -1,13 +1,15 @@
 package com.staples.mobile.common.access.easyopen.model.sku;
 
+import java.util.List;
+
 public class Image {
-    private String altText;
-    private String name;
-    private String promotionalIconAltText;
-    private String promotionalIconName;
-    private String promotionalIconUrl;
-    private ThumbnailImage[] thumbnailImage;
-    private String url;
+    String altText;
+    String name;
+    String promotionalIconAltText;
+    String promotionalIconName;
+    String promotionalIconUrl;
+    List<ThumbnailImage> thumbnailImage;
+    String url;
 
     public String getAltText() {
         return altText;
@@ -29,7 +31,7 @@ public class Image {
         return promotionalIconUrl;
     }
 
-    public ThumbnailImage[] getThumbnailImage() {
+    public List<ThumbnailImage> getThumbnailImage() {
         return thumbnailImage;
     }
 
