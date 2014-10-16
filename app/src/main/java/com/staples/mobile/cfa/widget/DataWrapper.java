@@ -12,23 +12,26 @@ import com.staples.mobile.cfa.bundle.BundleAdapter;
 
 /**
  * This class is a ViewGroup wrapper for three child Views:
- * <ol><li>A View for when the list has items (probably a ListView)</li>
+ * <ol><li>A View for when the list has items (probably a ListView or GridView)</li>
  * <li>A View for when the list is populating (probably a ProgressBar)</li>
  * <li>A View for when the list is empty (possibly a simple TextView)</li></ol>
  * The child Views are identified by their order in the child View tree.
+ * Usage: setState(DataWrapper.State state)
  */
-public class ListViewWrapper extends LinearLayout {
+public class DataWrapper extends LinearLayout {
     public static final String TAG ="ListViewWrapper";
 
     public enum State {
-        // Used for initial loading of ListView
+        // Used for initial loading of adapters
         LOADING (View.GONE,    View.VISIBLE, View.GONE),
         EMPTY   (View.GONE,    View.GONE,    View.VISIBLE),
-        // Used for additional loading of ListView
+        // Used for additional loading of adapters
         ADDING  (View.VISIBLE, View.VISIBLE, View.GONE),
         NOMORE  (View.VISIBLE, View.GONE,    View.VISIBLE),
         // Used for success
-        DONE    (View.VISIBLE, View.GONE,    View.GONE);
+        DONE    (View.VISIBLE, View.GONE,    View.GONE),
+        // Used for making extra elements visible
+        GONE    (View.GONE,    View.GONE,    View.GONE);
 
         int list;
         int progress;
@@ -41,16 +44,28 @@ public class ListViewWrapper extends LinearLayout {
         }
     }
 
-    public ListViewWrapper(Context context) {
+    public DataWrapper(Context context) {
         super(context, null, 0);
     }
 
-    public ListViewWrapper(Context context, AttributeSet attrs) {
+    public DataWrapper(Context context, AttributeSet attrs) {
         super(context, attrs, 0);
     }
 
-    public ListViewWrapper(Context context, AttributeSet attrs, int defStyle) {
+    public DataWrapper(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+    }
+
+    // Property modifiers for animation
+
+    public void setXFraction(float fraction) {
+        int width = getWidth();
+        if (width>0) setX(fraction * width);
+    }
+
+    public void setYFraction(float fraction) {
+        int height = getHeight();
+        if (height>0) setY(fraction * height);
     }
 
     // Display state handling

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RatingStars">
+        <attr name="android:textSize"/>
+        <attr name="android:gravity"/>
+        <attr name="noReviews" format="string"/>
+    </declare-styleable>
+    <declare-styleable name="PriceSticker">
+        <attr name="android:textSize"/>
+        <attr name="android:gravity"/>
+    </declare-styleable>
+    <declare-styleable name="PagerStripe">
+        <attr name="stripeThickness" format="dimension"/>
+        <attr name="android:textSize"/>
+    </declare-styleable>
+    <declare-styleable name="BadgeImageView">
+        <attr name="android:text"/>
+        <attr name="android:textSize"/>
+        <attr name="android:textColor"/>
+        <attr name="textLeftOffset" format="dimension"/>
+        <attr name="textBottomOffset" format="dimension"/>
+    </declare-styleable>
+</resources>

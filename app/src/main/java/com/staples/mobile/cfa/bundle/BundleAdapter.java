@@ -1,7 +1,6 @@
 package com.staples.mobile.cfa.bundle;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,14 +12,12 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
-import com.staples.mobile.cfa.widget.ListViewWrapper;
+import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.browse.Browse;
-import com.staples.mobile.common.access.easyopen.model.browse.Category;
-import com.staples.mobile.common.access.easyopen.model.browse.Product;
+import com.staples.mobile.common.access.easyopen.model.browse.*;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -41,16 +38,16 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
     private static final int MAXFETCH = 50;
 
     private Activity activity;
-    private ListViewWrapper wrapper;
+    private DataWrapper wrapper;
     private LayoutInflater inflater;
     private int layout;
     private Drawable noPhoto;
 
-    public BundleAdapter(Activity activity, ListViewWrapper wrapper) {
+    public BundleAdapter(Activity activity, DataWrapper wrapper) {
         super(activity, 0);
         this.activity = activity;
         this.wrapper = wrapper;
-        inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = activity.getLayoutInflater();
         noPhoto = activity.getResources().getDrawable(R.drawable.no_photo);
     }
 
@@ -71,8 +68,8 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
         RatingStars ratingStars = (RatingStars) view.findViewById(R.id.rating);
         ratingStars.setRating(item.customerRating, item.customerCount);
 
-        PriceSticker price = (PriceSticker) view.findViewById(R.id.price);
-        price.setPrice(item.price, item.unit);
+        PriceSticker priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
+        priceSticker.setPricing(item.price, item.unit);
 
         ImageView image = (ImageView) view.findViewById(R.id.image);
         if (item.imageUrl==null) image.setImageDrawable(noPhoto);
@@ -84,7 +81,7 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
     void fill(String path) {
         int i, j;
 
-        wrapper.setState(ListViewWrapper.State.LOADING);
+        wrapper.setState(DataWrapper.State.LOADING);
 
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
 
@@ -124,19 +121,19 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
                 item.customerCount = product.getCustomerReviewCount();
                 add(item);
             }
-            wrapper.setState(ListViewWrapper.State.DONE);
+            wrapper.setState(DataWrapper.State.DONE);
             notifyDataSetChanged();
             return;
         }
 
-        wrapper.setState(ListViewWrapper.State.EMPTY);
+        wrapper.setState(DataWrapper.State.EMPTY);
         notifyDataSetChanged();
     }
 
     @Override
     public void failure(RetrofitError retrofitError) {
         Log.d(TAG, "Failure callback " + retrofitError);
-        wrapper.setState(ListViewWrapper.State.EMPTY);
+        wrapper.setState(DataWrapper.State.EMPTY);
         notifyDataSetChanged();
     }
 }

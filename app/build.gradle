@@ -29,27 +29,22 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile('com.android.support:support-v4:20.+')
-
+    compile 'com.android.support:support-v4:20.+'
     compile 'com.squareup.okhttp:okhttp:+'
     compile 'com.squareup.okhttp:okhttp-urlconnection:+'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
-    compile ('com.squareup.retrofit:retrofit:1.6.1' ){
+    compile('com.squareup.retrofit:retrofit:1.6.1') {
         exclude module: 'gson'
     }
     compile 'com.squareup.retrofit:converter-jackson:1.6.1'
     compile 'com.squareup.picasso:picasso:2.3.4'
-
     //androidTestCompile ('com.jayway.android.robotium:robotium-solo:5.2+')
-
     androidTestCompile 'org.hamcrest:hamcrest-integration:1.1'
     androidTestCompile 'org.hamcrest:hamcrest-core:1.1'
     androidTestCompile 'org.hamcrest:hamcrest-library:1.1'
-
     androidTestCompile('junit:junit:4+') {
         exclude module: 'hamcrest-core'
     }
-
     androidTestCompile('org.robolectric:robolectric:2.3+') {
         exclude module: 'classworlds'
         exclude module: 'commons-logging'
@@ -69,15 +64,16 @@ dependencies {
     }
 }
 
-task showReport {
+task showTest {
     doLast {
         println("Opening report in browser")
         java.awt.Desktop.desktop.browse "file://$buildDir/test-report/debug/index.html".toURI()
     }
 }
 
-// test {finalizedBy showReport}
-
-dependencies{
-    androidTestCompile fileTree(dir: 'libs', include: ['*.jar'])
+task showLint() {
+    doLast {
+        println("Opening report in browser")
+        java.awt.Desktop.desktop.browse "file://$buildDir/outputs/lint-results.html".toURI()
+    }
 }

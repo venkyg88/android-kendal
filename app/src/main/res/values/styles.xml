@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <style name="AppTheme" parent="android:Theme.Holo.Light.NoActionBar"/>
 
     <style name="DrawerStyle">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:padding">4dp</item>
-        <item name="android:textSize">18dp</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:textColor">#000000</item>
     </style>
 
     <style name="TopperStyle">
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="CartHeader" parent="DrawerStyle">
@@ -25,4 +24,76 @@
 		<item name="android:textColor">@color/sel_text_list_item</item>
 	</style>
 
+    <!-- Sku styling -->
+
+    <style name="PagerStripe">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">6dp</item>
+        <item name="stripeThickness">3dp</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="SkuSummaryTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="SkuNumbers">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="LargeRatingStars">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+        <item name="noReviews">@string/no_reviews</item>
+    </style>
+    <style name="SmallRatingStars">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="LargePriceSticker">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="SmallPriceSticker">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="SkuSummaryHeader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="BulletMarkerStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">top|center_horizontal</item>
+        <item name="android:paddingTop">9dp</item>
+        <item name="android:paddingLeft">6dp</item>
+        <item name="android:paddingRight">3dp</item>
+        <item name="android:src">@drawable/bullet</item>
+    </style>
+    <style name="BulletTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
 </resources>

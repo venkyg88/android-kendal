@@ -1,26 +1,31 @@
 package com.staples.mobile.common.access.easyopen.api;
 
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
-import com.staples.mobile.common.access.easyopen.model.sku.Sku;
-import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
+import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
+import com.staples.mobile.common.access.easyopen.model.cart.CartRequestBody;
+import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
+import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.staples.mobile.common.access.easyopen.model.sku.Sku;
 
 import retrofit.Callback;
 import retrofit.http.Body;
+import retrofit.http.DELETE;
 import retrofit.http.EncodedPath;
 import retrofit.http.GET;
 import retrofit.http.POST;
 import retrofit.http.Query;
 
 public interface EasyOpenApi {
-
-
     public static final String INSECURE_ENDPOINT = "http://sapi.staples.com";
 //    public static final String INSECURE_ENDPOINT = "http://qapi.staples.com";
 //    public static final String INSECURE_ENDPOINT = "http://10.29.172.60:9100"; // The office printer!
 
     public static final String SECURE_ENDPOINT = "https://sapi.staples.com";
+
+    // Browsing & product details
 
     @GET("/{version}/{storeId}/category/top")
     void topCategories(
@@ -51,7 +56,7 @@ public interface EasyOpenApi {
     );
 
     @GET("/{version}/{storeId}/product/partnumber/{productId}")
-    void sku(
+    void getSkuInfo(
         @EncodedPath("version") String version,
         @EncodedPath("storeId") String storeId,
         @EncodedPath("productId") String productId,
@@ -59,35 +64,85 @@ public interface EasyOpenApi {
         @Query("locale") String locale,
         @Query("zipCode") String zipCode,
         @Query("client_id") String client_id,
+        @Query("offset") Integer offset,
+        @Query("limit") Integer limit,
         Callback<Sku> callback
     );
 
-    //https://sapi.staples.com/v1/10001/loginidentity?client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS
-    @POST("/{version}/{storeId}/loginidentity")
-    public void registeredUserLogin(
-            @Body RegisteredUserLogin body,
-            @EncodedPath("version") String version,
-            @EncodedPath("storeId") String storeId,
-            @Query("client_id") String client_id,
-            Callback<TokenObject> callback
+    // Logins & profile
+
+    @POST("/{version}/{storeId}/guestidentity")
+    public void guestLogin(
+        @EncodedPath("version") String version,
+        @EncodedPath("storeId") String storeId,
+        @Query("client_id") String client_id,
+        Callback<TokenObject> callback
     );
 
-//  /v1/{storeId}/member/profile
+    @POST("/{version}/{storeId}/loginidentity")
+    public void registeredUserLogin(
+        @Body RegisteredUserLogin body,
+        @EncodedPath("version") String version,
+        @EncodedPath("storeId") String storeId,
+        @Query("client_id") String client_id,
+        Callback<TokenObject> callback
+    );
+
     @GET("/{version}/{storeId}/member/profile")
     void member(
+        @EncodedPath("version") String version,
+        @EncodedPath("storeId") String storeId,
+        @Query("locale") String locale,
+        @Query("client_id") String client_id,
+        Callback<MemberDetail> callback
+    );
+
+    // http://api.staples.com/v1/10001/cart?locale=en_US&zipCode=05251&catalogId=10051&client_id={client-id}
+    @GET("/{version}/{storeId}/cart")
+    void viewCart(
             @EncodedPath("version") String version,
             @EncodedPath("storeId") String storeId,
             @Query("locale") String locale,
+            @Query("zipCode") String zipCode,
+            @Query("catalogId") String catalogId,
             @Query("client_id") String client_id,
-            Callback<MemberDetail> callback
+            Callback<CartContents> callback
     );
 
-    //https://api.staples.com/v1/10001/guestidentity?client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS
-    @POST("/{version}/{storeId}/guestidentity")
-    public void guestLogin(
+    //http://api.staples.com/v1/10001/cart?locale=en_US&zipCode=05251&catalogId=10051&client_id={client-id}
+    @POST("/{version}/{storeId}/cart")
+    void addToCart(
+            @Body CartRequestBody body,
             @EncodedPath("version") String version,
             @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("zipCode") String zipCode,
+            @Query("catalogId") String catalogId,
             @Query("client_id") String client_id,
-            Callback<TokenObject> callback
+            Callback<CartUpdate> callback
+    );
+
+    //https://api.staples.com/v1/10001/cart?locale=en_US&zipCode=05251&catalogId=10051&client_id={client-id}
+    @POST("/{version}/{storeId}/cart")
+    void updateCart(
+            @Body CartRequestBody body,
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("zipCode") String zipCode,
+            @Query("catalogId") String catalogId,
+            @Query("client_id") String client_id,
+            Callback<CartUpdate> callback
+    );
+
+    //http://api.staples.com/v1/10001/cart/id/453387856?locale=en_US&client_id={client-id}
+    @DELETE("/{version}/{storeId}/cart/id/{orderItemId}")
+    void deleteFromCart(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @EncodedPath("orderItemId") String orderItemId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<DeleteFromCart> callback
     );
 }

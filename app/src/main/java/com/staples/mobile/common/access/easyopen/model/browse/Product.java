@@ -3,8 +3,10 @@ package com.staples.mobile.common.access.easyopen.model.browse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Product {
+    private Analytic[] analytic;
     private boolean bopisEligible;
     private BulletDescription[] bulletDescription;
+    private boolean businessService;
     private String classId;
     private boolean comparable;
     private int customerReviewCount;
@@ -19,22 +21,30 @@ public class Product {
     private String manufacturerPartNumber;
     private boolean priceInCartOnly;
     private Pricing[] pricing;
+    private Product[] product; // for SKU sets
     private String productName;
     private String productUrl;
     private Description[] promotionalOfferExpire;
+    private String recommendationUrl;
     private boolean retailOnly;
     private boolean retailOnlySpecialOrder;
     private boolean ropisEligible;
     private int ropisQtyLimit;
     private float savings;
     private boolean shipableToStore;
+    private boolean shopRunner;
     private String sku;
     private Image[] smallPromoImage;
     private String staplesDisplayPartNumber;
+    private String supplierTypeId;
     private ThumbnailImage[] thumbnailImage;
     private String uniqueId;
     private boolean upsable;
     private boolean webOnly;
+
+    public Analytic[] getAnalytic() {
+        return analytic;
+    }
 
     public boolean isBopisEligible() {
         return bopisEligible;
@@ -42,6 +52,10 @@ public class Product {
 
     public BulletDescription[] getBulletDescription() {
         return bulletDescription;
+    }
+
+    public boolean isBusinessService() {
+        return businessService;
     }
 
     public String getClassId() {
@@ -96,6 +110,10 @@ public class Product {
         return pricing;
     }
 
+    public Product[] getProduct() {
+        return product;
+    }
+
     public String getProductName() {
         return productName;
     }
@@ -106,6 +124,10 @@ public class Product {
 
     public Description[] getPromotionalOfferExpire() {
         return promotionalOfferExpire;
+    }
+
+    public String getRecommendationUrl() {
+        return recommendationUrl;
     }
 
     public boolean isRetailOnly() {
@@ -132,6 +154,10 @@ public class Product {
         return shipableToStore;
     }
 
+    public boolean isShopRunner() {
+        return shopRunner;
+    }
+
     public String getSku() {
         return sku;
     }
@@ -142,6 +168,10 @@ public class Product {
 
     public String getStaplesDisplayPartNumber() {
         return staplesDisplayPartNumber;
+    }
+
+    public String getSupplierTypeId() {
+        return supplierTypeId;
     }
 
     public ThumbnailImage[] getThumbnailImage() {
