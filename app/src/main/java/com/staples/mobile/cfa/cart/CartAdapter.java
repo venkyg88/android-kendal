@@ -27,10 +27,14 @@ import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.cart.AddUpdateCart;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
+import com.staples.mobile.common.access.easyopen.model.cart.CartUpdateBody;
 import com.staples.mobile.common.access.easyopen.model.cart.ItemsAdded;
+import com.staples.mobile.common.access.easyopen.model.cart.OrderItemId;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
+import com.staples.mobile.common.access.easyopen.model.cart.UpdateOrderItem;
 import com.staples.mobile.common.access.easyopen.model.cart.ViewCart;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Callback;
@@ -146,14 +150,28 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         notifyDataSetChanged();
     }
 
-    public void updateItemQty(int position, int qty) {
+    public void updateItemQty(int position, int newQty) {
+        CartItem cartItem = getItem(position);
+        cartItem.setProposedQty(newQty); // record the value we're trying to set, update the model upon success
+
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
 
         //TODO: waiting on api
         // update quantity of item in cart
-        //easyOpenApi.updateCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, addUpdateCartListener);
+        easyOpenApi.updateCart(createCartUpdateBody(cartItem, newQty), RECOMMENDATION, STORE_ID,
+                LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, addUpdateCartListener);
+    }
 
-        notifyDataSetChanged();
+    private CartUpdateBody createCartUpdateBody(CartItem cartItem, int newQty) {
+        UpdateOrderItem updateOrderItem = new UpdateOrderItem();
+        updateOrderItem.setOrderItemId(cartItem.getOrderItemId());
+        updateOrderItem.setPartNumber_0(cartItem.getPartNumber());
+        updateOrderItem.setQuantity_0(newQty);
+        List<UpdateOrderItem> updateOrderItems = new ArrayList<UpdateOrderItem>();
+        updateOrderItems.add(updateOrderItem);
+        CartUpdateBody body = new CartUpdateBody();
+        body.setUpdateOrderItem(updateOrderItems);
+        return body;
     }
 
     //---------------------------------------//
@@ -194,10 +212,13 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            Log.d(TAG, "Failure callback " + retrofitError);
+            String msg = "Unable to obtain cart information: " + retrofitError.getMessage();
+            Log.d(TAG, msg);
+            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
             notifyDataSetChanged();
         }
     }
+
 
     // listens for completion of additions and updates to cart
     class AddUpdateCartListener implements Callback<AddUpdateCart> {
@@ -205,18 +226,35 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         @Override
         public void success(AddUpdateCart addUpdateCart, Response response) {
 
-            // TODO: get items returned from cart API
-
-            // getting data from viewCart request
-//            List<ItemsAdded> itemsAdded = addUpdateCart.getItemsAdded();
+            // determine which items were updated
+            List<ItemsAdded> itemsAdded = addUpdateCart.getItemsAdded();
+            for (int i = 0; i < getCount(); i++) {
+                CartItem cartItem = getItem(i);
+                if (isCartItemChanged(cartItem.getOrderItemId(), itemsAdded)) {
+                    cartItem.setQuantity(cartItem.getProposedQty());
+                }
+            }
 
             notifyDataSetChanged();
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            Log.d(TAG, "Failure callback " + retrofitError);
+            String msg = "Failed Cart Update: " + retrofitError.getMessage();
+            Log.d(TAG, msg);
+            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
             notifyDataSetChanged();
+        }
+
+        private boolean isCartItemChanged(String orderItemId, List<ItemsAdded> itemsAdded) {
+            for (ItemsAdded itemAdded : itemsAdded) {
+                for (OrderItemId oid : itemAdded.getOrderItemIds()) {
+                    if (oid.getOrderItemId().equals(orderItemId)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 
@@ -268,13 +306,12 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void onClick(View view) {
-            CartItem item = getItem(cartItemPosition);
-            item.setQuantity(0);
+            CartItem cartItem = getItem(cartItemPosition);
 //            qtyWidget.setSelection(0); // assumes position zero holds "0" value
             qtyWidget.setText("0");
 
             // update cart via API
-            updateItemQty(cartItemPosition, 0);
+//            updateItemQty(cartItemPosition, 0);
 
         }
     }
@@ -292,22 +329,21 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void onClick(View view) {
-            CartItem item = getItem(cartItemPosition);
-            int origQty = item.getQuantity();
+            CartItem cartItem = getItem(cartItemPosition);
+            int origQty = cartItem.getQuantity();
             int newQty = origQty;
 
-            String value = ((TextView)view).getText().toString();
+            String value = qtyWidget.getText().toString();
             if (value != null && value.length() > 0) {
                 try { newQty = Integer.parseInt(value); } catch (NumberFormatException e) {}
+            } else {
+                qtyWidget.setText("" + origQty); // if empty, assume no change
             }
-            qtyWidget.setText("" + newQty); // in case value.length() == 0
-
             if (newQty != origQty) {
                 // update cart via API
                 updateItemQty(cartItemPosition, newQty);
             }
 
-//            item.setQuantity(qty);
 //            qtyWidget.setText("" + qty);
         }
     }
