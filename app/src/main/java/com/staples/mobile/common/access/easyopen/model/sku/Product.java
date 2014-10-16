@@ -21,7 +21,7 @@ public class Product {
     private String manufacturerPartNumber;
     private boolean priceInCartOnly;
     private Pricing[] pricing;
-    private Product[] product; // error in JSON?
+    private Product[] product; // for SKU sets
     private String productName;
     private String productUrl;
     private Description[] promotionalOfferExpire;

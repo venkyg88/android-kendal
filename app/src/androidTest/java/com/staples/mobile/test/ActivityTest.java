@@ -31,7 +31,7 @@ import retrofit.client.Response;
 public class ActivityTest implements Callback<Lms> {
     public static final String TAG = "DrawerTest";
 
-    ActivityController controller;
+    private ActivityController controller;
     private MainActivity activity;
 
     @Before
