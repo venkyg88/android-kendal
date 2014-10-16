@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">Kendall</string>
     <string name="staples">Staples</string>
-
     <string name="left_drawer">Left Drawer</string>
     <string name="search">Search</string>
     <string name="right_drawer">Right Drawer</string>
@@ -18,17 +18,15 @@
     <string name="rewards_title">Rewards</string>
     <string name="order_title">Order</string>
     <string name="profile_title">Profile</string>
-
     <string name="backtotop_title">Back to Menu</string>
-
     <string name="store_info_title">Store Info</string>
-
     <string name="tobedone_title">(To be done)</string>
-
     <string name="search_title">Search</string>
     <string name="search_hint">Search</string>
     <string name="empty">Nothing found</string>
-    <string name="your_cart">Your cart (%1$d item%2$s)</string>
+    <string name="your_cart">Your cart</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="cartitem_qty_label">Qty:</string>
     <string name="add_to_cart">Add to cart</string>
     <string name="update_button">Update</string>
