@@ -25,8 +25,10 @@ import com.staples.mobile.R;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.cart.AddOrderItem;
 import com.staples.mobile.common.access.easyopen.model.cart.AddUpdateCart;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
+import com.staples.mobile.common.access.easyopen.model.cart.CartAddBody;
 import com.staples.mobile.common.access.easyopen.model.cart.CartUpdateBody;
 import com.staples.mobile.common.access.easyopen.model.cart.ItemsAdded;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItemId;
@@ -153,6 +155,16 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         notifyDataSetChanged();
     }
 
+    public void addToCart(String partNumber) {
+
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+        cartProgressBar.setVisibility(View.VISIBLE);
+
+        // update quantity of item in cart
+        easyOpenApi.addToCart(createCartAddBody(partNumber, 1), RECOMMENDATION, STORE_ID,
+                LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, addUpdateCartListener);
+    }
+
     public void updateItemQty(int position, int newQty) {
         CartItem cartItem = getItem(position);
         cartItem.setProposedQty(newQty); // record the value we're trying to set, update the model upon success
@@ -160,7 +172,6 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         cartProgressBar.setVisibility(View.VISIBLE);
 
-        //TODO: waiting on api
         // update quantity of item in cart
         easyOpenApi.updateCart(createCartUpdateBody(cartItem, newQty), RECOMMENDATION, STORE_ID,
                 LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, addUpdateCartListener);
@@ -178,6 +189,16 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         return body;
     }
 
+    private CartAddBody createCartAddBody(String partNumber, int qty) {
+        AddOrderItem addOrderItem = new AddOrderItem();
+        addOrderItem.setPartNumber_0(partNumber);
+        addOrderItem.setQuantity_0(qty);
+        List<AddOrderItem> addOrderItems = new ArrayList<AddOrderItem>();
+        addOrderItems.add(addOrderItem);
+        CartAddBody body = new CartAddBody();
+        body.setAddOrderItem(addOrderItems);
+        return body;
+    }
 
     private void hideSoftKeyboard(EditText editText) {
         InputMethodManager keyboard = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -238,12 +259,19 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
             cartProgressBar.setVisibility(View.GONE);
 
             // determine which items were updated
+            int updates = 0;
             List<ItemsAdded> itemsAdded = addUpdateCart.getItemsAdded();
             for (int i = 0; i < getCount(); i++) {
                 CartItem cartItem = getItem(i);
                 if (isCartItemChanged(cartItem.getOrderItemId(), itemsAdded)) {
                     cartItem.setQuantity(cartItem.getProposedQty());
+                    updates++;
                 }
+            }
+
+            // if no updates, but new ids, then it was an insertion so we need to refill the cart
+            if (updates == 0 && isAtLeastOneItem(itemsAdded)) {
+                fill();
             }
 
             notifyDataSetChanged();
@@ -264,6 +292,15 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                     if (oid.getOrderItemId().equals(orderItemId)) {
                         return true;
                     }
+                }
+            }
+            return false;
+        }
+
+        private boolean isAtLeastOneItem(List<ItemsAdded> itemsAdded) {
+            for (ItemsAdded itemAdded : itemsAdded) {
+                for (OrderItemId oid : itemAdded.getOrderItemIds()) {
+                    return true; // if any, return true
                 }
             }
             return false;

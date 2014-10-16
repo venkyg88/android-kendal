@@ -206,7 +206,7 @@ public class MainActivity extends Activity
     }
 
 
-    /** set item count indicator on cart icon and cart drawer title */
+    /** sets item count indicator on cart icon and cart drawer title */
     public void setCartItemCount(int count) {
         // set text of cart icon
         rightDrawerAction.setText(count == 0? "":String.valueOf(count));
@@ -215,6 +215,11 @@ public class MainActivity extends Activity
                 count==1? "":"s"));
     }
 
+    /** adds an item to the cart */
+    public void addItemToCart(String partNumber) {
+        cartAdapter.addToCart(partNumber);
+        drawerLayout.openDrawer(rightDrawer);
+    }
 
     // Action bar & topper clicks
 
