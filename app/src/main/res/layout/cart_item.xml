@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:lines="2"
             android:ellipsize="end"
-            android:textSize="16dp"/>
+            android:textSize="16sp"/>
         <com.staples.mobile.cfa.widget.PriceSticker
             android:id="@+id/cartitem_price"
             style="@style/SmallPriceSticker"/>
@@ -37,12 +37,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/cartitem_qty_label"
-                android:textSize="16dp"/>
+                android:textSize="16sp"/>
             <Spinner
                 android:id="@+id/cartitem_qty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16dp"/>
+                android:textSize="16sp"/>
             <!--<EditText-->
                 <!--android:id="@+id/cartitem_qty"-->
                 <!--android:layout_width="wrap_content"-->
