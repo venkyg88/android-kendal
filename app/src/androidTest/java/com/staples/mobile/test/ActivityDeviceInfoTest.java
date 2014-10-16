@@ -23,7 +23,7 @@ import org.robolectric.util.ActivityController;
 public class ActivityDeviceInfoTest {
     public static final String TAG = "ActivityDeviceInfoTest";
 
-    ActivityController controller;
+    private ActivityController controller;
     private MainActivity activity;
 
     @Before

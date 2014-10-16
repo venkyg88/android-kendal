@@ -10,6 +10,10 @@ android {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        lintOptions {
+            abortOnError false
+        }
     }
 
     packagingOptions {
@@ -64,15 +68,16 @@ dependencies {
     }
 }
 
-task showReport {
+task showTest {
     doLast {
         println("Opening report in browser")
         java.awt.Desktop.desktop.browse "file://$buildDir/test-report/debug/index.html".toURI()
     }
 }
 
-// test {finalizedBy showReport}
-
-dependencies{
-    androidTestCompile fileTree(dir: 'libs', include: ['*.jar'])
+task showLint(dependsOn: 'lint') {
+    doLast {
+        println("Opening report in browser")
+        java.awt.Desktop.desktop.browse "file://$buildDir/outputs/lint-results.html".toURI()
+    }
 }
