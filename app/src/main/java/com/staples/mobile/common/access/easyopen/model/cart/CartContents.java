@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewCart {
+public class CartContents {
     @JsonProperty("Cart")
     private List<Cart> cart = new ArrayList<Cart>();
     private boolean recordSetComplete;

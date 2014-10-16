@@ -1,6 +1,6 @@
 package com.staples.mobile.common.access.easyopen.model.cart;
 
-public class UpdateOrderItem {
+public class OrderItem {
     private String orderItemId;
     private String partNumber_0;
     private int quantity_0;
