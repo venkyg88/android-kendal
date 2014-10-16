@@ -21,9 +21,6 @@ public class ToBeDoneFragment extends Fragment {
         Log.d(TAG, "onCreateView()");
         View view = inflater.inflate(R.layout.tobedone, container, false);
 
-        LoginHelper loginHelper = new LoginHelper(getActivity());
-        loginHelper.getRegisteredUserTokens();
-
         Bundle args = getArguments();
         if (args!=null) {
             String title = args.getString("title");
