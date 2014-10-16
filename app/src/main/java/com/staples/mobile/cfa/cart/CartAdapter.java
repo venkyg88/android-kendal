@@ -24,14 +24,14 @@ import com.staples.mobile.R;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.cart.AddUpdateCart;
+import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
+import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
-import com.staples.mobile.common.access.easyopen.model.cart.CartUpdateBody;
+import com.staples.mobile.common.access.easyopen.model.cart.CartRequestBody;
 import com.staples.mobile.common.access.easyopen.model.cart.ItemsAdded;
+import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItemId;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
-import com.staples.mobile.common.access.easyopen.model.cart.UpdateOrderItem;
-import com.staples.mobile.common.access.easyopen.model.cart.ViewCart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -157,19 +157,19 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         //TODO: waiting on api
         // update quantity of item in cart
-        easyOpenApi.updateCart(createCartUpdateBody(cartItem, newQty), RECOMMENDATION, STORE_ID,
+        easyOpenApi.updateCart(createCartRequestBody(cartItem, newQty), RECOMMENDATION, STORE_ID,
                 LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, addUpdateCartListener);
     }
 
-    private CartUpdateBody createCartUpdateBody(CartItem cartItem, int newQty) {
-        UpdateOrderItem updateOrderItem = new UpdateOrderItem();
-        updateOrderItem.setOrderItemId(cartItem.getOrderItemId());
-        updateOrderItem.setPartNumber_0(cartItem.getPartNumber());
-        updateOrderItem.setQuantity_0(newQty);
-        List<UpdateOrderItem> updateOrderItems = new ArrayList<UpdateOrderItem>();
-        updateOrderItems.add(updateOrderItem);
-        CartUpdateBody body = new CartUpdateBody();
-        body.setUpdateOrderItem(updateOrderItems);
+    private CartRequestBody createCartRequestBody(CartItem cartItem, int newQty) {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setOrderItemId(cartItem.getOrderItemId());
+        orderItem.setPartNumber_0(cartItem.getPartNumber());
+        orderItem.setQuantity_0(newQty);
+        List<OrderItem> orderItems = new ArrayList<OrderItem>();
+        orderItems.add(orderItem);
+        CartRequestBody body = new CartRequestBody();
+        body.setOrderItem(orderItems);
         return body;
     }
 
@@ -186,15 +186,15 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
 
     // listens for completion of view request
-    class ViewCartListener implements Callback<ViewCart> {
+    class ViewCartListener implements Callback<CartContents> {
 
         @Override
-        public void success(ViewCart viewCart, Response response) {
+        public void success(CartContents cartContents, Response response) {
 
             // TODO: get items returned from cart API
 
-            // getting data from viewCart request
-            List<Cart> cartCollection = viewCart.getCart();
+            // getting data from cartContent request
+            List<Cart> cartCollection = cartContents.getCart();
             if (cartCollection == null || cartCollection.size() == 0) {
                 notifyDataSetChanged();
                 return;
@@ -227,13 +227,13 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
 
     // listens for completion of additions and updates to cart
-    class AddUpdateCartListener implements Callback<AddUpdateCart> {
+    class AddUpdateCartListener implements Callback<CartUpdate> {
 
         @Override
-        public void success(AddUpdateCart addUpdateCart, Response response) {
+        public void success(CartUpdate cartUpdate, Response response) {
 
             // determine which items were updated
-            List<ItemsAdded> itemsAdded = addUpdateCart.getItemsAdded();
+            List<ItemsAdded> itemsAdded = cartUpdate.getItemsAdded();
             for (int i = 0; i < getCount(); i++) {
                 CartItem cartItem = getItem(i);
                 if (isCartItemChanged(cartItem.getOrderItemId(), itemsAdded)) {

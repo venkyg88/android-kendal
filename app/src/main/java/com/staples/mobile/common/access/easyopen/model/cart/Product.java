@@ -27,13 +27,15 @@ public class Product {
     private boolean priceInCartOnly;
     private List<Pricing> pricing = new ArrayList<Pricing>();
     private String productName;
+    private List<PromotionalOfferExpire> promotionalOfferExpire;
     private int quantity;
     private boolean ropisEligible;
     private boolean shipableToStore;
     private ShippingInformation shippingInformation;
     private String sku;
-    private List<SmallInfoImage> smallInfoImage;
-    private List<ThumbnailImage> thumbnailImage = new ArrayList<ThumbnailImage>();
+    private List<Image> smallInfoImage;
+    private List<Image> smallPromoImage;
+    private List<Image> thumbnailImage = new ArrayList<Image>();
     private String uniqueId;
     private boolean upsable;
 
@@ -221,11 +223,11 @@ public class Product {
         this.sku = sku;
     }
 
-    public List<ThumbnailImage> getThumbnailImage() {
+    public List<Image> getThumbnailImage() {
         return thumbnailImage;
     }
 
-    public void setThumbnailImage(List<ThumbnailImage> thumbnailImage) {
+    public void setThumbnailImage(List<Image> thumbnailImage) {
         this.thumbnailImage = thumbnailImage;
     }
 
@@ -245,11 +247,19 @@ public class Product {
         this.upsable = upsable;
     }
 
-    public List<SmallInfoImage> getSmallInfoImage() {
+    public List<Image> getSmallInfoImage() {
         return smallInfoImage;
     }
 
-    public void setSmallInfoImage(List<SmallInfoImage> smallInfoImage) {
+    public void setSmallInfoImage(List<Image> smallInfoImage) {
         this.smallInfoImage = smallInfoImage;
+    }
+
+    public List<PromotionalOfferExpire> getPromotionalOfferExpire() {
+        return promotionalOfferExpire;
+    }
+
+    public void setPromotionalOfferExpire(List<PromotionalOfferExpire> promotionalOfferExpire) {
+        this.promotionalOfferExpire = promotionalOfferExpire;
     }
 }
