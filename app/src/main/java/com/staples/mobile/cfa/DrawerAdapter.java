@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.feed.FeedFragment;
 import com.staples.mobile.cfa.home.LmsFragment;
+import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -138,7 +139,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
         menuList.add(new DrawerItem(DrawerItem.Type.BROWSE, activity, R.drawable.logo, R.string.category_title));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.store_locator_title, ToBeDoneFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.weekly_ad_title, ToBeDoneFragment.class));
-        menuList.add(new DrawerItem(DrawerItem.Type.ACCOUNT, activity, R.drawable.logo, R.string.account_title, ToBeDoneFragment.class));
+        menuList.add(new DrawerItem(DrawerItem.Type.ACCOUNT, activity, R.drawable.logo, R.string.account_title, LoginFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.rewards_title, ToBeDoneFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.order_title, ToBeDoneFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.logo, R.string.profile_title, ToBeDoneFragment.class));
