@@ -245,6 +245,8 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
             Log.d(TAG, msg);
             Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
             notifyDataSetChanged();
+
+            // note: workaround to unknown field errors is to annotate model with @JsonIgnoreProperties(ignoreUnknown = true)
         }
     }
 
