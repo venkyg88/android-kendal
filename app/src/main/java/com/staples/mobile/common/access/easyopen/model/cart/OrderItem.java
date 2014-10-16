@@ -1,5 +1,8 @@
 package com.staples.mobile.common.access.easyopen.model.cart;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderItem {
     private String orderItemId;
     private String partNumber_0;
