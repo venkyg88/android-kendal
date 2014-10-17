@@ -22,9 +22,10 @@ import com.staples.mobile.cfa.cart.CartAdapter;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
+import com.staples.mobile.common.access.Access;
 
 public class MainActivity extends Activity
-                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
+                          implements View.OnClickListener, AdapterView.OnItemClickListener, Access.OnLoginCompleteListener {
     private static final String TAG = "MainActivity";
 
     private static final int SURRENDER_TIMEOUT = 5000;
@@ -82,9 +83,9 @@ public class MainActivity extends Activity
         prepareMainScreen(freshStart);
 
         LoginHelper loginHelper = new LoginHelper(this);
-        loginHelper.setOnLoginCompleteListener(this);
-        loginHelper.getRegisteredUserTokens();
-        //loginHelper.getGuestTokens();
+        loginHelper.addOnLoginCompleteListener(this);
+        //loginHelper.getRegisteredUserTokens();
+        loginHelper.getGuestTokens();
     }
 
     public void showMainScreen() {
@@ -156,8 +157,8 @@ public class MainActivity extends Activity
     }
 
     @Override
-    public void onLoginComplete(boolean success, String errMsg) {
-        if (success) {
+    public void onLoginComplete(boolean guestLevel) {
+        if (!guestLevel) {
             // load cart drawer (requires successful login)
             cartAdapter.fill();
         }
