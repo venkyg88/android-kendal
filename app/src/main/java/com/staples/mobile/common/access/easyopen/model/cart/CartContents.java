@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
+//wrapper class for view cart api responses
+
 public class CartContents {
     @JsonProperty("Cart")
     private List<Cart> cart = new ArrayList<Cart>();

@@ -2,8 +2,10 @@ package com.staples.mobile.common.access.easyopen.model.cart;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderItem {
+//Since this class works for both add and update bodies, this needs to be specified so that
+//when orderItemId is null for add queries, it is ignored by Jackson
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String orderItemId;
     private String partNumber_0;
     private int quantity_0;

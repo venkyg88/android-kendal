@@ -7,7 +7,8 @@ public class ShippingInformation {
     private DeliveryModeAvailable deliveryModeAvailable;
     private String deliveryModeSelected;
     private boolean deliveryPromotion;
-    private Object estimatedDeliveryDate;
+    //assumed to be String
+    private String estimatedDeliveryDate;
     private int estimatedDeliveryInBusinessDays;
     private boolean quickShip;
 
@@ -43,11 +44,11 @@ public class ShippingInformation {
         this.deliveryPromotion = deliveryPromotion;
     }
 
-    public Object getEstimatedDeliveryDate() {
+    public String getEstimatedDeliveryDate() {
         return estimatedDeliveryDate;
     }
 
-    public void setEstimatedDeliveryDate(Object estimatedDeliveryDate) {
+    public void setEstimatedDeliveryDate(String estimatedDeliveryDate) {
         this.estimatedDeliveryDate = estimatedDeliveryDate;
     }
 
