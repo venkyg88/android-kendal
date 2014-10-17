@@ -87,6 +87,12 @@ public class MainActivity extends Activity
         loginHelper.getGuestTokens();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        new LoginHelper(this).unregisterLoginCompleteListener(this);
+    }
+
     public void showMainScreen() {
         findViewById(R.id.splash).setVisibility(View.GONE);
         findViewById(R.id.main).setVisibility(View.VISIBLE);

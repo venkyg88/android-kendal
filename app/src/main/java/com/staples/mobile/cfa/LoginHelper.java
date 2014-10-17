@@ -62,6 +62,11 @@ public class LoginHelper {
         Access.getInstance().registerLoginCompleteListener(loginCompleteListener);
     }
 
+    /** removes listener */
+    public void unregisterLoginCompleteListener(Access.OnLoginCompleteListener loginCompleteListener) {
+        Access.getInstance().unregisterLoginCompleteListener(loginCompleteListener);
+    }
+
     /** returns true if current login level is only guest */
     public boolean isGuestLogin() {
         return Access.getInstance().isGuestLogin();
