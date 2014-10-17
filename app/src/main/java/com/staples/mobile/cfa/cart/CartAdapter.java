@@ -17,7 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +43,11 @@ import retrofit.client.Response;
 
 public class CartAdapter extends ArrayAdapter<CartItem> {
 
+    public interface ProgressIndicator {
+        public void showProgressIndicator();
+        public void hideProgressIndicator();
+    }
+
     private static final String TAG = "CartAdapter";
 
     private static final String RECOMMENDATION = "v1";
@@ -60,21 +64,26 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     private Activity activity;
     private LayoutInflater inflater;
     private int cartItemLayoutResId;
-    View cartProgressBar;
+    ProgressIndicator progressIndicator;
 
     private Drawable noPhoto;
 
-    private ViewCartListener viewCartListener = new ViewCartListener();
-    private AddUpdateCartListener addUpdateCartListener = new AddUpdateCartListener();
+    // api listeners
+    private ViewCartListener viewCartListener;
+    private AddUpdateCartListener addUpdateCartListener;
 
 
-    public CartAdapter(Activity activity, int cartItemLayoutResId, View cartProgressBar) {
+    public CartAdapter(Activity activity, int cartItemLayoutResId, ProgressIndicator progressIndicator) {
         super(activity, cartItemLayoutResId);
         this.activity = activity;
         this.cartItemLayoutResId = cartItemLayoutResId;
-        this.cartProgressBar = cartProgressBar;
+        this.progressIndicator = progressIndicator;
         noPhoto = activity.getResources().getDrawable(R.drawable.no_photo);
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        // create api listeners
+        viewCartListener = new ViewCartListener();
+        addUpdateCartListener = new AddUpdateCartListener();
     }
 
 
@@ -146,7 +155,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
     public void fill() {
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        cartProgressBar.setVisibility(View.VISIBLE);
+        progressIndicator.showProgressIndicator();
 
         // query for items in cart
         easyOpenApi.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, viewCartListener);
@@ -157,7 +166,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     public void addToCart(String sku) {
 
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        cartProgressBar.setVisibility(View.VISIBLE);
+        progressIndicator.showProgressIndicator();
 
         // update quantity of item in cart
         easyOpenApi.addToCart(createCartRequestBody(sku, 1), RECOMMENDATION, STORE_ID,
@@ -169,7 +178,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         cartItem.setProposedQty(newQty); // record the value we're trying to set, update the model upon success
 
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        cartProgressBar.setVisibility(View.VISIBLE);
+        progressIndicator.showProgressIndicator();
 
         // update quantity of item in cart
         easyOpenApi.updateCart(createCartRequestBody(cartItem, newQty), RECOMMENDATION, STORE_ID,
@@ -215,33 +224,28 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void success(CartContents cartContents, Response response) {
-            cartProgressBar.setVisibility(View.GONE);
+            progressIndicator.hideProgressIndicator();
 
             // getting data from cartContent request
             List<Cart> cartCollection = cartContents.getCart();
-            if (cartCollection == null || cartCollection.size() == 0) {
-                notifyDataSetChanged();
-                return;
-            }
-            Cart cart = cartCollection.get(0);
-            List<Product> products = cart.getProduct();
-            if (products != null) {
-                if (getCount() > 0) {
-                    clear();
+            if (cartCollection != null && cartCollection.size() > 0) {
+                Cart cart = cartCollection.get(0);
+                List<Product> products = cart.getProduct();
+                if (products != null) {
+                    if (getCount() > 0) {
+                        clear();
+                    }
+                    for (Product product : products) {
+                        add(new CartItem(product));
+                    }
                 }
-                for (Product product : products) {
-                    add(new CartItem(product));
-                }
-                notifyDataSetChanged();
-                return;
             }
-
             notifyDataSetChanged();
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            cartProgressBar.setVisibility(View.GONE);
+            progressIndicator.hideProgressIndicator();
             String msg = "Unable to obtain cart information: " + retrofitError.getMessage();
             Log.d(TAG, msg);
             Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
@@ -257,7 +261,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void success(CartUpdate cartUpdate, Response response) {
-            cartProgressBar.setVisibility(View.GONE);
+            progressIndicator.hideProgressIndicator();
 
             // if message, display to user (e.g. out-of-stock message)
             if (!TextUtils.isEmpty(cartUpdate.getMessage())) {
@@ -287,7 +291,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            cartProgressBar.setVisibility(View.GONE);
+            progressIndicator.hideProgressIndicator();
             String msg = "Failed Cart Update: " + retrofitError.getMessage();
             Log.d(TAG, msg);
             Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();

@@ -137,8 +137,17 @@ public class MainActivity extends Activity
         topper.findViewById(R.id.action_rewards).setOnClickListener(this);
 
         // Initialize right drawer cart listview
-        View cartProgressBar = rightDrawer.findViewById(R.id.cart_progress_bar);
-        cartAdapter = new CartAdapter(this, R.layout.cart_item, cartProgressBar);
+        final View cartProgressBar = rightDrawer.findViewById(R.id.cart_progress_bar);
+        CartAdapter.ProgressIndicator progressIndicator = new CartAdapter.ProgressIndicator() {
+            public void showProgressIndicator() {
+                cartProgressBar.setVisibility(View.VISIBLE);
+            }
+
+            public void hideProgressIndicator() {
+                cartProgressBar.setVisibility(View.GONE);
+            }
+        };
+        cartAdapter = new CartAdapter(this, R.layout.cart_item, progressIndicator);
         cartAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
@@ -146,9 +155,8 @@ public class MainActivity extends Activity
                 setCartItemCount(cartAdapter.getTotalCount());
             }
         });
-//        cartAdapter.fill();  // can't fill cart until login process completes (asynchronous)
         this.setCartItemCount(0); // initialize count to zero until we're able to fill the cart
-        ((ListView) rightDrawer.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
+        ((ListView)rightDrawer.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
 
         // Fresh start?
         if (freshStart) {
