@@ -51,6 +51,10 @@ public class CartItem {
         return product.getOrderItemId();
     }
 
+    public String getSku() {
+        return product.getSku();
+    }
+
     public String getPartNumber() {
         return product.getManufacturerPartNumber();
     }
