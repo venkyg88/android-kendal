@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartAdapter;
+import com.staples.mobile.cfa.cart.CartContainer;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -137,17 +138,9 @@ public class MainActivity extends Activity
         topper.findViewById(R.id.action_rewards).setOnClickListener(this);
 
         // Initialize right drawer cart listview
-        final View cartProgressBar = rightDrawer.findViewById(R.id.cart_progress_bar);
-        CartAdapter.ProgressIndicator progressIndicator = new CartAdapter.ProgressIndicator() {
-            public void showProgressIndicator() {
-                cartProgressBar.setVisibility(View.VISIBLE);
-            }
-
-            public void hideProgressIndicator() {
-                cartProgressBar.setVisibility(View.GONE);
-            }
-        };
-        cartAdapter = new CartAdapter(this, R.layout.cart_item, progressIndicator);
+        CartContainer cartContainer = (CartContainer)rightDrawer.findViewById(R.id.right_drawer_content);
+        cartContainer.setCartProgressOverlay(rightDrawer.findViewById(R.id.cart_progress_overlay));
+        cartAdapter = new CartAdapter(this, R.layout.cart_item, cartContainer.getProgressIndicator());
         cartAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {

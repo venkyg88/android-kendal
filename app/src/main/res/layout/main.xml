@@ -126,8 +126,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="end">
-
-                <LinearLayout
+                <com.staples.mobile.cfa.cart.CartContainer
                     android:id="@+id/right_drawer_content"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -146,14 +145,14 @@
                         android:layout_gravity="start"
                         android:choiceMode="singleChoice"
                         android:background="#ffffff"/>
-                </LinearLayout>
+                </com.staples.mobile.cfa.cart.CartContainer>
                 <RelativeLayout
-                    android:id="@+id/cart_progress_bar"
+                    android:id="@+id/cart_progress_overlay"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:visibility="gone"
                     android:clickable="false"
-                    android:background="#aa000022" >
+                    android:background="#6f000022" >
                     <ProgressBar
                         android:layout_centerInParent="true"
                         android:layout_width="wrap_content"
