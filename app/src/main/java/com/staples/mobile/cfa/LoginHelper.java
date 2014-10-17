@@ -58,8 +58,8 @@ public class LoginHelper {
 //    }
 
     /** adds listener to be notified following successful login */
-    public void addOnLoginCompleteListener(Access.OnLoginCompleteListener loginCompleteListener) {
-        Access.getInstance().addOnLoginCompleteListener(loginCompleteListener);
+    public void registerLoginCompleteListener(Access.OnLoginCompleteListener loginCompleteListener) {
+        Access.getInstance().registerLoginCompleteListener(loginCompleteListener);
     }
 
     /** returns true if current login level is only guest */

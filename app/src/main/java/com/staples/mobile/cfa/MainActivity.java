@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.staples.mobile.R;
@@ -83,7 +82,7 @@ public class MainActivity extends Activity
         prepareMainScreen(freshStart);
 
         LoginHelper loginHelper = new LoginHelper(this);
-        loginHelper.addOnLoginCompleteListener(this);
+        loginHelper.registerLoginCompleteListener(this);
         //loginHelper.getRegisteredUserTokens();
         loginHelper.getGuestTokens();
     }
