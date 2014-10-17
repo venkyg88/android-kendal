@@ -9,7 +9,7 @@ import java.util.List;
 public class CartUpdate {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String message;
+    private String message; // this field is not documented, but is included in some cases (e.g. out of stock items)
 
     private List<ItemsAdded> itemsAdded = new ArrayList<ItemsAdded>();
 
