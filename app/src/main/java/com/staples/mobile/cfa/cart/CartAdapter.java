@@ -7,6 +7,7 @@ package com.staples.mobile.cfa.cart;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -257,6 +258,16 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         @Override
         public void success(CartUpdate cartUpdate, Response response) {
             cartProgressBar.setVisibility(View.GONE);
+
+            // if message, display to user (e.g. out-of-stock message)
+            if (!TextUtils.isEmpty(cartUpdate.getMessage())) {
+                Toast.makeText(activity, cartUpdate.getMessage(), Toast.LENGTH_LONG).show();
+            }
+
+            // if no items added, no need to update display
+            if (cartUpdate.getItemsAdded().size() == 0) {
+                return;
+            }
 
             // TODO: find a reliable way to distinguish between responses to add and update
             if ("Created".equals(response.getReason())) {
