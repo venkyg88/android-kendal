@@ -98,10 +98,12 @@ public class Access {
     public void setTokens(String wcToken, String wcTrustedToken, boolean guestLogin) {
         token1 = wcToken;
         token2 = wcTrustedToken;
-        this.guestLogin = guestLogin;
-        if (loginCompleteListeners != null) {
-            for (OnLoginCompleteListener listener : loginCompleteListeners) {
-                listener.onLoginComplete(guestLogin);
+        if (token1 != null) {
+            this.guestLogin = guestLogin;
+            if (loginCompleteListeners != null) {
+                for (OnLoginCompleteListener listener : loginCompleteListeners) {
+                    listener.onLoginComplete(guestLogin);
+                }
             }
         }
     }
@@ -116,8 +118,17 @@ public class Access {
     }
 
     /** adds listener to be notified following successful login */
-    public void addOnLoginCompleteListener(OnLoginCompleteListener loginCompleteListener) {
-        loginCompleteListeners.add(loginCompleteListener);
+    public void registerLoginCompleteListener(OnLoginCompleteListener loginCompleteListener) {
+        if (!loginCompleteListeners.contains(loginCompleteListener)) {
+            loginCompleteListeners.add(loginCompleteListener);
+        }
+    }
+
+    /** removes listener */
+    public void unregisterLoginCompleteListener(OnLoginCompleteListener loginCompleteListener) {
+        if (loginCompleteListeners.contains(loginCompleteListener)) {
+            loginCompleteListeners.remove(loginCompleteListener);
+        }
     }
 
 // EasyOpen API
