@@ -131,7 +131,7 @@ public class MainActivity extends Activity
         topper.findViewById(R.id.action_rewards).setOnClickListener(this);
 
         // Initialize right drawer cart listview
-        ProgressBar cartProgressBar = (ProgressBar)rightDrawer.findViewById(R.id.cart_progress_bar);
+        View cartProgressBar = rightDrawer.findViewById(R.id.cart_progress_bar);
         cartAdapter = new CartAdapter(this, R.layout.cart_item, cartProgressBar);
         cartAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override

@@ -59,7 +59,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     private Activity activity;
     private LayoutInflater inflater;
     private int cartItemLayoutResId;
-    ProgressBar cartProgressBar;
+    View cartProgressBar;
 
     private Drawable noPhoto;
 
@@ -67,7 +67,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     private AddUpdateCartListener addUpdateCartListener = new AddUpdateCartListener();
 
 
-    public CartAdapter(Activity activity, int cartItemLayoutResId, ProgressBar cartProgressBar) {
+    public CartAdapter(Activity activity, int cartItemLayoutResId, View cartProgressBar) {
         super(activity, cartItemLayoutResId);
         this.activity = activity;
         this.cartItemLayoutResId = cartItemLayoutResId;
