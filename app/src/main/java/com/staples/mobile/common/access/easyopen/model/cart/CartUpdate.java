@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
 import java.util.List;
 
+//wrapper class for add and update api responses
+
 public class CartUpdate {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

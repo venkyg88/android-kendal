@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
+//Note that this class has different fields than browse.Product and sku.Product
 public class Product {
 
     private boolean bopisEligible;
