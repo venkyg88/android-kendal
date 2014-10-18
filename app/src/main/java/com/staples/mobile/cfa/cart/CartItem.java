@@ -19,29 +19,9 @@ public class CartItem {
     // Constructor
     public CartItem(Product product) {
         this.product = product;
+        this.proposedQty = -1; // indicates no change (used for qty update operation)
     }
 
-//    // TODO: remove this temporary conversion Constructor
-//    public CartItem(com.staples.mobile.common.access.easyopen.model.browse.Product product) {
-//        this.product = new Product();
-//        this.product.setQuantity(1);
-//        this.product.setProductName(product.getProductName());
-//        List<Pricing> pricings = new ArrayList<Pricing>();
-//        for (com.staples.mobile.common.access.easyopen.model.browse.Pricing p : product.getPricing()) {
-//            Pricing pricing = new Pricing();
-//            pricing.setFinalPrice(p.getFinalPrice());
-//            pricing.setUnitOfMeasure(p.getUnitOfMeasure());
-//            pricings.add(pricing);
-//        }
-//        this.product.setPricing(pricings);
-//        List<Image> images = new ArrayList<Image>();
-//        for (com.staples.mobile.common.access.easyopen.model.browse.Image img : product.getImage()) {
-//            Image image = new Image();
-//            image.setUrl(""+img.getUrl());
-//            images.add(image);
-//        }
-//        this.product.setImage(images);
-//    }
 
     public String getDescription() {
         return product.getProductName();
