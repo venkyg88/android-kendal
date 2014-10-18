@@ -13,18 +13,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartAdapter;
+import com.staples.mobile.cfa.cart.CartContainer;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
+import com.staples.mobile.common.access.Access;
 
 public class MainActivity extends Activity
-                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
+                          implements View.OnClickListener, AdapterView.OnItemClickListener, Access.OnLoginCompleteListener {
     private static final String TAG = "MainActivity";
 
     private static final int SURRENDER_TIMEOUT = 5000;
@@ -82,9 +83,15 @@ public class MainActivity extends Activity
         prepareMainScreen(freshStart);
 
         LoginHelper loginHelper = new LoginHelper(this);
-        loginHelper.setOnLoginCompleteListener(this);
-        loginHelper.getRegisteredUserTokens();
-        //loginHelper.getGuestTokens();
+        loginHelper.registerLoginCompleteListener(this);
+        //loginHelper.getRegisteredUserTokens();
+        loginHelper.getGuestTokens();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        new LoginHelper(this).unregisterLoginCompleteListener(this);
     }
 
     public void showMainScreen() {
@@ -131,8 +138,9 @@ public class MainActivity extends Activity
         topper.findViewById(R.id.action_rewards).setOnClickListener(this);
 
         // Initialize right drawer cart listview
-        ProgressBar cartProgressBar = (ProgressBar)rightDrawer.findViewById(R.id.cart_progress_bar);
-        cartAdapter = new CartAdapter(this, R.layout.cart_item, cartProgressBar);
+        CartContainer cartContainer = (CartContainer)rightDrawer.findViewById(R.id.right_drawer_content);
+        cartContainer.setCartProgressOverlay(rightDrawer.findViewById(R.id.cart_progress_overlay));
+        cartAdapter = new CartAdapter(this, R.layout.cart_item, cartContainer.getProgressIndicator());
         cartAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
@@ -140,9 +148,8 @@ public class MainActivity extends Activity
                 setCartItemCount(cartAdapter.getTotalCount());
             }
         });
-//        cartAdapter.fill();  // can't fill cart until login process completes (asynchronous)
         this.setCartItemCount(0); // initialize count to zero until we're able to fill the cart
-        ((ListView) rightDrawer.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
+        ((ListView)rightDrawer.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
 
         // Fresh start?
         if (freshStart) {
@@ -156,8 +163,8 @@ public class MainActivity extends Activity
     }
 
     @Override
-    public void onLoginComplete(boolean success, String errMsg) {
-        if (success) {
+    public void onLoginComplete(boolean guestLevel) {
+        if (!guestLevel) {
             // load cart drawer (requires successful login)
             cartAdapter.fill();
         }

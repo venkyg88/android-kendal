@@ -8,6 +8,8 @@ import com.staples.mobile.common.access.lms.api.LmsApi;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import retrofit.RequestInterceptor;
@@ -17,6 +19,11 @@ import retrofit.client.OkClient;
 import retrofit.converter.JacksonConverter;
 
 public class Access {
+
+    public interface OnLoginCompleteListener {
+        public void onLoginComplete(boolean guestLevel);
+    }
+
     public static final String TAG = "Access";
 
     private static final RestAdapter.LogLevel LOGLEVEL = RestAdapter.LogLevel.BASIC;
@@ -35,8 +42,11 @@ public class Access {
     private LmsApi lmsApi;
     private LmsApi mockLmsApi;
 
+    private boolean guestLogin;
     private String token1;
     private String token2;
+    private List<OnLoginCompleteListener> loginCompleteListeners;
+
 
     public static Access getInstance() {
         synchronized(Access.class) {
@@ -54,6 +64,7 @@ public class Access {
         okClient = new OkClient(okHttpClient);
 
         converter = new JacksonConverter();
+        loginCompleteListeners = new ArrayList<OnLoginCompleteListener>();
     }
 
     // Interceptors for standard HTTP headers
@@ -84,12 +95,43 @@ public class Access {
         }
     }
 
-    public void setTokens(String wcToken, String wcTrustedToken) {
+    public void setTokens(String wcToken, String wcTrustedToken, boolean guestLogin) {
         token1 = wcToken;
         token2 = wcTrustedToken;
+        if (token1 != null) {
+            this.guestLogin = guestLogin;
+            if (loginCompleteListeners != null) {
+                for (OnLoginCompleteListener listener : loginCompleteListeners) {
+                    listener.onLoginComplete(guestLogin);
+                }
+            }
+        }
     }
 
-    // EasyOpen API
+    /** returns true if current login level is only guest */
+    public boolean isGuestLogin() {
+        return guestLogin;
+    }
+
+    public void setGuestLogin(boolean guestLogin) {
+        this.guestLogin = guestLogin;
+    }
+
+    /** adds listener to be notified following successful login */
+    public void registerLoginCompleteListener(OnLoginCompleteListener loginCompleteListener) {
+        if (!loginCompleteListeners.contains(loginCompleteListener)) {
+            loginCompleteListeners.add(loginCompleteListener);
+        }
+    }
+
+    /** removes listener */
+    public void unregisterLoginCompleteListener(OnLoginCompleteListener loginCompleteListener) {
+        if (loginCompleteListeners.contains(loginCompleteListener)) {
+            loginCompleteListeners.remove(loginCompleteListener);
+        }
+    }
+
+// EasyOpen API
 
     public EasyOpenApi getEasyOpenApi(boolean secure) {
         // Check for existing
