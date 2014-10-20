@@ -25,14 +25,15 @@ import com.staples.mobile.R;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
-import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
+import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
 import com.staples.mobile.common.access.easyopen.model.cart.CartRequestBody;
+import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
 import com.staples.mobile.common.access.easyopen.model.cart.ItemsAdded;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItemId;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
+import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,6 +159,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         cartProgressBar.setVisibility(View.VISIBLE);
 
+
         // update quantity of item in cart
         easyOpenApi.addToCart(createCartRequestBody(sku, 1), RECOMMENDATION, STORE_ID,
                 LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, addUpdateCartListener);
@@ -175,18 +177,23 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                 LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, addUpdateCartListener);
     }
 
-    private CartRequestBody createCartRequestBody(CartItem cartItem, int newQty) {
+    //for updating
+    private TypedJsonString createCartRequestBody(CartItem cartItem, int newQty) {
         OrderItem orderItem = new OrderItem();
         orderItem.setOrderItemId(cartItem.getOrderItemId());
         orderItem.setPartNumber_0(cartItem.getSku());
         orderItem.setQuantity_0(newQty);
         List<OrderItem> orderItems = new ArrayList<OrderItem>();
         orderItems.add(orderItem);
-        CartRequestBody body = new CartRequestBody();
-        body.setOrderItem(orderItems);
-        return body;
+        //TODO add more cart items as required
+        String json = CartBodyGenerator.generateUpdateBody(orderItems);
+//        CartRequestBody body = new CartRequestBody();
+//        body.setOrderItem(orderItems);
+//        return body;
+        return new TypedJsonString(json);
     }
 
+    //for adding
     private CartRequestBody createCartRequestBody(String sku, int qty) {
         OrderItem addOrderItem = new OrderItem();
         addOrderItem.setPartNumber_0(sku);
