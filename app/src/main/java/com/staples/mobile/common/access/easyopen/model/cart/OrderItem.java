@@ -4,18 +4,25 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 public class OrderItem {
 //Since this class works for both add and update bodies, this needs to be specified so that
-//when orderItemId is null for add queries, it is ignored by Jackson
+//when orderItemId_0 is null for add queries, it is ignored by Jackson
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String orderItemId;
+    private String orderItemId_0;
     private String partNumber_0;
     private int quantity_0;
 
-    public String getOrderItemId() {
-        return orderItemId;
+    public OrderItem(String orderItemId, String partNumber, int quantity) {
+        orderItemId_0 = orderItemId;
+        partNumber_0 = partNumber;
+        quantity_0 = quantity;
     }
 
-    public void setOrderItemId(String orderItemId) {
-        this.orderItemId = orderItemId;
+
+    public String getOrderItemId_0() {
+        return orderItemId_0;
+    }
+
+    public void setOrderItemId_0(String orderItemId_0) {
+        this.orderItemId_0 = orderItemId_0;
     }
 
     public String getPartNumber_0() {

@@ -7,6 +7,7 @@ package com.staples.mobile.cfa.cart;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +44,11 @@ import retrofit.client.Response;
 
 public class CartAdapter extends ArrayAdapter<CartItem> {
 
+    public interface ProgressIndicator {
+        public void showProgressIndicator();
+        public void hideProgressIndicator();
+    }
+
     private static final String TAG = "CartAdapter";
 
     private static final String RECOMMENDATION = "v1";
@@ -60,21 +65,26 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     private Activity activity;
     private LayoutInflater inflater;
     private int cartItemLayoutResId;
-    ProgressBar cartProgressBar;
+    ProgressIndicator progressIndicator;
 
     private Drawable noPhoto;
 
-    private ViewCartListener viewCartListener = new ViewCartListener();
-    private AddUpdateCartListener addUpdateCartListener = new AddUpdateCartListener();
+    // api listeners
+    private ViewCartListener viewCartListener;
+    private AddUpdateCartListener addUpdateCartListener;
 
 
-    public CartAdapter(Activity activity, int cartItemLayoutResId, ProgressBar cartProgressBar) {
+    public CartAdapter(Activity activity, int cartItemLayoutResId, ProgressIndicator progressIndicator) {
         super(activity, cartItemLayoutResId);
         this.activity = activity;
         this.cartItemLayoutResId = cartItemLayoutResId;
-        this.cartProgressBar = cartProgressBar;
+        this.progressIndicator = progressIndicator;
         noPhoto = activity.getResources().getDrawable(R.drawable.no_photo);
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        // create api listeners
+        viewCartListener = new ViewCartListener();
+        addUpdateCartListener = new AddUpdateCartListener();
     }
 
 
@@ -146,7 +156,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
     public void fill() {
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        cartProgressBar.setVisibility(View.VISIBLE);
+        progressIndicator.showProgressIndicator();
 
         // query for items in cart
         easyOpenApi.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, viewCartListener);
@@ -157,7 +167,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     public void addToCart(String sku) {
 
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        cartProgressBar.setVisibility(View.VISIBLE);
+        progressIndicator.showProgressIndicator();
 
 
         // update quantity of item in cart
@@ -170,7 +180,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         cartItem.setProposedQty(newQty); // record the value we're trying to set, update the model upon success
 
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        cartProgressBar.setVisibility(View.VISIBLE);
+        progressIndicator.showProgressIndicator();
 
         // update quantity of item in cart
         easyOpenApi.updateCart(createCartRequestBody(cartItem, newQty), RECOMMENDATION, STORE_ID,
@@ -178,11 +188,9 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     }
 
     //for updating
+
     private TypedJsonString createCartRequestBody(CartItem cartItem, int newQty) {
-        OrderItem orderItem = new OrderItem();
-        orderItem.setOrderItemId(cartItem.getOrderItemId());
-        orderItem.setPartNumber_0(cartItem.getSku());
-        orderItem.setQuantity_0(newQty);
+        OrderItem orderItem = new OrderItem(cartItem.getOrderItemId(), cartItem.getSku(), newQty);
         List<OrderItem> orderItems = new ArrayList<OrderItem>();
         orderItems.add(orderItem);
         //TODO add more cart items as required
@@ -195,9 +203,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
     //for adding
     private CartRequestBody createCartRequestBody(String sku, int qty) {
-        OrderItem addOrderItem = new OrderItem();
-        addOrderItem.setPartNumber_0(sku);
-        addOrderItem.setQuantity_0(qty);
+        OrderItem addOrderItem = new OrderItem(null, sku, qty);
         List<OrderItem> addOrderItems = new ArrayList<OrderItem>();
         addOrderItems.add(addOrderItem);
         CartRequestBody body = new CartRequestBody();
@@ -221,33 +227,28 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void success(CartContents cartContents, Response response) {
-            cartProgressBar.setVisibility(View.GONE);
+            progressIndicator.hideProgressIndicator();
 
             // getting data from cartContent request
             List<Cart> cartCollection = cartContents.getCart();
-            if (cartCollection == null || cartCollection.size() == 0) {
-                notifyDataSetChanged();
-                return;
-            }
-            Cart cart = cartCollection.get(0);
-            List<Product> products = cart.getProduct();
-            if (products != null) {
-                if (getCount() > 0) {
-                    clear();
+            if (cartCollection != null && cartCollection.size() > 0) {
+                Cart cart = cartCollection.get(0);
+                List<Product> products = cart.getProduct();
+                if (products != null) {
+                    if (getCount() > 0) {
+                        clear();
+                    }
+                    for (Product product : products) {
+                        add(new CartItem(product));
+                    }
                 }
-                for (Product product : products) {
-                    add(new CartItem(product));
-                }
-                notifyDataSetChanged();
-                return;
             }
-
             notifyDataSetChanged();
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            cartProgressBar.setVisibility(View.GONE);
+            progressIndicator.hideProgressIndicator();
             String msg = "Unable to obtain cart information: " + retrofitError.getMessage();
             Log.d(TAG, msg);
             Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
@@ -263,27 +264,50 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void success(CartUpdate cartUpdate, Response response) {
-            cartProgressBar.setVisibility(View.GONE);
+            progressIndicator.hideProgressIndicator();
 
-            // TODO: find a reliable way to distinguish between responses to add and update
-            if ("Created".equals(response.getReason())) {
-                fill();
-            } else {
-                // determine which items were updated and fix their qty
-                List<ItemsAdded> itemsAdded = cartUpdate.getItemsAdded();
-                for (int i = 0; i < getCount(); i++) {
-                    CartItem cartItem = getItem(i);
-                    if (isCartItemChanged(cartItem.getOrderItemId(), itemsAdded)) {
-                        cartItem.setQuantity(cartItem.getProposedQty());
-                    }
-                }
-                notifyDataSetChanged();
+            // if message, display to user (e.g. out-of-stock message)
+            if (!TextUtils.isEmpty(cartUpdate.getMessage())) {
+                Toast.makeText(activity, cartUpdate.getMessage(), Toast.LENGTH_LONG).show();
             }
+
+            // if no items added, no need to update display
+            if (cartUpdate.getItemsAdded().size() == 0) {
+                return;
+            }
+
+            // Note: there's no way i can see to distinguish between responses to add and update,
+            // and there could be a race condition. I'm using the proposedQty variable to flag that
+            // an update was requested. If an add response returns first and matches an existing item
+            // identifier, then it could resemble an update. However, I am treating it as an update
+            // regardless, because when the real update response comes, it will then look like an
+            // add which will result in a full refresh of the cart.
+
+            // determine which if any items were updated and fix their qty without refreshing the cart
+            int updatedItems = 0;
+            List<ItemsAdded> itemsAdded = cartUpdate.getItemsAdded();
+            for (int i = 0; i < getCount(); i++) {
+                CartItem cartItem = getItem(i);
+                if (cartItem.getProposedQty() != -1 &&
+                        isCartItemChanged(cartItem.getOrderItemId(), itemsAdded)) {
+                    cartItem.setQuantity(cartItem.getProposedQty());
+                    cartItem.setProposedQty(-1);
+                    updatedItems++;
+                }
+            }
+
+            // if no items updated or a mismatch in the number, then it was probably an add action,
+            // so do a full refresh of the cart (see note above)
+            if (itemsAdded.size() > updatedItems) {
+                fill();
+            }
+
+            notifyDataSetChanged();
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            cartProgressBar.setVisibility(View.GONE);
+            progressIndicator.hideProgressIndicator();
             String msg = "Failed Cart Update: " + retrofitError.getMessage();
             Log.d(TAG, msg);
             Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
