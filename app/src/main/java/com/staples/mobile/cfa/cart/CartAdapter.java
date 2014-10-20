@@ -25,14 +25,14 @@ import com.staples.mobile.R;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
 import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
-import com.staples.mobile.common.access.easyopen.model.cart.Cart;
-import com.staples.mobile.common.access.easyopen.model.cart.CartRequestBody;
 import com.staples.mobile.common.access.easyopen.model.cart.ItemsAdded;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItemId;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
+import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -168,6 +168,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         progressIndicator.showProgressIndicator();
 
+
         // update quantity of item in cart
         easyOpenApi.addToCart(createCartRequestBody(sku, qty), RECOMMENDATION, STORE_ID,
                 LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, addUpdateCartListener);
@@ -185,22 +186,31 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                 LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, addUpdateCartListener);
     }
 
-    private CartRequestBody createCartRequestBody(CartItem cartItem, int newQty) {
+    //for updating
+
+    private TypedJsonString createCartRequestBody(CartItem cartItem, int newQty) {
         OrderItem orderItem = new OrderItem(cartItem.getOrderItemId(), cartItem.getSku(), newQty);
         List<OrderItem> orderItems = new ArrayList<OrderItem>();
         orderItems.add(orderItem);
-        CartRequestBody body = new CartRequestBody();
-        body.setOrderItem(orderItems);
-        return body;
+        //TODO add more cart items as required
+        String json = CartBodyGenerator.generateUpdateBody(orderItems);
+//        CartRequestBody body = new CartRequestBody();
+//        body.setOrderItem(orderItems);
+//        return body;
+        return new TypedJsonString(json);
     }
 
-    private CartRequestBody createCartRequestBody(String sku, int qty) {
+    //for adding
+    private TypedJsonString createCartRequestBody(String sku, int qty) {
         OrderItem addOrderItem = new OrderItem(null, sku, qty);
         List<OrderItem> addOrderItems = new ArrayList<OrderItem>();
         addOrderItems.add(addOrderItem);
-        CartRequestBody body = new CartRequestBody();
-        body.setOrderItem(addOrderItems);
-        return body;
+        //TODO add more cart items as required
+        String json = CartBodyGenerator.generateAddBody(addOrderItems);
+//        CartRequestBody body = new CartRequestBody();
+//        body.setOrderItem(addOrderItems);
+//        return body;
+        return new TypedJsonString(json);
     }
 
     private void hideSoftKeyboard(EditText editText) {
