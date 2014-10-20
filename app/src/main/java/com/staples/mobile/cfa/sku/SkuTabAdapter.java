@@ -6,12 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-import com.staples.mobile.R;
-
 import java.util.ArrayList;
 
-public class SkuPageAdapter extends PagerAdapter {
+public class SkuTabAdapter extends PagerAdapter {
     private static final String TAG = "SkuPageAdapter";
 
     private Activity activity;
@@ -22,7 +19,7 @@ public class SkuPageAdapter extends PagerAdapter {
         String title;
     }
 
-    public SkuPageAdapter(Activity activity) {
+    public SkuTabAdapter(Activity activity) {
         super();
         this.activity = activity;
         array = new ArrayList<SkuPageItem>();
@@ -44,6 +41,8 @@ public class SkuPageAdapter extends PagerAdapter {
         SkuPageItem item = array.get(position);
 
         item.view = new TextView(activity);
+        item.view.setPadding(20, 20, 20, 20);
+        item.view.setTextSize(50);
         item.view.setText(item.title);
 
         container.addView(item.view);
