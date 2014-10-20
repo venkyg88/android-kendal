@@ -1,6 +1,5 @@
 package com.staples.mobile.cfa.sku;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.res.Resources;
@@ -20,11 +19,7 @@ import com.staples.mobile.cfa.widget.PagerStripe;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.easyopen.model.sku.BulletDescription;
-import com.staples.mobile.common.access.easyopen.model.sku.Image;
-import com.staples.mobile.common.access.easyopen.model.sku.Pricing;
-import com.staples.mobile.common.access.easyopen.model.sku.Product;
-import com.staples.mobile.common.access.easyopen.model.sku.Sku;
+import com.staples.mobile.common.access.easyopen.model.sku.*;
 
 import java.util.List;
 
@@ -61,6 +56,7 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
     // Tab ViewPager
     private TabHost details;
     private ViewPager tabPager;
+    private SkuTabAdapter tabAdapter;
 
     private boolean shifted;
 
@@ -73,7 +69,7 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
             identifier = args.getString("identifier");
         }
 
-        View frame = inflater.inflate(R.layout.sku_frame, container, false);
+        View frame = inflater.inflate(R.layout.sku_summary, container, false);
         wrapper = (DataWrapper) frame.findViewById(R.id.wrapper);
         Resources res = getActivity().getResources();
 
@@ -86,7 +82,7 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
 
         // Init details (ViewPager)
         tabPager = (ViewPager) frame.findViewById(R.id.pager);
-        SkuTabAdapter tabAdapter = new SkuTabAdapter(getActivity());
+        tabAdapter = new SkuTabAdapter(getActivity());
         tabPager.setAdapter(tabAdapter);
 
         // Fill detail (View Pager)
@@ -94,8 +90,6 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
         tabAdapter.add(res.getString(R.string.specs));
         tabAdapter.add(res.getString(R.string.reviews));
         tabAdapter.notifyDataSetChanged();
-
-        tabPager.setOnPageChangeListener(this);
 
         // Init details (TabHost)
         details = (TabHost) frame.findViewById(R.id.details);
@@ -107,12 +101,13 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
         addTab(dummy, res, R.string.specs, SPECIFICATIONS);
         addTab(dummy, res, R.string.reviews, REVIEWS);
 
-        details.setOnTabChangedListener(this);
-
         // Set initial visibility
         wrapper.setState(DataWrapper.State.LOADING);
         details.setVisibility(View.GONE);
 
+        // Set listeners
+        details.setOnTabChangedListener(this);
+        tabPager.setOnPageChangeListener(this);
         frame.findViewById(R.id.description_detail).setOnClickListener(this);
         frame.findViewById(R.id.specification_detail).setOnClickListener(this);
         frame.findViewById(R.id.review_detail).setOnClickListener(this);
@@ -172,7 +167,7 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
         return(sb.toString());
     }
 
-    public void addBullets(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
+    public static void addBullets(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
         List<BulletDescription> bullets = product.getBulletDescription();
         if (bullets==null) return;
         for(BulletDescription bullet : bullets) {
@@ -192,6 +187,7 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
         Product[] products = sku.getProduct();
         if (products!=null) {
             Product product = products[0];
+            tabAdapter.setProduct(product);
             View frame = getView();
 
             // Add images
@@ -288,7 +284,7 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
                 break;
             case R.id.add_to_cart:
                 MainActivity activity = (MainActivity) getActivity();
-                activity.addItemToCart(identifier);
+                activity.addItemToCart(identifier, 1);
                 break;
         }
     }
