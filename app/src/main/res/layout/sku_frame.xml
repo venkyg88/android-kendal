@@ -39,35 +39,84 @@
                 android:id="@+id/pricing"
                 style="@style/LargePriceSticker"/>
             <!-- Description -->
-            <TextView
-                style="@style/SkuSummaryHeader"
-                android:text="@string/product_description"/>
             <LinearLayout
-                android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:id="@+id/description"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView
+                        style="@style/SkuSummaryHeader"
+                        android:text="@string/description"/>
+                </LinearLayout>
+                <ImageView
+                    android:id="@+id/description_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/more_arrow"/>
             </LinearLayout>
             <!-- Specifications -->
-            <TextView
-                style="@style/SkuSummaryHeader"
-                android:text="@string/product_specs"/>
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="4dp"
-                android:textSize="16sp"
-                android:text="@string/lorem_ipsum"/>
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView
+                        style="@style/SkuSummaryHeader"
+                        android:text="@string/specifications"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="4dp"
+                        android:textSize="16sp"
+                        android:text="@string/lorem_ipsum"/>
+                </LinearLayout>
+                <ImageView
+                    android:id="@+id/specification_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/more_arrow"/>
+            </LinearLayout>
             <!-- Customer reviews -->
-            <TextView
-                style="@style/SkuSummaryHeader"
-                android:text="@string/customer_reviews"/>
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="4dp"
-                android:textSize="16sp"
-                android:text="@string/lorem_ipsum"/>
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView
+                        style="@style/SkuSummaryHeader"
+                        android:text="@string/reviews"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="4dp"
+                        android:textSize="16sp"
+                        android:text="@string/lorem_ipsum"/>
+                </LinearLayout>
+                <ImageView
+                    android:id="@+id/review_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/more_arrow"/>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
@@ -92,16 +141,28 @@
         android:text="@string/empty"/>
 
     <!-- Detail page -->
-    <android.support.v4.view.ViewPager
+    <TabHost
         android:id="@+id/details"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#ffcccc">
-        <android.support.v4.view.PagerTabStrip
+        android:layout_height="match_parent">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"/>
-    </android.support.v4.view.ViewPager>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
+            <android.support.v4.view.ViewPager
+                android:id="@+id/pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+    </TabHost>
 
     <!-- Add to cart footer -->
     <Button

@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
+        android:padding="12dp"
         android:src="@drawable/splash"
         android:background="#ffffff"/>
     <!-- Main screen -->
