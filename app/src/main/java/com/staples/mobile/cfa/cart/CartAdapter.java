@@ -163,14 +163,14 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         notifyDataSetChanged();
     }
 
-    public void addToCart(String sku) {
+    public void addToCart(String sku, int qty) {
 
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         progressIndicator.showProgressIndicator();
 
 
         // update quantity of item in cart
-        easyOpenApi.addToCart(createCartRequestBody(sku, 1), RECOMMENDATION, STORE_ID,
+        easyOpenApi.addToCart(createCartRequestBody(sku, qty), RECOMMENDATION, STORE_ID,
                 LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, addUpdateCartListener);
     }
 
