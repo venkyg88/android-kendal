@@ -224,7 +224,12 @@ public class MainActivity extends Activity
 
     /** adds an item to the cart */
     public void addItemToCart(String partNumber) {
-        cartAdapter.addToCart(partNumber);
+        addItemToCart(partNumber, 1);
+    }
+
+    /** adds an item to the cart */
+    public void addItemToCart(String partNumber, int qty) {
+        cartAdapter.addToCart(partNumber, qty);
         drawerLayout.openDrawer(rightDrawer);
     }
 
