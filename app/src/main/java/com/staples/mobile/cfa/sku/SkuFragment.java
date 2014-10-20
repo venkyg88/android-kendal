@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.sku;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.staples.mobile.R;
@@ -30,8 +32,12 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClickListener {
+public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener ,View.OnClickListener {
     private static final String TAG = "SkuFragment";
+
+    private static final String DESCRIPTION =" Description";
+    private static final String SPECIFICATIONS =" Specifications";
+    private static final String REVIEWS = "Reviews";
 
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
@@ -45,11 +51,17 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
     private static final int MAXFETCH = 50;
 
     private DataWrapper wrapper;
+    private String identifier;
+
+    // Image ViewPager
+    private ViewPager imagePager;
     private SkuImageAdapter imageAdapter;
     private PagerStripe stripe;
-    private ViewPager details;
 
-    private String identifier;
+    // Tab ViewPager
+    private TabHost details;
+    private ViewPager tabPager;
+
     private boolean shifted;
 
     @Override
@@ -63,38 +75,72 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
 
         View frame = inflater.inflate(R.layout.sku_frame, container, false);
         wrapper = (DataWrapper) frame.findViewById(R.id.wrapper);
+        Resources res = getActivity().getResources();
 
         // Init image pager
-        ViewPager imagePager = (ViewPager) frame.findViewById(R.id.images);
+        imagePager = (ViewPager) frame.findViewById(R.id.images);
         imageAdapter = new SkuImageAdapter(getActivity());
         imagePager.setAdapter(imageAdapter);
         stripe = (PagerStripe) frame.findViewById(R.id.stripe);
         imagePager.setOnPageChangeListener(stripe);
 
-        // Init detail pager
-        details = (ViewPager) frame.findViewById(R.id.details);
-        SkuPageAdapter pageAdapter = new SkuPageAdapter(getActivity());
-        details.setAdapter(pageAdapter);
+        // Init details (ViewPager)
+        tabPager = (ViewPager) frame.findViewById(R.id.pager);
+        SkuTabAdapter tabAdapter = new SkuTabAdapter(getActivity());
+        tabPager.setAdapter(tabAdapter);
 
-        // Fill detail pager
-        Resources res = getActivity().getResources();
-        pageAdapter.add(res.getString(R.string.product_description));
-        pageAdapter.add(res.getString(R.string.product_specs));
-        pageAdapter.add(res.getString(R.string.customer_reviews));
-        pageAdapter.add(res.getString(R.string.accessories));
-        pageAdapter.notifyDataSetChanged();
+        // Fill detail (View Pager)
+        tabAdapter.add(res.getString(R.string.description));
+        tabAdapter.add(res.getString(R.string.specs));
+        tabAdapter.add(res.getString(R.string.reviews));
+        tabAdapter.notifyDataSetChanged();
+
+        tabPager.setOnPageChangeListener(this);
+
+        // Init details (TabHost)
+        details = (TabHost) frame.findViewById(R.id.details);
+        details.setup();
+
+        // Fill details (TabHost)
+        DummyFactory dummy = new DummyFactory(getActivity());
+        addTab(dummy, res, R.string.description, DESCRIPTION);
+        addTab(dummy, res, R.string.specs, SPECIFICATIONS);
+        addTab(dummy, res, R.string.reviews, REVIEWS);
+
+        details.setOnTabChangedListener(this);
 
         // Set initial visibility
         wrapper.setState(DataWrapper.State.LOADING);
         details.setVisibility(View.GONE);
 
-        frame.findViewById(R.id.pricing).setOnClickListener(this); // TODO Hacked for test
+        frame.findViewById(R.id.description_detail).setOnClickListener(this);
+        frame.findViewById(R.id.specification_detail).setOnClickListener(this);
+        frame.findViewById(R.id.review_detail).setOnClickListener(this);
         frame.findViewById(R.id.add_to_cart).setOnClickListener(this);
 
         Access.getInstance().getEasyOpenApi(false).getSkuInfo(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
                                                               ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
 
         return (frame);
+    }
+
+    public static class DummyFactory implements TabHost.TabContentFactory {
+        private View view;
+
+        public DummyFactory(Context context) {
+            view = new View(context);
+        }
+
+        public View createTabContent(String tag) {
+            return(view);
+        }
+    }
+
+    private void addTab(TabHost.TabContentFactory dummy, Resources res, int resid, String tag) {
+        TabHost.TabSpec tab = details.newTabSpec(tag);
+        tab.setIndicator(res.getString(resid));
+        tab.setContent(dummy);
+        details.addTab(tab);
     }
 
     private String formatNumbers(Product product) {
@@ -104,13 +150,19 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
         String modelNumber = product.getManufacturerPartNumber();
         if (skuNumber==null && modelNumber==null) return(null);
 
+        // Skip redundant numbers
+        if (skuNumber!=null && modelNumber!=null && skuNumber.equals(modelNumber))
+            modelNumber = null;
+
         Resources res = getActivity().getResources();
         StringBuilder sb = new StringBuilder();
+
         if (skuNumber!=null) {
             sb.append(res.getString(R.string.item));
             sb.append(":\u00a0");
             sb.append(skuNumber);
         }
+
         if (modelNumber!=null) {
             if (sb.length()>0) sb.append("   ");
             sb.append(res.getString(R.string.model));
@@ -118,6 +170,21 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
             sb.append(modelNumber);
         }
         return(sb.toString());
+    }
+
+    public void addBullets(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
+        List<BulletDescription> bullets = product.getBulletDescription();
+        if (bullets==null) return;
+        for(BulletDescription bullet : bullets) {
+            if (limit<=0) return;
+            String text = bullet.getText();
+            if (text != null) {
+                View item = inflater.inflate(R.layout.bullet_item, parent, false);
+                ((TextView) item.findViewById(R.id.bullet)).setText(text);
+                parent.addView(item);
+                limit --;
+            }
+        }
     }
 
     @Override
@@ -135,8 +202,15 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
                     if (url!=null) imageAdapter.add(url);
                 }
             }
-            stripe.setCount(imageAdapter.getCount());
-            imageAdapter.notifyDataSetChanged();
+
+            // Handle 0, 1, many images
+            int n = imageAdapter.getCount();
+            if (n==0) imagePager.setVisibility(View.GONE);
+            else {
+                if (n>1) stripe.setCount(imageAdapter.getCount());
+                else stripe.setVisibility(View.GONE);
+                imageAdapter.notifyDataSetChanged();
+            }
 
             // Add info
             ((TextView) frame.findViewById(R.id.title)).setText(product.getProductName());
@@ -156,20 +230,8 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
             }
 
             // Add bullets
-            List<BulletDescription> bullets = product.getBulletDescription();
-            if (bullets!=null) {
-                Activity activity = getActivity();
-                LayoutInflater inflater = activity.getLayoutInflater();
-                ViewGroup block = (ViewGroup) frame.findViewById(R.id.description);
-                for(BulletDescription bullet : bullets) {
-                    String text = bullet.getText();
-                    if (text!=null) {
-                        View group = inflater.inflate(R.layout.bullet_item, block, false);
-                        ((TextView) group.findViewById(R.id.bullet)).setText(text);
-                        block.addView(group);
-                    }
-                }
-            }
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            addBullets(inflater, (ViewGroup) frame.findViewById(R.id.description), product, 3);
 
             // Ready to display
             wrapper.setState(DataWrapper.State.DONE);
@@ -182,12 +244,47 @@ public class SkuFragment extends Fragment implements Callback<Sku>, View.OnClick
         wrapper.setState(DataWrapper.State.EMPTY);
     }
 
+    public void onTabChanged(String tag) {
+        int index;
+
+        // Get index
+        if (tag.equals(DESCRIPTION)) index = 0;
+        else if (tag.equals(SPECIFICATIONS)) index = 1;
+        else if (tag.equals(REVIEWS)) index = 2;
+        else throw(new RuntimeException("Unknown tag from TabHost"));
+
+        Log.d(TAG, "onTabChanged "+index);
+        tabPager.setCurrentItem(index);
+    }
+
+    public void onPageScrollStateChanged(int state) {
+    }
+
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    }
+
+    public void onPageSelected(int position) {
+        Log.d(TAG, "onPageSelected "+position);
+        details.setCurrentTab(position);
+    }
+
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.pricing:
+            case R.id.description_detail:
                 wrapper.setState(DataWrapper.State.GONE);
                 details.setVisibility(View.VISIBLE);
+                tabPager.setCurrentItem(0);
+                break;
+            case R.id.specification_detail:
+                wrapper.setState(DataWrapper.State.GONE);
+                details.setVisibility(View.VISIBLE);
+                tabPager.setCurrentItem(1);
+                break;
+            case R.id.review_detail:
+                wrapper.setState(DataWrapper.State.GONE);
+                details.setVisibility(View.VISIBLE);
+                tabPager.setCurrentItem(2);
                 break;
             case R.id.add_to_cart:
                 MainActivity activity = (MainActivity) getActivity();
