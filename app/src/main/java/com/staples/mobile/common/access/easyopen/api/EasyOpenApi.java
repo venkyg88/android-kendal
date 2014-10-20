@@ -2,7 +2,6 @@ package com.staples.mobile.common.access.easyopen.api;
 
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
-import com.staples.mobile.common.access.easyopen.model.cart.CartRequestBody;
 import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
 import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
@@ -113,7 +112,7 @@ public interface EasyOpenApi {
     //http://api.staples.com/v1/10001/cart?locale=en_US&zipCode=05251&catalogId=10051&client_id={client-id}
     @POST("/{version}/{storeId}/cart")
     void addToCart(
-            @Body CartRequestBody body,
+            @Body TypedJsonString body,
             @EncodedPath("version") String version,
             @EncodedPath("storeId") String storeId,
             @Query("locale") String locale,

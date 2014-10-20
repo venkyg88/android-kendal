@@ -27,7 +27,6 @@ import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
-import com.staples.mobile.common.access.easyopen.model.cart.CartRequestBody;
 import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
 import com.staples.mobile.common.access.easyopen.model.cart.ItemsAdded;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
@@ -202,13 +201,16 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     }
 
     //for adding
-    private CartRequestBody createCartRequestBody(String sku, int qty) {
+    private TypedJsonString createCartRequestBody(String sku, int qty) {
         OrderItem addOrderItem = new OrderItem(null, sku, qty);
         List<OrderItem> addOrderItems = new ArrayList<OrderItem>();
         addOrderItems.add(addOrderItem);
-        CartRequestBody body = new CartRequestBody();
-        body.setOrderItem(addOrderItems);
-        return body;
+        //TODO add more cart items as required
+        String json = CartBodyGenerator.generateAddBody(addOrderItems);
+//        CartRequestBody body = new CartRequestBody();
+//        body.setOrderItem(addOrderItems);
+//        return body;
+        return new TypedJsonString(json);
     }
 
     private void hideSoftKeyboard(EditText editText) {
