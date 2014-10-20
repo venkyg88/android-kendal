@@ -213,21 +213,16 @@ public class MainActivity extends Activity
     }
 
 
-    /** sets item count indicator on cart icon and cart drawer title */
+    /** Sets item count indicator on cart icon and cart drawer title */
     public void setCartItemCount(int count) {
         // set text of cart icon
-        rightDrawerAction.setText(count == 0? "":String.valueOf(count));
+        rightDrawerAction.setText(count == 0 ? null : Integer.toString(count));
         // Set text of cart drawer title
-        cartTitle.setText(String.format(getResources().getString(R.string.your_cart), count,
-                count==1? "":"s"));
+        if (count==0) cartTitle.setText(getResources().getString(R.string.your_cart));
+        else cartTitle.setText(getResources().getQuantityString(R.plurals.your_cart, count, count));
     }
 
-    /** adds an item to the cart */
-    public void addItemToCart(String partNumber) {
-        addItemToCart(partNumber, 1);
-    }
-
-    /** adds an item to the cart */
+    /** Adds an item to the cart */
     public void addItemToCart(String partNumber, int qty) {
         cartAdapter.addToCart(partNumber, qty);
         drawerLayout.openDrawer(rightDrawer);

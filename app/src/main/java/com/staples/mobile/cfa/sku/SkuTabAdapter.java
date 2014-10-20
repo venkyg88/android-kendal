@@ -2,9 +2,13 @@ package com.staples.mobile.cfa.sku;
 
 import android.app.Activity;
 import android.support.v4.view.PagerAdapter;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.staples.mobile.R;
+import com.staples.mobile.common.access.easyopen.model.sku.Product;
 
 import java.util.ArrayList;
 
@@ -13,9 +17,11 @@ public class SkuTabAdapter extends PagerAdapter {
 
     private Activity activity;
     private ArrayList<SkuPageItem> array;
+    private LayoutInflater inflater;
+    private Product product;
 
     private static class SkuPageItem {
-        TextView view;
+        View view;
         String title;
     }
 
@@ -23,6 +29,11 @@ public class SkuTabAdapter extends PagerAdapter {
         super();
         this.activity = activity;
         array = new ArrayList<SkuPageItem>();
+        inflater = activity.getLayoutInflater();
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     @Override
@@ -40,10 +51,20 @@ public class SkuTabAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         SkuPageItem item = array.get(position);
 
-        item.view = new TextView(activity);
-        item.view.setPadding(20, 20, 20, 20);
-        item.view.setTextSize(50);
-        item.view.setText(item.title);
+        switch(position) {
+            case 0:
+                item.view = inflater.inflate(R.layout.sku_description, container, false);
+                ViewGroup parent = (ViewGroup) item.view.findViewById(R.id.description);
+                SkuFragment.addBullets(inflater, parent, product, 50);
+                break;
+            case 1:
+            case 2:
+                item.view = new TextView(activity);
+                item.view.setPadding(10, 10, 10, 10);
+                ((TextView) item.view).setTextSize(30);
+                ((TextView) item.view).setText(item.title);
+                break;
+        }
 
         container.addView(item.view);
         return (item);

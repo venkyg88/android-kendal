@@ -104,10 +104,12 @@ public class BadgeImageView extends ImageView {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
+        if (text != null) {
 //        canvas.drawText(text, getPaddingLeft() + textLeftOffset,
 //                getHeight() - getPaddingBottom() - textBottomOffset, textPaint);
-        canvas.drawText(text, (getWidth() - getPaddingRight()) / 2 + getPaddingLeft()/2,
-                (getHeight() - textPaint.ascent() - getPaddingBottom()) / 2 + getPaddingTop()/2, textPaint);
+            canvas.drawText(text, (getWidth() - getPaddingRight()) / 2 + getPaddingLeft() / 2,
+                    (getHeight() - textPaint.ascent() - getPaddingBottom()) / 2 + getPaddingTop() / 2, textPaint);
+        }
     }
 
 
