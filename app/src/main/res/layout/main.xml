@@ -136,7 +136,6 @@
                         android:id="@+id/checkout"
                         android:layout_width="match_parent"
                         style="@style/CartHeader"
-                        android:text="@string/your_cart"
                         android:background="#ffff00"/>
                     <ListView
                         android:id="@+id/cart_list"
