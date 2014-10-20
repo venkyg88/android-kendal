@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TabHost;
 import android.widget.TextView;
 
@@ -45,6 +46,7 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
 
     private static final int MAXFETCH = 50;
 
+    private View frame;
     private DataWrapper wrapper;
     private String identifier;
 
@@ -69,7 +71,7 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
             identifier = args.getString("identifier");
         }
 
-        View frame = inflater.inflate(R.layout.sku_summary, container, false);
+        frame = inflater.inflate(R.layout.sku_summary, container, false);
         wrapper = (DataWrapper) frame.findViewById(R.id.wrapper);
         Resources res = getActivity().getResources();
 
@@ -283,8 +285,16 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
                 tabPager.setCurrentItem(2);
                 break;
             case R.id.add_to_cart:
+                EditText edit = (EditText) frame.findViewById(R.id.quantity);
+                String text = edit.getText().toString();
+                int qty = 1;
+                if (text.length()>0) {
+                    try {
+                        qty = Integer.parseInt(text);
+                    } catch(Exception e) {}
+                }
                 MainActivity activity = (MainActivity) getActivity();
-                activity.addItemToCart(identifier, 1);
+                activity.addItemToCart(identifier, qty);
                 break;
         }
     }
