@@ -11,25 +11,20 @@ import java.util.List;
 
 public class CartGeneratorTest {
 
-    public static final String TAG = "CartGeneratorTest";
     @Test
     public void addBodyGeneratorTest(){
 
         CartBodyGenerator cbg = new CartBodyGenerator();
         List<OrderItem> testList = new ArrayList<OrderItem>();
-        OrderItem item0= new OrderItem();
-        item0.setPartNumber_0("partnumber0");
-        item0.setQuantity_0(0);
-        OrderItem item1 = new OrderItem();
-        item1.setPartNumber_0("partnumber1");
-        item1.setQuantity_0(1);
+        OrderItem item0= new OrderItem(null,"partnumber0",0);
+        OrderItem item1 = new OrderItem(null,"partnumber1",1);
         testList.add(item0);
         testList.add(item1);
         String generatedString = cbg.generateAddBody(testList);
         String expected = "{\"orderItem\":["+
-                "{\"partNumber_0\":\"partnumber0\" "+
+                "{\"partNumber_0\":\"partnumber0\",\n "+
                 "\"quantity_0\":\"0\"},"+
-                "{\"partNumber_1\":\"partnumber1\" "+
+                "{\"partNumber_1\":\"partnumber1\",\n "+
                 "\"quantity_1\":\"1\"}"+
                 "] }";
         System.out.println("Expected add body:"+expected);
@@ -45,23 +40,17 @@ public class CartGeneratorTest {
 
         CartBodyGenerator cbg = new CartBodyGenerator();
         List<OrderItem> testList = new ArrayList<OrderItem>();
-        OrderItem item1= new OrderItem();
-        item1.setOrderItemId("orderitemid0");
-        item1.setPartNumber_0("partnumber0");
-        item1.setQuantity_0(0);
-        OrderItem item2 = new OrderItem();
-        item2.setOrderItemId("orderitemid1");
-        item2.setPartNumber_0("partnumber1");
-        item2.setQuantity_0(1);
+        OrderItem item1= new OrderItem("orderitemid0","partnumber0",0);
+        OrderItem item2 = new OrderItem("orderitemid1","partnumber1",1);
         testList.add(item1);
         testList.add(item2);
         String generatedString = cbg.generateUpdateBody(testList);
         String expected = "{\"orderItem\":["+
-                "{\"orderItemId_0\":\"orderitemid0\" "+
-                "\"partNumber_0\":\"partnumber0\" "+
+                "{\"orderItemId_0\":\"orderitemid0\",\n "+
+                "\"partNumber_0\":\"partnumber0\",\n "+
                 "\"quantity_0\":\"0\"},"+
-                "{\"orderItemId_1\":\"orderitemid1\" "+
-                "\"partNumber_1\":\"partnumber1\" "+
+                "{\"orderItemId_1\":\"orderitemid1\",\n "+
+                "\"partNumber_1\":\"partnumber1\",\n "+
                 "\"quantity_1\":\"1\"}"+
                 "] }";
         System.out.println("Expected update body:"+expected);

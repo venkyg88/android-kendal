@@ -13,7 +13,7 @@ public class CartBodyGenerator {
         StringBuffer sb= new StringBuffer("{ \"orderItem\":[\n");
         int index=0;
         for(OrderItem orderItem : orderItemList){
-            sb.append("{\"partNumber_"+index+"\":\""+orderItem.getPartNumber_0()+"\" ");
+            sb.append("{\"partNumber_"+index+"\":\""+orderItem.getPartNumber_0()+"\", ");
             sb.append("\"quantity_"+index+"\":\""+orderItem.getQuantity_0()+"\" },");
             sb.append("\n");
             index++;
@@ -27,8 +27,8 @@ public class CartBodyGenerator {
         StringBuffer sb= new StringBuffer("{ \"orderItem\":[\n");
         int index=0;
         for(OrderItem orderItem : orderItemList){
-            sb.append("{\"orderItemId_"+index+"\":\""+orderItem.getOrderItemId()+"\" ");
-            sb.append("\"partNumber_"+index+"\":\""+orderItem.getPartNumber_0()+"\" ");
+            sb.append("{\"orderItemId_"+index+"\":\""+orderItem.getOrderItemId_0()+"\", ");
+            sb.append("\"partNumber_"+index+"\":\""+orderItem.getPartNumber_0()+"\", ");
             sb.append("\"quantity_"+index+"\":\""+orderItem.getQuantity_0()+"\" },");
             sb.append("\n");
             index++;
