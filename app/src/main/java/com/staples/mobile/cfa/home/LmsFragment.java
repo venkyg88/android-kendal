@@ -27,7 +27,6 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.R;
 import com.staples.mobile.common.access.lms.LmsManager;
 import com.staples.mobile.common.access.lms.LmsManager.LmsMgrCallback;
