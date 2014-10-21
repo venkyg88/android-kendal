@@ -50,11 +50,11 @@ public class ObjectModelTest implements Callback<CartContents> {
         Assert.assertNotNull("Activity should exist", activity);
     }
 
-    @Test(timeout = 10000)
+    @Test
     public void testCartCanBeViewed() throws InterruptedException {
         success = false;
         failure = false;
-        EasyOpenApi easyOpenApi = Access.getInstance().getMockEasyOpenApi(activity);
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         Log.d("TIME",""+System.currentTimeMillis());
         easyOpenApi.viewCart("v1",
                 "10001",
@@ -63,24 +63,22 @@ public class ObjectModelTest implements Callback<CartContents> {
                 "10051",
                 "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS",
                 this);
-        Log.d("TIME:", "" + System.currentTimeMillis());
-        Thread.sleep(1000);
-        Log.d("TIME:",""+System.currentTimeMillis());
-        Assert.assertTrue("Api call should have succeeded", success);
+
+        Thread.sleep(5000);
+        Robolectric.runUiThreadTasksIncludingDelayedTasks();
+
         Assert.assertFalse("Api call should not have failed", failure);
+        Assert.assertTrue("Api call should have succeeded", success);
     }
-
-
 
     public void success(CartContents cart, Response response) {
         success = true;
-
     }
 
     public void failure(RetrofitError retrofitError) {
         failure = true;
-//        System.err.println("Network error: "+retrofitError.isNetworkError());
-//        System.err.println(retrofitError.getMessage());
-//        retrofitError.printStackTrace();
+        System.err.println("Network error: "+retrofitError.isNetworkError());
+        System.err.println(retrofitError.getMessage());
+        retrofitError.printStackTrace();
     }
 }
