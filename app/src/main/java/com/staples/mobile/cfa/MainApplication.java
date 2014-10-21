@@ -22,8 +22,6 @@ public class MainApplication
 
     public static MainApplication application = null;
 
-    private LmsManager lmsManager;
-
     @Override
     public void onCreate() {
 
@@ -34,11 +32,6 @@ public class MainApplication
         Thread.setDefaultUncaughtExceptionHandler((Thread.UncaughtExceptionHandler) this);
 
         setStrictMode();
-
-        lmsManager = new LmsManager();
-
-        lmsManager.getLms(this,  // LmsMgrCallback
-                          false); // force getting from server
     }
 
     public void uncaughtException(Thread terminatedThread, Throwable causeThrowable)
