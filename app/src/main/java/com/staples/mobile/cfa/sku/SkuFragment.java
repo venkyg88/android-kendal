@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -20,7 +21,11 @@ import com.staples.mobile.cfa.widget.PagerStripe;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.easyopen.model.sku.*;
+import com.staples.mobile.common.access.easyopen.model.sku.BulletDescription;
+import com.staples.mobile.common.access.easyopen.model.sku.Image;
+import com.staples.mobile.common.access.easyopen.model.sku.Pricing;
+import com.staples.mobile.common.access.easyopen.model.sku.Product;
+import com.staples.mobile.common.access.easyopen.model.sku.Sku;
 
 import java.util.List;
 
@@ -107,6 +112,10 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
         wrapper.setState(DataWrapper.State.LOADING);
         details.setVisibility(View.GONE);
 
+        // Disable add-to-cart
+        frame.findViewById(R.id.quantity).setEnabled(false);
+        frame.findViewById(R.id.add_to_cart).setEnabled(false);
+
         // Set listeners
         details.setOnTabChangedListener(this);
         tabPager.setOnPageChangeListener(this);
@@ -184,13 +193,22 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
         }
     }
 
+    // Retrofit callbacks
+
     @Override
     public void success(Sku sku, Response response) {
-        Product[] products = sku.getProduct();
-        if (products!=null) {
-            Product product = products[0];
+        List<Product> products = sku.getProduct();
+        if (products!=null && products.size()>0) {
+            // Use the first product in the list
+            Product product = products.get(0);
             tabAdapter.setProduct(product);
-            View frame = getView();
+
+            // Enable add-to-cart if not a Sku set
+            List<Product> skuset = product.getProduct();
+            if (skuset==null) {
+                frame.findViewById(R.id.quantity).setEnabled(true);
+                frame.findViewById(R.id.add_to_cart).setEnabled(true);
+            }
 
             // Add images
             List<Image> images = product.getImage();
@@ -242,6 +260,8 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
         wrapper.setState(DataWrapper.State.EMPTY);
     }
 
+   // TabHost notifications
+
     public void onTabChanged(String tag) {
         int index;
 
@@ -255,6 +275,8 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
         tabPager.setCurrentItem(index);
     }
 
+    // ViewPager notifications
+
     public void onPageScrollStateChanged(int state) {
     }
 
@@ -264,6 +286,13 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
     public void onPageSelected(int position) {
         Log.d(TAG, "onPageSelected "+position);
         details.setCurrentTab(position);
+    }
+
+    // Detail and add-to-cart clicks
+
+    private void closeSoftKeyboard(View view) {
+        InputMethodManager manager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override
@@ -286,12 +315,13 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
                 break;
             case R.id.add_to_cart:
                 EditText edit = (EditText) frame.findViewById(R.id.quantity);
+                closeSoftKeyboard(edit);
                 String text = edit.getText().toString();
                 int qty = 1;
                 if (text.length()>0) {
                     try {
                         qty = Integer.parseInt(text);
-                    } catch(Exception e) {}
+                    } catch(NumberFormatException e) {}
                 }
                 MainActivity activity = (MainActivity) getActivity();
                 activity.addItemToCart(identifier, qty);

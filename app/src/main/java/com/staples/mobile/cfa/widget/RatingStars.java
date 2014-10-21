@@ -24,7 +24,7 @@ import com.staples.mobile.R;
  * rating is 0.0 to 5.0 but handles clipping.
  */
 public class RatingStars extends View {
-    public static final String TAG = "RatingStars";
+    private static final String TAG = "RatingStars";
 
     private static final double DELTA = Math.PI/5.0; // I love geometry
     private static final double INDENTFACTOR = 2.0/(Math.sqrt(5.0)+3.0); // 0.381966

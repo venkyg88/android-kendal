@@ -11,7 +11,7 @@ import com.staples.mobile.common.access.easyopen.model.cart.Product;
 import java.util.List;
 
 public class CartItem {
-    public static final String TAG = "CartItem";
+    private static final String TAG = "CartItem";
 
     private Product product;
     private int proposedQty;

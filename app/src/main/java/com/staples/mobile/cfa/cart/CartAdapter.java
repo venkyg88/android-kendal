@@ -25,15 +25,7 @@ import com.staples.mobile.R;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.cart.Cart;
-import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
-import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
-import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
-import com.staples.mobile.common.access.easyopen.model.cart.ItemsAdded;
-import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
-import com.staples.mobile.common.access.easyopen.model.cart.OrderItemId;
-import com.staples.mobile.common.access.easyopen.model.cart.Product;
-import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
+import com.staples.mobile.common.access.easyopen.model.cart.*;
 
 import java.util.ArrayList;
 import java.util.List;

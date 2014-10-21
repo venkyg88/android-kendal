@@ -177,6 +177,7 @@
             android:layout_gravity="center_vertical"
             android:gravity="right"
             android:inputType="number"
+            android:singleLine="true"
             android:textSize="20sp"
             android:hint="1"/>
         <Button

@@ -19,7 +19,7 @@ import com.staples.mobile.cfa.bundle.BundleAdapter;
  * Usage: setState(DataWrapper.State state)
  */
 public class DataWrapper extends LinearLayout {
-    public static final String TAG ="ListViewWrapper";
+    private static final String TAG ="DataWrapper";
 
     public enum State {
         // Used for initial loading of adapters
