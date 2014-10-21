@@ -25,8 +25,8 @@ import com.staples.mobile.R;
 public class BadgeImageView extends ImageView {
     private Paint textPaint;
     private String text;
-    private int textLeftOffset;
-    private int textBottomOffset;
+//    private int textLeftOffset;
+//    private int textBottomOffset;
 
     /**
      * Constructor.  This version is only needed if you will be instantiating
@@ -58,12 +58,13 @@ public class BadgeImageView extends ImageView {
 
     private void initView(Context context, AttributeSet attrs) {
         text = "";
-        textLeftOffset = 2;
-        textBottomOffset = 2;
+//        textLeftOffset = 2;
+//        textBottomOffset = 2;
 
         textPaint = new Paint();
         textPaint.setAntiAlias(true);
         textPaint.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
+        textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTextSize(16);
         textPaint.setColor(Color.YELLOW);
 
@@ -89,8 +90,8 @@ public class BadgeImageView extends ImageView {
             }
 
             // retrieve text offsets and apply them
-            textLeftOffset = a.getDimensionPixelOffset(R.styleable.BadgeImageView_textLeftOffset, textLeftOffset);
-            textBottomOffset = a.getDimensionPixelOffset(R.styleable.BadgeImageView_textBottomOffset, textBottomOffset);
+//            textLeftOffset = a.getDimensionPixelOffset(R.styleable.BadgeImageView_textLeftOffset, textLeftOffset);
+//            textBottomOffset = a.getDimensionPixelOffset(R.styleable.BadgeImageView_textBottomOffset, textBottomOffset);
 
             a.recycle();
         }
@@ -103,9 +104,12 @@ public class BadgeImageView extends ImageView {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
-        if (text!=null)
-            canvas.drawText(text, getPaddingLeft() + textLeftOffset,
-                            getHeight() - getPaddingBottom() - textBottomOffset, textPaint);
+        if (text != null) {
+//        canvas.drawText(text, getPaddingLeft() + textLeftOffset,
+//                getHeight() - getPaddingBottom() - textBottomOffset, textPaint);
+            canvas.drawText(text, (getWidth() - getPaddingRight()) / 2 + getPaddingLeft() / 2,
+                    (getHeight() - textPaint.ascent() - getPaddingBottom()) / 2 + getPaddingTop() / 2, textPaint);
+        }
     }
 
 
@@ -129,17 +133,17 @@ public class BadgeImageView extends ImageView {
         invalidate();
     }
 
-    /**
-     * Sets the left and bottom offset for positioning text over the image
-     * @param leftOffset offset from the left
-     * @param bottomOffset offset from the bottom
-     */
-    public void setTextOffsets(int leftOffset, int bottomOffset) {
-        textLeftOffset = leftOffset;
-        textBottomOffset = bottomOffset;
-        requestLayout();
-        invalidate();
-    }
+//    /**
+//     * Sets the left and bottom offset for positioning text over the image
+//     * @param leftOffset offset from the left
+//     * @param bottomOffset offset from the bottom
+//     */
+//    public void setTextOffsets(int leftOffset, int bottomOffset) {
+//        textLeftOffset = leftOffset;
+//        textBottomOffset = bottomOffset;
+//        requestLayout();
+//        invalidate();
+//    }
 
     /**
      * Sets the text color for the badge
