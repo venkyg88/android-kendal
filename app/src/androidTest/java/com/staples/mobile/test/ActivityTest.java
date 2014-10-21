@@ -29,7 +29,7 @@ import retrofit.client.Response;
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18, qualifiers = "port")
 public class ActivityTest implements Callback<Lms> {
-    public static final String TAG = "DrawerTest";
+    private static final String TAG = "ActivityTest";
 
     private ActivityController controller;
     private MainActivity activity;

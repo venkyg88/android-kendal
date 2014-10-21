@@ -2,15 +2,17 @@ package com.staples.mobile.common.access.easyopen.model.sku;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 public class Sku {
     @JsonProperty("Product")
-   	private Product[] product;
+    private List<Product> product;
     private boolean recordSetComplete;
     private int recordSetCount;
     private int recordSetStartNumber;
     private int recordSetTotal;
 
-    public Product[] getProduct() {
+    public List<Product> getProduct() {
         return product;
     }
 
