@@ -9,7 +9,7 @@ import android.os.Bundle;
 import com.staples.mobile.R;
 
 public class DrawerItem {
-    public static final String TAG = "DrawerItem";
+    private static final String TAG = "DrawerItem";
 
     public enum Type {
         BROWSE    (0, R.layout.drawer_fragment), // Browse button in menu

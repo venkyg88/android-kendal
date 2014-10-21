@@ -21,7 +21,7 @@ import org.robolectric.util.ActivityController;
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18, qualifiers = "port" )
 public class ActivityDeviceInfoTest {
-    public static final String TAG = "ActivityDeviceInfoTest";
+    private static final String TAG = "ActivityDeviceInfoTest";
 
     private ActivityController controller;
     private MainActivity activity;

@@ -24,7 +24,7 @@ public class Access {
         public void onLoginComplete(boolean guestLevel);
     }
 
-    public static final String TAG = "Access";
+    private static final String TAG = "Access";
 
     private static final RestAdapter.LogLevel LOGLEVEL = RestAdapter.LogLevel.BASIC;
 
