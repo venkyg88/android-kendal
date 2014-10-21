@@ -2,25 +2,34 @@ package com.staples.mobile.common.access.lms.model;
 
 import java.util.List;
 
-public class Item {
+public class Item{
    	private List<Area> area;
    	private String banner;
-    private String size;
    	private String title;
+    private String size;
 
-    public List<Area> getArea() {
-        return area;
+ 	public List<Area> getArea(){
+		return this.area;
+	}
+	public void setArea(List<Area> area){
+		this.area = area;
+	}
+ 	public String getBanner(){
+		return this.banner;
+	}
+	public void setBanner(String banner){
+		this.banner = banner;
+	}
+    public String getTitle(){
+        return this.title;
     }
-
-    public String getBanner() {
-        return banner;
+    public void setTitle(String title){
+        this.title = title;
     }
-
-    public String getSize() {
-        return size;
+    public String getSize(){
+        return this.size;
     }
-
-    public String getTitle() {
-        return title;
+    public void setSize(String size){
+        this.size = size;
     }
 }

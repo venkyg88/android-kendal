@@ -49,28 +49,42 @@ public class LmsManager implements Callback<Lms> {
 
     public LmsManager() {
 
+        Log.v(TAG, "LmsManager:LmsManager():"
+                + " this[" + this + "]"
+        );
+
         lmsApi = Access.getInstance().getLmsApi();
     }
 
     public void getLms(LmsMgrCallback lmsManagerCallback,
                        boolean conditional) {
 
+        Log.v(TAG, "LmsManager:getLms():"
+                + " lms[" + lms + "]"
+                + " conditional[" + conditional + "]"
+                + " this[" + this + "]"
+        );
+
         this.lmsManagerCallback = lmsManagerCallback;
 
         while (true) {
 
+            if (lms == null) {
+
+                getLmsWithLock();
+
+                break; // while (true)
+            }
+
             if (conditional) {
 
-                lmsReadLock.lock();
+                lockRead();
 
-                if (lms != null) {
+                if (lmsManagerCallback != null) lmsManagerCallback.onGetLmsResult(true);
 
-                    lmsReadLock.unlock();
+                unlockRead();
 
-                    if (lmsManagerCallback != null) lmsManagerCallback.onGetLmsResult(true);
-                    break; // while (true)
-                }
-                lmsReadLock.unlock();
+                break; // while (true)
             }
 
             getLmsWithLock();
@@ -89,12 +103,12 @@ public class LmsManager implements Callback<Lms> {
 
         List<Screen> screens = null;
 
-        lmsReadLock.lock();
+        lockRead();
 
         if (lms != null) {
             screens = lms.getScreen();
         }
-        lmsReadLock.unlock();
+        unlockRead();
 
         return (screens);
     }
@@ -109,7 +123,7 @@ public class LmsManager implements Callback<Lms> {
 
         this.lms = lms;
 
-        lmsWriteLock.unlock();
+        unlockWrite();
 
         if (lmsManagerCallback != null) lmsManagerCallback.onGetLmsResult(true);
     }
@@ -122,7 +136,7 @@ public class LmsManager implements Callback<Lms> {
             + " this[" + this + "]"
         );
 
-        lmsWriteLock.unlock();
+        unlockWrite();
 
         if (lmsManagerCallback != null) lmsManagerCallback.onGetLmsResult(false);
     }
@@ -134,9 +148,57 @@ public class LmsManager implements Callback<Lms> {
                 + " this[" + this + "]"
         );
 
-        lmsWriteLock.lock();
+        lockWrite();
 
         lmsApi.lms(RECOMMENDATION, STORE_ID, this);
+
+        return;
+    }
+
+    private void lockRead() {
+
+        Log.v(TAG, "LmsManager:lockRead():"
+                + " lms[" + lms + "]"
+                + " this[" + this + "]"
+        );
+
+        lmsReadLock.lock();
+
+        return;
+    }
+
+    private void unlockRead() {
+
+        Log.v(TAG, "LmsManager:unlockRead():"
+                + " lms[" + lms + "]"
+                + " this[" + this + "]"
+        );
+
+        lmsReadLock.unlock();
+
+        return;
+    }
+
+    private void lockWrite() {
+
+        Log.v(TAG, "LmsManager:lockWrite():"
+                + " lms[" + lms + "]"
+                + " this[" + this + "]"
+        );
+
+        lmsWriteLock.lock();
+
+        return;
+    }
+
+    private void unlockWrite() {
+
+        Log.v(TAG, "LmsManager:unlockWrite():"
+                + " lms[" + lms + "]"
+                + " this[" + this + "]"
+        );
+
+        lmsWriteLock.unlock();
 
         return;
     }
