@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.widget.CartItemQtyEditor;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -113,11 +114,11 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
             view = inflater.inflate(cartItemLayoutResId, parent, false);
         }
 
-        CartItem item = getItem(position);
+        CartItem cartItem = getItem(position);
 
         // Set image
         ImageView imageView = (ImageView) view.findViewById(R.id.cartitem_image);
-        String imageUrl = item.getImageUrl();
+        String imageUrl = cartItem.getImageUrl();
         if (imageUrl == null) {
             imageView.setImageDrawable(noPhoto);
         } else {
@@ -126,16 +127,28 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         // Set title
         TextView titleTextView = (TextView) view.findViewById(R.id.cartitem_title);
-        titleTextView.setText(item.getDescription());
+        titleTextView.setText(cartItem.getDescription());
 
         // TODO: include original price
         // set price
         PriceSticker priceSticker = (PriceSticker) view.findViewById(R.id.cartitem_price);
-        priceSticker.setPricing(item.getFinalPrice(), item.getPriceUnitOfMeasure());
+        priceSticker.setPricing(cartItem.getFinalPrice(), cartItem.getPriceUnitOfMeasure());
 
-        // set quantity
-        EditText qtyWidget = (EditText) view.findViewById(R.id.cartitem_qty);
-        qtyWidget.setText("" + item.getQuantity());
+
+        // get qty related widgets
+        CartItemQtyEditor qtyWidget = (CartItemQtyEditor)view.findViewById(R.id.cartitem_qty);
+        Button deleteButton = (Button)view.findViewById(R.id.cartitem_delete);
+        Button updateButton = (Button)view.findViewById(R.id.cartitem_update);
+
+        // set up widget listeners
+        cartItem.setQtyWidgets(qtyWidget, updateButton);
+        qtyWidget.setTextChangedListener(cartItem.getQtyTextChangeListener());
+        deleteButton.setOnClickListener(cartItem.getQtyDeleteButtonListener());
+        updateButton.setOnClickListener(cartItem.getQtyUpdateButtonListener());
+
+        // set quantity (AFTER listeners set up above)
+        qtyWidget.setText("" + cartItem.getProposedQty());
+
 //        Spinner qtySpinner = (Spinner) view.findViewById(R.id.cartitem_qty);
 //        QtySpinnerAdapter qtySpinnerAdapter = new QtySpinnerAdapter(activity);
 //        qtySpinner.setAdapter(qtySpinnerAdapter);
@@ -144,13 +157,8 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 //        EditText qtyView = (EditText) view.findViewById(R.id.cartitem_qty);
 //        qtyView.setText(String.valueOf(item.getQuantity()));
 
-        // add listener to deletion button
-        Button deleteButton = (Button)view.findViewById(R.id.cartitem_delete);
-        deleteButton.setOnClickListener(new QtyDeleteButtonListener(position, qtyWidget));
-
-        // add listener to update button
-        Button updateButton = (Button)view.findViewById(R.id.cartitem_update);
-        updateButton.setOnClickListener(new QtyUpdateButtonListener(position, qtyWidget));
+        // set visibility of update button
+        updateButton.setVisibility(cartItem.isProposedQtyDifferent()? View.VISIBLE : View.GONE);
 
         return(view);
     }
@@ -161,7 +169,8 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         progressIndicator.showProgressIndicator();
 
         // query for items in cart
-        easyOpenApi.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, viewCartListener);
+        easyOpenApi.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID,
+                1, 1000, viewCartListener); // 0 offset results in max of 5 items, so using 1
 
         notifyDataSetChanged();
     }
@@ -179,11 +188,11 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     }
 
     /** updates item quantity */
-    public void updateItemQty(int position, int newQty) {
+    public void updateItemQty(CartItem cartItem, int newQty) {
         if (newQty == 0) {
-            deleteItem(position);
+            deleteItem(cartItem);
         } else {
-            CartItem cartItem = getItem(position);
+//            CartItem cartItem = getItem(position);
             cartItem.setProposedQty(newQty); // record the value we're trying to set, update the model upon success
 
             EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
@@ -196,8 +205,8 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     }
 
     /** deletes an item from the cart */
-    public void deleteItem(int position) {
-        CartItem cartItem = getItem(position);
+    public void deleteItem(CartItem cartItem) {
+//        CartItem cartItem = getItem(position);
         cartItem.setProposedQty(0); // record the value we're trying to set, update the model upon success
 
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
@@ -210,16 +219,12 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
 
     //for updating
-
     private TypedJsonString createCartRequestBody(CartItem cartItem, int newQty) {
         OrderItem orderItem = new OrderItem(cartItem.getOrderItemId(), cartItem.getSku(), newQty);
         List<OrderItem> orderItems = new ArrayList<OrderItem>();
         orderItems.add(orderItem);
         //TODO add more cart items as required
         String json = CartBodyGenerator.generateUpdateBody(orderItems);
-//        CartRequestBody body = new CartRequestBody();
-//        body.setOrderItem(orderItems);
-//        return body;
         return new TypedJsonString(json);
     }
 
@@ -230,13 +235,10 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         addOrderItems.add(addOrderItem);
         //TODO add more cart items as required
         String json = CartBodyGenerator.generateAddBody(addOrderItems);
-//        CartRequestBody body = new CartRequestBody();
-//        body.setOrderItem(addOrderItems);
-//        return body;
         return new TypedJsonString(json);
     }
 
-    private void hideSoftKeyboard(EditText editText) {
+    public void hideSoftKeyboard(EditText editText) {
         InputMethodManager keyboard = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         keyboard.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
@@ -272,7 +274,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                         clear();
                     }
                     for (Product product : products) {
-                        add(new CartItem(product));
+                        add(new CartItem(product, CartAdapter.this));
                     }
                 }
             }
@@ -316,9 +318,8 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                 List<String> itemIds = convertItemIdsToStringList(cartUpdate.getItemsAdded());
                 for (int i = 0; i < getCount(); i++) {
                     CartItem cartItem = getItem(i);
-                    if (cartItem.getProposedQty() != -1 && itemIds.contains(cartItem.getOrderItemId())) {
+                    if (cartItem.isProposedQtyDifferent() && itemIds.contains(cartItem.getOrderItemId())) {
                         cartItem.setQuantity(cartItem.getProposedQty());
-                        cartItem.setProposedQty(-1);
                     }
                 }
             } else {
@@ -359,7 +360,6 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                 CartItem cartItem = getItem(i);
                 if (cartItem.getProposedQty() == 0) {
                     cartItem.setQuantity(0);
-                    cartItem.setProposedQty(-1);
                 }
             }
             notifyDataSetChanged();
@@ -404,63 +404,4 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 //        }
 //    }
 
-
-    // listener class for quantity deletion button
-    class QtyDeleteButtonListener implements View.OnClickListener {
-
-        int cartItemPosition;
-        EditText qtyWidget;
-
-        QtyDeleteButtonListener(int cartItemPosition, EditText qtyWidget) {
-            this.cartItemPosition = cartItemPosition;
-            this.qtyWidget = qtyWidget;
-        }
-
-        @Override
-        public void onClick(View view) {
-            hideSoftKeyboard(qtyWidget);
-
-//            qtyWidget.setSelection(0); // assumes position zero holds "0" value
-            qtyWidget.setText("0");
-
-
-            // update cart via API
-//            updateItemQty(cartItemPosition, 0);
-
-        }
-    }
-
-    // listener class for quantity deletion button
-    class QtyUpdateButtonListener implements View.OnClickListener {
-
-        int cartItemPosition;
-        EditText qtyWidget;
-
-        QtyUpdateButtonListener(int cartItemPosition, EditText qtyWidget) {
-            this.cartItemPosition = cartItemPosition;
-            this.qtyWidget = qtyWidget;
-        }
-
-        @Override
-        public void onClick(View view) {
-            hideSoftKeyboard(qtyWidget);
-
-            CartItem cartItem = getItem(cartItemPosition);
-            int origQty = cartItem.getQuantity();
-            int newQty = origQty;
-
-            String value = qtyWidget.getText().toString();
-            if (value != null && value.length() > 0) {
-                try { newQty = Integer.parseInt(value); } catch (NumberFormatException e) {}
-            } else {
-                qtyWidget.setText("" + origQty); // if empty, assume no change
-            }
-            if (newQty != origQty) {
-                // update cart via API
-                updateItemQty(cartItemPosition, newQty);
-            }
-
-//            qtyWidget.setText("" + qty);
-        }
-    }
 }

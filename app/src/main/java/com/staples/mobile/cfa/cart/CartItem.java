@@ -4,6 +4,12 @@
 
 package com.staples.mobile.cfa.cart;
 
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
+import android.widget.Button;
+
+import com.staples.mobile.cfa.widget.CartItemQtyEditor;
 import com.staples.mobile.common.access.easyopen.model.cart.Image;
 import com.staples.mobile.common.access.easyopen.model.cart.Pricing;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
@@ -16,10 +22,21 @@ public class CartItem {
     private Product product;
     private int proposedQty;
 
+    private CartAdapter cartAdapter;
+    private QtyDeleteButtonListener qtyDeleteButtonListener;
+    private QtyUpdateButtonListener qtyUpdateButtonListener;
+    private QtyTextChangeListener qtyTextChangeListener;
+
     // Constructor
-    public CartItem(Product product) {
+    public CartItem(Product product, CartAdapter cartAdapter) {
         this.product = product;
-        this.proposedQty = -1; // indicates no change (used for qty update operation)
+        this.proposedQty = product.getQuantity();
+        this.cartAdapter = cartAdapter;
+
+        // create widget listeners
+        qtyDeleteButtonListener = new QtyDeleteButtonListener(this);
+        qtyUpdateButtonListener = new QtyUpdateButtonListener(this);
+        qtyTextChangeListener = new QtyTextChangeListener(this);
     }
 
 
@@ -107,4 +124,129 @@ public class CartItem {
     public void setProposedQty(int proposedQty) {
         this.proposedQty = proposedQty;
     }
+
+    public boolean isProposedQtyDifferent() {
+        return getQuantity() != getProposedQty();
+    }
+
+    public QtyTextChangeListener getQtyTextChangeListener() {
+        return qtyTextChangeListener;
+    }
+
+    public QtyDeleteButtonListener getQtyDeleteButtonListener() {
+        return qtyDeleteButtonListener;
+    }
+
+    public QtyUpdateButtonListener getQtyUpdateButtonListener() {
+        return qtyUpdateButtonListener;
+    }
+
+    public void setQtyWidgets(CartItemQtyEditor qtyWidget, Button updateButton) {
+        qtyTextChangeListener.setUpdateButton(updateButton);
+        qtyDeleteButtonListener.setQtyWidget(qtyWidget);
+        qtyUpdateButtonListener.setQtyWidget(qtyWidget);
+    }
+
+    // listener class for quantity deletion button
+    class QtyTextChangeListener implements TextWatcher {
+        CartItem cartItem;
+        Button updateButton;
+
+        QtyTextChangeListener(CartItem cartItem) {
+            this.cartItem = cartItem;
+        }
+
+        public void setUpdateButton(Button updateButton) {
+            this.updateButton = updateButton;
+        }
+
+        @Override public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) { }
+        @Override public void afterTextChanged(Editable editable) {}
+
+        @Override public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+            // if text is truly different from before, make update button visible, set proposed qty
+            if (!charSequence.toString().equals(""+cartItem.getQuantity())) {
+                if (charSequence.length() > 0) {
+                    try {
+                        cartItem.setProposedQty(Integer.parseInt(charSequence.toString()));
+                    } catch (NumberFormatException e) {
+                        cartItem.setProposedQty(cartItem.getQuantity());
+                    }
+                } else {
+                    cartItem.setProposedQty(cartItem.getQuantity());
+                }
+            }
+            updateButton.setVisibility(cartItem.isProposedQtyDifferent()? View.GONE : View.VISIBLE);
+            cartAdapter.notifyDataSetChanged();
+        }
+    }
+
+    // listener class for quantity deletion button
+    class QtyDeleteButtonListener implements View.OnClickListener {
+
+        CartItem cartItem;
+        CartItemQtyEditor qtyWidget;
+
+        QtyDeleteButtonListener(CartItem cartItem) {
+            this.cartItem = cartItem;
+        }
+
+        public void setQtyWidget(CartItemQtyEditor qtyWidget) {
+            this.qtyWidget = qtyWidget;
+        }
+
+        @Override
+        public void onClick(View view) {
+            cartAdapter.hideSoftKeyboard(qtyWidget);
+
+//            qtyWidget.setSelection(0); // assumes position zero holds "0" value
+            qtyWidget.setText("0");
+            setProposedQty(0);
+
+            // update cart via API
+//            updateItemQty(cartItemPosition, 0);
+
+        }
+    }
+
+    // listener class for quantity deletion button
+    class QtyUpdateButtonListener implements View.OnClickListener {
+
+        CartItem cartItem;
+        CartItemQtyEditor qtyWidget;
+
+        QtyUpdateButtonListener(CartItem cartItem) {
+            this.cartItem = cartItem;
+        }
+
+        public void setQtyWidget(CartItemQtyEditor qtyWidget) {
+            this.qtyWidget = qtyWidget;
+        }
+
+        @Override
+        public void onClick(View view) {
+            cartAdapter.hideSoftKeyboard(qtyWidget);
+
+//            CartItem cartItem = getItem(cartItemPosition);
+            int origQty = cartItem.getQuantity();
+            int newQty = origQty;
+
+            String value = qtyWidget.getText().toString();
+            if (value != null && value.length() > 0) {
+                try { newQty = Integer.parseInt(value); } catch (NumberFormatException e) {}
+            } else {
+                qtyWidget.setText("" + origQty); // if empty, assume no change
+            }
+            if (newQty != origQty) {
+                // update cart via API
+                cartAdapter.updateItemQty(CartItem.this, newQty);
+            }
+
+            // hide button after clicking
+            view.setVisibility(View.GONE);
+
+//            qtyWidget.setText("" + qty);
+        }
+    }
+
 }
