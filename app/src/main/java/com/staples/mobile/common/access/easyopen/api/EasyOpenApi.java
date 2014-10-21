@@ -106,6 +106,8 @@ public interface EasyOpenApi {
             @Query("zipCode") String zipCode,
             @Query("catalogId") String catalogId,
             @Query("client_id") String client_id,
+            @Query("offset") Integer offset,
+            @Query("limit") Integer limit,
             Callback<CartContents> callback
     );
 
