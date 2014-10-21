@@ -135,6 +135,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         // set up widget listeners
         cartItem.setQtyWidgets(qtyWidget, updateButton);
         qtyWidget.setTextChangedListener(cartItem.getQtyTextChangeListener());
+        qtyWidget.setOnEditorActionListener(cartItem.getQtyTextChangeListener());
         deleteButton.setOnClickListener(cartItem.getQtyDeleteButtonListener());
         updateButton.setOnClickListener(cartItem.getQtyUpdateButtonListener());
 
