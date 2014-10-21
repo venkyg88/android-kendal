@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+//For testing the body generator functions for the cart add and update calls
 public class CartGeneratorTest {
 
     @Test

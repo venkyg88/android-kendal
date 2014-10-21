@@ -208,10 +208,8 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         List<OrderItem> orderItems = new ArrayList<OrderItem>();
         orderItems.add(orderItem);
         //TODO add more cart items as required
+        //generates json string for corresponding updates
         String json = CartBodyGenerator.generateUpdateBody(orderItems);
-//        CartRequestBody body = new CartRequestBody();
-//        body.setOrderItem(orderItems);
-//        return body;
         return new TypedJsonString(json);
     }
 
@@ -221,10 +219,8 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         List<OrderItem> addOrderItems = new ArrayList<OrderItem>();
         addOrderItems.add(addOrderItem);
         //TODO add more cart items as required
+        //generates json string for corresponding updates
         String json = CartBodyGenerator.generateAddBody(addOrderItems);
-//        CartRequestBody body = new CartRequestBody();
-//        body.setOrderItem(addOrderItems);
-//        return body;
         return new TypedJsonString(json);
     }
 
