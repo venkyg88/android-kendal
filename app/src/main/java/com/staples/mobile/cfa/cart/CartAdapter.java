@@ -174,7 +174,6 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         progressIndicator.showProgressIndicator();
 
-
         // update quantity of item in cart
         easyOpenApi.addToCart(createCartRequestBody(sku, qty), RECOMMENDATION, STORE_ID,
                 LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, addtoCartListener);
@@ -185,7 +184,6 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         if (newQty == 0) {
             deleteItem(cartItem);
         } else {
-//            CartItem cartItem = getItem(position);
             cartItem.setProposedQty(newQty); // record the value we're trying to set, update the model upon success
 
             EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
@@ -199,7 +197,6 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
     /** deletes an item from the cart */
     public void deleteItem(CartItem cartItem) {
-//        CartItem cartItem = getItem(position);
         cartItem.setProposedQty(0); // record the value we're trying to set, update the model upon success
 
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
@@ -266,8 +263,9 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                     if (getCount() > 0) {
                         clear();
                     }
-                    for (Product product : products) {
-                        add(new CartItem(product, CartAdapter.this));
+                    // iterate thru products in reverse order so newest item appears first
+                    for (int i = products.size() - 1;  i >= 0;  i--) {
+                        add(new CartItem(products.get(i), CartAdapter.this));
                     }
                 }
             }
