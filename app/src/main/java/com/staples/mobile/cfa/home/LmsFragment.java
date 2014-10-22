@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Fragment;
 
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -339,7 +341,8 @@ public class LmsFragment
             requestCreator.into(categoryImageView);
             requestCreator.fit();
             @@@ STUBBED */
-            categoryImageView.setImageResource(bannerResourceId);
+            Bitmap bannerBitMap = BitmapFactory.decodeResource(resources, bannerResourceId);
+            categoryImageView.setImageBitmap(bannerBitMap);
         }
 
     } // doLmsItemsABD()
@@ -507,7 +510,8 @@ public class LmsFragment
             requestCreator.into(categoryImageView);
             requestCreator.fit();
             @@@ STUBBED */
-            categoryImageView.setImageResource(bannerResourceId);
+            Bitmap bannerBitMap = BitmapFactory.decodeResource(resources, bannerResourceId);
+            categoryImageView.setImageBitmap(bannerBitMap);
         }
 
     } // doLmsItemsC()
