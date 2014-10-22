@@ -12,7 +12,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.staples.mobile.cfa.widget.CartItemQtyEditor;
+import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.easyopen.model.cart.Image;
 import com.staples.mobile.common.access.easyopen.model.cart.Pricing;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
@@ -154,7 +154,7 @@ public class CartItem {
         return spinnerChangeListener;
     }
 
-    public void setQtyWidgets(CartItemQtyEditor qtyWidget, Button updateButton) {
+    public void setQtyWidgets(QuantityEditor qtyWidget, Button updateButton) {
         qtyTextChangeListener.setUpdateButton(updateButton);
         qtyTextChangeListener.setQtyWidget(qtyWidget);
         qtyDeleteButtonListener.setQtyWidget(qtyWidget);
@@ -167,7 +167,7 @@ public class CartItem {
     class QtyTextChangeListener implements TextWatcher, TextView.OnEditorActionListener {
         CartItem cartItem;
         Button updateButton;
-        CartItemQtyEditor qtyWidget;
+        QuantityEditor qtyWidget;
 
         /** constructor */
         QtyTextChangeListener(CartItem cartItem) {
@@ -178,7 +178,7 @@ public class CartItem {
             this.updateButton = updateButton;
         }
 
-        public void setQtyWidget(CartItemQtyEditor qtyWidget) {
+        public void setQtyWidget(QuantityEditor qtyWidget) {
             this.qtyWidget = qtyWidget;
         }
 
@@ -186,18 +186,20 @@ public class CartItem {
         public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
             // notifying data set changed while keyboard is up causes it to change to alphabetic,
             // so doing it here in onEditorAction instead
-            int origQty = cartItem.getQuantity();
-            int newQty = qtyWidget.getQtyValue(origQty); // default value to orig in case new value not parseable;
-            cartItem.setProposedQty(newQty);
+
+            // default proposed qty to orig in case new value not parseable;
+            cartItem.setProposedQty(qtyWidget.getQtyValue(cartItem.getQuantity()));
+            // notify reqardless of whether proposed differs from current because update button may
+            // be showing due to a prevoius difference
             cartAdapter.notifyDataSetChanged();
             return false;
         }
 
         @Override public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) { }
         @Override public void afterTextChanged(Editable editable) {
-            int origQty = cartItem.getQuantity();
-            int newQty = qtyWidget.getQtyValue(origQty); // default value to orig in case new value not parseable;
-            cartItem.setProposedQty(newQty);
+            // default proposed qty to orig in case new value not parseable;
+            cartItem.setProposedQty(qtyWidget.getQtyValue(cartItem.getQuantity()));
+
             // notifying data set changed while keyboard is up causes it to change to alphabetic,
             // so doing it in onEditorAction instead
         }
@@ -225,23 +227,24 @@ public class CartItem {
     /** listener class for quantity widget selection */
     class SpinnerChangeListener implements AdapterView.OnItemSelectedListener {
         CartItem cartItem;
-        CartItemQtyEditor qtyWidget;
+        QuantityEditor qtyWidget;
 
         /** constructor */
         SpinnerChangeListener(CartItem cartItem) {
             this.cartItem = cartItem;
         }
 
-        public void setQtyWidget(CartItemQtyEditor qtyWidget) {
+        public void setQtyWidget(QuantityEditor qtyWidget) {
             this.qtyWidget = qtyWidget;
         }
 
 
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-            int origQty = cartItem.getQuantity();
-            int newQty = qtyWidget.getQtyValue(origQty); // default value to orig in case new value not parseable;
-            cartItem.setProposedQty(newQty);
+            // default proposed qty to orig in case new value not parseable;
+            cartItem.setProposedQty(qtyWidget.getQtyValue(cartItem.getQuantity()));
+            // notify reqardless of whether proposed differs from current because update button may
+            // be showing due to a prevoius difference
             cartAdapter.notifyDataSetChanged();
         }
 
@@ -254,28 +257,21 @@ public class CartItem {
     class QtyDeleteButtonListener implements View.OnClickListener {
 
         CartItem cartItem;
-        CartItemQtyEditor qtyWidget;
+        QuantityEditor qtyWidget;
 
         /** constructor */
         QtyDeleteButtonListener(CartItem cartItem) {
             this.cartItem = cartItem;
         }
 
-        public void setQtyWidget(CartItemQtyEditor qtyWidget) {
+        public void setQtyWidget(QuantityEditor qtyWidget) {
             this.qtyWidget = qtyWidget;
         }
 
         @Override
         public void onClick(View view) {
             qtyWidget.hideSoftKeyboard();
-
             qtyWidget.setQtyValue(0);  // this will trigger selection change which will handle the rest
-            setProposedQty(0);
-
-            // update cart via API
-//            cartAdapter.updateItemQty(CartItem.this, 0);
-
-//            cartAdapter.notifyDataSetChanged();
         }
     }
 
@@ -283,14 +279,14 @@ public class CartItem {
     class QtyUpdateButtonListener implements View.OnClickListener {
 
         CartItem cartItem;
-        CartItemQtyEditor qtyWidget;
+        QuantityEditor qtyWidget;
 
         /** constructor */
         QtyUpdateButtonListener(CartItem cartItem) {
             this.cartItem = cartItem;
         }
 
-        public void setQtyWidget(CartItemQtyEditor qtyWidget) {
+        public void setQtyWidget(QuantityEditor qtyWidget) {
             this.qtyWidget = qtyWidget;
         }
 
@@ -300,20 +296,13 @@ public class CartItem {
 
 //            CartItem cartItem = getItem(cartItemPosition);
             int origQty = cartItem.getQuantity();
-            int newQty = qtyWidget.getQtyValue(origQty); // default value to orig in case new value not parseable
+            cartItem.setProposedQty(qtyWidget.getQtyValue(origQty)); // default value to orig in case new value not parseable
 
-
-//                qtyWidget.setQtyValue(newQty); // if empty, assume no change
-
-            if (newQty != origQty) {
-                // update cart via API
-                cartAdapter.updateItemQty(CartItem.this, newQty);
-            }
+            // update cart via API
+            cartAdapter.updateItemQty(CartItem.this);
 
             // hide button after clicking
             view.setVisibility(View.GONE);
-
-//            qtyWidget.setText("" + qty);
         }
     }
 }

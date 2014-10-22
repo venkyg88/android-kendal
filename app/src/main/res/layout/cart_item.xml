@@ -63,11 +63,12 @@
                 <!--android:layout_marginRight="6dp"-->
                 <!--android:textSize="20dp"-->
                 <!--/>-->
-            <com.staples.mobile.cfa.widget.CartItemQtyEditor
+            <com.staples.mobile.cfa.widget.QuantityEditor
                 android:id="@+id/cartitem_qty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:textSize="18sp"
                 app:maxSpinnerValue="6"
                 />
             <Button

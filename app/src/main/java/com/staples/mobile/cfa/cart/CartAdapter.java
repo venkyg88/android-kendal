@@ -12,17 +12,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
-import com.staples.mobile.cfa.widget.CartItemQtyEditor;
+import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -128,7 +126,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
 
         // get qty related widgets
-        CartItemQtyEditor qtyWidget = (CartItemQtyEditor)view.findViewById(R.id.cartitem_qty);
+        QuantityEditor qtyWidget = (QuantityEditor)view.findViewById(R.id.cartitem_qty);
         Button deleteButton = (Button)view.findViewById(R.id.cartitem_delete);
         Button updateButton = (Button)view.findViewById(R.id.cartitem_update);
 
@@ -181,18 +179,18 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     }
 
     /** updates item quantity */
-    public void updateItemQty(CartItem cartItem, int newQty) {
-        if (newQty == 0) {
-            deleteItem(cartItem);
-        } else {
-            cartItem.setProposedQty(newQty); // record the value we're trying to set, update the model upon success
+    public void updateItemQty(CartItem cartItem) {
+        if (cartItem.isProposedQtyDifferent()) {
+            if (cartItem.getProposedQty() == 0) {
+                deleteItem(cartItem);
+            } else {
+                EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+                progressIndicator.showProgressIndicator();
 
-            EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-            progressIndicator.showProgressIndicator();
-
-            // update quantity of item in cart
-            easyOpenApi.updateCart(createCartRequestBody(cartItem, newQty), RECOMMENDATION, STORE_ID,
-                    LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, updateCartListener);
+                // update quantity of item in cart
+                easyOpenApi.updateCart(createCartRequestBody(cartItem, cartItem.getProposedQty()), RECOMMENDATION, STORE_ID,
+                        LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, updateCartListener);
+            }
         }
     }
 

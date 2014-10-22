@@ -4,14 +4,12 @@
 
 package com.staples.mobile.cfa.widget;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,9 +23,10 @@ import com.staples.mobile.R;
 /**
  * Created by sutdi001 on 10/21/14.
  */
-public class CartItemQtyEditor extends FrameLayout {
+public class QuantityEditor extends FrameLayout {
 
     public static final int DEFAULT_MAX_SPINNER_VALUE = 5;
+    public static final float DEFAULT_TEXT_SIZE = 18;
 
     private Context context;
     private AdapterView.OnItemSelectedListener spinnerSelectionListener;
@@ -36,21 +35,12 @@ public class CartItemQtyEditor extends FrameLayout {
     private Spinner spinner;
     private NumericSpinnerAdapter spinnerAdapter;
     private int maxSpinnerValue;
+    private float textSize = DEFAULT_TEXT_SIZE;
 
-//    public CartItemQtyEditor(Context context) {
-//        super(context);
-//        initView(context, null);
-//    }
-
-    public CartItemQtyEditor(Context context, AttributeSet attrs) {
+    public QuantityEditor(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView(context, attrs);
     }
-
-//    public CartItemQtyEditor(Context context, AttributeSet attrs, int defStyle) {
-//        super(context, attrs, defStyle);
-//        initView(context, attrs);
-//    }
 
     private void initView(Context context, AttributeSet attrs) {
 
@@ -62,11 +52,25 @@ public class CartItemQtyEditor extends FrameLayout {
         editText = (EditText)view.findViewById(R.id.cartitem_qty_edittext);
         spinner = (Spinner)view.findViewById(R.id.cartitem_qty_spinner);
 
+        // this at least helps to select all of the text (e.g. on 2nd click), nothing seems to be foolproof
+        editText.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((EditText)view).selectAll();
+            }
+        });
+
         // get attributes from layout if any
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.QtyEditor);
             // get max spinner value attribute from layout if it exists
             maxSpinnerValue = a.getInteger(R.styleable.QtyEditor_maxSpinnerValue, DEFAULT_MAX_SPINNER_VALUE);
+            // retrieve text size and apply it to edit text, and to spinner dynamically on item selection
+            int textSizePx = a.getDimensionPixelOffset(R.styleable.QtyEditor_android_textSize, 0);
+            if (textSizePx != 0) {
+                textSize = textSizePx / context.getResources().getDisplayMetrics().scaledDensity;
+                editText.setTextSize(textSize);
+            }
             a.recycle();
         }
 
@@ -103,13 +107,9 @@ public class CartItemQtyEditor extends FrameLayout {
             editText.setVisibility(View.GONE);
             spinner.setSelection(spinnerPosition);
         } else {
-            boolean switchingFromSpinner = isSpinnerVisible();
             spinner.setVisibility(View.GONE);
             editText.setVisibility(View.VISIBLE);
             editText.setText(strQty);
-            if (switchingFromSpinner) {
-                showSoftKeyboard();
-            }
         }
     }
 
@@ -141,15 +141,6 @@ public class CartItemQtyEditor extends FrameLayout {
         }
     }
 
-    public void showSoftKeyboard() {
-        InputMethodManager keyboard = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        keyboard.showSoftInput(editText, 0);
-
-        editText.requestFocus();
-        ((Activity)context).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-//	    context.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-
-    }
 
     private boolean isEditTextVisible() {
         return View.VISIBLE == editText.getVisibility();
@@ -158,6 +149,7 @@ public class CartItemQtyEditor extends FrameLayout {
     private boolean isSpinnerVisible() {
         return View.VISIBLE == spinner.getVisibility();
     }
+
 
     // --------------------------------------------- //
     // ------------- internal classes -------------- //
@@ -168,6 +160,10 @@ public class CartItemQtyEditor extends FrameLayout {
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            // set text size
+            ((TextView) parent.getChildAt(0)).setTextSize(textSize);
+
             // if selection out of range, call setQtyValue to revert to editText widget
             String value = ((TextView)view).getText().toString();
             if (value != null && value.endsWith("+")) {
