@@ -67,6 +67,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <LinearLayout
+                    android:id="@+id/specifications"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -74,12 +75,6 @@
                     <TextView
                         style="@style/SkuSummaryHeader"
                         android:text="@string/specifications"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="4dp"
-                        android:textSize="16sp"
-                        android:text="@string/lorem_ipsum"/>
                 </LinearLayout>
                 <ImageView
                     android:id="@+id/specification_detail"
