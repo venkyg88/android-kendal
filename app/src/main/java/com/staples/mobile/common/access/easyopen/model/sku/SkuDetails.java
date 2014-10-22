@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class Sku {
+public class SkuDetails {
     @JsonProperty("Product")
     private List<Product> product;
     private boolean recordSetComplete;

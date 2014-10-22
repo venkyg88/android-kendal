@@ -10,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TabHost;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.staples.mobile.R;
@@ -22,10 +24,11 @@ import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.model.sku.BulletDescription;
+import com.staples.mobile.common.access.easyopen.model.sku.Description;
 import com.staples.mobile.common.access.easyopen.model.sku.Image;
 import com.staples.mobile.common.access.easyopen.model.sku.Pricing;
 import com.staples.mobile.common.access.easyopen.model.sku.Product;
-import com.staples.mobile.common.access.easyopen.model.sku.Sku;
+import com.staples.mobile.common.access.easyopen.model.sku.SkuDetails;
 
 import java.util.List;
 
@@ -33,7 +36,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener ,View.OnClickListener {
+public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener ,View.OnClickListener {
     private static final String TAG = "SkuFragment";
 
     private static final String DESCRIPTION =" Description";
@@ -124,7 +127,7 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
         frame.findViewById(R.id.review_detail).setOnClickListener(this);
         frame.findViewById(R.id.add_to_cart).setOnClickListener(this);
 
-        Access.getInstance().getEasyOpenApi(false).getSkuInfo(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
+        Access.getInstance().getEasyOpenApi(false).getSkuDetails(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
                                                               ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
 
         return (frame);
@@ -178,25 +181,71 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
         return(sb.toString());
     }
 
-    public static void addBullets(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
-        List<BulletDescription> bullets = product.getBulletDescription();
-        if (bullets==null) return;
-        for(BulletDescription bullet : bullets) {
-            if (limit<=0) return;
-            String text = bullet.getText();
-            if (text != null) {
-                View item = inflater.inflate(R.layout.bullet_item, parent, false);
-                ((TextView) item.findViewById(R.id.bullet)).setText(text);
-                parent.addView(item);
-                limit --;
+    public static boolean buildDescription(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
+        // Add descriptions
+        List<Description> paragraphs = product.getParagraph();
+        if (paragraphs!=null) {
+            for(Description paragraph : paragraphs) {
+                 String text = paragraph.getText();
+                 if (text!=null) {
+                     TextView item = (TextView) inflater.inflate(R.layout.sku_paragraph_item, parent, false);
+                     item.setText(text);
+                     item.setMaxLines(limit);
+                     parent.addView(item);
+                 }
             }
         }
+
+        // Add bullets
+        List<BulletDescription> bullets = product.getBulletDescription();
+        if (bullets!=null) {
+            int count = 0;
+            for(BulletDescription bullet : bullets) {
+                if (count>=limit) break;
+                String text = bullet.getText();
+                if (text != null) {
+                    View item = inflater.inflate(R.layout.sku_bullet_item, parent, false);
+                    ((TextView) item.findViewById(R.id.bullet)).setText(text);
+                    parent.addView(item);
+                    count++;
+                }
+            }
+        }
+
+        return(parent.getChildCount()>1);
+    }
+
+    public static boolean buildSpecifications(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
+        ViewGroup table = null;
+
+        // Add specification pairs
+        List<Description> specs = product.getSpecification();
+        if (specs!=null) {
+            int count = 0;
+            for(Description spec : specs) {
+                if (count>=limit) break;
+                String name = spec.getName();
+                String text = spec.getText();
+                if (name!=null && text!=null) {
+                    if (table==null) {
+                        table = (ViewGroup) inflater.inflate(R.layout.sku_spec_table, parent);
+                    }
+                    View item = inflater.inflate(R.layout.sku_spec_item, table, false);
+                    if ((count&1)!=0) item.setBackgroundColor(0xffcccccc);
+                    ((TextView) item.findViewById(R.id.name)).setText(name);
+                    ((TextView) item.findViewById(R.id.text)).setText(text);
+                    table.addView(item);
+                    count++;
+                }
+            }
+        }
+        return(parent.getChildCount()>1);
     }
 
     // Retrofit callbacks
 
     @Override
-    public void success(Sku sku, Response response) {
+    public void success(SkuDetails sku, Response response) {
         List<Product> products = sku.getProduct();
         if (products!=null && products.size()>0) {
             // Use the first product in the list
@@ -208,6 +257,9 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
             if (skuset==null) {
                 frame.findViewById(R.id.quantity).setEnabled(true);
                 frame.findViewById(R.id.add_to_cart).setEnabled(true);
+            } else if (!product.isInStock()) {
+                Button button = (Button) frame.findViewById(R.id.add_to_cart);
+                button.setText("Out of stock");
             }
 
             // Add images
@@ -245,9 +297,10 @@ public class SkuFragment extends Fragment implements Callback<Sku>, TabHost.OnTa
                 }
             }
 
-            // Add bullets
+            // Add description & specifications
             LayoutInflater inflater = getActivity().getLayoutInflater();
-            addBullets(inflater, (ViewGroup) frame.findViewById(R.id.description), product, 3);
+            buildDescription(inflater, (ViewGroup) frame.findViewById(R.id.description), product, 3);
+            buildSpecifications(inflater, (ViewGroup) frame.findViewById(R.id.specifications), product, 3);
 
             // Ready to display
             wrapper.setState(DataWrapper.State.DONE);
