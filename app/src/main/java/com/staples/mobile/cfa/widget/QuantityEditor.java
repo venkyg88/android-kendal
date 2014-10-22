@@ -23,7 +23,7 @@ import com.staples.mobile.R;
 /**
  * Created by sutdi001 on 10/21/14.
  */
-public class CartItemQtyEditor extends FrameLayout {
+public class QuantityEditor extends FrameLayout {
 
     public static final int DEFAULT_MAX_SPINNER_VALUE = 5;
     public static final float DEFAULT_TEXT_SIZE = 18;
@@ -37,7 +37,7 @@ public class CartItemQtyEditor extends FrameLayout {
     private int maxSpinnerValue;
     private float textSize = DEFAULT_TEXT_SIZE;
 
-    public CartItemQtyEditor(Context context, AttributeSet attrs) {
+    public QuantityEditor(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView(context, attrs);
     }

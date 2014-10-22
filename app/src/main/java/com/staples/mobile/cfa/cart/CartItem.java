@@ -12,7 +12,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.staples.mobile.cfa.widget.CartItemQtyEditor;
+import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.easyopen.model.cart.Image;
 import com.staples.mobile.common.access.easyopen.model.cart.Pricing;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
@@ -154,7 +154,7 @@ public class CartItem {
         return spinnerChangeListener;
     }
 
-    public void setQtyWidgets(CartItemQtyEditor qtyWidget, Button updateButton) {
+    public void setQtyWidgets(QuantityEditor qtyWidget, Button updateButton) {
         qtyTextChangeListener.setUpdateButton(updateButton);
         qtyTextChangeListener.setQtyWidget(qtyWidget);
         qtyDeleteButtonListener.setQtyWidget(qtyWidget);
@@ -167,7 +167,7 @@ public class CartItem {
     class QtyTextChangeListener implements TextWatcher, TextView.OnEditorActionListener {
         CartItem cartItem;
         Button updateButton;
-        CartItemQtyEditor qtyWidget;
+        QuantityEditor qtyWidget;
 
         /** constructor */
         QtyTextChangeListener(CartItem cartItem) {
@@ -178,7 +178,7 @@ public class CartItem {
             this.updateButton = updateButton;
         }
 
-        public void setQtyWidget(CartItemQtyEditor qtyWidget) {
+        public void setQtyWidget(QuantityEditor qtyWidget) {
             this.qtyWidget = qtyWidget;
         }
 
@@ -227,14 +227,14 @@ public class CartItem {
     /** listener class for quantity widget selection */
     class SpinnerChangeListener implements AdapterView.OnItemSelectedListener {
         CartItem cartItem;
-        CartItemQtyEditor qtyWidget;
+        QuantityEditor qtyWidget;
 
         /** constructor */
         SpinnerChangeListener(CartItem cartItem) {
             this.cartItem = cartItem;
         }
 
-        public void setQtyWidget(CartItemQtyEditor qtyWidget) {
+        public void setQtyWidget(QuantityEditor qtyWidget) {
             this.qtyWidget = qtyWidget;
         }
 
@@ -257,14 +257,14 @@ public class CartItem {
     class QtyDeleteButtonListener implements View.OnClickListener {
 
         CartItem cartItem;
-        CartItemQtyEditor qtyWidget;
+        QuantityEditor qtyWidget;
 
         /** constructor */
         QtyDeleteButtonListener(CartItem cartItem) {
             this.cartItem = cartItem;
         }
 
-        public void setQtyWidget(CartItemQtyEditor qtyWidget) {
+        public void setQtyWidget(QuantityEditor qtyWidget) {
             this.qtyWidget = qtyWidget;
         }
 
@@ -279,14 +279,14 @@ public class CartItem {
     class QtyUpdateButtonListener implements View.OnClickListener {
 
         CartItem cartItem;
-        CartItemQtyEditor qtyWidget;
+        QuantityEditor qtyWidget;
 
         /** constructor */
         QtyUpdateButtonListener(CartItem cartItem) {
             this.cartItem = cartItem;
         }
 
-        public void setQtyWidget(CartItemQtyEditor qtyWidget) {
+        public void setQtyWidget(QuantityEditor qtyWidget) {
             this.qtyWidget = qtyWidget;
         }
 
