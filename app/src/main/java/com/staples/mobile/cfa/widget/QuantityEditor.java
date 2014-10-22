@@ -31,7 +31,7 @@ public class QuantityEditor extends FrameLayout {
     private Context context;
     private AdapterView.OnItemSelectedListener spinnerSelectionListener;
     private TextWatcher textChangedListener;
-    private EditText editText;
+    private EditTextWithImeBackEvent editText;
     private Spinner spinner;
     private NumericSpinnerAdapter spinnerAdapter;
     private int maxSpinnerValue;
@@ -48,8 +48,8 @@ public class QuantityEditor extends FrameLayout {
 
         // inflate
         LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.cart_item_qty_editor, this);
-        editText = (EditText)view.findViewById(R.id.cartitem_qty_edittext);
+        View view = layoutInflater.inflate(R.layout.quantity_editor, this);
+        editText = (EditTextWithImeBackEvent)view.findViewById(R.id.cartitem_qty_edittext);
         spinner = (Spinner)view.findViewById(R.id.cartitem_qty_spinner);
 
         // this at least helps to select all of the text (e.g. on 2nd click), nothing seems to be foolproof
@@ -59,6 +59,7 @@ public class QuantityEditor extends FrameLayout {
                 ((EditText)view).selectAll();
             }
         });
+
 
         // get attributes from layout if any
         if (attrs != null) {
@@ -80,6 +81,19 @@ public class QuantityEditor extends FrameLayout {
         spinner.setOnItemSelectedListener(new NumericSpinnerAdapterItemSelectedListener());
     }
 
+    @Override
+    public void setTag(Object tag) {
+        super.setTag(tag);
+        spinner.setTag(tag);
+        editText.setTag(tag);
+    }
+
+    @Override
+    public void setTag(int key, Object tag) {
+        super.setTag(key, tag);
+        spinner.setTag(key, tag);
+        editText.setTag(key, tag);
+    }
 
     /** returns qty value from appropriate widget */
     public int getQtyValue(int defaultValue) {
@@ -134,6 +148,12 @@ public class QuantityEditor extends FrameLayout {
         editText.setOnEditorActionListener(listener);
     }
 
+    /** passes thru to editText widget */
+    public void setOnImeBackListener(EditTextWithImeBackEvent.EditTextImeBackListener listener) {
+        editText.setOnImeBackListener(listener);
+    }
+
+
     public void hideSoftKeyboard() {
         if (isEditTextVisible()) {
             InputMethodManager keyboard = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -168,11 +188,11 @@ public class QuantityEditor extends FrameLayout {
             String value = ((TextView)view).getText().toString();
             if (value != null && value.endsWith("+")) {
                 setQtyValue(maxSpinnerValue + 1);
-            } else {
-                // otherwise notify listener of valid item selection
-                if (spinnerSelectionListener != null) {
-                    spinnerSelectionListener.onItemSelected(parent, view, position, id);
-                }
+            }
+
+            // notify listener of item selection
+            if (spinnerSelectionListener != null) {
+                spinnerSelectionListener.onItemSelected(parent, view, position, id);
             }
         }
 
