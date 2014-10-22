@@ -52,6 +52,14 @@ public class CartItemQtyEditor extends FrameLayout {
         editText = (EditText)view.findViewById(R.id.cartitem_qty_edittext);
         spinner = (Spinner)view.findViewById(R.id.cartitem_qty_spinner);
 
+        // this at least helps to select all of the text (e.g. on 2nd click), nothing seems to be foolproof
+        editText.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((EditText)view).selectAll();
+            }
+        });
+
         // get attributes from layout if any
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.QtyEditor);
