@@ -28,6 +28,7 @@ import com.staples.mobile.R;
 public class CartItemQtyEditor extends FrameLayout {
 
     public static final int DEFAULT_MAX_SPINNER_VALUE = 5;
+    public static final float DEFAULT_TEXT_SIZE = 18;
 
     private Context context;
     private AdapterView.OnItemSelectedListener spinnerSelectionListener;
@@ -36,21 +37,12 @@ public class CartItemQtyEditor extends FrameLayout {
     private Spinner spinner;
     private NumericSpinnerAdapter spinnerAdapter;
     private int maxSpinnerValue;
-
-//    public CartItemQtyEditor(Context context) {
-//        super(context);
-//        initView(context, null);
-//    }
+    private float textSize = DEFAULT_TEXT_SIZE;
 
     public CartItemQtyEditor(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView(context, attrs);
     }
-
-//    public CartItemQtyEditor(Context context, AttributeSet attrs, int defStyle) {
-//        super(context, attrs, defStyle);
-//        initView(context, attrs);
-//    }
 
     private void initView(Context context, AttributeSet attrs) {
 
@@ -67,6 +59,12 @@ public class CartItemQtyEditor extends FrameLayout {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.QtyEditor);
             // get max spinner value attribute from layout if it exists
             maxSpinnerValue = a.getInteger(R.styleable.QtyEditor_maxSpinnerValue, DEFAULT_MAX_SPINNER_VALUE);
+            // retrieve text size and apply it to edit text, and to spinner dynamically on item selection
+            int textSizePx = a.getDimensionPixelOffset(R.styleable.QtyEditor_android_textSize, 0);
+            if (textSizePx != 0) {
+                textSize = textSizePx / context.getResources().getDisplayMetrics().scaledDensity;
+                editText.setTextSize(textSize);
+            }
             a.recycle();
         }
 
@@ -159,6 +157,7 @@ public class CartItemQtyEditor extends FrameLayout {
         return View.VISIBLE == spinner.getVisibility();
     }
 
+
     // --------------------------------------------- //
     // ------------- internal classes -------------- //
     // --------------------------------------------- //
@@ -168,6 +167,10 @@ public class CartItemQtyEditor extends FrameLayout {
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            // set text size
+            ((TextView) parent.getChildAt(0)).setTextSize(textSize);
+
             // if selection out of range, call setQtyValue to revert to editText widget
             String value = ((TextView)view).getText().toString();
             if (value != null && value.endsWith("+")) {
