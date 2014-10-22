@@ -84,8 +84,14 @@ public class MainActivity extends Activity
 
         LoginHelper loginHelper = new LoginHelper(this);
         loginHelper.registerLoginCompleteListener(this);
-        //loginHelper.getRegisteredUserTokens();
-        loginHelper.getGuestTokens();
+        // if already logged in (e.g. when device is rotated), don't login again, but do notify
+        // that login is complete so that cart can be refilled
+        if (loginHelper.isLoggedIn()) {
+            onLoginComplete(loginHelper.isGuestLogin());
+        } else {
+            // otherwise, do login as guest
+            loginHelper.getGuestTokens();
+        }
     }
 
     @Override
@@ -164,10 +170,8 @@ public class MainActivity extends Activity
 
     @Override
     public void onLoginComplete(boolean guestLevel) {
-        if (!guestLevel) {
-            // load cart drawer (requires successful login)
-            cartAdapter.fill();
-        }
+        // load cart drawer (requires successful login)
+        cartAdapter.fill();
     }
 
     // Navigation
