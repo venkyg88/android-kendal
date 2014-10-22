@@ -6,8 +6,8 @@ package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -25,12 +25,15 @@ import com.staples.mobile.R;
  */
 public class QuantityEditor extends FrameLayout {
 
+    public interface OnQtyChangeListener {
+        public void onQtyChange(View view);
+    }
+
     public static final int DEFAULT_MAX_SPINNER_VALUE = 5;
     public static final float DEFAULT_TEXT_SIZE = 18;
 
     private Context context;
-    private AdapterView.OnItemSelectedListener spinnerSelectionListener;
-    private TextWatcher textChangedListener;
+    private OnQtyChangeListener qtyChangeListener;
     private EditTextWithImeBackEvent editText;
     private Spinner spinner;
     private NumericSpinnerAdapter spinnerAdapter;
@@ -60,6 +63,27 @@ public class QuantityEditor extends FrameLayout {
             }
         });
 
+        // notify qty change listener when soft keyboard action completed
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (qtyChangeListener != null) {
+                    qtyChangeListener.onQtyChange(QuantityEditor.this);
+                }
+                return false;
+            }
+        });
+
+        // notify qty change listener when soft keyboard dismissed via back button
+        editText.setOnImeBackListener(new EditTextWithImeBackEvent.EditTextImeBackListener() {
+            @Override
+            public void onImeBack(EditTextWithImeBackEvent view, String text) {
+                if (qtyChangeListener != null) {
+                    qtyChangeListener.onQtyChange(QuantityEditor.this);
+                }
+            }
+        });
+
 
         // get attributes from layout if any
         if (attrs != null) {
@@ -81,19 +105,6 @@ public class QuantityEditor extends FrameLayout {
         spinner.setOnItemSelectedListener(new NumericSpinnerAdapterItemSelectedListener());
     }
 
-    @Override
-    public void setTag(Object tag) {
-        super.setTag(tag);
-        spinner.setTag(tag);
-        editText.setTag(tag);
-    }
-
-    @Override
-    public void setTag(int key, Object tag) {
-        super.setTag(key, tag);
-        spinner.setTag(key, tag);
-        editText.setTag(key, tag);
-    }
 
     /** returns qty value from appropriate widget */
     public int getQtyValue(int defaultValue) {
@@ -127,30 +138,9 @@ public class QuantityEditor extends FrameLayout {
         }
     }
 
-
     /** sets spinner selection listener on the spinner widget */
-    public void setSpinnerSelectionListener(AdapterView.OnItemSelectedListener spinnerSelectionListener) {
-        this.spinnerSelectionListener = spinnerSelectionListener;
-    }
-
-    /** sets text-changed listener on the editText widget
-     * (allows addition of only one text changed listener, removes previous one) */
-    public void setTextChangedListener(TextWatcher newTextChangedListener) {
-        if (textChangedListener != null) {
-            editText.removeTextChangedListener(textChangedListener);
-        }
-        textChangedListener = newTextChangedListener;
-        editText.addTextChangedListener(newTextChangedListener);
-    }
-
-    /** passes thru to editText widget */
-    public void setOnEditorActionListener(TextView.OnEditorActionListener listener) {
-        editText.setOnEditorActionListener(listener);
-    }
-
-    /** passes thru to editText widget */
-    public void setOnImeBackListener(EditTextWithImeBackEvent.EditTextImeBackListener listener) {
-        editText.setOnImeBackListener(listener);
+    public void setOnQtyChangeListener(OnQtyChangeListener listener) {
+        qtyChangeListener = listener;
     }
 
 
@@ -191,15 +181,15 @@ public class QuantityEditor extends FrameLayout {
             }
 
             // notify listener of item selection
-            if (spinnerSelectionListener != null) {
-                spinnerSelectionListener.onItemSelected(parent, view, position, id);
+            if (qtyChangeListener != null) {
+                qtyChangeListener.onQtyChange(QuantityEditor.this);
             }
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-            if (spinnerSelectionListener != null) {
-                spinnerSelectionListener.onNothingSelected(parent);
+            if (qtyChangeListener != null) {
+                qtyChangeListener.onQtyChange(QuantityEditor.this);
             }
         }
     }

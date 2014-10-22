@@ -9,11 +9,9 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,7 +20,6 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
-import com.staples.mobile.cfa.widget.EditTextWithImeBackEvent;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.Access;
@@ -70,8 +67,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     // widget listeners
     private QtyDeleteButtonListener qtyDeleteButtonListener;
     private QtyUpdateButtonListener qtyUpdateButtonListener;
-    private QtyTextChangeListener qtyTextChangeListener;
-    private SpinnerChangeListener spinnerChangeListener;
+    private QtyChangeListener qtyChangeListener;
 
 
     public CartAdapter(Activity activity, int cartItemLayoutResId, ProgressIndicator progressIndicator) {
@@ -91,8 +87,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         // create widget listeners
         qtyDeleteButtonListener = new QtyDeleteButtonListener();
         qtyUpdateButtonListener = new QtyUpdateButtonListener();
-        qtyTextChangeListener = new QtyTextChangeListener();
-        spinnerChangeListener = new SpinnerChangeListener();
+        qtyChangeListener = new QtyChangeListener();
     }
 
 
@@ -154,9 +149,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         cartItem.setQtyWidget(qtyWidget);
 
         // set widget listeners
-        qtyWidget.setOnImeBackListener(qtyTextChangeListener);
-        qtyWidget.setOnEditorActionListener(qtyTextChangeListener);
-        qtyWidget.setSpinnerSelectionListener(spinnerChangeListener);
+        qtyWidget.setOnQtyChangeListener(qtyChangeListener);
         deleteButton.setOnClickListener(qtyDeleteButtonListener);
         updateButton.setOnClickListener(qtyUpdateButtonListener);
 
@@ -372,55 +365,17 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
 
     /** listener class for text change */
-    class QtyTextChangeListener implements TextView.OnEditorActionListener, EditTextWithImeBackEvent.EditTextImeBackListener {
-
+    class QtyChangeListener implements QuantityEditor.OnQtyChangeListener {
         @Override
-        public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-            // notifying data set changed while keyboard is up causes it to change to alphabetic,
-            // so doing it here in onEditorAction instead
-
-            int position = (Integer)textView.getTag();
-            CartItem cartItem = getItem(position);
+        public void onQtyChange(View view) {
+            CartItem cartItem = getItem((Integer)view.getTag());
 
             // default proposed qty to orig in case new value not parseable;
             cartItem.setProposedQty(cartItem.getQtyWidget().getQtyValue(cartItem.getQuantity()));
             // notify reqardless of whether proposed differs from current because update button may
-            // be showing due to a prevoius difference
-            notifyDataSetChanged();
-            return false;
-        }
-
-        @Override
-        public void onImeBack(EditTextWithImeBackEvent view, String text) {
-            int position = (Integer)view.getTag();
-            CartItem cartItem = getItem(position);
-
-            // default proposed qty to orig in case new value not parseable;
-            cartItem.setProposedQty(cartItem.getQtyWidget().getQtyValue(cartItem.getQuantity()));
-            // notify reqardless of whether proposed differs from current because update button may
-            // be showing due to a prevoius difference
+            // be showing due to a previous difference
             notifyDataSetChanged();
         }
-    }
-
-
-    /** listener class for quantity widget selection */
-    class SpinnerChangeListener implements AdapterView.OnItemSelectedListener {
-
-        @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-            int position = (Integer)adapterView.getTag();
-            CartItem cartItem = getItem(position);
-
-            // default proposed qty to orig in case new value not parseable;
-            cartItem.setProposedQty(cartItem.getQtyWidget().getQtyValue(cartItem.getQuantity()));
-            // notify reqardless of whether proposed differs from current because update button may
-            // be showing due to a prevoius difference
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> adapterView) { }
     }
 
 
@@ -429,8 +384,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void onClick(View view) {
-            int position = (Integer)view.getTag();
-            CartItem cartItem = getItem(position);
+            CartItem cartItem = getItem((Integer)view.getTag());
 
             cartItem.getQtyWidget().hideSoftKeyboard();
             cartItem.getQtyWidget().setQtyValue(0);  // this will trigger selection change which will handle the rest
@@ -442,8 +396,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void onClick(View view) {
-            int position = (Integer)view.getTag();
-            CartItem cartItem = getItem(position);
+            CartItem cartItem = getItem((Integer)view.getTag());
 
             cartItem.getQtyWidget().hideSoftKeyboard();
 
