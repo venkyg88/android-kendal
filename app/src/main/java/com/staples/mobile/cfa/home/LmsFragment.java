@@ -35,6 +35,7 @@ import com.staples.mobile.common.access.lms.LmsManager.LmsMgrCallback;
 import com.staples.mobile.common.access.lms.model.Area;
 import com.staples.mobile.common.access.lms.model.Item;
 import com.staples.mobile.common.access.lms.model.Screen;
+import com.staples.mobile.common.device.DeviceInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,8 @@ public class LmsFragment
     private MainActivity activity;
     private Resources resources;
     private LayoutInflater layoutInflater;
-    private DisplayMetrics displayMetrics;
+
+    private DeviceInfo deviceInfo;
 
     private View lmsFrameView;
     private LinearLayout lmsScrollLayout;
@@ -87,7 +89,7 @@ public class LmsFragment
 
         this.activity = (MainActivity) activity;
         resources = activity.getResources();
-        displayMetrics = resources.getDisplayMetrics();
+        deviceInfo = new DeviceInfo(resources);
         lmsManager = new LmsManager();
 
         lmsItems = new ArrayList<LmsItem>();
@@ -180,16 +182,16 @@ public class LmsFragment
             }
 
             if (lmsItemsA.size() > 0) {
-                doLmsItemsABD(lmsItemsA, R.drawable.banner_a_color_small, displayMetrics.widthPixels);
+                doLmsItemsABD(lmsItemsA, R.drawable.banner_a_color_small, deviceInfo.getWidthPixels());
             }
             if (lmsItemsB.size() > 0) {
-                doLmsItemsABD(lmsItemsB, R.drawable.banner_b_color_small, (displayMetrics.widthPixels / 2));
+                doLmsItemsABD(lmsItemsB, R.drawable.banner_b_color_small, (deviceInfo.getWidthPixels() / 2));
             }
             if (lmsItemsC.size() > 0) {
                 doLmsItemsC(R.drawable.banner_c_color_small);
             }
             if (lmsItemsD.size() > 0) {
-                doLmsItemsABD(lmsItemsD, R.drawable.banner_d_color_small, (displayMetrics.widthPixels / 4));
+                doLmsItemsABD(lmsItemsD, R.drawable.banner_d_color_small, (deviceInfo.getWidthPixels() / 4));
             }
         }
         activity.showMainScreen();
@@ -204,11 +206,11 @@ public class LmsFragment
             + " this[" + this + "]"
         );
 
-        parentLayoutWidthPx = displayMetrics.widthPixels; // pixels
-        parentLayoutHeightPx = displayMetrics.widthPixels; // pixels
+        parentLayoutWidthPx = deviceInfo.getWidthPixels(); // pixels
+        parentLayoutHeightPx = deviceInfo.getWidthPixels(); // pixels
 
         /* @@@ STUBBED
-        int subLayoutHeight = displayMetrics.widthPixels;
+        int subLayoutHeight = deviceInfo.getWidthPixels();
         @@@ STUBBED */
 
         for (LmsItem lmsItem : lmsItems) {
@@ -267,9 +269,9 @@ public class LmsFragment
                 new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, // width
                                               LinearLayout.LayoutParams.WRAP_CONTENT); // height
             marginLeftPixels = 0;
-            marginTopPixels = (int) (4 * displayMetrics.density); // margin in pixels
+            marginTopPixels = deviceInfo.convertDpToIntegerPixels(4); // margin in pixels
             marginRightPixels = 0;
-            marginBottomPixels = (int) (8 * displayMetrics.density); // margin in pixels
+            marginBottomPixels = deviceInfo.convertDpToIntegerPixels(8); // margin in pixels
 
             widgetLayoutParms.setMargins(marginLeftPixels,
                                          marginTopPixels,
@@ -307,7 +309,7 @@ public class LmsFragment
             marginLeftPixels = 0;
             marginTopPixels = 0;
             marginRightPixels = 0;
-            marginBottomPixels = (int) (4 * displayMetrics.density); // margin in pixels
+            marginBottomPixels = deviceInfo.convertDpToIntegerPixels(4); // margin in pixels
 
             /* @@@ STUBBED
             widgetLayoutParms.setMargins(marginLeftPixels,
@@ -353,11 +355,11 @@ public class LmsFragment
             + " this[" + this + "]"
         );
 
-        parentLayoutWidthPx = displayMetrics.widthPixels; // pixels
-        parentLayoutHeightPx = displayMetrics.widthPixels; // pixels
+        parentLayoutWidthPx = deviceInfo.getWidthPixels(); // pixels
+        parentLayoutHeightPx = deviceInfo.getWidthPixels(); // pixels
 
-        int subLayoutWidth = displayMetrics.widthPixels / 2;
-        int subLayoutHeight = displayMetrics.widthPixels / 2;
+        int subLayoutWidth = deviceInfo.getWidthPixels() / 2;
+        int subLayoutHeight = deviceInfo.getWidthPixels() / 2;
 
         LinearLayout lmsSubLayoutContainer = null;
 
@@ -435,9 +437,9 @@ public class LmsFragment
                 new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, // width
                                               LinearLayout.LayoutParams.WRAP_CONTENT); // height
             marginLeftPixels = 0;
-            marginTopPixels = (int) (4 * displayMetrics.density); // margin in pixels
+            marginTopPixels = deviceInfo.convertDpToIntegerPixels(4); // margin in pixels
             marginRightPixels = 0;
-            marginBottomPixels = (int) (8 * displayMetrics.density); // margin in pixels
+            marginBottomPixels = deviceInfo.convertDpToIntegerPixels(8); // margin in pixels
 
             widgetLayoutParms.setMargins(marginLeftPixels,
                                          marginTopPixels,
@@ -475,7 +477,7 @@ public class LmsFragment
             marginLeftPixels = 0;
             marginTopPixels = 0;
             marginRightPixels = 0;
-            marginBottomPixels = (int) (4 * displayMetrics.density); // margin in pixels
+            marginBottomPixels = deviceInfo.convertDpToIntegerPixels(4); // margin in pixels
 
             /* @@@ STUBBED
             widgetLayoutParms.setMargins(marginLeftPixels,
