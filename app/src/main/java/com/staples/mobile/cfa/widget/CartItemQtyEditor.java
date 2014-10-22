@@ -4,14 +4,12 @@
 
 package com.staples.mobile.cfa.widget;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -101,13 +99,9 @@ public class CartItemQtyEditor extends FrameLayout {
             editText.setVisibility(View.GONE);
             spinner.setSelection(spinnerPosition);
         } else {
-            boolean switchingFromSpinner = isSpinnerVisible();
             spinner.setVisibility(View.GONE);
             editText.setVisibility(View.VISIBLE);
             editText.setText(strQty);
-            if (switchingFromSpinner) {
-                showSoftKeyboard();
-            }
         }
     }
 
@@ -139,15 +133,6 @@ public class CartItemQtyEditor extends FrameLayout {
         }
     }
 
-    public void showSoftKeyboard() {
-        InputMethodManager keyboard = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        keyboard.showSoftInput(editText, 0);
-
-        editText.requestFocus();
-        ((Activity)context).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-//	    context.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-
-    }
 
     private boolean isEditTextVisible() {
         return View.VISIBLE == editText.getVisibility();
