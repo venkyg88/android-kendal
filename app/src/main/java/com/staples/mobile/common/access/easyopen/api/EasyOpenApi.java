@@ -8,7 +8,7 @@ import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
-import com.staples.mobile.common.access.easyopen.model.sku.Sku;
+import com.staples.mobile.common.access.easyopen.model.sku.SkuDetails;
 
 import retrofit.Callback;
 import retrofit.http.Body;
@@ -55,8 +55,8 @@ public interface EasyOpenApi {
         Callback<Browse> callback
     );
 
-    @GET("/{version}/{storeId}/product/partnumber/{productId}")
-    void getSkuInfo(
+    @GET("/{version}/{storeId}/product/partnumber/{productId}/details")
+    void getSkuDetails(
         @EncodedPath("version") String version,
         @EncodedPath("storeId") String storeId,
         @EncodedPath("productId") String productId,
@@ -66,7 +66,7 @@ public interface EasyOpenApi {
         @Query("client_id") String client_id,
         @Query("offset") Integer offset,
         @Query("limit") Integer limit,
-        Callback<Sku> callback
+        Callback<SkuDetails> callback
     );
 
     // Logins & profile
