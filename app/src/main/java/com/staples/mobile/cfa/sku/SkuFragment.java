@@ -1,11 +1,14 @@
 package com.staples.mobile.cfa.sku;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +16,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TabHost;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.staples.mobile.R;
@@ -36,7 +38,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener ,View.OnClickListener {
+public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHost.OnTabChangeListener,
+                                                     ViewPager.OnPageChangeListener, View.OnClickListener, FragmentManager.OnBackStackChangedListener {
     private static final String TAG = "SkuFragment";
 
     private static final String DESCRIPTION =" Description";
@@ -54,9 +57,10 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
 
     private static final int MAXFETCH = 50;
 
-    private View frame;
-    private DataWrapper wrapper;
     private String identifier;
+
+    private DataWrapper wrapper;
+    private ViewGroup summary;
 
     // Image ViewPager
     private ViewPager imagePager;
@@ -79,19 +83,19 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
             identifier = args.getString("identifier");
         }
 
-        frame = inflater.inflate(R.layout.sku_summary, container, false);
-        wrapper = (DataWrapper) frame.findViewById(R.id.wrapper);
+        wrapper = (DataWrapper) inflater.inflate(R.layout.sku_summary, container, false);
+        summary = (ViewGroup) wrapper.findViewById(R.id.summary);
         Resources res = getActivity().getResources();
 
         // Init image pager
-        imagePager = (ViewPager) frame.findViewById(R.id.images);
+        imagePager = (ViewPager) summary.findViewById(R.id.images);
         imageAdapter = new SkuImageAdapter(getActivity());
         imagePager.setAdapter(imageAdapter);
-        stripe = (PagerStripe) frame.findViewById(R.id.stripe);
+        stripe = (PagerStripe) summary.findViewById(R.id.stripe);
         imagePager.setOnPageChangeListener(stripe);
 
         // Init details (ViewPager)
-        tabPager = (ViewPager) frame.findViewById(R.id.pager);
+        tabPager = (ViewPager) wrapper.findViewById(R.id.pager);
         tabAdapter = new SkuTabAdapter(getActivity());
         tabPager.setAdapter(tabAdapter);
 
@@ -102,7 +106,7 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
         tabAdapter.notifyDataSetChanged();
 
         // Init details (TabHost)
-        details = (TabHost) frame.findViewById(R.id.details);
+        details = (TabHost) wrapper.findViewById(R.id.details);
         details.setup();
 
         // Fill details (TabHost)
@@ -116,21 +120,28 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
         details.setVisibility(View.GONE);
 
         // Disable add-to-cart
-        frame.findViewById(R.id.quantity).setEnabled(false);
-        frame.findViewById(R.id.add_to_cart).setEnabled(false);
+        wrapper.findViewById(R.id.quantity).setEnabled(false);
+        wrapper.findViewById(R.id.add_to_cart).setEnabled(false);
 
         // Set listeners
         details.setOnTabChangedListener(this);
         tabPager.setOnPageChangeListener(this);
-        frame.findViewById(R.id.description_detail).setOnClickListener(this);
-        frame.findViewById(R.id.specification_detail).setOnClickListener(this);
-        frame.findViewById(R.id.review_detail).setOnClickListener(this);
-        frame.findViewById(R.id.add_to_cart).setOnClickListener(this);
+        summary.findViewById(R.id.description_detail).setOnClickListener(this);
+        summary.findViewById(R.id.specification_detail).setOnClickListener(this);
+        summary.findViewById(R.id.review_detail).setOnClickListener(this);
+        wrapper.findViewById(R.id.add_to_cart).setOnClickListener(this);
 
         Access.getInstance().getEasyOpenApi(false).getSkuDetails(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
                                                               ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
 
-        return (frame);
+        return(wrapper);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        FragmentManager manager = getFragmentManager();
+        manager.removeOnBackStackChangedListener(this);
     }
 
     public static class DummyFactory implements TabHost.TabContentFactory {
@@ -140,6 +151,7 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
             view = new View(context);
         }
 
+        @Override
         public View createTabContent(String tag) {
             return(view);
         }
@@ -189,9 +201,9 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
                  String text = paragraph.getText();
                  if (text!=null) {
                      TextView item = (TextView) inflater.inflate(R.layout.sku_paragraph_item, parent, false);
+                     parent.addView(item);
                      item.setText(text);
                      item.setMaxLines(limit);
-                     parent.addView(item);
                  }
             }
         }
@@ -205,8 +217,8 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
                 String text = bullet.getText();
                 if (text != null) {
                     View item = inflater.inflate(R.layout.sku_bullet_item, parent, false);
-                    ((TextView) item.findViewById(R.id.bullet)).setText(text);
                     parent.addView(item);
+                    ((TextView) item.findViewById(R.id.bullet)).setText(text);
                     count++;
                 }
             }
@@ -228,13 +240,14 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
                 String text = spec.getText();
                 if (name!=null && text!=null) {
                     if (table==null) {
-                        table = (ViewGroup) inflater.inflate(R.layout.sku_spec_table, parent);
+                        table = (ViewGroup) inflater.inflate(R.layout.sku_spec_table, parent, false);
+                        parent.addView(table);
                     }
                     View item = inflater.inflate(R.layout.sku_spec_item, table, false);
-                    if ((count&1)!=0) item.setBackgroundColor(0xffcccccc);
+                    table.addView(item);
+                    if ((count&1)!=0) item.setBackgroundColor(0xffdddddd);
                     ((TextView) item.findViewById(R.id.name)).setText(name);
                     ((TextView) item.findViewById(R.id.text)).setText(text);
-                    table.addView(item);
                     count++;
                 }
             }
@@ -255,10 +268,10 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
             // Enable add-to-cart if not a Sku set
             List<Product> skuset = product.getProduct();
             if (skuset==null) {
-                frame.findViewById(R.id.quantity).setEnabled(true);
-                frame.findViewById(R.id.add_to_cart).setEnabled(true);
+                wrapper.findViewById(R.id.quantity).setEnabled(true);
+                wrapper.findViewById(R.id.add_to_cart).setEnabled(true);
             } else if (!product.isInStock()) {
-                Button button = (Button) frame.findViewById(R.id.add_to_cart);
+                Button button = (Button) wrapper.findViewById(R.id.add_to_cart);
                 button.setText("Out of stock");
             }
 
@@ -281,9 +294,9 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
             }
 
             // Add info
-            ((TextView) frame.findViewById(R.id.title)).setText(product.getProductName());
-            ((TextView) frame.findViewById(R.id.numbers)).setText(formatNumbers(product));
-            ((RatingStars) frame.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
+            ((TextView) summary.findViewById(R.id.title)).setText(product.getProductName());
+            ((TextView) summary.findViewById(R.id.numbers)).setText(formatNumbers(product));
+            ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
 
             // Add pricing
             List<Pricing> pricings = product.getPricing();
@@ -291,7 +304,7 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
                 for(Pricing pricing : pricings) {
                     float finalPrice = pricing.getFinalPrice();
                     if (finalPrice>0.0f) {
-                        ((PriceSticker) frame.findViewById(R.id.pricing)).setPricing(finalPrice, pricing.getUnitOfMeasure());
+                        ((PriceSticker) summary.findViewById(R.id.pricing)).setPricing(finalPrice, pricing.getUnitOfMeasure());
                         break;
                     }
                 }
@@ -299,8 +312,8 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
 
             // Add description & specifications
             LayoutInflater inflater = getActivity().getLayoutInflater();
-            buildDescription(inflater, (ViewGroup) frame.findViewById(R.id.description), product, 3);
-            buildSpecifications(inflater, (ViewGroup) frame.findViewById(R.id.specifications), product, 3);
+            buildDescription(inflater, (ViewGroup) summary.findViewById(R.id.description), product, 3);
+            buildSpecifications(inflater, (ViewGroup) summary.findViewById(R.id.specifications), product, 3);
 
             // Ready to display
             wrapper.setState(DataWrapper.State.DONE);
@@ -324,7 +337,6 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
         else if (tag.equals(REVIEWS)) index = 2;
         else throw(new RuntimeException("Unknown tag from TabHost"));
 
-        Log.d(TAG, "onTabChanged "+index);
         tabPager.setCurrentItem(index);
     }
 
@@ -337,7 +349,6 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
     }
 
     public void onPageSelected(int position) {
-        Log.d(TAG, "onPageSelected "+position);
         details.setCurrentTab(position);
     }
 
@@ -348,26 +359,47 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
         manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    private void shiftToDetail(int position) {
+        if (shifted) return;
+        wrapper.setState(DataWrapper.State.GONE);
+        details.setVisibility(View.VISIBLE);
+        shifted = true;
+        tabPager.setCurrentItem(position);
+
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.addToBackStack("SkuDetail");
+        transaction.commit();
+        manager.addOnBackStackChangedListener(this);
+    }
+
+    @Override
+    public void	onBackStackChanged() {
+        FragmentManager manager = getFragmentManager();
+        int n = manager.getBackStackEntryCount();
+        if (n<1) return;
+        String name = manager.getBackStackEntryAt(n-1).getName();
+        if (name!=null && name.equals("SkuDetail")) return;
+        manager.removeOnBackStackChangedListener(this);
+        wrapper.setState(DataWrapper.State.DONE);
+        details.setVisibility(View.GONE);
+        shifted = false;
+    }
+
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.description_detail:
-                wrapper.setState(DataWrapper.State.GONE);
-                details.setVisibility(View.VISIBLE);
-                tabPager.setCurrentItem(0);
+                shiftToDetail(0);
                 break;
             case R.id.specification_detail:
-                wrapper.setState(DataWrapper.State.GONE);
-                details.setVisibility(View.VISIBLE);
-                tabPager.setCurrentItem(1);
+                shiftToDetail(1);
                 break;
             case R.id.review_detail:
-                wrapper.setState(DataWrapper.State.GONE);
-                details.setVisibility(View.VISIBLE);
-                tabPager.setCurrentItem(2);
+                shiftToDetail(2);
                 break;
             case R.id.add_to_cart:
-                EditText edit = (EditText) frame.findViewById(R.id.quantity);
+                EditText edit = (EditText) summary.findViewById(R.id.quantity);
                 closeSoftKeyboard(edit);
                 String text = edit.getText().toString();
                 int qty = 1;
