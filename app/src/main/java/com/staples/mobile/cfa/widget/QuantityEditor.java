@@ -21,6 +21,9 @@ import android.widget.TextView;
 import com.staples.mobile.R;
 
 /**
+ * Quantity editor that presents as a spinner for values 0 thru maxSpinnerValue and as an EditText
+ * for higher values. Provides easier UX for the more common lower numbered values.
+ *
  * Created by sutdi001 on 10/21/14.
  */
 public class QuantityEditor extends FrameLayout {
