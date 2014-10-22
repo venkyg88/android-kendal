@@ -112,7 +112,7 @@ public class LoginHelper {
                     public void success(TokenObject tokenObjectReturned, Response response) {
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
-                        Toast.makeText(activity, tokenObjectReturned.getWCToken(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, tokenObjectReturned.getWCToken(), Toast.LENGTH_SHORT).show();
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
