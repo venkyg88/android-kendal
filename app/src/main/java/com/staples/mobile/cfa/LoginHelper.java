@@ -67,6 +67,11 @@ public class LoginHelper {
         Access.getInstance().unregisterLoginCompleteListener(loginCompleteListener);
     }
 
+    /** returns true if logged in (i.e. if token exists) */
+    public boolean isLoggedIn() {
+        return Access.getInstance().isLoggedIn();
+    }
+
     /** returns true if current login level is only guest */
     public boolean isGuestLogin() {
         return Access.getInstance().isGuestLogin();
