@@ -181,18 +181,18 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     }
 
     /** updates item quantity */
-    public void updateItemQty(CartItem cartItem, int newQty) {
-        if (newQty == 0) {
-            deleteItem(cartItem);
-        } else {
-            cartItem.setProposedQty(newQty); // record the value we're trying to set, update the model upon success
+    public void updateItemQty(CartItem cartItem) {
+        if (cartItem.isProposedQtyDifferent()) {
+            if (cartItem.getProposedQty() == 0) {
+                deleteItem(cartItem);
+            } else {
+                EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+                progressIndicator.showProgressIndicator();
 
-            EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-            progressIndicator.showProgressIndicator();
-
-            // update quantity of item in cart
-            easyOpenApi.updateCart(createCartRequestBody(cartItem, newQty), RECOMMENDATION, STORE_ID,
-                    LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, updateCartListener);
+                // update quantity of item in cart
+                easyOpenApi.updateCart(createCartRequestBody(cartItem, cartItem.getProposedQty()), RECOMMENDATION, STORE_ID,
+                        LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, updateCartListener);
+            }
         }
     }
 
