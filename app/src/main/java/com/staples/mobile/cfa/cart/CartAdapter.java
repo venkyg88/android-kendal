@@ -136,11 +136,12 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         cartItem.setQtyWidgets(qtyWidget, updateButton);
         qtyWidget.setTextChangedListener(cartItem.getQtyTextChangeListener());
         qtyWidget.setOnEditorActionListener(cartItem.getQtyTextChangeListener());
+        qtyWidget.setSpinnerSelectionListener(cartItem.getSpinnerChangeListener());
         deleteButton.setOnClickListener(cartItem.getQtyDeleteButtonListener());
         updateButton.setOnClickListener(cartItem.getQtyUpdateButtonListener());
 
         // set quantity (AFTER listeners set up above)
-        qtyWidget.setText("" + cartItem.getProposedQty());
+        qtyWidget.setQtyValue(cartItem.getProposedQty());
 
 //        Spinner qtySpinner = (Spinner) view.findViewById(R.id.cartitem_qty);
 //        QtySpinnerAdapter qtySpinnerAdapter = new QtySpinnerAdapter(activity);
@@ -165,7 +166,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         easyOpenApi.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID,
                 1, 1000, viewCartListener); // 0 offset results in max of 5 items, so using 1
 
-        notifyDataSetChanged();
+//        notifyDataSetChanged();
     }
 
     /** adds item to cart */
@@ -226,11 +227,6 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         //TODO add more cart items as required
         String json = CartBodyGenerator.generateAddBody(addOrderItems);
         return new TypedJsonString(json);
-    }
-
-    public void hideSoftKeyboard(EditText editText) {
-        InputMethodManager keyboard = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        keyboard.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
 
 
@@ -298,24 +294,26 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                 Toast.makeText(activity, cartUpdate.getMessage(), Toast.LENGTH_LONG).show();
             }
 
-            // if no items added, no need to update display
-            if (cartUpdate.getItemsAdded().size() == 0) {
-                return;
-            }
-
-            // if an update
+            // if an update (this assumes one product updated at a time)
             if (update) {
-                // determine which items were updated and fix their qty without refreshing the cart
-                List<String> itemIds = convertItemIdsToStringList(cartUpdate.getItemsAdded());
-                for (int i = 0; i < getCount(); i++) {
-                    CartItem cartItem = getItem(i);
-                    if (cartItem.isProposedQtyDifferent() && itemIds.contains(cartItem.getOrderItemId())) {
-                        cartItem.setQuantity(cartItem.getProposedQty());
+                // if no items updated, then refill cart to get accurate counts
+                if (cartUpdate.getItemsAdded().size() == 0) {
+                    fill();
+                } else {
+                    // determine which items were updated and fix their qty, no need to refill the cart
+                    List<String> itemIds = convertItemIdsToStringList(cartUpdate.getItemsAdded());
+                    for (int i = 0; i < getCount(); i++) {
+                        CartItem cartItem = getItem(i);
+                        if (cartItem.isProposedQtyDifferent() && itemIds.contains(cartItem.getOrderItemId())) {
+                            cartItem.setQuantity(cartItem.getProposedQty());
+                        }
                     }
                 }
             } else {
-                //otherwise an insert, so refresh cart
-                fill();
+                // if a successful insert, refill cart
+                if (cartUpdate.getItemsAdded().size() > 0) {
+                    fill();
+                }
             }
 
             notifyDataSetChanged();
@@ -346,53 +344,30 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         @Override
         public void success(DeleteFromCart cartContents, Response response) {
             progressIndicator.hideProgressIndicator();
-            // determine which items were deleted and update their qty
-            for (int i = 0; i < getCount(); i++) {
-                CartItem cartItem = getItem(i);
-                if (cartItem.getProposedQty() == 0) {
-                    cartItem.setQuantity(0);
-                }
-            }
-            notifyDataSetChanged();
+//            // determine which item was deleted and remove it
+//            for (int i = 0; i < getCount(); i++) {
+//                CartItem cartItem = getItem(i);
+//                if (cartItem.getProposedQty() == 0) {
+//                    remove(cartItem);
+//                    break;
+//                }
+//            }
+//            notifyDataSetChanged();
+            fill();
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
+            // determine which item was attempted to be deleted and restore it
+            for (int i = 0; i < getCount(); i++) {
+                CartItem cartItem = getItem(i);
+                if (cartItem.getProposedQty() == 0) {
+                    cartItem.resetProposedQty();
+                    break;
+                }
+            }
             respondToFailure("Failed Cart Update: " + retrofitError.getMessage());
         }
     }
-
-
-//    // listener class for quantity widget selection
-//    class QtySpinnerAdapterItemSelectedListener implements AdapterView.OnItemSelectedListener {
-//
-//        int cartItemPosition;
-//
-//        QtySpinnerAdapterItemSelectedListener(int cartItemPosition) {
-//            this.cartItemPosition = cartItemPosition;
-//        }
-//
-//        @Override
-//        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//            CartItem item = getItem(cartItemPosition);
-//            int origQty = item.getQuantity();
-//            int newQty = origQty;
-//
-//            String value = ((TextView)view).getText().toString();
-//            if (value != null) {
-//                if (!value.endsWith("+")) {
-//                    try { newQty = Integer.parseInt(value); } catch (NumberFormatException e) {}
-//                }
-//            }
-//            if (newQty != origQty) {
-//                updateItemQty(cartItemPosition, newQty);
-//            }
-//        }
-//
-//        @Override
-//        public void onNothingSelected(AdapterView<?> adapterView) {
-//            Toast.makeText(activity, "nothing selected", Toast.LENGTH_SHORT);
-//        }
-//    }
 
 }
