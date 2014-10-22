@@ -6,8 +6,8 @@ package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -21,17 +21,23 @@ import android.widget.TextView;
 import com.staples.mobile.R;
 
 /**
+ * Quantity editor that presents as a spinner for values 0 thru maxSpinnerValue and as an EditText
+ * for higher values. Provides easier UX for the more common lower numbered values.
+ *
  * Created by sutdi001 on 10/21/14.
  */
 public class QuantityEditor extends FrameLayout {
+
+    public interface OnQtyChangeListener {
+        public void onQtyChange(View view);
+    }
 
     public static final int DEFAULT_MAX_SPINNER_VALUE = 5;
     public static final float DEFAULT_TEXT_SIZE = 18;
 
     private Context context;
-    private AdapterView.OnItemSelectedListener spinnerSelectionListener;
-    private TextWatcher textChangedListener;
-    private EditText editText;
+    private OnQtyChangeListener qtyChangeListener;
+    private EditTextWithImeBackEvent editText;
     private Spinner spinner;
     private NumericSpinnerAdapter spinnerAdapter;
     private int maxSpinnerValue;
@@ -48,8 +54,8 @@ public class QuantityEditor extends FrameLayout {
 
         // inflate
         LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.cart_item_qty_editor, this);
-        editText = (EditText)view.findViewById(R.id.cartitem_qty_edittext);
+        View view = layoutInflater.inflate(R.layout.quantity_editor, this);
+        editText = (EditTextWithImeBackEvent)view.findViewById(R.id.cartitem_qty_edittext);
         spinner = (Spinner)view.findViewById(R.id.cartitem_qty_spinner);
 
         // this at least helps to select all of the text (e.g. on 2nd click), nothing seems to be foolproof
@@ -59,6 +65,28 @@ public class QuantityEditor extends FrameLayout {
                 ((EditText)view).selectAll();
             }
         });
+
+        // notify qty change listener when soft keyboard action completed
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (qtyChangeListener != null) {
+                    qtyChangeListener.onQtyChange(QuantityEditor.this);
+                }
+                return false;
+            }
+        });
+
+        // notify qty change listener when soft keyboard dismissed via back button
+        editText.setOnImeBackListener(new EditTextWithImeBackEvent.EditTextImeBackListener() {
+            @Override
+            public void onImeBack(EditTextWithImeBackEvent view, String text) {
+                if (qtyChangeListener != null) {
+                    qtyChangeListener.onQtyChange(QuantityEditor.this);
+                }
+            }
+        });
+
 
         // get attributes from layout if any
         if (attrs != null) {
@@ -113,26 +141,11 @@ public class QuantityEditor extends FrameLayout {
         }
     }
 
-
     /** sets spinner selection listener on the spinner widget */
-    public void setSpinnerSelectionListener(AdapterView.OnItemSelectedListener spinnerSelectionListener) {
-        this.spinnerSelectionListener = spinnerSelectionListener;
+    public void setOnQtyChangeListener(OnQtyChangeListener listener) {
+        qtyChangeListener = listener;
     }
 
-    /** sets text-changed listener on the editText widget
-     * (allows addition of only one text changed listener, removes previous one) */
-    public void setTextChangedListener(TextWatcher newTextChangedListener) {
-        if (textChangedListener != null) {
-            editText.removeTextChangedListener(textChangedListener);
-        }
-        textChangedListener = newTextChangedListener;
-        editText.addTextChangedListener(newTextChangedListener);
-    }
-
-    /** passes thru to editText widget */
-    public void setOnEditorActionListener(TextView.OnEditorActionListener listener) {
-        editText.setOnEditorActionListener(listener);
-    }
 
     public void hideSoftKeyboard() {
         if (isEditTextVisible()) {
@@ -168,18 +181,18 @@ public class QuantityEditor extends FrameLayout {
             String value = ((TextView)view).getText().toString();
             if (value != null && value.endsWith("+")) {
                 setQtyValue(maxSpinnerValue + 1);
-            } else {
-                // otherwise notify listener of valid item selection
-                if (spinnerSelectionListener != null) {
-                    spinnerSelectionListener.onItemSelected(parent, view, position, id);
-                }
+            }
+
+            // notify listener of item selection
+            if (qtyChangeListener != null) {
+                qtyChangeListener.onQtyChange(QuantityEditor.this);
             }
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-            if (spinnerSelectionListener != null) {
-                spinnerSelectionListener.onNothingSelected(parent);
+            if (qtyChangeListener != null) {
+                qtyChangeListener.onQtyChange(QuantityEditor.this);
             }
         }
     }
