@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
+//wrapper class for getStoreInventory() callback
 public class StoreInventory {
 
     @JsonProperty("Store")
