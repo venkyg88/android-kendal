@@ -9,9 +9,11 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -20,6 +22,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.widget.EditTextWithImeBackEvent;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.Access;
@@ -64,6 +67,12 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     private AddUpdateCartListener updateCartListener;
     private DeleteFromCartListener deleteFromCartListener;
 
+    // widget listeners
+    private QtyDeleteButtonListener qtyDeleteButtonListener;
+    private QtyUpdateButtonListener qtyUpdateButtonListener;
+    private QtyTextChangeListener qtyTextChangeListener;
+    private SpinnerChangeListener spinnerChangeListener;
+
 
     public CartAdapter(Activity activity, int cartItemLayoutResId, ProgressIndicator progressIndicator) {
         super(activity, cartItemLayoutResId);
@@ -78,6 +87,12 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         addtoCartListener = new AddUpdateCartListener(false);
         updateCartListener = new AddUpdateCartListener(true);
         deleteFromCartListener = new DeleteFromCartListener();
+
+        // create widget listeners
+        qtyDeleteButtonListener = new QtyDeleteButtonListener();
+        qtyUpdateButtonListener = new QtyUpdateButtonListener();
+        qtyTextChangeListener = new QtyTextChangeListener();
+        spinnerChangeListener = new SpinnerChangeListener();
     }
 
 
@@ -130,24 +145,23 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         Button deleteButton = (Button)view.findViewById(R.id.cartitem_delete);
         Button updateButton = (Button)view.findViewById(R.id.cartitem_update);
 
-        // set up widget listeners
-        cartItem.setQtyWidgets(qtyWidget, updateButton);
-        qtyWidget.setTextChangedListener(cartItem.getQtyTextChangeListener());
-        qtyWidget.setOnEditorActionListener(cartItem.getQtyTextChangeListener());
-        qtyWidget.setSpinnerSelectionListener(cartItem.getSpinnerChangeListener());
-        deleteButton.setOnClickListener(cartItem.getQtyDeleteButtonListener());
-        updateButton.setOnClickListener(cartItem.getQtyUpdateButtonListener());
+        // associate cart position with each widget
+        qtyWidget.setTag(position);
+        deleteButton.setTag(position);
+        updateButton.setTag(position);
+
+        // associate qty widget with cart item
+        cartItem.setQtyWidget(qtyWidget);
+
+        // set widget listeners
+        qtyWidget.setOnImeBackListener(qtyTextChangeListener);
+        qtyWidget.setOnEditorActionListener(qtyTextChangeListener);
+        qtyWidget.setSpinnerSelectionListener(spinnerChangeListener);
+        deleteButton.setOnClickListener(qtyDeleteButtonListener);
+        updateButton.setOnClickListener(qtyUpdateButtonListener);
 
         // set quantity (AFTER listeners set up above)
         qtyWidget.setQtyValue(cartItem.getProposedQty());
-
-//        Spinner qtySpinner = (Spinner) view.findViewById(R.id.cartitem_qty);
-//        QtySpinnerAdapter qtySpinnerAdapter = new QtySpinnerAdapter(activity);
-//        qtySpinner.setAdapter(qtySpinnerAdapter);
-//        qtySpinner.setSelection(qtySpinnerAdapter.getPosition("" + item.getQuantity()));
-//        qtySpinner.setOnItemSelectedListener(new QtySpinnerAdapterItemSelectedListener(position));
-//        EditText qtyView = (EditText) view.findViewById(R.id.cartitem_qty);
-//        qtyView.setText(String.valueOf(item.getQuantity()));
 
         // set visibility of update button
         updateButton.setVisibility(cartItem.isProposedQtyDifferent()? View.VISIBLE : View.GONE);
@@ -163,8 +177,6 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         // query for items in cart
         easyOpenApi.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID,
                 1, 1000, viewCartListener); // 0 offset results in max of 5 items, so using 1
-
-//        notifyDataSetChanged();
     }
 
     /** adds item to cart */
@@ -241,6 +253,9 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     //---------------------------------------//
 
 
+    /************* api listeners ************/
+
+
     /** listens for completion of view request */
     class ViewCartListener implements Callback<CartContents> {
 
@@ -259,7 +274,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                     }
                     // iterate thru products in reverse order so newest item appears first
                     for (int i = products.size() - 1;  i >= 0;  i--) {
-                        add(new CartItem(products.get(i), CartAdapter.this));
+                        add(new CartItem(products.get(i)));
                     }
                 }
             }
@@ -342,30 +357,104 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         @Override
         public void success(DeleteFromCart cartContents, Response response) {
             progressIndicator.hideProgressIndicator();
-//            // determine which item was deleted and remove it
-//            for (int i = 0; i < getCount(); i++) {
-//                CartItem cartItem = getItem(i);
-//                if (cartItem.getProposedQty() == 0) {
-//                    remove(cartItem);
-//                    break;
-//                }
-//            }
-//            notifyDataSetChanged();
             fill();
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            // determine which item was attempted to be deleted and restore it
-            for (int i = 0; i < getCount(); i++) {
-                CartItem cartItem = getItem(i);
-                if (cartItem.getProposedQty() == 0) {
-                    cartItem.resetProposedQty();
-                    break;
-                }
-            }
             respondToFailure("Failed Cart Update: " + retrofitError.getMessage());
         }
     }
 
+
+
+    /************* widget listeners ************/
+
+
+    /** listener class for text change */
+    class QtyTextChangeListener implements TextView.OnEditorActionListener, EditTextWithImeBackEvent.EditTextImeBackListener {
+
+        @Override
+        public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+            // notifying data set changed while keyboard is up causes it to change to alphabetic,
+            // so doing it here in onEditorAction instead
+
+            int position = (Integer)textView.getTag();
+            CartItem cartItem = getItem(position);
+
+            // default proposed qty to orig in case new value not parseable;
+            cartItem.setProposedQty(cartItem.getQtyWidget().getQtyValue(cartItem.getQuantity()));
+            // notify reqardless of whether proposed differs from current because update button may
+            // be showing due to a prevoius difference
+            notifyDataSetChanged();
+            return false;
+        }
+
+        @Override
+        public void onImeBack(EditTextWithImeBackEvent view, String text) {
+            int position = (Integer)view.getTag();
+            CartItem cartItem = getItem(position);
+
+            // default proposed qty to orig in case new value not parseable;
+            cartItem.setProposedQty(cartItem.getQtyWidget().getQtyValue(cartItem.getQuantity()));
+            // notify reqardless of whether proposed differs from current because update button may
+            // be showing due to a prevoius difference
+            notifyDataSetChanged();
+        }
+    }
+
+
+    /** listener class for quantity widget selection */
+    class SpinnerChangeListener implements AdapterView.OnItemSelectedListener {
+
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            int position = (Integer)adapterView.getTag();
+            CartItem cartItem = getItem(position);
+
+            // default proposed qty to orig in case new value not parseable;
+            cartItem.setProposedQty(cartItem.getQtyWidget().getQtyValue(cartItem.getQuantity()));
+            // notify reqardless of whether proposed differs from current because update button may
+            // be showing due to a prevoius difference
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) { }
+    }
+
+
+    /** listener class for item deletion button */
+    class QtyDeleteButtonListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+            int position = (Integer)view.getTag();
+            CartItem cartItem = getItem(position);
+
+            cartItem.getQtyWidget().hideSoftKeyboard();
+            cartItem.getQtyWidget().setQtyValue(0);  // this will trigger selection change which will handle the rest
+        }
+    }
+
+    /** listener class for quantity update button */
+    class QtyUpdateButtonListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+            int position = (Integer)view.getTag();
+            CartItem cartItem = getItem(position);
+
+            cartItem.getQtyWidget().hideSoftKeyboard();
+
+            // default proposed value to orig in case new value not parseable
+            cartItem.setProposedQty(cartItem.getQtyWidget().getQtyValue(cartItem.getQuantity()));
+
+            // update cart via API
+            updateItemQty(cartItem);
+
+            // hide button after clicking
+            view.setVisibility(View.GONE);
+        }
+    }
 }
