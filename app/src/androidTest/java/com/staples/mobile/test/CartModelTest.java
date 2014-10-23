@@ -29,7 +29,7 @@ import retrofit.client.Response;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18, qualifiers = "port")
-public class ObjectModelTest implements Callback<CartContents> {
+public class CartModelTest implements Callback<CartContents> {
 
     private ActivityController controller;
     private MainActivity activity;
@@ -71,6 +71,8 @@ public class ObjectModelTest implements Callback<CartContents> {
                 "01010",
                 "10051",
                 "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS",
+                0,
+                50,
                 this);
 
         Thread.sleep(5000);
