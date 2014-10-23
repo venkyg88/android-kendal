@@ -9,6 +9,7 @@ import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
 import com.staples.mobile.common.access.easyopen.model.sku.Sku;
+import com.staples.mobile.common.access.easyopen.model.search.SearchResult;
 
 import retrofit.Callback;
 import retrofit.http.Body;
@@ -144,5 +145,22 @@ public interface EasyOpenApi {
             @Query("locale") String locale,
             @Query("client_id") String client_id,
             Callback<DeleteFromCart> callback
+    );
+
+    //http://sapi.staples.com/v1/10001/search/term?catalogId=10051&locale=en_US&zipCode=01702&term=laptops&page=1&limit=10&sort=0&client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS&filterId=
+    @GET("/{version}/{storeId}/search/term")
+    void searchResult(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("catalogId") String catalogId,
+            @Query("locale") String locale,
+            @Query("zipCode") String zipCode,
+            @Query("term") String term,
+            @Query("page") String page,
+            @Query("limit") String limit,
+            @Query("sort") String sort,
+            @Query("client_id") String client_id,
+            @Query("filterId") String filterIds,
+            Callback<SearchResult> callback
     );
 }
