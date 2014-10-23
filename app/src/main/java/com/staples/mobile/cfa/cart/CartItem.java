@@ -4,6 +4,9 @@
 
 package com.staples.mobile.cfa.cart;
 
+import android.widget.Button;
+
+import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.easyopen.model.cart.Image;
 import com.staples.mobile.common.access.easyopen.model.cart.Pricing;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
@@ -16,10 +19,12 @@ public class CartItem {
     private Product product;
     private int proposedQty;
 
+    QuantityEditor qtyWidget;
+
     // Constructor
     public CartItem(Product product) {
         this.product = product;
-        this.proposedQty = -1; // indicates no change (used for qty update operation)
+        this.proposedQty = product.getQuantity();
     }
 
 
@@ -33,10 +38,6 @@ public class CartItem {
 
     public String getSku() {
         return product.getSku();
-    }
-
-    public String getPartNumber() {
-        return product.getManufacturerPartNumber();
     }
 
     public Pricing getPricing() {
@@ -106,5 +107,21 @@ public class CartItem {
 
     public void setProposedQty(int proposedQty) {
         this.proposedQty = proposedQty;
+    }
+
+    public boolean isProposedQtyDifferent() {
+        return getQuantity() != getProposedQty();
+    }
+
+    public void resetProposedQty() {
+        setProposedQty(getQuantity());
+    }
+
+    public QuantityEditor getQtyWidget() {
+        return qtyWidget;
+    }
+
+    public void setQtyWidget(QuantityEditor qtyWidget) {
+        this.qtyWidget = qtyWidget;
     }
 }

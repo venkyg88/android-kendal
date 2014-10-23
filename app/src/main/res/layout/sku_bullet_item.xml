@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
     <ImageView
-        style="@style/BulletMarkerStyle"/>
+        style="@style/SkuBulletMarkerStyle"/>
     <TextView
         android:id="@+id/bullet"
-        style="@style/BulletTextStyle"/>
+        style="@style/SkuBulletTextStyle"/>
 </LinearLayout>

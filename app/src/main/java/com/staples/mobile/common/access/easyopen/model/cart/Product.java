@@ -31,6 +31,7 @@ public class Product {
     private List<PromotionalOfferExpire> promotionalOfferExpire;
     private int quantity;
     private boolean ropisEligible;
+    private int ropisQtyLimit;
     private boolean shipableToStore;
     private ShippingInformation shippingInformation;
     private String sku;
@@ -198,6 +199,14 @@ public class Product {
 
     public void setRopisEligible(boolean ropisEligible) {
         this.ropisEligible = ropisEligible;
+    }
+
+    public int getRopisQtyLimit() {
+        return ropisQtyLimit;
+    }
+
+    public void setRopisQtyLimit(int ropisQtyLimit) {
+        this.ropisQtyLimit = ropisQtyLimit;
     }
 
     public boolean getShipableToStore() {

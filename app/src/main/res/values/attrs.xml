@@ -13,11 +13,13 @@
         <attr name="stripeThickness" format="dimension"/>
         <attr name="android:textSize"/>
     </declare-styleable>
+    <declare-styleable name="QtyEditor">
+        <attr name="android:textSize"/>
+        <attr name="maxSpinnerValue" format="integer"/>
+    </declare-styleable>
     <declare-styleable name="BadgeImageView">
         <attr name="android:text"/>
         <attr name="android:textSize"/>
         <attr name="android:textColor"/>
-        <attr name="textLeftOffset" format="dimension"/>
-        <attr name="textBottomOffset" format="dimension"/>
     </declare-styleable>
 </resources>
