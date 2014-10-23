@@ -26,27 +26,21 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/sort_method"
-        android:layout_width="fill_parent"
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="vertical"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:text="@string/empty"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="20sp"
-            android:text="@string/empty"/>
+    <TextView
+        android:id="@+id/sort_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="false"
+        android:padding="5dp"
+        android:text="Refresh" />
 
-        <TextView
-            android:id="@+id/sort_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="false"
-            android:padding="5dp"
-            android:text="Refresh" />
-    </LinearLayout>
 </com.staples.mobile.cfa.search.SearchWrapperLayout>

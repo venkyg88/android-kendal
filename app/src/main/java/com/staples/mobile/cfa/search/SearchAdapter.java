@@ -58,7 +58,7 @@ public class SearchAdapter extends ArrayAdapter<SearchResultRowItem> implements 
     private int layout;
 
     private class SearchService {
-        private final String API_URL = "http://qapi.staples.com";
+        private final String API_URL = "http://sapi.staples.com";
         private final String TAG = "SearchService";
         private final OkHttpClient okHttpClient = new OkHttpClient();
 
