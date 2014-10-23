@@ -273,15 +273,16 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         public void success(CartContents cartContents, Response response) {
             progressIndicator.hideProgressIndicator();
 
-            // getting data from cartContent request
+            // clear the cart before refilling
+            cart = null;
+            clear();
+
+            // get data from cartContent request
             List<Cart> cartCollection = cartContents.getCart();
             if (cartCollection != null && cartCollection.size() > 0) {
                 cart = cartCollection.get(0);
                 List<Product> products = cart.getProduct();
                 if (products != null) {
-                    if (getCount() > 0) {
-                        clear();
-                    }
                     // iterate thru products in reverse order so newest item appears first
                     for (int i = products.size() - 1;  i >= 0;  i--) {
                         add(new CartItem(products.get(i)));
