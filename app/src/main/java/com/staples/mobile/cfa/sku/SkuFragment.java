@@ -399,7 +399,7 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
                 shiftToDetail(2);
                 break;
             case R.id.add_to_cart:
-                EditText edit = (EditText) summary.findViewById(R.id.quantity);
+                EditText edit = (EditText) wrapper.findViewById(R.id.quantity);
                 closeSoftKeyboard(edit);
                 String text = edit.getText().toString();
                 int qty = 1;
