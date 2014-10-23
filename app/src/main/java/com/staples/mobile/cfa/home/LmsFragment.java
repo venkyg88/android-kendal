@@ -89,7 +89,6 @@ public class LmsFragment
 
         this.activity = (MainActivity) activity;
         resources = activity.getResources();
-        deviceInfo = new DeviceInfo(resources);
         lmsManager = new LmsManager();
 
         lmsItems = new ArrayList<LmsItem>();
@@ -144,6 +143,8 @@ public class LmsFragment
                 + " this[" + this + "]"
         );
 
+        deviceInfo = new DeviceInfo(resources);
+
         if (success) {
 
             screens = lmsManager.getScreen();
@@ -182,16 +183,16 @@ public class LmsFragment
             }
 
             if (lmsItemsA.size() > 0) {
-                doLmsItemsABD(lmsItemsA, R.drawable.banner_a_color_small, deviceInfo.getWidthPixels());
+                doLmsItemsABD(lmsItemsA, R.drawable.banner_a_color_small, deviceInfo.getSmallestAbsWidthPixels());
             }
             if (lmsItemsB.size() > 0) {
-                doLmsItemsABD(lmsItemsB, R.drawable.banner_b_color_small, (deviceInfo.getWidthPixels() / 2));
+                doLmsItemsABD(lmsItemsB, R.drawable.banner_b_color_small, (deviceInfo.getSmallestAbsWidthPixels() / 2));
             }
             if (lmsItemsC.size() > 0) {
                 doLmsItemsC(R.drawable.banner_c_color_small);
             }
             if (lmsItemsD.size() > 0) {
-                doLmsItemsABD(lmsItemsD, R.drawable.banner_d_color_small, (deviceInfo.getWidthPixels() / 4));
+                doLmsItemsABD(lmsItemsD, R.drawable.banner_d_color_small, (deviceInfo.getSmallestAbsWidthPixels() / 4));
             }
         }
         activity.showMainScreen();
@@ -207,10 +208,10 @@ public class LmsFragment
         );
 
         parentLayoutWidthPx = deviceInfo.getWidthPixels(); // pixels
-        parentLayoutHeightPx = deviceInfo.getWidthPixels(); // pixels
+        parentLayoutHeightPx = deviceInfo.getHeightPixels(); // pixels
 
         /* @@@ STUBBED
-        int subLayoutHeight = deviceInfo.getWidthPixels();
+        int subLayoutHeight = deviceInfo.getSmallestAbsWidthPixels();
         @@@ STUBBED */
 
         for (LmsItem lmsItem : lmsItems) {
@@ -237,7 +238,7 @@ public class LmsFragment
             // LMS Sublayout
 
             lmsItemLayoutParms =
-                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, // width
+                new LinearLayout.LayoutParams(deviceInfo.getSmallestAbsWidthPixels(), // width
                                               subLayoutHeight); // height
 
             lmsSubLayout = new LinearLayout(activity);
@@ -303,7 +304,7 @@ public class LmsFragment
             categoryImageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
             widgetLayoutParms =
-                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, // width
+                new LinearLayout.LayoutParams(deviceInfo.getSmallestAbsWidthPixels(), // width
                                               LinearLayout.LayoutParams.WRAP_CONTENT); // height
 
             marginLeftPixels = 0;
@@ -356,10 +357,10 @@ public class LmsFragment
         );
 
         parentLayoutWidthPx = deviceInfo.getWidthPixels(); // pixels
-        parentLayoutHeightPx = deviceInfo.getWidthPixels(); // pixels
+        parentLayoutHeightPx = deviceInfo.getHeightPixels(); // pixels
 
-        int subLayoutWidth = deviceInfo.getWidthPixels() / 2;
-        int subLayoutHeight = deviceInfo.getWidthPixels() / 2;
+        int subLayoutWidth = deviceInfo.getSmallestAbsWidthPixels() / 2;
+        int subLayoutHeight = deviceInfo.getSmallestAbsWidthPixels() / 2;
 
         LinearLayout lmsSubLayoutContainer = null;
 
