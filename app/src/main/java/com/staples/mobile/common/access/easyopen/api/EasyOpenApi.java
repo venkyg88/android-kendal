@@ -5,6 +5,7 @@ import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
 import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
 import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
+import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
@@ -88,6 +89,17 @@ public interface EasyOpenApi {
         Callback<TokenObject> callback
     );
 
+    // https://api.staples.com/v1/10001/member/registeruser?locale=en_US&client_id={your-client-id}
+    @POST("/{version}/{storeId}/member/registeruser")
+    public void registerUser(
+            @Body CreateUserLogin body,
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<TokenObject> callback
+    );
+
     @GET("/{version}/{storeId}/member/profile")
     void member(
         @EncodedPath("version") String version,
@@ -147,4 +159,5 @@ public interface EasyOpenApi {
             @Query("client_id") String client_id,
             Callback<DeleteFromCart> callback
     );
+
 }
