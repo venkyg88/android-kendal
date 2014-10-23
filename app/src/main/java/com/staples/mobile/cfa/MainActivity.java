@@ -23,6 +23,7 @@ import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener, Access.OnLoginCompleteListener {
@@ -151,10 +152,10 @@ public class MainActivity extends Activity
             @Override
             public void onChanged() {
                 super.onChanged();
-                setCartItemCount(cartAdapter.getTotalCount());
+                updateCartIndicators(cartAdapter.getCart());
             }
         });
-        this.setCartItemCount(0); // initialize count to zero until we're able to fill the cart
+        updateCartIndicators(null); // initialize cart display until we're able to fill the cart (e.g. item count to zero)
         ((ListView)rightDrawer.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
 
         // Fresh start?
@@ -218,12 +219,19 @@ public class MainActivity extends Activity
 
 
     /** Sets item count indicator on cart icon and cart drawer title */
-    public void setCartItemCount(int count) {
+    public void updateCartIndicators(Cart cart) {
+        int totalItemCount = 0;
+        if (cart != null) {
+            totalItemCount = cart.getTotalItems();
+        } else {
+
+        }
+
         // set text of cart icon
-        rightDrawerAction.setText(count == 0 ? null : Integer.toString(count));
+        rightDrawerAction.setText(totalItemCount == 0 ? null : Integer.toString(totalItemCount));
         // Set text of cart drawer title
-        if (count==0) cartTitle.setText(getResources().getString(R.string.your_cart));
-        else cartTitle.setText(getResources().getQuantityString(R.plurals.your_cart, count, count));
+        if (totalItemCount==0) cartTitle.setText(getResources().getString(R.string.your_cart));
+        else cartTitle.setText(getResources().getQuantityString(R.plurals.your_cart, totalItemCount, totalItemCount));
     }
 
     /** Adds an item to the cart */
