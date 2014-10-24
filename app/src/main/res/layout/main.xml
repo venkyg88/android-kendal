@@ -49,16 +49,50 @@
                     android:textSize="24sp"
                     android:text="@string/staples"/>
             </LinearLayout>
-            <View
-                android:layout_width="0dp"
+
+            <!-- Search Bar -->
+            <LinearLayout
+                android:layout_width="fill_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1" />
-            <ImageView
-                android:id="@+id/action_search"
-                android:layout_width="@dimen/icon_width"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:src="@drawable/ic_search"/>
+                android:layout_weight="1">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/original_text"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left|center_vertical"
+                        android:hint="@string/original_hint"
+                        android:imeOptions="actionSearch"
+                        android:ems="10"
+                        android:textSize="15sp"
+                        android:inputType="textAutoComplete|textAutoCorrect"
+                        android:maxLines="1"/>
+
+                    <Button
+                        android:id="@+id/suggestions_delete_button"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_gravity="right|center_vertical"
+                        android:layout_marginRight="5dp"
+                        android:adjustViewBounds="true"
+                        android:background="@drawable/ic_suggestions_delete" />
+                </FrameLayout>
+
+                <ImageView
+                    android:id="@+id/action_search"
+                    android:layout_width="35dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_marginRight="3dp"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/ic_search"/>
+            </LinearLayout>
+
             <com.staples.mobile.cfa.widget.BadgeImageView
                 android:id="@+id/action_right_drawer"
                 android:layout_width="@dimen/icon_width"
