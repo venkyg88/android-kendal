@@ -19,7 +19,7 @@ public class CreateAccountFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView()");
-        View view =  inflater.inflate(R.layout.create_account_fragment, container, false);
+        View view =  inflater.inflate(R.layout.create_account, container, false);
 
         return view;
     }
