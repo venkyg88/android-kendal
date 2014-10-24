@@ -11,7 +11,6 @@ import android.os.Bundle;
 
 import android.text.TextUtils;
 
-import android.util.DisplayMetrics;
 import android.util.Log;
 
 import android.view.Gravity;
@@ -41,12 +40,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LmsFragment
-    extends Fragment
-    implements LmsMgrCallback {
+        extends Fragment
+        implements LmsMgrCallback {
 
     private static final String TAG = "LmsFragment";
 
-    private static final boolean LOGGING = true;
+    private static final boolean LOGGING = false;
 
     private MainActivity activity;
     private Resources resources;
@@ -81,8 +80,8 @@ public class LmsFragment
     public void onAttach(Activity activity) {
 
         if (LOGGING) Log.v(TAG, "LmsFragment:onAttach():"
-                + " activity[" + activity + "]"
-                + " this[" + this + "]"
+                        + " activity[" + activity + "]"
+                        + " this[" + this + "]"
         );
 
         super.onAttach(activity);
@@ -104,7 +103,7 @@ public class LmsFragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup container, Bundle bundle) {
 
         if (LOGGING) Log.v(TAG, "LmsFragment:onCreateView():"
-                + " this[" + this + "]"
+                        + " this[" + this + "]"
         );
 
         picasso = Picasso.with(activity);
@@ -121,8 +120,8 @@ public class LmsFragment
             public void onClick(View view) {
 
                 if (LOGGING) Log.v(TAG, "LmsFragment:OnClickListener.onClick():"
-                        + " view[" + view + "]"
-                        + " this[" + this + "]"
+                                + " view[" + view + "]"
+                                + " this[" + this + "]"
                 );
                 LmsItem lmsItem = (LmsItem) view.getTag();
                 String path = "/category/identifier/" + lmsItem.identifier;
@@ -131,7 +130,7 @@ public class LmsFragment
         };
 
         lmsManager.getLms(this,  // LmsMgrCallback
-                          true); // conditional
+                true); // conditional
 
         return (lmsFrameView);
     }
@@ -139,8 +138,8 @@ public class LmsFragment
     public void onGetLmsResult(boolean success) {
 
         if (LOGGING) Log.v(TAG, "LmsFragment:LmsManager.onGetLmsResult():"
-                + " success[" + success + "]"
-                + " this[" + this + "]"
+                        + " success[" + success + "]"
+                        + " this[" + this + "]"
         );
 
         deviceInfo = new DeviceInfo(resources);
@@ -201,25 +200,21 @@ public class LmsFragment
     private void doLmsItemsABD(List<LmsItem> lmsItems, int bannerResourceId, int subLayoutHeight) {
 
         if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsABD():"
-            + " lmsItems[" + lmsItems + "]"
-            + " bannerResourceId[" + bannerResourceId + "]"
-            + " subLayoutHeight[" + subLayoutHeight + "]"
-            + " this[" + this + "]"
+                        + " lmsItems[" + lmsItems + "]"
+                        + " bannerResourceId[" + bannerResourceId + "]"
+                        + " subLayoutHeight[" + subLayoutHeight + "]"
+                        + " this[" + this + "]"
         );
 
         parentLayoutWidthPx = deviceInfo.getWidthPixels(); // pixels
         parentLayoutHeightPx = deviceInfo.getHeightPixels(); // pixels
 
-        /* @@@ STUBBED
-        int subLayoutHeight = deviceInfo.getSmallestAbsWidthPixels();
-        @@@ STUBBED */
-
         for (LmsItem lmsItem : lmsItems) {
 
             if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsABD(): lmsItem:"
-                    + " lmsItem.title[" + lmsItem.title + "]"
-                    + " lmsItem.bannerUrl[" + lmsItem.bannerUrl + "]"
-                    + " this[" + this + "]"
+                            + " lmsItem.title[" + lmsItem.title + "]"
+                            + " lmsItem.bannerUrl[" + lmsItem.bannerUrl + "]"
+                            + " this[" + this + "]"
             );
 
             LinearLayout.LayoutParams lmsItemLayoutParms = null;
@@ -230,24 +225,16 @@ public class LmsFragment
             TextView titleTextView = null;
             ImageView categoryImageView = null;
 
-            int marginTopPixels = 0;
-            int marginBottomPixels = 0;
-            int marginLeftPixels = 0;
-            int marginRightPixels = 0;
-
             // LMS Sublayout
 
             lmsItemLayoutParms =
-                new LinearLayout.LayoutParams(deviceInfo.getSmallestAbsWidthPixels(), // width
-                                              subLayoutHeight); // height
+                    new LinearLayout.LayoutParams(deviceInfo.getSmallestAbsWidthPixels(), // width
+                            subLayoutHeight); // height
 
             lmsSubLayout = new LinearLayout(activity);
             lmsSubLayout.setLayoutParams(lmsItemLayoutParms);
 
             lmsSubLayout.setId(lmsSubLayout.hashCode());
-            /* @@@ STUBBED
-            lmsSubLayout.setBackgroundResource(R.drawable.rectangle_frame);
-            @@@ STUBBED */
             lmsSubLayout.setOrientation(LinearLayout.VERTICAL);
             lmsSubLayout.setMeasureWithLargestChildEnabled(true);
             lmsSubLayout.setTag(lmsItem);
@@ -255,95 +242,21 @@ public class LmsFragment
 
             lmsScrollLayout.addView(lmsSubLayout);
 
-            // Title TextView
-
-            titleTextView = new TextView(activity);
-            titleTextView.setId(titleTextView.hashCode());
-            titleTextView.setGravity(Gravity.LEFT);
-            titleTextView.setLines(2);
-            titleTextView.setEllipsize(TextUtils.TruncateAt.END);
-            titleTextView.setTextColor(resources.getColor(R.color.sel_text_list_item));
-            titleTextView.setTextAppearance(activity, R.style.TextExtraLargeListItem);
-            titleTextView.setText(lmsItem.title);
-
-            widgetLayoutParms =
-                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, // width
-                                              LinearLayout.LayoutParams.WRAP_CONTENT); // height
-            marginLeftPixels = 0;
-            marginTopPixels = deviceInfo.convertDpToIntegerPixels(4); // margin in pixels
-            marginRightPixels = 0;
-            marginBottomPixels = deviceInfo.convertDpToIntegerPixels(8); // margin in pixels
-
-            widgetLayoutParms.setMargins(marginLeftPixels,
-                                         marginTopPixels,
-                                         marginRightPixels,
-                                         marginBottomPixels);
-
-            if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsABD(): titleTextView:"
-                    + " marginLeftPixels[" + marginLeftPixels + "]"
-                    + " marginTopPixels[" + marginTopPixels + "]"
-                    + " marginRightPixels[" + marginRightPixels + "]"
-                    + " marginBottomPixels[" + marginBottomPixels + "]"
-                    + " this[" + this + "]"
-            );
-
-            titleTextView.setLayoutParams(widgetLayoutParms);
-
-            /* @@@ STUBBED
-            lmsSubLayout.addView(titleTextView);
-            @@@ STUBBED */
-
             // Category ImageView
 
             categoryImageView = new ImageView(activity);
             categoryImageView.setId(categoryImageView.hashCode());
             categoryImageView.setAdjustViewBounds(true);
-            /* @@@ STUBBED
-            categoryImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            @@@ STUBBED */
             categoryImageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
             widgetLayoutParms =
-                new LinearLayout.LayoutParams(deviceInfo.getSmallestAbsWidthPixels(), // width
-                                              LinearLayout.LayoutParams.WRAP_CONTENT); // height
-
-            marginLeftPixels = 0;
-            marginTopPixels = 0;
-            marginRightPixels = 0;
-            marginBottomPixels = deviceInfo.convertDpToIntegerPixels(4); // margin in pixels
-
-            /* @@@ STUBBED
-            widgetLayoutParms.setMargins(marginLeftPixels,
-                                         marginTopPixels,
-                                         marginRightPixels,
-                                         marginBottomPixels);
-            @@@ STUBBED */
-
-            if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsABD(): categoryImageView:"
-                    + " subLayoutHeight[" + subLayoutHeight + "]"
-                    + " marginLeftPixels[" + marginLeftPixels + "]"
-                    + " marginTopPixels[" + marginTopPixels + "]"
-                    + " marginRightPixels[" + marginRightPixels + "]"
-                    + " marginBottomPixels[" + marginBottomPixels + "]"
-                    + " this[" + this + "]"
-            );
+                    new LinearLayout.LayoutParams(deviceInfo.getSmallestAbsWidthPixels(), // width
+                            LinearLayout.LayoutParams.WRAP_CONTENT); // height
 
             categoryImageView.setLayoutParams(widgetLayoutParms);
 
             lmsSubLayout.addView(categoryImageView);
 
-            /* @@@ STUBBED
-            RequestCreator requestCreator = picasso.load(lmsItem.bannerUrl);
-            requestCreator.error(noPhoto);
-            requestCreator.into(categoryImageView);
-            requestCreator.fit();
-            @@@ STUBBED */
-            /* @@@ STUBBED
-            RequestCreator requestCreator = picasso.load(bannerResourceId);
-            requestCreator.error(noPhoto);
-            requestCreator.into(categoryImageView);
-            requestCreator.fit();
-            @@@ STUBBED */
             Bitmap bannerBitMap = BitmapFactory.decodeResource(resources, bannerResourceId);
             categoryImageView.setImageBitmap(bannerBitMap);
         }
@@ -353,7 +266,7 @@ public class LmsFragment
     private void doLmsItemsC(int bannerResourceId) {
 
         if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsC():"
-            + " this[" + this + "]"
+                        + " this[" + this + "]"
         );
 
         parentLayoutWidthPx = deviceInfo.getWidthPixels(); // pixels
@@ -382,14 +295,6 @@ public class LmsFragment
                 lmsScrollLayout.addView(lmsSubLayoutContainer);
             }
 
-            if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsC(): lmsItem:"
-                    + " lmsItemNbr[" + lmsItemNbr + "]"
-                    + " firstSubInContainer[" + firstSubInContainer + "]"
-                    + " lmsItem.title[" + lmsItem.title + "]"
-                    + " lmsItem.bannerUrl[" + lmsItem.bannerUrl + "]"
-                    + " this[" + this + "]"
-            );
-
             LinearLayout.LayoutParams lmsItemLayoutParms = null;
 
             LinearLayout.LayoutParams widgetLayoutParms = null;
@@ -398,24 +303,16 @@ public class LmsFragment
             TextView titleTextView = null;
             ImageView categoryImageView = null;
 
-            int marginTopPixels = 0;
-            int marginBottomPixels = 0;
-            int marginLeftPixels = 0;
-            int marginRightPixels = 0;
-
             // LMS Sublayout
 
             lmsItemLayoutParms =
-                new LinearLayout.LayoutParams(subLayoutWidth, // width
-                                              subLayoutHeight); // height
+                    new LinearLayout.LayoutParams(subLayoutWidth, // width
+                            subLayoutHeight); // height
 
             lmsSubLayout = new LinearLayout(activity);
             lmsSubLayout.setLayoutParams(lmsItemLayoutParms);
 
             lmsSubLayout.setId(lmsSubLayout.hashCode());
-            /* @@@ STUBBED
-            lmsSubLayout.setBackgroundResource(R.drawable.rectangle_frame);
-            @@@ STUBBED */
             lmsSubLayout.setOrientation(LinearLayout.VERTICAL);
             lmsSubLayout.setMeasureWithLargestChildEnabled(true);
             lmsSubLayout.setTag(lmsItem);
@@ -423,96 +320,21 @@ public class LmsFragment
 
             lmsSubLayoutContainer.addView(lmsSubLayout);
 
-            // Title TextView
-
-            titleTextView = new TextView(activity);
-            titleTextView.setId(titleTextView.hashCode());
-            titleTextView.setGravity(Gravity.LEFT);
-            titleTextView.setLines(2);
-            titleTextView.setEllipsize(TextUtils.TruncateAt.END);
-            titleTextView.setTextColor(resources.getColor(R.color.sel_text_list_item));
-            titleTextView.setTextAppearance(activity, R.style.TextExtraLargeListItem);
-            titleTextView.setText(lmsItem.title);
-
-            widgetLayoutParms =
-                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, // width
-                                              LinearLayout.LayoutParams.WRAP_CONTENT); // height
-            marginLeftPixels = 0;
-            marginTopPixels = deviceInfo.convertDpToIntegerPixels(4); // margin in pixels
-            marginRightPixels = 0;
-            marginBottomPixels = deviceInfo.convertDpToIntegerPixels(8); // margin in pixels
-
-            widgetLayoutParms.setMargins(marginLeftPixels,
-                                         marginTopPixels,
-                                         marginRightPixels,
-                                         marginBottomPixels);
-
-            if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsC(): titleTextView:"
-                    + " marginLeftPixels[" + marginLeftPixels + "]"
-                    + " marginTopPixels[" + marginTopPixels + "]"
-                    + " marginRightPixels[" + marginRightPixels + "]"
-                    + " marginBottomPixels[" + marginBottomPixels + "]"
-                    + " this[" + this + "]"
-            );
-
-            titleTextView.setLayoutParams(widgetLayoutParms);
-
-            /* @@@ STUBBED
-            lmsSubLayout.addView(titleTextView);
-            @@@ STUBBED */
-
             // Category ImageView
 
             categoryImageView = new ImageView(activity);
             categoryImageView.setId(categoryImageView.hashCode());
             categoryImageView.setAdjustViewBounds(true);
-            /* @@@ STUBBED
-            categoryImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            @@@ STUBBED */
             categoryImageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
             widgetLayoutParms =
-                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, // width
-                                              LinearLayout.LayoutParams.WRAP_CONTENT); // height
-
-            marginLeftPixels = 0;
-            marginTopPixels = 0;
-            marginRightPixels = 0;
-            marginBottomPixels = deviceInfo.convertDpToIntegerPixels(4); // margin in pixels
-
-            /* @@@ STUBBED
-            widgetLayoutParms.setMargins(marginLeftPixels,
-                                         marginTopPixels,
-                                         marginRightPixels,
-                                         marginBottomPixels);
-            @@@ STUBBED */
-
-            if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsC(): categoryImageView:"
-                    + " subLayoutWidth[" + subLayoutWidth + "]"
-                    + " subLayoutHeight[" + subLayoutHeight + "]"
-                    + " marginLeftPixels[" + marginLeftPixels + "]"
-                    + " marginTopPixels[" + marginTopPixels + "]"
-                    + " marginRightPixels[" + marginRightPixels + "]"
-                    + " marginBottomPixels[" + marginBottomPixels + "]"
-                    + " this[" + this + "]"
-            );
+                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, // width
+                            LinearLayout.LayoutParams.WRAP_CONTENT); // height
 
             categoryImageView.setLayoutParams(widgetLayoutParms);
 
             lmsSubLayout.addView(categoryImageView);
 
-            /* @@@ STUBBED
-            RequestCreator requestCreator = picasso.load(lmsItem.bannerUrl);
-            requestCreator.error(noPhoto);
-            requestCreator.into(categoryImageView);
-            requestCreator.fit();
-            @@@ STUBBED */
-            /* @@@ STUBBED
-            RequestCreator requestCreator = picasso.load(bannerResourceId);
-            requestCreator.error(noPhoto);
-            requestCreator.into(categoryImageView);
-            requestCreator.fit();
-            @@@ STUBBED */
             Bitmap bannerBitMap = BitmapFactory.decodeResource(resources, bannerResourceId);
             categoryImageView.setImageBitmap(bannerBitMap);
         }
