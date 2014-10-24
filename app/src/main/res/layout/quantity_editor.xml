@@ -10,16 +10,18 @@
         android:id="@+id/cartitem_qty_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         />
-    <EditText
+    <com.staples.mobile.cfa.widget.EditTextWithImeBackEvent
         android:id="@+id/cartitem_qty_edittext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:inputType="number"
         android:imeOptions="actionDone"
         android:selectAllOnFocus="true"
         android:layout_marginRight="6dp"
-        android:textSize="16dp"
+        android:textSize="18sp"
         android:visibility="gone"
         />
 </FrameLayout>

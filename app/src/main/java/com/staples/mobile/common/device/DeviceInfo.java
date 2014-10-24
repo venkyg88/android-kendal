@@ -47,6 +47,8 @@ public class DeviceInfo {
     // fields populated from android.util.DisplayMetrics
     private int smallestAbsWidthPixels;
     private int largestAbsWidthPixels;
+    private int widthPixels;
+    private int heightPixels;
     private float smallestAbsWidthDp;
     private float largestAbsWidthDp;
     private int densityDpi;
@@ -95,6 +97,8 @@ public class DeviceInfo {
         // values populated from android.util.DisplayMetrics
         densityDpi = displayMetrics.densityDpi; // IMPORTANT: set density first for use in conversion
         logicalDensity = displayMetrics.density;
+        widthPixels = displayMetrics.widthPixels;
+        heightPixels = displayMetrics.heightPixels;
         smallestAbsWidthPixels = Math.min(displayMetrics.widthPixels, displayMetrics.heightPixels);
         largestAbsWidthPixels = Math.max(displayMetrics.widthPixels, displayMetrics.heightPixels);
         smallestAbsWidthDp = convertPixelsToDp(smallestAbsWidthPixels);
@@ -242,6 +246,16 @@ public class DeviceInfo {
     // ------------- using android.util.DisplayMetrics --------------- //
     // --------------------------------------------------------------- //
 
+
+    /** returns the absolute width of the display in pixels */
+    public int getWidthPixels() {
+        return widthPixels;
+    }
+
+    /** returns the absolute height of the display in pixels */
+    public int getHeightPixels() {
+        return heightPixels;
+    }
 
     /** returns the absolute width of the longest dimension of the display in pixels */
     public int getLargestAbsWidthPixels() {

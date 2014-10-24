@@ -49,19 +49,25 @@ public class SkuTabAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
+        ViewGroup parent;
+
         SkuPageItem item = array.get(position);
 
         switch(position) {
             case 0:
-                item.view = inflater.inflate(R.layout.sku_description, container, false);
-                ViewGroup parent = (ViewGroup) item.view.findViewById(R.id.description);
-                SkuFragment.addBullets(inflater, parent, product, 50);
+                item.view = inflater.inflate(R.layout.sku_detail, container, false);
+                parent = (ViewGroup) item.view.findViewById(R.id.details);
+                SkuFragment.buildDescription(inflater, parent, product, 50);
                 break;
             case 1:
+                item.view = inflater.inflate(R.layout.sku_detail, container, false);
+                parent = (ViewGroup) item.view.findViewById(R.id.details);
+                SkuFragment.buildSpecifications(inflater, parent, product, 50);
+                break;
             case 2:
                 item.view = new TextView(activity);
                 item.view.setPadding(10, 10, 10, 10);
-                ((TextView) item.view).setTextSize(30);
+                ((TextView) item.view).setTextSize(20);
                 ((TextView) item.view).setText(item.title);
                 break;
         }

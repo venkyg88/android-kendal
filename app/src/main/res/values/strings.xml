@@ -18,6 +18,7 @@
     <string name="rewards_title">Rewards</string>
     <string name="order_title">Order</string>
     <string name="profile_title">Profile</string>
+    <string name="checkout_title">Checkout</string>
     <string name="backtotop_title">Back to Menu</string>
     <string name="store_info_title">Store Info</string>
     <string name="tobedone_title">(To be done)</string>
@@ -26,9 +27,12 @@
     <string name="empty">Nothing found</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <string name="cartitem_qty_label">Qty:</string>
+    <string name="cartitem_qty_label">Qty</string>
     <string name="add_to_cart">Add to cart</string>
     <string name="update_button">Update</string>
+    <string name="shipping">Shipping</string>
+    <string name="pretax_subtotal">Pre-tax Subtotal</string>
+    <string name="proceed_to_checkout">Proceed to Checkout</string>
     <string name="no_reviews">no reviews</string>
 
     <string name="description">Description</string>
@@ -45,6 +49,4 @@
         <item quantity="one">Your cart (1 item)</item>
         <item quantity="other">Your cart (%d items)</item>
     </plurals>
-
-    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
 </resources>

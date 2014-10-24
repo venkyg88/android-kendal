@@ -108,6 +108,11 @@ public class Access {
         }
     }
 
+    /** returns true if logged in (i.e. if token exists) */
+    public boolean isLoggedIn() {
+        return token1 != null;
+    }
+
     /** returns true if current login level is only guest */
     public boolean isGuestLogin() {
         return guestLogin;

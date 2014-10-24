@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public class Product {
+    List<Product> accessory;
+    List<Product> alsoConsider;
     List<Analytic> analytic;
     boolean bopisEligible;
     List<BulletDescription> bulletDescription;
@@ -15,12 +17,18 @@ public class Product {
     float customerReviewRating;
     boolean deliveryOnly;
     String displayName;
+    List<Description> expandedText;
     boolean freeShipping;
+    List<Description> headliner;
     List<Image> image;
+    boolean inStock;
     @JsonProperty("leadTimeDecription")
     String leadTimeDescription;
+    int leadTimeMaximum;
+    int leadTimeMinimum;
     String manufacturerName;
     String manufacturerPartNumber;
+    List<Description> paragraph;
     boolean priceInCartOnly;
     List<Pricing> pricing;
     List<Product> product;
@@ -37,12 +45,21 @@ public class Product {
     boolean shopRunner;
     String sku;
     List<Image> smallPromoImage;
+    List<Description> specification;
     String staplesDisplayPartNumber;
     String supplierTypeId;
     List<ThumbnailImage> thumbnailImage;
     String uniqueId;
     boolean upsable;
     boolean webOnly;
+
+    public List<Product> getAccessory() {
+        return accessory;
+    }
+
+    public List<Product> getAlsoConsider() {
+        return alsoConsider;
+    }
 
     public List<Analytic> getAnalytic() {
         return analytic;
@@ -84,16 +101,36 @@ public class Product {
         return displayName;
     }
 
+    public List<Description> getExpandedText() {
+        return expandedText;
+    }
+
     public boolean isFreeShipping() {
         return freeShipping;
+    }
+
+    public List<Description> getHeadliner() {
+        return headliner;
     }
 
     public List<Image> getImage() {
         return image;
     }
 
+    public boolean isInStock() {
+        return inStock;
+    }
+
     public String getLeadTimeDescription() {
         return leadTimeDescription;
+    }
+
+    public int getLeadTimeMaximum() {
+        return leadTimeMaximum;
+    }
+
+    public int getLeadTimeMinimum() {
+        return leadTimeMinimum;
     }
 
     public String getManufacturerName() {
@@ -102,6 +139,10 @@ public class Product {
 
     public String getManufacturerPartNumber() {
         return manufacturerPartNumber;
+    }
+
+    public List<Description> getParagraph() {
+        return paragraph;
     }
 
     public boolean isPriceInCartOnly() {
@@ -166,6 +207,10 @@ public class Product {
 
     public List<Image> getSmallPromoImage() {
         return smallPromoImage;
+    }
+
+    public List<Description> getSpecification() {
+        return specification;
     }
 
     public String getStaplesDisplayPartNumber() {

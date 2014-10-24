@@ -5,11 +5,16 @@ import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
 import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
 import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
+<<<<<<< HEAD
 import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
+=======
+import com.staples.mobile.common.access.easyopen.model.inventory.StoreInfo;
+import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
+>>>>>>> aa9728dc6c14b7dbb270d0ace750524ecc20568a
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
-import com.staples.mobile.common.access.easyopen.model.sku.Sku;
+import com.staples.mobile.common.access.easyopen.model.sku.SkuDetails;
 
 import retrofit.Callback;
 import retrofit.http.Body;
@@ -56,8 +61,8 @@ public interface EasyOpenApi {
         Callback<Browse> callback
     );
 
-    @GET("/{version}/{storeId}/product/partnumber/{productId}")
-    void getSkuInfo(
+    @GET("/{version}/{storeId}/product/partnumber/{productId}/details")
+    void getSkuDetails(
         @EncodedPath("version") String version,
         @EncodedPath("storeId") String storeId,
         @EncodedPath("productId") String productId,
@@ -67,7 +72,7 @@ public interface EasyOpenApi {
         @Query("client_id") String client_id,
         @Query("offset") Integer offset,
         @Query("limit") Integer limit,
-        Callback<Sku> callback
+        Callback<SkuDetails> callback
     );
 
     // Logins & profile
@@ -158,6 +163,33 @@ public interface EasyOpenApi {
             @Query("locale") String locale,
             @Query("client_id") String client_id,
             Callback<DeleteFromCart> callback
+    );
+
+    //http://sapi.staples.com/v1/10001/stores/inventory?locale=en_US&zipCode=05251&catalogId=10051&partNumber=513096&distance=100&client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS
+    @GET("/{version}/{storeId}/stores/inventory")
+    void getStoreInventory(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("zipCode") String zipCode,
+            @Query("catalogId") String catalogId,
+            @Query("partNumber") String partNumber,
+            @Query("distance") String distance,
+            @Query("client_id") String client_id,
+            @Query("offset") String offset,
+            @Query("limit") String limit,
+            Callback<StoreInventory> callback
+    );
+
+    //http://sapi.staples.com/v1/10001/stores/info/1113?locale=en_US&client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS
+    @GET("/{version}/{storeId}/stores/info/{storeNumber}")
+    void getStoreDetails(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @EncodedPath("storeNumber") String storeNumber,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<StoreInfo> callback
     );
 
 }
