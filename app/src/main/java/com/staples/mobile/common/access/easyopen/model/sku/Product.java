@@ -17,6 +17,7 @@ public class Product {
     float customerReviewRating;
     boolean deliveryOnly;
     String displayName;
+    List<Description> expandedText;
     boolean freeShipping;
     List<Description> headliner;
     List<Image> image;
@@ -98,6 +99,10 @@ public class Product {
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public List<Description> getExpandedText() {
+        return expandedText;
     }
 
     public boolean isFreeShipping() {

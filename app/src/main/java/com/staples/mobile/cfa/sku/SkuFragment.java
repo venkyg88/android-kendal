@@ -25,12 +25,7 @@ import com.staples.mobile.cfa.widget.PagerStripe;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.easyopen.model.sku.BulletDescription;
-import com.staples.mobile.common.access.easyopen.model.sku.Description;
-import com.staples.mobile.common.access.easyopen.model.sku.Image;
-import com.staples.mobile.common.access.easyopen.model.sku.Pricing;
-import com.staples.mobile.common.access.easyopen.model.sku.Product;
-import com.staples.mobile.common.access.easyopen.model.sku.SkuDetails;
+import com.staples.mobile.common.access.easyopen.model.sku.*;
 
 import java.util.List;
 
@@ -194,6 +189,9 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
     }
 
     public static boolean buildDescription(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
+        boolean described = false;
+        int count = 0;
+
         // Add descriptions
         List<Description> paragraphs = product.getParagraph();
         if (paragraphs!=null) {
@@ -204,6 +202,7 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
                      parent.addView(item);
                      item.setText(text);
                      item.setMaxLines(limit);
+                     described = true;
                  }
             }
         }
@@ -211,7 +210,6 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
         // Add bullets
         List<BulletDescription> bullets = product.getBulletDescription();
         if (bullets!=null) {
-            int count = 0;
             for(BulletDescription bullet : bullets) {
                 if (count>=limit) break;
                 String text = bullet.getText();
@@ -224,16 +222,16 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
             }
         }
 
-        return(parent.getChildCount()>1);
+        return(described || count>0);
     }
 
     public static boolean buildSpecifications(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
         ViewGroup table = null;
+        int count = 0;
 
         // Add specification pairs
         List<Description> specs = product.getSpecification();
         if (specs!=null) {
-            int count = 0;
             for(Description spec : specs) {
                 if (count>=limit) break;
                 String name = spec.getName();
@@ -247,12 +245,12 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
                     table.addView(item);
                     if ((count&1)!=0) item.setBackgroundColor(0xffdddddd);
                     ((TextView) item.findViewById(R.id.name)).setText(name);
-                    ((TextView) item.findViewById(R.id.text)).setText(text);
+                    ((TextView) item.findViewById(R.id.value)).setText(text);
                     count++;
                 }
             }
         }
-        return(parent.getChildCount()>1);
+        return(count>0);
     }
 
     // Retrofit callbacks
@@ -299,21 +297,19 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
 
             // Add pricing
-            List<Pricing> pricings = product.getPricing();
-            if (pricings!=null) {
-                for(Pricing pricing : pricings) {
-                    float finalPrice = pricing.getFinalPrice();
-                    if (finalPrice>0.0f) {
-                        ((PriceSticker) summary.findViewById(R.id.pricing)).setPricing(finalPrice, pricing.getUnitOfMeasure());
-                        break;
-                    }
-                }
-            }
+            ((PriceSticker) summary.findViewById(R.id.pricing)).setPricing(product.getPricing());
 
-            // Add description & specifications
+            // Add description
             LayoutInflater inflater = getActivity().getLayoutInflater();
-            buildDescription(inflater, (ViewGroup) summary.findViewById(R.id.description), product, 3);
-            buildSpecifications(inflater, (ViewGroup) summary.findViewById(R.id.specifications), product, 3);
+            if (!buildDescription(inflater, (ViewGroup) summary.findViewById(R.id.description), product, 3))
+                summary.findViewById(R.id.description_detail).setVisibility(View.GONE);
+
+            // Add specifications
+            if (!buildSpecifications(inflater, (ViewGroup) summary.findViewById(R.id.specifications), product, 3))
+                summary.findViewById(R.id.specification_detail).setVisibility(View.GONE);
+
+            // Add reviews
+//            summary.findViewById(R.id.review_detail).setVisibility(View.GONE);
 
             // Ready to display
             wrapper.setState(DataWrapper.State.DONE);
@@ -399,7 +395,7 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
                 shiftToDetail(2);
                 break;
             case R.id.add_to_cart:
-                EditText edit = (EditText) summary.findViewById(R.id.quantity);
+                EditText edit = (EditText) wrapper.findViewById(R.id.quantity);
                 closeSoftKeyboard(edit);
                 String text = edit.getText().toString();
                 int qty = 1;
