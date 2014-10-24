@@ -6,8 +6,7 @@ public class Inventory {
     private boolean available;
     private boolean bopisEligible;
     private String partNumber;
-    //TODO make sure quantity doesn't give back decimal values
-    private int quantity;
+    private float quantity;
     private String stockLevelMessage;
 
     public boolean getAvailable() {
@@ -34,11 +33,11 @@ public class Inventory {
         this.partNumber = partNumber;
     }
 
-    public int getQuantity() {
+    public float getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(float quantity) {
         this.quantity = quantity;
     }
 

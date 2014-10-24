@@ -1,0 +1,118 @@
+package com.staples.mobile.test;
+
+import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowLog;
+import org.robolectric.util.ActivityController;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
+@RunWith(RobolectricTestRunner.class)
+@Config(emulateSdk = 18, qualifiers = "port")
+public class InventoryModelTest {
+    private ActivityController controller;
+    private MainActivity activity;
+    private EasyOpenApi easyOpenApi;
+    private EasyOpenApi mockEasyOpenApi;
+
+    private boolean success;
+    private boolean failure;
+
+    @Before
+    public void setUp() {
+        // Redirect logcat to stdout logfile
+        ShadowLog.stream = System.out;
+
+        // Create activity controller
+        controller = Robolectric.buildActivity(MainActivity.class);
+        Assert.assertNotNull("Robolectric controller should not be null", controller);
+
+        // Create activity
+        controller.create();
+        controller.start();
+        controller.visible();
+        activity = (MainActivity) controller.get();
+
+        // Check for success
+        Assert.assertNotNull("Activity should exist", activity);
+
+        easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+        mockEasyOpenApi = Access.getInstance().getMockEasyOpenApi(activity);
+    }
+
+    @Test
+    public void inventoryModelIsCreatedWithLiveCall() throws InterruptedException{
+        success = false;
+        failure = false;
+        //http://sapi.staples.com/v1/10001/stores/inventory?locale=en_US&zipCode=05251&catalogId=10051&partNumber=513096&distance=100&client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS
+        easyOpenApi.getStoreInventory(
+                "v1",
+                "10001",
+                "en_US",
+                "05251",
+                "10051",
+                "513096",
+                "25",
+                "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS",
+                "0",
+                "50",
+                new Callback<StoreInventory>() {
+                    @Override
+                    public void success(StoreInventory storeInventory, Response response) {
+                        success = true;
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        failure = true;
+                    }
+                }
+        );
+
+        Thread.sleep(5000);
+        Robolectric.runUiThreadTasksIncludingDelayedTasks();
+
+        Assert.assertFalse("Model creation should not have failed", failure);
+        Assert.assertTrue("Model creation should have succeeded", success);
+    }
+    @Test
+    public void inventoryModelIsCreatedWithMockCall() throws InterruptedException{
+
+        success = false;
+        failure = false;
+
+        //Parameters to the mock API don't matter since it reads from a json file anyway
+        mockEasyOpenApi.getStoreInventory("","","","","","","","","","",new Callback<StoreInventory>() {
+            @Override
+            public void success(StoreInventory storeInventory, Response response) {
+                success = true;
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                error.printStackTrace();
+                failure = true;
+            }
+        });
+
+        Thread.sleep(5000);
+        Robolectric.runUiThreadTasksIncludingDelayedTasks();
+
+        Assert.assertFalse("Model creation should not have failed", failure);
+        Assert.assertTrue("Model creation should have succeeded", success);
+    }
+
+
+}

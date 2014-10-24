@@ -8,6 +8,7 @@ import android.util.Log;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
+import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
 import com.staples.mobile.common.access.lms.model.Lms;
 
 import java.io.BufferedReader;
@@ -80,6 +81,11 @@ public class MockApiHandler implements InvocationHandler {
 
         if (name.equals("viewCart")) {
             Object objects = loadJsonObjects("viewCart.json", CartContents.class, (Callback<CartContents>) callback);
+            return(objects);
+        }
+
+        if(name.equals("getStoreInventory")){
+            Object objects = loadJsonObjects("storeInventory.json", StoreInventory.class, (Callback<StoreInventory>) callback);
             return(objects);
         }
 
