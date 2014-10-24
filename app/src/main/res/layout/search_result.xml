@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.staples.mobile.cfa.search.SearchWrapperLayout
+<com.staples.mobile.cfa.widget.DataWrapper
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/wrapper"
     android:layout_width="match_parent"
@@ -43,4 +43,4 @@
         android:padding="5dp"
         android:text="Refresh" />
 
-</com.staples.mobile.cfa.search.SearchWrapperLayout>
+</com.staples.mobile.cfa.widget.DataWrapper>

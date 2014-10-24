@@ -14,27 +14,25 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.okhttp.OkHttpClient;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.bundle.BundleItem;
+import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.RatingStars;
+import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.search.Product;
-import com.staples.mobile.common.access.easyopen.model.search.Search;
-import com.staples.mobile.common.access.easyopen.model.search.SearchResult;
-import com.staples.mobile.common.access.easyopen.model.search.ThumbnailImage;
+import com.staples.mobile.common.access.easyopen.model.browse.*;
 
 import org.apache.http.HttpStatus;
 
+import java.util.List;
+
 import retrofit.Callback;
-import retrofit.RestAdapter;
 import retrofit.RetrofitError;
-import retrofit.android.AndroidLog;
-import retrofit.client.OkClient;
 import retrofit.client.Response;
 
-public class SearchAdapter extends ArrayAdapter<SearchResultRowItem> implements Callback<SearchResult>{
+public class SearchAdapter extends ArrayAdapter<BundleItem> implements DataWrapper.Layoutable, Callback<SearchResult>{
     private static final String TAG = "SearchAdapter";
 
     private static final String RECOMMENDATION = "v1";
@@ -48,7 +46,7 @@ public class SearchAdapter extends ArrayAdapter<SearchResultRowItem> implements 
 
     private EasyOpenApi easyOpenApi;
     private Drawable noPhoto;
-    private SearchWrapperLayout wrapper;
+    private DataWrapper wrapper;
 
     private static Search mySearch;
     private int search_counter = 0;
@@ -57,28 +55,7 @@ public class SearchAdapter extends ArrayAdapter<SearchResultRowItem> implements 
     private String keyword;
     private int layout;
 
-    private class SearchService {
-        private final String API_URL = "http://sapi.staples.com";
-        private final String TAG = "SearchService";
-        private final OkHttpClient okHttpClient = new OkHttpClient();
-
-        //@TODO Retrofit logging level
-        public EasyOpenApi getSearchApi() {
-
-            RestAdapter restAdapter = new RestAdapter
-                    .Builder()
-                    .setClient(new OkClient(okHttpClient))
-                            //.setErrorHandler(new ErrorRetrofitHandlerException())
-                    .setEndpoint(API_URL)
-                    .setLogLevel(RestAdapter.LogLevel.FULL)
-                    .setLog(new AndroidLog(TAG))
-                    .build();
-            EasyOpenApi searchApi = restAdapter.create(EasyOpenApi.class);
-            return searchApi;
-        }
-    }
-
-    public SearchAdapter(Activity activity, SearchWrapperLayout wrapper) {
+    public SearchAdapter(Activity activity, DataWrapper wrapper) {
         super(activity, 0);
         this.activity = activity;
         this.wrapper = wrapper;
@@ -86,22 +63,18 @@ public class SearchAdapter extends ArrayAdapter<SearchResultRowItem> implements 
         noPhoto = activity.getResources().getDrawable(R.drawable.no_photo);
     }
 
-    public void setLayout(int layout) {
-        this.layout = layout;
+    public void setLayout(DataWrapper.Layout layout) {
+        if (layout==DataWrapper.Layout.TALL) this.layout = R.layout.bundle_item_tall;
+        else  this.layout = R.layout.bundle_item_wide;
     }
 
     public void getSearchResults(final String keyword)
     {
-        wrapper.setState(SearchWrapperLayout.State.LOADING);
+        wrapper.setState(DataWrapper.State.LOADING);
 
         this.keyword = keyword;
-        if (easyOpenApi == null) {
-            SearchService ss = new SearchService();
-            easyOpenApi = ss.getSearchApi();
-        }
 
-        //easyOpenApi.searchApi(v, storeId, catalogId, locale, zipCode, term, page,
-        //					  limit, sort, client_id, filterId, callback);
+        easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         easyOpenApi.searchResult(RECOMMENDATION, STORE_ID, CATALOG_ID, LOCALE, ZIPCODE, keyword, "1",
                 SEARCH_RESULTS_AMOUNT, SORT_BY_BEST_MATCH, CLIENT_ID, "", this);
     }
@@ -127,12 +100,11 @@ public class SearchAdapter extends ArrayAdapter<SearchResultRowItem> implements 
                 else{
                     mySearch = searchResult.getSearch()[0];
                     if(mySearch.getItemCount() > 0){
-                        Log.d(TAG, "Retro successed: product name[0]:" + mySearch.getProduct()[0].getProductName());
                         setSearchResult();
-                        wrapper.setState(SearchWrapperLayout.State.DONE);
+                        wrapper.setState(DataWrapper.State.DONE);
                     }
                     else{
-                        wrapper.setState(SearchWrapperLayout.State.EMPTY);
+                        wrapper.setState(DataWrapper.State.EMPTY);
                     }
                     notifyDataSetChanged();
                 }
@@ -150,61 +122,45 @@ public class SearchAdapter extends ArrayAdapter<SearchResultRowItem> implements 
         Log.d(TAG, "Retro failed!");
         Log.d(TAG, "Fail to get search results: " + retrofitError.getMessage());
         Log.d(TAG, "URl used to get search details: " + retrofitError.getUrl());
-        wrapper.setState(SearchWrapperLayout.State.EMPTY);
+        wrapper.setState(DataWrapper.State.EMPTY);
         notifyDataSetChanged();
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        SearchResultRowItem rowItem = getItem(position);
+    public View getView(int position, View view, ViewGroup parent) {
+        BundleItem item = getItem(position);
 
-        if (convertView == null) {
-            convertView = inflater.inflate(R.layout.search_result_row_wide, parent, false);
-        }
+        if (view==null)
+            view = inflater.inflate(layout, parent, false);
 
-        TextView title = (TextView) convertView.findViewById(R.id.title);
-        if (title!=null) title.setText(rowItem.getProduceName());
+        TextView title = (TextView) view.findViewById(R.id.title);
+        if (title!=null) title.setText(item.title);
 
-        RatingStars ratingStars = (RatingStars) convertView.findViewById(R.id.rating);
-        ratingStars.setRating(Float.parseFloat(rowItem.getRating()), Integer.parseInt(rowItem.getReviewAmount()));
+        RatingStars ratingStars = (RatingStars) view.findViewById(R.id.rating);
+        ratingStars.setRating(item.customerRating, item.customerCount);
 
-        PriceSticker priceSticker = (PriceSticker) convertView.findViewById(R.id.pricing);
-        priceSticker.setPricing(Float.parseFloat(rowItem.getCurrentPrice()), rowItem.getUnitOfMeasure());
+        PriceSticker priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
+        priceSticker.setPricing(item.price, item.unit);
 
-        ImageView image = (ImageView) convertView.findViewById(R.id.image);
-        if (rowItem.getImageUrl() == null) {
-            image.setImageDrawable(noPhoto);
-        }
-        else {
-            Picasso.with(activity).load(rowItem.getImageUrl()).error(noPhoto).into(image);
-        }
+        ImageView image = (ImageView) view.findViewById(R.id.image);
+        if (item.imageUrl==null) image.setImageDrawable(noPhoto);
+        else Picasso.with(activity).load(item.imageUrl).error(noPhoto).into(image);
 
-        return convertView;
+        return(view);
     }
 
     private void setSearchResult (){
-        Search searchObj = mySearch;
+        List<Product> products = mySearch.getProduct();
+        if (products!=null) {
 
-        for (int i = 0; i < searchObj.getProduct().length; i++) {
-            Product product = searchObj.getProduct()[i];
-            String productName = product.getProductName();
-            String currentPrice = String.valueOf(product.getPricing()[0].getFinalPrice());
-            String previousPrice = String.valueOf(product.getPricing()[0].getPrice());
-            String rating = String.valueOf(product.getCustomerReviewRating());
-            String reviewAmount = String.valueOf(product.getCustomerReviewCount());
-            String sku = String.valueOf(product.getSku());
-            String unitOfMeasure = String.valueOf(product.getPricing()[0].getUnitOfMeasure());
-
-            ThumbnailImage thumbNailImage = product.getThumbnailImage()[0];
-            String thumbnailImageURL = thumbNailImage.getUrl();
-            StringBuilder sb = new StringBuilder();
-            sb.append(thumbnailImageURL);
-            sb.append("&hei=100&wid=100&resMode=sharp");
-            String imageUrl = sb.toString();
-
-            SearchResultRowItem item = new SearchResultRowItem(i, productName, previousPrice,
-                    currentPrice, reviewAmount, rating, sku, unitOfMeasure, imageUrl);
-            add(item);
+            for (Product product : products) {
+                BundleItem item = new BundleItem(product.getProductName(), product.getSku());
+                item.setImageUrl(product.getImage());
+                item.setPrice(product.getPricing());
+                item.customerRating = product.getCustomerReviewRating();
+                item.customerCount = product.getCustomerReviewCount();
+                add(item);
+            }
         }
     }
 }

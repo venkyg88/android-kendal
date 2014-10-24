@@ -25,7 +25,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<Browse> {
+public class BundleAdapter extends ArrayAdapter<BundleItem> implements DataWrapper.Layoutable, Callback<Browse> {
     private static final String TAG = "BundleAdapter";
 
     private static final String RECOMMENDATION = "v1";
@@ -53,8 +53,9 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements Callback<
         noPhoto = activity.getResources().getDrawable(R.drawable.no_photo);
     }
 
-    public void setLayout(int layout) {
-        this.layout = layout;
+    public void setLayout(DataWrapper.Layout layout) {
+        if (layout==DataWrapper.Layout.TALL) this.layout = R.layout.bundle_item_tall;
+        else  this.layout = R.layout.bundle_item_wide;
     }
 
     @Override

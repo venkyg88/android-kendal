@@ -2,24 +2,27 @@ package com.staples.mobile.common.access.easyopen.model.search;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 public class Pricing {
     @JsonProperty("BuyMoreSaveMoreDetail")
-    private BuyMoreSaveMoreDetail[] buyMoreSaveMoreDetail;
-    private String buyMoreSaveMoreImage;
-    private Description[] description;
-    private Discount[] discount;
-    private boolean displayRegularPricing;
-    private boolean displayWasPricing;
-    private float finalPriceDeduction;
-    private Product[] freeItem;
-    private float finalPrice;
-    private float freeItemTotalSavings;
-    private float listPrice;
-    private float price;
-    private float savings;
-    private String unitOfMeasure;
+    List<BuyMoreSaveMoreDetail> buyMoreSaveMoreDetail;
+    String buyMoreSaveMoreImage;
+    List<Description> description;
+    List<Discount> discount;
+    boolean displayRegularPricing;
+    boolean displayWasPricing;
+    float finalPriceDeduction;
+    List<Product> freeItem;
+    float finalPrice;
+    float freeItemTotalSavings;
+    List<Image> image;
+    float listPrice;
+    float price;
+    float savings;
+    String unitOfMeasure;
 
-    public BuyMoreSaveMoreDetail[] getBuyMoreSaveMoreDetail() {
+    public List<BuyMoreSaveMoreDetail> getBuyMoreSaveMoreDetail() {
         return buyMoreSaveMoreDetail;
     }
 
@@ -27,11 +30,11 @@ public class Pricing {
         return buyMoreSaveMoreImage;
     }
 
-    public Description[] getDescription() {
+    public List<Description> getDescription() {
         return description;
     }
 
-    public Discount[] getDiscount() {
+    public List<Discount> getDiscount() {
         return discount;
     }
 
@@ -47,7 +50,7 @@ public class Pricing {
         return finalPriceDeduction;
     }
 
-    public Product[] getFreeItem() {
+    public List<Product> getFreeItem() {
         return freeItem;
     }
 
@@ -57,6 +60,10 @@ public class Pricing {
 
     public float getFreeItemTotalSavings() {
         return freeItemTotalSavings;
+    }
+
+    public List<Image> getImage() {
+        return image;
     }
 
     public float getListPrice() {

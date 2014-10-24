@@ -4,6 +4,7 @@ public class Discount {
     private float amount;
     private String currency;
     private boolean deductFromListPrice;
+    private String form;
     private String name;
 
     public float getAmount() {
@@ -16,6 +17,10 @@ public class Discount {
 
     public boolean isDeductFromListPrice() {
         return deductFromListPrice;
+    }
+
+    public String getForm() {
+        return form;
     }
 
     public String getName() {

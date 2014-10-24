@@ -2,46 +2,62 @@ package com.staples.mobile.common.access.easyopen.model.search;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 public class Product {
-    private boolean bopisEligible;
-    private BulletDescription[] bulletDescription;
-    private String classId;
-    private boolean comparable;
-    private int customerReviewCount;
-    private float customerReviewRating;
-    private boolean deliveryOnly;
-    private String displayName;
-    private boolean freeShipping;
-    private Image[] image;
+    List<Analytic> analytic;
+    boolean bopisEligible;
+    List<BulletDescription> bulletDescription;
+    boolean businessService;
+    String classId;
+    boolean comparable;
+    int customerReviewCount;
+    float customerReviewRating;
+    boolean deliveryOnly;
+    String displayName;
+    boolean freeShipping;
+    List<Image> image;
     @JsonProperty("leadTimeDecription")
-    private String leadTimeDescription;
-    private String manufacturerName;
-    private String manufacturerPartNumber;
-    private boolean priceInCartOnly;
-    private Pricing[] pricing;
-    private String productName;
-    private String productUrl;
-    private Description[] promotionalOfferExpire;
-    private boolean retailOnly;
-    private boolean retailOnlySpecialOrder;
-    private boolean ropisEligible;
-    private int ropisQtyLimit;
-    private float savings;
-    private boolean shipableToStore;
-    private String sku;
-    private Image[] smallPromoImage;
-    private String staplesDisplayPartNumber;
-    private ThumbnailImage[] thumbnailImage;
-    private String uniqueId;
-    private boolean upsable;
-    private boolean webOnly;
+    String leadTimeDescription;
+    String manufacturerName;
+    String manufacturerPartNumber;
+    boolean priceInCartOnly;
+    List<Pricing> pricing;
+    List<Product> product;
+    String productName;
+    String productUrl;
+    List<Description> promotionalOfferExpire;
+    String recommendationUrl;
+    boolean retailOnly;
+    boolean retailOnlySpecialOrder;
+    boolean ropisEligible;
+    int ropisQtyLimit;
+    float savings;
+    boolean shipableToStore;
+    boolean shopRunner;
+    String sku;
+    List<Image> smallPromoImage;
+    String staplesDisplayPartNumber;
+    String supplierTypeId;
+    List<ThumbnailImage> thumbnailImage;
+    String uniqueId;
+    boolean upsable;
+    boolean webOnly;
+
+    public List<Analytic> getAnalytic() {
+        return analytic;
+    }
 
     public boolean isBopisEligible() {
         return bopisEligible;
     }
 
-    public BulletDescription[] getBulletDescription() {
+    public List<BulletDescription> getBulletDescription() {
         return bulletDescription;
+    }
+
+    public boolean isBusinessService() {
+        return businessService;
     }
 
     public String getClassId() {
@@ -72,7 +88,7 @@ public class Product {
         return freeShipping;
     }
 
-    public Image[] getImage() {
+    public List<Image> getImage() {
         return image;
     }
 
@@ -92,8 +108,12 @@ public class Product {
         return priceInCartOnly;
     }
 
-    public Pricing[] getPricing() {
+    public List<Pricing> getPricing() {
         return pricing;
+    }
+
+    public List<Product> getProduct() {
+        return product;
     }
 
     public String getProductName() {
@@ -104,8 +124,12 @@ public class Product {
         return productUrl;
     }
 
-    public Description[] getPromotionalOfferExpire() {
+    public List<Description> getPromotionalOfferExpire() {
         return promotionalOfferExpire;
+    }
+
+    public String getRecommendationUrl() {
+        return recommendationUrl;
     }
 
     public boolean isRetailOnly() {
@@ -132,11 +156,15 @@ public class Product {
         return shipableToStore;
     }
 
+    public boolean isShopRunner() {
+        return shopRunner;
+    }
+
     public String getSku() {
         return sku;
     }
 
-    public Image[] getSmallPromoImage() {
+    public List<Image> getSmallPromoImage() {
         return smallPromoImage;
     }
 
@@ -144,7 +172,11 @@ public class Product {
         return staplesDisplayPartNumber;
     }
 
-    public ThumbnailImage[] getThumbnailImage() {
+    public String getSupplierTypeId() {
+        return supplierTypeId;
+    }
+
+    public List<ThumbnailImage> getThumbnailImage() {
         return thumbnailImage;
     }
 

@@ -1,4 +1,4 @@
-package com.staples.mobile.common.access.easyopen.model.search;
+package com.staples.mobile.common.access.easyopen.model.browse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -9,10 +9,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SearchResult {
 	@JsonProperty("Search")
-	private com.staples.mobile.common.access.easyopen.model.search.Search[] Search;
+	private com.staples.mobile.common.access.easyopen.model.browse.Search[] Search;
 	private String recommendationUrl;
 
-	public com.staples.mobile.common.access.easyopen.model.search.Search[] getSearch() {
+	public com.staples.mobile.common.access.easyopen.model.browse.Search[] getSearch() {
 		return Search;
 	}
 	

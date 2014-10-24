@@ -16,18 +16,20 @@ import android.widget.TextView;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.bundle.BundleItem;
+import com.staples.mobile.cfa.widget.DataWrapper;
 
 public class SearchFragment extends Fragment implements AdapterView.OnItemClickListener {
     private static final String TAG = "SearchFragment";
 
     // Initialize UI elements
     private SearchAdapter searchAdapter;
-    private SearchWrapperLayout wrapper;
+    private DataWrapper wrapper;
     private View view;
     private GridView searchResultListView;
 
     // Initialize Api variables
-    public static String keyword = "";
+    public static String keyword = ""; // TODO Ugly public static
 
     // Initialize UI elements
     private TextView sortMethodView1;
@@ -36,7 +38,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "SearchFragment:onCreateView()" + " this[" + this + "]");
         view = inflater.inflate(R.layout.search_result, container, false);
-        wrapper = (SearchWrapperLayout) view.findViewById(R.id.wrapper);
+        wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
 
         findViews();
         setAdapter();
@@ -49,11 +51,11 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView parent, View view, int position, long id) {
-        SearchResultRowItem item = (SearchResultRowItem) parent.getItemAtPosition(position);
-        if (item == null || item.getProduceName() == null) {
+        BundleItem item = (BundleItem) parent.getItemAtPosition(position);
+        if (item == null || item.title == null) {
             return;
         }
-        ((MainActivity) getActivity()).selectSkuItem(item.getSku());
+        ((MainActivity) getActivity()).selectSkuItem(item.identifier);
     }
 
     private void findViews(){
