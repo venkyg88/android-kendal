@@ -68,10 +68,11 @@ public class SearchAdapter extends ArrayAdapter<BundleItem> implements DataWrapp
         else  this.layout = R.layout.bundle_item_wide;
     }
 
-    public void getSearchResults(final String keyword)
+    public void getSearchResults(String keyword)
     {
         wrapper.setState(DataWrapper.State.LOADING);
 
+        if (keyword==null || keyword.isEmpty()) keyword = "glue";
         this.keyword = keyword;
 
         easyOpenApi = Access.getInstance().getEasyOpenApi(false);
@@ -88,7 +89,7 @@ public class SearchAdapter extends ArrayAdapter<BundleItem> implements DataWrapp
                 Log.d(TAG + "Error JSON searchResult", "No value for 'Search' in JSON response. "
                         + "Resend the request for " + search_counter + " times.");
                 if(search_counter <= 5){
-                    getSearchResults(keyword);
+//                    getSearchResults(keyword);
                 }
             }
             else{
