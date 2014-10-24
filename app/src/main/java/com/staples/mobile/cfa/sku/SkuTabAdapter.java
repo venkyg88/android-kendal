@@ -67,7 +67,7 @@ public class SkuTabAdapter extends PagerAdapter {
             case 2:
                 item.view = new TextView(activity);
                 item.view.setPadding(10, 10, 10, 10);
-                ((TextView) item.view).setTextSize(30);
+                ((TextView) item.view).setTextSize(20);
                 ((TextView) item.view).setText(item.title);
                 break;
         }
