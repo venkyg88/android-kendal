@@ -5,12 +5,9 @@ import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
 import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
 import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
-<<<<<<< HEAD
 import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
-=======
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInfo;
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
->>>>>>> aa9728dc6c14b7dbb270d0ace750524ecc20568a
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
