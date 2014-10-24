@@ -15,7 +15,7 @@
     </style>
 
     <style name="CartHeader" parent="DrawerStyle">
-        <item name="android:background">#ffff80</item>
+        <item name="android:background">#ffff00</item>
     </style>
 
 	<style name="TextExtraLargeListItem">

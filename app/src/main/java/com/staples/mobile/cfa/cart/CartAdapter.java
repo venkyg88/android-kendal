@@ -69,6 +69,9 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     private QtyUpdateButtonListener qtyUpdateButtonListener;
     private QtyChangeListener qtyChangeListener;
 
+    // cart object
+    private Cart cart;
+
 
     public CartAdapter(Activity activity, int cartItemLayoutResId, ProgressIndicator progressIndicator) {
         super(activity, cartItemLayoutResId);
@@ -91,15 +94,9 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     }
 
 
-    // Items
 
-    public int getTotalCount() {
-        int totalCount = 0;
-        for (int position = 0;  position < getCount();  position++) {
-            CartItem item = getItem(position);
-            totalCount += item.getQuantity();
-        }
-        return totalCount;
+    public Cart getCart() {
+        return cart;
     }
 
 
@@ -109,55 +106,53 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     @Override
     public View getView(int position, View view, ViewGroup parent) {
 
+        // use view holder pattern to improve listview performance
+        ViewHolder vh = null;
+
         // Get a new or recycled view of the right type
         if (view == null) {
             view = inflater.inflate(cartItemLayoutResId, parent, false);
+            vh = new ViewHolder(view); // get various widgets and place in view holder
+            view.setTag(vh);
+        } else {
+            vh = (ViewHolder) view.getTag();
         }
 
         CartItem cartItem = getItem(position);
 
         // Set image
-        ImageView imageView = (ImageView) view.findViewById(R.id.cartitem_image);
         String imageUrl = cartItem.getImageUrl();
         if (imageUrl == null) {
-            imageView.setImageDrawable(noPhoto);
+            vh.imageView.setImageDrawable(noPhoto);
         } else {
-            Picasso.with(activity).load(imageUrl).error(noPhoto).into(imageView);
+            Picasso.with(activity).load(imageUrl).error(noPhoto).into(vh.imageView);
         }
 
         // Set title
-        TextView titleTextView = (TextView) view.findViewById(R.id.cartitem_title);
-        titleTextView.setText(cartItem.getDescription());
+        vh.titleTextView.setText(cartItem.getDescription());
 
         // TODO: include original price
         // set price
-        PriceSticker priceSticker = (PriceSticker) view.findViewById(R.id.cartitem_price);
-        priceSticker.setPricing(cartItem.getFinalPrice(), cartItem.getPriceUnitOfMeasure());
-
-
-        // get qty related widgets
-        QuantityEditor qtyWidget = (QuantityEditor)view.findViewById(R.id.cartitem_qty);
-        Button deleteButton = (Button)view.findViewById(R.id.cartitem_delete);
-        Button updateButton = (Button)view.findViewById(R.id.cartitem_update);
+        vh.priceSticker.setPricing(cartItem.getFinalPrice(), cartItem.getPriceUnitOfMeasure());
 
         // associate cart position with each widget
-        qtyWidget.setTag(position);
-        deleteButton.setTag(position);
-        updateButton.setTag(position);
+        vh.qtyWidget.setTag(position);
+        vh.deleteButton.setTag(position);
+        vh.updateButton.setTag(position);
 
         // associate qty widget with cart item
-        cartItem.setQtyWidget(qtyWidget);
+        cartItem.setQtyWidget(vh.qtyWidget);
 
         // set widget listeners
-        qtyWidget.setOnQtyChangeListener(qtyChangeListener);
-        deleteButton.setOnClickListener(qtyDeleteButtonListener);
-        updateButton.setOnClickListener(qtyUpdateButtonListener);
+        vh.qtyWidget.setOnQtyChangeListener(qtyChangeListener);
+        vh.deleteButton.setOnClickListener(qtyDeleteButtonListener);
+        vh.updateButton.setOnClickListener(qtyUpdateButtonListener);
 
         // set quantity (AFTER listeners set up above)
-        qtyWidget.setQtyValue(cartItem.getProposedQty());
+        vh.qtyWidget.setQtyValue(cartItem.getProposedQty());
 
         // set visibility of update button
-        updateButton.setVisibility(cartItem.isProposedQtyDifferent()? View.VISIBLE : View.GONE);
+        vh.updateButton.setVisibility(cartItem.isProposedQtyDifferent()? View.VISIBLE : View.GONE);
 
         return(view);
     }
@@ -243,10 +238,30 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         notifyDataSetChanged();
     }
 
+
     //---------------------------------------//
     //------------ inner classes ------------//
     //---------------------------------------//
 
+    /************* view holder ************/
+
+    static class ViewHolder {
+        ImageView imageView;
+        TextView titleTextView;
+        PriceSticker priceSticker;
+        QuantityEditor qtyWidget;
+        Button deleteButton;
+        Button updateButton;
+
+        ViewHolder(View convertView) {
+            imageView = (ImageView) convertView.findViewById(R.id.cartitem_image);
+            titleTextView = (TextView) convertView.findViewById(R.id.cartitem_title);
+            priceSticker = (PriceSticker) convertView.findViewById(R.id.cartitem_price);
+            qtyWidget = (QuantityEditor) convertView.findViewById(R.id.cartitem_qty);
+            deleteButton = (Button) convertView.findViewById(R.id.cartitem_delete);
+            updateButton = (Button) convertView.findViewById(R.id.cartitem_update);
+        }
+    }
 
     /************* api listeners ************/
 
@@ -258,15 +273,16 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         public void success(CartContents cartContents, Response response) {
             progressIndicator.hideProgressIndicator();
 
-            // getting data from cartContent request
+            // clear the cart before refilling
+            cart = null;
+            clear();
+
+            // get data from cartContent request
             List<Cart> cartCollection = cartContents.getCart();
             if (cartCollection != null && cartCollection.size() > 0) {
-                Cart cart = cartCollection.get(0);
+                cart = cartCollection.get(0);
                 List<Product> products = cart.getProduct();
                 if (products != null) {
-                    if (getCount() > 0) {
-                        clear();
-                    }
                     // iterate thru products in reverse order so newest item appears first
                     for (int i = products.size() - 1;  i >= 0;  i--) {
                         add(new CartItem(products.get(i)));
@@ -302,29 +318,34 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                 Toast.makeText(activity, cartUpdate.getMessage(), Toast.LENGTH_LONG).show();
             }
 
-            // if an update (this assumes one product updated at a time)
-            if (update) {
-                // if no items updated, then refill cart to get accurate counts
-                if (cartUpdate.getItemsAdded().size() == 0) {
-                    fill();
-                } else {
-                    // determine which items were updated and fix their qty, no need to refill the cart
-                    List<String> itemIds = convertItemIdsToStringList(cartUpdate.getItemsAdded());
-                    for (int i = 0; i < getCount(); i++) {
-                        CartItem cartItem = getItem(i);
-                        if (cartItem.isProposedQtyDifferent() && itemIds.contains(cartItem.getOrderItemId())) {
-                            cartItem.setQuantity(cartItem.getProposedQty());
-                        }
-                    }
-                }
-            } else {
-                // if a successful insert, refill cart
-                if (cartUpdate.getItemsAdded().size() > 0) {
-                    fill();
-                }
+            // if a successful insert, refill cart
+            if (cartUpdate.getItemsAdded().size() > 0) {
+                fill();
             }
 
-            notifyDataSetChanged();
+            // can't do the following because need updated info about the cart such as shipping and subtotals
+//            // if an update (this assumes one product updated at a time)
+//            if (update) {
+//                // if no items updated, then refill cart to get accurate counts
+//                if (cartUpdate.getItemsAdded().size() == 0) {
+//                    fill();
+//                } else {
+//                    // determine which items were updated and fix their qty, no need to refill the cart
+//                    List<String> itemIds = convertItemIdsToStringList(cartUpdate.getItemsAdded());
+//                    for (int i = 0; i < getCount(); i++) {
+//                        CartItem cartItem = getItem(i);
+//                        if (cartItem.isProposedQtyDifferent() && itemIds.contains(cartItem.getOrderItemId())) {
+//                            cartItem.setQuantity(cartItem.getProposedQty());
+//                        }
+//                    }
+//                }
+//            } else {
+//                // if a successful insert, refill cart
+//                if (cartUpdate.getItemsAdded().size() > 0) {
+//                    fill();
+//                }
+//            }
+//            notifyDataSetChanged();
         }
 
         @Override
@@ -332,16 +353,16 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
             respondToFailure("Failed Cart Update: " + retrofitError.getMessage());
         }
 
-        /** converts list of items into list of ids */
-        private List<String> convertItemIdsToStringList(List<ItemsAdded> itemsAdded) {
-            List<String> ids = new ArrayList<String>();
-            for (ItemsAdded itemAdded : itemsAdded) {
-                for (OrderItemId oid : itemAdded.getOrderItemIds()) {
-                    ids.add(oid.getOrderItemId());
-                }
-            }
-            return ids;
-        }
+//        /** converts list of items into list of ids */
+//        private List<String> convertItemIdsToStringList(List<ItemsAdded> itemsAdded) {
+//            List<String> ids = new ArrayList<String>();
+//            for (ItemsAdded itemAdded : itemsAdded) {
+//                for (OrderItemId oid : itemAdded.getOrderItemIds()) {
+//                    ids.add(oid.getOrderItemId());
+//                }
+//            }
+//            return ids;
+//        }
     }
 
 
@@ -357,7 +378,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            respondToFailure("Failed Cart Update: " + retrofitError.getMessage());
+            respondToFailure("Failed Cart Item Deletion: " + retrofitError.getMessage());
         }
     }
 

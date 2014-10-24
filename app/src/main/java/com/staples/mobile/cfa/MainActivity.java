@@ -23,6 +23,7 @@ import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener, Access.OnLoginCompleteListener {
@@ -36,6 +37,10 @@ public class MainActivity extends Activity
     private View rightDrawer;
     private BadgeImageView rightDrawerAction;
     private TextView cartTitle;
+    private TextView cartSubtotal;
+    private TextView cartShipping;
+    private TextView cartProceedToCheckout;
+    private View cartSubtotalLayout;
     private CartAdapter cartAdapter;
 
     private DrawerItem homeDrawerItem;
@@ -115,7 +120,19 @@ public class MainActivity extends Activity
         topper = (ViewGroup) findViewById(R.id.topper);
         rightDrawer = findViewById(R.id.right_drawer);
         rightDrawerAction = (BadgeImageView)findViewById(R.id.action_right_drawer);
-        cartTitle = (TextView)findViewById(R.id.checkout);
+        cartTitle = (TextView)findViewById(R.id.cart_title);
+        cartShipping = (TextView)findViewById(R.id.cart_shipping);
+        cartSubtotal = (TextView)findViewById(R.id.cart_subtotal);
+        cartSubtotalLayout = findViewById(R.id.cart_subtotal_layout);
+        cartProceedToCheckout = (TextView)findViewById(R.id.cart_proceed);
+
+        cartProceedToCheckout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectFragment(Fragment.instantiate(MainActivity.this, ToBeDoneFragment.class.getName()),
+                        Transition.SLIDE, true);
+            }
+        });
 
         // Set action bar listeners
         findViewById(R.id.action_left_drawer).setOnClickListener(this);
@@ -151,10 +168,10 @@ public class MainActivity extends Activity
             @Override
             public void onChanged() {
                 super.onChanged();
-                setCartItemCount(cartAdapter.getTotalCount());
+                updateCartIndicators(cartAdapter.getCart());
             }
         });
-        this.setCartItemCount(0); // initialize count to zero until we're able to fill the cart
+        updateCartIndicators(null); // initialize cart display until we're able to fill the cart (e.g. item count to zero)
         ((ListView)rightDrawer.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
 
         // Fresh start?
@@ -218,12 +235,30 @@ public class MainActivity extends Activity
 
 
     /** Sets item count indicator on cart icon and cart drawer title */
-    public void setCartItemCount(int count) {
-        // set text of cart icon
-        rightDrawerAction.setText(count == 0 ? null : Integer.toString(count));
+    public void updateCartIndicators(Cart cart) {
+        int totalItemCount = 0;
+        String shipping = "";
+        float preTaxSubtotal = 0;
+        if (cart != null) {
+            totalItemCount = cart.getTotalItems();
+            shipping = cart.getDelivery();
+            preTaxSubtotal = cart.getPreTaxTotal();
+        }
+
+        // set text of cart icon badge
+        rightDrawerAction.setText(totalItemCount == 0 ? null : Integer.toString(totalItemCount));
+
         // Set text of cart drawer title
-        if (count==0) cartTitle.setText(getResources().getString(R.string.your_cart));
-        else cartTitle.setText(getResources().getQuantityString(R.plurals.your_cart, count, count));
+        if (totalItemCount==0) cartTitle.setText(getResources().getString(R.string.your_cart));
+        else cartTitle.setText(getResources().getQuantityString(R.plurals.your_cart, totalItemCount, totalItemCount));
+
+        // set text of shipping and subtotal
+        cartShipping.setText(shipping);
+        cartSubtotal.setText("$" + preTaxSubtotal);
+
+        // only show shipping, subtotal, and proceed-to-checkout when at least one item
+        cartSubtotalLayout.setVisibility(totalItemCount == 0? View.GONE : View.VISIBLE);
+        cartProceedToCheckout.setVisibility(totalItemCount == 0? View.GONE : View.VISIBLE);
     }
 
     /** Adds an item to the cart */
