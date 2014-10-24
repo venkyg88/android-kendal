@@ -1,19 +1,19 @@
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 
 import com.staples.mobile.R;
+import com.staples.mobile.common.access.easyopen.model.sku.Pricing;
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 public class PriceSticker extends View {
     private static final String TAG = "StickerPrice";
@@ -78,10 +78,26 @@ public class PriceSticker extends View {
         height = baseline + (int) pricePaint.descent();
     }
 
-    public void setPricing(float price, String unit) {
+    public void setPricing(float price, String unit) { // TODO old code
         this.price = price;
         this.unit = unit;
         invalidate();
+    }
+
+    public boolean setPricing(List<Pricing> pricings) {
+        if (pricings==null) return(false);
+        for(Pricing pricing : pricings) {
+            if (setPricing(pricing)) return (true);
+        }
+        return (false);
+    }
+
+    public boolean setPricing(Pricing pricing) {
+        if (pricing==null) return(false);
+        price = pricing.getFinalPrice();
+        unit = pricing.getUnitOfMeasure();
+        invalidate();
+        return(true);
     }
 
     @Override
