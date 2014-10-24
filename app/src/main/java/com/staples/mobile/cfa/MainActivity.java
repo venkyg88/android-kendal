@@ -39,7 +39,7 @@ public class MainActivity extends Activity
     private TextView cartTitle;
     private TextView cartSubtotal;
     private TextView cartShipping;
-    private TextView cartProceedToCheckout;
+    private View cartProceedToCheckout;
     private View cartSubtotalLayout;
     private CartAdapter cartAdapter;
 
@@ -47,6 +47,7 @@ public class MainActivity extends Activity
     private DrawerItem searchDrawerItem;
     private DrawerItem storeDrawerItem;
     private DrawerItem rewardsDrawerItem;
+    private DrawerItem checkoutDrawerItem;
 
     public enum Transition {
         NONE  (0, 0, 0, 0, 0),
@@ -120,19 +121,6 @@ public class MainActivity extends Activity
         topper = (ViewGroup) findViewById(R.id.topper);
         rightDrawer = findViewById(R.id.right_drawer);
         rightDrawerAction = (BadgeImageView)findViewById(R.id.action_right_drawer);
-        cartTitle = (TextView)findViewById(R.id.cart_title);
-        cartShipping = (TextView)findViewById(R.id.cart_shipping);
-        cartSubtotal = (TextView)findViewById(R.id.cart_subtotal);
-        cartSubtotalLayout = findViewById(R.id.cart_subtotal_layout);
-        cartProceedToCheckout = (TextView)findViewById(R.id.cart_proceed);
-
-        cartProceedToCheckout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectFragment(Fragment.instantiate(MainActivity.this, ToBeDoneFragment.class.getName()),
-                        Transition.SLIDE, true);
-            }
-        });
 
         // Set action bar listeners
         findViewById(R.id.action_left_drawer).setOnClickListener(this);
@@ -153,6 +141,7 @@ public class MainActivity extends Activity
         searchDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.ic_search, R.string.search_title, ToBeDoneFragment.class);
         storeDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.store_info_title, ToBeDoneFragment.class);
         rewardsDrawerItem = adapter.getItem(6); // TODO Hard-coded alias
+        checkoutDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.checkout_title, ToBeDoneFragment.class);
 
         // Initialize topper
         LayoutInflater inflater = getLayoutInflater();
@@ -160,8 +149,16 @@ public class MainActivity extends Activity
         topper.findViewById(R.id.action_store).setOnClickListener(this);
         topper.findViewById(R.id.action_rewards).setOnClickListener(this);
 
+        // Cart
+        cartTitle = (TextView) rightDrawer.findViewById(R.id.cart_title);
+        cartShipping = (TextView) rightDrawer.findViewById(R.id.cart_shipping);
+        cartSubtotal = (TextView) rightDrawer.findViewById(R.id.cart_subtotal);
+        cartSubtotalLayout = rightDrawer.findViewById(R.id.cart_subtotal_layout);
+        cartProceedToCheckout = rightDrawer.findViewById(R.id.action_checkout);
+        cartProceedToCheckout.setOnClickListener(this);
+
         // Initialize right drawer cart listview
-        CartContainer cartContainer = (CartContainer)rightDrawer.findViewById(R.id.right_drawer_content);
+        CartContainer cartContainer = (CartContainer) rightDrawer.findViewById(R.id.right_drawer_content);
         cartContainer.setCartProgressOverlay(rightDrawer.findViewById(R.id.cart_progress_overlay));
         cartAdapter = new CartAdapter(this, R.layout.cart_item, cartContainer.getProgressIndicator());
         cartAdapter.registerDataSetObserver(new DataSetObserver() {
@@ -172,7 +169,7 @@ public class MainActivity extends Activity
             }
         });
         updateCartIndicators(null); // initialize cart display until we're able to fill the cart (e.g. item count to zero)
-        ((ListView)rightDrawer.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
+        ((ListView) rightDrawer.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
 
         // Fresh start?
         if (freshStart) {
@@ -232,7 +229,6 @@ public class MainActivity extends Activity
         selectDrawerItem(item, Transition.SLIDE, true);
         return(true);
     }
-
 
     /** Sets item count indicator on cart icon and cart drawer title */
     public void updateCartIndicators(Cart cart) {
@@ -301,6 +297,10 @@ public class MainActivity extends Activity
 
             case R.id.action_rewards:
                 selectDrawerItem(rewardsDrawerItem, Transition.SLIDE, true);
+                break;
+
+            case R.id.action_checkout:
+                selectDrawerItem(checkoutDrawerItem, Transition.SLIDE, true);
                 break;
         }
     }

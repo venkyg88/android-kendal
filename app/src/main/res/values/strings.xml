@@ -18,6 +18,7 @@
     <string name="rewards_title">Rewards</string>
     <string name="order_title">Order</string>
     <string name="profile_title">Profile</string>
+    <string name="checkout_title">Checkout</string>
     <string name="backtotop_title">Back to Menu</string>
     <string name="store_info_title">Store Info</string>
     <string name="tobedone_title">(To be done)</string>
