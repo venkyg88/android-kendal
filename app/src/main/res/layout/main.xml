@@ -30,69 +30,52 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:src="@drawable/ic_drawer"/>
-            <LinearLayout
+            <ImageView
                 android:id="@+id/action_home"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:src="@drawable/logo"/>
+                android:gravity="center"
+                android:src="@drawable/logo"/>
+            <!-- Search Bar -->
+            <com.staples.mobile.cfa.search.SearchBar
+                android:id="@+id/search_bar"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:animateLayoutChanges="true">
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/header"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:paddingLeft="4dp"
                     android:paddingRight="4dp"
-                    android:gravity="center"
+                    android:gravity="center_vertical"
                     android:textSize="24sp"
                     android:text="@string/staples"/>
-            </LinearLayout>
-
-            <!-- Search Bar -->
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <AutoCompleteTextView
-                        android:id="@+id/original_text"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="left|center_vertical"
-                        android:hint="@string/original_hint"
-                        android:imeOptions="actionSearch"
-                        android:ems="10"
-                        android:textSize="15sp"
-                        android:inputType="textAutoComplete|textAutoCorrect"
-                        android:maxLines="1"/>
-
-                    <Button
-                        android:id="@+id/suggestions_delete_button"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:layout_gravity="right|center_vertical"
-                        android:layout_marginRight="5dp"
-                        android:adjustViewBounds="true"
-                        android:background="@drawable/ic_suggestions_delete" />
-                </FrameLayout>
-
+                <AutoCompleteTextView
+                    android:id="@+id/search_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:inputType="textAutoComplete|textAutoCorrect"
+                    android:imeOptions="actionSearch|flagNoExtractUi"
+                    android:singleLine="true"
+                    android:hint="@string/original_hint"
+                    android:textSize="16sp"/>
                 <ImageView
-                    android:id="@+id/action_search"
-                    android:layout_width="35dp"
+                    android:id="@+id/search_cancel"
+                    android:layout_width="@dimen/icon_width"
                     android:layout_height="match_parent"
-                    android:layout_gravity="right|center_vertical"
-                    android:layout_marginRight="3dp"
-                    android:adjustViewBounds="true"
+                    android:src="@drawable/ic_action_cancel"/>
+                <ImageView
+                    android:id="@+id/search_activate"
+                    android:layout_width="@dimen/icon_width"
+                    android:layout_height="match_parent"
                     android:src="@drawable/ic_search"/>
-            </LinearLayout>
-
+            </com.staples.mobile.cfa.search.SearchBar>
+            <!-- Cart badge -->
             <com.staples.mobile.cfa.widget.BadgeImageView
                 android:id="@+id/action_right_drawer"
                 android:layout_width="@dimen/icon_width"

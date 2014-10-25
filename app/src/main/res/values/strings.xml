@@ -56,8 +56,4 @@
     <string name="error">(Web service error)</string>
     <string name="json_error">(Web service error - JSON parse error)</string>
     <string name="interrupted">(Web service interrupted)</string>
-    <string name="no_results">No suggestions</string>
-    <string name="keyword_matches_label">KEYWORD MATCHES</string>
-    <string name="recent_search_label">YOUR RECENT SEARCHES</string>
->>>>>>> search
 </resources>
