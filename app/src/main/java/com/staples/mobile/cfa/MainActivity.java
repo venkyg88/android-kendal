@@ -4,26 +4,48 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartAdapter;
 import com.staples.mobile.cfa.cart.CartContainer;
+import com.staples.mobile.cfa.search.SearchFragment;
+import com.staples.mobile.cfa.search.SuggestTask;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener, Access.OnLoginCompleteListener {
@@ -48,6 +70,18 @@ public class MainActivity extends Activity
     private DrawerItem storeDrawerItem;
     private DrawerItem rewardsDrawerItem;
     private DrawerItem checkoutDrawerItem;
+
+    // search related variables:
+    public final static String BEST_MATCHES = "0";
+    private AutoCompleteTextView editText;
+    private Button deleteButton;
+    private Handler guiThread;
+    private ExecutorService suggestThread;
+    private Runnable getSuggestionTask;
+    private Future<?> suggPending;
+    private ArrayAdapter<String> adapter;
+    private ArrayList<String> saveKeywordsList;
+    private List<String> items;
 
     public enum Transition {
         NONE  (0, 0, 0, 0, 0),
@@ -104,6 +138,7 @@ public class MainActivity extends Activity
     protected void onDestroy() {
         super.onDestroy();
         new LoginHelper(this).unregisterLoginCompleteListener(this);
+        initSearchBar();
     }
 
     public void showMainScreen() {
@@ -138,7 +173,7 @@ public class MainActivity extends Activity
 
         // Create non-drawer DrawerItems
         homeDrawerItem = adapter.getItem(0); // TODO Hard-coded alias
-        searchDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.ic_search, R.string.search_title, ToBeDoneFragment.class);
+        searchDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.ic_search, R.string.search_title, SearchFragment.class);
         storeDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.store_info_title, ToBeDoneFragment.class);
         rewardsDrawerItem = adapter.getItem(6); // TODO Hard-coded alias
         checkoutDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.checkout_title, ToBeDoneFragment.class);
@@ -345,5 +380,209 @@ public class MainActivity extends Activity
                 }
                 break;
         }
+    }
+
+    // search methods:
+    private void initSearchBar(){
+        initSuggestThreading();
+        findSearchViews();
+        setSearchListeners();
+        setAdapters();
+        setSavedKeywords();
+    }
+
+    private void findSearchViews() {
+        editText = (AutoCompleteTextView) findViewById(R.id.original_text);
+        deleteButton = (Button) findViewById(R.id.suggestions_delete_button);
+        deleteButton.setVisibility(View.GONE);
+    }
+
+    private void setSavedKeywords(){
+        Context context = MainActivity.this;
+        SharedPreferences sp = context.getSharedPreferences("RECENT_SEARCH_KEYWORDS", MODE_PRIVATE);
+
+        String savedKeywordsString = sp.getString("KEYWORD_LIST", "");
+
+        if(!savedKeywordsString.equals("")){
+            String[] keywords = savedKeywordsString.split("/_/");
+            saveKeywordsList = new ArrayList<String>();
+            for(int i = keywords.length - 1; i >= 0; i--){
+                // Log.d(TAG, "Each Saved Keyword -> " + keywords[i]);
+                saveKeywordsList.add(keywords[i]);
+            }
+            setSuggestions(saveKeywordsList);
+        }
+    }
+
+    private void setSearchListeners(){
+        editText.addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                queueUpdate(100); /* wait 100 milliseconds */
+            }
+            public void afterTextChanged(Editable s) {
+                showSuggestDropDown(100);
+            }
+        });
+
+        editText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String keyword = (String) parent.getItemAtPosition(position);
+                if(keyword.equals(getResources().getString(R.string.no_results)) || SuggestTask.error != null){
+                    Toast.makeText(getApplicationContext(), "Please try another keyword.", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    doSearch(editText.getText().toString());
+                }
+            }
+        });
+
+        editText.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event){
+                editText.showDropDown();
+                return false;
+            }
+        });
+
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    doSearch(editText.getText().toString());
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        deleteButton.setOnTouchListener(new View.OnTouchListener()
+        {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionevent)
+            {
+                int action = motionevent.getAction();
+                if (action == MotionEvent.ACTION_UP)
+                {
+                    Log.d(TAG + "deleteButton", "deleteButton clicked");
+                    editText.setText("");
+                }
+                return false;
+            }
+        });
+    }
+
+    private void doSearch(String keyword) {
+        Toast.makeText(getApplicationContext(), "Searching " + editText.getText() + "...", Toast.LENGTH_SHORT).show();
+
+        saveKeyword(keyword);
+
+        if(keyword.length() > 0){
+            selectDrawerItem(searchDrawerItem, Transition.FADE, true);
+            editText.dismissDropDown();
+            InputMethodManager imm = (InputMethodManager)getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+            SearchFragment.keyword = String.valueOf(editText.getText());
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "Please enter keyword.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void saveKeyword(String keyword){
+        // Save the keyword before doing the search
+        Context context = MainActivity.this;
+        SharedPreferences sp = context.getSharedPreferences("RECENT_SEARCH_KEYWORDS", MODE_PRIVATE);
+
+        String savedKeywordsString = sp.getString("KEYWORD_LIST", "");
+        if(savedKeywordsString.equals("")){
+            savedKeywordsString = keyword;
+        }
+        else{
+            savedKeywordsString = savedKeywordsString + "/_/" + keyword;
+        }
+
+        if(keyword.equals("clear")){
+            savedKeywordsString = "";
+        }
+
+        // save updated KEYWORD_LIST
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("KEYWORD_LIST", savedKeywordsString);
+        editor.commit();
+    }
+
+    private void setAdapters() {
+        items = new ArrayList<String>();
+        adapter = new ArrayAdapter<String>(this, R.layout.search_auto_suggestion_row, items);
+        editText.setAdapter(adapter);
+    }
+
+    private void initSuggestThreading() {
+        guiThread = new Handler();
+        suggestThread = Executors.newSingleThreadExecutor();
+
+        getSuggestionTask = new Runnable() {
+            public void run() {
+                String original = editText.getText().toString().trim();
+
+                // Cancel previous suggestion if there was one
+                if (suggPending != null){
+                    suggPending.cancel(true);
+                }
+
+                // Check to make sure there is text to work on
+                if (original.length() != 0) {
+                    // Display delete button
+                    deleteButton.setVisibility(View.VISIBLE);
+
+                    try {
+                        SuggestTask suggestTask = new SuggestTask(MainActivity.this, original);
+                        suggPending = suggestThread.submit(suggestTask);
+                    } catch (RejectedExecutionException e) {
+                    }
+                }
+                else{
+                    deleteButton.setVisibility(View.GONE);
+                    adapter.clear();
+                    setSavedKeywords();
+                }
+            }
+        };
+    }
+
+    private void queueUpdate(long delayMillis) {
+        guiThread.removeCallbacks(getSuggestionTask);
+        guiThread.postDelayed(getSuggestionTask, delayMillis);
+    }
+
+    private void showSuggestDropDown(long delayMillis) {
+        Runnable showSuggestDropDownTask = new Runnable() {
+            public void run() {
+                editText.showDropDown();
+            }
+        };
+        guiThread.postDelayed(showSuggestDropDownTask, delayMillis);
+    }
+
+    public void setSuggestions(List<String> suggestions) {
+        guiSetSuggestions(editText, suggestions);
+    }
+
+    private void guiSetSuggestions(final AutoCompleteTextView editText, final List<String> suggestions) {
+        guiThread.post(new Runnable() {
+            public void run() {
+                adapter.clear();
+
+                for (String listItem : suggestions) {
+                    adapter.add(listItem);
+                }
+
+                adapter.getFilter().filter(editText.getText(), null);
+            }
+        });
     }
 }

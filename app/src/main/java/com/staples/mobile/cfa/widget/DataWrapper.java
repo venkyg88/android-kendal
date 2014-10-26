@@ -2,15 +2,12 @@ package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 
 import com.staples.mobile.R;
-import com.staples.mobile.cfa.bundle.BundleAdapter;
 
 /**
  * This class is a ViewGroup wrapper for three child Views:
@@ -21,7 +18,7 @@ import com.staples.mobile.cfa.bundle.BundleAdapter;
  * Usage: setState(DataWrapper.State state)
  */
 public class DataWrapper extends LinearLayout {
-    private static final String TAG ="DataWrapper";
+    private static final String TAG = "DataWrapper";
 
     public enum State {
         // Used for initial loading of adapters
@@ -44,6 +41,12 @@ public class DataWrapper extends LinearLayout {
             this.progress = progress;
             this.empty = empty;
         }
+    }
+
+    public enum Layout {WIDE, TALL}
+
+    public interface Layoutable {
+        public void setLayout(Layout layout);
     }
 
     public DataWrapper(Context context) {
@@ -96,12 +99,11 @@ public class DataWrapper extends LinearLayout {
             if (n<=0) n = 1;
             grid.setNumColumns(n);
 
-            // Special handling for BundleAdapter
+            // Special handling for Layoutable
             ListAdapter adapter = grid.getAdapter();
-            if (adapter instanceof BundleAdapter) {
-                BundleAdapter bundle = (BundleAdapter) adapter;
-                if (n > 1) bundle.setLayout(R.layout.bundle_item_tall);
-                else bundle.setLayout(R.layout.bundle_item_wide);
+            if (adapter instanceof Layoutable) {
+                if (n > 1) ((Layoutable) adapter).setLayout(Layout.TALL);
+                else ((Layoutable) adapter).setLayout(Layout.WIDE);
             }
         }
     }

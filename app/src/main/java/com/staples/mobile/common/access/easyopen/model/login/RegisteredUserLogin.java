@@ -7,7 +7,6 @@ package com.staples.mobile.common.access.easyopen.model.login;
 public class RegisteredUserLogin {
 
     private String logonId;
-
     private String logonPassword;
 
     public RegisteredUserLogin(String logonId, String logonPassword) {
