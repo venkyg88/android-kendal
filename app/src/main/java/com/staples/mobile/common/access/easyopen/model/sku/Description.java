@@ -3,6 +3,8 @@ package com.staples.mobile.common.access.easyopen.model.sku;
 public class Description {
     private String description;
     private String name;
+    private String promotionalHeadlineName;
+    private String promotionalHeadlineText;
     private String promotionalMessageName;
     private String promotionalMessageText;
     private String text;
@@ -13,6 +15,14 @@ public class Description {
 
     public String getName() {
         return name;
+    }
+
+    public String getPromotionalHeadlineName() {
+        return promotionalHeadlineName;
+    }
+
+    public String getPromotionalHeadlineText() {
+        return promotionalHeadlineText;
     }
 
     public String getPromotionalMessageName() {

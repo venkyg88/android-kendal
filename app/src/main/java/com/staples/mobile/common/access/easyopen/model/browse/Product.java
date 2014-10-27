@@ -13,10 +13,12 @@ public class Product {
     boolean businessService;
     String classId;
     boolean comparable;
+    List<Description> customTab;
     int customerReviewCount;
     float customerReviewRating;
     boolean deliveryOnly;
     String displayName;
+    boolean esd;
     List<Description> expandedText;
     boolean freeShipping;
     List<Description> headliner;
@@ -36,6 +38,7 @@ public class Product {
     String productUrl;
     List<Description> promotionalOfferExpire;
     String recommendationUrl;
+    boolean registeredUserOnly;
     boolean retailOnly;
     boolean retailOnlySpecialOrder;
     boolean ropisEligible;
@@ -48,6 +51,7 @@ public class Product {
     List<Description> specification;
     String staplesDisplayPartNumber;
     String supplierTypeId;
+    List<Description> termsAndCondition;
     List<ThumbnailImage> thumbnailImage;
     String uniqueId;
     boolean upsable;
@@ -85,6 +89,10 @@ public class Product {
         return comparable;
     }
 
+    public List<Description> getCustomTab() {
+        return customTab;
+    }
+
     public int getCustomerReviewCount() {
         return customerReviewCount;
     }
@@ -99,6 +107,10 @@ public class Product {
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public boolean isEsd() {
+        return esd;
     }
 
     public List<Description> getExpandedText() {
@@ -173,6 +185,10 @@ public class Product {
         return recommendationUrl;
     }
 
+    public boolean isRegisteredUserOnly() {
+        return registeredUserOnly;
+    }
+
     public boolean isRetailOnly() {
         return retailOnly;
     }
@@ -219,6 +235,10 @@ public class Product {
 
     public String getSupplierTypeId() {
         return supplierTypeId;
+    }
+
+    public List<Description> getTermsAndCondition() {
+        return termsAndCondition;
     }
 
     public List<ThumbnailImage> getThumbnailImage() {

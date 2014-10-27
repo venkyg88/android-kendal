@@ -160,16 +160,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_horizontal">
-        <EditText
+        <com.staples.mobile.cfa.widget.QuantityEditor
             android:id="@+id/quantity"
-            android:layout_width="60dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:gravity="right"
-            android:inputType="number"
-            android:singleLine="true"
-            android:textSize="20sp"
-            android:hint="1"/>
+            android:textSize="18sp"
+            maxSpinnerValue="6"/>
         <Button
             android:id="@+id/add_to_cart"
             android:layout_width="160dp"

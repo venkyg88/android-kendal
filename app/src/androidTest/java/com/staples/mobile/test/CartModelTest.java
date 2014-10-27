@@ -2,7 +2,6 @@ package com.staples.mobile.test;
 
 import android.util.Log;
 
-import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
@@ -12,14 +11,11 @@ import com.staples.mobile.common.access.easyopen.model.cart.Product;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowLog;
-import org.robolectric.util.ActivityController;
 
 import java.util.List;
 
@@ -27,40 +23,20 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+
+//These are tested against LIVE sapi calls
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18, qualifiers = "port")
 public class CartModelTest implements Callback<CartContents> {
 
-    private ActivityController controller;
-    private MainActivity activity;
     private EasyOpenApi easyOpenApi;
-
     private boolean success;
     private boolean failure;
 
-    @Before
-    public void setUp() {
-        // Redirect logcat to stdout logfile
-        ShadowLog.stream = System.out;
-
-        // Create activity controller
-        controller = Robolectric.buildActivity(MainActivity.class);
-        Assert.assertNotNull("Robolectric controller should not be null", controller);
-
-        // Create activity
-        controller.create();
-        controller.start();
-        controller.visible();
-        activity = (MainActivity) controller.get();
-
-        // Check for success
-        Assert.assertNotNull("Activity should exist", activity);
-
-        easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-    }
-
     @Test
     public void testCartCanBeViewed() throws InterruptedException {
+
+        easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         success = false;
         failure = false;
 
@@ -86,6 +62,7 @@ public class CartModelTest implements Callback<CartContents> {
     public void testCartItemsCanBeAdded() throws InterruptedException{
         success = false;
         failure = false;
+        easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         TypedJsonString body = new TypedJsonString("{" +
                 "\"orderItem\": [" +
                 "{\"partNumber_0\":123455,\"quantity_0\": \"3\"}," +
@@ -122,7 +99,6 @@ public class CartModelTest implements Callback<CartContents> {
         List<Cart> cartItems = cartContents.getCart();
         if(cartItems.size()==0){
             System.err.println("Empty Cart");
-//            System.err.println("JSON: "+result);
             return;
         }
 

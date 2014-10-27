@@ -41,8 +41,6 @@ public class DrawerItem {
 
     // For browse categories
     public String path;
-
-    // For SKU page
     public String identifier;
 
     // Constructor
