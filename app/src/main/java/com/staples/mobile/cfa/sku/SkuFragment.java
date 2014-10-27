@@ -23,6 +23,7 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PagerStripe;
 import com.staples.mobile.cfa.widget.PriceSticker;
+import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.model.sku.*;
@@ -263,13 +264,22 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
             Product product = products.get(0);
             tabAdapter.setProduct(product);
 
-            // Enable add-to-cart if not a Sku set
+            // Determine if Sku set, in-stock or out-of-stock
+            QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
+            Button button = (Button) wrapper.findViewById(R.id.add_to_cart);
             List<Product> skuset = product.getProduct();
-            if (skuset==null) {
-                wrapper.findViewById(R.id.quantity).setEnabled(true);
-                wrapper.findViewById(R.id.add_to_cart).setEnabled(true);
-            } else if (!product.isInStock()) {
-                Button button = (Button) wrapper.findViewById(R.id.add_to_cart);
+            if (skuset!=null) {
+                edit.setQtyValue(0);
+                button.setText("Varies");
+            } else if (product.isRetailOnly()) {
+                edit.setQtyValue(0);
+                button.setText("Retail only");
+            } else if (product.isInStock()) {
+                edit.setQtyValue(1);
+                edit.setEnabled(true);
+                button.setEnabled(true);
+            } else {
+                edit.setQtyValue(0);
                 button.setText("Out of stock");
             }
 
@@ -350,11 +360,6 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
 
     // Detail and add-to-cart clicks
 
-    private void closeSoftKeyboard(View view) {
-        InputMethodManager manager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
     private void shiftToDetail(int position) {
         if (shifted) return;
         wrapper.setState(DataWrapper.State.GONE);
@@ -395,15 +400,8 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
                 shiftToDetail(2);
                 break;
             case R.id.add_to_cart:
-                EditText edit = (EditText) wrapper.findViewById(R.id.quantity);
-                closeSoftKeyboard(edit);
-                String text = edit.getText().toString();
-                int qty = 1;
-                if (text.length()>0) {
-                    try {
-                        qty = Integer.parseInt(text);
-                    } catch(NumberFormatException e) {}
-                }
+                QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
+                int qty = edit.getQtyValue(1);
                 MainActivity activity = (MainActivity) getActivity();
                 activity.addItemToCart(identifier, qty);
                 break;

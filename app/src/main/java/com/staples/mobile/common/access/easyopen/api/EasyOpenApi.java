@@ -174,8 +174,8 @@ public interface EasyOpenApi {
             @Query("partNumber") String partNumber,
             @Query("distance") String distance,
             @Query("client_id") String client_id,
-            @Query("offset") String offset,
-            @Query("limit") String limit,
+            @Query("offset") Integer offset,
+            @Query("limit") Integer limit,
             Callback<StoreInventory> callback
     );
 
@@ -199,9 +199,9 @@ public interface EasyOpenApi {
             @Query("locale") String locale,
             @Query("zipCode") String zipCode,
             @Query("term") String term,
-            @Query("page") String page,
-            @Query("limit") String limit,
-            @Query("sort") String sort,
+            @Query("page") Integer page,
+            @Query("limit") Integer limit,
+            @Query("sort") Integer sort,
             @Query("client_id") String client_id,
             @Query("filterId") String filterIds,
             Callback<SearchResult> callback
