@@ -2,14 +2,12 @@ package com.staples.mobile.common.access.easyopen.model.browse;
 
 import java.util.List;
 
-/**
- * Author: Yongnan Zhou
- * Date: 2014 Oct.
- */
-
 public class Search {
 	private String autoSuggest;
-	private FilterGroup[] filterGroup;
+    private String blueBoxMessage;
+    private String didYouMean;
+	private List<FilterGroup> filterGroup;
+    private String forwardUrl;
 	private int itemCount;
 	private List<Product> product;
 	private String searchTerm;
@@ -20,8 +18,20 @@ public class Search {
         return autoSuggest;
     }
 
-    public FilterGroup[] getFilterGroup() {
+    public String getBlueBoxMessage() {
+        return blueBoxMessage;
+    }
+
+    public String getDidYouMean() {
+        return didYouMean;
+    }
+
+    public List<FilterGroup> getFilterGroup() {
         return filterGroup;
+    }
+
+    public String getForwardUrl() {
+        return forwardUrl;
     }
 
     public int getItemCount() {
