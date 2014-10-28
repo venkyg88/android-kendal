@@ -30,6 +30,8 @@
     <string name="cartitem_qty_label">Qty</string>
     <string name="add_to_cart">Add to cart</string>
     <string name="update_button">Update</string>
+    <string name="free_shipping_msg1">Free shipping when you spend %1$s - only %2$s to go!</string>
+    <string name="free_shipping_msg2">You qualify for FREE SHIPPING!</string>
     <string name="shipping">Shipping</string>
     <string name="pretax_subtotal">Pre-tax Subtotal</string>
     <string name="proceed_to_checkout">Proceed to Checkout</string>
