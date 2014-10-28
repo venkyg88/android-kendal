@@ -65,15 +65,9 @@
                     android:hint="@string/original_hint"
                     android:textSize="16sp"/>
                 <ImageView
-                    android:id="@+id/search_cancel"
+                    android:id="@+id/search_icon"
                     android:layout_width="@dimen/icon_width"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_action_cancel"/>
-                <ImageView
-                    android:id="@+id/search_activate"
-                    android:layout_width="@dimen/icon_width"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_search"/>
+                    android:layout_height="match_parent"/>
             </com.staples.mobile.cfa.search.SearchBar>
             <!-- Cart badge -->
             <com.staples.mobile.cfa.widget.BadgeImageView

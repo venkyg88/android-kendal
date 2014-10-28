@@ -2,24 +2,27 @@ package com.staples.mobile.cfa.search;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
+import android.text.style.StyleSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.BaseAdapter;
 import android.widget.Filter;
-import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,13 +46,13 @@ public class SearchBar extends LinearLayout implements View.OnClickListener, Tex
     private MainActivity activity;
     private View header;
     private AutoCompleteTextView editText;
-    private View cancelButton;
+    private ImageView icon;
     private Handler handler;
     private StartSuggest startSuggest;
     private SuggestTask suggestTask;
     private Future<?> suggestPending;
     private FinishSuggest finishSuggest;
-    private NoFilterAdapter adapter;
+    private HighlightAdapter adapter;
     private ArrayList<String> recentKeywords;
     private boolean open;
 
@@ -70,96 +73,105 @@ public class SearchBar extends LinearLayout implements View.OnClickListener, Tex
         // Find elements
         header = findViewById(R.id.header);
         editText = (AutoCompleteTextView) findViewById(R.id.search_text);
-        cancelButton=findViewById(R.id.search_cancel);
-        View activate = findViewById(R.id.search_activate);
+        icon = (ImageView) findViewById(R.id.search_icon);
 
         // Set listeners
         editText.addTextChangedListener(this);
         editText.setOnEditorActionListener(this);
         editText.setOnItemClickListener(this);
-        cancelButton.setOnClickListener(this);
-        activate.setOnClickListener(this);
+        icon.setOnClickListener(this);
 
         closeSearchBar();
 
-        adapter = new NoFilterAdapter(activity);
+        adapter = new HighlightAdapter(activity);
         editText.setAdapter(adapter);
-        editText.setThreshold(0);
+        editText.setThreshold(1);
 
         recentKeywords = new ArrayList<String>();
         loadRecentKeywords();
 
+        // Tasks
         handler = new Handler();
         startSuggest = new StartSuggest();
         suggestTask = new SuggestTask(activity, this);
         finishSuggest = new FinishSuggest();
     }
 
-    private static class NoFilterAdapter extends BaseAdapter implements ListAdapter, Filterable {
-        private ArrayList<String> array;
+    private static class HighlightAdapter extends ArrayAdapter<String> {
         private LayoutInflater inflater;
         private Filter filter;
+        private String keyword;
 
-        private NoFilterAdapter(Context context) {
-            array = new ArrayList<String>();
+        public HighlightAdapter(Context context) {
+            super(context, 0);
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            filter = new NoFilter();
+            filter = new InclusiveFilter();
+add("apples");
+add("bananas");
+add("cantaloupes");
+
         }
 
-        @Override
-        public int getCount() {
-            return(array.size());
-        }
+        private void setHighlightedText(TextView view, String text) {
+            if (text==null || keyword==null || keyword.isEmpty()) {
+                view.setText(text);
+                return;
+            }
 
-        @Override
-        public String getItem(int position) {
-            return(array.get(position));
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return(position);
-        }
-        public void clear() {
-            array.clear();
-        }
-
-        public void add(String string) {
-            if (string==null) return;
-            array.add(string);
-        }
-
-        public void addAll(List<String> strings) {
-            if (strings==null) return;
-            for(String string : strings)
-                array.add(string);
+            SpannableStringBuilder sb = new SpannableStringBuilder(text);
+            int n = text.length();
+            int k = keyword.length();
+            for(int i=0;i<n;) {
+                int j = text.indexOf(keyword, i);
+                if (j<0) j = n;
+                if (j>i) sb.setSpan(new StyleSpan(Typeface.BOLD), i, j, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                i = j+k;
+            }
+            view.setText(sb);
         }
 
         @Override
         public View getView(int position, View view, ViewGroup parent) {
             if (view == null) {
-                view = inflater.inflate(R.layout.search_auto_suggestion_row, parent, false);
+                view = inflater.inflate(R.layout.search_suggest_item, parent, false);
             }
-            ((TextView) view).setText(array.get(position));
+            setHighlightedText((TextView) view, getItem(position));
             return (view);
         }
 
+        @Override
         public Filter getFilter() {
-            return (filter);
+            return(filter);
         }
 
-        public class NoFilter extends Filter {
+        public class InclusiveFilter extends Filter {
             @Override
-            protected FilterResults performFiltering(CharSequence arg0) {
+            protected FilterResults performFiltering(CharSequence constraint) {
+                if (constraint==null) keyword = "";
+                else keyword = constraint.toString();
+
+Log.d(TAG, "Filter " + keyword);
+                ArrayList<String> array = new ArrayList<String>();
+                int n = getCount();
+                for(int i=0;i<n;i++) {
+                    String item = getItem(i);
+                    if (item!=null && item.indexOf(keyword)>=0)
+                        array.add(item);
+                }
+
                 FilterResults result = new FilterResults();
                 result.values = array;
                 result.count = array.size();
-                return result;
+                return(result);
             }
 
             @Override
-            protected void publishResults(CharSequence arg0, FilterResults arg1) {
-                notifyDataSetChanged();
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+Log.d(TAG, "Publish "+results.count);
+                if (results.count>0)
+                    notifyDataSetChanged();
+                else
+                    notifyDataSetInvalidated();
             }
         }
     }
@@ -167,7 +179,8 @@ public class SearchBar extends LinearLayout implements View.OnClickListener, Tex
     private void openSearchBar() {
         header.setVisibility(View.GONE);
         editText.setVisibility(View.VISIBLE);
-        cancelButton.setVisibility(View.VISIBLE);
+
+        icon.setImageResource(R.drawable.ic_action_cancel);
 
         editText.requestFocus();
         editText.setText(null);
@@ -182,9 +195,10 @@ public class SearchBar extends LinearLayout implements View.OnClickListener, Tex
     private void closeSearchBar() {
         header.setVisibility(View.VISIBLE);
         editText.setVisibility(View.GONE);
-        cancelButton.setVisibility(View.GONE);
 
-        editText.dismissDropDown();
+        icon.setImageResource(R.drawable.ic_search);
+
+//        editText.dismissDropDown();
 
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
@@ -197,14 +211,12 @@ public class SearchBar extends LinearLayout implements View.OnClickListener, Tex
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.search_activate:
-                if (!open) openSearchBar();
-                else doSearch(null);
-                break;
-            case R.id.search_cancel:
-                int n = editText.getText().length();
-                if (n==0) closeSearchBar();
-                else editText.setText(null);
+            case R.id.search_icon:
+                if (open) {
+                    int n = editText.getText().length();
+                    if (n == 0) editText.showDropDown(); //closeSearchBar();
+                    else editText.setText(null);
+                } else openSearchBar();
                 break;
         }
     }
@@ -239,32 +251,37 @@ public class SearchBar extends LinearLayout implements View.OnClickListener, Tex
     }
 
     public class StartSuggest implements Runnable {
+        String lastKey;
+
         @Override
         public void run() {
+            // Get keyword and key
+            String keyword = editText.getText().toString().trim();
+            String key = SuggestTask.cleanKeyword(keyword);
+
+            // If key didn't change just return
+            if ((lastKey==null && key==null) ||
+                (lastKey!=null && key!=null && lastKey.equals(key)))
+                return;
+            lastKey = key;
+
             // Cancel previous suggestion
             if (suggestPending!=null) {
                 suggestPending.cancel(true);
                 suggestPending = null;
             }
 
-            // If empty show past keywords
-            String keyword = editText.getText().toString().trim();
-            if (keyword.isEmpty() || keyword.equals(" ")) {
-                adapter.clear();
-                adapter.addAll(recentKeywords);
+            // No suggestion possible
+            if (key==null) {
+//                adapter.clear();
+//                adapter.addAll(recentKeywords);
                 adapter.notifyDataSetChanged();
                 editText.showDropDown();
                 return;
             }
 
-            String key = SuggestTask.cleanKeyword(keyword);
-            if (key==null) {
-                adapter.clear();
-                adapter.notifyDataSetChanged();
-                return;
-            }
-
-            suggestTask.setKeyword(key);
+            // Run query
+            suggestTask.setKey(key);
             ExecutorService thread = Executors.newSingleThreadExecutor();
             try {
                 suggestPending = thread.submit(suggestTask);
@@ -281,8 +298,8 @@ public class SearchBar extends LinearLayout implements View.OnClickListener, Tex
 
         @Override
         public void run() {
-            adapter.clear();
-            adapter.addAll(suggestions);
+//            adapter.clear();
+//            adapter.addAll(suggestions);
             adapter.notifyDataSetChanged();
             editText.showDropDown();
         }
@@ -311,13 +328,7 @@ public class SearchBar extends LinearLayout implements View.OnClickListener, Tex
         if (keyword==null || keyword.isEmpty()) return;
 
         // check if keyword is present
-        for(int i=0;i< recentKeywords.size();i++) {
-            if (recentKeywords.get(i).equals(keyword)) {
-                recentKeywords.remove(i);
-                recentKeywords.add(0, keyword);
-                return;
-            }
-        }
+        recentKeywords.remove(keyword);
 
         // truncate to one smaller than the limit
         for(int i = recentKeywords.size();i>=MAXRECENTKEYWORDS;i--)

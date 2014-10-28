@@ -73,7 +73,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
     @Override
     public void success(SearchResult searchResult, Response response) {
-        int count = process_search(searchResult);
+        int count = processSearch(searchResult);
         if (count==0) wrapper.setState(DataWrapper.State.EMPTY);
         else wrapper.setState(DataWrapper.State.DONE);
         adapter.notifyDataSetChanged();
@@ -86,7 +86,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         adapter.notifyDataSetChanged();
     }
 
-    private int process_search(SearchResult searchResult) {
+    private int processSearch(SearchResult searchResult) {
         if (searchResult==null) return(0);
         List<Search> searches = searchResult.getSearch();
         if (searches==null || searches.size()<1) return(0);

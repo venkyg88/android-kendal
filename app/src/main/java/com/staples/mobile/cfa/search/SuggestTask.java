@@ -23,7 +23,7 @@ public class SuggestTask implements Runnable {
 
 	private final MainActivity suggestMain;
     private final SearchBar searchBar;
-	private String keyword;
+	private String key;
 
 	// Auto suggestions result from API call
 	private ArrayList<String> suggestionList;
@@ -39,14 +39,14 @@ public class SuggestTask implements Runnable {
         suggestionList = new ArrayList<String>();
 	}
 
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
+    public void setKey(String key) {
+        this.key = key;
     }
 
 	public void run() {
 		List<String> suggestions;
 		try {
-			suggestions = getSuggestions(keyword);
+			suggestions = getSuggestions(key);
             searchBar.callback(suggestions);
 		} catch (IOException e) {
 			Log.e(TAG, e.toString());
@@ -58,7 +58,11 @@ public class SuggestTask implements Runnable {
         if (keyword==null) return(null);
         keyword = keyword.trim();
         int n = keyword.length();
-        if (n==0 || n>3) return(null);
+        if (n==0) return(null);
+        if (n>3) {
+            keyword = keyword.substring(0, 3);
+            n = 3;
+        }
         keyword = keyword.toLowerCase();
 
         // check charset
@@ -71,11 +75,11 @@ public class SuggestTask implements Runnable {
 
 	// Parse InputStream response content to String
 	public void inputStreamToSuggestions(InputStream is) throws IOException {
-		// Wrap a BufferedReader around the InputStream
 		BufferedReader rd = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+        int count;
 
 		suggestionList.clear();
-        for(int count=0;count<SUGGESTION_AMOUNT;) {
+        for(count=0;count<SUGGESTION_AMOUNT;) {
             String line = rd.readLine();
             if (line==null) break;
             if (!line.equals("noresult")) {
@@ -83,11 +87,12 @@ public class SuggestTask implements Runnable {
                 count++;
             }
         }
+        Log.d(TAG, count+" suggestions");
 	}
 
-	private List<String> getSuggestions(String keyword) throws IOException{
+	private List<String> getSuggestions(String key) throws IOException{
 		InputStream inputStream = null;
-		Log.d(TAG, "Running getSuggestions(" + keyword + ")");
+		Log.d(TAG, "Running getSuggestions(" + key + ")");
 		try {
 			// clear error message if there are any in the auto suggestion list
 			error = null;
@@ -99,7 +104,7 @@ public class SuggestTask implements Runnable {
 
             // Build RESTful query and Create a GET Header
             HttpClient httpclient = new DefaultHttpClient();
-            HttpGet httpSuggestGet = new HttpGet("http://www.staples.com/sbd/content/mainautocomplete/files/"+keyword+".txt");
+            HttpGet httpSuggestGet = new HttpGet("http://www.staples.com/sbd/content/mainautocomplete/files/"+key+".txt");
 
             // Execute HTTP GET Request
             HttpResponse httpResponse = httpclient.execute(httpSuggestGet);
