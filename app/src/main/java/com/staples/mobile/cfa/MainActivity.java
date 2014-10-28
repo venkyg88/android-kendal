@@ -122,6 +122,10 @@ public class MainActivity extends Activity
         findViewById(R.id.main).setVisibility(View.VISIBLE);
     }
 
+    public void showTopper(boolean show) {
+        topper.setVisibility(show? View.VISIBLE : View.GONE);
+    }
+
     public void prepareMainScreen(boolean freshStart) {
         // Inflate
         setContentView(R.layout.main);
@@ -317,7 +321,7 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.action_checkout:
-                selectDrawerItem(checkoutDrawerItem, Transition.SLIDE, true);
+                selectDrawerItem(checkoutDrawerItem, Transition.NONE, true);
                 break;
         }
     }

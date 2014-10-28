@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 
@@ -66,6 +67,12 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
         taxVw.setText("$0.99");
         checkoutTotalVw.setText("$99.99");
 
+        // Set listeners
+        view.findViewById(R.id.shipping_addr_add).setOnClickListener(this);
+        view.findViewById(R.id.payment_method_add).setOnClickListener(this);
+        view.findViewById(R.id.billing_addr_add).setOnClickListener(this);
+        view.findViewById(R.id.checkout_submit).setOnClickListener(this);
+
         // get api object (need secure connection
         EasyOpenApi api = Access.getInstance().getEasyOpenApi(true);
 
@@ -76,6 +83,26 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // hide topper
+        if (getActivity() instanceof MainActivity) {
+            MainActivity a = (MainActivity) getActivity();
+            a.showTopper(false);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // restore topper
+        if (getActivity() instanceof MainActivity) {
+            MainActivity a = (MainActivity) getActivity();
+            a.showTopper(true);
+        }
+
+    }
 
     @Override
     public void onClick(View view) {
