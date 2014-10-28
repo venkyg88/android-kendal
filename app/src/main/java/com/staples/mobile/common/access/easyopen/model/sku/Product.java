@@ -5,6 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public class Product {
+
+    boolean addOn; // for sapi
+    boolean heavyWeightSKU; //for sapi
+    boolean preOrderFlag; //for sapi
+
     List<Product> accessory;
     List<Product> alsoConsider;
     List<Analytic> analytic;
@@ -56,6 +61,30 @@ public class Product {
     String uniqueId;
     boolean upsable;
     boolean webOnly;
+
+    public boolean isAddOn() {
+        return addOn;
+    }
+
+    public void setAddOn(boolean addOn) {
+        this.addOn = addOn;
+    }
+
+    public boolean isHeavyWeightSKU() {
+        return heavyWeightSKU;
+    }
+
+    public void setHeavyWeightSKU(boolean heavyWeightSKU) {
+        this.heavyWeightSKU = heavyWeightSKU;
+    }
+
+    public boolean isPreOrderFlag() {
+        return preOrderFlag;
+    }
+
+    public void setPreOrderFlag(boolean preOrderFlag) {
+        this.preOrderFlag = preOrderFlag;
+    }
 
     public List<Product> getAccessory() {
         return accessory;
