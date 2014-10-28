@@ -7,6 +7,7 @@ package com.staples.mobile.cfa.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,8 @@ public class QuantityEditor extends FrameLayout {
     public interface OnQtyChangeListener {
         public void onQtyChange(View view);
     }
+
+    private static final String TAG = QuantityEditor.class.getSimpleName();
 
     public static final int DEFAULT_MAX_SPINNER_VALUE = 5;
     public static final float DEFAULT_TEXT_SIZE = 18;
@@ -118,7 +121,13 @@ public class QuantityEditor extends FrameLayout {
             value = editText.getText().toString();
         }
         if (value != null && value.length() > 0) {
-            try { return Integer.parseInt(value); } catch (NumberFormatException e) {}
+            try {
+                return Integer.parseInt(value);
+            } catch (NumberFormatException nfe) {
+                Log.e(TAG, "Parsing error: " + nfe);
+            } catch (Exception e) {
+                Log.e(TAG, "Parsing error: " + e);
+            }
         }
 
         return defaultValue;

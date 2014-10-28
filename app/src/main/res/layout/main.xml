@@ -168,25 +168,36 @@
                             style="@style/CartHeader"
                             android:layout_width="wrap_content"
                             android:layout_alignParentLeft="true"
-                            android:text="@string/shipping" />
+                            android:text="@string/shipping"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="0dp"
+                            />
                         <TextView
                             android:id="@+id/cart_shipping"
                             style="@style/CartHeader"
                             android:layout_width="wrap_content"
-                            android:layout_alignParentRight="true" />
+                            android:layout_alignParentRight="true"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="0dp"
+                            />
                         <TextView
                             android:id="@+id/cart_subtotal_label"
                             style="@style/CartHeader"
                             android:layout_width="wrap_content"
                             android:layout_alignParentLeft="true"
                             android:layout_below="@id/cart_shipping_label"
+                            android:paddingTop="0dp"
+                            android:paddingBottom="2dp"
                             android:text="@string/pretax_subtotal" />
                         <TextView
                             android:id="@+id/cart_subtotal"
                             style="@style/CartHeader"
                             android:layout_width="wrap_content"
                             android:layout_alignParentRight="true"
-                            android:layout_below="@id/cart_shipping" />
+                            android:layout_below="@id/cart_shipping"
+                            android:paddingTop="0dp"
+                            android:paddingBottom="2dp"
+                            />
                     </RelativeLayout>
                     <TextView
                         android:id="@+id/action_checkout"
