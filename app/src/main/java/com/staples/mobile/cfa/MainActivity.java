@@ -20,6 +20,7 @@ import com.staples.mobile.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartAdapter;
 import com.staples.mobile.cfa.cart.CartContainer;
+import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.search.SearchBar;
 import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
@@ -154,7 +155,7 @@ public class MainActivity extends Activity
         searchDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.ic_search, R.string.search_title, SearchFragment.class);
         storeDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.store_info_title, ToBeDoneFragment.class);
         rewardsDrawerItem = adapter.getItem(6); // TODO Hard-coded alias
-        checkoutDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.checkout_title, ToBeDoneFragment.class);
+        checkoutDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.checkout_title, CheckoutFragment.class);
 
         // Initialize topper
         LayoutInflater inflater = getLayoutInflater();
