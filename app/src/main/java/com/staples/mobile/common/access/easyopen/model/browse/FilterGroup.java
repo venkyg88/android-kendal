@@ -3,10 +3,10 @@ package com.staples.mobile.common.access.easyopen.model.browse;
 import java.util.List;
 
 public class FilterGroup {
-    List<Filter> filter;
-    String id;
-    String name;
-    int productsCount;
+    private List<Filter> filter;
+    private String id;
+    private String name;
+    private int productsCount;
 
     public List<Filter> getFilter() {
         return filter;
