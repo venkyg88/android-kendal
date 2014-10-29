@@ -1,10 +1,10 @@
 package com.staples.mobile.cfa;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.res.Resources;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartAdapter;
-import com.staples.mobile.cfa.cart.CartContainer;
+import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.search.SearchBar;
 import com.staples.mobile.cfa.search.SearchFragment;
@@ -28,6 +28,9 @@ import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener, Access.OnLoginCompleteListener {
@@ -43,6 +46,7 @@ public class MainActivity extends Activity
     private BadgeImageView rightDrawerAction;
     private TextView cartTitle;
     private TextView cartSubtotal;
+    private TextView cartFreeShippingMsg;
     private TextView cartShipping;
     private View cartProceedToCheckout;
     private View cartSubtotalLayout;
@@ -122,6 +126,10 @@ public class MainActivity extends Activity
         findViewById(R.id.main).setVisibility(View.VISIBLE);
     }
 
+    public void showTopper(boolean show) {
+        topper.setVisibility(show? View.VISIBLE : View.GONE);
+    }
+
     public void prepareMainScreen(boolean freshStart) {
         // Inflate
         setContentView(R.layout.main);
@@ -165,6 +173,7 @@ public class MainActivity extends Activity
 
         // Cart
         cartTitle = (TextView) rightDrawer.findViewById(R.id.cart_title);
+        cartFreeShippingMsg = (TextView) rightDrawer.findViewById(R.id.free_shipping_msg);
         cartShipping = (TextView) rightDrawer.findViewById(R.id.cart_shipping);
         cartSubtotal = (TextView) rightDrawer.findViewById(R.id.cart_subtotal);
         cartSubtotalLayout = rightDrawer.findViewById(R.id.cart_subtotal_layout);
@@ -172,7 +181,7 @@ public class MainActivity extends Activity
         cartProceedToCheckout.setOnClickListener(this);
 
         // Initialize right drawer cart listview
-        CartContainer cartContainer = (CartContainer) rightDrawer.findViewById(R.id.right_drawer_content);
+        LinearLayoutWithProgressOverlay cartContainer = (LinearLayoutWithProgressOverlay) rightDrawer.findViewById(R.id.right_drawer_content);
         cartContainer.setCartProgressOverlay(rightDrawer.findViewById(R.id.cart_progress_overlay));
         cartAdapter = new CartAdapter(this, R.layout.cart_item, cartContainer.getProgressIndicator());
         cartAdapter.registerDataSetObserver(new DataSetObserver() {
@@ -253,12 +262,16 @@ public class MainActivity extends Activity
 
     /** Sets item count indicator on cart icon and cart drawer title */
     public void updateCartIndicators(Cart cart) {
+        Resources r = getResources();
+
         int totalItemCount = 0;
         String shipping = "";
+        float subtotal = 0;
         float preTaxSubtotal = 0;
         if (cart != null) {
             totalItemCount = cart.getTotalItems();
             shipping = cart.getDelivery();
+            subtotal = cart.getSubTotal();
             preTaxSubtotal = cart.getPreTaxTotal();
         }
 
@@ -266,14 +279,31 @@ public class MainActivity extends Activity
         rightDrawerAction.setText(totalItemCount == 0 ? null : Integer.toString(totalItemCount));
 
         // Set text of cart drawer title
-        if (totalItemCount==0) cartTitle.setText(getResources().getString(R.string.your_cart));
+        if (totalItemCount==0) cartTitle.setText(r.getString(R.string.your_cart));
         else cartTitle.setText(getResources().getQuantityString(R.plurals.your_cart, totalItemCount, totalItemCount));
+
+        // set text of free shipping msg
+        // TODO: get actual threshold from lms
+        // TODO: reconcile with shipping cost returned by api
+        float freeShippingThreshold = 99999.99f; // TODO: replace with call to lms
+        if (freeShippingThreshold > subtotal) {
+            // need to spend more to qualify for free shipping
+            NumberFormat nf = DecimalFormat.getCurrencyInstance();
+            cartFreeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
+                    nf.format(freeShippingThreshold), nf.format(freeShippingThreshold - subtotal)));
+            cartFreeShippingMsg.setBackgroundColor(0xff3f6fff); // blue
+        } else {
+            // qualifies for free shipping
+            cartFreeShippingMsg.setText(R.string.free_shipping_msg2);
+            cartFreeShippingMsg.setBackgroundColor(0xff00ff00); // green
+        }
 
         // set text of shipping and subtotal
         cartShipping.setText(shipping);
         cartSubtotal.setText("$" + preTaxSubtotal);
 
         // only show shipping, subtotal, and proceed-to-checkout when at least one item
+        cartFreeShippingMsg.setVisibility(totalItemCount == 0? View.GONE : View.VISIBLE);
         cartSubtotalLayout.setVisibility(totalItemCount == 0? View.GONE : View.VISIBLE);
         cartProceedToCheckout.setVisibility(totalItemCount == 0? View.GONE : View.VISIBLE);
     }
@@ -317,7 +347,7 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.action_checkout:
-                selectDrawerItem(checkoutDrawerItem, Transition.SLIDE, true);
+                selectDrawerItem(checkoutDrawerItem, Transition.NONE, true);
                 break;
         }
     }

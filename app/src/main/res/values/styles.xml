@@ -22,7 +22,7 @@
         <item name="android:background">#ffff00</item>
     </style>
 
-    <style name="CheckoutHeading">
+    <style name="CheckoutSubheading">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">14sp</item>
@@ -33,13 +33,17 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">#000000</item>
-        <item name="android:padding">4dp</item>
+        <!--setting padding individually so that individual values can be overriden -->
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
     </style>
 
     <style name="CheckoutText">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="TextExtraLargeListItem">

@@ -2,8 +2,12 @@
 <!--
   ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
   -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent" >
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay
+    android:id="@+id/checkout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -12,9 +16,10 @@
         android:id="@+id/cart_title"
         android:layout_width="match_parent"
         style="@style/CartHeader"
+        android:textSize="24sp"
         android:text="@string/checkout_title"/>
 
-    <!-- Summary page contents -->
+    <!-- scrollable contents -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -38,7 +43,7 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
                     <TextView
-                        style="@style/CheckoutHeading"
+                        style="@style/CheckoutSubheading"
                         android:text="@string/shipping_addr"/>
                     <TextView
                         android:id="@+id/checkout_shipping_addr"
@@ -57,7 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingTop="8dp"
+                android:paddingTop="16dp"
                 >
                 <LinearLayout
                     android:layout_width="0dp"
@@ -65,7 +70,7 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
                     <TextView
-                        style="@style/CheckoutHeading"
+                        style="@style/CheckoutSubheading"
                         android:text="@string/payment_method"/>
                     <TextView
                         android:id="@+id/checkout_payment_method"
@@ -84,7 +89,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingTop="8dp"
+                android:paddingTop="16dp"
                 >
                 <LinearLayout
                     android:layout_width="0dp"
@@ -92,7 +97,7 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
                     <TextView
-                        style="@style/CheckoutHeading"
+                        style="@style/CheckoutSubheading"
                         android:text="@string/billing_addr"/>
                     <TextView
                         android:id="@+id/checkout_billing_addr"
@@ -112,7 +117,8 @@
     <!-- delivery range -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:background="#e6e6e6" >
         <TextView
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
@@ -158,6 +164,8 @@
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
             android:layout_alignParentLeft="true"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
             android:text="@string/shipping"
             />
         <TextView
@@ -165,6 +173,8 @@
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
             android:layout_alignParentRight="true"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
             />
     </RelativeLayout>
 
@@ -211,4 +221,21 @@
             />
     </RelativeLayout>
 
-</LinearLayout>
+</com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay>
+
+<!-- progress whirly -->
+<RelativeLayout
+    android:id="@+id/checkout_progress_overlay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone"
+    android:clickable="false"
+    android:background="#6f000022" >
+    <ProgressBar
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateOnly="true" />
+</RelativeLayout>
+
+</FrameLayout>
