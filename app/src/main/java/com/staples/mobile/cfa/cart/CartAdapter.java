@@ -300,7 +300,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                         Product product = products.get(i);
                         CartItem cartItem = new CartItem(product);
                         if (product.getExpectedBusinessDayDelivery() != null  &&
-                                product.getExpectedBusinessDayDelivery() != shippingEstimate) {
+                                !product.getExpectedBusinessDayDelivery().equals(shippingEstimate)) {
                             shippingEstimate = product.getExpectedBusinessDayDelivery();
                             cartItem.setShippingEstimate(shippingEstimateLabel + " " + shippingEstimate);
                         }
