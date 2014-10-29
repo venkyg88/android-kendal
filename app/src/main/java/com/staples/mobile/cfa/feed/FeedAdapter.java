@@ -3,6 +3,7 @@ package com.staples.mobile.cfa.feed;
 import android.app.Activity;
 import android.util.Log;
 
+import com.staples.mobile.cfa.LoginHelper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
@@ -24,7 +25,8 @@ public class FeedAdapter {
     private static final String LOCALE = "en_US";
 
     private static final String ZIPCODE = "01010";
-    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+//    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     private Activity activity;
 

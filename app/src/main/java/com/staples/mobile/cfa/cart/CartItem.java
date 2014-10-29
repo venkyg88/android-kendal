@@ -4,8 +4,6 @@
 
 package com.staples.mobile.cfa.cart;
 
-import android.widget.Button;
-
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.easyopen.model.cart.Image;
 import com.staples.mobile.common.access.easyopen.model.cart.Pricing;
@@ -18,7 +16,7 @@ public class CartItem {
 
     private Product product;
     private int proposedQty;
-    String shippingEstimate;
+    String expectedDelivery;
 
     QuantityEditor qtyWidget;
 
@@ -93,12 +91,12 @@ public class CartItem {
         return null;
     }
 
-    public String getShippingEstimate() {
-        return shippingEstimate;
+    public String getExpectedDelivery() {
+        return expectedDelivery;
     }
 
-    public void setShippingEstimate(String shippingEstimate) {
-        this.shippingEstimate = shippingEstimate;
+    public void setExpectedDelivery(String expectedDelivery) {
+        this.expectedDelivery = expectedDelivery;
     }
 
     public int getQuantity() {

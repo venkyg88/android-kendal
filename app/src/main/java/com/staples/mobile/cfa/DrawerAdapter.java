@@ -38,7 +38,9 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
     private static final String LOCALE = "en_US";
 
     private static final String ZIPCODE = "01010";
-    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+//    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
+
 
     private static final int MAXFETCH = 50;
 
