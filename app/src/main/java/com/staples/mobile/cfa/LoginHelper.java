@@ -1,9 +1,13 @@
 package com.staples.mobile.cfa;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.staples.mobile.R;
+import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
@@ -28,36 +32,6 @@ public class LoginHelper {
         this.activity = activity;
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
     }
-
-
-//    public void getRegisteredUserTokens()
-//    {
-//        RegisteredUserLogin user = new RegisteredUserLogin("testuser2","password");
-//
-//        easyOpenApi.registeredUserLogin(user, RECOMMENDATION, STORE_ID, CLIENT_ID, new Callback<TokenObject>() {
-//
-//                    @Override
-//                    public void success(TokenObject tokenObjectReturned, Response response) {
-//                        int code = response.getStatus();
-//                        Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
-////                        Toast.makeText(activity, tokenObjectReturned.getWCToken(), Toast.LENGTH_LONG).show();
-//
-//                        Log.i("Status Code", " " + code);
-//                        Log.i("wcToken", tokenObjectReturned.getWCToken());
-//                        Log.i("wctrustedToken", tokenObjectReturned.getWCTrustedToken());
-//                    }
-//
-//                    @Override
-//                    public void failure(RetrofitError retrofitError) {
-//
-////                        Toast.makeText(activity, "Failed to Login As Registered User", Toast.LENGTH_LONG).show();
-//
-//                        Log.i("Fail Message For Registered User", " " + retrofitError.getMessage());
-//                        Log.i("Post URL address For Registered User", " " + retrofitError.getUrl());
-//                    }
-//                }
-//        );
-//    }
 
     /** adds listener to be notified following successful login */
     public void registerLoginCompleteListener(Access.OnLoginCompleteListener loginCompleteListener) {
@@ -114,7 +88,19 @@ public class LoginHelper {
                     public void success(TokenObject tokenObjectReturned, Response response) {
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
-                        Toast.makeText(activity, "Success" + "\n" +  tokenObjectReturned.getWCToken(), Toast.LENGTH_LONG).show();
+
+//                        // We need to make this code reusable so that we can use it in different parts of application
+//                        // Create new fragment and transaction
+//                        Fragment newFragment = new ProfileFragment();
+//                        FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
+//
+//                        // Replace whatever is in the fragment_container view with this fragment,
+//                        // and add the transaction to the back stack
+//                        transaction.replace(R.id.tab1, newFragment);
+//                        transaction.addToBackStack(null);
+//
+//                        // Commit the transaction
+//                        transaction.commit();
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
