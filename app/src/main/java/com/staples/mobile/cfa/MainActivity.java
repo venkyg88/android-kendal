@@ -19,9 +19,9 @@ import android.widget.TextView;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartAdapter;
-import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
-import com.staples.mobile.cfa.search.SearchBar;
+import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
+import com.staples.mobile.cfa.search.SearchBarView;
 import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
@@ -41,7 +41,7 @@ public class MainActivity extends Activity
     private DrawerLayout drawerLayout;
     private View leftDrawer;
     private View rightDrawer;
-    private SearchBar searchBar;
+    private SearchBarView searchBar;
     private ViewGroup topper;
     private BadgeImageView rightDrawerAction;
     private TextView cartTitle;
@@ -112,7 +112,7 @@ public class MainActivity extends Activity
     @Override
     protected void onPause() {
         super.onPause();
-        searchBar.saveRecentKeywords();
+        searchBar.saveSearchHistory();
     }
 
     @Override
@@ -127,7 +127,7 @@ public class MainActivity extends Activity
     }
 
     public void showTopper(boolean show) {
-        topper.setVisibility(show? View.VISIBLE : View.GONE);
+        topper.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     public void prepareMainScreen(boolean freshStart) {
@@ -138,7 +138,7 @@ public class MainActivity extends Activity
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawer = findViewById(R.id.left_drawer);
         rightDrawer = findViewById(R.id.right_drawer);
-        searchBar = (SearchBar) findViewById(R.id.search_bar);
+        searchBar = (SearchBarView) findViewById(R.id.search_text);
         topper = (ViewGroup) findViewById(R.id.topper);
         rightDrawerAction = (BadgeImageView)findViewById(R.id.action_right_drawer);
 

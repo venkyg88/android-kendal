@@ -2,9 +2,6 @@ package com.staples.mobile.cfa.search;
 
 import android.util.Log;
 
-import com.staples.mobile.R;
-import com.staples.mobile.cfa.MainActivity;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -16,37 +13,36 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 
 public class SuggestTask implements Runnable {
 	private static final String TAG = "SuggestTask";
 
-	private final MainActivity suggestMain;
-    private final SearchBar searchBar;
-	private String keyword;
+    private static final String SUGGESTSERVER = "http://www.staples.com/sbd/content/mainautocomplete/files/";
+    private static final int MAXFETCH = 50;
+
+    private SearchBarView searchBar;
+	private String key;
 
 	// Auto suggestions result from API call
 	private ArrayList<String> suggestionList;
 	private String error;
 
 	// The number of auto suggestion results
-	private static final int SUGGESTION_AMOUNT = 20; 
 
-	public SuggestTask(MainActivity context, SearchBar searchBar) {
-		this.suggestMain = context;
+	public SuggestTask(SearchBarView searchBar) {
         this.searchBar = searchBar;
 
         suggestionList = new ArrayList<String>();
 	}
 
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
+    public void setKey(String key) {
+        this.key = key;
     }
 
 	public void run() {
-		List<String> suggestions;
+		ArrayList<String> suggestions;
 		try {
-			suggestions = getSuggestions(keyword);
+			suggestions = getSuggestions(key);
             searchBar.callback(suggestions);
 		} catch (IOException e) {
 			Log.e(TAG, e.toString());
@@ -58,7 +54,11 @@ public class SuggestTask implements Runnable {
         if (keyword==null) return(null);
         keyword = keyword.trim();
         int n = keyword.length();
-        if (n==0 || n>3) return(null);
+        if (n==0) return(null);
+        if (n>3) {
+            keyword = keyword.substring(0, 3);
+            n = 3;
+        }
         keyword = keyword.toLowerCase();
 
         // check charset
@@ -71,11 +71,11 @@ public class SuggestTask implements Runnable {
 
 	// Parse InputStream response content to String
 	public void inputStreamToSuggestions(InputStream is) throws IOException {
-		// Wrap a BufferedReader around the InputStream
 		BufferedReader rd = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+        int count;
 
 		suggestionList.clear();
-        for(int count=0;count<SUGGESTION_AMOUNT;) {
+        for(count=0;count<MAXFETCH;) {
             String line = rd.readLine();
             if (line==null) break;
             if (!line.equals("noresult")) {
@@ -83,11 +83,12 @@ public class SuggestTask implements Runnable {
                 count++;
             }
         }
+        Log.d(TAG, count+" suggestions");
 	}
 
-	private List<String> getSuggestions(String keyword) throws IOException{
+	private ArrayList<String> getSuggestions(String key) throws IOException{
 		InputStream inputStream = null;
-		Log.d(TAG, "Running getSuggestions(" + keyword + ")");
+		Log.d(TAG, "Running getSuggestions(" + key + ")");
 		try {
 			// clear error message if there are any in the auto suggestion list
 			error = null;
@@ -97,11 +98,9 @@ public class SuggestTask implements Runnable {
 				throw new InterruptedException();
 			}
 
-            // Build RESTful query and Create a GET Header
+            // Query server
             HttpClient httpclient = new DefaultHttpClient();
-            HttpGet httpSuggestGet = new HttpGet("http://www.staples.com/sbd/content/mainautocomplete/files/"+keyword+".txt");
-
-            // Execute HTTP GET Request
+            HttpGet httpSuggestGet = new HttpGet(SUGGESTSERVER+key+".txt");
             HttpResponse httpResponse = httpclient.execute(httpSuggestGet);
 
             // Check if task has been interrupted. If it is, that means there is no result returned.
@@ -114,7 +113,6 @@ public class SuggestTask implements Runnable {
             {
                 // Get HTTP Response's Content, Read results from the query
                 inputStream = httpResponse.getEntity().getContent();
-
                 inputStreamToSuggestions(inputStream);
             }
             else
@@ -125,16 +123,9 @@ public class SuggestTask implements Runnable {
 			if (Thread.interrupted()){
 				throw new InterruptedException();
 			}
-
-		} catch (IOException e) {
-			Log.e(TAG, "IOException", e);
-			error = suggestMain.getResources().getString(R.string.error) + " " + e.toString();
-		} catch (InterruptedException e) {
-			Log.e(TAG, "InterruptedException", e);
-			error = suggestMain.getResources().getString(R.string.interrupted) + " " + e.toString();
 		} catch (Exception e) {
 			Log.e(TAG, "Exception", e);
-			error = suggestMain.getResources().getString(R.string.error) + " " + e.toString();
+			error = e.toString();
 		} finally {
 			// clean up resources
 			if (inputStream != null) {

@@ -25,7 +25,6 @@ import retrofit.http.Query;
 
 public interface EasyOpenApi {
     public static final String INSECURE_ENDPOINT = "http://sapi.staples.com";
-//    public static final String INSECURE_ENDPOINT = "http://qapi.staples.com";
 //    public static final String INSECURE_ENDPOINT = "http://10.29.172.60:9100"; // The office printer!
 
     public static final String SECURE_ENDPOINT = "https://sapi.staples.com";

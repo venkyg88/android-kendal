@@ -6,21 +6,21 @@ import java.util.List;
 
 public class Pricing {
     @JsonProperty("BuyMoreSaveMoreDetail")
-    List<BuyMoreSaveMoreDetail> buyMoreSaveMoreDetail;
-    String buyMoreSaveMoreImage;
-    List<Description> description;
-    List<Discount> discount;
-    boolean displayRegularPricing;
-    boolean displayWasPricing;
-    float finalPriceDeduction;
-    List<Product> freeItem;
-    float finalPrice;
-    float freeItemTotalSavings;
-    List<Image> image;
-    float listPrice;
-    float price;
-    float savings;
-    String unitOfMeasure;
+    private List<BuyMoreSaveMoreDetail> buyMoreSaveMoreDetail;
+    private String buyMoreSaveMoreImage;
+    private List<Description> description;
+    private List<Discount> discount;
+    private boolean displayRegularPricing;
+    private boolean displayWasPricing;
+    private float finalPriceDeduction;
+    private List<Product> freeItem;
+    private float finalPrice;
+    private float freeItemTotalSavings;
+    private List<Image> image;
+    private float listPrice;
+    private float price;
+    private float savings;
+    private String unitOfMeasure;
 
     public List<BuyMoreSaveMoreDetail> getBuyMoreSaveMoreDetail() {
         return buyMoreSaveMoreDetail;
