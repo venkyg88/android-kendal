@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.LoginHelper;
+import com.staples.mobile.cfa.cart.CartAdapter;
 import com.staples.mobile.common.access.Access;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
@@ -123,6 +124,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             if(!getRegisterUsername().isEmpty() && !getRegisterPassword().isEmpty())
             {
                 loginHelper.registerUser(getEmaiId(), getRegisterUsername(), getRegisterPassword());
+
             }
             else{
                 Toast.makeText(getActivity(), "Username or Password cannot be null", Toast.LENGTH_LONG).show();
