@@ -18,6 +18,7 @@ public class CartItem {
 
     private Product product;
     private int proposedQty;
+    String shippingEstimate;
 
     QuantityEditor qtyWidget;
 
@@ -92,6 +93,13 @@ public class CartItem {
         return null;
     }
 
+    public String getShippingEstimate() {
+        return shippingEstimate;
+    }
+
+    public void setShippingEstimate(String shippingEstimate) {
+        this.shippingEstimate = shippingEstimate;
+    }
 
     public int getQuantity() {
         return product.getQuantity();

@@ -40,6 +40,7 @@ public class Product {
     private List<Image> thumbnailImage = new ArrayList<Image>();
     private String uniqueId;
     private boolean upsable;
+    private boolean preOrderFlag;
 
     public boolean getBopisEligible() {
         return bopisEligible;
@@ -279,5 +280,13 @@ public class Product {
 
     public void setSmallPromoImage(List<Image> smallPromoImage) {
         this.smallPromoImage = smallPromoImage;
+    }
+
+    public boolean getPreOrderFlag() {
+        return preOrderFlag;
+    }
+
+    public void setPreOrderFlag(boolean preOrderFlag) {
+        this.preOrderFlag = preOrderFlag;
     }
 }
