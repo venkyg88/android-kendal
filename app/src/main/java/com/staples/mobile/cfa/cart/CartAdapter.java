@@ -121,8 +121,8 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         CartItem cartItem = getItem(position);
 
         // set or hide shipping estimate
-        if (cartItem.getShippingEstimate() != null) {
-            vh.shipEstimateTextView.setText(cartItem.getShippingEstimate());
+        if (cartItem.getExpectedDelivery() != null) {
+            vh.shipEstimateTextView.setText(cartItem.getExpectedDelivery());
             vh.shipEstimateTextView.setVisibility(View.VISIBLE);
         } else {
             vh.shipEstimateTextView.setVisibility(View.GONE);
@@ -293,7 +293,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                 cart = cartCollection.get(0);
                 List<Product> products = cart.getProduct();
                 if (products != null) {
-                    String shippingEstimateLabel = activity.getResources().getString(R.string.delivery_estimate);
+                    String shippingEstimateLabel = activity.getResources().getString(R.string.expected_delivery);
                     String shippingEstimate = null;
                     // iterate thru products in reverse order so newest item appears first
                     for (int i = products.size() - 1;  i >= 0;  i--) {
@@ -302,7 +302,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                         if (product.getExpectedBusinessDayDelivery() != null  &&
                                 !product.getExpectedBusinessDayDelivery().equals(shippingEstimate)) {
                             shippingEstimate = product.getExpectedBusinessDayDelivery();
-                            cartItem.setShippingEstimate(shippingEstimateLabel + " " + shippingEstimate);
+                            cartItem.setExpectedDelivery(shippingEstimateLabel + " " + shippingEstimate);
                         }
                         add(cartItem);
                     }
