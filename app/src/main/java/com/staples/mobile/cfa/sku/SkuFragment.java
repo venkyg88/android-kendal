@@ -8,16 +8,16 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -68,6 +68,9 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
     private ViewPager tabPager;
     private SkuTabAdapter tabAdapter;
 
+    // Accessory List
+    private LinearLayout accessoryView;
+
     private boolean shifted;
 
     @Override
@@ -104,6 +107,9 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
         // Init details (TabHost)
         details = (TabHost) wrapper.findViewById(R.id.details);
         details.setup();
+
+        // Init accessory
+        accessoryView = (LinearLayout) wrapper.findViewById(R.id.accessory);
 
         // Fill details (TabHost)
         DummyFactory dummy = new DummyFactory(getActivity());
@@ -321,6 +327,17 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
             // Add reviews
 //            summary.findViewById(R.id.review_detail).setVisibility(View.GONE);
 
+
+            // Check if the product has accessories
+            if(product.getAccessory() != null){
+                // Add accessories
+                addAccessory(product);
+                Log.d(TAG, "Product has accessories.");
+            }
+            else{
+                Log.d(TAG, "Product has no accessories.");
+            }
+
             // Ready to display
             wrapper.setState(DataWrapper.State.DONE);
         }
@@ -330,6 +347,24 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
     public void failure(RetrofitError retrofitError) {
         Log.d(TAG, "Failure callback " + retrofitError);
         wrapper.setState(DataWrapper.State.EMPTY);
+    }
+
+    private void addAccessory(Product product){
+        List<Product> accessories = product.getAccessory();
+
+        if (accessories != null) {
+            for(Product accessory : accessories) {
+                String accessoryImageUrl = accessory.getImage().get(0).getUrl();
+
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View skuAccessoryRow = inflater.inflate(R.layout.sku_accessory_item, null);
+
+                ImageView accessoryImageView = (ImageView) skuAccessoryRow.findViewById(R.id.accessory_image);
+                Picasso.with(getActivity()).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
+
+                accessoryView.addView(skuAccessoryRow);
+            }
+        }
     }
 
    // TabHost notifications
