@@ -2,13 +2,15 @@
  * Copyright (c) 2014 Staples, Inc. All rights reserved.
  */
 
-package com.staples.mobile.cfa.cart;
+package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
+
+import com.staples.mobile.cfa.cart.CartAdapter;
 
 /**
  * Created by sutdi001 on 10/17/14.

@@ -6,7 +6,7 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent" >
 
-<com.staples.mobile.cfa.cart.LinearLayoutWithProgressOverlay
+<com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay
     android:id="@+id/checkout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -221,7 +221,7 @@
             />
     </RelativeLayout>
 
-</com.staples.mobile.cfa.cart.LinearLayoutWithProgressOverlay>
+</com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay>
 
 <!-- progress whirly -->
 <RelativeLayout

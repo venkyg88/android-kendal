@@ -141,7 +141,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="end">
-                <com.staples.mobile.cfa.cart.LinearLayoutWithProgressOverlay
+                <com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay
                     android:id="@+id/right_drawer_content"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -216,7 +216,7 @@
                         android:textSize="24dp"
                         android:textColor="#ffffff"
                         android:background="#3f3f3f"/>
-                    </com.staples.mobile.cfa.cart.LinearLayoutWithProgressOverlay>
+                    </com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay>
                 <RelativeLayout
                     android:id="@+id/cart_progress_overlay"
                     android:layout_width="match_parent"
