@@ -27,7 +27,7 @@ import retrofit.client.Response;
 //These are tested against LIVE sapi calls
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18, qualifiers = "port")
-public class CartModelTest implements Callback<CartContents> {
+public class CartModelTest {
 
     private EasyOpenApi easyOpenApi;
     private boolean success;
@@ -49,7 +49,30 @@ public class CartModelTest implements Callback<CartContents> {
                 "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS",
                 0,
                 50,
-                this);
+                new Callback<CartContents>() {
+                    @Override
+                    public void success(CartContents cartContents, Response response) {
+                        success = true;
+
+                        List<Cart> cartItems = cartContents.getCart();
+                        if(cartItems.size()==0){
+                            System.err.println("Empty Cart");
+                            return;
+                        }
+
+                        List<Product> products = cartItems.get(0).getProduct();
+                        for(Product item: products){
+                            System.out.println("Product:" + item.getProductName()+", qty: "+item.getQuantity());
+                        }
+
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        failure = true;
+                        error.printStackTrace();
+                    }
+                });
 
         Thread.sleep(5000);
         Robolectric.runUiThreadTasksIncludingDelayedTasks();
@@ -79,11 +102,13 @@ public class CartModelTest implements Callback<CartContents> {
                     @Override
                     public void success(CartUpdate cartUpdate, Response response) {
                         success = true;
+                        Log.d("testCartItemsCanBeAdded", cartUpdate.getMessage());
                     }
 
                     @Override
                     public void failure(RetrofitError error) {
                         failure = true;
+                        error.printStackTrace();
                     }
                 });
         Thread.sleep(5000);
@@ -91,25 +116,5 @@ public class CartModelTest implements Callback<CartContents> {
 
         Assert.assertFalse("Api call should not have failed", failure);
         Assert.assertTrue("Api call should have succeeded", success);
-    }
-
-    public void success(CartContents cartContents, Response response) {
-        success = true;
-
-        List<Cart> cartItems = cartContents.getCart();
-        if(cartItems.size()==0){
-            System.err.println("Empty Cart");
-            return;
-        }
-
-        List<Product> products = cartItems.get(0).getProduct();
-        for(Product item: products){
-            System.out.println("Product:" + item.getProductName()+", qty: "+item.getQuantity());
-        }
-    }
-
-    public void failure(RetrofitError retrofitError) {
-        failure = true;
-        retrofitError.printStackTrace();
     }
 }
