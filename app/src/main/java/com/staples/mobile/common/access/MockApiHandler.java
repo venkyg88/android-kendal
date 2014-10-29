@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
-import com.staples.mobile.common.access.lms.model.Lms;
+import com.staples.mobile.common.access.configurator.model.Configurator;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -40,26 +40,34 @@ public class MockApiHandler implements InvocationHandler {
             final T objects = mapper.readValue(reader, responseClass);
             reader.close();
 
-            Runnable runs = new Runnable() {public void run() {callback.success(objects, null);}};
+            Runnable runs = new Runnable() {
+                public void run() {
+                    callback.success(objects, null);
+                }
+            };
             handler.post(runs);
-            return(objects);
-        } catch(JsonParseException e) {
+            return (objects);
+        } catch (JsonParseException e) {
             Log.e(TAG, "Could not parse " + filename + " (" + e + ")");
-        } catch(Exception e) {
+        } catch (Exception e) {
             Log.e(TAG, "Could not load " + filename + " (" + e + ")");
         }
-        Runnable runs = new Runnable() {public void run() {callback.failure(null);}};
+        Runnable runs = new Runnable() {
+            public void run() {
+                callback.failure(null);
+            }
+        };
         handler.post(runs);
-        return(null);
+        return (null);
     }
 
     private Callback<?> getCallback(Object[] args) {
-        if (args==null) return(null);
+        if (args == null) return (null);
         int argn = args.length;
-        if (argn<1) return(null);
-        Object callback = args[argn-1];
-        if (!(callback instanceof Callback<?>)) return(null);
-        return((Callback<?>) callback);
+        if (argn < 1) return (null);
+        Object callback = args[argn - 1];
+        if (!(callback instanceof Callback<?>)) return (null);
+        return ((Callback<?>) callback);
     }
 
     @SuppressWarnings("unchecked")
@@ -70,26 +78,26 @@ public class MockApiHandler implements InvocationHandler {
         String name = method.getName();
 
         // Get callback
-        Callback<?> callback =  getCallback(args);
-        if (callback==null) throw(new RuntimeException("Invoke can not find callback"));
+        Callback<?> callback = getCallback(args);
+        if (callback == null) throw (new RuntimeException("Invoke can not find callback"));
 
         // Handle main API requests
         if (name.equals("lms")) {
-            Object objects = loadJsonObjects("lms_v6.json", Lms.class, (Callback<Lms>) callback);
-            return(objects);
+            Object objects = loadJsonObjects("lms_v6.json", Configurator.class, (Callback<Configurator>) callback);
+            return (objects);
         }
 
         if (name.equals("viewCart")) {
             Object objects = loadJsonObjects("viewCart.json", CartContents.class, (Callback<CartContents>) callback);
-            return(objects);
+            return (objects);
         }
 
-        if(name.equals("getStoreInventory")){
+        if (name.equals("getStoreInventory")) {
             Object objects = loadJsonObjects("storeInventory.json", StoreInventory.class, (Callback<StoreInventory>) callback);
-            return(objects);
+            return (objects);
         }
 
         // Unhandled
-        throw(new RuntimeException("Unhandled mock API call"));
+        throw (new RuntimeException("Unhandled mock API call"));
     }
 }

@@ -4,8 +4,8 @@ import android.util.Log;
 
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.lms.api.LmsApi;
-import com.staples.mobile.common.access.lms.model.Lms;
-import com.staples.mobile.common.access.lms.model.Screen;
+import com.staples.mobile.common.access.configurator.model.Configurator;
+import com.staples.mobile.common.access.configurator.model.Screen;
 
 import java.util.List;
 import java.util.concurrent.locks.Lock;
@@ -15,7 +15,7 @@ import retrofit.Callback;
 import retrofit.client.Response;
 import retrofit.RetrofitError;
 
-public class LmsManager implements Callback<Lms> {
+public class LmsManager implements Callback<Configurator> {
 
     // Class Variables
 
@@ -25,12 +25,12 @@ public class LmsManager implements Callback<Lms> {
     private static final String STORE_ID = "10001";
 
     private static final ReentrantReadWriteLock lmsReadWriteLock =
-        new ReentrantReadWriteLock();
+            new ReentrantReadWriteLock();
 
     private static final Lock lmsReadLock = lmsReadWriteLock.readLock();
     private static final Lock lmsWriteLock = lmsReadWriteLock.writeLock();
 
-    private static Lms lms;
+    private static Configurator lms;
 
     // Interface Definitions
 
@@ -50,7 +50,7 @@ public class LmsManager implements Callback<Lms> {
     public LmsManager() {
 
         Log.v(TAG, "LmsManager:LmsManager():"
-                + " this[" + this + "]"
+                        + " this[" + this + "]"
         );
 
         lmsApi = Access.getInstance().getLmsApi();
@@ -60,9 +60,9 @@ public class LmsManager implements Callback<Lms> {
                        boolean conditional) {
 
         Log.v(TAG, "LmsManager:getLms():"
-                + " lms[" + lms + "]"
-                + " conditional[" + conditional + "]"
-                + " this[" + this + "]"
+                        + " lms[" + lms + "]"
+                        + " conditional[" + conditional + "]"
+                        + " this[" + this + "]"
         );
 
         this.lmsManagerCallback = lmsManagerCallback;
@@ -97,8 +97,8 @@ public class LmsManager implements Callback<Lms> {
     public List<Screen> getScreen() {
 
         Log.v(TAG, "LmsManager:getScreen():"
-                + " lms[" + lms + "]"
-                + " this[" + this + "]"
+                        + " lms[" + lms + "]"
+                        + " this[" + this + "]"
         );
 
         List<Screen> screens = null;
@@ -114,11 +114,11 @@ public class LmsManager implements Callback<Lms> {
     }
 
     @Override
-    public void success(Lms lms, Response response) {
+    public void success(Configurator lms, Response response) {
 
         Log.v(TAG, "LmsManager:retrofit.Callback.success():"
-                + " lms[" + lms + "]"
-                + " this[" + this + "]"
+                        + " lms[" + lms + "]"
+                        + " this[" + this + "]"
         );
 
         this.lms = lms;
@@ -132,8 +132,8 @@ public class LmsManager implements Callback<Lms> {
     public void failure(RetrofitError retrofitError) {
 
         Log.e(TAG, "LmsManager:retrofit.Callback.failure():"
-            + " retrofitError[" + retrofitError + "]"
-            + " this[" + this + "]"
+                        + " retrofitError[" + retrofitError + "]"
+                        + " this[" + this + "]"
         );
 
         unlockWrite();
@@ -144,8 +144,8 @@ public class LmsManager implements Callback<Lms> {
     private void getLmsWithLock() {
 
         Log.v(TAG, "LmsManager:getLmsWithLock():"
-                + " lms[" + lms + "]"
-                + " this[" + this + "]"
+                        + " lms[" + lms + "]"
+                        + " this[" + this + "]"
         );
 
         lockWrite();
@@ -158,8 +158,8 @@ public class LmsManager implements Callback<Lms> {
     private void lockRead() {
 
         Log.v(TAG, "LmsManager:lockRead():"
-                + " lms[" + lms + "]"
-                + " this[" + this + "]"
+                        + " lms[" + lms + "]"
+                        + " this[" + this + "]"
         );
 
         lmsReadLock.lock();
@@ -170,8 +170,8 @@ public class LmsManager implements Callback<Lms> {
     private void unlockRead() {
 
         Log.v(TAG, "LmsManager:unlockRead():"
-                + " lms[" + lms + "]"
-                + " this[" + this + "]"
+                        + " lms[" + lms + "]"
+                        + " this[" + this + "]"
         );
 
         lmsReadLock.unlock();
@@ -182,8 +182,8 @@ public class LmsManager implements Callback<Lms> {
     private void lockWrite() {
 
         Log.v(TAG, "LmsManager:lockWrite():"
-                + " lms[" + lms + "]"
-                + " this[" + this + "]"
+                        + " lms[" + lms + "]"
+                        + " this[" + this + "]"
         );
 
         lmsWriteLock.lock();
@@ -194,8 +194,8 @@ public class LmsManager implements Callback<Lms> {
     private void unlockWrite() {
 
         Log.v(TAG, "LmsManager:unlockWrite():"
-                + " lms[" + lms + "]"
-                + " this[" + this + "]"
+                        + " lms[" + lms + "]"
+                        + " this[" + this + "]"
         );
 
         lmsWriteLock.unlock();
