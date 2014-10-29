@@ -120,6 +120,14 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         CartItem cartItem = getItem(position);
 
+        // set or hide shipping estimate
+        if (cartItem.getShippingEstimate() != null) {
+            vh.shipEstimateTextView.setText(cartItem.getShippingEstimate());
+            vh.shipEstimateTextView.setVisibility(View.VISIBLE);
+        } else {
+            vh.shipEstimateTextView.setVisibility(View.GONE);
+        }
+
         // Set image
         String imageUrl = cartItem.getImageUrl();
         if (imageUrl == null) {
@@ -246,6 +254,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     /************* view holder ************/
 
     static class ViewHolder {
+        TextView shipEstimateTextView;
         ImageView imageView;
         TextView titleTextView;
         PriceSticker priceSticker;
@@ -254,6 +263,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         Button updateButton;
 
         ViewHolder(View convertView) {
+            shipEstimateTextView = (TextView) convertView.findViewById(R.id.cartitem_shipping_estimate);
             imageView = (ImageView) convertView.findViewById(R.id.cartitem_image);
             titleTextView = (TextView) convertView.findViewById(R.id.cartitem_title);
             priceSticker = (PriceSticker) convertView.findViewById(R.id.cartitem_price);
@@ -283,9 +293,18 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                 cart = cartCollection.get(0);
                 List<Product> products = cart.getProduct();
                 if (products != null) {
+                    String shippingEstimateLabel = activity.getResources().getString(R.string.delivery_estimate);
+                    String shippingEstimate = null;
                     // iterate thru products in reverse order so newest item appears first
                     for (int i = products.size() - 1;  i >= 0;  i--) {
-                        add(new CartItem(products.get(i)));
+                        Product product = products.get(i);
+                        CartItem cartItem = new CartItem(product);
+                        if (product.getExpectedBusinessDayDelivery() != null  &&
+                                product.getExpectedBusinessDayDelivery() != shippingEstimate) {
+                            shippingEstimate = product.getExpectedBusinessDayDelivery();
+                            cartItem.setShippingEstimate(shippingEstimateLabel + " " + shippingEstimate);
+                        }
+                        add(cartItem);
                     }
                 }
             }
