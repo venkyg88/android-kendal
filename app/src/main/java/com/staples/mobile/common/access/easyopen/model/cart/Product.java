@@ -42,6 +42,8 @@ public class Product {
     private boolean upsable;
     private boolean preOrderFlag;
     private String marketPlace;
+    private String esd;
+    private boolean registeredUserOnly;
 
     public boolean getBopisEligible() {
         return bopisEligible;
@@ -297,5 +299,21 @@ public class Product {
 
     public void setMarketPlace(String marketPlace) {
         this.marketPlace = marketPlace;
+    }
+
+    public String getEsd() {
+        return esd;
+    }
+
+    public void setEsd(String esd) {
+        this.esd = esd;
+    }
+
+    public boolean isRegisteredUserOnly() {
+        return registeredUserOnly;
+    }
+
+    public void setRegisteredUserOnly(boolean registeredUserOnly) {
+        this.registeredUserOnly = registeredUserOnly;
     }
 }
