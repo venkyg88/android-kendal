@@ -25,6 +25,7 @@ public class Product {
     private String manufacturerPartNumber;
     private String orderItemDeleteUrl;
     private String orderItemId;
+    private boolean preOrderFlag;
     private boolean priceInCartOnly;
     private List<Pricing> pricing = new ArrayList<Pricing>();
     private String productName;
@@ -40,7 +41,6 @@ public class Product {
     private List<Image> thumbnailImage = new ArrayList<Image>();
     private String uniqueId;
     private boolean upsable;
-    private boolean preOrderFlag;
 
     public boolean getBopisEligible() {
         return bopisEligible;

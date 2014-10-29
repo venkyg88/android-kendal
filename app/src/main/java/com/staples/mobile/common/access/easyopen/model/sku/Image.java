@@ -3,13 +3,13 @@ package com.staples.mobile.common.access.easyopen.model.sku;
 import java.util.List;
 
 public class Image {
-    String altText;
-    String name;
-    String promotionalIconAltText;
-    String promotionalIconName;
-    String promotionalIconUrl;
-    List<ThumbnailImage> thumbnailImage;
-    String url;
+    private String altText;
+    private String name;
+    private String promotionalIconAltText;
+    private String promotionalIconName;
+    private String promotionalIconUrl;
+    private List<Image> thumbnailImage;
+    private String url;
 
     public String getAltText() {
         return altText;
@@ -31,7 +31,7 @@ public class Image {
         return promotionalIconUrl;
     }
 
-    public List<ThumbnailImage> getThumbnailImage() {
+    public List<Image> getThumbnailImage() {
         return thumbnailImage;
     }
 
