@@ -8,33 +8,19 @@ import java.util.List;
 public class Member {
 
     private String autoLoginFlag;
-
     private String creditCardCount;
-
     private String emailAddress;
-
     private String isUserSubscribed;
-
     private String openAccountEnabledFlag;
-
     private String password;
-
     private String reminderQuestion;
-
     private String rewardsNumber;
-
     private String rewardsNumberVerified;
-
     private String storedAddressCount;
-
     private String userName;
-
     private String welcomeMessage;
-
     private Reward[] rewardDetails;
-
     private FavouriteListDetail[] favoritesList;
-
     private List<PreferredStore> preferredStore;
 
     public List<PreferredStore> getPreferredStore() {

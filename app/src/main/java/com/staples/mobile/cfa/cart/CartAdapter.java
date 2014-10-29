@@ -91,6 +91,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         qtyDeleteButtonListener = new QtyDeleteButtonListener();
         qtyUpdateButtonListener = new QtyUpdateButtonListener();
         qtyChangeListener = new QtyChangeListener();
+
     }
 
 
@@ -214,6 +215,53 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                 LOCALE, CLIENT_ID, deleteFromCartListener);
     }
 
+    /** gets the billing address for the user account */
+    public void getBillingAddress() {
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
+        progressIndicator.showProgressIndicator();
+
+        easyOpenApi.getBillingAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<AddressDetail>(){
+
+            @Override
+            public void success(AddressDetail billingDetail, Response response) {
+                int code = response.getStatus();
+
+                Log.i("Status Code", " " + code);
+                Log.i("Billing  Address 1", billingDetail.getAddress().get(0).getAddress1());
+            }
+
+            @Override
+            public void failure(RetrofitError retrofitError) {
+                Log.i("Fail Message for getting the billing address", " " + retrofitError.getMessage());
+                Log.i("Post URL address for getting the billing address", " " + retrofitError.getUrl());
+            }
+        }
+        );
+    }
+
+    /** gets the shipping address for the user account */
+    public void getShippingAddress() {
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
+        progressIndicator.showProgressIndicator();
+
+        easyOpenApi.getShippingAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<AddressDetail>(){
+
+                    @Override
+                    public void success(AddressDetail billingDetail, Response response) {
+                        int code = response.getStatus();
+
+                        Log.i("Status Code", " " + code);
+                        Log.i("Shipping  Address 1", billingDetail.getAddress().get(0).getAddress1());
+                    }
+
+                    @Override
+                    public void failure(RetrofitError retrofitError) {
+                        Log.i("Fail Message for getting the shipping address", " " + retrofitError.getMessage());
+                        Log.i("Post URL address for getting the shipping address", " " + retrofitError.getUrl());
+                    }
+                }
+        );
+    }
 
     //for updating
     private TypedJsonString createCartRequestBody(CartItem cartItem, int newQty) {

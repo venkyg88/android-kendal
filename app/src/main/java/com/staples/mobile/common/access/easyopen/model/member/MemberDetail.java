@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 /**
- * Created by dodav001 on 10/6/14.
+ * Created by Avinash Dodda.
  */
 public class MemberDetail {
 
