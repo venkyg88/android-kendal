@@ -41,6 +41,7 @@ public class Product {
     private String uniqueId;
     private boolean upsable;
     private boolean preOrderFlag;
+    private String marketPlace;
 
     public boolean getBopisEligible() {
         return bopisEligible;
@@ -288,5 +289,13 @@ public class Product {
 
     public void setPreOrderFlag(boolean preOrderFlag) {
         this.preOrderFlag = preOrderFlag;
+    }
+
+    public String getMarketPlace() {
+        return marketPlace;
+    }
+
+    public void setMarketPlace(String marketPlace) {
+        this.marketPlace = marketPlace;
     }
 }
