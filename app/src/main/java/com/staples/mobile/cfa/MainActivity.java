@@ -1,6 +1,5 @@
 package com.staples.mobile.cfa;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -20,7 +19,7 @@ import android.widget.TextView;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartAdapter;
-import com.staples.mobile.cfa.cart.CartContainer;
+import com.staples.mobile.cfa.cart.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.search.SearchBar;
 import com.staples.mobile.cfa.search.SearchFragment;
@@ -182,7 +181,7 @@ public class MainActivity extends Activity
         cartProceedToCheckout.setOnClickListener(this);
 
         // Initialize right drawer cart listview
-        CartContainer cartContainer = (CartContainer) rightDrawer.findViewById(R.id.right_drawer_content);
+        LinearLayoutWithProgressOverlay cartContainer = (LinearLayoutWithProgressOverlay) rightDrawer.findViewById(R.id.right_drawer_content);
         cartContainer.setCartProgressOverlay(rightDrawer.findViewById(R.id.cart_progress_overlay));
         cartAdapter = new CartAdapter(this, R.layout.cart_item, cartContainer.getProgressIndicator());
         cartAdapter.registerDataSetObserver(new DataSetObserver() {
