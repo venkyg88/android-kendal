@@ -17,4 +17,16 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textSize="12sp"/>
+    <TextView
+        android:id="@+id/accessory_price"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="12sp"/>
+    <TextView
+        android:id="@+id/accessory_unit"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="12sp"/>
 </LinearLayout>
