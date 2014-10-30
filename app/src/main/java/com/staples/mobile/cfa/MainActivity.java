@@ -19,9 +19,9 @@ import android.widget.TextView;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartAdapter;
-import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
-import com.staples.mobile.cfa.search.SearchBar;
+import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
+import com.staples.mobile.cfa.search.SearchBarView;
 import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
@@ -41,7 +41,7 @@ public class MainActivity extends Activity
     private DrawerLayout drawerLayout;
     private View leftDrawer;
     private View rightDrawer;
-    private SearchBar searchBar;
+    private SearchBarView searchBar;
     private ViewGroup topper;
     private BadgeImageView rightDrawerAction;
     private TextView cartTitle;
@@ -112,7 +112,7 @@ public class MainActivity extends Activity
     @Override
     protected void onPause() {
         super.onPause();
-        searchBar.saveRecentKeywords();
+        searchBar.saveSearchHistory();
     }
 
     @Override
@@ -127,7 +127,7 @@ public class MainActivity extends Activity
     }
 
     public void showTopper(boolean show) {
-        topper.setVisibility(show? View.VISIBLE : View.GONE);
+        topper.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     public void prepareMainScreen(boolean freshStart) {
@@ -138,7 +138,7 @@ public class MainActivity extends Activity
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawer = findViewById(R.id.left_drawer);
         rightDrawer = findViewById(R.id.right_drawer);
-        searchBar = (SearchBar) findViewById(R.id.search_bar);
+        searchBar = (SearchBarView) findViewById(R.id.search_text);
         topper = (ViewGroup) findViewById(R.id.topper);
         rightDrawerAction = (BadgeImageView)findViewById(R.id.action_right_drawer);
 
@@ -209,11 +209,17 @@ public class MainActivity extends Activity
     public void onLoginComplete(boolean guestLevel) {
         // load cart drawer (requires successful login)
         cartAdapter.fill();
+
+        // for faster debugging with registered user (automatic login), uncomment this and use your
+        // own credentials, but re-comment out before checking code in
+//        if (guestLevel) {
+//            new LoginHelper(this).getUserTokens("<user>", "<password>");
+//        }
     }
 
     // Navigation
 
-    private boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
+    public boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
         // Make sure all drawers are closed
         drawerLayout.closeDrawers();
 
@@ -239,25 +245,27 @@ public class MainActivity extends Activity
     }
 
     public boolean selectBundle(String title, String path) {
-        DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, 0, BundleFragment.class);
-        item.title = title;
-        item.path = path;
-        selectDrawerItem(item, Transition.SLIDE, true);
-        return (true);
+        Fragment fragment = Fragment.instantiate(this, BundleFragment.class.getName());
+        Bundle args = new Bundle();
+        if (path != null) args.putString("path", path);
+        fragment.setArguments(args);
+        return (selectFragment(fragment, Transition.SLIDE, true));
     }
 
     public boolean selectSearch(String keyword) {
-        DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, 0, SearchFragment.class);
-        item.identifier = keyword;
-        selectDrawerItem(item, Transition.SLIDE, true);
-        return (true);
+        Fragment fragment = Fragment.instantiate(this, SearchFragment.class.getName());
+        Bundle args = new Bundle();
+        if (keyword!=null) args.putString("identifier", keyword);
+        fragment.setArguments(args);
+        return (selectFragment(fragment, Transition.SLIDE, true));
     }
 
     public boolean selectSkuItem(String identifier) {
-        DrawerItem item = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, 0, SkuFragment.class);
-        item.identifier = identifier;
-        selectDrawerItem(item, Transition.SLIDE, true);
-        return(true);
+        Fragment fragment = Fragment.instantiate(this, SkuFragment.class.getName());
+        Bundle args = new Bundle();
+        if (identifier!=null) args.putString("identifier", identifier);
+        fragment.setArguments(args);
+        return (selectFragment(fragment, Transition.SLIDE, true));
     }
 
     /** Sets item count indicator on cart icon and cart drawer title */
@@ -286,7 +294,7 @@ public class MainActivity extends Activity
         // TODO: get actual threshold from lms
         // TODO: reconcile with shipping cost returned by api
         float freeShippingThreshold = 99999.99f; // TODO: replace with call to lms
-        if (freeShippingThreshold > subtotal) {
+        if (freeShippingThreshold > subtotal && !"Free".equals(shipping)) {
             // need to spend more to qualify for free shipping
             NumberFormat nf = DecimalFormat.getCurrencyInstance();
             cartFreeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),

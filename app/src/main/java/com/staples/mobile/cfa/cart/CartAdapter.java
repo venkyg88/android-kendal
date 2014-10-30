@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.LoginHelper;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.Access;
@@ -49,7 +50,8 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     private static final String LOCALE = "en_US";
 
     private static final String ZIPCODE = "01010";
-    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+//    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     private Activity activity;
     private LayoutInflater inflater;
@@ -122,8 +124,8 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         CartItem cartItem = getItem(position);
 
         // set or hide shipping estimate
-        if (cartItem.getShippingEstimate() != null) {
-            vh.shipEstimateTextView.setText(cartItem.getShippingEstimate());
+        if (cartItem.getExpectedDelivery() != null) {
+            vh.shipEstimateTextView.setText(cartItem.getExpectedDelivery());
             vh.shipEstimateTextView.setVisibility(View.VISIBLE);
         } else {
             vh.shipEstimateTextView.setVisibility(View.GONE);
@@ -341,7 +343,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                 cart = cartCollection.get(0);
                 List<Product> products = cart.getProduct();
                 if (products != null) {
-                    String shippingEstimateLabel = activity.getResources().getString(R.string.delivery_estimate);
+                    String shippingEstimateLabel = activity.getResources().getString(R.string.expected_delivery);
                     String shippingEstimate = null;
                     // iterate thru products in reverse order so newest item appears first
                     for (int i = products.size() - 1;  i >= 0;  i--) {
@@ -350,7 +352,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                         if (product.getExpectedBusinessDayDelivery() != null  &&
                                 !product.getExpectedBusinessDayDelivery().equals(shippingEstimate)) {
                             shippingEstimate = product.getExpectedBusinessDayDelivery();
-                            cartItem.setShippingEstimate(shippingEstimateLabel + " " + shippingEstimate);
+                            cartItem.setExpectedDelivery(shippingEstimateLabel + " " + shippingEstimate);
                         }
                         add(cartItem);
                     }

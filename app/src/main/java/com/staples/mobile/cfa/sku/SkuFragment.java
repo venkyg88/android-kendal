@@ -19,6 +19,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.LoginHelper;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PagerStripe;
@@ -49,7 +50,8 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
     private static final String LOCALE = "en_US";
 
     private static final String ZIPCODE = "01010";
-    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+//    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     private static final int MAXFETCH = 50;
 

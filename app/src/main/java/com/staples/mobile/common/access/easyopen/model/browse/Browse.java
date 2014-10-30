@@ -6,13 +6,13 @@ import java.util.List;
 
 public class Browse {
     @JsonProperty("Category")
-    List<Category> category;
-    String recommendationUrl;
-    boolean recordSetComplete;
-    int recordSetCount;
-    int recordSetStartNumber;
-    int recordSetTotal;
-    String resourceUrl;
+    private List<Category> category;
+    private String recommendationUrl;
+    private boolean recordSetComplete;
+    private int recordSetCount;
+    private int recordSetStartNumber;
+    private int recordSetTotal;
+    private String resourceUrl;
 
     public List<Category> getCategory() {
         return category;

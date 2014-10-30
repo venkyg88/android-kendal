@@ -17,6 +17,7 @@ public class Pricing {
     private float price;
     private float totalOrderItemPrice;
     private String unitOfMeasure;
+    private String savings;
 
     public String getBuyMoreSaveMoreImage() {
         return buyMoreSaveMoreImage;
@@ -88,5 +89,13 @@ public class Pricing {
 
     public void setListPrice(float listPrice) {
         this.listPrice = listPrice;
+    }
+
+    public String getSavings() {
+        return savings;
+    }
+
+    public void setSavings(String savings) {
+        this.savings = savings;
     }
 }

@@ -33,7 +33,7 @@
     <string name="free_shipping_msg1">Free shipping when you spend %1$s - only %2$s to go!</string>
     <string name="free_shipping_msg2">You qualify for FREE SHIPPING!</string>
     <string name="shipping">Shipping</string>
-    <string name="delivery_estimate">Delivery Estimate:</string>
+    <string name="expected_delivery">Expected Delivery:</string>
     <string name="pretax_subtotal">Pre-tax Subtotal</string>
     <string name="proceed_to_checkout">Proceed to Checkout</string>
     <string name="no_reviews">no reviews</string>
@@ -60,10 +60,6 @@
         <item quantity="other">Your cart (%d items)</item>
     </plurals>
 
-    <!-- Auto Suggestion -->
-    <string name="original_hint">See recent searches</string>
+    <string name="original_hint">Search</string>
     <string name="searching">Searching&#8230;</string>
-    <string name="error">(Web service error)</string>
-    <string name="json_error">(Web service error - JSON parse error)</string>
-    <string name="interrupted">(Web service interrupted)</string>
 </resources>

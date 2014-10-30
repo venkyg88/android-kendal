@@ -5,5 +5,4 @@
     android:layout_height="wrap_content"
     android:textAppearance="?android:attr/textAppearanceMedium"
     android:gravity="center_vertical"
-    android:padding="10dip"
-/>
+    android:padding="10dip"/>
