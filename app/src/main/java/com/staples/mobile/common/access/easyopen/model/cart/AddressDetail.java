@@ -12,7 +12,7 @@ public class AddressDetail {
 
     @JsonProperty("Cart")
     private List<Address> address;
-    private List<ApiError> errors; // this allows one to examine ((AddressDetail)retrofitError.getBody()).getErrors()
+    private List<ApiError> errors; // this allows one to examine ((AddressDetail)retrofitError.getBody()).getErrors() when 400 Bad Request
 
     public List<Address> getAddress() {
         return address;

@@ -8,9 +8,9 @@ package com.staples.mobile.common.access.easyopen.model;
  * Created by sutdi001 on 10/30/14.
  *
  * Note: by including the following in the definition of the api response object, then within
- * the api failure response, retrofitError.getBody() can be cast to the response object type and
- * errors examined. This saves the step of having to reproduce the call with all its params and
- * headers in an external tool such as Postman.
+ * a 400 Bad Request failure response, retrofitError.getBody() can be cast to the response object
+ * type and errors examined. This saves the step of having to reproduce the call with all its params
+ * and headers in an external tool such as Postman.
  *
  *     private List<ApiError> errors;
  *     public List<ApiError> getErrors() { return errors; }

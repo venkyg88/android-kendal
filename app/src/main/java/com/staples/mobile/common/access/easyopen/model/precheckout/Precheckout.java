@@ -2,8 +2,11 @@ package com.staples.mobile.common.access.easyopen.model.precheckout;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
+
 import java.lang.StringBuilder;
 import java.lang.String;
+import java.util.List;
 
 @JsonPropertyOrder({"addressValidationAlert","city","state","zipCode"})
 public class Precheckout {
@@ -12,6 +15,13 @@ public class Precheckout {
     private String city;
     private String state;
     private String zipCode;
+
+    // include this so that ((Precheckout)retrofitError.getBody()).getErrors()
+    // can be examined in 400 Bad Request failure response (e.g. in debugger)
+    private List<ApiError> errors;
+    public List<ApiError> getErrors() { return errors; }
+    public void setErrors(List<ApiError> errors) { this.errors = errors; }
+
 
     @JsonProperty("AddressValidationAlert")
     public String getAddressValidationAlert(){
