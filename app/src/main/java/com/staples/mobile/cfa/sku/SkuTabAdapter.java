@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.staples.mobile.R;
-import com.staples.mobile.common.access.easyopen.model.sku.Product;
+import com.staples.mobile.common.access.easyopen.model.browse.Product;
 
 import java.util.ArrayList;
 
