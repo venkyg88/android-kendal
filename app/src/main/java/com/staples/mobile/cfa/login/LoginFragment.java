@@ -12,8 +12,6 @@ import android.widget.TabHost;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
-import com.staples.mobile.cfa.LoginHelper;
-import com.staples.mobile.cfa.cart.CartAdapter;
 import com.staples.mobile.common.access.Access;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {

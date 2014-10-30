@@ -20,6 +20,8 @@ import com.staples.mobile.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartAdapter;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
+import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.cfa.search.SearchBarView;
 import com.staples.mobile.cfa.search.SearchFragment;
@@ -265,6 +267,11 @@ public class MainActivity extends Activity
         Bundle args = new Bundle();
         if (identifier!=null) args.putString("identifier", identifier);
         fragment.setArguments(args);
+        return (selectFragment(fragment, Transition.SLIDE, true));
+    }
+
+    public boolean selectProfileFragment() {
+        Fragment fragment = Fragment.instantiate(this, ProfileFragment.class.getName());
         return (selectFragment(fragment, Transition.SLIDE, true));
     }
 

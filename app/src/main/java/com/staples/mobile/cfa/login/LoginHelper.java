@@ -1,4 +1,4 @@
-package com.staples.mobile.cfa;
+package com.staples.mobile.cfa.login;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -89,6 +90,8 @@ public class LoginHelper {
                     public void success(TokenObject tokenObjectReturned, Response response) {
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
+                        ((MainActivity)activity).selectProfileFragment();
+
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
                         Log.i("wctrustedToken", tokenObjectReturned.getWCTrustedToken());
@@ -114,7 +117,7 @@ public class LoginHelper {
                     public void success(TokenObject tokenObjectReturned, Response response) {
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
-                        Toast.makeText(activity, "Success" + "\n" +  tokenObjectReturned.getWCToken(), Toast.LENGTH_LONG).show();
+                        ((MainActivity)activity).selectProfileFragment();
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
