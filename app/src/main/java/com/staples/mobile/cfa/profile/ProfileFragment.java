@@ -39,6 +39,7 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>{
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
         easyOpenApi.getMemberProfile(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, this);
         easyOpenApi.getMemberAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, this);
+        easyOpenApi.getMemberCreditCardDetails(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, this);
 
         return (view);
     }
@@ -60,8 +61,17 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>{
         if (addresses!=null) {
             Address address = addresses.get(0);
             if (address != null) {
-                String city = address.getCity();
-                Log.i(TAG, "City " + city);
+                String tmpAddress =  address.getAddress1() + "\n" + address.getCity() + "\n" + address.getState() + "\n" + address.getZipcode();
+                ((EditText) getView().findViewById(R.id.addressET)).setText(tmpAddress);
+            }
+        }
+
+        List<CCDetails> creditCards = member.getCreditCard();
+        if(creditCards !=null) {
+            CCDetails creditCard = creditCards.get(0);
+            if (creditCard != null) {
+                String tmpCreditCard =  creditCard.getCardNumber() + "\n" + creditCard.getCardType();
+                ((EditText) getView().findViewById(R.id.ccET)).setText(tmpCreditCard);
             }
         }
     }

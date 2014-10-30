@@ -11,6 +11,15 @@ public class CCDetails {
     private String expirationMonth;
     private String expirationYear;
     private String notes;
+    private String authorized;
+
+    public String getAuthorized() {
+        return authorized;
+    }
+
+    public void setAuthorized(String authorized) {
+        this.authorized = authorized;
+    }
 
     public String getCardNumber() {
         return cardNumber;
