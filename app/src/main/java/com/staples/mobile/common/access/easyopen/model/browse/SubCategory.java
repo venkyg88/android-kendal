@@ -3,12 +3,12 @@ package com.staples.mobile.common.access.easyopen.model.browse;
 import java.util.List;
 
 public class SubCategory {
-    String catalogId;
-    String categoryUrl;
-    int childCount;
-    List<Description> description;
-    String identifier;
-    boolean navigable;
+    private String catalogId;
+    private String categoryUrl;
+    private int childCount;
+    private List<Description> description;
+    private String identifier;
+    private boolean navigable;
 
     public String getCatalogId() {
         return catalogId;

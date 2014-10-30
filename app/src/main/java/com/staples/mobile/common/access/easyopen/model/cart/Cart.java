@@ -14,6 +14,8 @@ public class Cart {
     private float subTotal;
     private int totalItems;
     private boolean webOnly;
+    private float shippingCharge;
+    private float totalTax;
 
     public String getDelivery() {
         return delivery;
@@ -77,5 +79,21 @@ public class Cart {
 
     public void setWebOnly(boolean webOnly) {
         this.webOnly = webOnly;
+    }
+
+    public float getShippingCharge() {
+        return shippingCharge;
+    }
+
+    public void setShippingCharge(float shippingCharge) {
+        this.shippingCharge = shippingCharge;
+    }
+
+    public float getTotalTax() {
+        return totalTax;
+    }
+
+    public void setTotalTax(float totalTax) {
+        this.totalTax = totalTax;
     }
 }

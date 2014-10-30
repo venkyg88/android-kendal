@@ -1,6 +1,7 @@
 package com.staples.mobile.common.access.easyopen.api;
 
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
+import com.staples.mobile.common.access.easyopen.model.cart.AddressDetail;
 import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
 import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
 import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
@@ -24,10 +25,12 @@ import retrofit.http.Query;
 
 public interface EasyOpenApi {
     public static final String INSECURE_ENDPOINT = "http://sapi.staples.com";
+//    public static final String INSECURE_ENDPOINT = "http://api.staples.com";
 //    public static final String INSECURE_ENDPOINT = "http://qapi.staples.com";
 //    public static final String INSECURE_ENDPOINT = "http://10.29.172.60:9100"; // The office printer!
 
     public static final String SECURE_ENDPOINT = "https://sapi.staples.com";
+//    public static final String SECURE_ENDPOINT = "https://api.staples.com";
 
     // Browsing & product details
 
@@ -206,4 +209,45 @@ public interface EasyOpenApi {
             @Query("filterId") String filterIds,
             Callback<SearchResult> callback
     );
+
+    //https://api.staples.com/v1/10001/cart/address/billing?locale=en_US&client_id=
+    @GET("/{version}/{storeId}/cart/address/billing")
+    void getBillingAddress(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<AddressDetail> callback
+    );
+
+    //https://api.staples.com/v1/10001/cart/address/shipping?locale=en_US&client_id=
+    @GET("/{version}/{storeId}/cart/address/shipping")
+    void getShippingAddress(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<AddressDetail> callback
+    );
+
+    //https://api.staples.com/v1/10001/cart/tax?locale=en_US&client_id=
+    @GET("/{version}/{storeId}/cart/tax")
+    void getTax(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<CartContents> callback
+    );
+
+    //https://api.staples.com/v1/10001/cart/shipping/charge?locale=en_US&client_id=
+    @GET("/{version}/{storeId}/cart/shipping/charge")
+    void getShippingCharge(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<CartContents> callback
+    );
+
 }

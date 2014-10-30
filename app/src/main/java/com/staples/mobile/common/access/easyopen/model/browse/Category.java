@@ -5,23 +5,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public class Category {
-    String catalogId;
-    List<Analytic> categoryAnalytic;
-    String categoryUrl;
-    int childCount;
-    boolean comparable;
-    String comparisonUrl;
+    private String catalogId;
+    private List<Analytic> categoryAnalytic;
+    private String categoryUrl;
+    private int childCount;
+    private boolean comparable;
+    private String comparisonUrl;
     @JsonProperty("description")
-    List<Description> description1;
+    private List<Description> description1;
     @JsonProperty("Description")
-    List<Description> description2;
-    List<FilterGroup> filterGroup;
-    String identifier;
-    boolean navigable;
-    boolean partialResults;
-    List<Product> product;
-    String recommendationUrl;
-    List<SubCategory> subCategory;
+    private List<Description> description2;
+    private List<FilterGroup> filterGroup;
+    private String identifier;
+    private boolean navigable;
+    private boolean partialResults;
+    private List<Product> product;
+    private String recommendationUrl;
+    private List<SubCategory> subCategory;
 
     public String getCatalogId() {
         return catalogId;

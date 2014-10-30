@@ -5,89 +5,68 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public class Product {
-
-    boolean addOn; // for sapi
-    boolean heavyWeightSKU; //for sapi
-    boolean preOrderFlag; //for sapi
-
-    List<Product> accessory;
-    List<Product> alsoConsider;
-    List<Analytic> analytic;
-    boolean bopisEligible;
-    List<BulletDescription> bulletDescription;
-    boolean businessService;
-    String classId;
-    boolean comparable;
-    List<Description> customTab;
-    int customerReviewCount;
-    float customerReviewRating;
-    boolean deliveryOnly;
-    String displayName;
-    boolean esd;
-    List<Description> expandedText;
-    boolean freeShipping;
-    List<Description> headliner;
-    List<Image> image;
-    boolean inStock;
+    private List<Product> accessory;
+    private boolean addOn;
+    private List<Product> alsoConsider;
+    private List<Analytic> analytic;
+    private boolean bopisEligible;
+    private List<BulletDescription> bulletDescription;
+    private boolean businessService;
+    private String classId;
+    private boolean comparable;
+    private List<Description> customTab;
+    private int customerReviewCount;
+    private float customerReviewRating;
+    private boolean deliveryOnly;
+    private String displayName;
+    private boolean esd;
+    private List<Description> expandedText;
+    private boolean freeShipping;
+    private List<Description> headliner;
+    private boolean heavyWeightSKU;
+    private List<Image> image;
+    private boolean inStock;
     @JsonProperty("leadTimeDecription")
-    String leadTimeDescription;
-    int leadTimeMaximum;
-    int leadTimeMinimum;
-    String manufacturerName;
-    String manufacturerPartNumber;
-    List<Description> paragraph;
-    boolean priceInCartOnly;
-    List<Pricing> pricing;
-    List<Product> product;
-    String productName;
-    String productUrl;
-    List<Description> promotionalOfferExpire;
-    String recommendationUrl;
-    boolean registeredUserOnly;
-    boolean retailOnly;
-    boolean retailOnlySpecialOrder;
-    boolean ropisEligible;
-    int ropisQtyLimit;
-    float savings;
-    boolean shipableToStore;
-    boolean shopRunner;
-    String sku;
-    List<Image> smallPromoImage;
-    List<Description> specification;
-    String staplesDisplayPartNumber;
-    String supplierTypeId;
-    List<Description> termsAndCondition;
-    List<ThumbnailImage> thumbnailImage;
-    String uniqueId;
-    boolean upsable;
-    boolean webOnly;
-
-    public boolean isAddOn() {
-        return addOn;
-    }
-
-    public void setAddOn(boolean addOn) {
-        this.addOn = addOn;
-    }
-
-    public boolean isHeavyWeightSKU() {
-        return heavyWeightSKU;
-    }
-
-    public void setHeavyWeightSKU(boolean heavyWeightSKU) {
-        this.heavyWeightSKU = heavyWeightSKU;
-    }
-
-    public boolean isPreOrderFlag() {
-        return preOrderFlag;
-    }
-
-    public void setPreOrderFlag(boolean preOrderFlag) {
-        this.preOrderFlag = preOrderFlag;
-    }
+    private String leadTimeDescription;
+    private int leadTimeMaximum;
+    private int leadTimeMinimum;
+    private String manufacturerName;
+    private String manufacturerPartNumber;
+    private List<Description> paragraph;
+    private boolean preOrderFlag;
+    private boolean priceInCartOnly;
+    private List<Pricing> pricing;
+    private List<Product> product;
+    private String productName;
+    private String productUrl;
+    private List<Description> promotionalOfferExpire;
+    private String recommendationUrl;
+    private boolean registeredUserOnly;
+    private boolean retailOnly;
+    private boolean retailOnlySpecialOrder;
+    private boolean ropisEligible;
+    private int ropisQtyLimit;
+    private float savings;
+    private boolean shipableToStore;
+    private boolean shopRunner;
+    private String sku;
+    private List<Image> smallInfoImage;
+    private List<Image> smallPromoImage;
+    private List<Description> specification;
+    private String staplesDisplayPartNumber;
+    private String supplierTypeId;
+    private List<Description> termsAndCondition;
+    private List<Image> thumbnailImage;
+    private String uniqueId;
+    private boolean upsable;
+    private boolean webOnly;
 
     public List<Product> getAccessory() {
         return accessory;
+    }
+
+    public boolean isAddOn() {
+        return addOn;
     }
 
     public List<Product> getAlsoConsider() {
@@ -154,6 +133,10 @@ public class Product {
         return headliner;
     }
 
+    public boolean isHeavyWeightSKU() {
+        return heavyWeightSKU;
+    }
+
     public List<Image> getImage() {
         return image;
     }
@@ -184,6 +167,10 @@ public class Product {
 
     public List<Description> getParagraph() {
         return paragraph;
+    }
+
+    public boolean isPreOrderFlag() {
+        return preOrderFlag;
     }
 
     public boolean isPriceInCartOnly() {
@@ -250,6 +237,10 @@ public class Product {
         return sku;
     }
 
+    public List<Image> getSmallInfoImage() {
+        return smallInfoImage;
+    }
+
     public List<Image> getSmallPromoImage() {
         return smallPromoImage;
     }
@@ -270,7 +261,7 @@ public class Product {
         return termsAndCondition;
     }
 
-    public List<ThumbnailImage> getThumbnailImage() {
+    public List<Image> getThumbnailImage() {
         return thumbnailImage;
     }
 

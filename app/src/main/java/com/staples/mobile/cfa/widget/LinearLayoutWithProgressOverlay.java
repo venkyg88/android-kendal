@@ -2,7 +2,7 @@
  * Copyright (c) 2014 Staples, Inc. All rights reserved.
  */
 
-package com.staples.mobile.cfa.cart;
+package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -10,26 +10,28 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.staples.mobile.cfa.cart.CartAdapter;
+
 /**
  * Created by sutdi001 on 10/17/14.
  *
  * Class to swallow touch events of cart container and its children while progress indicator is visible
  */
-public class CartContainer extends LinearLayout {
+public class LinearLayoutWithProgressOverlay extends LinearLayout {
 
     boolean swallowTouchEvents = false;
     CartAdapter.ProgressIndicator progressIndicator;
     View cartProgressOverlay;
 
-    public CartContainer(Context context) {
+    public LinearLayoutWithProgressOverlay(Context context) {
         super(context);
     }
 
-    public CartContainer(Context context, AttributeSet attrs) {
+    public LinearLayoutWithProgressOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CartContainer(Context context, AttributeSet attrs, int defStyle) {
+    public LinearLayoutWithProgressOverlay(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
@@ -37,15 +39,15 @@ public class CartContainer extends LinearLayout {
         if (progressIndicator == null) {
             progressIndicator = new CartAdapter.ProgressIndicator() {
                 public void showProgressIndicator() {
-                    if (CartContainer.this.cartProgressOverlay != null) {
-                        CartContainer.this.cartProgressOverlay.setVisibility(View.VISIBLE);
+                    if (LinearLayoutWithProgressOverlay.this.cartProgressOverlay != null) {
+                        LinearLayoutWithProgressOverlay.this.cartProgressOverlay.setVisibility(View.VISIBLE);
                     }
                     setSwallowTouchEvents(true);
                 }
 
                 public void hideProgressIndicator() {
-                    if (CartContainer.this.cartProgressOverlay != null) {
-                        CartContainer.this.cartProgressOverlay.setVisibility(View.GONE);
+                    if (LinearLayoutWithProgressOverlay.this.cartProgressOverlay != null) {
+                        LinearLayoutWithProgressOverlay.this.cartProgressOverlay.setVisibility(View.GONE);
                     }
                     setSwallowTouchEvents(false);
                 }

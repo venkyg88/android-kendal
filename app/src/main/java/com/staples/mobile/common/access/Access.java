@@ -47,7 +47,6 @@ public class Access {
     private String token2;
     private List<OnLoginCompleteListener> loginCompleteListeners;
 
-
     public static Access getInstance() {
         synchronized(Access.class) {
             if (instance == null) {

@@ -31,9 +31,9 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.R;
 import com.staples.mobile.common.access.lms.LmsManager;
 import com.staples.mobile.common.access.lms.LmsManager.LmsMgrCallback;
-import com.staples.mobile.common.access.lms.model.Area;
-import com.staples.mobile.common.access.lms.model.Item;
-import com.staples.mobile.common.access.lms.model.Screen;
+import com.staples.mobile.common.access.configurator.model.Area;
+import com.staples.mobile.common.access.configurator.model.Item;
+import com.staples.mobile.common.access.configurator.model.Screen;
 import com.staples.mobile.common.device.DeviceInfo;
 
 import java.util.ArrayList;

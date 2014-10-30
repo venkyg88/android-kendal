@@ -2,7 +2,6 @@ package com.staples.mobile.test;
 
 import android.util.Log;
 
-import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
@@ -12,14 +11,11 @@ import com.staples.mobile.common.access.easyopen.model.cart.Product;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowLog;
-import org.robolectric.util.ActivityController;
 
 import java.util.List;
 
@@ -27,40 +23,20 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+
+//These are tested against LIVE sapi calls
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18, qualifiers = "port")
-public class CartModelTest implements Callback<CartContents> {
+public class CartModelTest {
 
-    private ActivityController controller;
-    private MainActivity activity;
     private EasyOpenApi easyOpenApi;
-
     private boolean success;
     private boolean failure;
 
-    @Before
-    public void setUp() {
-        // Redirect logcat to stdout logfile
-        ShadowLog.stream = System.out;
-
-        // Create activity controller
-        controller = Robolectric.buildActivity(MainActivity.class);
-        Assert.assertNotNull("Robolectric controller should not be null", controller);
-
-        // Create activity
-        controller.create();
-        controller.start();
-        controller.visible();
-        activity = (MainActivity) controller.get();
-
-        // Check for success
-        Assert.assertNotNull("Activity should exist", activity);
-
-        easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-    }
-
     @Test
     public void testCartCanBeViewed() throws InterruptedException {
+
+        easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         success = false;
         failure = false;
 
@@ -73,7 +49,30 @@ public class CartModelTest implements Callback<CartContents> {
                 "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS",
                 0,
                 50,
-                this);
+                new Callback<CartContents>() {
+                    @Override
+                    public void success(CartContents cartContents, Response response) {
+                        success = true;
+
+                        List<Cart> cartItems = cartContents.getCart();
+                        if(cartItems.size()==0){
+                            System.err.println("Empty Cart");
+                            return;
+                        }
+
+                        List<Product> products = cartItems.get(0).getProduct();
+                        for(Product item: products){
+                            System.out.println("Product:" + item.getProductName()+", qty: "+item.getQuantity());
+                        }
+
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        failure = true;
+                        error.printStackTrace();
+                    }
+                });
 
         Thread.sleep(5000);
         Robolectric.runUiThreadTasksIncludingDelayedTasks();
@@ -86,6 +85,7 @@ public class CartModelTest implements Callback<CartContents> {
     public void testCartItemsCanBeAdded() throws InterruptedException{
         success = false;
         failure = false;
+        easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         TypedJsonString body = new TypedJsonString("{" +
                 "\"orderItem\": [" +
                 "{\"partNumber_0\":123455,\"quantity_0\": \"3\"}," +
@@ -102,11 +102,13 @@ public class CartModelTest implements Callback<CartContents> {
                     @Override
                     public void success(CartUpdate cartUpdate, Response response) {
                         success = true;
+                        Log.d("testCartItemsCanBeAdded", cartUpdate.getMessage());
                     }
 
                     @Override
                     public void failure(RetrofitError error) {
                         failure = true;
+                        error.printStackTrace();
                     }
                 });
         Thread.sleep(5000);
@@ -114,26 +116,5 @@ public class CartModelTest implements Callback<CartContents> {
 
         Assert.assertFalse("Api call should not have failed", failure);
         Assert.assertTrue("Api call should have succeeded", success);
-    }
-
-    public void success(CartContents cartContents, Response response) {
-        success = true;
-
-        List<Cart> cartItems = cartContents.getCart();
-        if(cartItems.size()==0){
-            System.err.println("Empty Cart");
-//            System.err.println("JSON: "+result);
-            return;
-        }
-
-        List<Product> products = cartItems.get(0).getProduct();
-        for(Product item: products){
-            System.out.println("Product:" + item.getProductName()+", qty: "+item.getQuantity());
-        }
-    }
-
-    public void failure(RetrofitError retrofitError) {
-        failure = true;
-        retrofitError.printStackTrace();
     }
 }

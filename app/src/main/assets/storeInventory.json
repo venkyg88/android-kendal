@@ -1,0 +1,103 @@
+{
+	"Store": [
+		{
+			"address": "3675 Marketplace Blvd",
+			"city": "East Point",
+			"distance": "3.58",
+			"inventory": [
+				{
+					"available": "false",
+					"bopisEligible": "true",
+					"partNumber": "645929",
+					"quantity": "50000.0",
+					"stockLevelMessage": "50+ available"
+				}
+			],
+			"phoneNumber": "4043440117",
+			"postalCode": "30344",
+			"state": "GA",
+			"storeHours": "Monday - Friday: 0800-2100 Saturday: 0900-2100 Sunday: 1000-2000",
+			"storeNumber": "1113"
+		},
+		{
+			"address": "650 Ponce De Leon Ave.",
+			"city": "Atlanta",
+			"distance": "7.67",
+			"inventory": [
+				{
+					"available": "false",
+					"bopisEligible": "true",
+					"partNumber": "645929",
+					"quantity": "50000.0",
+					"stockLevelMessage": "50+ available"
+				}
+			],
+			"phoneNumber": "4048810354",
+			"postalCode": "30308",
+			"state": "GA",
+			"storeHours": "Monday - Friday: 0800-2100 Saturday: 0900-2100 Sunday: 1000-1800",
+			"storeNumber": "1005"
+		},
+		{
+			"address": "3535 Peachtree Rd NE Suite 103",
+			"city": "Atlanta",
+			"distance": "12.75",
+			"inventory": [
+				{
+					"available": "false",
+					"bopisEligible": "true",
+					"partNumber": "645929",
+					"quantity": "50000.0",
+					"stockLevelMessage": "50+ available"
+				}
+			],
+			"phoneNumber": "4047609799",
+			"postalCode": "30326",
+			"state": "GA",
+			"storeHours": "Monday - Friday: 0800-2100 Saturday: 0900-2100 Sunday: 1000-1800",
+			"storeNumber": "1003"
+		},
+		{
+			"address": "105 Banks Station",
+			"city": "Fayetteville",
+			"distance": "14.84",
+			"inventory": [
+				{
+					"available": "false",
+					"bopisEligible": "true",
+					"partNumber": "645929",
+					"quantity": "2.0",
+					"stockLevelMessage": "2 available"
+				}
+			],
+			"phoneNumber": "6788171811",
+			"postalCode": "30214",
+			"state": "GA",
+			"storeHours": "Monday - Friday: 0900-1900 Saturday: 1000-1900 Sunday: 1200-1800",
+			"storeNumber": "1649"
+		},
+		{
+			"address": "5560 Roswell Rd",
+			"city": "Atlanta",
+			"distance": "16.03",
+			"inventory": [
+				{
+					"available": "false",
+					"bopisEligible": "true",
+					"partNumber": "645929",
+					"quantity": "1.0",
+					"stockLevelMessage": "1 available"
+				}
+			],
+			"phoneNumber": "4042564602",
+			"postalCode": "30342",
+			"state": "GA",
+			"storeHours": "Monday - Friday: 0900-1900 Saturday: 1000-1900 Sunday: 1200-1800",
+			"storeNumber": "1839"
+		}
+	],
+	"recordSetComplete": "false",
+	"recordSetCount": "5",
+	"recordSetStartNumber": "0",
+	"recordSetTotal": "9"
+}

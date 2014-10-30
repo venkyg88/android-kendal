@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.LoginHelper;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
@@ -31,7 +32,8 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
     private static final String CATALOG_ID = "10051";
     private static final String LOCALE = "en_US";
     private static final String ZIPCODE = "01010";
-    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+//    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
     private static final int MAXFETCH = 50;
 
     private DataWrapper wrapper;

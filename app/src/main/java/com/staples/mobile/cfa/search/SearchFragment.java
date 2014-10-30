@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.LoginHelper;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.bundle.BundleAdapter;
 import com.staples.mobile.cfa.bundle.BundleItem;
@@ -33,7 +34,8 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
     private static final String CATALOG_ID = "10051";
     private static final String LOCALE = "en_US";
     private static final String ZIPCODE = "01010";
-    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+//    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
     private static final int MAXFETCH = 50;
     private static final int SORT_BY_BEST_MATCH = 0;
 
@@ -73,7 +75,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
     @Override
     public void success(SearchResult searchResult, Response response) {
-        int count = process_search(searchResult);
+        int count = processSearch(searchResult);
         if (count==0) wrapper.setState(DataWrapper.State.EMPTY);
         else wrapper.setState(DataWrapper.State.DONE);
         adapter.notifyDataSetChanged();
@@ -86,7 +88,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         adapter.notifyDataSetChanged();
     }
 
-    private int process_search(SearchResult searchResult) {
+    private int processSearch(SearchResult searchResult) {
         if (searchResult==null) return(0);
         List<Search> searches = searchResult.getSearch();
         if (searches==null || searches.size()<1) return(0);

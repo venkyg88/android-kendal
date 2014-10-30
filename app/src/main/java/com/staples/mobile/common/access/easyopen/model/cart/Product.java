@@ -25,6 +25,7 @@ public class Product {
     private String manufacturerPartNumber;
     private String orderItemDeleteUrl;
     private String orderItemId;
+    private boolean preOrderFlag;
     private boolean priceInCartOnly;
     private List<Pricing> pricing = new ArrayList<Pricing>();
     private String productName;
@@ -40,6 +41,9 @@ public class Product {
     private List<Image> thumbnailImage = new ArrayList<Image>();
     private String uniqueId;
     private boolean upsable;
+    private String marketPlace;
+    private String esd;
+    private boolean registeredUserOnly;
 
     public boolean getBopisEligible() {
         return bopisEligible;
@@ -279,5 +283,37 @@ public class Product {
 
     public void setSmallPromoImage(List<Image> smallPromoImage) {
         this.smallPromoImage = smallPromoImage;
+    }
+
+    public boolean getPreOrderFlag() {
+        return preOrderFlag;
+    }
+
+    public void setPreOrderFlag(boolean preOrderFlag) {
+        this.preOrderFlag = preOrderFlag;
+    }
+
+    public String getMarketPlace() {
+        return marketPlace;
+    }
+
+    public void setMarketPlace(String marketPlace) {
+        this.marketPlace = marketPlace;
+    }
+
+    public String getEsd() {
+        return esd;
+    }
+
+    public void setEsd(String esd) {
+        this.esd = esd;
+    }
+
+    public boolean isRegisteredUserOnly() {
+        return registeredUserOnly;
+    }
+
+    public void setRegisteredUserOnly(boolean registeredUserOnly) {
+        this.registeredUserOnly = registeredUserOnly;
     }
 }

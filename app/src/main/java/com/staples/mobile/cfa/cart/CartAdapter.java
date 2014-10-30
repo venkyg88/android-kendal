@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.LoginHelper;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.Access;
@@ -49,7 +50,8 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     private static final String LOCALE = "en_US";
 
     private static final String ZIPCODE = "01010";
-    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+//    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     private Activity activity;
     private LayoutInflater inflater;
@@ -91,6 +93,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         qtyDeleteButtonListener = new QtyDeleteButtonListener();
         qtyUpdateButtonListener = new QtyUpdateButtonListener();
         qtyChangeListener = new QtyChangeListener();
+
     }
 
 
@@ -119,6 +122,14 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         }
 
         CartItem cartItem = getItem(position);
+
+        // set or hide shipping estimate
+        if (cartItem.getExpectedDelivery() != null) {
+            vh.shipEstimateTextView.setText(cartItem.getExpectedDelivery());
+            vh.shipEstimateTextView.setVisibility(View.VISIBLE);
+        } else {
+            vh.shipEstimateTextView.setVisibility(View.GONE);
+        }
 
         // Set image
         String imageUrl = cartItem.getImageUrl();
@@ -206,6 +217,53 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                 LOCALE, CLIENT_ID, deleteFromCartListener);
     }
 
+    /** gets the billing address for the user account */
+    public void getBillingAddress() {
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
+        progressIndicator.showProgressIndicator();
+
+        easyOpenApi.getBillingAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<AddressDetail>(){
+
+            @Override
+            public void success(AddressDetail billingDetail, Response response) {
+                int code = response.getStatus();
+
+                Log.i("Status Code", " " + code);
+                Log.i("Billing  Address 1", billingDetail.getAddress().get(0).getAddress1());
+            }
+
+            @Override
+            public void failure(RetrofitError retrofitError) {
+                Log.i("Fail Message for getting the billing address", " " + retrofitError.getMessage());
+                Log.i("Post URL address for getting the billing address", " " + retrofitError.getUrl());
+            }
+        }
+        );
+    }
+
+    /** gets the shipping address for the user account */
+    public void getShippingAddress() {
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
+        progressIndicator.showProgressIndicator();
+
+        easyOpenApi.getShippingAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<AddressDetail>(){
+
+                    @Override
+                    public void success(AddressDetail billingDetail, Response response) {
+                        int code = response.getStatus();
+
+                        Log.i("Status Code", " " + code);
+                        Log.i("Shipping  Address 1", billingDetail.getAddress().get(0).getAddress1());
+                    }
+
+                    @Override
+                    public void failure(RetrofitError retrofitError) {
+                        Log.i("Fail Message for getting the shipping address", " " + retrofitError.getMessage());
+                        Log.i("Post URL address for getting the shipping address", " " + retrofitError.getUrl());
+                    }
+                }
+        );
+    }
 
     //for updating
     private TypedJsonString createCartRequestBody(CartItem cartItem, int newQty) {
@@ -246,6 +304,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     /************* view holder ************/
 
     static class ViewHolder {
+        TextView shipEstimateTextView;
         ImageView imageView;
         TextView titleTextView;
         PriceSticker priceSticker;
@@ -254,6 +313,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         Button updateButton;
 
         ViewHolder(View convertView) {
+            shipEstimateTextView = (TextView) convertView.findViewById(R.id.cartitem_shipping_estimate);
             imageView = (ImageView) convertView.findViewById(R.id.cartitem_image);
             titleTextView = (TextView) convertView.findViewById(R.id.cartitem_title);
             priceSticker = (PriceSticker) convertView.findViewById(R.id.cartitem_price);
@@ -283,9 +343,18 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
                 cart = cartCollection.get(0);
                 List<Product> products = cart.getProduct();
                 if (products != null) {
+                    String shippingEstimateLabel = activity.getResources().getString(R.string.expected_delivery);
+                    String shippingEstimate = null;
                     // iterate thru products in reverse order so newest item appears first
                     for (int i = products.size() - 1;  i >= 0;  i--) {
-                        add(new CartItem(products.get(i)));
+                        Product product = products.get(i);
+                        CartItem cartItem = new CartItem(product);
+                        if (product.getExpectedBusinessDayDelivery() != null  &&
+                                !product.getExpectedBusinessDayDelivery().equals(shippingEstimate)) {
+                            shippingEstimate = product.getExpectedBusinessDayDelivery();
+                            cartItem.setExpectedDelivery(shippingEstimateLabel + " " + shippingEstimate);
+                        }
+                        add(cartItem);
                     }
                 }
             }
