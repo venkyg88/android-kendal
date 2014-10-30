@@ -5,6 +5,7 @@ import com.staples.mobile.common.access.easyopen.model.cart.AddressDetail;
 import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
 import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
 import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
+import com.staples.mobile.common.access.easyopen.model.cart.OrderStatusContents;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
 import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInfo;
@@ -12,6 +13,7 @@ import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.staples.mobile.common.access.easyopen.model.precheckout.Precheckout;
 import com.staples.mobile.common.access.easyopen.model.sku.SkuDetails;
 import com.staples.mobile.common.access.easyopen.model.browse.SearchResult;
 
@@ -250,4 +252,27 @@ public interface EasyOpenApi {
             Callback<CartContents> callback
     );
 
+    //https://api.staples.com/v1/10001/order/status?locale=en_US&client_id=
+    @GET("/{version}/{storeId}/order/status")
+    void getOrderStatus(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("zipCode") String zipCode,
+            @Query("catalogId") String catalogId,
+            @Query("client_id") String client_id,
+            @Query("orderNumber") String orderNumber,
+            Callback<OrderStatusContents> callback
+    );
+
+
+    //https://api.staples.com/v1/10001/cart/precheckout?locale=en_US&client_id=
+    @GET("/{version}/{storeId}/cart/precheckout")
+    void precheckout(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<Precheckout> callback
+    );
 }
