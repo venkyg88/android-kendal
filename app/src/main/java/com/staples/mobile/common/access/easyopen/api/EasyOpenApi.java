@@ -250,4 +250,33 @@ public interface EasyOpenApi {
             Callback<CartContents> callback
     );
 
+    //https://api.staples.com/v1/10001/member/profile?locale=en_US&client_id=
+    @GET("/{version}/{storeId}/member/profile")
+    void getMemberProfile(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<MemberDetail> callback
+    );
+
+    //https://api.staples.com/v1/10001/member/profile/creditcard?locale=en_US&client_id=
+    @GET("/{version}/{storeId}/member/profile/creditcard")
+    void getMemberCreditCardDetails(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<MemberDetail> callback
+    );
+
+    //https://api.staples.com/v1/10001/member/profile/address?locale=en_US&client_id=
+    @GET("/{version}/{storeId}/member/profile/address")
+    void getMemberAddress(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<MemberDetail> callback
+    );
 }

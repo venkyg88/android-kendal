@@ -1,5 +1,7 @@
 package com.staples.mobile.common.access.easyopen.model.member;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 /**
@@ -22,6 +24,24 @@ public class Member {
     private Reward[] rewardDetails;
     private FavouriteListDetail[] favoritesList;
     private List<PreferredStore> preferredStore;
+    private List<CCDetails> creditCard;
+    private List<Address> address;
+
+    public List<CCDetails> getCreditCard() {
+        return creditCard;
+    }
+
+    public void setCreditCard(List<CCDetails> creditCard) {
+        this.creditCard = creditCard;
+    }
+
+    public List<Address> getAddress() {
+        return address;
+    }
+
+    public void setAddress(List<Address> address) {
+        this.address = address;
+    }
 
     public List<PreferredStore> getPreferredStore() {
         return preferredStore;

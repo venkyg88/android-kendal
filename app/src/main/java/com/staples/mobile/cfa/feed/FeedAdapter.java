@@ -1,17 +1,10 @@
 package com.staples.mobile.cfa.feed;
 
 import android.app.Activity;
-import android.util.Log;
 
-import com.staples.mobile.cfa.LoginHelper;
+import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.member.Member;
-import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 /**
  * Created by Avinash Dodda
@@ -43,31 +36,8 @@ public class FeedAdapter {
     }
 
     public void fill() {
-        getMemberData();
+
     }
 
-    public void getMemberData()
-    {
-        easyOpenApi.member(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<MemberDetail>() {
 
-                    @Override
-                    public void success(MemberDetail memberDetail, Response response) {
-
-                        int code = response.getStatus();
-                        Member member = memberDetail.getMember().get(0);
-
-                        Log.i("Member Name", member.getUserName());
-                        Log.i("Member Email", member.getEmailAddress());
-                        Log.i("Status Code", " " + code);
-                    }
-
-                    @Override
-                    public void failure(RetrofitError retrofitError) {
-                        Log.i("Fail message when getting member details", " " + retrofitError.getMessage());
-                        Log.i("URl used to get member details", " "+retrofitError.getUrl());
-
-                    }
-                }
-        );
-    }
 }
