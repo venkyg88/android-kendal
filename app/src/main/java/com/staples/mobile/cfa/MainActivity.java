@@ -126,8 +126,13 @@ public class MainActivity extends Activity
         findViewById(R.id.main).setVisibility(View.VISIBLE);
     }
 
+    // DLS: TODO: this is temporary. Need to decide what activity to use to present checkout fragment
     public void showTopper(boolean show) {
-        topper.setVisibility(show ? View.VISIBLE : View.GONE);
+        if (show) {
+            topper.setVisibility(View.VISIBLE);
+        } else {
+            topper.setVisibility(View.GONE);
+        }
     }
 
     public void prepareMainScreen(boolean freshStart) {
@@ -314,6 +319,11 @@ public class MainActivity extends Activity
         cartFreeShippingMsg.setVisibility(totalItemCount == 0? View.GONE : View.VISIBLE);
         cartSubtotalLayout.setVisibility(totalItemCount == 0? View.GONE : View.VISIBLE);
         cartProceedToCheckout.setVisibility(totalItemCount == 0? View.GONE : View.VISIBLE);
+
+        // add info to checkout fragment which may be displayed behind cart
+        Bundle checkoutBundle = checkoutDrawerItem.instantiate(this).getArguments();
+        checkoutBundle.putString("deliveryRange", "TBD");
+        checkoutBundle.putFloat("preTaxSubtotal", preTaxSubtotal);
     }
 
     /** Adds an item to the cart */
