@@ -23,6 +23,7 @@ import retrofit.http.DELETE;
 import retrofit.http.EncodedPath;
 import retrofit.http.GET;
 import retrofit.http.POST;
+import retrofit.http.PUT;
 import retrofit.http.Query;
 
 public interface EasyOpenApi {
@@ -267,7 +268,7 @@ public interface EasyOpenApi {
 
 
     //https://api.staples.com/v1/10001/cart/precheckout?locale=en_US&client_id=
-    @GET("/{version}/{storeId}/cart/precheckout")
+    @PUT("/{version}/{storeId}/cart/precheckout")
     void precheckout(
             @EncodedPath("version") String version,
             @EncodedPath("storeId") String storeId,
