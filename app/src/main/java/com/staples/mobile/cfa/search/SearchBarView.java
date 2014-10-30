@@ -67,7 +67,7 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
         setOnItemClickListener(this);
         icon.setOnClickListener(this);
 
-        adapter = new SearchBarAdapter(activity);
+        adapter = new SearchBarAdapter(activity, this);
         setAdapter(adapter);
         adapter.loadSearchHistory();
 
@@ -108,6 +108,10 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
         open = false;
     }
 
+    public String getKeyword() {
+        return(keyword);
+    }
+
     @Override
     public boolean enoughToFilter() {
         return(true);
@@ -120,9 +124,8 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
         switch(view.getId()) {
             case R.id.search_icon:
                 if (open) {
-                    int n = getText().length();
-                    if (n == 0) closeSearchBar();
-                    else setText(null);
+                    if (getText().length()==0) closeSearchBar();
+                    else  setText(null);
                 } else openSearchBar();
                 break;
         }
@@ -134,13 +137,16 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
+        keyword = s.toString().trim();
+
+        if (handler!=null) {
+            handler.removeCallbacks(startSuggest);
+            if (open) handler.postDelayed(startSuggest, KEYDELAY);
+        }
     }
 
     @Override
     public void afterTextChanged(Editable s) {
-        if (handler==null) return;
-        handler.removeCallbacks(startSuggest);
-        if (open) handler.postDelayed(startSuggest, KEYDELAY);
     }
 
     @Override
@@ -163,11 +169,9 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
 
         @Override
         public void run() {
-            // Get keyword and key
-            keyword = getText().toString().trim();
-            String key = SuggestTask.cleanKeyword(keyword);
 
             // If key didn't change just return
+            String key = SuggestTask.cleanKeyword(keyword);
             if ((lastKey==null && key==null) ||
                     (lastKey!=null && key!=null && lastKey.equals(key))) {
                 performFiltering(keyword, 0);

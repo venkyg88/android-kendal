@@ -83,12 +83,10 @@ public class SuggestTask implements Runnable {
                 count++;
             }
         }
-        Log.d(TAG, count+" suggestions");
 	}
 
 	private ArrayList<String> getSuggestions(String key) throws IOException{
 		InputStream inputStream = null;
-		Log.d(TAG, "Running getSuggestions(" + key + ")");
 		try {
 			// clear error message if there are any in the auto suggestion list
 			error = null;
