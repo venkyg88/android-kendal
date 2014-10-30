@@ -30,18 +30,6 @@ public class BundleItem {
         return(null);
     }
 
-    public String setThumbnailImageUrl(List<ThumbnailImage> thumbs) {
-        if (thumbs==null) return(null);
-        for(ThumbnailImage thumb : thumbs) {
-            String url = thumb.getUrl();
-            if (url!=null) {
-                imageUrl = url;
-                return(imageUrl);
-            }
-        }
-        return(null);
-    }
-
     public Float setPrice(List<Pricing> pricings) {
         if (pricings==null) return(null);
         for(Pricing pricing : pricings) {

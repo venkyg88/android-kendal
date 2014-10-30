@@ -60,10 +60,6 @@
         <item quantity="other">Your cart (%d items)</item>
     </plurals>
 
-    <!-- Auto Suggestion -->
-    <string name="original_hint">See recent searches</string>
+    <string name="original_hint">Search</string>
     <string name="searching">Searching&#8230;</string>
-    <string name="error">(Web service error)</string>
-    <string name="json_error">(Web service error - JSON parse error)</string>
-    <string name="interrupted">(Web service interrupted)</string>
 </resources>
