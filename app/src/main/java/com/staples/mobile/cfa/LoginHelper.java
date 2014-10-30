@@ -88,20 +88,6 @@ public class LoginHelper {
                     public void success(TokenObject tokenObjectReturned, Response response) {
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
-
-//                        // We need to make this code reusable so that we can use it in different parts of application
-//                        // Create new fragment and transaction
-//                        Fragment newFragment = new ProfileFragment();
-//                        FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
-//
-//                        // Replace whatever is in the fragment_container view with this fragment,
-//                        // and add the transaction to the back stack
-//                        transaction.replace(R.id.tab1, newFragment);
-//                        transaction.addToBackStack(null);
-//
-//                        // Commit the transaction
-//                        transaction.commit();
-
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
                         Log.i("wctrustedToken", tokenObjectReturned.getWCTrustedToken());
