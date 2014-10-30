@@ -25,7 +25,6 @@
     <string name="search_title">Search</string>
     <string name="search_hint">Search</string>
     <string name="empty">Nothing found</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="cartitem_qty_label">Qty</string>
     <string name="add_to_cart">Add to cart</string>
@@ -50,6 +49,14 @@
     <string name="specs">Specs</string>
     <string name="reviews">Reviews</string>
     <string name="accessories">Accessories</string>
+
+    <!-- Availability -->
+    <string name="avail_nothing">Nothing found</string>
+    <string name="avail_skuset">Varies</string>
+    <string name="avail_retailonly">Retail only</string>
+    <string name="avail_specialorder">Retail only (special order)</string>
+    <string name="avail_instock">In stock</string>
+    <string name="avail_outofstock">Out of stock</string>
 
     <string name="item">Item</string>
     <string name="model">Model</string>

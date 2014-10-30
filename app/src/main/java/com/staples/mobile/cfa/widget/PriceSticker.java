@@ -10,7 +10,7 @@ import android.view.Gravity;
 import android.view.View;
 
 import com.staples.mobile.R;
-import com.staples.mobile.common.access.easyopen.model.sku.Pricing;
+import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 
 import java.text.DecimalFormat;
 import java.util.List;
