@@ -109,15 +109,6 @@ public interface EasyOpenApi {
             Callback<TokenObject> callback
     );
 
-    @GET("/{version}/{storeId}/member/profile")
-    void member(
-        @EncodedPath("version") String version,
-        @EncodedPath("storeId") String storeId,
-        @Query("locale") String locale,
-        @Query("client_id") String client_id,
-        Callback<MemberDetail> callback
-    );
-
     // http://api.staples.com/v1/10001/cart?locale=en_US&zipCode=05251&catalogId=10051&client_id={client-id}
     @GET("/{version}/{storeId}/cart")
     void viewCart(
@@ -276,4 +267,45 @@ public interface EasyOpenApi {
             @Query("client_id") String client_id,
             Callback<Precheckout> callback
     );
+
+// todo: retire this one since redundant
+    @GET("/{version}/{storeId}/member/profile")
+    void member(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<MemberDetail> callback
+    );
+
+    //https://api.staples.com/v1/10001/member/profile?locale=en_US&client_id=
+    @GET("/{version}/{storeId}/member/profile")
+    void getMemberProfile(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<MemberDetail> callback
+    );
+
+    //https://api.staples.com/v1/10001/member/profile/creditcard?locale=en_US&client_id=
+    @GET("/{version}/{storeId}/member/profile/creditcard")
+    void getMemberCreditCardDetails(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<MemberDetail> callback
+    );
+
+    //https://api.staples.com/v1/10001/member/profile/address?locale=en_US&client_id=
+    @GET("/{version}/{storeId}/member/profile/address")
+    void getMemberAddress(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<MemberDetail> callback
+    );
+
 }

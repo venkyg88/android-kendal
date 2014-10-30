@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
-import com.staples.mobile.cfa.LoginHelper;
+import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.Access;
@@ -246,7 +246,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
         progressIndicator.showProgressIndicator();
 
-        easyOpenApi.getShippingAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<AddressDetail>(){
+        easyOpenApi.getShippingAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<AddressDetail>() {
 
                     @Override
                     public void success(AddressDetail billingDetail, Response response) {
