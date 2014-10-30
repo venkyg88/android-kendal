@@ -27,16 +27,18 @@ class SearchBarAdapter extends BaseAdapter implements Filterable {
     private static final int MAXHISTORY = 10;
 
     private Activity activity;
+    private SearchBarView searchBar;
     private ArrayList<String> original;
     private ArrayList<String> history;
     private ArrayList<String> active;
     private LayoutInflater inflater;
     private Filter filter;
-    private String keyword;
 
-    public SearchBarAdapter(Activity activity) {
+    public SearchBarAdapter(Activity activity, SearchBarView searchBar) {
         super();
         this.activity = activity;
+        this.searchBar =searchBar;
+
         original = new ArrayList<String>();
         history = new ArrayList<String>();
         inflater = activity.getLayoutInflater();
@@ -64,7 +66,8 @@ class SearchBarAdapter extends BaseAdapter implements Filterable {
     }
 
     private void setHighlightedText(TextView view, String text) {
-        if (text==null || keyword==null || keyword.isEmpty()) {
+        String keyword = searchBar.getKeyword();
+        if (text==null || keyword ==null || keyword.isEmpty()) {
             view.setText(text);
             return;
         }
@@ -107,14 +110,14 @@ class SearchBarAdapter extends BaseAdapter implements Filterable {
                 return(results);
             }
 
-            keyword = constraint.toString();
+            String span = constraint.toString();
 
             ArrayList<String> array = new ArrayList<String>();
             if (original!=null) {
                 int n = original.size();
                 for(int i = 0; i < n; i++) {
                     String item = original.get(i);
-                    if (item != null && item.indexOf(keyword) >= 0)
+                    if (item != null && item.indexOf(span) >= 0)
                         array.add(item);
                 }
             }
@@ -126,7 +129,6 @@ class SearchBarAdapter extends BaseAdapter implements Filterable {
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-Log.d(TAG, "Publish " + results.count);
             active = (ArrayList<String>) results.values;
             if (results.count>0)
                 notifyDataSetChanged();

@@ -27,7 +27,7 @@ import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.easyopen.model.sku.*;
+import com.staples.mobile.common.access.easyopen.model.browse.*;
 
 import java.util.List;
 
@@ -168,6 +168,8 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
         details.addTab(tab);
     }
 
+    // Formatters and builders
+
     private String formatNumbers(Product product) {
         // Safety check
         if (product==null) return(null);
@@ -262,6 +264,24 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
         return(count>0);
     }
 
+    private void addAccessory(Product product) {
+        List<Product> accessories = product.getAccessory();
+
+        if (accessories != null) {
+            for(Product accessory : accessories) {
+                String accessoryImageUrl = accessory.getImage().get(0).getUrl();
+
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View skuAccessoryRow = inflater.inflate(R.layout.sku_accessory_item, null);
+
+                ImageView accessoryImageView = (ImageView) skuAccessoryRow.findViewById(R.id.accessory_image);
+                Picasso.with(getActivity()).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
+
+                accessoryView.addView(skuAccessoryRow);
+            }
+        }
+    }
+
     // Retrofit callbacks
 
     @Override
@@ -272,23 +292,26 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
             Product product = products.get(0);
             tabAdapter.setProduct(product);
 
-            // Determine if Sku set, in-stock or out-of-stock
+            // Handle availability
             QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
             Button button = (Button) wrapper.findViewById(R.id.add_to_cart);
-            List<Product> skuset = product.getProduct();
-            if (skuset!=null) {
-                edit.setQtyValue(0);
-                button.setText("Varies");
-            } else if (product.isRetailOnly()) {
-                edit.setQtyValue(0);
-                button.setText("Retail only");
-            } else if (product.isInStock()) {
-                edit.setQtyValue(1);
-                edit.setEnabled(true);
-                button.setEnabled(true);
-            } else {
-                edit.setQtyValue(0);
-                button.setText("Out of stock");
+            Availability availability = Availability.getProductAvailability(product);
+            switch(availability) {
+                case NOTHING:
+                case SKUSET:
+                case RETAILONLY:
+                case SPECIALORDER:
+                case OUTOFSTOCK:
+                    edit.setVisibility(View.GONE);
+                    button.setText(availability.getTextResId());
+                    button.setEnabled(false);
+                    break;
+                case INSTOCK:
+                    edit.setVisibility(View.VISIBLE);
+                    edit.setQtyValue(1);
+                    button.setText(R.string.add_to_cart);
+                    button.setEnabled(true);
+                    break;
             }
 
             // Add images
@@ -349,40 +372,6 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
     public void failure(RetrofitError retrofitError) {
         Log.d(TAG, "Failure callback " + retrofitError);
         wrapper.setState(DataWrapper.State.EMPTY);
-    }
-
-    private void addAccessory(Product product){
-        List<Product> accessories = product.getAccessory();
-        String accessoryImageUrl;
-        String accessoryTitle;
-
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-
-        if (accessories != null) {
-            for(Product accessory : accessories) {
-                accessoryImageUrl = accessory.getImage().get(0).getUrl();
-                accessoryTitle = accessory.getProductName();
-
-                View skuAccessoryRow = inflater.inflate(R.layout.sku_accessory_item, null);
-
-                // Set accessory image
-                ImageView accessotyImageView = (ImageView) skuAccessoryRow.findViewById(R.id.accessory_image);
-                Picasso.with(getActivity()).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessotyImageView);
-
-                // Set accessory title
-                TextView accessoryTitleTextView = (TextView) skuAccessoryRow.findViewById(R.id.accessory_title);
-                accessoryTitleTextView.setText(accessoryTitle);
-
-                // Set accessory rating
-                ((RatingStars) skuAccessoryRow.findViewById(R.id.accessory_rating))
-                        .setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
-
-                // Set accessory price
-                ((PriceSticker) skuAccessoryRow.findViewById(R.id.accessory_price)).setPricing(product.getPricing());
-
-                accessoryView.addView(skuAccessoryRow);
-            }
-        }
     }
 
    // TabHost notifications
