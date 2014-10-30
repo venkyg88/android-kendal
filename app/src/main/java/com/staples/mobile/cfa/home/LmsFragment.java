@@ -29,6 +29,7 @@ import com.squareup.picasso.RequestCreator;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.R;
+import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.lms.LmsManager;
 import com.staples.mobile.common.access.lms.LmsManager.LmsMgrCallback;
 import com.staples.mobile.common.access.configurator.model.Area;
@@ -46,6 +47,8 @@ public class LmsFragment
     private static final String TAG = "LmsFragment";
 
     private static final boolean LOGGING = false;
+
+    private static final long LMS_REFRESH_TIME_MILLIS = (5 * 60 * 1000);
 
     private MainActivity activity;
     private Resources resources;
@@ -129,8 +132,22 @@ public class LmsFragment
             }
         };
 
+
+        // @@@ TODO Need to make refresh interval settable.
+        Access access = Access.getInstance();
+
+        boolean conditionalLmsRefresh = true;
+        long currentTimeMs = System.currentTimeMillis();
+        long lastTimeLmsRefreshed = access.getLastTimeLmsRefreshed();
+        long timeToRefreshMs = lastTimeLmsRefreshed + LMS_REFRESH_TIME_MILLIS;
+
+        if (currentTimeMs > timeToRefreshMs) {
+            conditionalLmsRefresh = false; // force Lms refresh
+            access.setLastTimeLmsRefreshed(currentTimeMs);
+        }
+
         lmsManager.getLms(this,  // LmsMgrCallback
-                true); // conditional
+                conditionalLmsRefresh); // conditional
 
         return (lmsFrameView);
     }

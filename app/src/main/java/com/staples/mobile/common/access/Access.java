@@ -47,6 +47,8 @@ public class Access {
     private String token2;
     private List<OnLoginCompleteListener> loginCompleteListeners;
 
+    private long lastTimeLmsRefreshed;
+
     public static Access getInstance() {
         synchronized(Access.class) {
             if (instance == null) {
@@ -197,5 +199,13 @@ public class Access {
         InvocationHandler handler = new MockApiHandler(context);
         mockLmsApi = (LmsApi) Proxy.newProxyInstance(LmsApi.class.getClassLoader(), new Class[]{LmsApi.class}, handler);
         return(mockLmsApi);
+    }
+
+    public long getLastTimeLmsRefreshed() {
+        return(lastTimeLmsRefreshed);
+    }
+
+    public void setLastTimeLmsRefreshed(long lastTimeLmsRefreshed) {
+        this.lastTimeLmsRefreshed = lastTimeLmsRefreshed;
     }
 }
