@@ -268,15 +268,6 @@ public interface EasyOpenApi {
             Callback<Precheckout> callback
     );
 
-// todo: retire this one since redundant
-    @GET("/{version}/{storeId}/member/profile")
-    void member(
-            @EncodedPath("version") String version,
-            @EncodedPath("storeId") String storeId,
-            @Query("locale") String locale,
-            @Query("client_id") String client_id,
-            Callback<MemberDetail> callback
-    );
 
     //https://api.staples.com/v1/10001/member/profile?locale=en_US&client_id=
     @GET("/{version}/{storeId}/member/profile")
