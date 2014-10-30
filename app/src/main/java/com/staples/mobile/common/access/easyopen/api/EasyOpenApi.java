@@ -230,4 +230,24 @@ public interface EasyOpenApi {
             Callback<AddressDetail> callback
     );
 
+    //https://api.staples.com/v1/10001/cart/tax?locale=en_US&client_id=
+    @GET("/{version}/{storeId}/cart/tax")
+    void getTax(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<CartContents> callback
+    );
+
+    //https://api.staples.com/v1/10001/cart/shipping/charge?locale=en_US&client_id=
+    @GET("/{version}/{storeId}/cart/shipping/charge")
+    void getShippingCharge(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<CartContents> callback
+    );
+
 }
