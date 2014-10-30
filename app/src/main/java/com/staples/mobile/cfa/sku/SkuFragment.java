@@ -12,9 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.MainActivity;
@@ -24,7 +27,7 @@ import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.easyopen.model.sku.*;
+import com.staples.mobile.common.access.easyopen.model.browse.*;
 
 import java.util.List;
 
@@ -67,6 +70,9 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
     private ViewPager tabPager;
     private SkuTabAdapter tabAdapter;
 
+    // Accessory List
+    private LinearLayout accessoryView;
+
     private boolean shifted;
 
     @Override
@@ -103,6 +109,9 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
         // Init details (TabHost)
         details = (TabHost) wrapper.findViewById(R.id.details);
         details.setup();
+
+        // Init accessory
+        accessoryView = (LinearLayout) wrapper.findViewById(R.id.accessory);
 
         // Fill details (TabHost)
         DummyFactory dummy = new DummyFactory(getActivity());
@@ -158,6 +167,8 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
         tab.setContent(dummy);
         details.addTab(tab);
     }
+
+    // Formatters and builders
 
     private String formatNumbers(Product product) {
         // Safety check
@@ -253,6 +264,24 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
         return(count>0);
     }
 
+    private void addAccessory(Product product) {
+        List<Product> accessories = product.getAccessory();
+
+        if (accessories != null) {
+            for(Product accessory : accessories) {
+                String accessoryImageUrl = accessory.getImage().get(0).getUrl();
+
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View skuAccessoryRow = inflater.inflate(R.layout.sku_accessory_item, null);
+
+                ImageView accessoryImageView = (ImageView) skuAccessoryRow.findViewById(R.id.accessory_image);
+                Picasso.with(getActivity()).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
+
+                accessoryView.addView(skuAccessoryRow);
+            }
+        }
+    }
+
     // Retrofit callbacks
 
     @Override
@@ -263,23 +292,26 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
             Product product = products.get(0);
             tabAdapter.setProduct(product);
 
-            // Determine if Sku set, in-stock or out-of-stock
+            // Handle availability
             QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
             Button button = (Button) wrapper.findViewById(R.id.add_to_cart);
-            List<Product> skuset = product.getProduct();
-            if (skuset!=null) {
-                edit.setQtyValue(0);
-                button.setText("Varies");
-            } else if (product.isRetailOnly()) {
-                edit.setQtyValue(0);
-                button.setText("Retail only");
-            } else if (product.isInStock()) {
-                edit.setQtyValue(1);
-                edit.setEnabled(true);
-                button.setEnabled(true);
-            } else {
-                edit.setQtyValue(0);
-                button.setText("Out of stock");
+            Availability availability = Availability.getProductAvailability(product);
+            switch(availability) {
+                case NOTHING:
+                case SKUSET:
+                case RETAILONLY:
+                case SPECIALORDER:
+                case OUTOFSTOCK:
+                    edit.setVisibility(View.GONE);
+                    button.setText(availability.getTextResId());
+                    button.setEnabled(false);
+                    break;
+                case INSTOCK:
+                    edit.setVisibility(View.VISIBLE);
+                    edit.setQtyValue(1);
+                    button.setText(R.string.add_to_cart);
+                    button.setEnabled(true);
+                    break;
             }
 
             // Add images
@@ -319,6 +351,17 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
 
             // Add reviews
 //            summary.findViewById(R.id.review_detail).setVisibility(View.GONE);
+
+
+            // Check if the product has accessories
+            if(product.getAccessory() != null){
+                // Add accessories
+                addAccessory(product);
+                Log.d(TAG, "Product has accessories.");
+            }
+            else{
+                Log.d(TAG, "Product has no accessories.");
+            }
 
             // Ready to display
             wrapper.setState(DataWrapper.State.DONE);
