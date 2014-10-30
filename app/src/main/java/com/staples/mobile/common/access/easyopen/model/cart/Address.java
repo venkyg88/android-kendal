@@ -17,6 +17,25 @@ public class Address {
     private String state;
     private String zipCode;
 
+    // default constructor
+    public Address() { }
+
+    // DLS: temporary conversion constructor (until models are consolidated)
+    public Address(com.staples.mobile.common.access.easyopen.model.member.Address profileAddress) {
+        this.address1 = profileAddress.getAddress1();
+        this.address2 = profileAddress.getAddress2();
+        this.city = profileAddress.getCity();
+        this.emailAddress = profileAddress.getEmailAddress();
+        this.firstName = profileAddress.getFirstname();
+        this.lastName = profileAddress.getLastname();
+        this.organizationName = profileAddress.getOrganizationName();
+        this.phoneExtension = profileAddress.getPhoneExtension();
+        this.phoneNumber = profileAddress.getPhoneNumber();
+        this.state = profileAddress.getState();
+        this.zipCode = profileAddress.getZipcode();
+    }
+
+
     public String getAddress1() {
         return address1;
     }
