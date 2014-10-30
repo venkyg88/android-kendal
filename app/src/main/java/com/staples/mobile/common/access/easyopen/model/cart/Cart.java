@@ -7,14 +7,15 @@ import java.util.List;
 public class Cart {
 
     private String delivery;
-    private String orderId;
+    private String orderId;         // returned by /cart
+    private String orderIdentifier; // returned by /cart/tax and /cart/shippingCharge
     private float preTaxTotal;
     private List<Product> product = new ArrayList<Product>();
     private String recommendationUrl;
     private float subTotal;
     private int totalItems;
     private boolean webOnly;
-    private float shippingCharge;
+    private String shippingCharge;
     private float totalTax;
 
     public String getDelivery() {
@@ -31,6 +32,14 @@ public class Cart {
 
     public void setOrderId(String orderId) {
         this.orderId = orderId;
+    }
+
+    public String getOrderIdentifier() {
+        return orderIdentifier;
+    }
+
+    public void setOrderIdentifier(String orderIdentifier) {
+        this.orderIdentifier = orderIdentifier;
     }
 
     public float getPreTaxTotal() {
@@ -81,11 +90,11 @@ public class Cart {
         this.webOnly = webOnly;
     }
 
-    public float getShippingCharge() {
+    public String getShippingCharge() {
         return shippingCharge;
     }
 
-    public void setShippingCharge(float shippingCharge) {
+    public void setShippingCharge(String shippingCharge) {
         this.shippingCharge = shippingCharge;
     }
 
