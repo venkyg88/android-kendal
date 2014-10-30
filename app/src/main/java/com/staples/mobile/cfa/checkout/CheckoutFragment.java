@@ -24,8 +24,13 @@ import com.staples.mobile.common.access.easyopen.model.cart.Address;
 import com.staples.mobile.common.access.easyopen.model.cart.AddressDetail;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
+//import com.staples.mobile.common.access.easyopen.model.cart.OrderStatus;
+//import com.staples.mobile.common.access.easyopen.model.cart.OrderStatusContents;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.staples.mobile.common.access.easyopen.model.precheckout.Precheckout;
+
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -56,15 +61,23 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     private TextView taxVw;
     private TextView checkoutTotalVw;
 
-    boolean shippingAddrResponseReceived = false;
-    boolean billingAddrResponseReceived = false;
-    boolean profileResponseReceived = false;
+    boolean shippingAddrResponseReceived;
+    boolean billingAddrResponseReceived;
+    boolean profileResponseReceived;
+
+    // api objects
+    EasyOpenApi api;
+    EasyOpenApi secureApi;
 
     // data returned from api
     Member member;
     Address shippingAddress;
     Address billingAddress;
-    Cart cart;
+    Float tax;
+
+    // data initialized from cart drawer
+    Float pretaxSubtotal;
+
 
 
     // api listeners
@@ -73,7 +86,9 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     ProfileListener profileListener;
     CartListener shippingChargeListener;
     CartListener taxListener;
-    CartListener cartListener;
+//    CartListener cartListener;
+    PrecheckoutListener precheckoutListener;
+//    OrderStatusListener orderStatusListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -101,8 +116,15 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
         // Set initial visibility
         showProgressIndicator();
 
-        // get api object (need secure connection
-        EasyOpenApi api = Access.getInstance().getEasyOpenApi(true);
+        // get order info from bundle
+        Bundle checkoutBundle = this.getArguments();
+        deliveryRangeVw.setText(checkoutBundle.getString("deliveryRange"));
+        pretaxSubtotal = checkoutBundle.getFloat("preTaxSubtotal");
+
+
+        // get api objects
+        api = Access.getInstance().getEasyOpenApi(false);
+        secureApi = Access.getInstance().getEasyOpenApi(true);
 
         // create api listeners
         profileListener = new ProfileListener();
@@ -110,16 +132,26 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
         billingAddrListener = new AddressDetailListener(false);
         shippingChargeListener = new CartListener(true, false);
         taxListener = new CartListener(false, true);
-        cartListener = new CartListener(false, false);
+//        cartListener = new CartListener(false, false);
+        precheckoutListener = new PrecheckoutListener();
+//        orderStatusListener = new OrderStatusListener();
 
         // make parallel calls for shipping address, billing address, and profile
+        shippingAddrResponseReceived = false;
+        billingAddrResponseReceived = false;
+        profileResponseReceived = false;
+        tax = null;
+        member = null;
+        shippingAddress = null;
+        billingAddress = null;
+
 
         // query for shipping address
-        api.getShippingAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, shippingAddrListener);
+        secureApi.getShippingAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, shippingAddrListener);
         // query for billing address
-        api.getBillingAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, billingAddrListener);
+        secureApi.getBillingAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, billingAddrListener);
         // query for profile
-        api.member(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, profileListener);
+        secureApi.member(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, profileListener);
 
 
         // precheckout - when does this happen ???
@@ -188,7 +220,8 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void proceedIfReady() {
+
+    private void precheckoutIfReady() {
         // if initial api calls have returned
         if (profileResponseReceived && shippingAddrResponseReceived && billingAddrResponseReceived) {
 
@@ -205,11 +238,14 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
             // do precheckout if enough info to do so
             if (member != null && shippingAddress != null && billingAddress != null) {
-                // get api object (need secure connection)
-                EasyOpenApi api = Access.getInstance().getEasyOpenApi(true);
 
-                Toast.makeText(getActivity(), "All good, but waiting on precheckout code", Toast.LENGTH_SHORT).show();
-                hideProgressIndicator(); // do this in api response when ready
+
+                secureApi.precheckout(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, precheckoutListener);
+
+
+                secureApi.getTax(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, taxListener);
+                secureApi.getShippingCharge(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, shippingChargeListener);
+               // api.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, 1, 1, cartListener);
 
             } else {
                hideProgressIndicator();
@@ -296,12 +332,18 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
                 CheckoutFragment.this.billingAddress = address;
                 billingAddrVw.setText(formatAddress(address));
             }
-            proceedIfReady();
+            precheckoutIfReady();
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
+
+            boolean normalAddrNotAvailResponse = (retrofitError.getResponse() != null &&
+                    retrofitError.getResponse().getStatus() == 400);
+
             if (shippingListener) {
+
+                // query for profile addresses
                 shippingAddrResponseReceived = true;
             } else {
                 billingAddrResponseReceived = true;
@@ -311,7 +353,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
             Log.d(TAG, msg);
             Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
 
-            proceedIfReady();
+            precheckoutIfReady();
 
 
        }
@@ -333,10 +375,10 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
             profileResponseReceived = true;
 
-            paymentMethodVw.setText("<card logo> Card ending in 3333\n(# cards in profile: " +
+            paymentMethodVw.setText("<card logo> Card ending in <####>\n(# cards in profile: " +
                     ((member != null)? ""+member.getCreditCardCount() : "0") + ")");
 
-            proceedIfReady();
+            precheckoutIfReady();
         }
 
         @Override
@@ -347,7 +389,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
             Log.d(TAG, msg);
             Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
 
-            proceedIfReady();
+            precheckoutIfReady();
         }
     }
 
@@ -373,25 +415,37 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
                     cartContents.getCart().size() > 0) {
                 cart = cartContents.getCart().get(0);
             }
-            CheckoutFragment.this.cart = cart;
 
 
 
             if (cartListener) {
+//            deliveryRangeVw.setText("Oct 25-29");
 
+//                //checkoutTotalVw.setText(cart.getPreTaxTotal() + cart.getTotalTax());
+//                pretaxSubtotal = cart.getPreTaxTotal();
+//
+//                updateGrandTotal();
             }
 
             if (taxListener) {
-                taxVw.setText(""+cart.getTotalTax());
+                tax = cart.getTotalTax();
+                taxVw.setText(""+tax);
+                updateGrandTotal();
             }
 
             if (shippingChargeListener) {
                 shippingChargeVw.setText(""+cart.getShippingCharge());
             }
 
-//            deliveryRangeVw.setText("Oct 25-29");
-//            checkoutTotalVw.setText("$99.99");
 
+        }
+
+        private void updateGrandTotal() {
+            if (pretaxSubtotal != null && tax != null) {
+                checkoutTotalVw.setText("$" + (pretaxSubtotal + tax));
+            } else {
+                checkoutTotalVw.setText("");
+            }
         }
 
         @Override
@@ -403,6 +457,33 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
           //  respondToFailure("Unable to obtain cart information: " + retrofitError.getMessage());
             // note: workaround to unknown field errors is to annotate model with @JsonIgnoreProperties(ignoreUnknown = true)
+        }
+    }
+
+
+    /** listens for completion of precheckout */
+    class PrecheckoutListener implements Callback<Precheckout> {
+
+        @Override
+        public void success(Precheckout precheckoutResponse, Response response) {
+
+            String validationAlert = precheckoutResponse.getAddressValidationAlert();
+
+            Toast.makeText(getActivity(), "precheckout succeeded", Toast.LENGTH_SHORT).show();
+
+            // get tax
+            hideProgressIndicator(); // do this in api response when ready
+
+
+        }
+
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            String msg = "Precheckout error: " + retrofitError.getMessage();
+            Log.d(TAG, msg);
+            Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+
+            hideProgressIndicator();
         }
     }
 
