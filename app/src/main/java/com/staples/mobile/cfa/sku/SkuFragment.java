@@ -8,13 +8,10 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TabHost;
 import android.widget.TextView;
 
@@ -27,7 +24,12 @@ import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.easyopen.model.sku.*;
+import com.staples.mobile.common.access.easyopen.model.browse.Availability;
+import com.staples.mobile.common.access.easyopen.model.browse.BulletDescription;
+import com.staples.mobile.common.access.easyopen.model.browse.Description;
+import com.staples.mobile.common.access.easyopen.model.browse.Image;
+import com.staples.mobile.common.access.easyopen.model.browse.Product;
+import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
 
 import java.util.List;
 
@@ -266,23 +268,26 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
             Product product = products.get(0);
             tabAdapter.setProduct(product);
 
-            // Determine if Sku set, in-stock or out-of-stock
+            // Handle availability
             QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
             Button button = (Button) wrapper.findViewById(R.id.add_to_cart);
-            List<Product> skuset = product.getProduct();
-            if (skuset!=null) {
-                edit.setQtyValue(0);
-                button.setText("Varies");
-            } else if (product.isRetailOnly()) {
-                edit.setQtyValue(0);
-                button.setText("Retail only");
-            } else if (product.isInStock()) {
-                edit.setQtyValue(1);
-                edit.setEnabled(true);
-                button.setEnabled(true);
-            } else {
-                edit.setQtyValue(0);
-                button.setText("Out of stock");
+            Availability availability = Availability.getProductAvailability(product);
+            switch(availability) {
+                case NOTHING:
+                case SKUSET:
+                case RETAILONLY:
+                case SPECIALORDER:
+                case OUTOFSTOCK:
+                    edit.setVisibility(View.GONE);
+                    button.setText(availability.getTextResId());
+                    button.setEnabled(false);
+                    break;
+                case INSTOCK:
+                    edit.setVisibility(View.VISIBLE);
+                    edit.setQtyValue(1);
+                    button.setText(R.string.add_to_cart);
+                    button.setEnabled(true);
+                    break;
             }
 
             // Add images
