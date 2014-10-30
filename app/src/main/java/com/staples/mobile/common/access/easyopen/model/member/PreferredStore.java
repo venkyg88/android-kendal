@@ -18,6 +18,9 @@ public class PreferredStore {
 
     private String zipCode;
 
+    private String availabilityMessage;
+
+
     public String getAddress() {
         return address;
     }
@@ -64,5 +67,13 @@ public class PreferredStore {
 
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
+    }
+
+    public String getAvailabilityMessage() {
+        return availabilityMessage;
+    }
+
+    public void setAvailabilityMessage(String availabilityMessage) {
+        this.availabilityMessage = availabilityMessage;
     }
 }

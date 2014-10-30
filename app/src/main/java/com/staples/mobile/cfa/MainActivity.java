@@ -209,6 +209,12 @@ public class MainActivity extends Activity
     public void onLoginComplete(boolean guestLevel) {
         // load cart drawer (requires successful login)
         cartAdapter.fill();
+
+        // for faster debugging with registered user (automatic login), uncomment this and use your
+        // own credentials, but re-comment out before checking code in
+//        if (guestLevel) {
+//            new LoginHelper(this).getUserTokens("<user>", "<password>");
+//        }
     }
 
     // Navigation
@@ -288,7 +294,7 @@ public class MainActivity extends Activity
         // TODO: get actual threshold from lms
         // TODO: reconcile with shipping cost returned by api
         float freeShippingThreshold = 99999.99f; // TODO: replace with call to lms
-        if (freeShippingThreshold > subtotal) {
+        if (freeShippingThreshold > subtotal && !"Free".equals(shipping)) {
             // need to spend more to qualify for free shipping
             NumberFormat nf = DecimalFormat.getCurrencyInstance();
             cartFreeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
