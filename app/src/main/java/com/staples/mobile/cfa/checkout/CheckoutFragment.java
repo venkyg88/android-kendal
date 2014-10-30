@@ -151,7 +151,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
         // query for billing address
         secureApi.getBillingAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, billingAddrListener);
         // query for profile
-        secureApi.member(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, profileListener);
+        secureApi.getMemberProfile(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, profileListener);
 
 
         // precheckout - when does this happen ???
