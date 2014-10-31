@@ -30,6 +30,7 @@ import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
+import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 
 import java.text.DecimalFormat;
@@ -221,6 +222,10 @@ public class MainActivity extends Activity
 //        if (guestLevel) {
 //            new LoginHelper(this).getUserTokens("<user>", "<password>");
 //        }
+
+        if (guestLevel) {
+            new LoginHelper(this).getUserTokens("diana", "password");
+        }
     }
 
     // Navigation
