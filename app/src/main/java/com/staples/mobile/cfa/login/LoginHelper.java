@@ -149,6 +149,7 @@ public class LoginHelper {
                     public void success(TokenObject tokenObjectReturned, Response response) {
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
+                        notifyListeners(false);
                         ((MainActivity)activity).selectProfileFragment();
 
                         Log.i("Status Code", " " + code);
