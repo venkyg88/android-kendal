@@ -1,11 +1,13 @@
 package com.staples.mobile.cfa;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,7 +31,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
+public class DrawerAdapter extends BaseAdapter implements Callback<Browse>{
     private static final String TAG = "DrawerAdapter";
 
     private static final String RECOMMENDATION = "v1";
@@ -54,6 +56,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
     private ArrayList<DrawerItem> browseList;
 
     private boolean browseMode;
+    private Button signInBtn;
 
     public DrawerAdapter(Activity activity, DataWrapper wrapper) {
         super();
@@ -294,4 +297,5 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse> {
         wrapper.setState(DataWrapper.State.NOMORE);
         notifyDataSetChanged();
     }
+
 }
