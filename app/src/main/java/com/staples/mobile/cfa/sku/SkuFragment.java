@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.TabHost;
 import android.widget.TextView;
 
@@ -36,7 +37,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHost.OnTabChangeListener,
-                                                     ViewPager.OnPageChangeListener, View.OnClickListener, FragmentManager.OnBackStackChangedListener {
+                                                     ViewPager.OnPageChangeListener, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
     private static final String TAG = "SkuFragment";
 
     private static final String DESCRIPTION =" Description";
@@ -71,7 +72,8 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
     private SkuTabAdapter tabAdapter;
 
     // Accessory List
-    private LinearLayout accessoryView;
+    private LinearLayout accessoryContainer;
+    private HorizontalScrollView accessoryScrollView;
 
     private boolean shifted;
 
@@ -111,7 +113,8 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
         details.setup();
 
         // Init accessory
-        accessoryView = (LinearLayout) wrapper.findViewById(R.id.accessory);
+        accessoryContainer = (LinearLayout) wrapper.findViewById(R.id.accessory);
+        accessoryScrollView = (HorizontalScrollView) wrapper.findViewById(R.id.accessoryScrollView);
 
         // Fill details (TabHost)
         DummyFactory dummy = new DummyFactory(getActivity());
@@ -365,8 +368,9 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
                 View skuAccessoryRow = inflater.inflate(R.layout.sku_accessory_item, null);
 
                 // Set accessory image
-                ImageView accessotyImageView = (ImageView) skuAccessoryRow.findViewById(R.id.accessory_image);
-                Picasso.with(getActivity()).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessotyImageView);
+                ImageView accessoryImageView = (ImageView) skuAccessoryRow.findViewById(R.id.accessory_image);
+                accessoryImageView.setId(Integer.parseInt(accessory.getUniqueId()));
+                Picasso.with(getActivity()).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
 
                 // Set accessory title
                 TextView accessoryTitleTextView = (TextView) skuAccessoryRow.findViewById(R.id.accessory_title);
@@ -379,10 +383,19 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
                 // Set accessory price
                 ((PriceSticker) skuAccessoryRow.findViewById(R.id.accessory_price)).setPricing(product.getPricing());
 
-                accessoryView.addView(skuAccessoryRow);
+                accessoryContainer.addView(skuAccessoryRow);
             }
         }
     }
+
+//    @Override
+//    public void onItemClick(AdapterView parent, View view, int position, long id) {
+//        SearchResultRowItem item = (SearchResultRowItem) parent.getItemAtPosition(position);
+//        if (item == null || item.getProduceName() == null) {
+//            return;
+//        }
+//        ((MainActivity) getActivity()).selectSkuItem(item.getSku());
+//    }
 
     @Override
     public void failure(RetrofitError retrofitError) {
