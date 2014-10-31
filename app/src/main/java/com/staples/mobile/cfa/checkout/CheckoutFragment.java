@@ -55,6 +55,8 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
     private static final int MAXFETCH = 50;
 
+    NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+
     private LinearLayoutWithProgressOverlay checkoutLayout;
     private TextView shippingAddrVw;
     private TextView paymentMethodVw;
@@ -508,7 +510,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
             if (taxListener) {
                 tax = cart.getTotalTax();
-                taxVw.setText(""+tax);
+                taxVw.setText(currencyFormat.format(tax));
                 updateGrandTotal();
             }
 
@@ -522,7 +524,6 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
         private void updateGrandTotal() {
             if (pretaxSubtotal != null && tax != null) {
-                NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
                 checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax));
             } else {
                 checkoutTotalVw.setText("");
