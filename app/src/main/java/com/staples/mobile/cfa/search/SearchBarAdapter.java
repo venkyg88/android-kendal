@@ -127,7 +127,7 @@ class SearchBarAdapter extends BaseAdapter implements Filterable {
             return(results);
         }
 
-        @Override
+        @Override @SuppressWarnings("unchecked")
         protected void publishResults(CharSequence constraint, FilterResults results) {
             active = (ArrayList<String>) results.values;
             if (results.count>0)

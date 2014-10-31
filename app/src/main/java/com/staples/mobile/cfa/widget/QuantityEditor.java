@@ -172,7 +172,6 @@ public class QuantityEditor extends FrameLayout {
         return View.VISIBLE == spinner.getVisibility();
     }
 
-
     // --------------------------------------------- //
     // ------------- internal classes -------------- //
     // --------------------------------------------- //
@@ -182,12 +181,10 @@ public class QuantityEditor extends FrameLayout {
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-            // set text size
-            ((TextView) parent.getChildAt(0)).setTextSize(textSize);
+            if (view==null) return; // safety for Robolectric tests
 
             // if selection out of range, call setQtyValue to revert to editText widget
-            String value = ((TextView)view).getText().toString();
+            String value = ((TextView) view).getText().toString();
             if (value != null && value.endsWith("+")) {
                 setQtyValue(maxSpinnerValue + 1);
             }
@@ -214,7 +211,7 @@ public class QuantityEditor extends FrameLayout {
 
             // add items
             for (int i = 0; i <= maxValue; i++) {
-                add(""+i);
+                add(Integer.toString(i));
             }
             add((maxValue+1) + "+");
         }
