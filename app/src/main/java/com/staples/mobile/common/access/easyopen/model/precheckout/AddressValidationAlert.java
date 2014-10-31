@@ -9,12 +9,14 @@ import java.lang.String;
 import java.util.List;
 
 @JsonPropertyOrder({"addressValidationAlert","city","state","zipCode"})
-public class Precheckout {
+public class AddressValidationAlert {
 
     private String addressValidationAlert;
     private String city;
     private String state;
     private String zipCode;
+    private String shippingAddressId; // needed for response when adding shipping address to cart
+    private String billingAddressId; // needed for response when adding billing address to cart
 
     // include this so that ((Precheckout)retrofitError.getBody()).getErrors()
     // can be examined in 400 Bad Request failure response (e.g. in debugger)
@@ -59,8 +61,21 @@ public class Precheckout {
         this.zipCode = zipCode;
     }
 
+    public String getShippingAddressId() {
+        return shippingAddressId;
+    }
 
+    public void setShippingAddressId(String shippingAddressId) {
+        this.shippingAddressId = shippingAddressId;
+    }
 
+    public String getBillingAddressId() {
+        return billingAddressId;
+    }
+
+    public void setBillingAddressId(String billingAddressId) {
+        this.billingAddressId = billingAddressId;
+    }
 
     public String toString(){
         StringBuilder builder = new StringBuilder();
