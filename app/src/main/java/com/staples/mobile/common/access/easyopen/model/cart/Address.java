@@ -30,7 +30,7 @@ public class Address {
         this.lastName = profileAddress.getLastname();
         this.organizationName = profileAddress.getOrganizationName();
         this.phoneExtension = profileAddress.getPhoneExtension();
-        this.phoneNumber = profileAddress.getPhoneNumber();
+        this.phoneNumber = profileAddress.getPhone1();
         this.state = profileAddress.getState();
         this.zipCode = profileAddress.getZipcode();
     }
