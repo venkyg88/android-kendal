@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.staples.mobile.R;
@@ -61,7 +62,7 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>{
         if (addresses!=null) {
             Address address = addresses.get(0);
             if (address != null) {
-                String tmpAddress =  address.getAddress1() + "\n" + address.getCity() + "\n" + address.getState() + "\n" + address.getZipcode();
+                String tmpAddress = address.getAddress1() + "\n" + address.getCity() + "\n" + address.getState() + "\n" + address.getZipcode();
                 ((EditText) getView().findViewById(R.id.addressET)).setText(tmpAddress);
             }
         }

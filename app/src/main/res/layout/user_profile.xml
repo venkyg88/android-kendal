@@ -57,4 +57,22 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:id="@+id/shippingBtn"
+        android:layout_above="@+id/ccET"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:id="@+id/ccBtn"
+        android:layout_alignBottom="@+id/ccET"
+        android:layout_alignLeft="@+id/shippingBtn"
+        android:layout_alignStart="@+id/shippingBtn"/>
+
 </RelativeLayout>
