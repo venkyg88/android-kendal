@@ -15,11 +15,18 @@ import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 
+import java.util.List;
+import java.util.Vector;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class LoginHelper {
+
+    public interface OnLoginCompleteListener {
+        public void onLoginComplete(boolean guestLevel);
+    }
 
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
@@ -30,19 +37,37 @@ public class LoginHelper {
     private Activity activity;
     private EasyOpenApi easyOpenApi;
 
+
+    // single static synchronized list of login complete listeners
+    private static List<OnLoginCompleteListener> loginCompleteListeners = new Vector<OnLoginCompleteListener>();
+
+
     public LoginHelper(Activity activity) {
         this.activity = activity;
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
     }
 
+
     /** adds listener to be notified following successful login */
-    public void registerLoginCompleteListener(Access.OnLoginCompleteListener loginCompleteListener) {
-        Access.getInstance().registerLoginCompleteListener(loginCompleteListener);
+    public void registerLoginCompleteListener(OnLoginCompleteListener loginCompleteListener) {
+        if (!loginCompleteListeners.contains(loginCompleteListener)) {
+            loginCompleteListeners.add(loginCompleteListener);
+        }
     }
 
     /** removes listener */
-    public void unregisterLoginCompleteListener(Access.OnLoginCompleteListener loginCompleteListener) {
-        Access.getInstance().unregisterLoginCompleteListener(loginCompleteListener);
+    public void unregisterLoginCompleteListener(OnLoginCompleteListener loginCompleteListener) {
+        if (loginCompleteListeners.contains(loginCompleteListener)) {
+            loginCompleteListeners.remove(loginCompleteListener);
+        }
+    }
+
+    private void notifyListeners(boolean guestLogin) {
+        if (loginCompleteListeners != null) {
+            for (OnLoginCompleteListener listener : loginCompleteListeners) {
+                listener.onLoginComplete(guestLogin);
+            }
+        }
     }
 
     /** returns true if logged in (i.e. if token exists) */
@@ -55,6 +80,7 @@ public class LoginHelper {
         return Access.getInstance().isGuestLogin();
     }
 
+
     public void getGuestTokens()
     {
         easyOpenApi.guestLogin(RECOMMENDATION, STORE_ID, CLIENT_ID, new Callback<TokenObject>() {
@@ -64,6 +90,7 @@ public class LoginHelper {
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), true);
                         // Toast.makeText(activity, tokenObjectReturned.getWCToken(), Toast.LENGTH_SHORT).show();
+                        notifyListeners(true);
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
@@ -90,6 +117,7 @@ public class LoginHelper {
                     public void success(TokenObject tokenObjectReturned, Response response) {
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
+                        notifyListeners(false);
                         ((MainActivity)activity).selectProfileFragment();
 
                         Log.i("Status Code", " " + code);

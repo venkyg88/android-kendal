@@ -35,7 +35,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public class MainActivity extends Activity
-                          implements View.OnClickListener, AdapterView.OnItemClickListener, Access.OnLoginCompleteListener {
+                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
     private static final String TAG = "MainActivity";
 
     private static final int SURRENDER_TIMEOUT = 5000;
