@@ -22,10 +22,19 @@ import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.cart.Address;
 import com.staples.mobile.common.access.easyopen.model.cart.AddressDetail;
+import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
+//import com.staples.mobile.common.access.easyopen.model.cart.OrderStatus;
+//import com.staples.mobile.common.access.easyopen.model.cart.OrderStatusContents;
+import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
+import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.staples.mobile.common.access.easyopen.model.precheckout.AddressValidationAlert;
+
+import java.text.NumberFormat;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -56,24 +65,43 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     private TextView taxVw;
     private TextView checkoutTotalVw;
 
-    boolean shippingAddrResponseReceived = false;
-    boolean billingAddrResponseReceived = false;
-    boolean profileResponseReceived = false;
+    boolean shippingAddrResponseReceived;
+    boolean billingAddrResponseReceived;
+    boolean profileCcResponseReceived;
+    boolean profileAddrResponseReceived;
+    boolean shippingAddrAddToCartResponseReceived;
+    boolean billingAddrAddToCartResponseReceived;
+    boolean ccAddToCartResponseReceived;
+
+    // api objects
+    EasyOpenApi api;
+    EasyOpenApi secureApi;
 
     // data returned from api
-    Member member;
+    List<com.staples.mobile.common.access.easyopen.model.member.Address> profileAddresses;
+    List<CCDetails> profileCreditCards;
     Address shippingAddress;
     Address billingAddress;
-    Cart cart;
+    Float tax;
+
+
+    // data initialized from cart drawer
+    Float pretaxSubtotal;
+
 
 
     // api listeners
     AddressDetailListener shippingAddrListener;
     AddressDetailListener billingAddrListener;
-    ProfileListener profileListener;
+    ProfileListener profileCcListener;
+    ProfileListener profileAddrListener;
     CartListener shippingChargeListener;
     CartListener taxListener;
-    CartListener cartListener;
+//    CartListener cartListener;
+    PrecheckoutListener addShippingAddrListener;
+    PrecheckoutListener addBillingAddrListener;
+    PrecheckoutListener precheckoutListener;
+//    OrderStatusListener orderStatusListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -101,25 +129,52 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
         // Set initial visibility
         showProgressIndicator();
 
-        // get api object (need secure connection
-        EasyOpenApi api = Access.getInstance().getEasyOpenApi(true);
+        // get order info from bundle
+        Bundle checkoutBundle = this.getArguments();
+        deliveryRangeVw.setText(checkoutBundle.getString("deliveryRange"));
+        pretaxSubtotal = checkoutBundle.getFloat("preTaxSubtotal");
+
+
+        // get api objects
+        api = Access.getInstance().getEasyOpenApi(false);
+        secureApi = Access.getInstance().getEasyOpenApi(true);
 
         // create api listeners
-        profileListener = new ProfileListener();
+        profileAddrListener = new ProfileListener(true);
+        profileCcListener = new ProfileListener(false);
         shippingAddrListener = new AddressDetailListener(true);
         billingAddrListener = new AddressDetailListener(false);
         shippingChargeListener = new CartListener(true, false);
         taxListener = new CartListener(false, true);
-        cartListener = new CartListener(false, false);
+//        cartListener = new CartListener(false, false);
+        addShippingAddrListener = new PrecheckoutListener(true, false);
+        addBillingAddrListener = new PrecheckoutListener(false, false);
+        precheckoutListener = new PrecheckoutListener(true, true);
+//        orderStatusListener = new OrderStatusListener();
 
-        // make parallel calls for shipping address, billing address, and profile
+
+        // initialize data prior to making api calls which will fill it
+        shippingAddrResponseReceived = false;
+        billingAddrResponseReceived = false;
+        profileCcResponseReceived = false;
+        profileAddrResponseReceived = false;
+        shippingAddrAddToCartResponseReceived = true; // init to true until we know call will be needed
+        billingAddrAddToCartResponseReceived = true; // init to true until we know call will be needed
+        ccAddToCartResponseReceived = false;
+        tax = null;
+        shippingAddress = null;
+        billingAddress = null;
+
+        // make parallel calls for shipping address, billing address, and profile info
 
         // query for shipping address
-        api.getShippingAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, shippingAddrListener);
+        secureApi.getShippingAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, shippingAddrListener);
         // query for billing address
-        api.getBillingAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, billingAddrListener);
-        // query for profile
-        api.member(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, profileListener);
+        secureApi.getBillingAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, billingAddrListener);
+        // query for profile credit cards
+        secureApi.getMemberCreditCardDetails(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, profileCcListener);
+        // query for profile addresses
+        secureApi.getMemberAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, profileAddrListener);
 
 
         // precheckout - when does this happen ???
@@ -138,10 +193,6 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
         // get/add order's payment method
 //        ${urlContext}/${storeId}/cart/payment?locale=${locale}&client_id=${clientId}
-
-        // get profile addresses and credit cards
-//        ${urlContext}/${storeId}/member/profile/address
-//        ${urlContext}/${storeId}/member/profile/creditcard
 
         // submit order
 //        ${urlContext}/${storeId}/cart/confirm?locale=${locale}&client_id=${clientId}
@@ -188,32 +239,85 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void proceedIfReady() {
-        // if initial api calls have returned
-        if (profileResponseReceived && shippingAddrResponseReceived && billingAddrResponseReceived) {
+    private boolean isFirstApiPassComplete() {
+        return (profileAddrResponseReceived && profileCcResponseReceived &&
+                shippingAddrResponseReceived && billingAddrResponseReceived);
+    }
 
-            if (member == null) {
-                Toast.makeText(getActivity(), "No profile found", Toast.LENGTH_SHORT).show();
-            } else {
+    private boolean isSecondApiPassComplete() {
+        return (billingAddrAddToCartResponseReceived && shippingAddrAddToCartResponseReceived &&
+                ccAddToCartResponseReceived);
+    }
+
+
+
+    private void startSecondWaveIfReady() {
+
+        // if first wave of api calls have returned
+        if (isFirstApiPassComplete()) {
+
+            // if profile addresses available
+            if (profileAddresses != null && profileAddresses.size() > 0) {
+                com.staples.mobile.common.access.easyopen.model.member.Address profileAddress = profileAddresses.get(0);
+                Address address = new Address(profileAddress);
+
+                // if cart shipping address null, but address available from profile then add it to cart
                 if (shippingAddress == null) {
-                    Toast.makeText(getActivity(), "No shipping address in cart, " + member.getStoredAddressCount() + " addresses in profile", Toast.LENGTH_SHORT).show();
+                    shippingAddress = address;
+                    shippingAddrVw.setText(formatAddress(shippingAddress));
+                    // add profile address to cart
+                    shippingAddrAddToCartResponseReceived = false;
+                    secureApi.addShippingAddressToCart(new ShippingAddress(profileAddress),
+                            RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, addShippingAddrListener);
                 }
+
+                // if cart billing address null, but address available from profile then add it to cart
                 if (billingAddress == null) {
-                    Toast.makeText(getActivity(), "No billing address in cart, " + member.getCreditCardCount() + " cards in profile", Toast.LENGTH_SHORT).show();
+                    billingAddress = address;
+                    billingAddrVw.setText(formatAddress(billingAddress));
+                    // add profile address to cart
+                    billingAddrAddToCartResponseReceived = false;
+                    secureApi.addBillingAddressToCart(new BillingAddress(billingAddress),
+                            RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, addBillingAddrListener);
                 }
-            }
-
-            // do precheckout if enough info to do so
-            if (member != null && shippingAddress != null && billingAddress != null) {
-                // get api object (need secure connection)
-                EasyOpenApi api = Access.getInstance().getEasyOpenApi(true);
-
-                Toast.makeText(getActivity(), "All good, but waiting on precheckout code", Toast.LENGTH_SHORT).show();
-                hideProgressIndicator(); // do this in api response when ready
-
             } else {
-               hideProgressIndicator();
+                Toast.makeText(getActivity(), "No profile addresses available", Toast.LENGTH_SHORT).show();
             }
+
+
+            // if CC available from profile
+            if (profileCreditCards != null && profileCreditCards.size() > 0) {
+                CCDetails cc = profileCreditCards.get(0);
+                if (!TextUtils.isEmpty(cc.getCardNumber()) && cc.getCardNumber().length() >= 4) {
+                    paymentMethodVw.setText("<card logo> Card ending in " + cc.getCardNumber().substring(cc.getCardNumber().length() - 4));
+                    // add profile cc to cart
+                    ccAddToCartResponseReceived = false;
+//                    secureApi.addCreditCardToCart(...)   TBD
+
+                    ccAddToCartResponseReceived = true; // until we add above
+
+                } else {
+                    Toast.makeText(getActivity(), "Credit card number is blank", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(getActivity(), "No payment methods available", Toast.LENGTH_SHORT).show();
+            }
+
+            // if done because of issues above or addresses already part of order, start precheck if possible
+            if (isSecondApiPassComplete()) {
+                startPrecheckoutIfReady();
+            }
+
+        }
+    }
+
+    private void startPrecheckoutIfReady() {
+
+        // if first and second waves of api calls have returned
+        if (isFirstApiPassComplete() && isSecondApiPassComplete() &&
+                shippingAddress != null && billingAddress != null) {
+
+            secureApi.precheckout(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, precheckoutListener);
         }
     }
 
@@ -269,13 +373,13 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     /************* api listeners ************/
 
 
-    /** listens for completion of view request */
+    /** listens for completion of cart address request */
     class AddressDetailListener implements Callback<AddressDetail> {
 
-        boolean shippingListener; // true if shipping address listener, false if billing address listener
+        boolean listeningForShippingAddr; // true if shipping address listener, false if billing address listener
 
-        AddressDetailListener(boolean shippingListener) {
-            this.shippingListener = shippingListener;
+        AddressDetailListener(boolean listeningForShippingAddr) {
+            this.listeningForShippingAddr = listeningForShippingAddr;
         }
 
         @Override
@@ -287,7 +391,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
                 address = addressDetail.getAddress().get(0);
             }
 
-            if (shippingListener) {
+            if (listeningForShippingAddr) {
                 shippingAddrResponseReceived = true;
                 CheckoutFragment.this.shippingAddress = address;
                 shippingAddrVw.setText(formatAddress(address)); //"Paul Gates\n56 Frost St #1\nCambridge, MA 02140"
@@ -296,30 +400,43 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
                 CheckoutFragment.this.billingAddress = address;
                 billingAddrVw.setText(formatAddress(address));
             }
-            proceedIfReady();
+            startSecondWaveIfReady();
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            if (shippingListener) {
+
+            boolean normalAddrNotAvailResponse = (retrofitError.getResponse() != null &&
+                    retrofitError.getResponse().getStatus() == 400);
+
+
+            if (listeningForShippingAddr) {
+
+                // query for profile addresses
                 shippingAddrResponseReceived = true;
             } else {
                 billingAddrResponseReceived = true;
             }
 
-            String msg = "Error getting " + (shippingListener? "shipping":"billing") + " address: " + retrofitError.getMessage();
-            Log.d(TAG, msg);
-            Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+            if (!normalAddrNotAvailResponse) {
+                String msg = "Error getting " + (listeningForShippingAddr ? "shipping" : "billing") + " address: " + retrofitError.getMessage();
+                Log.d(TAG, msg);
+                Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+            }
 
-            proceedIfReady();
-
-
+            startSecondWaveIfReady();
        }
     }
 
 
-    /** listens for completion of view request */
+    /** listens for completion of profile request */
     class ProfileListener implements Callback<MemberDetail> {
+
+        boolean listeningForAddresses; // true if profile address listener, false if profile CC listener
+
+        ProfileListener(boolean listeningForAddresses) {
+            this.listeningForAddresses = listeningForAddresses;
+        }
 
         @Override
         public void success(MemberDetail memberDetail, Response response) {
@@ -329,25 +446,37 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
                     memberDetail.getMember().size() > 0) {
                 member = memberDetail.getMember().get(0);
             }
-            CheckoutFragment.this.member = member;
 
-            profileResponseReceived = true;
 
-            paymentMethodVw.setText("<card logo> Card ending in 3333\n(# cards in profile: " +
-                    ((member != null)? ""+member.getCreditCardCount() : "0") + ")");
+            if (listeningForAddresses) {
+                if (member != null) {
+                    profileAddresses = member.getAddress();
+                }
+                profileAddrResponseReceived = true;
+            } else {
+                if (member != null) {
+                    profileCreditCards = member.getCreditCard();
+                }
+                profileCcResponseReceived = true;
+            }
 
-            proceedIfReady();
+            startSecondWaveIfReady();
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            profileResponseReceived = true;
+
+            if (listeningForAddresses) {
+                profileAddrResponseReceived = true;
+            } else {
+                profileCcResponseReceived = true;
+            }
 
             String msg = "Error getting profile: " + retrofitError.getMessage();
             Log.d(TAG, msg);
             Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
 
-            proceedIfReady();
+            startSecondWaveIfReady();
         }
     }
 
@@ -373,25 +502,28 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
                     cartContents.getCart().size() > 0) {
                 cart = cartContents.getCart().get(0);
             }
-            CheckoutFragment.this.cart = cart;
-
-
-
-            if (cartListener) {
-
-            }
 
             if (taxListener) {
-                taxVw.setText(""+cart.getTotalTax());
+                tax = cart.getTotalTax();
+                taxVw.setText(""+tax);
+                updateGrandTotal();
             }
 
             if (shippingChargeListener) {
                 shippingChargeVw.setText(""+cart.getShippingCharge());
             }
 
-//            deliveryRangeVw.setText("Oct 25-29");
-//            checkoutTotalVw.setText("$99.99");
 
+            hideProgressIndicator();
+        }
+
+        private void updateGrandTotal() {
+            if (pretaxSubtotal != null && tax != null) {
+                NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+                checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax));
+            } else {
+                checkoutTotalVw.setText("");
+            }
         }
 
         @Override
@@ -403,6 +535,63 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
           //  respondToFailure("Unable to obtain cart information: " + retrofitError.getMessage());
             // note: workaround to unknown field errors is to annotate model with @JsonIgnoreProperties(ignoreUnknown = true)
+        }
+    }
+
+
+    /** listens for completion of precheckout */
+    class PrecheckoutListener implements Callback<AddressValidationAlert> {
+
+        boolean listeningForShippingAddr; // true if shipping address listener, false if billing address listener
+        boolean listeningForPrecheckout; // true if precheckout listener
+
+        PrecheckoutListener(boolean listeningForShippingAddr, boolean listeningForPrecheckout) {
+            this.listeningForShippingAddr = listeningForShippingAddr;
+            this.listeningForPrecheckout = listeningForPrecheckout;
+        }
+
+        @Override
+        public void success(AddressValidationAlert precheckoutResponse, Response response) {
+            String validationAlert = precheckoutResponse.getAddressValidationAlert();
+
+            if (listeningForPrecheckout) {
+                // get tax and shipping charge
+                secureApi.getTax(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, taxListener);
+                secureApi.getShippingCharge(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, shippingChargeListener);
+
+                Toast.makeText(getActivity(), "precheckout succeeded", Toast.LENGTH_SHORT).show();
+            } else {
+                if (validationAlert != null) {
+                    Toast.makeText(getActivity(), "Address alert: " + validationAlert, Toast.LENGTH_SHORT).show();
+                }
+
+                if (listeningForShippingAddr) {
+                    shippingAddrAddToCartResponseReceived = true;
+                } else {
+                    billingAddrAddToCartResponseReceived = true;
+                }
+                startPrecheckoutIfReady();
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError retrofitError) {
+
+            if (listeningForShippingAddr) {
+                shippingAddrAddToCartResponseReceived = true;
+            } else {
+                billingAddrAddToCartResponseReceived = true;
+            }
+
+            String msg;
+            if (listeningForPrecheckout) {
+                msg = "Precheckout error: " + retrofitError.getMessage();
+            } else {
+                msg = "Address error: " + retrofitError.getMessage();
+            }
+            Log.d(TAG, msg);
+            Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+            hideProgressIndicator();
         }
     }
 

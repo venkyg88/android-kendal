@@ -2,9 +2,12 @@ package com.staples.mobile.common.access.easyopen.api;
 
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.cart.AddressDetail;
+import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
 import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
 import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
 import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
+import com.staples.mobile.common.access.easyopen.model.cart.OrderStatusContents;
+import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
 import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInfo;
@@ -12,6 +15,7 @@ import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.staples.mobile.common.access.easyopen.model.precheckout.AddressValidationAlert;
 import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
 import com.staples.mobile.common.access.easyopen.model.browse.SearchResult;
 
@@ -21,6 +25,7 @@ import retrofit.http.DELETE;
 import retrofit.http.EncodedPath;
 import retrofit.http.GET;
 import retrofit.http.POST;
+import retrofit.http.PUT;
 import retrofit.http.Query;
 
 public interface EasyOpenApi {
@@ -104,15 +109,6 @@ public interface EasyOpenApi {
             @Query("locale") String locale,
             @Query("client_id") String client_id,
             Callback<TokenObject> callback
-    );
-
-    @GET("/{version}/{storeId}/member/profile")
-    void member(
-        @EncodedPath("version") String version,
-        @EncodedPath("storeId") String storeId,
-        @Query("locale") String locale,
-        @Query("client_id") String client_id,
-        Callback<MemberDetail> callback
     );
 
     // http://api.staples.com/v1/10001/cart?locale=en_US&zipCode=05251&catalogId=10051&client_id={client-id}
@@ -230,6 +226,29 @@ public interface EasyOpenApi {
             Callback<AddressDetail> callback
     );
 
+    //https://api.staples.com/v1/10001/cart/address/billing?locale=en_US&client_id=
+    @POST("/{version}/{storeId}/cart/address/billing")
+    void addBillingAddressToCart(
+            @Body BillingAddress body,
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<AddressValidationAlert> callback
+    );
+
+    //https://api.staples.com/v1/10001/cart/address/shipping?locale=en_US&client_id=
+    @POST("/{version}/{storeId}/cart/address/shipping")
+    void addShippingAddressToCart(
+            @Body ShippingAddress body,
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<AddressValidationAlert> callback
+    );
+
+
     //https://api.staples.com/v1/10001/cart/tax?locale=en_US&client_id=
     @GET("/{version}/{storeId}/cart/tax")
     void getTax(
@@ -249,6 +268,31 @@ public interface EasyOpenApi {
             @Query("client_id") String client_id,
             Callback<CartContents> callback
     );
+
+    //https://api.staples.com/v1/10001/order/status?locale=en_US&client_id=
+    @GET("/{version}/{storeId}/order/status")
+    void getOrderStatus(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("zipCode") String zipCode,
+            @Query("catalogId") String catalogId,
+            @Query("client_id") String client_id,
+            @Query("orderNumber") String orderNumber,
+            Callback<OrderStatusContents> callback
+    );
+
+
+    //https://api.staples.com/v1/10001/cart/precheckout?locale=en_US&client_id=
+    @PUT("/{version}/{storeId}/cart/precheckout")
+    void precheckout(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<AddressValidationAlert> callback
+    );
+
 
     //https://api.staples.com/v1/10001/member/profile?locale=en_US&client_id=
     @GET("/{version}/{storeId}/member/profile")
@@ -279,4 +323,5 @@ public interface EasyOpenApi {
             @Query("client_id") String client_id,
             Callback<MemberDetail> callback
     );
+
 }

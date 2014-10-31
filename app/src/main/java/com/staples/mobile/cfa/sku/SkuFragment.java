@@ -264,24 +264,6 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
         return(count>0);
     }
 
-    private void addAccessory(Product product) {
-        List<Product> accessories = product.getAccessory();
-
-        if (accessories != null) {
-            for(Product accessory : accessories) {
-                String accessoryImageUrl = accessory.getImage().get(0).getUrl();
-
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                View skuAccessoryRow = inflater.inflate(R.layout.sku_accessory_item, null);
-
-                ImageView accessoryImageView = (ImageView) skuAccessoryRow.findViewById(R.id.accessory_image);
-                Picasso.with(getActivity()).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
-
-                accessoryView.addView(skuAccessoryRow);
-            }
-        }
-    }
-
     // Retrofit callbacks
 
     @Override
@@ -365,6 +347,40 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
 
             // Ready to display
             wrapper.setState(DataWrapper.State.DONE);
+        }
+    }
+
+    private void addAccessory(Product product){
+        List<Product> accessories = product.getAccessory();
+        String accessoryImageUrl;
+        String accessoryTitle;
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        if (accessories != null) {
+            for(Product accessory : accessories) {
+                accessoryImageUrl = accessory.getImage().get(0).getUrl();
+                accessoryTitle = accessory.getProductName();
+
+                View skuAccessoryRow = inflater.inflate(R.layout.sku_accessory_item, null);
+
+                // Set accessory image
+                ImageView accessotyImageView = (ImageView) skuAccessoryRow.findViewById(R.id.accessory_image);
+                Picasso.with(getActivity()).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessotyImageView);
+
+                // Set accessory title
+                TextView accessoryTitleTextView = (TextView) skuAccessoryRow.findViewById(R.id.accessory_title);
+                accessoryTitleTextView.setText(accessoryTitle);
+
+                // Set accessory rating
+                ((RatingStars) skuAccessoryRow.findViewById(R.id.accessory_rating))
+                        .setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
+
+                // Set accessory price
+                ((PriceSticker) skuAccessoryRow.findViewById(R.id.accessory_price)).setPricing(product.getPricing());
+
+                accessoryView.addView(skuAccessoryRow);
+            }
         }
     }
 

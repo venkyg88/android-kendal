@@ -7,9 +7,6 @@ import android.widget.ListView;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.DrawerAdapter;
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.lms.api.LmsApi;
-import com.staples.mobile.common.access.lms.model.Lms;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -22,14 +19,10 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
 import org.robolectric.util.ActivityController;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18, qualifiers = "port")
-public class ActivityTest implements Callback<Lms> {
-    private static final String TAG = "ActivityTest";
+public class PortraitActivityTest {
+    private static final String TAG = "PortraitActivityTest";
 
     private ActivityController controller;
     private MainActivity activity;
@@ -84,27 +77,5 @@ public class ActivityTest implements Callback<Lms> {
 
         ArrayAdapter adapter = (ArrayAdapter) list.getAdapter();
         Assert.assertNotNull("Right drawer should have adapter", adapter);
-    }
-
-    private boolean success;
-    private boolean failure;
-
-    @Test
-    public void testMockLmsApi() throws InterruptedException{
-        success = false;
-        failure = false;
-        LmsApi lmsApi = Access.getInstance().getMockLmsApi(activity);
-        lmsApi.lms("Ignore", "Ignore", this);
-        Thread.sleep(1000);
-        Assert.assertTrue("MockLmsApi should have succeeded", success);
-        Assert.assertFalse("MockLmsApi should not have failed", failure);
-    }
-
-    public void success(Lms lms, Response response) {
-        success = true;
-    }
-
-    public void failure(RetrofitError retrofitError) {
-        failure = true;
     }
 }
