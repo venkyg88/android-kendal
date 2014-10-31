@@ -28,7 +28,6 @@ import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
-import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 
 import java.text.DecimalFormat;
@@ -370,7 +369,11 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.action_checkout:
-                selectDrawerItem(checkoutDrawerItem, Transition.NONE, true);
+                // do NOT add to Back stack - doesn't seem to work, might need to override activity's
+                // onBackPressed() method and use popBackStack() when attempting to return to checkout
+                // fragment, but waiting because will probably need to put this fragment in a separate
+                // activity anyway.
+                selectDrawerItem(checkoutDrawerItem, Transition.NONE, false);
                 break;
         }
     }
