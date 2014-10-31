@@ -74,7 +74,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     boolean ccAddToCartResponseReceived;
 
     // api objects
-    EasyOpenApi api;
+//    EasyOpenApi api;
     EasyOpenApi secureApi;
 
     // data returned from api
@@ -136,7 +136,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
 
         // get api objects
-        api = Access.getInstance().getEasyOpenApi(false);
+//        api = Access.getInstance().getEasyOpenApi(false);
         secureApi = Access.getInstance().getEasyOpenApi(true);
 
         // create api listeners
@@ -160,7 +160,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
         profileAddrResponseReceived = false;
         shippingAddrAddToCartResponseReceived = true; // init to true until we know call will be needed
         billingAddrAddToCartResponseReceived = true; // init to true until we know call will be needed
-        ccAddToCartResponseReceived = false;
+        ccAddToCartResponseReceived = true; // init to true until we know call will be needed
         tax = null;
         shippingAddress = null;
         billingAddress = null;
@@ -314,10 +314,13 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     private void startPrecheckoutIfReady() {
 
         // if first and second waves of api calls have returned
-        if (isFirstApiPassComplete() && isSecondApiPassComplete() &&
-                shippingAddress != null && billingAddress != null) {
+        if (isFirstApiPassComplete() && isSecondApiPassComplete()) {
 
-            secureApi.precheckout(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, precheckoutListener);
+            if (shippingAddress != null && billingAddress != null) {
+                secureApi.precheckout(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, precheckoutListener);
+            } else {
+                hideProgressIndicator();
+            }
         }
     }
 
