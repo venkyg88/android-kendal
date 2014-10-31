@@ -46,7 +46,7 @@ public class LmsFragment
 
     private static final String TAG = "LmsFragment";
 
-    private static final boolean LOGGING = false;
+    private static final boolean LOGGING = true;
 
     private static final long LMS_REFRESH_TIME_MILLIS = (5 * 60 * 1000);
 
@@ -55,6 +55,8 @@ public class LmsFragment
     private LayoutInflater layoutInflater;
 
     private DeviceInfo deviceInfo;
+
+    private LmsPersistentState lmsPersistentState;
 
     private View lmsFrameView;
     private LinearLayout lmsScrollLayout;
@@ -88,6 +90,8 @@ public class LmsFragment
         );
 
         super.onAttach(activity);
+
+        lmsPersistentState = LmsPersistentState.getInstance();
 
         this.activity = (MainActivity) activity;
         resources = activity.getResources();
@@ -132,18 +136,16 @@ public class LmsFragment
             }
         };
 
-
         // @@@ TODO Need to make refresh interval settable.
-        Access access = Access.getInstance();
 
         boolean conditionalLmsRefresh = true;
         long currentTimeMs = System.currentTimeMillis();
-        long lastTimeLmsRefreshed = access.getLastTimeLmsRefreshed();
+        long lastTimeLmsRefreshed = lmsPersistentState.getLastTimeLmsRefreshed();
         long timeToRefreshMs = lastTimeLmsRefreshed + LMS_REFRESH_TIME_MILLIS;
 
         if (currentTimeMs > timeToRefreshMs) {
             conditionalLmsRefresh = false; // force Lms refresh
-            access.setLastTimeLmsRefreshed(currentTimeMs);
+            lmsPersistentState.setLastTimeLmsRefreshed(currentTimeMs);
         }
 
         lmsManager.getLms(this,  // LmsMgrCallback
