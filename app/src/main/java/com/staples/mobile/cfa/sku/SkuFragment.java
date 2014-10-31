@@ -337,7 +337,6 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
             // Add reviews
 //            summary.findViewById(R.id.review_detail).setVisibility(View.GONE);
 
-
             // Check if the product has accessories
             if(product.getAccessory() != null){
                 // Add accessories
@@ -360,32 +359,47 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        if (accessories != null) {
-            for(Product accessory : accessories) {
-                accessoryImageUrl = accessory.getImage().get(0).getUrl();
-                accessoryTitle = accessory.getProductName();
+        for(final Product accessory : accessories) {
+            accessoryImageUrl = accessory.getImage().get(0).getUrl();
+            accessoryTitle = accessory.getProductName();
+            final String sku = accessory.getSku();
 
-                View skuAccessoryRow = inflater.inflate(R.layout.sku_accessory_item, null);
+            View skuAccessoryRow = inflater.inflate(R.layout.sku_accessory_item, null);
 
-                // Set accessory image
-                ImageView accessoryImageView = (ImageView) skuAccessoryRow.findViewById(R.id.accessory_image);
-                accessoryImageView.setId(Integer.parseInt(accessory.getUniqueId()));
-                Picasso.with(getActivity()).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
+            // Set accessory image
+            ImageView accessoryImageView = (ImageView) skuAccessoryRow.findViewById(R.id.accessory_image);
+            Picasso.with(getActivity()).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
 
-                // Set accessory title
-                TextView accessoryTitleTextView = (TextView) skuAccessoryRow.findViewById(R.id.accessory_title);
-                accessoryTitleTextView.setText(accessoryTitle);
+            // set listener for accessory image
+            accessoryImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((MainActivity) getActivity()).selectSkuItem(sku);
+                }
+            });
 
-                // Set accessory rating
-                ((RatingStars) skuAccessoryRow.findViewById(R.id.accessory_rating))
-                        .setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
+            // Set accessory title
+            TextView accessoryTitleTextView = (TextView) skuAccessoryRow.findViewById(R.id.accessory_title);
+            accessoryTitleTextView.setText(accessoryTitle);
 
-                // Set accessory price
-                ((PriceSticker) skuAccessoryRow.findViewById(R.id.accessory_price)).setPricing(product.getPricing());
+            // set listener for accessory title
+            accessoryTitleTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((MainActivity) getActivity()).selectSkuItem(sku);
+                }
+            });
 
-                accessoryContainer.addView(skuAccessoryRow);
-            }
+            // Set accessory rating
+            ((RatingStars) skuAccessoryRow.findViewById(R.id.accessory_rating))
+                    .setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
+
+            // Set accessory price
+            ((PriceSticker) skuAccessoryRow.findViewById(R.id.accessory_price)).setPricing(product.getPricing());
+
+            accessoryContainer.addView(skuAccessoryRow);
         }
+
     }
 
 //    @Override
