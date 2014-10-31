@@ -1,4 +1,4 @@
-package com.staples.mobile.common.access.easyopen.model.precheckout;
+package com.staples.mobile.common.access.easyopen.model.checkout;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;

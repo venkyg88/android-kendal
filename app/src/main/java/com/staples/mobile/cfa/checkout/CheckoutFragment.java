@@ -32,7 +32,7 @@ import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
-import com.staples.mobile.common.access.easyopen.model.precheckout.AddressValidationAlert;
+import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
 
 import java.text.NumberFormat;
 import java.util.List;
