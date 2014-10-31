@@ -4,9 +4,12 @@
 
 package com.staples.mobile.common.access.easyopen.model.cart;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
- * Created by Avinash Dodda.
+ * Created by Diana Sutlief.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BillingAddress {
     private String billingAddress1;
     private String billingAddress2;
