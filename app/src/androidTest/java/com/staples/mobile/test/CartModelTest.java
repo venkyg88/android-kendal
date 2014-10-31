@@ -35,6 +35,7 @@ public class CartModelTest {
 
     @Test
     public void testCartCanBeViewed() throws InterruptedException {
+        if (!com.staples.mobile.test.Config.doLiveCalls) return;
 
         easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         success = false;
@@ -83,9 +84,12 @@ public class CartModelTest {
 
     @Test
     public void testCartItemsCanBeAdded() throws InterruptedException{
+        if (!com.staples.mobile.test.Config.doLiveCalls) return;
+
+        easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         success = false;
         failure = false;
-        easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+
         TypedJsonString body = new TypedJsonString("{" +
                 "\"orderItem\": [" +
                 "{\"partNumber_0\":123455,\"quantity_0\": \"3\"}," +
