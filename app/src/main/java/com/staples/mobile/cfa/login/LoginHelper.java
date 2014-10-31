@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
@@ -91,6 +93,8 @@ public class LoginHelper {
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
                         ((MainActivity)activity).selectProfileFragment();
+                        Button signInText = (Button)activity.findViewById(R.id.accountBtn);
+                        signInText.setText("Sign Out");
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
