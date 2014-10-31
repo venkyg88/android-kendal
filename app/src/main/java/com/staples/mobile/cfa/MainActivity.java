@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ import com.staples.mobile.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartAdapter;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
+import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
@@ -278,6 +280,11 @@ public class MainActivity extends Activity
         return (selectFragment(fragment, Transition.SLIDE, true));
     }
 
+    public boolean selectLoginFragment() {
+        Fragment fragment = Fragment.instantiate(this, LoginFragment.class.getName());
+        return (selectFragment(fragment, Transition.SLIDE, true));
+    }
+
     /** Sets item count indicator on cart icon and cart drawer title */
     public void updateCartIndicators(Cart cart) {
         Resources r = getResources();
@@ -335,6 +342,21 @@ public class MainActivity extends Activity
     public void addItemToCart(String partNumber, int qty) {
         cartAdapter.addToCart(partNumber, qty);
         drawerLayout.openDrawer(rightDrawer);
+    }
+
+    public void accountBtnClick(View view)
+    {
+        Button accountBtn = (Button)view;
+        String buttonText = accountBtn.getText().toString();
+
+        if(buttonText.equals("Sign In")){
+            selectLoginFragment();
+        }
+        if(buttonText.equals("Sign Out")){
+            Access.getInstance().setTokens(null, null, true);
+            selectDrawerItem(homeDrawerItem, Transition.NONE, true);
+            accountBtn.setText("Sign In");
+        }
     }
 
     // Action bar & topper clicks

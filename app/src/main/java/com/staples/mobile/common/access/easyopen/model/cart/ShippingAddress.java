@@ -4,9 +4,12 @@
 
 package com.staples.mobile.common.access.easyopen.model.cart;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * Created by Diana Sutlief.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ShippingAddress {
     private String shippingAddressId;
     private String deliveryAddress1;
@@ -46,7 +49,7 @@ public class ShippingAddress {
 
     // conversion constructor
     public ShippingAddress(com.staples.mobile.common.access.easyopen.model.member.Address profileAddress) {
-        this.shippingAddressId = profileAddress.getAddressId();
+//        this.shippingAddressId = profileAddress.getAddressId();
         this.deliveryAddress1 = profileAddress.getAddress1();
         this.deliveryAddress2 = profileAddress.getAddress2();
         this.deliveryCity = profileAddress.getCity();
