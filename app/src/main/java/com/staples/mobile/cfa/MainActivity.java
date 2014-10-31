@@ -222,10 +222,6 @@ public class MainActivity extends Activity
 //        if (guestLevel) {
 //            new LoginHelper(this).getUserTokens("<user>", "<password>");
 //        }
-
-        if (guestLevel) {
-            new LoginHelper(this).getUserTokens("diana", "password");
-        }
     }
 
     // Navigation
