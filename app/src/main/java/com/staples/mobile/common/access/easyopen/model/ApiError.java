@@ -61,20 +61,35 @@ public class ApiError {
     }
 
 
-    /** convenience method for retrieving error message from RetrofitError error
+
+    /** convenience method for retrieving API error from RetrofitError error
      * (have response object implement SupportsApiErrors) */
-    public static String getErrorMessage(RetrofitError error) {
-        String errMsg = null;
+    public static ApiError getApiError(RetrofitError error) {
+        ApiError apiError = null;
         int httpErrorCode = error.getResponse().getStatus();
         if (httpErrorCode == 400 || httpErrorCode == 500) {
             if (error.getBody() instanceof SupportsApiErrors) {
                 List<ApiError> errors = ((SupportsApiErrors)error.getBody()).getErrors();
                 if (errors != null && errors.size() > 0) {
-                    ApiError apiError = errors.get(0);
-                    errMsg = (apiError.getErrorKey() != null)? apiError.getErrorKey() : apiError.getErrorMessage();
+                    apiError = errors.get(0);
                 }
             }
         }
-        return errMsg != null? errMsg : error.getMessage();
+        if (apiError == null) {
+            apiError = new ApiError();
+            apiError.setErrorMessage(error.getMessage());
+        }
+        return apiError;
+    }
+
+    /** convenience method for retrieving error message from RetrofitError error
+     * (have response object implement SupportsApiErrors) */
+    public static String getErrorMessage(RetrofitError error) {
+        ApiError apiError = getApiError(error);
+        if (apiError.getErrorMessage() != null) {
+            return apiError.getErrorMessage();
+        } else {
+            return apiError.getErrorKey();
+        }
     }
 }
