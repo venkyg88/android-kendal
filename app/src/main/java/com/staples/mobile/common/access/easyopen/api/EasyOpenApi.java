@@ -7,8 +7,12 @@ import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
 import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
 import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderStatusContents;
+import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
+import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethodResponse;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
+import com.staples.mobile.common.access.easyopen.model.checkout.SubmitOrderRequest;
+import com.staples.mobile.common.access.easyopen.model.checkout.SubmitOrderResponse;
 import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInfo;
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
@@ -248,6 +252,16 @@ public interface EasyOpenApi {
             Callback<AddressValidationAlert> callback
     );
 
+    //https://api.staples.com/v1/10001/cart/payment?locale=en_US&client_id=
+    @POST("/{version}/{storeId}/cart/payment")
+    void addPaymentMethodToCart(
+            @Body PaymentMethod body,
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<PaymentMethodResponse> callback
+    );
 
     //https://api.staples.com/v1/10001/cart/tax?locale=en_US&client_id=
     @GET("/{version}/{storeId}/cart/tax")
@@ -293,6 +307,16 @@ public interface EasyOpenApi {
             Callback<AddressValidationAlert> callback
     );
 
+    //https://api.staples.com/v1/10001/cart/confirm?locale=en_US&client_id=
+    @POST("/{version}/{storeId}/cart/confirm")
+    void submitOrder(
+            @Body SubmitOrderRequest body,
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<SubmitOrderResponse> callback
+    );
 
     //https://api.staples.com/v1/10001/member/profile?locale=en_US&client_id=
     @GET("/{version}/{storeId}/member/profile")
