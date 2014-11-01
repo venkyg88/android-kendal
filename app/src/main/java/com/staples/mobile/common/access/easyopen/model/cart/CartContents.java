@@ -3,13 +3,14 @@ package com.staples.mobile.common.access.easyopen.model.cart;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.SupportsApiErrors;
 
 import java.util.ArrayList;
 import java.util.List;
 
 //wrapper class for view cart api responses
 
-public class CartContents {
+public class CartContents implements SupportsApiErrors {
     @JsonProperty("Cart")
     private List<Cart> cart = new ArrayList<Cart>();
     private boolean recordSetComplete;

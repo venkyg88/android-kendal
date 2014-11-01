@@ -7,6 +7,7 @@ package com.staples.mobile.common.access.easyopen.model.cart;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.SupportsApiErrors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 /**
  * Created by sutdi001 on 10/30/14.
  */
-public class OrderStatusContents {
+public class OrderStatusContents implements SupportsApiErrors {
     @JsonProperty("Cart")
     private List<OrderStatus> orderStatus = new ArrayList<OrderStatus>();
 
