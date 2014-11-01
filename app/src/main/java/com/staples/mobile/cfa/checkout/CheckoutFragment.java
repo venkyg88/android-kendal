@@ -263,26 +263,28 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
         if (TextUtils.isEmpty(cid)) {
             Toast.makeText(activity, "CID is required", Toast.LENGTH_SHORT).show();
         } else {
-            showProgressIndicator();
-
             // first add selected payment method with it's assoc CID to cart
-            PaymentMethod paymentMethod = new PaymentMethod(selectedPaymentMethod);
-            paymentMethod.setCardVerificationCode(cid);
-            secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
-                    new Callback<PaymentMethodResponse>() {
-                        @Override
-                        public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
-                            // upon payment method success, submit the order
-                            submitOrder(cid);
-                        }
+            if (selectedPaymentMethod != null) {
+                showProgressIndicator();
 
-                        @Override
-                        public void failure(RetrofitError error) {
-                            hideProgressIndicator();
-                            Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(error), Toast.LENGTH_SHORT).show();
+                PaymentMethod paymentMethod = new PaymentMethod(selectedPaymentMethod);
+                paymentMethod.setCardVerificationCode(cid);
+                secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+                        new Callback<PaymentMethodResponse>() {
+                            @Override
+                            public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
+                                // upon payment method success, submit the order
+                                submitOrder(cid);
+                            }
+
+                            @Override
+                            public void failure(RetrofitError error) {
+                                hideProgressIndicator();
+                                Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(error), Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-            );
+                );
+            }
 
         }
     }
@@ -494,7 +496,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
             }
 
             if (!normalAddrNotAvailResponse) {
-                String msg = "Error getting " + (listeningForShippingAddr ? "shipping" : "billing") + " address: " + retrofitError.getMessage();
+                String msg = "Error getting " + (listeningForShippingAddr ? "shipping" : "billing") + " address: " + ApiError.getErrorMessage(retrofitError);
                 Log.d(TAG, msg);
                 Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
             }
@@ -547,7 +549,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
                 profileCcResponseReceived = true;
             }
 
-            String msg = "Error getting profile: " + retrofitError.getMessage();
+            String msg = "Error getting profile: " + ApiError.getErrorMessage(retrofitError);
             Log.d(TAG, msg);
             Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
 
@@ -603,11 +605,11 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
         @Override
         public void failure(RetrofitError retrofitError) {
 
-            String msg = "Error getting math story: " + retrofitError.getMessage();
+            String msg = "Error getting math story: " + ApiError.getErrorMessage(retrofitError);
             Log.d(TAG, msg);
             Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
 
-          //  respondToFailure("Unable to obtain cart information: " + retrofitError.getMessage());
+          //  respondToFailure("Unable to obtain cart information: " + ApiError.getErrorMessage(retrofitError));
             // note: workaround to unknown field errors is to annotate model with @JsonIgnoreProperties(ignoreUnknown = true)
         }
     }
@@ -659,9 +661,9 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
             String msg;
             if (listeningForPrecheckout) {
-                msg = "Precheckout error: " + retrofitError.getMessage();
+                msg = "Precheckout error: " + ApiError.getErrorMessage(retrofitError);
             } else {
-                msg = "Address error: " + retrofitError.getMessage();
+                msg = "Address error: " + ApiError.getErrorMessage(retrofitError);
             }
             Log.d(TAG, msg);
             Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
