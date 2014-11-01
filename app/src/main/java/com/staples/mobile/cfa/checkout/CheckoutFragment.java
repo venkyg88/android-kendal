@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +22,8 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.SupportsApiErrors;
 import com.staples.mobile.common.access.easyopen.model.cart.Address;
 import com.staples.mobile.common.access.easyopen.model.cart.AddressDetail;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
@@ -28,7 +31,11 @@ import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
 //import com.staples.mobile.common.access.easyopen.model.cart.OrderStatus;
 //import com.staples.mobile.common.access.easyopen.model.cart.OrderStatusContents;
+import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
+import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethodResponse;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
+import com.staples.mobile.common.access.easyopen.model.checkout.SubmitOrderRequest;
+import com.staples.mobile.common.access.easyopen.model.checkout.SubmitOrderResponse;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
@@ -71,6 +78,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     private TextView shippingChargeVw;
     private TextView taxVw;
     private TextView checkoutTotalVw;
+    private EditText paymentCidVw;
 
     boolean shippingAddrResponseReceived;
     boolean billingAddrResponseReceived;
@@ -78,7 +86,6 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     boolean profileAddrResponseReceived;
     boolean shippingAddrAddToCartResponseReceived;
     boolean billingAddrAddToCartResponseReceived;
-    boolean ccAddToCartResponseReceived;
 
     // api objects
 //    EasyOpenApi api;
@@ -95,7 +102,8 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     // data initialized from cart drawer
     Float pretaxSubtotal;
 
-
+    // payment method associated with the order
+    CCDetails selectedPaymentMethod;
 
     // api listeners
     AddressDetailListener shippingAddrListener;
@@ -122,6 +130,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
         checkoutLayout.setCartProgressOverlay(view.findViewById(R.id.checkout_progress_overlay));
         shippingAddrVw = (TextView) view.findViewById(R.id.checkout_shipping_addr);
         paymentMethodVw = (TextView) view.findViewById(R.id.checkout_payment_method);
+        paymentCidVw = (EditText) view.findViewById(R.id.payment_cid);
         billingAddrVw = (TextView) view.findViewById(R.id.checkout_billing_addr);
         deliveryRangeVw = (TextView) view.findViewById(R.id.checkout_delivery_range);
         couponsRewardsVw = (TextView) view.findViewById(R.id.checkout_coupons_rewards);
@@ -169,7 +178,6 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
         profileAddrResponseReceived = false;
         shippingAddrAddToCartResponseReceived = true; // init to true until we know call will be needed
         billingAddrAddToCartResponseReceived = true; // init to true until we know call will be needed
-        ccAddToCartResponseReceived = true; // init to true until we know call will be needed
         tax = null;
         shippingAddress = null;
         billingAddress = null;
@@ -243,10 +251,70 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(activity, "TBD", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.checkout_submit:
-                Toast.makeText(activity, "TBD", Toast.LENGTH_SHORT).show();
+                submitPaymentMethod();
                 break;
         }
     }
+
+    private void submitPaymentMethod() {
+        // get cid for both payment method submission and order submission
+        final String cid = paymentCidVw.getText().toString().trim();
+
+        if (TextUtils.isEmpty(cid)) {
+            Toast.makeText(activity, "CID is required", Toast.LENGTH_SHORT).show();
+        } else {
+            showProgressIndicator();
+
+            // first add selected payment method with it's assoc CID to cart
+            PaymentMethod paymentMethod = new PaymentMethod(selectedPaymentMethod);
+            paymentMethod.setCardVerificationCode(cid);
+            secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+                    new Callback<PaymentMethodResponse>() {
+                        @Override
+                        public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
+                            // upon payment method success, submit the order
+                            submitOrder(cid);
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            hideProgressIndicator();
+                            Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(error), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            );
+
+        }
+    }
+
+    private void submitOrder(String cid) {
+        // upon payment method success, submit the order
+        SubmitOrderRequest submitOrderRequest = new SubmitOrderRequest();
+        submitOrderRequest.setCardVerificationCode(cid);
+        secureApi.submitOrder(submitOrderRequest, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+                new Callback<SubmitOrderResponse>() {
+
+                    @Override
+                    public void success(SubmitOrderResponse submitOrderResponse, Response response) {
+                        hideProgressIndicator();
+                        Toast.makeText(activity, "SUCCESS! Order: " +
+                                submitOrderResponse.getStaplesOrderNumber(), Toast.LENGTH_SHORT).show();
+
+                        // todo: need to refresh cart
+                        // todo: need to show confirmation page
+
+                        //success: qa21, diana, order # 9707186646
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        hideProgressIndicator();
+                        Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(error), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+    }
+
 
     private boolean isFirstApiPassComplete() {
         return (profileAddrResponseReceived && profileCcResponseReceived &&
@@ -254,8 +322,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     }
 
     private boolean isSecondApiPassComplete() {
-        return (billingAddrAddToCartResponseReceived && shippingAddrAddToCartResponseReceived &&
-                ccAddToCartResponseReceived);
+        return (billingAddrAddToCartResponseReceived && shippingAddrAddToCartResponseReceived);
     }
 
 
@@ -298,13 +365,9 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
             if (profileCreditCards != null && profileCreditCards.size() > 0) {
                 CCDetails cc = profileCreditCards.get(0);
                 if (!TextUtils.isEmpty(cc.getCardNumber()) && cc.getCardNumber().length() >= 4) {
-                    paymentMethodVw.setText("<card logo> Card ending in " + cc.getCardNumber().substring(cc.getCardNumber().length() - 4));
-                    // add profile cc to cart
-                    ccAddToCartResponseReceived = false;
-//                    secureApi.addCreditCardToCart(...)   TBD
-
-                    ccAddToCartResponseReceived = true; // until we add above
-
+                    paymentMethodVw.setText(cc.getCardType() + "  ending in " +
+                            cc.getCardNumber().substring(cc.getCardNumber().length() - 4));
+                    selectedPaymentMethod = cc;
                 } else {
                     Toast.makeText(activity, "Credit card number is blank", Toast.LENGTH_SHORT).show();
                 }
