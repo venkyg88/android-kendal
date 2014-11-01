@@ -25,6 +25,7 @@ import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.cart.*;
 
 import java.util.ArrayList;
@@ -234,7 +235,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
             @Override
             public void failure(RetrofitError retrofitError) {
-                Log.i("Fail Message for getting the billing address", " " + retrofitError.getMessage());
+                Log.i("Fail Message for getting the billing address", " " + ApiError.getErrorMessage(retrofitError));
                 Log.i("Post URL address for getting the billing address", " " + retrofitError.getUrl());
             }
         }
@@ -258,7 +259,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
-                        Log.i("Fail Message for getting the shipping address", " " + retrofitError.getMessage());
+                        Log.i("Fail Message for getting the shipping address", " " + ApiError.getErrorMessage(retrofitError));
                         Log.i("Post URL address for getting the shipping address", " " + retrofitError.getUrl());
                     }
                 }
@@ -363,7 +364,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            respondToFailure("Unable to obtain cart information: " + retrofitError.getMessage());
+            respondToFailure("Unable to obtain cart information: " + ApiError.getErrorMessage(retrofitError));
             // note: workaround to unknown field errors is to annotate model with @JsonIgnoreProperties(ignoreUnknown = true)
         }
     }
@@ -389,49 +390,18 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
             // if a successful insert, refill cart
             if (cartUpdate.getItemsAdded().size() > 0) {
-                fill();
+                fill();  // need updated info about the cart such as shipping and subtotals in addition to new quantities
+            } else {
+                // notify data set changed because qty text may have changed, but actual qty not
+                // and we need update button to be visible
+                notifyDataSetChanged();
             }
-
-            // can't do the following because need updated info about the cart such as shipping and subtotals
-//            // if an update (this assumes one product updated at a time)
-//            if (update) {
-//                // if no items updated, then refill cart to get accurate counts
-//                if (cartUpdate.getItemsAdded().size() == 0) {
-//                    fill();
-//                } else {
-//                    // determine which items were updated and fix their qty, no need to refill the cart
-//                    List<String> itemIds = convertItemIdsToStringList(cartUpdate.getItemsAdded());
-//                    for (int i = 0; i < getCount(); i++) {
-//                        CartItem cartItem = getItem(i);
-//                        if (cartItem.isProposedQtyDifferent() && itemIds.contains(cartItem.getOrderItemId())) {
-//                            cartItem.setQuantity(cartItem.getProposedQty());
-//                        }
-//                    }
-//                }
-//            } else {
-//                // if a successful insert, refill cart
-//                if (cartUpdate.getItemsAdded().size() > 0) {
-//                    fill();
-//                }
-//            }
-//            notifyDataSetChanged();
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            respondToFailure("Failed Cart Update: " + retrofitError.getMessage());
+            respondToFailure("Failed Cart Update: " + ApiError.getErrorMessage(retrofitError));
         }
-
-//        /** converts list of items into list of ids */
-//        private List<String> convertItemIdsToStringList(List<ItemsAdded> itemsAdded) {
-//            List<String> ids = new ArrayList<String>();
-//            for (ItemsAdded itemAdded : itemsAdded) {
-//                for (OrderItemId oid : itemAdded.getOrderItemIds()) {
-//                    ids.add(oid.getOrderItemId());
-//                }
-//            }
-//            return ids;
-//        }
     }
 
 
@@ -447,7 +417,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            respondToFailure("Failed Cart Item Deletion: " + retrofitError.getMessage());
+            respondToFailure("Failed Cart Item Deletion: " + ApiError.getErrorMessage(retrofitError));
         }
     }
 
