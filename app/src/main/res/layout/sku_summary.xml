@@ -119,6 +119,7 @@
                     style="@style/SkuSummaryHeader"
                     android:text="@string/accessories"/>
                 <HorizontalScrollView
+                    android:id="@+id/accessoryScrollView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
                     <LinearLayout
