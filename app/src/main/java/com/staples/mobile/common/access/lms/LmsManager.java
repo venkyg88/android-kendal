@@ -21,9 +21,6 @@ public class LmsManager implements Callback<Configurator> {
 
     private static final String TAG = "LmsManager";
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
-
     private static final ReentrantReadWriteLock lmsReadWriteLock =
             new ReentrantReadWriteLock();
 
@@ -150,7 +147,7 @@ public class LmsManager implements Callback<Configurator> {
 
         lockWrite();
 
-        lmsApi.lms(RECOMMENDATION, STORE_ID, this);
+        lmsApi.lms(this);
 
         return;
     }
