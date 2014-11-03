@@ -8,8 +8,6 @@ import com.staples.mobile.common.access.lms.api.LmsApi;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import retrofit.RequestInterceptor;
@@ -19,10 +17,6 @@ import retrofit.client.OkClient;
 import retrofit.converter.JacksonConverter;
 
 public class Access {
-
-    public interface OnLoginCompleteListener {
-        public void onLoginComplete(boolean guestLevel);
-    }
 
     private static final String TAG = "Access";
 
@@ -45,7 +39,6 @@ public class Access {
     private boolean guestLogin;
     private String token1;
     private String token2;
-    private List<OnLoginCompleteListener> loginCompleteListeners;
 
     private long lastTimeLmsRefreshed;
 
@@ -65,7 +58,6 @@ public class Access {
         okClient = new OkClient(okHttpClient);
 
         converter = new JacksonConverter();
-        loginCompleteListeners = new ArrayList<OnLoginCompleteListener>();
     }
 
     // Interceptors for standard HTTP headers
@@ -101,11 +93,6 @@ public class Access {
         token2 = wcTrustedToken;
         if (token1 != null) {
             this.guestLogin = guestLogin;
-            if (loginCompleteListeners != null) {
-                for (OnLoginCompleteListener listener : loginCompleteListeners) {
-                    listener.onLoginComplete(guestLogin);
-                }
-            }
         }
     }
 
@@ -123,19 +110,6 @@ public class Access {
         this.guestLogin = guestLogin;
     }
 
-    /** adds listener to be notified following successful login */
-    public void registerLoginCompleteListener(OnLoginCompleteListener loginCompleteListener) {
-        if (!loginCompleteListeners.contains(loginCompleteListener)) {
-            loginCompleteListeners.add(loginCompleteListener);
-        }
-    }
-
-    /** removes listener */
-    public void unregisterLoginCompleteListener(OnLoginCompleteListener loginCompleteListener) {
-        if (loginCompleteListeners.contains(loginCompleteListener)) {
-            loginCompleteListeners.remove(loginCompleteListener);
-        }
-    }
 
 // EasyOpen API
 

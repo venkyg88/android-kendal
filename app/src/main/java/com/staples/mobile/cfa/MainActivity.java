@@ -37,7 +37,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public class MainActivity extends Activity
-                          implements View.OnClickListener, AdapterView.OnItemClickListener, Access.OnLoginCompleteListener {
+                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
     private static final String TAG = "MainActivity";
 
     private static final int SURRENDER_TIMEOUT = 5000;
@@ -392,7 +392,11 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.action_checkout:
-                selectDrawerItem(checkoutDrawerItem, Transition.NONE, true);
+                // do NOT add to Back stack - doesn't seem to work, might need to override activity's
+                // onBackPressed() method and use popBackStack() when attempting to return to checkout
+                // fragment, but waiting because will probably need to put this fragment in a separate
+                // activity anyway.
+                selectDrawerItem(checkoutDrawerItem, Transition.NONE, false);
                 break;
         }
     }

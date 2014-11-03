@@ -4,6 +4,7 @@
 
 package com.staples.mobile.cfa.checkout;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -31,7 +32,7 @@ import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
-import com.staples.mobile.common.access.easyopen.model.precheckout.AddressValidationAlert;
+import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -55,6 +56,12 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
     private static final int MAXFETCH = 50;
 
+    NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+
+    // saving around Activity object since getActivity() returns null after user navigates away from
+    // fragment, but api call may still be returning
+    private Activity activity;
+
     private LinearLayoutWithProgressOverlay checkoutLayout;
     private TextView shippingAddrVw;
     private TextView paymentMethodVw;
@@ -74,7 +81,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     boolean ccAddToCartResponseReceived;
 
     // api objects
-    EasyOpenApi api;
+//    EasyOpenApi api;
     EasyOpenApi secureApi;
 
     // data returned from api
@@ -107,6 +114,8 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
 
+        activity = getActivity();
+
         // inflate and get child views
         View view = inflater.inflate(R.layout.checkout_fragment, container, false);
         checkoutLayout = (LinearLayoutWithProgressOverlay) view.findViewById(R.id.checkout);
@@ -136,7 +145,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
 
         // get api objects
-        api = Access.getInstance().getEasyOpenApi(false);
+//        api = Access.getInstance().getEasyOpenApi(false);
         secureApi = Access.getInstance().getEasyOpenApi(true);
 
         // create api listeners
@@ -160,7 +169,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
         profileAddrResponseReceived = false;
         shippingAddrAddToCartResponseReceived = true; // init to true until we know call will be needed
         billingAddrAddToCartResponseReceived = true; // init to true until we know call will be needed
-        ccAddToCartResponseReceived = false;
+        ccAddToCartResponseReceived = true; // init to true until we know call will be needed
         tax = null;
         shippingAddress = null;
         billingAddress = null;
@@ -204,8 +213,8 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         // hide topper
-        if (getActivity() instanceof MainActivity) {
-            MainActivity a = (MainActivity) getActivity();
+        if (activity instanceof MainActivity) {
+            MainActivity a = (MainActivity) activity;
             a.showTopper(false);
         }
     }
@@ -214,8 +223,8 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     public void onPause() {
         super.onPause();
         // restore topper
-        if (getActivity() instanceof MainActivity) {
-            MainActivity a = (MainActivity) getActivity();
+        if (activity instanceof MainActivity) {
+            MainActivity a = (MainActivity) activity;
             a.showTopper(true);
         }
 
@@ -225,16 +234,16 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.shipping_addr_add:
-                Toast.makeText(getActivity(), "TBD", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "TBD", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.payment_method_add:
-                Toast.makeText(getActivity(), "TBD", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "TBD", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.billing_addr_add:
-                Toast.makeText(getActivity(), "TBD", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "TBD", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.checkout_submit:
-                Toast.makeText(getActivity(), "TBD", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "TBD", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -281,7 +290,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
                             RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, addBillingAddrListener);
                 }
             } else {
-                Toast.makeText(getActivity(), "No profile addresses available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "No profile addresses available", Toast.LENGTH_SHORT).show();
             }
 
 
@@ -297,10 +306,10 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
                     ccAddToCartResponseReceived = true; // until we add above
 
                 } else {
-                    Toast.makeText(getActivity(), "Credit card number is blank", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "Credit card number is blank", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(getActivity(), "No payment methods available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "No payment methods available", Toast.LENGTH_SHORT).show();
             }
 
             // if done because of issues above or addresses already part of order, start precheck if possible
@@ -314,10 +323,13 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     private void startPrecheckoutIfReady() {
 
         // if first and second waves of api calls have returned
-        if (isFirstApiPassComplete() && isSecondApiPassComplete() &&
-                shippingAddress != null && billingAddress != null) {
+        if (isFirstApiPassComplete() && isSecondApiPassComplete()) {
 
-            secureApi.precheckout(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, precheckoutListener);
+            if (shippingAddress != null && billingAddress != null) {
+                secureApi.precheckout(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, precheckoutListener);
+            } else {
+                hideProgressIndicator();
+            }
         }
     }
 
@@ -421,7 +433,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
             if (!normalAddrNotAvailResponse) {
                 String msg = "Error getting " + (listeningForShippingAddr ? "shipping" : "billing") + " address: " + retrofitError.getMessage();
                 Log.d(TAG, msg);
-                Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
             }
 
             startSecondWaveIfReady();
@@ -474,7 +486,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
             String msg = "Error getting profile: " + retrofitError.getMessage();
             Log.d(TAG, msg);
-            Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
 
             startSecondWaveIfReady();
         }
@@ -505,7 +517,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
             if (taxListener) {
                 tax = cart.getTotalTax();
-                taxVw.setText(""+tax);
+                taxVw.setText(currencyFormat.format(tax));
                 updateGrandTotal();
             }
 
@@ -519,7 +531,6 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
         private void updateGrandTotal() {
             if (pretaxSubtotal != null && tax != null) {
-                NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
                 checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax));
             } else {
                 checkoutTotalVw.setText("");
@@ -531,7 +542,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
             String msg = "Error getting math story: " + retrofitError.getMessage();
             Log.d(TAG, msg);
-            Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
 
           //  respondToFailure("Unable to obtain cart information: " + retrofitError.getMessage());
             // note: workaround to unknown field errors is to annotate model with @JsonIgnoreProperties(ignoreUnknown = true)
@@ -559,10 +570,10 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
                 secureApi.getTax(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, taxListener);
                 secureApi.getShippingCharge(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, shippingChargeListener);
 
-                Toast.makeText(getActivity(), "precheckout succeeded", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "precheckout succeeded", Toast.LENGTH_SHORT).show();
             } else {
                 if (validationAlert != null) {
-                    Toast.makeText(getActivity(), "Address alert: " + validationAlert, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "Address alert: " + validationAlert, Toast.LENGTH_SHORT).show();
                 }
 
                 if (listeningForShippingAddr) {
@@ -590,7 +601,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
                 msg = "Address error: " + retrofitError.getMessage();
             }
             Log.d(TAG, msg);
-            Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
             hideProgressIndicator();
         }
     }
