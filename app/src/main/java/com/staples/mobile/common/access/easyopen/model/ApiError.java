@@ -66,12 +66,14 @@ public class ApiError {
      * (have response object implement SupportsApiErrors) */
     public static ApiError getApiError(RetrofitError error) {
         ApiError apiError = null;
-        int httpErrorCode = error.getResponse().getStatus();
-        if (httpErrorCode == 400 || httpErrorCode == 500) {
-            if (error.getBody() instanceof SupportsApiErrors) {
-                List<ApiError> errors = ((SupportsApiErrors)error.getBody()).getErrors();
-                if (errors != null && errors.size() > 0) {
-                    apiError = errors.get(0);
+        if (error.getResponse() != null) {
+            int httpErrorCode = error.getResponse().getStatus();
+            if (httpErrorCode == 400 || httpErrorCode == 500) {
+                if (error.getBody() instanceof SupportsApiErrors) {
+                    List<ApiError> errors = ((SupportsApiErrors) error.getBody()).getErrors();
+                    if (errors != null && errors.size() > 0) {
+                        apiError = errors.get(0);
+                    }
                 }
             }
         }
