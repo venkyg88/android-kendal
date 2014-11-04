@@ -31,7 +31,9 @@ import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
+import com.staples.mobile.common.access.lms.LmsManager;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -293,11 +295,17 @@ public class MainActivity extends Activity
         String shipping = "";
         float subtotal = 0;
         float preTaxSubtotal = 0;
+        float freeShippingThreshold = 0;
         if (cart != null) {
             totalItemCount = cart.getTotalItems();
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();
             preTaxSubtotal = cart.getPreTaxTotal();
+            LmsManager lmsManager = new LmsManager();
+            Configurator configurator = lmsManager.getConfigurator();
+            if (configurator != null) {
+                freeShippingThreshold = configurator.getPromotions().getFreeShippingThreshold().floatValue();
+            }
         }
 
         // set text of cart icon badge
@@ -308,9 +316,7 @@ public class MainActivity extends Activity
         else cartTitle.setText(getResources().getQuantityString(R.plurals.your_cart, totalItemCount, totalItemCount));
 
         // set text of free shipping msg
-        // TODO: get actual threshold from lms
-        // TODO: reconcile with shipping cost returned by api
-        float freeShippingThreshold = 99999.99f; // TODO: replace with call to lms
+
         if (freeShippingThreshold > subtotal && !"Free".equals(shipping)) {
             // need to spend more to qualify for free shipping
             NumberFormat nf = DecimalFormat.getCurrencyInstance();
