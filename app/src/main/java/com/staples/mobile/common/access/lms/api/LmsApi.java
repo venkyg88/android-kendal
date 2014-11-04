@@ -13,10 +13,8 @@ public interface LmsApi {
 
     // public static final String SERVICE_ENDPOINT = "http://10.29.172.60:9100"; // The office printer!
 
-    @GET("/{version}/{storeId}/lms")
+    @GET("/")
     void lms(
-            @EncodedPath("version") String version,
-            @EncodedPath("storeId") String storeId,
             Callback<Configurator> callback
     );
 }
