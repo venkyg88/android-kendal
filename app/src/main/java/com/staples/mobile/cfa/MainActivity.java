@@ -60,6 +60,7 @@ public class MainActivity extends Activity
     private DrawerItem storeDrawerItem;
     private DrawerItem rewardsDrawerItem;
     private DrawerItem checkoutDrawerItem;
+    private LoginHelper loginHelper;
 
     public enum Transition {
         NONE  (0, 0, 0, 0, 0),
@@ -100,7 +101,7 @@ public class MainActivity extends Activity
         boolean freshStart = (bundle == null);
         prepareMainScreen(freshStart);
 
-        LoginHelper loginHelper = new LoginHelper(this);
+        loginHelper = new LoginHelper(this);
         loginHelper.registerLoginCompleteListener(this);
         // if already logged in (e.g. when device is rotated), don't login again, but do notify
         // that login is complete so that cart can be refilled
@@ -353,8 +354,9 @@ public class MainActivity extends Activity
             selectLoginFragment();
         }
         if(buttonText.equals("Sign Out")){
-            Access.getInstance().setTokens(null, null, true);
+            Access.getInstance().setTokens(null, null, false);
             selectDrawerItem(homeDrawerItem, Transition.NONE, true);
+            loginHelper.getGuestTokens();
             accountBtn.setText("Sign In");
         }
     }
