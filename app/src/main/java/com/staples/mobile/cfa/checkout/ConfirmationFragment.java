@@ -132,7 +132,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
         orderId = confirmationBundle.getString(BUNDLE_PARAM_ORDERID);
         orderNumber = confirmationBundle.getString(BUNDLE_PARAM_ORDERNUMBER);
         String zipCode = confirmationBundle.getString(BUNDLE_PARAM_ZIPCODE);
-        orderNumberVw.setText("#"+orderId);
+        orderNumberVw.setText("#"+orderNumber);
 
 
         // get api objects
