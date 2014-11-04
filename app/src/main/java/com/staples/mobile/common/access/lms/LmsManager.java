@@ -91,6 +91,22 @@ public class LmsManager implements Callback<Configurator> {
         } // while (true)
     }
 
+    public Configurator getConfigurator() {
+
+        Log.v(TAG, "LmsManager:getConfigurator():"
+                        + " lms[" + lms + "]"
+                        + " this[" + this + "]"
+        );
+
+        lockRead();
+
+        Configurator lms = this.lms;
+
+        unlockRead();
+
+        return (lms);
+    }
+
     public List<Screen> getScreen() {
 
         Log.v(TAG, "LmsManager:getScreen():"
