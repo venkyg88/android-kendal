@@ -21,6 +21,7 @@ import com.staples.mobile.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartAdapter;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
+import com.staples.mobile.cfa.checkout.ConfirmationFragment;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileFragment;
@@ -60,6 +61,7 @@ public class MainActivity extends Activity
     private DrawerItem storeDrawerItem;
     private DrawerItem rewardsDrawerItem;
     private DrawerItem checkoutDrawerItem;
+    private DrawerItem confirmationDrawerItem;
 
     public enum Transition {
         NONE  (0, 0, 0, 0, 0),
@@ -171,6 +173,7 @@ public class MainActivity extends Activity
         storeDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.store_info_title, ToBeDoneFragment.class);
         rewardsDrawerItem = adapter.getItem(6); // TODO Hard-coded alias
         checkoutDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.checkout_title, CheckoutFragment.class);
+        confirmationDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.confirmation_title, ConfirmationFragment.class);
 
         // Initialize topper
         LayoutInflater inflater = getLayoutInflater();
@@ -249,6 +252,21 @@ public class MainActivity extends Activity
         if (item.fragment == null)
             item.instantiate(this);
         return(selectFragment(item.fragment, transition, push));
+    }
+
+    public boolean selectOrderConfirmation(String orderId, String orderNumber, String zipCode) {
+        // refresh cart since should now be empty
+        cartAdapter.fill();
+        // open order confirmation fragment
+        Fragment fragment = Fragment.instantiate(this, ConfirmationFragment.class.getName());
+        Bundle args = new Bundle();
+        if (orderNumber != null) {
+            args.putString(ConfirmationFragment.BUNDLE_PARAM_ORDERID, orderId);
+            args.putString(ConfirmationFragment.BUNDLE_PARAM_ORDERNUMBER, orderNumber);
+            args.putString(ConfirmationFragment.BUNDLE_PARAM_ZIPCODE, zipCode);
+        }
+        fragment.setArguments(args);
+        return (selectFragment(fragment, Transition.SLIDE, true));
     }
 
     public boolean selectBundle(String title, String path) {
@@ -334,8 +352,8 @@ public class MainActivity extends Activity
 
         // add info to checkout fragment which may be displayed behind cart
         Bundle checkoutBundle = checkoutDrawerItem.instantiate(this).getArguments();
-        checkoutBundle.putString("deliveryRange", "TBD");
-        checkoutBundle.putFloat("preTaxSubtotal", preTaxSubtotal);
+        checkoutBundle.putString(CheckoutFragment.BUNDLE_PARAM_DELIVERYRANGE, "TBD");
+        checkoutBundle.putFloat(CheckoutFragment.BUNDLE_PARAM_PRETAXSUBTOTAL, preTaxSubtotal);
     }
 
     /** Adds an item to the cart */
@@ -372,6 +390,7 @@ public class MainActivity extends Activity
                 } else drawerLayout.closeDrawers();
                 break;
 
+            case R.id.continue_shopping_btn:
             case R.id.action_home:
                 selectDrawerItem(homeDrawerItem, Transition.NONE, true);
                 break;
