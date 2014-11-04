@@ -57,10 +57,14 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     private static final String CATALOG_ID = "10051";
     private static final String LOCALE = "en_US";
 
-    private static final String ZIPCODE = "01010";
+//    private static final String ZIPCODE = "01010";
     private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     private static final int MAXFETCH = 50;
+
+
+    public static final String BUNDLE_PARAM_DELIVERYRANGE = "deliveryRange";
+    public static final String BUNDLE_PARAM_PRETAXSUBTOTAL = "preTaxSubtotal";
 
     NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 
@@ -77,7 +81,6 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     private TextView shippingChargeVw;
     private TextView taxVw;
     private TextView checkoutTotalVw;
-    private EditText paymentCidVw;
 
     boolean shippingAddrResponseReceived;
     boolean billingAddrResponseReceived;
@@ -87,7 +90,6 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     boolean billingAddrAddToCartResponseReceived;
 
     // api objects
-//    EasyOpenApi api;
     EasyOpenApi secureApi;
 
     // data returned from api
@@ -129,7 +131,6 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
         checkoutLayout.setCartProgressOverlay(view.findViewById(R.id.checkout_progress_overlay));
         shippingAddrVw = (TextView) view.findViewById(R.id.checkout_shipping_addr);
         paymentMethodVw = (TextView) view.findViewById(R.id.checkout_payment_method);
-        paymentCidVw = (EditText) view.findViewById(R.id.payment_cid);
         billingAddrVw = (TextView) view.findViewById(R.id.checkout_billing_addr);
         deliveryRangeVw = (TextView) view.findViewById(R.id.checkout_delivery_range);
         couponsRewardsVw = (TextView) view.findViewById(R.id.checkout_coupons_rewards);
@@ -148,12 +149,11 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
         // get order info from bundle
         Bundle checkoutBundle = this.getArguments();
-        deliveryRangeVw.setText(checkoutBundle.getString("deliveryRange"));
-        pretaxSubtotal = checkoutBundle.getFloat("preTaxSubtotal");
+        deliveryRangeVw.setText(checkoutBundle.getString(BUNDLE_PARAM_DELIVERYRANGE));
+        pretaxSubtotal = checkoutBundle.getFloat(BUNDLE_PARAM_PRETAXSUBTOTAL);
 
 
         // get api objects
-//        api = Access.getInstance().getEasyOpenApi(false);
         secureApi = Access.getInstance().getEasyOpenApi(true);
 
         // create api listeners
@@ -250,41 +250,34 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(activity, "TBD", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.checkout_submit:
-                submitPaymentMethod();
+                submitPaymentMethod(null); // cid not necessary for registered users
                 break;
         }
     }
 
-    private void submitPaymentMethod() {
-        // get cid for both payment method submission and order submission
-        final String cid = paymentCidVw.getText().toString().trim();
+    private void submitPaymentMethod(final String cid) {
 
-        if (TextUtils.isEmpty(cid)) {
-            Toast.makeText(activity, "CID is required", Toast.LENGTH_SHORT).show();
-        } else {
-            // first add selected payment method with it's assoc CID to cart
-            if (selectedPaymentMethod != null) {
-                showProgressIndicator();
+        // first add selected payment method to cart
+        if (selectedPaymentMethod != null) {
+            showProgressIndicator();
 
-                PaymentMethod paymentMethod = new PaymentMethod(selectedPaymentMethod);
-                paymentMethod.setCardVerificationCode(cid);
-                secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
-                        new Callback<PaymentMethodResponse>() {
-                            @Override
-                            public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
-                                // upon payment method success, submit the order
-                                submitOrder(cid);
-                            }
-
-                            @Override
-                            public void failure(RetrofitError error) {
-                                hideProgressIndicator();
-                                Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(error), Toast.LENGTH_SHORT).show();
-                            }
+            PaymentMethod paymentMethod = new PaymentMethod(selectedPaymentMethod);
+            paymentMethod.setCardVerificationCode(cid);
+            secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+                    new Callback<PaymentMethodResponse>() {
+                        @Override
+                        public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
+                            // upon payment method success, submit the order
+                            submitOrder(cid);
                         }
-                );
-            }
 
+                        @Override
+                        public void failure(RetrofitError retrofitError) {
+                            hideProgressIndicator();
+                            Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            );
         }
     }
 
@@ -301,16 +294,19 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
                         Toast.makeText(activity, "SUCCESS! Order: " +
                                 submitOrderResponse.getStaplesOrderNumber(), Toast.LENGTH_SHORT).show();
 
-                        // todo: need to refresh cart
-                        // todo: need to show confirmation page
+                        // show confirmation page and refresh cart
+                        ((MainActivity)activity).selectOrderConfirmation(
+                                submitOrderResponse.getOrderId(),
+                                submitOrderResponse.getStaplesOrderNumber(),
+                                CheckoutFragment.this.shippingAddress.getZipCode());
 
-                        //success: qa21, diana, order # 9707186646
+                        //success: qa21, diana, order # 9707186646, # 9707187319
                     }
 
                     @Override
-                    public void failure(RetrofitError error) {
+                    public void failure(RetrofitError retrofitError) {
                         hideProgressIndicator();
-                        Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(error), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "Submission Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
                     }
                 }
         );
