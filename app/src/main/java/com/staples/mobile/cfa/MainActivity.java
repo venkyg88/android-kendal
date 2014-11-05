@@ -418,11 +418,12 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.action_checkout:
-                // do NOT add to Back stack - doesn't seem to work, might need to override activity's
+                // considering not adding to Back stack, but it doesn't seem to work and possibly
+                // causes problems with opening fragment a second time, might need to override activity's
                 // onBackPressed() method and use popBackStack() when attempting to return to checkout
                 // fragment, but waiting because will probably need to put this fragment in a separate
                 // activity anyway.
-                selectDrawerItem(checkoutDrawerItem, Transition.NONE, false);
+                selectDrawerItem(checkoutDrawerItem, Transition.NONE, true);
                 break;
         }
     }
