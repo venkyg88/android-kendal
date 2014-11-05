@@ -293,6 +293,8 @@ public interface EasyOpenApi {
             @Query("catalogId") String catalogId,
             @Query("client_id") String client_id,
             @Query("orderNumber") String orderNumber,
+            @Query("offset") Integer offset,
+            @Query("limit") Integer limit,
             Callback<OrderStatusContents> callback
     );
 
