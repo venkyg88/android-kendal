@@ -257,7 +257,7 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
                     }
                     View item = inflater.inflate(R.layout.sku_spec_item, table, false);
                     table.addView(item);
-                    if ((count&1)!=0) item.setBackgroundColor(0xffdddddd);
+                    if ((count&1)==0) item.setBackgroundColor(0xffdddddd);
                     ((TextView) item.findViewById(R.id.name)).setText(name);
                     ((TextView) item.findViewById(R.id.value)).setText(text);
                     count++;
@@ -331,9 +331,10 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
                 summary.findViewById(R.id.description_detail).setVisibility(View.GONE);
 
             // Add specifications
-            if (!buildSpecifications(inflater, (ViewGroup) summary.findViewById(R.id.specifications), product, 3))
+            if (!buildSpecifications(inflater, (ViewGroup) summary.findViewById(R.id.specifications), product, 3)) {
+                summary.findViewById(R.id.specifications).setVisibility(View.GONE);
                 summary.findViewById(R.id.specification_detail).setVisibility(View.GONE);
-
+            }
             // Add reviews
 //            summary.findViewById(R.id.review_detail).setVisibility(View.GONE);
 
@@ -401,15 +402,6 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
         }
 
     }
-
-//    @Override
-//    public void onItemClick(AdapterView parent, View view, int position, long id) {
-//        SearchResultRowItem item = (SearchResultRowItem) parent.getItemAtPosition(position);
-//        if (item == null || item.getProduceName() == null) {
-//            return;
-//        }
-//        ((MainActivity) getActivity()).selectSkuItem(item.getSku());
-//    }
 
     @Override
     public void failure(RetrofitError retrofitError) {
