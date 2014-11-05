@@ -59,6 +59,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
     private static final String CATALOG_ID = "10051";
     private static final String LOCALE = "en_US";
 
+    private static final String ZIPCODE = "01010";
     private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     private static final int MAXFETCH = 50;
@@ -66,7 +67,6 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
 
     public static final String BUNDLE_PARAM_ORDERID = "orderId";
     public static final String BUNDLE_PARAM_ORDERNUMBER = "orderNumber";
-    public static final String BUNDLE_PARAM_ZIPCODE = "zipCode";
 
     NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 
@@ -131,7 +131,6 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
         Bundle confirmationBundle = this.getArguments();
         orderId = confirmationBundle.getString(BUNDLE_PARAM_ORDERID);
         orderNumber = confirmationBundle.getString(BUNDLE_PARAM_ORDERNUMBER);
-        String zipCode = confirmationBundle.getString(BUNDLE_PARAM_ZIPCODE);
         orderNumberVw.setText("#"+orderNumber);
 
 
@@ -145,7 +144,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
 
         // query for order status
         showProgressIndicator();
-        secureApi.getOrderStatus(RECOMMENDATION, STORE_ID, LOCALE, zipCode, CATALOG_ID,
+        secureApi.getOrderStatus(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID,
                 CLIENT_ID, orderNumber, 1, 100, orderStatusListener);
 
 

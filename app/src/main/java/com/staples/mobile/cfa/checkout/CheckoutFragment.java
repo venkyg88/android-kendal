@@ -57,7 +57,6 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     private static final String CATALOG_ID = "10051";
     private static final String LOCALE = "en_US";
 
-//    private static final String ZIPCODE = "01010";
     private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     private static final int MAXFETCH = 50;
@@ -297,8 +296,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
                         // show confirmation page and refresh cart
                         ((MainActivity)activity).selectOrderConfirmation(
                                 submitOrderResponse.getOrderId(),
-                                submitOrderResponse.getStaplesOrderNumber(),
-                                CheckoutFragment.this.shippingAddress.getZipCode());
+                                submitOrderResponse.getStaplesOrderNumber());
 
                         //success: qa21, diana, order # 9707186646, # 9707187319
                     }

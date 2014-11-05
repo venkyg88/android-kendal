@@ -255,7 +255,7 @@ public class MainActivity extends Activity
         return(selectFragment(item.fragment, transition, push));
     }
 
-    public boolean selectOrderConfirmation(String orderId, String orderNumber, String zipCode) {
+    public boolean selectOrderConfirmation(String orderId, String orderNumber) {
         // refresh cart since should now be empty
         cartAdapter.fill();
         // open order confirmation fragment
@@ -264,7 +264,6 @@ public class MainActivity extends Activity
         if (orderNumber != null) {
             args.putString(ConfirmationFragment.BUNDLE_PARAM_ORDERID, orderId);
             args.putString(ConfirmationFragment.BUNDLE_PARAM_ORDERNUMBER, orderNumber);
-            args.putString(ConfirmationFragment.BUNDLE_PARAM_ZIPCODE, zipCode);
         }
         fragment.setArguments(args);
         return (selectFragment(fragment, Transition.SLIDE, true));
