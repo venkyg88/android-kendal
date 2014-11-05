@@ -7,10 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.R;
-import com.staples.mobile.cfa.profile.MemberObject;
 
 public class ToBeDoneFragment extends Fragment {
     private static final String TAG = "ToBeDoneFragment";
@@ -27,9 +25,6 @@ public class ToBeDoneFragment extends Fragment {
         if (args!=null) {
             String title = args.getString("title");
             ((TextView) view.findViewById(R.id.title)).setText(title);
-        }
-        if(MemberObject.isRewardsMember()){
-            Toast.makeText(getActivity(), "true" ,Toast.LENGTH_LONG).show();
         }
         return(view);
      }
