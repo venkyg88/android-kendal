@@ -9,6 +9,7 @@ public class Product {
     private boolean addOn;
     private List<Product> alsoConsider;
     private List<Analytic> analytic;
+    private boolean apple;
     private boolean bopisEligible;
     private List<BulletDescription> bulletDescription;
     private boolean businessService;
@@ -61,9 +62,6 @@ public class Product {
     private boolean upsable;
     private boolean webOnly;
 
-    private String apple; // got from http://sapi.staples.com/v1/10001/product/partnumber/112276/details?catalogId=10051&locale=en_US&zipCode=01010&client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS&limit=50
-    // product name: Standard staples
-
     public List<Product> getAccessory() {
         return accessory;
     }
@@ -78,6 +76,10 @@ public class Product {
 
     public List<Analytic> getAnalytic() {
         return analytic;
+    }
+
+    public boolean isApple() {
+        return apple;
     }
 
     public boolean isBopisEligible() {
@@ -278,13 +280,5 @@ public class Product {
 
     public boolean isWebOnly() {
         return webOnly;
-    }
-
-    public String getApple() {
-        return apple;
-    }
-
-    public void setApple(String apple) {
-        this.apple = apple;
     }
 }

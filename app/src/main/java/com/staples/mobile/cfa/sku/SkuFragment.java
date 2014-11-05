@@ -28,16 +28,21 @@ import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.browse.*;
+import com.staples.mobile.common.access.easyopen.model.reviews.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHost.OnTabChangeListener,
-                                                     ViewPager.OnPageChangeListener, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
+public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener,
+                                                     View.OnClickListener, FragmentManager.OnBackStackChangedListener{
     private static final String TAG = "SkuFragment";
 
     private static final String DESCRIPTION =" Description";
@@ -138,8 +143,11 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
         summary.findViewById(R.id.review_detail).setOnClickListener(this);
         wrapper.findViewById(R.id.add_to_cart).setOnClickListener(this);
 
-        Access.getInstance().getEasyOpenApi(false).getSkuDetails(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
-                                                              ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
+        EasyOpenApi test = Access.getInstance().getEasyOpenApi(false);
+        test.getSkuDetails(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
+                           ZIPCODE, CLIENT_ID, null, MAXFETCH, new SkuDetailsCallback());
+        EasyOpenApi prod = Access.getInstance().getEasyOpenApi(false);
+        prod.getReviews(RECOMMENDATION, identifier, CLIENT_ID, new ReviewSetCallback());
 
         return(wrapper);
     }
@@ -257,7 +265,7 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
                     }
                     View item = inflater.inflate(R.layout.sku_spec_item, table, false);
                     table.addView(item);
-                    if ((count&1)==0) item.setBackgroundColor(0xffdddddd);
+                    if ((count&1)!=0) item.setBackgroundColor(0xffdddddd);
                     ((TextView) item.findViewById(R.id.name)).setText(name);
                     ((TextView) item.findViewById(R.id.value)).setText(text);
                     count++;
@@ -267,10 +275,85 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
         return(count>0);
     }
 
+    private void addAccessory(Product product){
+        List<Product> accessories = product.getAccessory();
+        String accessoryImageUrl;
+        String accessoryTitle;
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        for(final Product accessory : accessories) {
+            accessoryImageUrl = accessory.getImage().get(0).getUrl();
+            accessoryTitle = accessory.getProductName();
+            final String sku = accessory.getSku();
+
+            View skuAccessoryRow = inflater.inflate(R.layout.sku_accessory_item, null);
+
+            // Set accessory image
+            ImageView accessoryImageView = (ImageView) skuAccessoryRow.findViewById(R.id.accessory_image);
+            Picasso.with(getActivity()).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
+
+            // set listener for accessory image
+            accessoryImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((MainActivity) getActivity()).selectSkuItem(sku);
+                }
+            });
+
+            // Set accessory title
+            TextView accessoryTitleTextView = (TextView) skuAccessoryRow.findViewById(R.id.accessory_title);
+            accessoryTitleTextView.setText(accessoryTitle);
+
+            // set listener for accessory title
+            accessoryTitleTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((MainActivity) getActivity()).selectSkuItem(sku);
+                }
+            });
+
+            // Set accessory rating
+            ((RatingStars) skuAccessoryRow.findViewById(R.id.accessory_rating))
+                    .setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
+
+            // Set accessory price
+            ((PriceSticker) skuAccessoryRow.findViewById(R.id.accessory_price)).setPricing(product.getPricing());
+
+            accessoryContainer.addView(skuAccessoryRow);
+        }
+
+    }
+
     // Retrofit callbacks
 
-    @Override
-    public void success(SkuDetails sku, Response response) {
+    private class SkuDetailsCallback implements Callback<SkuDetails> {
+        @Override
+        public void success(SkuDetails sku, Response response) {
+            processSkuDetails(sku);
+            wrapper.setState(DataWrapper.State.DONE);
+        }
+
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            Log.d(TAG, "Failure callback " + retrofitError);
+            wrapper.setState(DataWrapper.State.EMPTY);
+        }
+    }
+
+    private class ReviewSetCallback implements Callback<ReviewSet> {
+        @Override
+        public void success(ReviewSet reviews, Response response) {
+            processReviewSet(reviews);
+        }
+
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            Log.d(TAG, "Failure callback " + retrofitError);
+        }
+    }
+
+    private void processSkuDetails(SkuDetails sku) {
         List<Product> products = sku.getProduct();
         if (products!=null && products.size()>0) {
             // Use the first product in the list
@@ -331,12 +414,8 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
                 summary.findViewById(R.id.description_detail).setVisibility(View.GONE);
 
             // Add specifications
-            if (!buildSpecifications(inflater, (ViewGroup) summary.findViewById(R.id.specifications), product, 3)) {
-                summary.findViewById(R.id.specifications).setVisibility(View.GONE);
+            if (!buildSpecifications(inflater, (ViewGroup) summary.findViewById(R.id.specifications), product, 3))
                 summary.findViewById(R.id.specification_detail).setVisibility(View.GONE);
-            }
-            // Add reviews
-//            summary.findViewById(R.id.review_detail).setVisibility(View.GONE);
 
             // Check if the product has accessories
             if(product.getAccessory() != null){
@@ -347,66 +426,37 @@ public class SkuFragment extends Fragment implements Callback<SkuDetails>, TabHo
             else{
                 Log.d(TAG, "Product has no accessories.");
             }
-
-            // Ready to display
-            wrapper.setState(DataWrapper.State.DONE);
         }
     }
 
-    private void addAccessory(Product product){
-        List<Product> accessories = product.getAccessory();
-        String accessoryImageUrl;
-        String accessoryTitle;
+    private void processReviewSet(ReviewSet reviews) {
+        if (reviews == null) return;
+        List<Data> datas = reviews.getData();
+        if (datas == null) return;
+        for(Data data : datas) {
+            int rating = data.getRating();
+            String comments = data.getComments();
+            if (comments!=null) {
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
+                View view = inflater.inflate(R.layout.sku_review_item, parent, false);
+                ((TextView) view.findViewById(R.id.sku_review_date)).setText("Today");
+                ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(rating, null);
+                ((TextView) view.findViewById(R.id.sku_review_comments)).setText(comments);
+                parent.addView(view);
+                break;
+            }
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-
-        for(final Product accessory : accessories) {
-            accessoryImageUrl = accessory.getImage().get(0).getUrl();
-            accessoryTitle = accessory.getProductName();
-            final String sku = accessory.getSku();
-
-            View skuAccessoryRow = inflater.inflate(R.layout.sku_accessory_item, null);
-
-            // Set accessory image
-            ImageView accessoryImageView = (ImageView) skuAccessoryRow.findViewById(R.id.accessory_image);
-            Picasso.with(getActivity()).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
-
-            // set listener for accessory image
-            accessoryImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((MainActivity) getActivity()).selectSkuItem(sku);
-                }
-            });
-
-            // Set accessory title
-            TextView accessoryTitleTextView = (TextView) skuAccessoryRow.findViewById(R.id.accessory_title);
-            accessoryTitleTextView.setText(accessoryTitle);
-
-            // set listener for accessory title
-            accessoryTitleTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((MainActivity) getActivity()).selectSkuItem(sku);
-                }
-            });
-
-            // Set accessory rating
-            ((RatingStars) skuAccessoryRow.findViewById(R.id.accessory_rating))
-                    .setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
-
-            // Set accessory price
-            ((PriceSticker) skuAccessoryRow.findViewById(R.id.accessory_price)).setPricing(product.getPricing());
-
-            accessoryContainer.addView(skuAccessoryRow);
+//            List<HashMap<String, List<String>>> tags = data.getReview_tags();
+//            if (tags!=null) {
+//                for(HashMap<String, List<String>> map : tags) {
+//                    Set<Map.Entry<String, List<String>>> set = map.entrySet();
+//                    for(Map.Entry entry : set) {
+//                        Log.d(TAG, entry.getKey() + " " + entry.getValue());
+//                    }
+//                }
+//            }
         }
-
-    }
-
-    @Override
-    public void failure(RetrofitError retrofitError) {
-        Log.d(TAG, "Failure callback " + retrofitError);
-        wrapper.setState(DataWrapper.State.EMPTY);
     }
 
    // TabHost notifications
