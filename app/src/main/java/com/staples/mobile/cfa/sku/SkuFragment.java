@@ -344,7 +344,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private class ReviewSetCallback implements Callback<ReviewSet> {
         @Override
         public void success(ReviewSet reviews, Response response) {
-            processReviewSet(reviews);
+//            processReviewSet(reviews);
         }
 
         @Override
@@ -429,35 +429,35 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         }
     }
 
-    private void processReviewSet(ReviewSet reviews) {
-        if (reviews == null) return;
-        List<Data> datas = reviews.getData();
-        if (datas == null) return;
-        for(Data data : datas) {
-            int rating = data.getRating();
-            String comments = data.getComments();
-            if (comments!=null) {
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
-                View view = inflater.inflate(R.layout.sku_review_item, parent, false);
-                ((TextView) view.findViewById(R.id.sku_review_date)).setText("Today");
-                ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(rating, null);
-                ((TextView) view.findViewById(R.id.sku_review_comments)).setText(comments);
-                parent.addView(view);
-                break;
-            }
-
-//            List<HashMap<String, List<String>>> tags = data.getReview_tags();
-//            if (tags!=null) {
-//                for(HashMap<String, List<String>> map : tags) {
-//                    Set<Map.Entry<String, List<String>>> set = map.entrySet();
-//                    for(Map.Entry entry : set) {
-//                        Log.d(TAG, entry.getKey() + " " + entry.getValue());
-//                    }
-//                }
+//    private void processReviewSet(ReviewSet reviews) {
+//        if (reviews == null) return;
+//        List<Data> datas = reviews.getData();
+//        if (datas == null) return;
+//        for(Data data : datas) {
+//            int rating = data.getRating();
+//            String comments = data.getComments();
+//            if (comments!=null) {
+//                LayoutInflater inflater = getActivity().getLayoutInflater();
+//                ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
+//                View view = inflater.inflate(R.layout.sku_review_item, parent, false);
+//                ((TextView) view.findViewById(R.id.sku_review_date)).setText("Today");
+//                ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(rating, null);
+//                ((TextView) view.findViewById(R.id.sku_review_comments)).setText(comments);
+//                parent.addView(view);
+//                break;
 //            }
-        }
-    }
+//
+////            List<HashMap<String, List<String>>> tags = data.getReview_tags();
+////            if (tags!=null) {
+////                for(HashMap<String, List<String>> map : tags) {
+////                    Set<Map.Entry<String, List<String>>> set = map.entrySet();
+////                    for(Map.Entry entry : set) {
+////                        Log.d(TAG, entry.getKey() + " " + entry.getValue());
+////                    }
+////                }
+////            }
+//        }
+//    }
 
    // TabHost notifications
 
