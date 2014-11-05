@@ -198,10 +198,11 @@ public class MainActivity extends Activity
             @Override
             public void onChanged() {
                 super.onChanged();
-                updateCartIndicators(cartAdapter.getCart());
+                updateCartIndicators(cartAdapter.getCart(), cartAdapter.getMinExpectedBusinessDays(),
+                        cartAdapter.getMaxExpectedBusinessDays());
             }
         });
-        updateCartIndicators(null); // initialize cart display until we're able to fill the cart (e.g. item count to zero)
+        updateCartIndicators(null, 0, 0); // initialize cart display until we're able to fill the cart (e.g. item count to zero)
         ((ListView) rightDrawer.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
 
         // Fresh start?
@@ -304,7 +305,7 @@ public class MainActivity extends Activity
     }
 
     /** Sets item count indicator on cart icon and cart drawer title */
-    public void updateCartIndicators(Cart cart) {
+    public void updateCartIndicators(Cart cart, int minExpectedBusinessDays, int maxExpectedBusinessDays) {
         Resources r = getResources();
 
         int totalItemCount = 0;
@@ -351,8 +352,14 @@ public class MainActivity extends Activity
         cartProceedToCheckout.setVisibility(totalItemCount == 0? View.GONE : View.VISIBLE);
 
         // add info to checkout fragment which may be displayed behind cart
+        String deliveryRange;
+        if (maxExpectedBusinessDays > minExpectedBusinessDays) {
+            deliveryRange = minExpectedBusinessDays + " - " + maxExpectedBusinessDays;
+        } else {
+            deliveryRange = ""+minExpectedBusinessDays;
+        }
         Bundle checkoutBundle = checkoutDrawerItem.instantiate(this).getArguments();
-        checkoutBundle.putString(CheckoutFragment.BUNDLE_PARAM_DELIVERYRANGE, "TBD");
+        checkoutBundle.putString(CheckoutFragment.BUNDLE_PARAM_DELIVERYRANGE, deliveryRange);
         checkoutBundle.putFloat(CheckoutFragment.BUNDLE_PARAM_PRETAXSUBTOTAL, preTaxSubtotal);
     }
 
