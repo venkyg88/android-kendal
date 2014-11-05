@@ -7,6 +7,7 @@ package com.staples.mobile.cfa.cart;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,7 +30,12 @@ import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.cart.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -75,6 +81,9 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     // cart object
     private Cart cart;
 
+    int minExpectedBusinessDays;
+    int maxExpectedBusinessDays;
+
 
     public CartAdapter(Activity activity, int cartItemLayoutResId, ProgressIndicator progressIndicator) {
         super(activity, cartItemLayoutResId);
@@ -103,8 +112,15 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         return cart;
     }
 
+    public int getMinExpectedBusinessDays() {
+        return minExpectedBusinessDays;
+    }
 
-    /* Views */
+    public int getMaxExpectedBusinessDays() {
+        return maxExpectedBusinessDays;
+    }
+
+/* Views */
 
 
     @Override
@@ -338,25 +354,57 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
             cart = null;
             clear();
 
+
             // get data from cartContent request
             List<Cart> cartCollection = cartContents.getCart();
             if (cartCollection != null && cartCollection.size() > 0) {
                 cart = cartCollection.get(0);
                 List<Product> products = cart.getProduct();
                 if (products != null) {
-                    String shippingEstimateLabel = activity.getResources().getString(R.string.expected_delivery);
-                    String shippingEstimate = null;
+                    List<CartItem> listItems = new ArrayList<CartItem>();
                     // iterate thru products in reverse order so newest item appears first
                     for (int i = products.size() - 1;  i >= 0;  i--) {
                         Product product = products.get(i);
                         CartItem cartItem = new CartItem(product);
-                        if (product.getExpectedBusinessDayDelivery() != null  &&
-                                !product.getExpectedBusinessDayDelivery().equals(shippingEstimate)) {
-                            shippingEstimate = product.getExpectedBusinessDayDelivery();
-                            cartItem.setExpectedDelivery(shippingEstimateLabel + " " + shippingEstimate);
-                        }
-                        add(cartItem);
+                        listItems.add(cartItem);
                     }
+
+                    // sort by expected delivery date
+                    Collections.sort(listItems, new Comparator<CartItem>() {
+                        @Override
+                        public int compare(CartItem cartItem1, CartItem cartItem2) {
+                            if (cartItem1.getMinExpectedBusinessDays() != cartItem2.getMinExpectedBusinessDays()) {
+                                return cartItem1.getMinExpectedBusinessDays() - cartItem2.getMinExpectedBusinessDays();
+                            } else {
+                                return cartItem1.getMaxExpectedBusinessDays() - cartItem2.getMaxExpectedBusinessDays();
+                            }
+                        }
+                    });
+
+                    // calculate expected delivery times
+                    String shippingEstimateLabel = activity.getResources().getString(R.string.expected_delivery);
+                    String leadTimeDescription = null;
+                    minExpectedBusinessDays = -1;
+                    maxExpectedBusinessDays = -1;
+                    for (int i = 0; i < listItems.size(); i++) {
+                        CartItem cartItem = listItems.get(i);
+                        if (cartItem.getLeadTimeDescription() != null  &&
+                                !cartItem.getLeadTimeDescription().equals(leadTimeDescription)) {
+                            leadTimeDescription = cartItem.getLeadTimeDescription();
+                            cartItem.setExpectedDelivery(shippingEstimateLabel + " " + leadTimeDescription);
+                        }
+                        if (minExpectedBusinessDays == -1 ||
+                                cartItem.getMinExpectedBusinessDays() < minExpectedBusinessDays) {
+                            minExpectedBusinessDays = cartItem.getMinExpectedBusinessDays();
+                        }
+                        if (maxExpectedBusinessDays == -1 ||
+                                cartItem.getMaxExpectedBusinessDays() > maxExpectedBusinessDays) {
+                            maxExpectedBusinessDays = cartItem.getMaxExpectedBusinessDays();
+                        }
+                    }
+
+                    // add items to the adapter list
+                    addAll(listItems);
                 }
             }
             notifyDataSetChanged();
