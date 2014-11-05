@@ -145,7 +145,8 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
 
         // query for order status
         showProgressIndicator();
-        secureApi.getOrderStatus(RECOMMENDATION, STORE_ID, LOCALE, zipCode, CATALOG_ID, CLIENT_ID, orderNumber, orderStatusListener);
+        secureApi.getOrderStatus(RECOMMENDATION, STORE_ID, LOCALE, zipCode, CATALOG_ID,
+                CLIENT_ID, orderNumber, 1, 100, orderStatusListener);
 
 
         return view;
