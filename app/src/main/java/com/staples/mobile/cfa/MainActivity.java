@@ -285,6 +285,10 @@ public class MainActivity extends Activity
         return (selectFragment(fragment, Transition.SLIDE, true));
     }
 
+    public boolean navigateToFragment(Fragment fragment) {
+        return (selectFragment(fragment, Transition.SLIDE, true));
+    }
+
     /** Sets item count indicator on cart icon and cart drawer title */
     public void updateCartIndicators(Cart cart) {
         Resources r = getResources();
