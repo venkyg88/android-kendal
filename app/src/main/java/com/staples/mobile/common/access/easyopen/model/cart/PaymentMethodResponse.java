@@ -11,7 +11,7 @@ import com.staples.mobile.common.access.easyopen.model.SupportsApiErrors;
 import java.util.List;
 
 public class PaymentMethodResponse implements SupportsApiErrors {
-ed
+
     // include this so that ((CartContents)retrofitError.getBody()).getErrors()
     // can be examined in 400 Bad Request failure response (e.g. in debugger)
     private List<ApiError> errors;
