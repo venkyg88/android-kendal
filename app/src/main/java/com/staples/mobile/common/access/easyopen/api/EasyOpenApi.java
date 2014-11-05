@@ -100,6 +100,15 @@ public interface EasyOpenApi {
         Callback<TokenObject> callback
     );
 
+    //https://api.staples.com/v1/10001/loginidentity/@self?client_id={your-client-id}
+    @DELETE("/{version}/{storeId}/loginidentity/@self")
+    public void registeredUserSignOut(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("client_id") String client_id,
+            Callback<String> callback
+    );
+
     // https://api.staples.com/v1/10001/member/registeruser?locale=en_US&client_id={your-client-id}
     @POST("/{version}/{storeId}/member/registeruser")
     public void registerUser(

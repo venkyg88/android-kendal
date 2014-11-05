@@ -354,7 +354,7 @@ public class MainActivity extends Activity
             selectLoginFragment();
         }
         if(buttonText.equals("Sign Out")){
-            Access.getInstance().setTokens(null, null, false);
+            loginHelper.registerUserSignOut();
             selectDrawerItem(homeDrawerItem, Transition.NONE, true);
             loginHelper.getGuestTokens();
             accountBtn.setText("Sign In");

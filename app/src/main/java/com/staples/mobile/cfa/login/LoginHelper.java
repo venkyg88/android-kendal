@@ -166,4 +166,21 @@ public class LoginHelper {
                 }
         );
     }
+
+    public void registerUserSignOut ()
+    {
+        easyOpenApi.registeredUserSignOut(RECOMMENDATION, STORE_ID,CLIENT_ID, new Callback<String>() {
+            @Override
+            public void success(String s, Response response) {
+                Log.i("Status Code", " " + response.getStatus());
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.i("Fail Message For User Signout", " " + error.getUrl() + error.getMessage());
+
+            }
+        }
+      );
+    }
 }

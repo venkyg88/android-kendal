@@ -125,10 +125,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             setEmaiId(((EditText) getView().findViewById(R.id.emailIdRegister)).getText().toString());
             setRegisterUsername(((EditText) getView().findViewById(R.id.userNameRegister)).getText().toString());
             setRegisterPassword(((EditText) getView().findViewById(R.id.passwordRegister)).getText().toString());
-            Access.getInstance().setTokens(null, null, false);
 
             if(!getRegisterUsername().isEmpty() && !getRegisterPassword().isEmpty())
             {
+                Access.getInstance().setTokens(null, null, false);
                 loginHelper.registerUser(getEmaiId(), getRegisterUsername(), getRegisterPassword());
 
             }
