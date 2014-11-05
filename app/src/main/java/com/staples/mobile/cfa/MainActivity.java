@@ -345,22 +345,6 @@ public class MainActivity extends Activity
         drawerLayout.openDrawer(rightDrawer);
     }
 
-    public void accountBtnClick(View view)
-    {
-        Button accountBtn = (Button)view;
-        String buttonText = accountBtn.getText().toString();
-
-        if(buttonText.equals("Sign In")){
-            selectLoginFragment();
-        }
-        if(buttonText.equals("Sign Out")){
-            loginHelper.registerUserSignOut();
-            selectDrawerItem(homeDrawerItem, Transition.NONE, true);
-            loginHelper.getGuestTokens();
-            accountBtn.setText("Sign In");
-        }
-    }
-
     // Action bar & topper clicks
 
     @Override
@@ -400,6 +384,21 @@ public class MainActivity extends Activity
                 // activity anyway.
                 selectDrawerItem(checkoutDrawerItem, Transition.NONE, false);
                 break;
+        }
+    }
+
+    public void signInBtnClick(View view) {
+        Button accountBtn = (Button)view;
+        String buttonText = accountBtn.getText().toString();
+
+        if(buttonText.equals("Sign In")){
+            selectLoginFragment();
+        }
+        if(buttonText.equals("Sign Out")){
+            loginHelper.userSignOut();
+            selectDrawerItem(homeDrawerItem, Transition.NONE, true);
+            loginHelper.getGuestTokens();
+            accountBtn.setText("Sign In");
         }
     }
 

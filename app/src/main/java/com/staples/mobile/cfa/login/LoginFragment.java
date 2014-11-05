@@ -136,6 +136,5 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(getActivity(), "Username or Password cannot be null", Toast.LENGTH_LONG).show();
             }
         }
-
     }
 }

@@ -14,10 +14,12 @@ import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
+import com.staples.mobile.common.access.easyopen.model.login.EmptyResponse;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 import retrofit.Callback;
@@ -121,7 +123,7 @@ public class LoginHelper {
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
                         notifyListeners(false);
                         ((MainActivity)activity).selectProfileFragment();
-                        Button signInText = (Button)activity.findViewById(R.id.accountBtn);
+                        Button signInText = (Button)activity.findViewById(R.id.account_button);
                         signInText.setText("Sign Out");
 
                         Log.i("Status Code", " " + code);
@@ -167,20 +169,21 @@ public class LoginHelper {
         );
     }
 
-    public void registerUserSignOut ()
+    public void userSignOut ()
     {
-        easyOpenApi.registeredUserSignOut(RECOMMENDATION, STORE_ID,CLIENT_ID, new Callback<String>() {
+        easyOpenApi.registeredUserSignOut(RECOMMENDATION, STORE_ID, CLIENT_ID, new Callback<EmptyResponse>() {
             @Override
-            public void success(String s, Response response) {
-                Log.i("Status Code", " " + response.getStatus());
+            public void success(EmptyResponse empty, Response response) {
+                if(empty.getErrors()!=null) {
+                    Log.i("Code for signout", " " + empty.getErrors().get(0).getErrorMessage());
+                }
+                Log.i("Code for signout", " " + response.getStatus());
             }
 
             @Override
             public void failure(RetrofitError error) {
-                Log.i("Fail Message For User Signout", " " + error.getUrl() + error.getMessage());
-
+                Log.i("Url for signout", " " + error.getUrl());
             }
-        }
-      );
+        });
     }
 }

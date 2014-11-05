@@ -1,5 +1,6 @@
 package com.staples.mobile.common.access.easyopen.api;
 
+import retrofit.client.Response;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.cart.AddressDetail;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
@@ -12,6 +13,7 @@ import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
 import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInfo;
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
+import com.staples.mobile.common.access.easyopen.model.login.EmptyResponse;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
@@ -106,7 +108,7 @@ public interface EasyOpenApi {
             @EncodedPath("version") String version,
             @EncodedPath("storeId") String storeId,
             @Query("client_id") String client_id,
-            Callback<String> callback
+            Callback<EmptyResponse> callback
     );
 
     // https://api.staples.com/v1/10001/member/registeruser?locale=en_US&client_id={your-client-id}
