@@ -40,7 +40,7 @@ public class RatingStars extends View {
     private Config config;
     private int gravity;
     private float rating;
-    private int reviews;
+    private Integer reviews;
     private String noReviews;
 
     private Rect src = new Rect();
@@ -172,7 +172,7 @@ public class RatingStars extends View {
         }
     }
 
-    public void setRating(float rating, int reviews) {
+    public void setRating(float rating, Integer reviews) {
         this.rating = rating;
         this.reviews = reviews;
         invalidate();
@@ -188,7 +188,8 @@ public class RatingStars extends View {
     public void onDraw(Canvas canvas) {
         // Get text
         String text;
-        if (reviews<=0 && noReviews!=null) text = " (" + noReviews + ")";
+        if (reviews==null) text = null;
+        else if (reviews<=0 && noReviews!=null) text = " (" + noReviews + ")";
         else text = " (" + reviews + ")";
 
         // Use gravity to determine left position
@@ -196,7 +197,7 @@ public class RatingStars extends View {
             dst.left = getPaddingLeft();
         } else {
             float slack = getWidth()-getPaddingLeft()-getPaddingRight()-5*config.starWidth;
-            slack -= config.textPaint.measureText(text, 0, text.length());
+            if (text!=null) slack -= config.textPaint.measureText(text, 0, text.length());
             dst.left = getPaddingLeft();
             if (gravity==Gravity.CENTER_HORIZONTAL) dst.left += slack/2.0f;
             else if (gravity==Gravity.RIGHT) dst.left += slack;
@@ -225,7 +226,9 @@ public class RatingStars extends View {
         }
 
         // Draw review count
-        dst.top += (config.starHeight -0.7f*config.textPaint.ascent())/2.0f; // Fudge for visual centering
-        canvas.drawText(text, dst.left, dst.top, config.textPaint);
+        if (text!=null) {
+            dst.top += (config.starHeight - 0.7f * config.textPaint.ascent()) / 2.0f; // Fudge for visual centering
+            canvas.drawText(text, dst.left, dst.top, config.textPaint);
+        }
     }
 }
