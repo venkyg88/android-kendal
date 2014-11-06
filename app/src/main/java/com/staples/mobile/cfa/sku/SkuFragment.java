@@ -12,16 +12,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.HorizontalScrollView;
 import android.widget.TabHost;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PagerStripe;
 import com.staples.mobile.cfa.widget.PriceSticker;
@@ -29,8 +30,14 @@ import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.browse.*;
-import com.staples.mobile.common.access.easyopen.model.reviews.*;
+import com.staples.mobile.common.access.easyopen.model.browse.Availability;
+import com.staples.mobile.common.access.easyopen.model.browse.BulletDescription;
+import com.staples.mobile.common.access.easyopen.model.browse.Description;
+import com.staples.mobile.common.access.easyopen.model.browse.Image;
+import com.staples.mobile.common.access.easyopen.model.browse.Product;
+import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
+import com.staples.mobile.common.access.easyopen.model.reviews.Data;
+import com.staples.mobile.common.access.easyopen.model.reviews.ReviewSet;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -43,11 +50,11 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener,
-                                                     View.OnClickListener, FragmentManager.OnBackStackChangedListener{
+        View.OnClickListener, FragmentManager.OnBackStackChangedListener {
     private static final String TAG = "SkuFragment";
 
-    private static final String DESCRIPTION =" Description";
-    private static final String SPECIFICATIONS =" Specifications";
+    private static final String DESCRIPTION = " Description";
+    private static final String SPECIFICATIONS = " Specifications";
     private static final String REVIEWS = "Reviews";
 
     private static final String RECOMMENDATION = "v1";
@@ -57,7 +64,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private static final String LOCALE = "en_US";
 
     private static final String ZIPCODE = "01010";
-//    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
+    //    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
     private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     private static final int MAXFETCH = 50;
@@ -90,7 +97,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         Log.d(TAG, "onCreateView()");
 
         Bundle args = getArguments();
-        if (args!=null) {
+        if (args != null) {
             identifier = args.getString("identifier");
         }
 
@@ -149,10 +156,10 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         // Initiate API calls
         EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
         api.getSkuDetails(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
-                           ZIPCODE, CLIENT_ID, null, MAXFETCH, new SkuDetailsCallback());
+                ZIPCODE, CLIENT_ID, null, MAXFETCH, new SkuDetailsCallback());
         api.getReviews(RECOMMENDATION, identifier, CLIENT_ID, new ReviewSetCallback());
 
-        return(wrapper);
+        return (wrapper);
     }
 
     @Override
@@ -171,7 +178,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         @Override
         public View createTabContent(String tag) {
-            return(view);
+            return (view);
         }
     }
 
@@ -186,31 +193,31 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     private String formatNumbers(Product product) {
         // Safety check
-        if (product==null) return(null);
+        if (product == null) return (null);
         String skuNumber = product.getSku();
         String modelNumber = product.getManufacturerPartNumber();
-        if (skuNumber==null && modelNumber==null) return(null);
+        if (skuNumber == null && modelNumber == null) return (null);
 
         // Skip redundant numbers
-        if (skuNumber!=null && modelNumber!=null && skuNumber.equals(modelNumber))
+        if (skuNumber != null && modelNumber != null && skuNumber.equals(modelNumber))
             modelNumber = null;
 
         Resources res = getActivity().getResources();
         StringBuilder sb = new StringBuilder();
 
-        if (skuNumber!=null) {
+        if (skuNumber != null) {
             sb.append(res.getString(R.string.item));
             sb.append(":\u00a0");
             sb.append(skuNumber);
         }
 
-        if (modelNumber!=null) {
-            if (sb.length()>0) sb.append("   ");
+        if (modelNumber != null) {
+            if (sb.length() > 0) sb.append("   ");
             sb.append(res.getString(R.string.model));
             sb.append(":\u00a0");
             sb.append(modelNumber);
         }
-        return(sb.toString());
+        return (sb.toString());
     }
 
     public static boolean buildDescription(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
@@ -219,24 +226,24 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         // Add descriptions
         List<Description> paragraphs = product.getParagraph();
-        if (paragraphs!=null) {
-            for(Description paragraph : paragraphs) {
-                 String text = paragraph.getText();
-                 if (text!=null) {
-                     TextView item = (TextView) inflater.inflate(R.layout.sku_paragraph_item, parent, false);
-                     parent.addView(item);
-                     item.setText(text);
-                     item.setMaxLines(limit);
-                     described = true;
-                 }
+        if (paragraphs != null) {
+            for (Description paragraph : paragraphs) {
+                String text = paragraph.getText();
+                if (text != null) {
+                    TextView item = (TextView) inflater.inflate(R.layout.sku_paragraph_item, parent, false);
+                    parent.addView(item);
+                    item.setText(text);
+                    item.setMaxLines(limit);
+                    described = true;
+                }
             }
         }
 
         // Add bullets
         List<BulletDescription> bullets = product.getBulletDescription();
-        if (bullets!=null) {
-            for(BulletDescription bullet : bullets) {
-                if (count>=limit) break;
+        if (bullets != null) {
+            for (BulletDescription bullet : bullets) {
+                if (count >= limit) break;
                 String text = bullet.getText();
                 if (text != null) {
                     View item = inflater.inflate(R.layout.sku_bullet_item, parent, false);
@@ -247,11 +254,10 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             }
         }
 
-        return(described || count>0);
+        return (described || count > 0);
     }
 
-    public static boolean buildSpecifications(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
-        ViewGroup table = null;
+    protected static boolean addSpecifications(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
         int rowCount = 0;
         String specName;
         String specValue;
@@ -259,10 +265,10 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         // Add specification
         List<Description> specs = product.getSpecification();
         if (specs != null) {
-            table = (ViewGroup) inflater.inflate(R.layout.sku_spec_table, parent, false);
+            TableLayout table = (TableLayout) inflater.inflate(R.layout.sku_spec_table, parent, false);
             parent.addView(table);
 
-            for(Description spec : specs) {
+            for (Description spec : specs) {
                 if (rowCount >= limit) {
                     break;
                 }
@@ -287,17 +293,17 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             }
         }
 
-        return(rowCount > 0);
+        return (rowCount > 0);
     }
 
-    private void addAccessory(Product product){
+    private void addAccessory(Product product) {
         List<Product> accessories = product.getAccessory();
         String accessoryImageUrl;
         String accessoryTitle;
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        for(final Product accessory : accessories) {
+        for (final Product accessory : accessories) {
             accessoryImageUrl = accessory.getImage().get(0).getUrl();
             accessoryTitle = accessory.getProductName();
             final String sku = accessory.getSku();
@@ -370,7 +376,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     private void processSkuDetails(SkuDetails sku) {
         List<Product> products = sku.getProduct();
-        if (products!=null && products.size()>0) {
+        if (products != null && products.size() > 0) {
             // Use the first product in the list
             Product product = products.get(0);
             tabAdapter.setProduct(product);
@@ -379,7 +385,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
             Button button = (Button) wrapper.findViewById(R.id.add_to_cart);
             Availability availability = Availability.getProductAvailability(product);
-            switch(availability) {
+            switch (availability) {
                 case NOTHING:
                 case SKUSET:
                 case RETAILONLY:
@@ -399,18 +405,18 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
             // Add images
             List<Image> images = product.getImage();
-            if (images!=null && images.size()>0) {
-                for(Image image : images) {
+            if (images != null && images.size() > 0) {
+                for (Image image : images) {
                     String url = image.getUrl();
-                    if (url!=null) imageAdapter.add(url);
+                    if (url != null) imageAdapter.add(url);
                 }
             }
 
             // Handle 0, 1, many images
             int n = imageAdapter.getCount();
-            if (n==0) imagePager.setVisibility(View.GONE);
+            if (n == 0) imagePager.setVisibility(View.GONE);
             else {
-                if (n>1) stripe.setCount(imageAdapter.getCount());
+                if (n > 1) stripe.setCount(imageAdapter.getCount());
                 else stripe.setVisibility(View.GONE);
                 imageAdapter.notifyDataSetChanged();
             }
@@ -428,49 +434,52 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             if (!buildDescription(inflater, (ViewGroup) summary.findViewById(R.id.description), product, 3))
                 summary.findViewById(R.id.description_detail).setVisibility(View.GONE);
 
-            // Add specifications
-            if (!buildSpecifications(inflater, (ViewGroup) summary.findViewById(R.id.specifications), product, 3)) {
+            // Check if the product has specifications
+            if (product.getSpecification() != null) {
+                // Add specifications
+                addSpecifications(inflater, (ViewGroup) summary.findViewById(R.id.specifications), product, 3);
+                Log.d(TAG, "Product has specification.");
+            } else {
                 summary.findViewById(R.id.specifications).setVisibility(View.GONE);
                 summary.findViewById(R.id.specification_detail).setVisibility(View.GONE);
+                Log.d(TAG, "Product has no specification.");
             }
 
             // Check if the product has accessories
-            if(product.getAccessory() != null){
+            if (product.getAccessory() != null) {
                 // Add accessories
                 addAccessory(product);
                 Log.d(TAG, "Product has accessories.");
-            }
-            else{
-                TextView accessoryText = (TextView) summary.findViewById(R.id.accessory_title);
-                accessoryText.setVisibility(View.GONE);
+            } else {
+                summary.findViewById(R.id.accessory_title).setVisibility(View.GONE);
                 Log.d(TAG, "Product has no accessories.");
             }
         }
     }
 
     public static String formatTimestamp(String raw) {
-        if (raw==null) return(null);
+        if (raw == null) return (null);
 
-        if (iso8601==null)
+        if (iso8601 == null)
             iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
         try {
             Date date = iso8601.parse(raw);
             String text = DateFormat.getDateInstance().format(date);
-            return(text);
-        } catch(ParseException e) {
-            return(null);
+            return (text);
+        } catch (ParseException e) {
+            return (null);
         }
     }
 
     private void processReviewSet(ReviewSet reviews) {
-        if (reviews==null) return;
+        if (reviews == null) return;
         List<Data> datas = reviews.getData();
-        if (datas==null || datas.size()<1) return;
+        if (datas == null || datas.size() < 1) return;
         tabAdapter.setReviews(datas);
 
         Data item = datas.get(0);
-        if (item!=null) {
+        if (item != null) {
             // Inflate review block
             LayoutInflater inflater = getActivity().getLayoutInflater();
             ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
@@ -479,14 +488,14 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
             // Set items
             String created = formatTimestamp(item.getCreated_datetime());
-            if (created!=null)
+            if (created != null)
                 ((TextView) view.findViewById(R.id.sku_review_date)).setText(created);
             else ((TextView) view.findViewById(R.id.sku_review_date)).setVisibility(View.GONE);
 
             ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(item.getRating(), null);
 
             String comments = item.getComments();
-            if (comments!=null)
+            if (comments != null)
                 ((TextView) view.findViewById(R.id.sku_review_comments)).setText(comments);
             else ((TextView) view.findViewById(R.id.sku_review_comments)).setVisibility(View.GONE);
         }
@@ -503,7 +512,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 //            }
     }
 
-   // TabHost notifications
+    // TabHost notifications
 
     public void onTabChanged(String tag) {
         int index;
@@ -512,7 +521,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         if (tag.equals(DESCRIPTION)) index = 0;
         else if (tag.equals(SPECIFICATIONS)) index = 1;
         else if (tag.equals(REVIEWS)) index = 2;
-        else throw(new RuntimeException("Unknown tag from TabHost"));
+        else throw (new RuntimeException("Unknown tag from TabHost"));
 
         tabPager.setCurrentItem(index);
     }
@@ -546,12 +555,12 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     }
 
     @Override
-    public void	onBackStackChanged() {
+    public void onBackStackChanged() {
         FragmentManager manager = getFragmentManager();
         int n = manager.getBackStackEntryCount();
-        if (n<1) return;
-        String name = manager.getBackStackEntryAt(n-1).getName();
-        if (name!=null && name.equals("SkuDetail")) return;
+        if (n < 1) return;
+        String name = manager.getBackStackEntryAt(n - 1).getName();
+        if (name != null && name.equals("SkuDetail")) return;
         manager.removeOnBackStackChangedListener(this);
         wrapper.setState(DataWrapper.State.DONE);
         details.setVisibility(View.GONE);
@@ -560,7 +569,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     @Override
     public void onClick(View view) {
-        switch(view.getId()) {
+        switch (view.getId()) {
             case R.id.description_detail:
                 shiftToDetail(0);
                 break;
