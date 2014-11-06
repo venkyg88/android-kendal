@@ -333,8 +333,11 @@ public class MainActivity extends Activity
         rightDrawerAction.setText(totalItemCount == 0 ? null : Integer.toString(totalItemCount));
 
         // Set text of cart drawer title
-        if (totalItemCount==0) cartTitle.setText(r.getString(R.string.your_cart));
-        else cartTitle.setText(getResources().getQuantityString(R.plurals.your_cart, totalItemCount, totalItemCount));
+        if (totalItemCount==0) {
+            cartTitle.setText(r.getString(R.string.your_cart));
+        } else {
+            cartTitle.setText(r.getQuantityString(R.plurals.your_cart, totalItemCount, totalItemCount));
+        }
 
         // set text of free shipping msg
 
