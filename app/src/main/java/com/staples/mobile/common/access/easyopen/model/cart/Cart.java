@@ -15,8 +15,8 @@ public class Cart {
     private float subTotal;
     private int totalItems;
     private boolean webOnly;
-    private String shippingCharge;
-    private float totalTax;
+    private String shippingCharge; // must be String since may contain "Free"
+    private float totalTax;       // returned by api.getTax()
 
     public String getDelivery() {
         return delivery;

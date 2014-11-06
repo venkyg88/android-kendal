@@ -51,6 +51,22 @@ public class QuantityEditor extends FrameLayout {
         initView(context, attrs);
     }
 
+    /** calls setError(error) on widget
+     *
+     * @param error
+     */
+    public void setErrorIndicator(CharSequence error) {
+        //int color = error? 0xFF0000:0xFFFFFF;
+//        editText.setError(error? "Update failed":null);
+//        if (spinner.getSelectedView() != null) {
+//            ((TextView)spinner.getSelectedView()).setError(error? "Update failed":null);
+//        }
+        editText.setError(error);
+        if (spinner.getSelectedView() != null) {
+            ((TextView)spinner.getSelectedView()).setError(error);
+        }
+    }
+
     private void initView(Context context, AttributeSet attrs) {
 
         this.context = context;
@@ -89,6 +105,7 @@ public class QuantityEditor extends FrameLayout {
                 }
             }
         });
+
 
 
         // get attributes from layout if any

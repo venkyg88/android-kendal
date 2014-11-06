@@ -135,6 +135,7 @@
 
     <!-- coupons & rewards -->
     <RelativeLayout
+        android:id="@+id/co_coupons_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#cccccc"
@@ -157,8 +158,10 @@
 
     <!-- shipping -->
     <RelativeLayout
+        android:id="@+id/co_shipping_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:background="#cccccc">
         <TextView
             style="@style/CheckoutFooter"
@@ -180,8 +183,10 @@
 
     <!-- sales tax -->
     <RelativeLayout
+        android:id="@+id/co_tax_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:background="#cccccc">
         <TextView
             style="@style/CheckoutFooter"
@@ -199,10 +204,11 @@
 
     <!-- submit order -->
     <RelativeLayout
-        android:id="@+id/checkout_submit"
+        android:id="@+id/co_submission_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FF6666">
+        android:visibility="gone"
+        android:background="#FF3636">
         <TextView
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"

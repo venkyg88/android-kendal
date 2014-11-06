@@ -6,6 +6,7 @@ package com.staples.mobile.cfa.checkout;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -72,6 +73,9 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     private Activity activity;
 
     private LinearLayoutWithProgressOverlay checkoutLayout;
+    private View shippingLayout;
+    private View taxLayout;
+    private View submissionLayout;
     private TextView shippingAddrVw;
     private TextView paymentMethodVw;
     private TextView billingAddrVw;
@@ -122,12 +126,17 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
 
+        Resources r = getResources();
+
         activity = getActivity();
 
         // inflate and get child views
         View view = inflater.inflate(R.layout.checkout_fragment, container, false);
         checkoutLayout = (LinearLayoutWithProgressOverlay) view.findViewById(R.id.checkout);
         checkoutLayout.setCartProgressOverlay(view.findViewById(R.id.checkout_progress_overlay));
+        shippingLayout = view.findViewById(R.id.co_shipping_layout);
+        submissionLayout = view.findViewById(R.id.co_submission_layout);
+        taxLayout = view.findViewById(R.id.co_tax_layout);
         shippingAddrVw = (TextView) view.findViewById(R.id.checkout_shipping_addr);
         paymentMethodVw = (TextView) view.findViewById(R.id.checkout_payment_method);
         billingAddrVw = (TextView) view.findViewById(R.id.checkout_billing_addr);
@@ -141,16 +150,22 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.shipping_addr_add).setOnClickListener(this);
         view.findViewById(R.id.payment_method_add).setOnClickListener(this);
         view.findViewById(R.id.billing_addr_add).setOnClickListener(this);
-        view.findViewById(R.id.checkout_submit).setOnClickListener(this);
+        submissionLayout.setOnClickListener(this);
 
         // Set initial visibility
         showProgressIndicator();
 
         // get order info from bundle
         Bundle checkoutBundle = this.getArguments();
-        deliveryRangeVw.setText(checkoutBundle.getString(BUNDLE_PARAM_DELIVERYRANGE));
+        String deliveryRange = checkoutBundle.getString(BUNDLE_PARAM_DELIVERYRANGE);
         pretaxSubtotal = checkoutBundle.getFloat(BUNDLE_PARAM_PRETAXSUBTOTAL);
 
+        // set delivery range text
+        if ("1".equals(deliveryRange)) {
+            deliveryRangeVw.setText(r.getQuantityString(R.plurals.business_days, 1, "1"));
+        } else {
+            deliveryRangeVw.setText(r.getQuantityString(R.plurals.business_days, 2, deliveryRange));
+        }
 
         // get api objects
         secureApi = Access.getInstance().getEasyOpenApi(true);
@@ -248,7 +263,7 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
             case R.id.billing_addr_add:
                 Toast.makeText(activity, "TBD", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.checkout_submit:
+            case R.id.co_submission_layout:
                 submitPaymentMethod(null); // cid not necessary for registered users
                 break;
         }
@@ -556,12 +571,10 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
 
         boolean shippingChargeListener; // true if shipping charge listener
         boolean taxListener; // true if tax listener
-        boolean cartListener; // true if cart listener
 
         CartListener(boolean shippingChargeListener, boolean taxListener) {
             this.shippingChargeListener = shippingChargeListener;
             this.taxListener = taxListener && !shippingChargeListener;
-            this.cartListener = (!shippingChargeListener && !taxListener);
         }
 
         @Override
@@ -576,34 +589,34 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
             if (taxListener) {
                 tax = cart.getTotalTax();
                 taxVw.setText(currencyFormat.format(tax));
-                updateGrandTotal();
+                taxLayout.setVisibility(View.VISIBLE);
+                if (pretaxSubtotal != null && tax != null) {
+                    checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax));
+                    submissionLayout.setVisibility(View.VISIBLE);
+                }
+                hideProgressIndicator();
             }
 
             if (shippingChargeListener) {
-                shippingChargeVw.setText(""+cart.getShippingCharge());
-            }
-
-
-            hideProgressIndicator();
-        }
-
-        private void updateGrandTotal() {
-            if (pretaxSubtotal != null && tax != null) {
-                checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax));
-            } else {
-                checkoutTotalVw.setText("");
+                String shippingCharge = cart.getShippingCharge(); // this may be text (e.g. "Free")
+                try { // if possible, parse floating value and format as money
+                    shippingCharge = currencyFormat.format(Float.parseFloat(shippingCharge));
+                } catch(NumberFormatException e) { /* normal to fail (e.g. if equal to "Free") */}
+                shippingChargeVw.setText(shippingCharge);
+                shippingLayout.setVisibility(View.VISIBLE);
             }
         }
+
 
         @Override
         public void failure(RetrofitError retrofitError) {
-
             String msg = "Error getting math story: " + ApiError.getErrorMessage(retrofitError);
             Log.d(TAG, msg);
             Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
 
-          //  respondToFailure("Unable to obtain cart information: " + ApiError.getErrorMessage(retrofitError));
-            // note: workaround to unknown field errors is to annotate model with @JsonIgnoreProperties(ignoreUnknown = true)
+            if (taxListener) {
+                hideProgressIndicator();
+            }
         }
     }
 
@@ -627,8 +640,6 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
                 // get tax and shipping charge
                 secureApi.getTax(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, taxListener);
                 secureApi.getShippingCharge(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, shippingChargeListener);
-
-                Toast.makeText(activity, "precheckout succeeded", Toast.LENGTH_SHORT).show();
             } else {
                 if (validationAlert != null) {
                     Toast.makeText(activity, "Address alert: " + validationAlert, Toast.LENGTH_SHORT).show();

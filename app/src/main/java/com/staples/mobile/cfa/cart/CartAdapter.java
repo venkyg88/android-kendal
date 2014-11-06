@@ -75,7 +75,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
     // widget listeners
     private QtyDeleteButtonListener qtyDeleteButtonListener;
-    private QtyUpdateButtonListener qtyUpdateButtonListener;
+//    private QtyUpdateButtonListener qtyUpdateButtonListener;
     private QtyChangeListener qtyChangeListener;
 
     // cart object
@@ -101,7 +101,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         // create widget listeners
         qtyDeleteButtonListener = new QtyDeleteButtonListener();
-        qtyUpdateButtonListener = new QtyUpdateButtonListener();
+//        qtyUpdateButtonListener = new QtyUpdateButtonListener();
         qtyChangeListener = new QtyChangeListener();
 
     }
@@ -166,7 +166,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         // associate cart position with each widget
         vh.qtyWidget.setTag(position);
         vh.deleteButton.setTag(position);
-        vh.updateButton.setTag(position);
+//        vh.updateButton.setTag(position);
 
         // associate qty widget with cart item
         cartItem.setQtyWidget(vh.qtyWidget);
@@ -174,13 +174,14 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         // set widget listeners
         vh.qtyWidget.setOnQtyChangeListener(qtyChangeListener);
         vh.deleteButton.setOnClickListener(qtyDeleteButtonListener);
-        vh.updateButton.setOnClickListener(qtyUpdateButtonListener);
+//        vh.updateButton.setOnClickListener(qtyUpdateButtonListener);
 
         // set quantity (AFTER listeners set up above)
         vh.qtyWidget.setQtyValue(cartItem.getProposedQty());
 
         // set visibility of update button
-        vh.updateButton.setVisibility(cartItem.isProposedQtyDifferent()? View.VISIBLE : View.GONE);
+//        vh.updateButton.setVisibility(cartItem.isProposedQtyDifferent()? View.VISIBLE : View.GONE);
+        vh.qtyWidget.setErrorIndicator(cartItem.isProposedQtyDifferent()? "Update failed" : null);
 
         return(view);
     }
@@ -336,7 +337,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
             priceSticker = (PriceSticker) convertView.findViewById(R.id.cartitem_price);
             qtyWidget = (QuantityEditor) convertView.findViewById(R.id.cartitem_qty);
             deleteButton = (Button) convertView.findViewById(R.id.cartitem_delete);
-            updateButton = (Button) convertView.findViewById(R.id.cartitem_update);
+//            updateButton = (Button) convertView.findViewById(R.id.cartitem_update);
         }
     }
 

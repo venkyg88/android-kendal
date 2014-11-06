@@ -47,6 +47,10 @@
     <string name="confirmation_title">Order Confirmation</string>
     <string name="order_confirmation_msg">Thank you for your order!</string>
     <string name="continue_shopping">Continue Shopping</string>
+    <plurals name="business_days">
+        <item quantity="one">1 business day</item>
+        <item quantity="other">%s business days</item>
+    </plurals>
 
     <string name="description">Description</string>
     <string name="specifications">Specifications</string>
