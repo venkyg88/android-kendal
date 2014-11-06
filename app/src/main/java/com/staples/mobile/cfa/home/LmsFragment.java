@@ -76,8 +76,17 @@ public class LmsFragment
     private Picasso picasso;
     private Drawable noPhoto;
 
-    private int parentLayoutWidthPx;
-    private int parentLayoutHeightPx;
+    private int aItemWidth;
+    private int aItemHeight;
+
+    private int bItemWidth;
+    private int bItemHeight;
+
+    private int cItemWidth;
+    private int cItemHeight;
+
+    private int dItemWidth;
+    private int dItemHeight;
 
     private View.OnClickListener itemOnClickListener;
 
@@ -187,118 +196,120 @@ public class LmsFragment
                 lmsItem = new LmsItem(item.getTitle(), item.getBanner(), skuList, item.getSize());
                 lmsItems.add(lmsItem);
 
-                String size = item.getSize();
+                String size = lmsItem.size;
 
                 if (size.equalsIgnoreCase("A")) {
+
                     lmsItemsA.add(lmsItem);
+
                 } else if (size.equalsIgnoreCase("B")) {
+
                     lmsItemsB.add(lmsItem);
+
                 } else if (size.equalsIgnoreCase("C")) {
+
                     lmsItemsC.add(lmsItem);
+
                 } else if (size.equalsIgnoreCase("D")) {
+
                     lmsItemsD.add(lmsItem);
                 }
             }
 
-            if (lmsItemsA.size() > 0) {
-                doLmsItemsABD(lmsItemsA, R.drawable.banner_a_color_small, deviceInfo.getSmallestAbsWidthPixels());
-            }
-            if (lmsItemsB.size() > 0) {
-                doLmsItemsABD(lmsItemsB, R.drawable.banner_b_color_small, (deviceInfo.getSmallestAbsWidthPixels() / 2));
-            }
-            if (lmsItemsC.size() > 0) {
-                doLmsItemsC(R.drawable.banner_c_color_small);
-            }
-            if (lmsItemsD.size() > 0) {
-                doLmsItemsABD(lmsItemsD, R.drawable.banner_d_color_small, (deviceInfo.getSmallestAbsWidthPixels() / 4));
+            boolean isPortrait = deviceInfo.isCurrentOrientationPortrait(resources);
+
+            if (isPortrait) {
+                doPortrait();
+            } else {
+                doLandscape();
             }
         }
         activity.showMainScreen();
     }
 
-    private void doLmsItemsABD(List<LmsItem> lmsItems, int bannerResourceId, int subLayoutHeight) {
+    private void doPortrait() {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsABD():"
-                        + " lmsItems[" + lmsItems + "]"
-                        + " bannerResourceId[" + bannerResourceId + "]"
-                        + " subLayoutHeight[" + subLayoutHeight + "]"
+        if (LOGGING) Log.v(TAG, "LmsFragment:doPortrait():"
                         + " this[" + this + "]"
         );
 
-        parentLayoutWidthPx = deviceInfo.getWidthPixels(); // pixels
-        parentLayoutHeightPx = deviceInfo.getHeightPixels(); // pixels
+        // A items are square.
+        aItemWidth = aItemHeight = deviceInfo.getSmallestAbsWidthPixels();
+
+        bItemWidth = aItemWidth;        // same width as an A item.
+        bItemHeight = aItemHeight / 2;  // half the height of an A item.
+
+        cItemWidth = bItemWidth / 2;    // half the width of a A item.
+        cItemHeight = bItemHeight;      // same height as a B item.
+
+        dItemWidth = aItemWidth;        // same width as an A item.
+        dItemHeight = aItemHeight / 4;  // quarter the height of an A item.
+
+        if (lmsItemsA.size() > 0) {
+            doLmsItemsABDPort(lmsItemsA);
+        }
+        if (lmsItemsB.size() > 0) {
+            doLmsItemsABDPort(lmsItemsB);
+        }
+        if (lmsItemsC.size() > 0) {
+            doLmsItemsCPort();
+        }
+        if (lmsItemsD.size() > 0) {
+            doLmsItemsABDPort(lmsItemsD);
+        }
+
+    } // doPortrait()
+
+    private void doLmsItemsABDPort(List<LmsItem> lmsItems) {
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsABDPort():"
+                        + " lmsItems[" + lmsItems + "]"
+                        + " this[" + this + "]"
+        );
 
         for (LmsItem lmsItem : lmsItems) {
 
-            if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsABD(): lmsItem:"
-                            + " lmsItem.title[" + lmsItem.title + "]"
-                            + " lmsItem.bannerUrl[" + lmsItem.bannerUrl + "]"
-                            + " this[" + this + "]"
-            );
+            String size = lmsItem.size;
+            int subLayoutHeight = 0;
 
-            LinearLayout.LayoutParams lmsItemLayoutParms = null;
+            if (size.equalsIgnoreCase("A")) {
 
-            LinearLayout.LayoutParams widgetLayoutParms = null;
+                subLayoutHeight = aItemHeight;
 
-            LinearLayout lmsSubLayout = null;
-            TextView titleTextView = null;
-            ImageView categoryImageView = null;
+            } else if (size.equalsIgnoreCase("B")) {
 
-            // LMS Sublayout
+                subLayoutHeight = bItemHeight;
 
-            lmsItemLayoutParms =
-                    new LinearLayout.LayoutParams(deviceInfo.getSmallestAbsWidthPixels(), // width
-                            subLayoutHeight); // height
+            } else if (size.equalsIgnoreCase("D")) {
 
-            lmsSubLayout = new LinearLayout(activity);
-            lmsSubLayout.setLayoutParams(lmsItemLayoutParms);
+                subLayoutHeight = dItemHeight;
+            }
 
-            lmsSubLayout.setId(lmsSubLayout.hashCode());
-            lmsSubLayout.setOrientation(LinearLayout.VERTICAL);
-            lmsSubLayout.setMeasureWithLargestChildEnabled(true);
-            lmsSubLayout.setTag(lmsItem);
-            lmsSubLayout.setOnClickListener(itemOnClickListener);
+            ImageView categoryImageView = getImageView();
+            setImage(categoryImageView, lmsItem.bannerUrl);
 
-            lmsScrollLayout.addView(lmsSubLayout);
+            // Vertical. Contains selectable content. Used to create a
+            // rectangular frame around the content.
+            LinearLayout widgetLayout = getWidgetLayout(aItemWidth, subLayoutHeight, categoryImageView);
+            widgetLayout.setTag(lmsItem);
+            widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.addView(categoryImageView);
 
-            // Category ImageView
-
-            categoryImageView = new ImageView(activity);
-            categoryImageView.setId(categoryImageView.hashCode());
-            categoryImageView.setAdjustViewBounds(true);
-            categoryImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-
-            widgetLayoutParms =
-                    new LinearLayout.LayoutParams(deviceInfo.getSmallestAbsWidthPixels(), // width
-                            LinearLayout.LayoutParams.WRAP_CONTENT); // height
-
-            categoryImageView.setLayoutParams(widgetLayoutParms);
-
-            lmsSubLayout.addView(categoryImageView);
-
-            Bitmap bannerBitMap = BitmapFactory.decodeResource(resources, bannerResourceId);
-            categoryImageView.setImageBitmap(bannerBitMap);
+            lmsScrollLayout.addView(widgetLayout);
         }
 
-    } // doLmsItemsABD()
+    } // doLmsItemsABDPort()
 
-    private void doLmsItemsC(int bannerResourceId) {
+    private void doLmsItemsCPort() {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsC():"
+        if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsCPort():"
                         + " this[" + this + "]"
         );
-
-        parentLayoutWidthPx = deviceInfo.getWidthPixels(); // pixels
-        parentLayoutHeightPx = deviceInfo.getHeightPixels(); // pixels
-
-        int subLayoutWidth = deviceInfo.getSmallestAbsWidthPixels() / 2;
-        int subLayoutHeight = deviceInfo.getSmallestAbsWidthPixels() / 2;
 
         LinearLayout lmsSubLayoutContainer = null;
 
         boolean firstSubInContainer = true;
         int lmsItemNbr = -1;
-        int lastLmsItem = (lmsItemsC.size() - 1);
 
         for (LmsItem lmsItem : lmsItemsC) {
 
@@ -314,49 +325,596 @@ public class LmsFragment
                 lmsScrollLayout.addView(lmsSubLayoutContainer);
             }
 
-            LinearLayout.LayoutParams lmsItemLayoutParms = null;
+            ImageView categoryImageView = getImageView();
+            setImage(categoryImageView, lmsItem.bannerUrl);
 
-            LinearLayout.LayoutParams widgetLayoutParms = null;
+            // Vertical. Contains selectable content. Used to create a
+            // rectangular frame around the content.
+            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, categoryImageView);
+            widgetLayout.setTag(lmsItem);
+            widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.addView(categoryImageView);
 
-            LinearLayout lmsSubLayout = null;
-            TextView titleTextView = null;
-            ImageView categoryImageView = null;
+            lmsSubLayoutContainer.addView(widgetLayout);
+        }
 
-            // LMS Sublayout
+    } // doLmsItemsCPort()
 
-            lmsItemLayoutParms =
-                    new LinearLayout.LayoutParams(subLayoutWidth, // width
-                            subLayoutHeight); // height
+    private void doLandscape() {
 
-            lmsSubLayout = new LinearLayout(activity);
-            lmsSubLayout.setLayoutParams(lmsItemLayoutParms);
+        if (LOGGING) Log.v(TAG, "LmsFragment:doLandscape():"
+                        + " this[" + this + "]"
+        );
 
-            lmsSubLayout.setId(lmsSubLayout.hashCode());
-            lmsSubLayout.setOrientation(LinearLayout.VERTICAL);
-            lmsSubLayout.setMeasureWithLargestChildEnabled(true);
-            lmsSubLayout.setTag(lmsItem);
-            lmsSubLayout.setOnClickListener(itemOnClickListener);
+        if (lmsItemsA.size() > 0) {
+            doLmsItemsALand();
+        } else {
+            doLmsItemsLand();
+        }
 
-            lmsSubLayoutContainer.addView(lmsSubLayout);
+    } // doLandscape()
+
+    private void doLmsItemsALand() {
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsALand():"
+                        + " this[" + this + "]"
+        );
+
+        // Handle the A item.
+
+        LmsItem lmsItemA = lmsItemsA.get(0);
+
+        // A items are square.
+        aItemWidth = (deviceInfo.getLargestAbsWidthPixels() / 2);
+        aItemHeight = aItemWidth;
+
+        bItemWidth = aItemWidth;        // same width as an A item.
+        bItemHeight = aItemHeight / 2;  // half the height of an A item.
+
+        cItemWidth = aItemWidth / 2;    // half the width of a A item.
+        cItemHeight = bItemHeight;      // same height as a B item.
+
+        dItemWidth = aItemWidth;        // same width as an A item.
+        dItemHeight = aItemHeight / 4;  // quarter the height of an A item.
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsALand():"
+                        + " aItemWidth[" + aItemWidth + "]"
+                        + " aItemHeight[" + aItemHeight + "]"
+                        + " bItemWidth[" + bItemWidth + "]"
+                        + " bItemHeight[" + bItemHeight + "]"
+                        + " cItemWidth[" + cItemWidth + "]"
+                        + " cItemHeight[" + cItemHeight + "]"
+                        + " dItemWidth[" + dItemWidth + "]"
+                        + " dItemHeight[" + dItemHeight + "]"
+                        + " this[" + this + "]"
+        );
+
+        // LMS Sublayout
+
+        // Horizontal. Contains A item and lmsBCDLayout.
+        LinearLayout lmsSubLayout = getSubLayout(aItemWidth * 2,
+                aItemHeight,
+                LinearLayout.HORIZONTAL);
+
+        lmsScrollLayout.addView(lmsSubLayout);
+
+        ImageView categoryImageView = getImageView();
+        setImage(categoryImageView, lmsItemA.bannerUrl);
+
+        // Vertical. Contains selectable content. Used to create a rectangular
+        // frame around the content.
+        LinearLayout widgetLayout = getWidgetLayout(aItemWidth, aItemHeight, categoryImageView);
+        widgetLayout.addView(categoryImageView);
+        widgetLayout.setTag(lmsItemA);
+        widgetLayout.setOnClickListener(itemOnClickListener);
+
+        lmsSubLayout.addView(widgetLayout);
+
+
+        // Vertical. Contains one or more B, C, and/or D items.
+        LinearLayout lmsBCDLayout = getBCDLayout();
+
+        lmsSubLayout.addView(lmsBCDLayout);
+
+        boolean aFilled = false;
+
+        while (true) {
+
+            // @@@ TODO Following code is buggy.
+
+            if (lmsItemsB.size() >= 2) {
+                aFilled = fillAWithB(lmsBCDLayout, 2);
+                break; // while (true)
+            }
+            if (lmsItemsB.size() > 0) {
+                fillAWithB(lmsBCDLayout, 1);
+                aFilled = fillAWithC(lmsBCDLayout, 1);
+                if (aFilled) break; // while (true)
+            }
+            if (lmsItemsC.size() > 0) {
+                aFilled = fillAWithC(lmsBCDLayout, 2);
+                if (aFilled) break; // while (true)
+            }
+            if (lmsItemsD.size() > 0) {
+                aFilled = fillAWithD(lmsBCDLayout, 4);
+                if (aFilled) break; // while (true)
+            }
+            break; // while (true)
+
+        } // while (true)
+
+        doLmsItemsLand();
+
+    } // doLmsItemsALand()
+
+    private boolean fillAWithB(LinearLayout lmsBCDLayout, int maxItems) {
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:fillAWithB():"
+                        + " this[" + this + "]"
+        );
+
+        LinearLayout.LayoutParams widgetLayoutParms = null;
+
+        int nbrListItems = Math.min(lmsItemsB.size(), maxItems);
+
+        int lmsItemNdx = 0;
+        LmsItem lmsItem = null;
+
+        for (lmsItemNdx = 0; lmsItemNdx < nbrListItems; lmsItemNdx++) {
+
+            lmsItem = lmsItemsB.get(0);
+
+            lmsItemsB.remove(0);
+
+            if (LOGGING) Log.v(TAG, "LmsFragment:fillAWithB(): lmsItem:"
+                            + " lmsItem.title[" + lmsItem.title + "]"
+                            + " lmsItem.bannerUrl[" + lmsItem.bannerUrl + "]"
+                            + " this[" + this + "]"
+            );
 
             // Category ImageView
 
-            categoryImageView = new ImageView(activity);
-            categoryImageView.setId(categoryImageView.hashCode());
-            categoryImageView.setAdjustViewBounds(true);
-            categoryImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            ImageView categoryImageView = getImageView();
+            setImage(categoryImageView, lmsItem.bannerUrl);
 
-            widgetLayoutParms =
-                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, // width
-                            LinearLayout.LayoutParams.WRAP_CONTENT); // height
+            // Vertical. Contains selectable content. Used to create a
+            // rectangular frame around the content.
+            LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, categoryImageView);
+            widgetLayout.setTag(lmsItem);
+            widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.addView(categoryImageView);
 
-            categoryImageView.setLayoutParams(widgetLayoutParms);
-
-            lmsSubLayout.addView(categoryImageView);
-
-            Bitmap bannerBitMap = BitmapFactory.decodeResource(resources, bannerResourceId);
-            categoryImageView.setImageBitmap(bannerBitMap);
+            lmsBCDLayout.addView(widgetLayout);
         }
 
-    } // doLmsItemsC()
+        boolean aFilled = (lmsItemNdx == maxItems) ? true : false;
+
+        return (aFilled);
+
+    } // fillAWithB()
+
+    private boolean fillAWithC(LinearLayout lmsBCDLayout, int maxItems) {
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:fillAWithC():"
+                        + " this[" + this + "]"
+        );
+
+        LinearLayout lmsSubLayoutContainer = null;
+
+        // maxItems is the maximum number of SubLayout containers allowed. Each
+        // SubLayout container can contain 2 list items.
+        int nbrListItems = Math.min(lmsItemsC.size(), (maxItems * 2));
+
+        boolean firstSubInContainer = true;
+
+        int nbrSubLayoutContainers = 0;
+
+        int lmsItemNdx = 0;
+        LmsItem lmsItem = null;
+
+        for (lmsItemNdx = 0; lmsItemNdx < nbrListItems; lmsItemNdx++) {
+
+            lmsItem = lmsItemsC.get(0);
+
+            lmsItemsC.remove(0);
+
+            firstSubInContainer = (lmsItemNdx % 2 == 0);
+
+            if (firstSubInContainer) {
+
+                lmsSubLayoutContainer = new LinearLayout(activity);
+                lmsSubLayoutContainer.setId(lmsSubLayoutContainer.hashCode());
+                lmsSubLayoutContainer.setOrientation(LinearLayout.HORIZONTAL);
+                lmsSubLayoutContainer.setMeasureWithLargestChildEnabled(true);
+
+                int padding = 0;
+                lmsSubLayoutContainer.setPadding(padding, padding, padding, padding);
+
+                lmsBCDLayout.addView(lmsSubLayoutContainer);
+
+                nbrSubLayoutContainers++;
+            }
+
+            ImageView categoryImageView = getImageView();
+            setImage(categoryImageView, lmsItem.bannerUrl);
+
+            // Vertical. Contains selectable content. Used to create a
+            // rectangular frame around the content.
+            LinearLayout widgetLayout = getWidgetLayout(cItemWidth,
+                    cItemHeight,
+                    categoryImageView);
+
+            widgetLayout.addView(categoryImageView);
+            widgetLayout.setTag(lmsItem);
+            widgetLayout.setOnClickListener(itemOnClickListener);
+
+            lmsSubLayoutContainer.addView(widgetLayout);
+        }
+
+        boolean aFilled = (nbrSubLayoutContainers == maxItems) ? true : false;
+
+        return (aFilled);
+
+    } // fillAWithC()
+
+    private boolean fillAWithD(LinearLayout lmsBCDLayout, int maxItems) {
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:fillAWithD():"
+                        + " this[" + this + "]"
+        );
+
+        LinearLayout.LayoutParams widgetLayoutParms = null;
+
+        int nbrListItems = Math.min(lmsItemsD.size(), maxItems);
+
+        int lmsItemNdx = 0;
+        LmsItem lmsItem = null;
+
+        for (lmsItemNdx = 0; lmsItemNdx < nbrListItems; lmsItemNdx++) {
+
+            lmsItem = lmsItemsD.get(0);
+
+            lmsItemsD.remove(0);
+
+            if (LOGGING) Log.v(TAG, "LmsFragment:fillAWithD(): lmsItem:"
+                            + " lmsItem.title[" + lmsItem.title + "]"
+                            + " lmsItem.bannerUrl[" + lmsItem.bannerUrl + "]"
+                            + " this[" + this + "]"
+            );
+
+            // Category ImageView
+
+            ImageView categoryImageView = getImageView();
+            setImage(categoryImageView, lmsItem.bannerUrl);
+
+            // Vertical. Contains selectable content. Used to create a
+            // rectangular frame around the content.
+            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, categoryImageView);
+            widgetLayout.setTag(lmsItem);
+            widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.addView(categoryImageView);
+
+            lmsBCDLayout.addView(widgetLayout);
+        }
+
+        boolean aFilled = (lmsItemNdx == maxItems) ? true : false;
+
+        return (aFilled);
+
+    } // fillAWithD()
+
+    private LinearLayout getWidgetLayout(int layoutWidth, int layoutHeight, View childView) {
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:getWidgetLayout():"
+                        + " layoutWidth[" + layoutWidth + "]"
+                        + " layoutHeight[" + layoutHeight + "]"
+                        + " childView[" + childView + "]"
+                        + " this[" + this + "]"
+        );
+
+        // Vertical. Contains selectable content. Used to create a rectangular
+        // frame around the content.
+        LinearLayout widgetLayout = null;
+
+        widgetLayout = new LinearLayout(activity);
+        widgetLayout.setBackgroundResource(R.drawable.rectangle_frame);
+
+        widgetLayout.setId(widgetLayout.hashCode());
+        widgetLayout.setOrientation(LinearLayout.VERTICAL);
+        widgetLayout.setMeasureWithLargestChildEnabled(true);
+
+        int padding = 0;
+        widgetLayout.setPadding(padding, padding, padding, padding);
+
+        LinearLayout.LayoutParams widgetLayoutParms =
+                new LinearLayout.LayoutParams(layoutWidth, // width
+                        layoutHeight); // height
+
+        int margin = 0;
+        widgetLayoutParms.setMargins(margin, margin, margin, margin); // left, top, right, bottom
+
+        childView.setLayoutParams(widgetLayoutParms);
+
+        return (widgetLayout);
+
+    } // getWidgetLayout()
+
+    private LinearLayout getBCDLayout() {
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:getBCDLayout():"
+                        + " this[" + this + "]"
+        );
+
+        LinearLayout.LayoutParams lmsBCDLayoutParms =
+
+                new LinearLayout.LayoutParams(aItemWidth, // width
+                        aItemHeight); // height
+
+        LinearLayout lmsBCDLayout = new LinearLayout(activity);
+        lmsBCDLayout.setLayoutParams(lmsBCDLayoutParms);
+
+        lmsBCDLayout.setId(lmsBCDLayout.hashCode());
+        lmsBCDLayout.setOrientation(LinearLayout.VERTICAL);
+        lmsBCDLayout.setMeasureWithLargestChildEnabled(true);
+
+        int padding = 0;
+        lmsBCDLayout.setPadding(padding, padding, padding, padding);
+
+        return (lmsBCDLayout);
+
+    } // getBCDLayout()
+
+    private LinearLayout getSubLayout(int layoutWidth, int layoutHeight, int orientation) {
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:getSubLayout():"
+                        + " layoutWidth[" + layoutWidth + "]"
+                        + " layoutHeight[" + layoutHeight + "]"
+                        + " this[" + this + "]"
+        );
+
+        LinearLayout.LayoutParams lmsSubLayoutParms =
+                new LinearLayout.LayoutParams(layoutWidth, // width
+                        layoutHeight); // height
+
+        LinearLayout lmsSubLayout = new LinearLayout(activity);
+
+        lmsSubLayout.setLayoutParams(lmsSubLayoutParms);
+        lmsSubLayout.setBackgroundResource(R.drawable.rectangle_frame);
+
+        lmsSubLayout.setId(lmsSubLayout.hashCode());
+        lmsSubLayout.setOrientation(orientation);
+        lmsSubLayout.setMeasureWithLargestChildEnabled(true);
+
+        int padding = 0;
+        lmsSubLayout.setPadding(padding, padding, padding, padding);
+
+        return (lmsSubLayout);
+
+    } // getSubLayout()
+
+    private ImageView getImageView() {
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:getImageView():"
+                        + " this[" + this + "]"
+        );
+
+        ImageView imageView = new ImageView(activity);
+        imageView.setId(imageView.hashCode());
+        imageView.setAdjustViewBounds(true);
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+        int padding = 24;
+        imageView.setPadding(padding, padding, padding, padding);
+
+        return (imageView);
+
+    } // getImageView()
+
+    private void setImage(ImageView imageView, String imageUrl) {
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:setImage():"
+                        + " imageUrl[" + imageUrl + "]"
+                        + " imageView[" + imageView + "]"
+                        + " this[" + this + "]"
+        );
+
+        RequestCreator requestCreator = picasso.load(imageUrl);
+        requestCreator.error(noPhoto);
+        requestCreator.into(imageView);
+        requestCreator.fit();
+
+    } // setImage()
+
+    private void doLmsItemsLand() {
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsLand():"
+                        + " this[" + this + "]"
+        );
+
+        if (lmsItemsB.size() > 0) {
+            fillWithBLand();
+        }
+        if (lmsItemsC.size() > 0) {
+            fillWithCLand();
+        }
+        if (lmsItemsD.size() > 0) {
+            fillWithDLand();
+        }
+
+    } // doLmsItemsLand()
+
+    private void fillWithBLand() {
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:fillWithBLand():"
+                        + " this[" + this + "]"
+        );
+
+        final int NBR_ITEMS_IN_CONTAINER = 2;
+
+        int nbrListItems = lmsItemsB.size();
+
+        boolean firstSubInContainer = true;
+
+        int lmsItemNdx = 0;
+        LmsItem lmsItem = null;
+
+        LinearLayout lmsSubLayoutContainer = null;
+
+        for (lmsItemNdx = 0; lmsItemNdx < nbrListItems; lmsItemNdx++) {
+
+            lmsItem = lmsItemsB.get(0);
+
+            lmsItemsB.remove(0);
+
+            firstSubInContainer = (lmsItemNdx % NBR_ITEMS_IN_CONTAINER == 0);
+
+            if (firstSubInContainer) {
+
+                lmsSubLayoutContainer = new LinearLayout(activity);
+                lmsSubLayoutContainer.setId(lmsSubLayoutContainer.hashCode());
+                lmsSubLayoutContainer.setOrientation(LinearLayout.HORIZONTAL);
+                lmsSubLayoutContainer.setMeasureWithLargestChildEnabled(true);
+
+                int padding = 0;
+                lmsSubLayoutContainer.setPadding(padding, padding, padding, padding);
+
+                lmsScrollLayout.addView(lmsSubLayoutContainer);
+            }
+
+            ImageView categoryImageView = getImageView();
+            setImage(categoryImageView, lmsItem.bannerUrl);
+
+            // Vertical. Contains selectable content. Used to create a
+            // rectangular frame around the content.
+            LinearLayout widgetLayout = getWidgetLayout(bItemWidth,
+                    bItemHeight,
+                    categoryImageView);
+
+            widgetLayout.addView(categoryImageView);
+            widgetLayout.setTag(lmsItem);
+            widgetLayout.setOnClickListener(itemOnClickListener);
+
+            lmsSubLayoutContainer.addView(widgetLayout);
+        }
+
+    } // fillWithBLand()
+
+    private void fillWithCLand() {
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:fillWithCLand():"
+                        + " this[" + this + "]"
+        );
+
+        final int NBR_ITEMS_IN_CONTAINER = 4;
+
+        int nbrListItems = lmsItemsC.size();
+
+        boolean firstSubInContainer = true;
+
+        int lmsItemNdx = 0;
+        LmsItem lmsItem = null;
+
+        LinearLayout lmsSubLayoutContainer = null;
+
+        for (lmsItemNdx = 0; lmsItemNdx < nbrListItems; lmsItemNdx++) {
+
+            lmsItem = lmsItemsC.get(0);
+
+            lmsItemsC.remove(0);
+
+            firstSubInContainer = (lmsItemNdx % NBR_ITEMS_IN_CONTAINER == 0);
+
+            if (firstSubInContainer) {
+
+                lmsSubLayoutContainer = new LinearLayout(activity);
+                lmsSubLayoutContainer.setId(lmsSubLayoutContainer.hashCode());
+                lmsSubLayoutContainer.setOrientation(LinearLayout.HORIZONTAL);
+                lmsSubLayoutContainer.setMeasureWithLargestChildEnabled(true);
+
+                int padding = 0;
+                lmsSubLayoutContainer.setPadding(padding, padding, padding, padding);
+
+                LinearLayout.LayoutParams subLayoutContainerLayoutParms =
+                        new LinearLayout.LayoutParams(cItemWidth * NBR_ITEMS_IN_CONTAINER, // width
+                                cItemHeight); // height
+
+                int margin = 0;
+                subLayoutContainerLayoutParms.setMargins(margin, margin, margin, margin); // left, top, right, bottom
+
+                lmsScrollLayout.addView(lmsSubLayoutContainer);
+            }
+
+            ImageView categoryImageView = getImageView();
+            setImage(categoryImageView, lmsItem.bannerUrl);
+
+            // Vertical. Contains selectable content. Used to create a
+            // rectangular frame around the content.
+            LinearLayout widgetLayout = getWidgetLayout(cItemWidth,
+                    cItemHeight,
+                    categoryImageView);
+
+            widgetLayout.addView(categoryImageView);
+            widgetLayout.setTag(lmsItem);
+            widgetLayout.setOnClickListener(itemOnClickListener);
+
+            lmsSubLayoutContainer.addView(widgetLayout);
+        }
+
+    } // fillWithCLand()
+
+    private void fillWithDLand() {
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:fillWithDLand():"
+                        + " this[" + this + "]"
+        );
+
+        final int NBR_ITEMS_IN_CONTAINER = 2;
+
+        int nbrListItems = lmsItemsD.size();
+
+        boolean firstSubInContainer = true;
+
+        int lmsItemNdx = 0;
+        LmsItem lmsItem = null;
+
+        LinearLayout lmsSubLayoutContainer = null;
+
+        for (lmsItemNdx = 0; lmsItemNdx < nbrListItems; lmsItemNdx++) {
+
+            lmsItem = lmsItemsD.get(0);
+
+            lmsItemsD.remove(0);
+
+            firstSubInContainer = (lmsItemNdx % NBR_ITEMS_IN_CONTAINER == 0);
+
+            if (firstSubInContainer) {
+
+                lmsSubLayoutContainer = new LinearLayout(activity);
+                lmsSubLayoutContainer.setId(lmsSubLayoutContainer.hashCode());
+                lmsSubLayoutContainer.setOrientation(LinearLayout.HORIZONTAL);
+                lmsSubLayoutContainer.setMeasureWithLargestChildEnabled(true);
+
+                int padding = 0;
+                lmsSubLayoutContainer.setPadding(padding, padding, padding, padding);
+
+                lmsScrollLayout.addView(lmsSubLayoutContainer);
+            }
+
+            ImageView categoryImageView = getImageView();
+            setImage(categoryImageView, lmsItem.bannerUrl);
+
+            // Vertical. Contains selectable content. Used to create a
+            // rectangular frame around the content.
+            LinearLayout widgetLayout = getWidgetLayout(dItemWidth,
+                    dItemHeight,
+                    categoryImageView);
+
+            widgetLayout.addView(categoryImageView);
+            widgetLayout.setTag(lmsItem);
+            widgetLayout.setOnClickListener(itemOnClickListener);
+
+            lmsSubLayoutContainer.addView(widgetLayout);
+        }
+
+    } // fillWithDLand()
 }
