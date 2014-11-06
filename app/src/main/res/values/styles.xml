@@ -124,7 +124,24 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="SkuSpecStyle">
+        <item name="android:textSize">16dp</item>
+    </style>
+    <style name="SkuSpecNameStyle" parent="SkuSpecStyle">
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingRight">4dp</item>
+    </style>
+    <style name="SkuSpecValueStyle" parent="SkuSpecStyle">
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">2dp</item>
+    </style>
+
     <style name="SkuSpecFont">
         <item name="android:textSize">16dp</item>
+    </style>
+
+    <style name="SkuReviewTitle">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

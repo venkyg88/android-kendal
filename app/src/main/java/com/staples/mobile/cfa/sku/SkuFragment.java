@@ -483,7 +483,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             // Inflate review block
             LayoutInflater inflater = getActivity().getLayoutInflater();
             ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
-            View view = inflater.inflate(R.layout.sku_review_item, parent, false);
+            View view = inflater.inflate(R.layout.sku_review_brief_item, parent, false);
             parent.addView(view);
 
             // Set items

@@ -62,6 +62,8 @@
     <string name="avail_instock">In stock</string>
     <string name="avail_outofstock">Out of stock</string>
 
+    <string name="would_you">Would you recommend this to a friend?</string>
+
     <string name="item">Item</string>
     <string name="model">Model</string>
 
