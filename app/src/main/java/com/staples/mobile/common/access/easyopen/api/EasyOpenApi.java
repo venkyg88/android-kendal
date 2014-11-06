@@ -2,6 +2,8 @@ package com.staples.mobile.common.access.easyopen.api;
 
 import retrofit.client.Response;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
+import com.staples.mobile.common.access.easyopen.model.browse.SearchResult;
+import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
 import com.staples.mobile.common.access.easyopen.model.cart.AddressDetail;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
 import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
@@ -10,16 +12,15 @@ import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderStatusContents;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
-import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
+import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInfo;
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
 import com.staples.mobile.common.access.easyopen.model.login.EmptyResponse;
+import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
-import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
-import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
-import com.staples.mobile.common.access.easyopen.model.browse.SearchResult;
+import com.staples.mobile.common.access.easyopen.model.reviews.ReviewSet;
 
 import retrofit.Callback;
 import retrofit.http.Body;
@@ -81,6 +82,14 @@ public interface EasyOpenApi {
         @Query("offset") Integer offset,
         @Query("limit") Integer limit,
         Callback<SkuDetails> callback
+    );
+
+    @GET("/{version}/display/reviews")
+    void getReviews(
+        @EncodedPath("version") String version,
+        @Query("page_id") String page_id,
+        @Query("client_id") String client_id,
+        Callback<ReviewSet> callback
     );
 
     // Logins & profile
