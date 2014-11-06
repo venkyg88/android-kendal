@@ -257,7 +257,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         return (described || count > 0);
     }
 
-    protected static boolean addSpecifications(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
+    protected static void addSpecifications(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
         int rowCount = 0;
         String specName;
         String specValue;
@@ -292,8 +292,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 }
             }
         }
-
-        return (rowCount > 0);
     }
 
     private void addAccessory(Product product) {

@@ -3,9 +3,10 @@
     style="@style/SkuSpecFont"
     android:layout_width="fill_parent"
     android:padding="10dp">
-    <TextView
-        android:id="@+id/name"/>
+
+    <TextView android:id="@+id/name" />
+
     <TextView
         android:id="@+id/value"
-        android:paddingLeft="10dp"/>
+        android:paddingLeft="10dp" />
 </TableRow>
