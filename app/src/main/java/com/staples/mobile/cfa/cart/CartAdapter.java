@@ -477,14 +477,18 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     /** listener class for text change */
     class QtyChangeListener implements QuantityEditor.OnQtyChangeListener {
         @Override
-        public void onQtyChange(View view) {
+        public void onQtyChange(View view, boolean validSpinnerValue) {
             CartItem cartItem = getItem((Integer)view.getTag());
 
             // default proposed qty to orig in case new value not parseable;
             cartItem.setProposedQty(cartItem.getQtyWidget().getQtyValue(cartItem.getQuantity()));
-            // notify reqardless of whether proposed differs from current because update button may
-            // be showing due to a previous difference
-            notifyDataSetChanged();
+
+            // if valid spinner value, then automatically update the cart
+            if (validSpinnerValue) {
+                updateItemQty(cartItem);
+            } else { // otherwise notify data set changed to make update button appear or disappear
+                notifyDataSetChanged();
+            }
         }
     }
 
@@ -497,7 +501,12 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
             CartItem cartItem = getItem((Integer)view.getTag());
 
             cartItem.getQtyWidget().hideSoftKeyboard();
-            cartItem.getQtyWidget().setQtyValue(0);  // this will trigger selection change which will handle the rest
+
+            // delete from cart via API
+            cartItem.setProposedQty(0);
+            updateItemQty(cartItem);
+
+//            cartItem.getQtyWidget().setQtyValue(0);  // this will trigger selection change which will handle the rest
         }
     }
 
