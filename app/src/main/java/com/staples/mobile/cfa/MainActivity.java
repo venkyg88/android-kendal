@@ -24,6 +24,7 @@ import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.checkout.ConfirmationFragment;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.profile.MemberObject;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.cfa.search.SearchBarView;
@@ -32,7 +33,9 @@ import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
+import com.staples.mobile.common.access.lms.LmsManager;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -61,6 +64,8 @@ public class MainActivity extends Activity
     private DrawerItem storeDrawerItem;
     private DrawerItem rewardsDrawerItem;
     private DrawerItem checkoutDrawerItem;
+    
+    private LoginHelper loginHelper;
     private DrawerItem confirmationDrawerItem;
 
     public enum Transition {
@@ -102,7 +107,7 @@ public class MainActivity extends Activity
         boolean freshStart = (bundle == null);
         prepareMainScreen(freshStart);
 
-        LoginHelper loginHelper = new LoginHelper(this);
+        loginHelper = new LoginHelper(this);
         loginHelper.registerLoginCompleteListener(this);
         // if already logged in (e.g. when device is rotated), don't login again, but do notify
         // that login is complete so that cart can be refilled
@@ -311,11 +316,17 @@ public class MainActivity extends Activity
         String shipping = "";
         float subtotal = 0;
         float preTaxSubtotal = 0;
+        float freeShippingThreshold = 0;
         if (cart != null) {
             totalItemCount = cart.getTotalItems();
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();
             preTaxSubtotal = cart.getPreTaxTotal();
+            LmsManager lmsManager = new LmsManager();
+            Configurator configurator = lmsManager.getConfigurator();
+            if (configurator != null) {
+                freeShippingThreshold = configurator.getPromotions().getFreeShippingThreshold().floatValue();
+            }
         }
 
         // set text of cart icon badge
@@ -326,10 +337,8 @@ public class MainActivity extends Activity
         else cartTitle.setText(getResources().getQuantityString(R.plurals.your_cart, totalItemCount, totalItemCount));
 
         // set text of free shipping msg
-        // TODO: get actual threshold from lms
-        // TODO: reconcile with shipping cost returned by api
-        float freeShippingThreshold = 99999.99f; // TODO: replace with call to lms
-        if (freeShippingThreshold > subtotal && !"Free".equals(shipping)) {
+
+        if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !MemberObject.isRewardsMember()) {
             // need to spend more to qualify for free shipping
             NumberFormat nf = DecimalFormat.getCurrencyInstance();
             cartFreeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
@@ -366,21 +375,6 @@ public class MainActivity extends Activity
     public void addItemToCart(String partNumber, int qty) {
         cartAdapter.addToCart(partNumber, qty);
         drawerLayout.openDrawer(rightDrawer);
-    }
-
-    public void accountBtnClick(View view)
-    {
-        Button accountBtn = (Button)view;
-        String buttonText = accountBtn.getText().toString();
-
-        if(buttonText.equals("Sign In")){
-            selectLoginFragment();
-        }
-        if(buttonText.equals("Sign Out")){
-            Access.getInstance().setTokens(null, null, true);
-            selectDrawerItem(homeDrawerItem, Transition.NONE, true);
-            accountBtn.setText("Sign In");
-        }
     }
 
     // Action bar & topper clicks
@@ -424,6 +418,21 @@ public class MainActivity extends Activity
                 // activity anyway.
                 selectDrawerItem(checkoutDrawerItem, Transition.NONE, true);
                 break;
+        }
+    }
+
+    public void signInBtnClick(View view) {
+        Button accountBtn = (Button)view;
+        String buttonText = accountBtn.getText().toString();
+
+        if(buttonText.equals("Sign In")){
+            selectLoginFragment();
+        }
+        if(buttonText.equals("Sign Out")){
+            loginHelper.userSignOut();
+            selectDrawerItem(homeDrawerItem, Transition.NONE, true);
+            loginHelper.getGuestTokens();
+            accountBtn.setText("Sign In");
         }
     }
 

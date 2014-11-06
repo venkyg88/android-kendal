@@ -5,12 +5,15 @@ import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.staples.mobile.R;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
+import com.staples.mobile.common.access.easyopen.model.reviews.Data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SkuTabAdapter extends PagerAdapter {
     private static final String TAG = "SkuPageAdapter";
@@ -19,6 +22,7 @@ public class SkuTabAdapter extends PagerAdapter {
     private ArrayList<SkuPageItem> array;
     private LayoutInflater inflater;
     private Product product;
+    private List<Data> reviews;
 
     private static class SkuPageItem {
         View view;
@@ -34,6 +38,10 @@ public class SkuTabAdapter extends PagerAdapter {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public void setReviews(List<Data> reviews) {
+        this.reviews = reviews;
     }
 
     @Override
@@ -55,20 +63,20 @@ public class SkuTabAdapter extends PagerAdapter {
 
         switch(position) {
             case 0:
-                item.view = inflater.inflate(R.layout.sku_detail, container, false);
+                item.view = inflater.inflate(R.layout.sku_detail_scroll, container, false);
                 parent = (ViewGroup) item.view.findViewById(R.id.details);
                 SkuFragment.buildDescription(inflater, parent, product, 50);
                 break;
             case 1:
-                item.view = inflater.inflate(R.layout.sku_detail, container, false);
+                item.view = inflater.inflate(R.layout.sku_detail_scroll, container, false);
                 parent = (ViewGroup) item.view.findViewById(R.id.details);
                 SkuFragment.buildSpecifications(inflater, parent, product, 50);
                 break;
             case 2:
-                item.view = new TextView(activity);
-                item.view.setPadding(10, 10, 10, 10);
-                ((TextView) item.view).setTextSize(20);
-                ((TextView) item.view).setText(item.title);
+                item.view = inflater.inflate(R.layout.sku_detail_list, container, false);
+                ReviewAdapter adapter = new ReviewAdapter(activity);
+                ((ListView) item.view).setAdapter(adapter);
+                adapter.setReviews(reviews);
                 break;
         }
 
