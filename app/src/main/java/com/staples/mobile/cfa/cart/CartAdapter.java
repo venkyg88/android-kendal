@@ -484,11 +484,12 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
             cartItem.setProposedQty(cartItem.getQtyWidget().getQtyValue(cartItem.getQuantity()));
 
             // if valid spinner value, then automatically update the cart
-            if (validSpinnerValue) {
-                updateItemQty(cartItem);
-            } else { // otherwise notify data set changed to make update button appear or disappear
-                notifyDataSetChanged();
-            }
+//            if (validSpinnerValue) {
+//                updateItemQty(cartItem);
+//            } else { // otherwise notify data set changed to make update button appear or disappear
+//                notifyDataSetChanged();
+//            }
+              updateItemQty(cartItem);
         }
     }
 
