@@ -30,7 +30,7 @@ import com.staples.mobile.R;
 public class QuantityEditor extends FrameLayout {
 
     public interface OnQtyChangeListener {
-        public void onQtyChange(View view);
+        public void onQtyChange(View view, boolean validSpinnerValue);
     }
 
     private static final String TAG = QuantityEditor.class.getSimpleName();
@@ -74,7 +74,7 @@ public class QuantityEditor extends FrameLayout {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (qtyChangeListener != null) {
-                    qtyChangeListener.onQtyChange(QuantityEditor.this);
+                    qtyChangeListener.onQtyChange(QuantityEditor.this, false);
                 }
                 return false;
             }
@@ -85,7 +85,7 @@ public class QuantityEditor extends FrameLayout {
             @Override
             public void onImeBack(EditTextWithImeBackEvent view, String text) {
                 if (qtyChangeListener != null) {
-                    qtyChangeListener.onQtyChange(QuantityEditor.this);
+                    qtyChangeListener.onQtyChange(QuantityEditor.this, false);
                 }
             }
         });
@@ -183,22 +183,25 @@ public class QuantityEditor extends FrameLayout {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             if (view==null) return; // safety for Robolectric tests
 
+            boolean validSpinnerValue = true;
+
             // if selection out of range, call setQtyValue to revert to editText widget
             String value = ((TextView) view).getText().toString();
             if (value != null && value.endsWith("+")) {
+                validSpinnerValue = false;
                 setQtyValue(maxSpinnerValue + 1);
             }
 
             // notify listener of item selection
             if (qtyChangeListener != null) {
-                qtyChangeListener.onQtyChange(QuantityEditor.this);
+                qtyChangeListener.onQtyChange(QuantityEditor.this, validSpinnerValue);
             }
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
             if (qtyChangeListener != null) {
-                qtyChangeListener.onQtyChange(QuantityEditor.this);
+                qtyChangeListener.onQtyChange(QuantityEditor.this, false);
             }
         }
     }
@@ -210,7 +213,7 @@ public class QuantityEditor extends FrameLayout {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
             // add items
-            for (int i = 0; i <= maxValue; i++) {
+            for (int i = 1; i <= maxValue; i++) {
                 add(Integer.toString(i));
             }
             add((maxValue+1) + "+");

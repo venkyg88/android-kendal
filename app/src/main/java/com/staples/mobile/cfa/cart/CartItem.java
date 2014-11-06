@@ -17,6 +17,8 @@ public class CartItem {
     private Product product;
     private int proposedQty;
     String expectedDelivery;
+    int minExpectedBusinessDays;
+    int maxExpectedBusinessDays;
 
     QuantityEditor qtyWidget;
 
@@ -24,6 +26,18 @@ public class CartItem {
     public CartItem(Product product) {
         this.product = product;
         this.proposedQty = product.getQuantity();
+
+        // parse out lead time info ("3 Business Days" or "3 - 5 Business Days")
+        String leadTimeDesc = product.getLeadTimeDescription();
+        int indexOfDash = leadTimeDesc.indexOf(" - ");
+        int indexOfText = leadTimeDesc.indexOf(" Business");
+        if (indexOfDash > 0) {
+            minExpectedBusinessDays = Integer.parseInt(leadTimeDesc.substring(0, indexOfDash));
+            maxExpectedBusinessDays = Integer.parseInt(leadTimeDesc.substring(indexOfDash+3, indexOfText));
+        } else {
+            minExpectedBusinessDays = Integer.parseInt(leadTimeDesc.substring(0, indexOfText));
+            maxExpectedBusinessDays = minExpectedBusinessDays;
+        }
     }
 
 
@@ -99,6 +113,11 @@ public class CartItem {
         this.expectedDelivery = expectedDelivery;
     }
 
+
+    public String getLeadTimeDescription() {
+        return product.getLeadTimeDescription();
+    }
+
     public int getQuantity() {
         return product.getQuantity();
     }
@@ -129,5 +148,13 @@ public class CartItem {
 
     public void setQtyWidget(QuantityEditor qtyWidget) {
         this.qtyWidget = qtyWidget;
+    }
+
+    public int getMinExpectedBusinessDays() {
+        return minExpectedBusinessDays;
+    }
+
+    public int getMaxExpectedBusinessDays() {
+        return maxExpectedBusinessDays;
     }
 }

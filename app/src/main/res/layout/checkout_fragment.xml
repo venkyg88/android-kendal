@@ -13,7 +13,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/cart_title"
+        android:id="@+id/checkout_title"
         android:layout_width="match_parent"
         style="@style/CartHeader"
         android:textSize="24sp"
