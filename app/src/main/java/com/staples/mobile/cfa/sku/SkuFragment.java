@@ -36,10 +36,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -255,30 +252,42 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     public static boolean buildSpecifications(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
         ViewGroup table = null;
-        int count = 0;
+        int rowCount = 0;
+        String specName;
+        String specValue;
 
-        // Add specification pairs
+        // Add specification
         List<Description> specs = product.getSpecification();
-        if (specs!=null) {
+        if (specs != null) {
+            table = (ViewGroup) inflater.inflate(R.layout.sku_spec_table, parent, false);
+            parent.addView(table);
+
             for(Description spec : specs) {
-                if (count>=limit) break;
-                String name = spec.getName();
-                String text = spec.getText();
-                if (name!=null && text!=null) {
-                    if (table==null) {
-                        table = (ViewGroup) inflater.inflate(R.layout.sku_spec_table, parent, false);
-                        parent.addView(table);
-                    }
+                if (rowCount >= limit) {
+                    break;
+                }
+
+                specName = spec.getName();
+                specValue = spec.getText();
+
+                if (specName != null && specValue != null) {
                     View item = inflater.inflate(R.layout.sku_spec_item, table, false);
                     table.addView(item);
-                    if ((count&1)!=0) item.setBackgroundColor(0xffdddddd);
-                    ((TextView) item.findViewById(R.id.name)).setText(name);
-                    ((TextView) item.findViewById(R.id.value)).setText(text);
-                    count++;
+
+                    // set dark color for even table rows
+                    if ((rowCount % 2) == 0) {
+                        item.setBackgroundColor(0xffdddddd);
+                    }
+
+                    ((TextView) item.findViewById(R.id.name)).setText(specName);
+                    ((TextView) item.findViewById(R.id.value)).setText(specValue);
+
+                    rowCount++;
                 }
             }
         }
-        return(count>0);
+
+        return(rowCount > 0);
     }
 
     private void addAccessory(Product product){
