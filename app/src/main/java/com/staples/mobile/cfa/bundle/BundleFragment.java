@@ -88,7 +88,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
 
     @Override
     public void success(Browse browse, Response response) {
-        int count = process_browse(browse);
+        int count = processBrowse(browse);
         if (count==0) wrapper.setState(DataWrapper.State.EMPTY);
         else wrapper.setState(DataWrapper.State.DONE);
         adapter.notifyDataSetChanged();
@@ -101,7 +101,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
         adapter.notifyDataSetChanged();
     }
 
-    private int process_browse(Browse browse) {
+    private int processBrowse(Browse browse) {
         if (browse==null) return(0);
         List<Category> categories = browse.getCategory();
         if (categories==null || categories.size()<1) return(0);
