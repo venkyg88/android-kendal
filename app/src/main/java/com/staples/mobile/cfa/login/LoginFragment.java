@@ -1,11 +1,13 @@
 package com.staples.mobile.cfa.login;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TabHost;
@@ -101,8 +103,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
         if(view == signInBtn)
         {
-            setUserName(((EditText) getView().findViewById(R.id.username)).getText().toString());
-            setPassword(((EditText)getView().findViewById(R.id.password)).getText().toString());
+            String userName = ((EditText) getView().findViewById(R.id.username)).getText().toString();
+            String password = ((EditText)getView().findViewById(R.id.password)).getText().toString();
+
+            setUserName(userName);
+            setPassword(password);
+
+            InputMethodManager keyboard = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
             if(!getUserName().isEmpty() && !getPassword().isEmpty())
             {
@@ -117,10 +125,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             setEmaiId(((EditText) getView().findViewById(R.id.emailIdRegister)).getText().toString());
             setRegisterUsername(((EditText) getView().findViewById(R.id.userNameRegister)).getText().toString());
             setRegisterPassword(((EditText) getView().findViewById(R.id.passwordRegister)).getText().toString());
-            Access.getInstance().setTokens(null, null, false);
 
             if(!getRegisterUsername().isEmpty() && !getRegisterPassword().isEmpty())
             {
+                Access.getInstance().setTokens(null, null, false);
                 loginHelper.registerUser(getEmaiId(), getRegisterUsername(), getRegisterPassword());
 
             }
@@ -128,6 +136,5 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(getActivity(), "Username or Password cannot be null", Toast.LENGTH_LONG).show();
             }
         }
-
     }
 }

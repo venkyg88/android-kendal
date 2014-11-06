@@ -32,6 +32,10 @@ import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.browse.*;
 import com.staples.mobile.common.access.easyopen.model.reviews.*;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +64,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     private static final int MAXFETCH = 50;
+
+    private static SimpleDateFormat iso8601;
 
     private String identifier;
 
@@ -143,11 +149,11 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         summary.findViewById(R.id.review_detail).setOnClickListener(this);
         wrapper.findViewById(R.id.add_to_cart).setOnClickListener(this);
 
-        EasyOpenApi test = Access.getInstance().getEasyOpenApi(false);
-        test.getSkuDetails(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
+        // Initiate API calls
+        EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
+        api.getSkuDetails(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
                            ZIPCODE, CLIENT_ID, null, MAXFETCH, new SkuDetailsCallback());
-        EasyOpenApi prod = Access.getInstance().getEasyOpenApi(false);
-        prod.getReviews(RECOMMENDATION, identifier, CLIENT_ID, new ReviewSetCallback());
+        api.getReviews(RECOMMENDATION, identifier, CLIENT_ID, new ReviewSetCallback());
 
         return(wrapper);
     }
@@ -344,7 +350,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private class ReviewSetCallback implements Callback<ReviewSet> {
         @Override
         public void success(ReviewSet reviews, Response response) {
-//            processReviewSet(reviews);
+            processReviewSet(reviews);
         }
 
         @Override
@@ -429,35 +435,60 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         }
     }
 
-//    private void processReviewSet(ReviewSet reviews) {
-//        if (reviews == null) return;
-//        List<Data> datas = reviews.getData();
-//        if (datas == null) return;
-//        for(Data data : datas) {
-//            int rating = data.getRating();
-//            String comments = data.getComments();
-//            if (comments!=null) {
-//                LayoutInflater inflater = getActivity().getLayoutInflater();
-//                ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
-//                View view = inflater.inflate(R.layout.sku_review_item, parent, false);
-//                ((TextView) view.findViewById(R.id.sku_review_date)).setText("Today");
-//                ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(rating, null);
-//                ((TextView) view.findViewById(R.id.sku_review_comments)).setText(comments);
-//                parent.addView(view);
-//                break;
+    public static String formatTimestamp(String raw) {
+        if (raw==null) return(null);
+
+        if (iso8601==null)
+            iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+        try {
+            Date date = iso8601.parse(raw);
+            String text = DateFormat.getDateInstance().format(date);
+            return(text);
+        } catch(ParseException e) {
+            return(null);
+        }
+    }
+
+    private void processReviewSet(ReviewSet reviews) {
+        if (reviews==null) return;
+        List<Data> datas = reviews.getData();
+        if (datas==null || datas.size()<1) return;
+        tabAdapter.setReviews(datas);
+
+        Data item = datas.get(0);
+        if (item!=null) {
+            // Inflate review block
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
+            View view = inflater.inflate(R.layout.sku_review_item, parent, false);
+            parent.addView(view);
+
+            // Set items
+            String created = formatTimestamp(item.getCreated_datetime());
+            if (created!=null)
+                ((TextView) view.findViewById(R.id.sku_review_date)).setText(created);
+            else ((TextView) view.findViewById(R.id.sku_review_date)).setVisibility(View.GONE);
+
+            ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(item.getRating(), null);
+
+            String comments = item.getComments();
+            if (comments!=null)
+                ((TextView) view.findViewById(R.id.sku_review_comments)).setText(comments);
+            else ((TextView) view.findViewById(R.id.sku_review_comments)).setVisibility(View.GONE);
+        }
+
+// TODO Review tags
+//            List<HashMap<String, List<String>>> tags = data.getReview_tags();
+//            if (tags!=null) {
+//                for(HashMap<String, List<String>> map : tags) {
+//                    Set<Map.Entry<String, List<String>>> set = map.entrySet();
+//                    for(Map.Entry entry : set) {
+//                        Log.d(TAG, entry.getKey() + " " + entry.getValue());
+//                    }
+//                }
 //            }
-//
-////            List<HashMap<String, List<String>>> tags = data.getReview_tags();
-////            if (tags!=null) {
-////                for(HashMap<String, List<String>> map : tags) {
-////                    Set<Map.Entry<String, List<String>>> set = map.entrySet();
-////                    for(Map.Entry entry : set) {
-////                        Log.d(TAG, entry.getKey() + " " + entry.getValue());
-////                    }
-////                }
-////            }
-//        }
-//    }
+    }
 
    // TabHost notifications
 

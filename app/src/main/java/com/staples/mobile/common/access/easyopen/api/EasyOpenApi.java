@@ -1,5 +1,6 @@
 package com.staples.mobile.common.access.easyopen.api;
 
+import retrofit.client.Response;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.SearchResult;
 import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
@@ -19,6 +20,7 @@ import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
 import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInfo;
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
+import com.staples.mobile.common.access.easyopen.model.login.EmptyResponse;
 import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
@@ -114,6 +116,15 @@ public interface EasyOpenApi {
         @EncodedPath("storeId") String storeId,
         @Query("client_id") String client_id,
         Callback<TokenObject> callback
+    );
+
+    //https://api.staples.com/v1/10001/loginidentity/@self?client_id={your-client-id}
+    @DELETE("/{version}/{storeId}/loginidentity/@self")
+    public void registeredUserSignOut(
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("client_id") String client_id,
+            Callback<EmptyResponse> callback
     );
 
     // https://api.staples.com/v1/10001/member/registeruser?locale=en_US&client_id={your-client-id}
