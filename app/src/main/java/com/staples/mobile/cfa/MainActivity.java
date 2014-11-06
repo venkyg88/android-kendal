@@ -435,7 +435,6 @@ public class MainActivity extends Activity
         if(buttonText.equals("Sign Out")){
             loginHelper.userSignOut();
             selectDrawerItem(homeDrawerItem, Transition.NONE, true);
-            loginHelper.getGuestTokens();
             accountBtn.setText("Sign In");
         }
     }

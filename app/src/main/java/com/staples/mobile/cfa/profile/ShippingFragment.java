@@ -75,6 +75,8 @@ public class ShippingFragment extends Fragment implements View.OnClickListener {
                 @Override
                 public void success(AddressId addressId, Response response) {
                     Toast.makeText(getActivity(), "Address Id " + addressId.getAddressId(), Toast.LENGTH_LONG).show();
+                    Fragment profileFragment = Fragment.instantiate(getActivity(), ProfileFragment.class.getName());
+                    ((MainActivity)getActivity()).navigateToFragment(profileFragment);
                 }
 
                 @Override
