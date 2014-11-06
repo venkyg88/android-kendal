@@ -22,6 +22,7 @@ import com.staples.mobile.R;
  * Star and text size is scaled to the android:textSize specified.
  * The main method is setRating(float rating, int reviews);
  * rating is 0.0 to 5.0 but handles clipping.
+ * reviews is the integer count or null for nothing to display
  */
 public class RatingStars extends View {
     private static final String TAG = "RatingStars";
