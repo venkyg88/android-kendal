@@ -414,8 +414,10 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 summary.findViewById(R.id.description_detail).setVisibility(View.GONE);
 
             // Add specifications
-            if (!buildSpecifications(inflater, (ViewGroup) summary.findViewById(R.id.specifications), product, 3))
+            if (!buildSpecifications(inflater, (ViewGroup) summary.findViewById(R.id.specifications), product, 3)) {
+                summary.findViewById(R.id.specifications).setVisibility(View.GONE);
                 summary.findViewById(R.id.specification_detail).setVisibility(View.GONE);
+            }
 
             // Check if the product has accessories
             if(product.getAccessory() != null){
@@ -424,6 +426,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 Log.d(TAG, "Product has accessories.");
             }
             else{
+                TextView accessoryText = (TextView) summary.findViewById(R.id.accessory_title);
+                accessoryText.setVisibility(View.GONE);
                 Log.d(TAG, "Product has no accessories.");
             }
         }

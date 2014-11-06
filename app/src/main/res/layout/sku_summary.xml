@@ -130,6 +130,7 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="5dp">
                 <TextView
+                    android:id="@+id/accessory_title"
                     style="@style/SkuSummaryHeader"
                     android:text="@string/accessories"/>
                 <HorizontalScrollView
