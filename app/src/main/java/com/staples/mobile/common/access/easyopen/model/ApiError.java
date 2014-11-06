@@ -4,6 +4,8 @@
 
 package com.staples.mobile.common.access.easyopen.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
 import retrofit.RetrofitError;
@@ -22,11 +24,23 @@ import retrofit.RetrofitError;
  *
  * Also include "implements SupportsApiErrors" to make use of the ApiError.getErrorMessage convenience method
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ApiError {
     String errorCode;
     String errorKey;
     String errorMessage;
     String errorParameters;
+
+    // need to include JsonIgnoreProperties flag above because insufficient-stock error includes an
+    // undocumented "items" property in the error response. for example:
+    //        "items": [
+    //            {
+    //                "substituteItem": {
+    //                    "partNumber": "803389",
+    //                    "quantity": "0.0"
+    //                }
+    //            }
+    //        ]
 
     public String getErrorCode() {
         return errorCode;
