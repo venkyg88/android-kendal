@@ -2,13 +2,14 @@ package com.staples.mobile.common.access.easyopen.model.cart;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.SupportsApiErrors;
 
 import java.util.List;
 
 /**
  * Created by Avinash Dodda.
  */
-public class AddressDetail {
+public class AddressDetail implements SupportsApiErrors {
 
     @JsonProperty("Cart")
     private List<Address> address;

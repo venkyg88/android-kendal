@@ -7,6 +7,7 @@ package com.staples.mobile.cfa.cart;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,10 +26,16 @@ import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.cart.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -74,6 +81,9 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     // cart object
     private Cart cart;
 
+    int minExpectedBusinessDays;
+    int maxExpectedBusinessDays;
+
 
     public CartAdapter(Activity activity, int cartItemLayoutResId, ProgressIndicator progressIndicator) {
         super(activity, cartItemLayoutResId);
@@ -102,8 +112,15 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         return cart;
     }
 
+    public int getMinExpectedBusinessDays() {
+        return minExpectedBusinessDays;
+    }
 
-    /* Views */
+    public int getMaxExpectedBusinessDays() {
+        return maxExpectedBusinessDays;
+    }
+
+/* Views */
 
 
     @Override
@@ -234,7 +251,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
             @Override
             public void failure(RetrofitError retrofitError) {
-                Log.i("Fail Message for getting the billing address", " " + retrofitError.getMessage());
+                Log.i("Fail Message for getting the billing address", " " + ApiError.getErrorMessage(retrofitError));
                 Log.i("Post URL address for getting the billing address", " " + retrofitError.getUrl());
             }
         }
@@ -258,7 +275,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
-                        Log.i("Fail Message for getting the shipping address", " " + retrofitError.getMessage());
+                        Log.i("Fail Message for getting the shipping address", " " + ApiError.getErrorMessage(retrofitError));
                         Log.i("Post URL address for getting the shipping address", " " + retrofitError.getUrl());
                     }
                 }
@@ -337,25 +354,57 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
             cart = null;
             clear();
 
+
             // get data from cartContent request
             List<Cart> cartCollection = cartContents.getCart();
             if (cartCollection != null && cartCollection.size() > 0) {
                 cart = cartCollection.get(0);
                 List<Product> products = cart.getProduct();
                 if (products != null) {
-                    String shippingEstimateLabel = activity.getResources().getString(R.string.expected_delivery);
-                    String shippingEstimate = null;
+                    List<CartItem> listItems = new ArrayList<CartItem>();
                     // iterate thru products in reverse order so newest item appears first
                     for (int i = products.size() - 1;  i >= 0;  i--) {
                         Product product = products.get(i);
                         CartItem cartItem = new CartItem(product);
-                        if (product.getExpectedBusinessDayDelivery() != null  &&
-                                !product.getExpectedBusinessDayDelivery().equals(shippingEstimate)) {
-                            shippingEstimate = product.getExpectedBusinessDayDelivery();
-                            cartItem.setExpectedDelivery(shippingEstimateLabel + " " + shippingEstimate);
-                        }
-                        add(cartItem);
+                        listItems.add(cartItem);
                     }
+
+                    // sort by expected delivery date
+                    Collections.sort(listItems, new Comparator<CartItem>() {
+                        @Override
+                        public int compare(CartItem cartItem1, CartItem cartItem2) {
+                            if (cartItem1.getMinExpectedBusinessDays() != cartItem2.getMinExpectedBusinessDays()) {
+                                return cartItem1.getMinExpectedBusinessDays() - cartItem2.getMinExpectedBusinessDays();
+                            } else {
+                                return cartItem1.getMaxExpectedBusinessDays() - cartItem2.getMaxExpectedBusinessDays();
+                            }
+                        }
+                    });
+
+                    // calculate expected delivery times
+                    String shippingEstimateLabel = activity.getResources().getString(R.string.expected_delivery);
+                    String leadTimeDescription = null;
+                    minExpectedBusinessDays = -1;
+                    maxExpectedBusinessDays = -1;
+                    for (int i = 0; i < listItems.size(); i++) {
+                        CartItem cartItem = listItems.get(i);
+                        if (cartItem.getLeadTimeDescription() != null  &&
+                                !cartItem.getLeadTimeDescription().equals(leadTimeDescription)) {
+                            leadTimeDescription = cartItem.getLeadTimeDescription();
+                            cartItem.setExpectedDelivery(shippingEstimateLabel + " " + leadTimeDescription);
+                        }
+                        if (minExpectedBusinessDays == -1 ||
+                                cartItem.getMinExpectedBusinessDays() < minExpectedBusinessDays) {
+                            minExpectedBusinessDays = cartItem.getMinExpectedBusinessDays();
+                        }
+                        if (maxExpectedBusinessDays == -1 ||
+                                cartItem.getMaxExpectedBusinessDays() > maxExpectedBusinessDays) {
+                            maxExpectedBusinessDays = cartItem.getMaxExpectedBusinessDays();
+                        }
+                    }
+
+                    // add items to the adapter list
+                    addAll(listItems);
                 }
             }
             notifyDataSetChanged();
@@ -363,7 +412,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            respondToFailure("Unable to obtain cart information: " + retrofitError.getMessage());
+            respondToFailure("Unable to obtain cart information: " + ApiError.getErrorMessage(retrofitError));
             // note: workaround to unknown field errors is to annotate model with @JsonIgnoreProperties(ignoreUnknown = true)
         }
     }
@@ -389,49 +438,18 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
             // if a successful insert, refill cart
             if (cartUpdate.getItemsAdded().size() > 0) {
-                fill();
+                fill();  // need updated info about the cart such as shipping and subtotals in addition to new quantities
+            } else {
+                // notify data set changed because qty text may have changed, but actual qty not
+                // and we need update button to be visible
+                notifyDataSetChanged();
             }
-
-            // can't do the following because need updated info about the cart such as shipping and subtotals
-//            // if an update (this assumes one product updated at a time)
-//            if (update) {
-//                // if no items updated, then refill cart to get accurate counts
-//                if (cartUpdate.getItemsAdded().size() == 0) {
-//                    fill();
-//                } else {
-//                    // determine which items were updated and fix their qty, no need to refill the cart
-//                    List<String> itemIds = convertItemIdsToStringList(cartUpdate.getItemsAdded());
-//                    for (int i = 0; i < getCount(); i++) {
-//                        CartItem cartItem = getItem(i);
-//                        if (cartItem.isProposedQtyDifferent() && itemIds.contains(cartItem.getOrderItemId())) {
-//                            cartItem.setQuantity(cartItem.getProposedQty());
-//                        }
-//                    }
-//                }
-//            } else {
-//                // if a successful insert, refill cart
-//                if (cartUpdate.getItemsAdded().size() > 0) {
-//                    fill();
-//                }
-//            }
-//            notifyDataSetChanged();
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            respondToFailure("Failed Cart Update: " + retrofitError.getMessage());
+            respondToFailure("Failed Cart Update: " + ApiError.getErrorMessage(retrofitError));
         }
-
-//        /** converts list of items into list of ids */
-//        private List<String> convertItemIdsToStringList(List<ItemsAdded> itemsAdded) {
-//            List<String> ids = new ArrayList<String>();
-//            for (ItemsAdded itemAdded : itemsAdded) {
-//                for (OrderItemId oid : itemAdded.getOrderItemIds()) {
-//                    ids.add(oid.getOrderItemId());
-//                }
-//            }
-//            return ids;
-//        }
     }
 
 
@@ -447,7 +465,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            respondToFailure("Failed Cart Item Deletion: " + retrofitError.getMessage());
+            respondToFailure("Failed Cart Item Deletion: " + ApiError.getErrorMessage(retrofitError));
         }
     }
 
@@ -459,14 +477,19 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     /** listener class for text change */
     class QtyChangeListener implements QuantityEditor.OnQtyChangeListener {
         @Override
-        public void onQtyChange(View view) {
+        public void onQtyChange(View view, boolean validSpinnerValue) {
             CartItem cartItem = getItem((Integer)view.getTag());
 
             // default proposed qty to orig in case new value not parseable;
             cartItem.setProposedQty(cartItem.getQtyWidget().getQtyValue(cartItem.getQuantity()));
-            // notify reqardless of whether proposed differs from current because update button may
-            // be showing due to a previous difference
-            notifyDataSetChanged();
+
+            // if valid spinner value, then automatically update the cart
+//            if (validSpinnerValue) {
+//                updateItemQty(cartItem);
+//            } else { // otherwise notify data set changed to make update button appear or disappear
+//                notifyDataSetChanged();
+//            }
+              updateItemQty(cartItem);
         }
     }
 
@@ -479,7 +502,12 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
             CartItem cartItem = getItem((Integer)view.getTag());
 
             cartItem.getQtyWidget().hideSoftKeyboard();
-            cartItem.getQtyWidget().setQtyValue(0);  // this will trigger selection change which will handle the rest
+
+            // delete from cart via API
+            cartItem.setProposedQty(0);
+            updateItemQty(cartItem);
+
+//            cartItem.getQtyWidget().setQtyValue(0);  // this will trigger selection change which will handle the rest
         }
     }
 
