@@ -2,7 +2,7 @@
     package="com.staples.mobile"
     android:versionCode="5"
     android:versionName="Kendall">
-    <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="20"/>
+    <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="21"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
