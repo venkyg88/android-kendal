@@ -135,4 +135,9 @@
         <item name="android:paddingLeft">4dp</item>
         <item name="android:paddingRight">2dp</item>
     </style>
+
+    <style name="SkuReviewTitle">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>
