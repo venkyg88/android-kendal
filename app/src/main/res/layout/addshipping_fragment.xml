@@ -44,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPostalAddress"
-        android:hint="Ship-To-Address"
+        android:hint="Address"
         android:ems="10"
         android:id="@+id/address"
         android:layout_below="@+id/phoneNumber"
@@ -57,8 +57,43 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"
-        android:id="@+id/button"
+        android:id="@+id/addressSaveBtn"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPostalAddress"
+        android:ems="10"
+        android:hint="City"
+        android:id="@+id/city"
+        android:layout_below="@+id/address"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/lastName"
+        android:layout_alignEnd="@+id/lastName" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="State"
+        android:id="@+id/state"
+        android:layout_below="@+id/city"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/lastName"
+        android:layout_toLeftOf="@+id/lastName" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="Zip Code"
+        android:ems="10"
+        android:id="@+id/zipCode"
+        android:layout_below="@+id/city"
+        android:layout_toRightOf="@+id/addressSaveBtn"
+        android:layout_toEndOf="@+id/addressSaveBtn" />
 
 </RelativeLayout>
