@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
+  -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+<com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay
+    android:id="@+id/confirmation"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/confirmation_title"
+        android:layout_width="match_parent"
+        style="@style/CartHeader"
+        android:textSize="24sp"
+        android:text="@string/confirmation_title"/>
+
+    <!-- scrollable contents -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#ffffff">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="6dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:textSize="24sp"
+                android:text="@string/order_confirmation_msg"/>
+            <TextView
+                android:id="@+id/order_number"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:textSize="24sp"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+    <!-- continue shopping -->
+    <TextView
+        android:id="@+id/continue_shopping_btn"
+        style="@style/CheckoutFooter"
+        android:layout_width="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:text="@string/continue_shopping"
+        android:textSize="28sp"
+        android:textColor="#FFFFFF"
+    />
+
+
+</com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay>
+
+<!-- progress whirly -->
+<RelativeLayout
+    android:id="@+id/confirmation_progress_overlay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone"
+    android:clickable="false"
+    android:background="#6f000022" >
+    <ProgressBar
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateOnly="true" />
+</RelativeLayout>
+
+</FrameLayout>
