@@ -2,13 +2,14 @@ package com.staples.mobile.common.access.easyopen.model.member;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.SupportsApiErrors;
 
 import java.util.List;
 
 /**
  * Created by Avinash Dodda.
  */
-public class MemberDetail {
+public class MemberDetail implements SupportsApiErrors {
 
     @JsonProperty("Member")
     private List<Member> member;

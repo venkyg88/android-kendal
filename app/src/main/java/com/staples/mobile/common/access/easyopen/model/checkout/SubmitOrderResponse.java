@@ -3,13 +3,14 @@ package com.staples.mobile.common.access.easyopen.model.checkout;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.SupportsApiErrors;
 
 import java.lang.StringBuilder;
 import java.lang.String;
 import java.util.List;
 
 @JsonPropertyOrder({"orderId", "staplesOrderNumber"})
-public class SubmitOrderResponse {
+public class SubmitOrderResponse implements SupportsApiErrors {
 
     private String orderId;
     private String staplesOrderNumber;

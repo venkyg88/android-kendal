@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:inputType="number"
+        android:maxLength="4"
         android:imeOptions="actionDone"
         android:selectAllOnFocus="true"
         android:layout_marginRight="6dp"
