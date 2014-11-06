@@ -4,9 +4,9 @@
     android:layout_width="fill_parent"
     android:padding="10dp">
 
-    <TextView android:id="@+id/name" />
+    <TextView android:id="@+id/specName" />
 
     <TextView
-        android:id="@+id/value"
+        android:id="@+id/specValue"
         android:paddingLeft="10dp" />
 </TableRow>

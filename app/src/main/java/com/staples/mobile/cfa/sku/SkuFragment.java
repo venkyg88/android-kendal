@@ -12,11 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -86,9 +86,11 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private ViewPager tabPager;
     private SkuTabAdapter tabAdapter;
 
-    // Accessory List
+    // Accessory Container
     private LinearLayout accessoryContainer;
-    private HorizontalScrollView accessoryScrollView;
+
+    // Spec Table Container
+    private TableLayout specContainer;
 
     private boolean shifted;
 
@@ -128,8 +130,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         details.setup();
 
         // Init accessory
-        accessoryContainer = (LinearLayout) wrapper.findViewById(R.id.accessory);
-        accessoryScrollView = (HorizontalScrollView) wrapper.findViewById(R.id.accessoryScrollView);
+        accessoryContainer = (LinearLayout) wrapper.findViewById(R.id.accessoryContainer);
 
         // Fill details (TabHost)
         DummyFactory dummy = new DummyFactory(getActivity());
@@ -277,16 +278,17 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 specValue = spec.getText();
 
                 if (specName != null && specValue != null) {
-                    View item = inflater.inflate(R.layout.sku_spec_item, table, false);
-                    table.addView(item);
+                    TableRow skuSpecRow = (TableRow) inflater.inflate(R.layout.sku_spec_item, table, false);
+                    table.addView(skuSpecRow);
 
                     // set dark color for even table rows
                     if ((rowCount % 2) == 0) {
-                        item.setBackgroundColor(0xffdddddd);
+                        skuSpecRow.setBackgroundColor(0xffdddddd);
                     }
 
-                    ((TextView) item.findViewById(R.id.name)).setText(specName);
-                    ((TextView) item.findViewById(R.id.value)).setText(specValue);
+                    // Set specification
+                    ((TextView) skuSpecRow.findViewById(R.id.specName)).setText(specName);
+                    ((TextView) skuSpecRow.findViewById(R.id.specValue)).setText(specValue);
 
                     rowCount++;
                 }
@@ -312,7 +314,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             ImageView accessoryImageView = (ImageView) skuAccessoryRow.findViewById(R.id.accessory_image);
             Picasso.with(getActivity()).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
 
-            // set listener for accessory image
+            // Set listener for accessory image
             accessoryImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -324,7 +326,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             TextView accessoryTitleTextView = (TextView) skuAccessoryRow.findViewById(R.id.accessory_title);
             accessoryTitleTextView.setText(accessoryTitle);
 
-            // set listener for accessory title
+            // Set listener for accessory title
             accessoryTitleTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
