@@ -308,6 +308,10 @@ public class MainActivity extends Activity
         return (selectFragment(fragment, Transition.SLIDE, true));
     }
 
+    public boolean navigateToFragment(Fragment fragment) {
+        return (selectFragment(fragment, Transition.SLIDE, true));
+    }
+
     /** Sets item count indicator on cart icon and cart drawer title */
     public void updateCartIndicators(Cart cart, int minExpectedBusinessDays, int maxExpectedBusinessDays) {
         Resources r = getResources();
@@ -434,7 +438,6 @@ public class MainActivity extends Activity
         if(buttonText.equals("Sign Out")){
             loginHelper.userSignOut();
             selectDrawerItem(homeDrawerItem, Transition.NONE, true);
-            loginHelper.getGuestTokens();
             accountBtn.setText("Sign In");
         }
     }

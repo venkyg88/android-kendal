@@ -24,6 +24,8 @@ import com.staples.mobile.common.access.easyopen.model.login.EmptyResponse;
 import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
+import com.staples.mobile.common.access.easyopen.model.member.AddAddress;
+import com.staples.mobile.common.access.easyopen.model.member.AddressId;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
 import com.staples.mobile.common.access.easyopen.model.reviews.ReviewSet;
 
@@ -371,4 +373,14 @@ public interface EasyOpenApi {
             Callback<MemberDetail> callback
     );
 
+    //https://api.staples.com/v1/10001/member/profile/address?locale=en_US&client_id={your-client-id}
+    @POST("/{version}/{storeId}/member/profile/address")
+    void addMemberAddress(
+            @Body AddAddress body,
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<AddressId> callback
+    );
 }

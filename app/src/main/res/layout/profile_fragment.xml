@@ -61,7 +61,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add"
-        android:id="@+id/shippingBtn"
+        android:id="@+id/addShippingBtn"
         android:layout_above="@+id/ccET"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
@@ -70,9 +70,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add"
-        android:id="@+id/ccBtn"
+        android:id="@+id/addCCBtn"
         android:layout_alignBottom="@+id/ccET"
-        android:layout_alignLeft="@+id/shippingBtn"
-        android:layout_alignStart="@+id/shippingBtn"/>
+        android:layout_alignLeft="@+id/addShippingBtn"
+        android:layout_alignStart="@+id/addShippingBtn"/>
 
 </RelativeLayout>

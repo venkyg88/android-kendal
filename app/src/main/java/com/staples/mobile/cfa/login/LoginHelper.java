@@ -40,6 +40,7 @@ public class LoginHelper {
 
     private Activity activity;
     private EasyOpenApi easyOpenApi;
+    Button signInText;
 
 
     // single static synchronized list of login complete listeners
@@ -123,7 +124,7 @@ public class LoginHelper {
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
                         notifyListeners(false);
                         ((MainActivity)activity).selectProfileFragment();
-                        Button signInText = (Button)activity.findViewById(R.id.account_button);
+                        signInText = (Button)activity.findViewById(R.id.account_button);
                         signInText.setText("Sign Out");
 
                         Log.i("Status Code", " " + code);
@@ -153,6 +154,8 @@ public class LoginHelper {
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
                         notifyListeners(false);
                         ((MainActivity)activity).selectProfileFragment();
+                        signInText = (Button)activity.findViewById(R.id.account_button);
+                        signInText.setText("Sign Out");
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
@@ -176,6 +179,8 @@ public class LoginHelper {
             public void success(EmptyResponse empty, Response response) {
                 if(empty.getErrors()!=null) {
                     Log.i("Code for signout", " " + empty.getErrors().get(0).getErrorMessage());
+                    getGuestTokens();
+                    Toast.makeText(activity, "Logged in as Guest", Toast.LENGTH_SHORT).show();
                 }
                 Log.i("Code for signout", " " + response.getStatus());
             }

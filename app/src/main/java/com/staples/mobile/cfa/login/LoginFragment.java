@@ -98,6 +98,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
+    public void hideKeyboard(View view)
+    {
+        InputMethodManager keyboard = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
     @Override
     public void onClick(View view) {
 
@@ -109,8 +115,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             setUserName(userName);
             setPassword(password);
 
-            InputMethodManager keyboard = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            hideKeyboard(view);
 
             if(!getUserName().isEmpty() && !getPassword().isEmpty())
             {
@@ -125,6 +130,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             setEmaiId(((EditText) getView().findViewById(R.id.emailIdRegister)).getText().toString());
             setRegisterUsername(((EditText) getView().findViewById(R.id.userNameRegister)).getText().toString());
             setRegisterPassword(((EditText) getView().findViewById(R.id.passwordRegister)).getText().toString());
+
+            hideKeyboard(view);
 
             if(!getRegisterUsername().isEmpty() && !getRegisterPassword().isEmpty())
             {

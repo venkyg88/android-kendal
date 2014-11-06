@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.*;
@@ -20,7 +21,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ProfileFragment extends Fragment implements Callback<MemberDetail>{
+public class ProfileFragment extends Fragment implements Callback<MemberDetail>, View.OnClickListener{
     private static final String TAG = "ProfileFragment";
 
     private static final String RECOMMENDATION = "v1";
@@ -30,12 +31,19 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>{
     private static final String LOCALE = "en_US";
 
     private EasyOpenApi easyOpenApi;
+    Button shippingBtn;
+    Button ccBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
 
         Log.d(TAG, "onCreateView()");
-        View view = inflater.inflate(R.layout.user_profile, container, false);
+        View view = inflater.inflate(R.layout.profile_fragment, container, false);
+
+        shippingBtn = (Button) view.findViewById(R.id.addShippingBtn);
+        ccBtn = (Button) view.findViewById(R.id.addCCBtn);
+        shippingBtn.setOnClickListener(this);
+        ccBtn.setOnClickListener(this);
 
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
         easyOpenApi.getMemberProfile(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, this);
@@ -64,7 +72,7 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>{
         if (addresses!=null) {
             Address address = addresses.get(0);
             if (address != null) {
-                String tmpAddress = address.getAddress1() + "\n" + address.getCity() + "\n" + address.getState() + "\n" + address.getZipcode();
+                String tmpAddress = address.getAddress1() + " " + address.getCity() + " " + address.getState() + " " + address.getZipcode();
                 ((EditText) getView().findViewById(R.id.addressET)).setText(tmpAddress);
             }
         }
@@ -73,7 +81,7 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>{
         if(creditCards !=null) {
             CCDetails creditCard = creditCards.get(0);
             if (creditCard != null) {
-                String tmpCreditCard =  creditCard.getCardNumber() + "\n" + creditCard.getCardType();
+                String tmpCreditCard =  creditCard.getCardNumber() + " " + creditCard.getCardType();
                 ((EditText) getView().findViewById(R.id.ccET)).setText(tmpCreditCard);
             }
         }
@@ -83,5 +91,19 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>{
     public void failure(RetrofitError retrofitError) {
         Log.i("Fail message when getting member details", " " + retrofitError.getMessage());
         Log.i("URl used to get member details", " " + retrofitError.getUrl());
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()) {
+            case R.id.addShippingBtn:
+                Fragment shippingFragment = Fragment.instantiate(getActivity(), ShippingFragment.class.getName());
+                ((MainActivity)getActivity()).navigateToFragment(shippingFragment);
+                break;
+            case R.id.addCCBtn:
+                Fragment ccFragment = Fragment.instantiate(getActivity(), CreditCardFragment.class.getName());
+                ((MainActivity)getActivity()).navigateToFragment(ccFragment);
+                break;
+        }
     }
 }
