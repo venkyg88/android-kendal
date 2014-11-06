@@ -61,6 +61,8 @@ public class MainActivity extends Activity
     private DrawerItem storeDrawerItem;
     private DrawerItem rewardsDrawerItem;
     private DrawerItem checkoutDrawerItem;
+    
+    private LoginHelper loginHelper;
     private DrawerItem confirmationDrawerItem;
 
     public enum Transition {
@@ -102,7 +104,7 @@ public class MainActivity extends Activity
         boolean freshStart = (bundle == null);
         prepareMainScreen(freshStart);
 
-        LoginHelper loginHelper = new LoginHelper(this);
+        loginHelper = new LoginHelper(this);
         loginHelper.registerLoginCompleteListener(this);
         // if already logged in (e.g. when device is rotated), don't login again, but do notify
         // that login is complete so that cart can be refilled
@@ -368,21 +370,6 @@ public class MainActivity extends Activity
         drawerLayout.openDrawer(rightDrawer);
     }
 
-    public void accountBtnClick(View view)
-    {
-        Button accountBtn = (Button)view;
-        String buttonText = accountBtn.getText().toString();
-
-        if(buttonText.equals("Sign In")){
-            selectLoginFragment();
-        }
-        if(buttonText.equals("Sign Out")){
-            Access.getInstance().setTokens(null, null, true);
-            selectDrawerItem(homeDrawerItem, Transition.NONE, true);
-            accountBtn.setText("Sign In");
-        }
-    }
-
     // Action bar & topper clicks
 
     @Override
@@ -424,6 +411,21 @@ public class MainActivity extends Activity
                 // activity anyway.
                 selectDrawerItem(checkoutDrawerItem, Transition.NONE, true);
                 break;
+        }
+    }
+
+    public void signInBtnClick(View view) {
+        Button accountBtn = (Button)view;
+        String buttonText = accountBtn.getText().toString();
+
+        if(buttonText.equals("Sign In")){
+            selectLoginFragment();
+        }
+        if(buttonText.equals("Sign Out")){
+            loginHelper.userSignOut();
+            selectDrawerItem(homeDrawerItem, Transition.NONE, true);
+            loginHelper.getGuestTokens();
+            accountBtn.setText("Sign In");
         }
     }
 

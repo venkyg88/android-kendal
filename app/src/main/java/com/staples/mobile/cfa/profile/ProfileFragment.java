@@ -54,6 +54,7 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>{
 
         String email = member.getEmailAddress();
         String userName = member.getUserName();
+
         if (email!=null)
             ((EditText) getView().findViewById(R.id.emailProfile)).setText(email);
         if (userName!=null)
