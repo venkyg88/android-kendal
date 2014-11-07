@@ -3,7 +3,6 @@ package com.staples.mobile.common.access.easyopen.model.login;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.staples.mobile.common.access.easyopen.model.BaseResponse;
 
-import java.util.List;
 
 /**
  * Created by Avinash Dodda

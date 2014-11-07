@@ -7,8 +7,6 @@ package com.staples.mobile.common.access.easyopen.model.cart;
 
 import com.staples.mobile.common.access.easyopen.model.BaseResponse;
 
-import java.util.List;
-
 public class PaymentMethodResponse extends BaseResponse {
     private String creditCardId;
     private String authorized;
