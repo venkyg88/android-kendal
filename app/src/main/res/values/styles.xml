@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="android:Theme.Holo.Light.NoActionBar"/>
+    <style name="AppTheme" parent="android:Theme.Holo.Light.NoActionBar" />
 
     <style name="DrawerStyle">
         <item name="android:layout_height">wrap_content</item>
@@ -134,6 +134,10 @@
     <style name="SkuSpecValueStyle" parent="SkuSpecStyle">
         <item name="android:paddingLeft">4dp</item>
         <item name="android:paddingRight">2dp</item>
+    </style>
+
+    <style name="SkuSpecFont">
+        <item name="android:textSize">16dp</item>
     </style>
 
     <style name="SkuReviewTitle">

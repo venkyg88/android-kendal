@@ -174,14 +174,11 @@ public class LoginHelper {
 
     public void userSignOut ()
     {
-        easyOpenApi.registeredUserSignOut(RECOMMENDATION, STORE_ID, CLIENT_ID, new Callback<EmptyResponse>() {
+        easyOpenApi.registeredUserSignOut(RECOMMENDATION, STORE_ID, CLIENT_ID, new Callback<Response>() {
             @Override
-            public void success(EmptyResponse empty, Response response) {
-                if(empty.getErrors()!=null) {
-                    Log.i("Code for signout", " " + empty.getErrors().get(0).getErrorMessage());
-                    getGuestTokens();
-                    Toast.makeText(activity, "Logged in as Guest", Toast.LENGTH_SHORT).show();
-                }
+            public void success(Response empty, Response response) {
+                Access.getInstance().setTokens(null, null, true); //set these to null since they're definitely unusable now
+                getGuestTokens(); // re-establish a guest login since user may try to add to cart after signing out
                 Log.i("Code for signout", " " + response.getStatus());
             }
 
