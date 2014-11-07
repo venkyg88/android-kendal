@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableRow xmlns:android="http://schemas.android.com/apk/res/android">
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/SkuSpecFont"
+    android:layout_width="fill_parent"
+    android:padding="10dp">
+
+    <TextView android:id="@+id/specName" />
+
     <TextView
-        android:id="@+id/name"
-        style="@style/SkuSpecNameStyle"/>
-    <TextView
-        android:id="@+id/value"
-        style="@style/SkuSpecValueStyle"/>
+        android:id="@+id/specValue"
+        android:paddingLeft="10dp" />
 </TableRow>

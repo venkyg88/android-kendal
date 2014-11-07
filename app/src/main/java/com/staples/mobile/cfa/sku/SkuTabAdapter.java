@@ -70,7 +70,7 @@ public class SkuTabAdapter extends PagerAdapter {
             case 1:
                 item.view = inflater.inflate(R.layout.sku_detail_scroll, container, false);
                 parent = (ViewGroup) item.view.findViewById(R.id.details);
-                SkuFragment.buildSpecifications(inflater, parent, product, 50);
+                SkuFragment.addSpecifications(inflater, parent, product, 50);
                 break;
             case 2:
                 item.view = inflater.inflate(R.layout.sku_detail_list, container, false);
