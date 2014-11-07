@@ -45,6 +45,7 @@ public class Product {
     private String esd;
     private boolean registeredUserOnly;
     private String webOnly;
+    private String streetDate;
 
     public boolean getBopisEligible() {
         return bopisEligible;
@@ -325,4 +326,13 @@ public class Product {
     public void setWebOnly(String webOnly) {
         this.webOnly = webOnly;
     }
+
+    public String getStreetDate() {
+        return streetDate;
+    }
+
+    public void setStreetDate(String streetDate) {
+        this.streetDate = streetDate;
+    }
 }
+
