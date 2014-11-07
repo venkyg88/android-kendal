@@ -3,23 +3,17 @@ package com.staples.mobile.common.access.easyopen.model.checkout;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.SupportsApiErrors;
+import com.staples.mobile.common.access.easyopen.model.BaseResponse;
 
 import java.lang.StringBuilder;
 import java.lang.String;
 import java.util.List;
 
 @JsonPropertyOrder({"orderId", "staplesOrderNumber"})
-public class SubmitOrderResponse implements SupportsApiErrors {
+public class SubmitOrderResponse extends BaseResponse {
 
     private String orderId;
     private String staplesOrderNumber;
-
-    // include this so that ((SubmitOrderResponse)retrofitError.getBody()).getErrors()
-    // can be examined in 400 Bad Request failure response (e.g. in debugger)
-    private List<ApiError> errors;
-    public List<ApiError> getErrors() { return errors; }
-    public void setErrors(List<ApiError> errors) { this.errors = errors; }
 
     @JsonProperty("orderId")
     public String getOrderId() {
