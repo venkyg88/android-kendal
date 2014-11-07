@@ -44,6 +44,7 @@ public class Product {
     private String marketPlace;
     private String esd;
     private boolean registeredUserOnly;
+    private String webOnly;
 
     public boolean getBopisEligible() {
         return bopisEligible;
@@ -315,5 +316,13 @@ public class Product {
 
     public void setRegisteredUserOnly(boolean registeredUserOnly) {
         this.registeredUserOnly = registeredUserOnly;
+    }
+
+    public String getWebOnly() {
+        return webOnly;
+    }
+
+    public void setWebOnly(String webOnly) {
+        this.webOnly = webOnly;
     }
 }
