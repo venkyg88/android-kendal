@@ -124,7 +124,7 @@ public interface EasyOpenApi {
             @EncodedPath("version") String version,
             @EncodedPath("storeId") String storeId,
             @Query("client_id") String client_id,
-            Callback<EmptyResponse> callback
+            Callback<Response> callback
     );
 
     // https://api.staples.com/v1/10001/member/registeruser?locale=en_US&client_id={your-client-id}
