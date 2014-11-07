@@ -48,7 +48,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         public void hideProgressIndicator();
     }
 
-    private static final String TAG = "CartAdapter";
+    private static final String TAG = CartAdapter.class.getSimpleName();
 
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
@@ -181,7 +181,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         // set visibility of update button
 //        vh.updateButton.setVisibility(cartItem.isProposedQtyDifferent()? View.VISIBLE : View.GONE);
-        vh.qtyWidget.setErrorIndicator(cartItem.isProposedQtyDifferent()? "Update failed" : null);
+        vh.qtyWidget.setErrorIndicator(cartItem.isProposedQtyDifferent() ? "Update failed" : null);
 
         return(view);
     }
