@@ -6,7 +6,6 @@ import com.staples.mobile.common.access.easyopen.model.BaseResponse;
 
 import java.lang.StringBuilder;
 import java.lang.String;
-import java.util.List;
 
 @JsonPropertyOrder({"addressValidationAlert","city","state","zipCode"})
 public class AddressValidationAlert extends BaseResponse {

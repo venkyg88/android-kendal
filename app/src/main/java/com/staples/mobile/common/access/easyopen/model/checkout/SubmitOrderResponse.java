@@ -7,7 +7,6 @@ import com.staples.mobile.common.access.easyopen.model.BaseResponse;
 
 import java.lang.StringBuilder;
 import java.lang.String;
-import java.util.List;
 
 @JsonPropertyOrder({"orderId", "staplesOrderNumber"})
 public class SubmitOrderResponse extends BaseResponse {
