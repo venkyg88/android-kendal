@@ -13,16 +13,20 @@ import retrofit.RetrofitError;
 /**
  * Created by sutdi001 on 10/30/14.
  *
- * Note: by including the following in the definition of the api response object, then within
- * a 400 Bad Request failure response, retrofitError.getBody() can be cast to the response object
- * type and errors examined. This saves the step of having to reproduce the call with all its params
- * and headers in an external tool such as Postman.
+ * Extend BaseResponse to allow retrieval of error messages from within the retrofit failure callback
+ * method. BaseResponse includes the following to allow a place for error info within the api response
+ * object.
  *
  *     private List<ApiError> errors;
  *     public List<ApiError> getErrors() { return errors; }
  *     public void setErrors(List<ApiError> errors) { this.errors = errors; }
  *
- * Also include "implements SupportsApiErrors" to make use of the ApiError.getErrorMessage convenience method
+ * Call ApiError.getApiError(retrofitError) or ApiError.getErrorMessage(retrofitError) to retrieve
+ * error info from the retrofitError parameter of the failure callback.
+ *
+ * The EasyOpenApi often includes helful error messages when returning a 400 Bad Request or
+ * 500 Internal Server Error. Drawing these from the retrofitError object saves the step of having
+ * to reproduce the call with all its parameters and headers in an external tool such as Postman.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApiError {
@@ -77,14 +81,14 @@ public class ApiError {
 
 
     /** convenience method for retrieving API error from RetrofitError error
-     * (have response object implement SupportsApiErrors) */
+     * (have response object extend BaseResponse) */
     public static ApiError getApiError(RetrofitError error) {
         ApiError apiError = null;
         if (error.getResponse() != null) {
             int httpErrorCode = error.getResponse().getStatus();
             if (httpErrorCode == 400 || httpErrorCode == 500) {
-                if (error.getBody() instanceof SupportsApiErrors) {
-                    List<ApiError> errors = ((SupportsApiErrors) error.getBody()).getErrors();
+                if (error.getBody() instanceof BaseResponse) {
+                    List<ApiError> errors = ((BaseResponse) error.getBody()).getErrors();
                     if (errors != null && errors.size() > 0) {
                         apiError = errors.get(0);
                     }
@@ -99,7 +103,7 @@ public class ApiError {
     }
 
     /** convenience method for retrieving error message from RetrofitError error
-     * (have response object implement SupportsApiErrors) */
+     * (have response object extend BaseResponse) */
     public static String getErrorMessage(RetrofitError error) {
         ApiError apiError = getApiError(error);
         if (apiError.getErrorMessage() != null) {

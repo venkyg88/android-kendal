@@ -5,19 +5,11 @@
 package com.staples.mobile.common.access.easyopen.model.cart;
 
 
-import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.SupportsApiErrors;
+import com.staples.mobile.common.access.easyopen.model.BaseResponse;
 
 import java.util.List;
 
-public class PaymentMethodResponse implements SupportsApiErrors {
-
-    // include this so that ((CartContents)retrofitError.getBody()).getErrors()
-    // can be examined in 400 Bad Request failure response (e.g. in debugger)
-    private List<ApiError> errors;
-    public List<ApiError> getErrors() { return errors; }
-    public void setErrors(List<ApiError> errors) { this.errors = errors; }
-
+public class PaymentMethodResponse extends BaseResponse {
     private String creditCardId;
     private String authorized;
 
