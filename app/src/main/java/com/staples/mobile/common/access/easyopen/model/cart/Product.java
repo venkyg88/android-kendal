@@ -1,12 +1,14 @@
 
 package com.staples.mobile.common.access.easyopen.model.cart;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
 
 //Note that this class has different fields than browse.Product and sku.Product
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Product {
 
     private boolean bopisEligible;
