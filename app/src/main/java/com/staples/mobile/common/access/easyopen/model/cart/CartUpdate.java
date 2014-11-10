@@ -2,21 +2,14 @@
 package com.staples.mobile.common.access.easyopen.model.cart;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.SupportsApiErrors;
+import com.staples.mobile.common.access.easyopen.model.BaseResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
 //wrapper class for add and update api responses
 
-public class CartUpdate implements SupportsApiErrors {
-
-    // include this so that ((CartContents)retrofitError.getBody()).getErrors()
-    // can be examined in 400 Bad Request failure response (e.g. in debugger)
-    private List<ApiError> errors;
-    public List<ApiError> getErrors() { return errors; }
-    public void setErrors(List<ApiError> errors) { this.errors = errors; }
+public class CartUpdate extends BaseResponse {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String message; // this field is not documented, but is included in some cases (e.g. out of stock items)

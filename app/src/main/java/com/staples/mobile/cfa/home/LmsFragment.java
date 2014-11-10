@@ -46,7 +46,7 @@ public class LmsFragment
 
     private static final String TAG = "LmsFragment";
 
-    private static final boolean LOGGING = true;
+    private static final boolean LOGGING = false;
 
     private static final long LMS_REFRESH_TIME_MILLIS = (5 * 60 * 1000);
 
@@ -306,7 +306,7 @@ public class LmsFragment
                         + " this[" + this + "]"
         );
 
-        LinearLayout lmsSubLayoutContainer = null;
+        LinearLayout subLayoutContainer = null;
 
         boolean firstSubInContainer = true;
         int lmsItemNbr = -1;
@@ -318,11 +318,9 @@ public class LmsFragment
             firstSubInContainer = (lmsItemNbr % 2 == 0);
 
             if (firstSubInContainer) {
-                lmsSubLayoutContainer = new LinearLayout(activity);
-                lmsSubLayoutContainer.setId(lmsSubLayoutContainer.hashCode());
-                lmsSubLayoutContainer.setOrientation(LinearLayout.HORIZONTAL);
-                lmsSubLayoutContainer.setMeasureWithLargestChildEnabled(true);
-                lmsScrollLayout.addView(lmsSubLayoutContainer);
+
+                subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
+                lmsScrollLayout.addView(subLayoutContainer);
             }
 
             ImageView categoryImageView = getImageView();
@@ -335,7 +333,7 @@ public class LmsFragment
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 
-            lmsSubLayoutContainer.addView(widgetLayout);
+            subLayoutContainer.addView(widgetLayout);
         }
 
     } // doLmsItemsCPort()
@@ -343,6 +341,31 @@ public class LmsFragment
     private void doLandscape() {
 
         if (LOGGING) Log.v(TAG, "LmsFragment:doLandscape():"
+                        + " this[" + this + "]"
+        );
+
+        // A items are square.
+        aItemWidth = (deviceInfo.getLargestAbsWidthPixels() / 2);
+        aItemHeight = aItemWidth;
+
+        bItemWidth = aItemWidth;        // same width as an A item.
+        bItemHeight = aItemHeight / 2;  // half the height of an A item.
+
+        cItemWidth = aItemWidth / 2;    // half the width of a A item.
+        cItemHeight = bItemHeight;      // same height as a B item.
+
+        dItemWidth = aItemWidth;        // same width as an A item.
+        dItemHeight = aItemHeight / 4;  // quarter the height of an A item.
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:doLandscape():"
+                        + " aItemWidth[" + aItemWidth + "]"
+                        + " aItemHeight[" + aItemHeight + "]"
+                        + " bItemWidth[" + bItemWidth + "]"
+                        + " bItemHeight[" + bItemHeight + "]"
+                        + " cItemWidth[" + cItemWidth + "]"
+                        + " cItemHeight[" + cItemHeight + "]"
+                        + " dItemWidth[" + dItemWidth + "]"
+                        + " dItemHeight[" + dItemHeight + "]"
                         + " this[" + this + "]"
         );
 
@@ -364,39 +387,14 @@ public class LmsFragment
 
         LmsItem lmsItemA = lmsItemsA.get(0);
 
-        // A items are square.
-        aItemWidth = (deviceInfo.getLargestAbsWidthPixels() / 2);
-        aItemHeight = aItemWidth;
-
-        bItemWidth = aItemWidth;        // same width as an A item.
-        bItemHeight = aItemHeight / 2;  // half the height of an A item.
-
-        cItemWidth = aItemWidth / 2;    // half the width of a A item.
-        cItemHeight = bItemHeight;      // same height as a B item.
-
-        dItemWidth = aItemWidth;        // same width as an A item.
-        dItemHeight = aItemHeight / 4;  // quarter the height of an A item.
-
-        if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsALand():"
-                        + " aItemWidth[" + aItemWidth + "]"
-                        + " aItemHeight[" + aItemHeight + "]"
-                        + " bItemWidth[" + bItemWidth + "]"
-                        + " bItemHeight[" + bItemHeight + "]"
-                        + " cItemWidth[" + cItemWidth + "]"
-                        + " cItemHeight[" + cItemHeight + "]"
-                        + " dItemWidth[" + dItemWidth + "]"
-                        + " dItemHeight[" + dItemHeight + "]"
-                        + " this[" + this + "]"
-        );
-
         // LMS Sublayout
 
         // Horizontal. Contains A item and lmsBCDLayout.
-        LinearLayout lmsSubLayout = getSubLayout(aItemWidth * 2,
+        LinearLayout subLayout = getSubLayout(aItemWidth * 2,
                 aItemHeight,
                 LinearLayout.HORIZONTAL);
 
-        lmsScrollLayout.addView(lmsSubLayout);
+        lmsScrollLayout.addView(subLayout);
 
         ImageView categoryImageView = getImageView();
         setImage(categoryImageView, lmsItemA.bannerUrl);
@@ -404,17 +402,17 @@ public class LmsFragment
         // Vertical. Contains selectable content. Used to create a rectangular
         // frame around the content.
         LinearLayout widgetLayout = getWidgetLayout(aItemWidth, aItemHeight, categoryImageView);
-        widgetLayout.addView(categoryImageView);
         widgetLayout.setTag(lmsItemA);
         widgetLayout.setOnClickListener(itemOnClickListener);
+        widgetLayout.addView(categoryImageView);
 
-        lmsSubLayout.addView(widgetLayout);
+        subLayout.addView(widgetLayout);
 
 
         // Vertical. Contains one or more B, C, and/or D items.
         LinearLayout lmsBCDLayout = getBCDLayout();
 
-        lmsSubLayout.addView(lmsBCDLayout);
+        subLayout.addView(lmsBCDLayout);
 
         boolean aFilled = false;
 
@@ -499,7 +497,7 @@ public class LmsFragment
                         + " this[" + this + "]"
         );
 
-        LinearLayout lmsSubLayoutContainer = null;
+        LinearLayout subLayoutContainer = null;
 
         // maxItems is the maximum number of SubLayout containers allowed. Each
         // SubLayout container can contain 2 list items.
@@ -522,15 +520,8 @@ public class LmsFragment
 
             if (firstSubInContainer) {
 
-                lmsSubLayoutContainer = new LinearLayout(activity);
-                lmsSubLayoutContainer.setId(lmsSubLayoutContainer.hashCode());
-                lmsSubLayoutContainer.setOrientation(LinearLayout.HORIZONTAL);
-                lmsSubLayoutContainer.setMeasureWithLargestChildEnabled(true);
-
-                int padding = 0;
-                lmsSubLayoutContainer.setPadding(padding, padding, padding, padding);
-
-                lmsBCDLayout.addView(lmsSubLayoutContainer);
+                subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
+                lmsBCDLayout.addView(subLayoutContainer);
 
                 nbrSubLayoutContainers++;
             }
@@ -540,15 +531,12 @@ public class LmsFragment
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(cItemWidth,
-                    cItemHeight,
-                    categoryImageView);
-
-            widgetLayout.addView(categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, categoryImageView);
             widgetLayout.setTag(lmsItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.addView(categoryImageView);
 
-            lmsSubLayoutContainer.addView(widgetLayout);
+            subLayoutContainer.addView(widgetLayout);
         }
 
         boolean aFilled = (nbrSubLayoutContainers == maxItems) ? true : false;
@@ -676,21 +664,40 @@ public class LmsFragment
                 new LinearLayout.LayoutParams(layoutWidth, // width
                         layoutHeight); // height
 
-        LinearLayout lmsSubLayout = new LinearLayout(activity);
+        LinearLayout subLayout = new LinearLayout(activity);
 
-        lmsSubLayout.setLayoutParams(lmsSubLayoutParms);
-        lmsSubLayout.setBackgroundResource(R.drawable.rectangle_frame);
+        subLayout.setLayoutParams(lmsSubLayoutParms);
+        subLayout.setBackgroundResource(R.drawable.rectangle_frame);
 
-        lmsSubLayout.setId(lmsSubLayout.hashCode());
-        lmsSubLayout.setOrientation(orientation);
-        lmsSubLayout.setMeasureWithLargestChildEnabled(true);
+        subLayout.setId(subLayout.hashCode());
+        subLayout.setOrientation(orientation);
+        subLayout.setMeasureWithLargestChildEnabled(true);
 
         int padding = 0;
-        lmsSubLayout.setPadding(padding, padding, padding, padding);
+        subLayout.setPadding(padding, padding, padding, padding);
 
-        return (lmsSubLayout);
+        return (subLayout);
 
     } // getSubLayout()
+
+    private LinearLayout getSubLayoutContainer(int orientation) {
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:getSubLayoutContainer():"
+                        + " orientation[" + orientation + "]"
+                        + " this[" + this + "]"
+        );
+
+        LinearLayout subLayoutContainer = new LinearLayout(activity);
+        subLayoutContainer.setId(subLayoutContainer.hashCode());
+        subLayoutContainer.setOrientation(orientation);
+        subLayoutContainer.setMeasureWithLargestChildEnabled(true);
+
+        int padding = 0;
+        subLayoutContainer.setPadding(padding, padding, padding, padding);
+
+        return (subLayoutContainer);
+
+    } // getSubLayoutContainer()
 
     private ImageView getImageView() {
 
@@ -758,7 +765,7 @@ public class LmsFragment
         int lmsItemNdx = 0;
         LmsItem lmsItem = null;
 
-        LinearLayout lmsSubLayoutContainer = null;
+        LinearLayout subLayoutContainer = null;
 
         for (lmsItemNdx = 0; lmsItemNdx < nbrListItems; lmsItemNdx++) {
 
@@ -770,15 +777,8 @@ public class LmsFragment
 
             if (firstSubInContainer) {
 
-                lmsSubLayoutContainer = new LinearLayout(activity);
-                lmsSubLayoutContainer.setId(lmsSubLayoutContainer.hashCode());
-                lmsSubLayoutContainer.setOrientation(LinearLayout.HORIZONTAL);
-                lmsSubLayoutContainer.setMeasureWithLargestChildEnabled(true);
-
-                int padding = 0;
-                lmsSubLayoutContainer.setPadding(padding, padding, padding, padding);
-
-                lmsScrollLayout.addView(lmsSubLayoutContainer);
+                subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
+                lmsScrollLayout.addView(subLayoutContainer);
             }
 
             ImageView categoryImageView = getImageView();
@@ -786,15 +786,12 @@ public class LmsFragment
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(bItemWidth,
-                    bItemHeight,
-                    categoryImageView);
-
-            widgetLayout.addView(categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, categoryImageView);
             widgetLayout.setTag(lmsItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.addView(categoryImageView);
 
-            lmsSubLayoutContainer.addView(widgetLayout);
+            subLayoutContainer.addView(widgetLayout);
         }
 
     } // fillWithBLand()
@@ -814,7 +811,7 @@ public class LmsFragment
         int lmsItemNdx = 0;
         LmsItem lmsItem = null;
 
-        LinearLayout lmsSubLayoutContainer = null;
+        LinearLayout subLayoutContainer = null;
 
         for (lmsItemNdx = 0; lmsItemNdx < nbrListItems; lmsItemNdx++) {
 
@@ -826,13 +823,7 @@ public class LmsFragment
 
             if (firstSubInContainer) {
 
-                lmsSubLayoutContainer = new LinearLayout(activity);
-                lmsSubLayoutContainer.setId(lmsSubLayoutContainer.hashCode());
-                lmsSubLayoutContainer.setOrientation(LinearLayout.HORIZONTAL);
-                lmsSubLayoutContainer.setMeasureWithLargestChildEnabled(true);
-
-                int padding = 0;
-                lmsSubLayoutContainer.setPadding(padding, padding, padding, padding);
+                subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
 
                 LinearLayout.LayoutParams subLayoutContainerLayoutParms =
                         new LinearLayout.LayoutParams(cItemWidth * NBR_ITEMS_IN_CONTAINER, // width
@@ -841,7 +832,7 @@ public class LmsFragment
                 int margin = 0;
                 subLayoutContainerLayoutParms.setMargins(margin, margin, margin, margin); // left, top, right, bottom
 
-                lmsScrollLayout.addView(lmsSubLayoutContainer);
+                lmsScrollLayout.addView(subLayoutContainer);
             }
 
             ImageView categoryImageView = getImageView();
@@ -849,15 +840,12 @@ public class LmsFragment
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(cItemWidth,
-                    cItemHeight,
-                    categoryImageView);
-
-            widgetLayout.addView(categoryImageView);
-            widgetLayout.setTag(lmsItem);
+            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, categoryImageView);
             widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.setTag(lmsItem);
+            widgetLayout.addView(categoryImageView);
 
-            lmsSubLayoutContainer.addView(widgetLayout);
+            subLayoutContainer.addView(widgetLayout);
         }
 
     } // fillWithCLand()
@@ -877,7 +865,7 @@ public class LmsFragment
         int lmsItemNdx = 0;
         LmsItem lmsItem = null;
 
-        LinearLayout lmsSubLayoutContainer = null;
+        LinearLayout subLayoutContainer = null;
 
         for (lmsItemNdx = 0; lmsItemNdx < nbrListItems; lmsItemNdx++) {
 
@@ -889,15 +877,8 @@ public class LmsFragment
 
             if (firstSubInContainer) {
 
-                lmsSubLayoutContainer = new LinearLayout(activity);
-                lmsSubLayoutContainer.setId(lmsSubLayoutContainer.hashCode());
-                lmsSubLayoutContainer.setOrientation(LinearLayout.HORIZONTAL);
-                lmsSubLayoutContainer.setMeasureWithLargestChildEnabled(true);
-
-                int padding = 0;
-                lmsSubLayoutContainer.setPadding(padding, padding, padding, padding);
-
-                lmsScrollLayout.addView(lmsSubLayoutContainer);
+                subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
+                lmsScrollLayout.addView(subLayoutContainer);
             }
 
             ImageView categoryImageView = getImageView();
@@ -905,15 +886,12 @@ public class LmsFragment
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(dItemWidth,
-                    dItemHeight,
-                    categoryImageView);
-
-            widgetLayout.addView(categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, categoryImageView);
             widgetLayout.setTag(lmsItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.addView(categoryImageView);
 
-            lmsSubLayoutContainer.addView(widgetLayout);
+            subLayoutContainer.addView(widgetLayout);
         }
 
     } // fillWithDLand()
