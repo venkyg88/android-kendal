@@ -204,9 +204,7 @@ public class LmsFragment
 
                 } else if (size.equalsIgnoreCase("B")) {
 
-                    /* @@@ STUBBED
                     lmsItemsB.add(lmsItem);
-                    @@@ STUBBED */
 
                 } else if (size.equalsIgnoreCase("C")) {
 
@@ -819,6 +817,8 @@ public class LmsFragment
 
         boolean firstSubInContainer = true;
 
+        int nbrCItemsInContainer = 0;
+
         int lmsItemNdx = 0;
         LmsItem lmsItem = null;
 
@@ -833,6 +833,8 @@ public class LmsFragment
             firstSubInContainer = (lmsItemNdx % NBR_ITEMS_IN_CONTAINER == 0);
 
             if (firstSubInContainer) {
+
+                nbrCItemsInContainer = 0;
 
                 subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
 
@@ -850,9 +852,51 @@ public class LmsFragment
             widgetLayout.addView(categoryImageView);
 
             subLayoutContainer.addView(widgetLayout);
+
+            nbrCItemsInContainer++;
+        }
+
+        if (nbrCItemsInContainer < 4) {
+
+            padWithDLand(subLayoutContainer, 2);
         }
 
     } // fillWithCLand()
+
+    private void padWithDLand(LinearLayout subLayoutContainer, int nbrListItems) {
+
+        if (LOGGING) Log.v(TAG, "LmsFragment:padWithDLand():"
+                        + " nbrListItems[" + nbrListItems + "]"
+                        + " this[" + this + "]"
+        );
+
+        int lmsItemNdx = 0;
+        LmsItem lmsItem = null;
+
+        LinearLayout dItemContainer = getSubLayoutContainer(LinearLayout.VERTICAL);
+
+        subLayoutContainer.addView(dItemContainer);
+
+        for (lmsItemNdx = 0; lmsItemNdx < nbrListItems; lmsItemNdx++) {
+
+            lmsItem = lmsItemsD.get(0);
+
+            lmsItemsD.remove(0);
+
+            ImageView categoryImageView = getImageView();
+            setImage(categoryImageView, lmsItem.bannerUrl);
+
+            // Vertical. Contains selectable content. Used to create a
+            // rectangular frame around the content.
+            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, categoryImageView);
+            widgetLayout.setTag(lmsItem);
+            widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.addView(categoryImageView);
+
+            dItemContainer.addView(widgetLayout);
+        }
+
+    } // padWithDLand()
 
     private void fillWithDLand() {
 
