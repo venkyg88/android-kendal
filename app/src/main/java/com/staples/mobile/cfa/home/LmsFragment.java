@@ -408,7 +408,6 @@ public class LmsFragment
 
         subLayout.addView(widgetLayout);
 
-
         // Vertical. Contains one or more B, C, and/or D items.
         LinearLayout lmsBCDLayout = getBCDLayout();
 
