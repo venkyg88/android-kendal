@@ -1,28 +1,19 @@
 package com.staples.mobile.common.access.easyopen.model.login;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.SupportsApiErrors;
+import com.staples.mobile.common.access.easyopen.model.BaseResponse;
 
-import java.util.List;
 
 /**
  * Created by Avinash Dodda
  */
-public class TokenObject implements SupportsApiErrors {
+public class TokenObject extends BaseResponse {
     @JsonProperty("WCToken")
     private String WCToken;
     @JsonProperty("WCTrustedToken")
     private String WCTrustedToken;
     private String personalizationID;
     private String userId;
-
-    // include this so that ((SupportsApiErrors)retrofitError.getBody()).getErrors()
-    // can be examined in 400 Bad Request failure response (e.g. in debugger)
-    private List<ApiError> errors;
-    public List<ApiError> getErrors() { return errors; }
-    public void setErrors(List<ApiError> errors) { this.errors = errors; }
-
 
     public String getWCToken() {
         return WCToken;
