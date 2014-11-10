@@ -204,7 +204,9 @@ public class LmsFragment
 
                 } else if (size.equalsIgnoreCase("B")) {
 
+                    /* @@@ STUBBED
                     lmsItemsB.add(lmsItem);
+                    @@@ STUBBED */
 
                 } else if (size.equalsIgnoreCase("C")) {
 
@@ -418,24 +420,37 @@ public class LmsFragment
 
         while (true) {
 
-            // @@@ TODO Following code is buggy.
-
             if (lmsItemsB.size() >= 2) {
+
                 aFilled = fillAWithB(lmsBCDLayout, 2);
                 break; // while (true)
             }
             if (lmsItemsB.size() > 0) {
+
                 fillAWithB(lmsBCDLayout, 1);
-                aFilled = fillAWithC(lmsBCDLayout, 1);
-                if (aFilled) break; // while (true)
-            }
-            if (lmsItemsC.size() > 0) {
-                aFilled = fillAWithC(lmsBCDLayout, 2);
-                if (aFilled) break; // while (true)
-            }
-            if (lmsItemsD.size() > 0) {
-                aFilled = fillAWithD(lmsBCDLayout, 4);
-                if (aFilled) break; // while (true)
+
+                if (lmsItemsC.size() > 0) {
+
+                    fillAWithC(lmsBCDLayout, 1);
+
+                } else if (lmsItemsD.size() >= 2) {
+
+                    fillAWithD(lmsBCDLayout, 1);
+                }
+                break; // while (true)
+
+            } else if (lmsItemsC.size() >= 4) {
+
+                fillAWithC(lmsBCDLayout, 2);
+
+            } else if (lmsItemsC.size() > 0) {
+
+                fillAWithC(lmsBCDLayout, 1);
+                fillAWithD(lmsBCDLayout, 2);
+
+            } else if (lmsItemsD.size() > 0) {
+
+                fillAWithD(lmsBCDLayout, 4);
             }
             break; // while (true)
 
@@ -450,8 +465,6 @@ public class LmsFragment
         if (LOGGING) Log.v(TAG, "LmsFragment:fillAWithB():"
                         + " this[" + this + "]"
         );
-
-        LinearLayout.LayoutParams widgetLayoutParms = null;
 
         int nbrListItems = Math.min(lmsItemsB.size(), maxItems);
 
@@ -550,8 +563,6 @@ public class LmsFragment
         if (LOGGING) Log.v(TAG, "LmsFragment:fillAWithD():"
                         + " this[" + this + "]"
         );
-
-        LinearLayout.LayoutParams widgetLayoutParms = null;
 
         int nbrListItems = Math.min(lmsItemsD.size(), maxItems);
 
@@ -824,13 +835,6 @@ public class LmsFragment
             if (firstSubInContainer) {
 
                 subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
-
-                LinearLayout.LayoutParams subLayoutContainerLayoutParms =
-                        new LinearLayout.LayoutParams(cItemWidth * NBR_ITEMS_IN_CONTAINER, // width
-                                cItemHeight); // height
-
-                int margin = 0;
-                subLayoutContainerLayoutParms.setMargins(margin, margin, margin, margin); // left, top, right, bottom
 
                 lmsScrollLayout.addView(subLayoutContainer);
             }
