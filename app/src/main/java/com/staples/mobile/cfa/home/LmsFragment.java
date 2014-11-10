@@ -414,13 +414,11 @@ public class LmsFragment
 
         subLayout.addView(lmsBCDLayout);
 
-        boolean aFilled = false;
-
         while (true) {
 
             if (lmsItemsB.size() >= 2) {
 
-                aFilled = fillAWithB(lmsBCDLayout, 2);
+                fillAWithB(lmsBCDLayout, 2);
                 break; // while (true)
             }
             if (lmsItemsB.size() > 0) {
@@ -458,7 +456,7 @@ public class LmsFragment
 
     } // doLmsItemsALand()
 
-    private boolean fillAWithB(LinearLayout lmsBCDLayout, int maxItems) {
+    private void fillAWithB(LinearLayout lmsBCDLayout, int maxItems) {
 
         if (LOGGING) Log.v(TAG, "LmsFragment:fillAWithB():"
                         + " this[" + this + "]"
@@ -496,13 +494,9 @@ public class LmsFragment
             lmsBCDLayout.addView(widgetLayout);
         }
 
-        boolean aFilled = (lmsItemNdx == maxItems) ? true : false;
-
-        return (aFilled);
-
     } // fillAWithB()
 
-    private boolean fillAWithC(LinearLayout lmsBCDLayout, int maxItems) {
+    private void fillAWithC(LinearLayout lmsBCDLayout, int maxItems) {
 
         if (LOGGING) Log.v(TAG, "LmsFragment:fillAWithC():"
                         + " this[" + this + "]"
@@ -550,13 +544,9 @@ public class LmsFragment
             subLayoutContainer.addView(widgetLayout);
         }
 
-        boolean aFilled = (nbrSubLayoutContainers == maxItems) ? true : false;
-
-        return (aFilled);
-
     } // fillAWithC()
 
-    private boolean fillAWithD(LinearLayout lmsBCDLayout, int maxItems) {
+    private void fillAWithD(LinearLayout lmsBCDLayout, int maxItems) {
 
         if (LOGGING) Log.v(TAG, "LmsFragment:fillAWithD():"
                         + " this[" + this + "]"
@@ -593,10 +583,6 @@ public class LmsFragment
 
             lmsBCDLayout.addView(widgetLayout);
         }
-
-        boolean aFilled = (lmsItemNdx == maxItems) ? true : false;
-
-        return (aFilled);
 
     } // fillAWithD()
 
