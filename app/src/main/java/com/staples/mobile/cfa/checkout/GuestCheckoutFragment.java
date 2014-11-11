@@ -60,6 +60,12 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
         guestEntryView = view;
 
+        // if logged in as guest, show sign-in button
+        LoginHelper loginHelper = new LoginHelper(activity);
+        if (loginHelper.isLoggedIn() && loginHelper.isGuestLogin()) {
+            view.findViewById(R.id.signin_button).setVisibility(View.VISIBLE);
+        }
+
         // hide imported view's Save button
         View shippingAddrLayoutVw = view.findViewById(R.id.shipping_addr_layout);
         shippingAddrLayoutVw.findViewById(R.id.addressSaveBtn).setVisibility(View.GONE);
