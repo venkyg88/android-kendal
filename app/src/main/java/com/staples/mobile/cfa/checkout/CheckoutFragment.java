@@ -73,6 +73,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     private View shippingChargeLayout;
     private View taxLayout;
     private View submissionLayout;
+    private ViewGroup checkoutEntryLayout;
     private TextView deliveryRangeVw;
     private TextView couponsRewardsVw;
     private TextView shippingChargeVw;
@@ -125,6 +126,8 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         View view = inflater.inflate(R.layout.checkout_fragment, container, false);
         checkoutLayout = (LinearLayoutWithProgressOverlay) view.findViewById(R.id.checkout);
         checkoutLayout.setCartProgressOverlay(view.findViewById(R.id.checkout_progress_overlay));
+        checkoutEntryLayout = (ViewGroup)view.findViewById(R.id.checkout_entry_layout);
+        inflater.inflate(getEntryLayoutId(), checkoutEntryLayout); // dynamically inflate variable entry area
         shippingChargeLayout = view.findViewById(R.id.co_shipping_layout);
         submissionLayout = view.findViewById(R.id.co_submission_layout);
         taxLayout = view.findViewById(R.id.co_tax_layout);
@@ -198,6 +201,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         }
     }
 
+    /** override this to specify layout for entry area */
+    protected abstract int getEntryLayoutId();
+
     /** override this for variation on entry area */
     protected abstract void initEntryArea(View view);
 
@@ -242,15 +248,11 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                     @Override
                     public void success(SubmitOrderResponse submitOrderResponse, Response response) {
                         hideProgressIndicator();
-                        Toast.makeText(activity, "SUCCESS! Order: " +
-                                submitOrderResponse.getStaplesOrderNumber(), Toast.LENGTH_SHORT).show();
 
                         // show confirmation page and refresh cart
                         ((MainActivity)activity).selectOrderConfirmation(
                                 submitOrderResponse.getOrderId(),
                                 submitOrderResponse.getStaplesOrderNumber());
-
-                        //success: qa21, diana, order # 9707186646, # 9707187319
                     }
 
                     @Override

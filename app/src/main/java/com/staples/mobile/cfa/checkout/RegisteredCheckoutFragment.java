@@ -89,6 +89,11 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
     AddAddressListener addShippingAddrListener;
     AddAddressListener addBillingAddrListener;
 
+    /** override this to specify layout for entry area */
+    @Override
+    protected int getEntryLayoutId() {
+        return R.layout.checkout_registered_entry;
+    }
 
     /** override this for variation on entry area */
     @Override
