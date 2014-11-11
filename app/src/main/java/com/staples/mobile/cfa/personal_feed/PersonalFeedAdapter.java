@@ -1,4 +1,4 @@
-package com.staples.mobile.cfa.feed;
+package com.staples.mobile.cfa.personal_feed;
 
 import android.app.Activity;
 
@@ -6,7 +6,7 @@ import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 
-public class FeedAdapter {
+public class PersonalFeedAdapter {
 
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
@@ -22,13 +22,13 @@ public class FeedAdapter {
 
     private EasyOpenApi easyOpenApi;
 
-    public FeedAdapter(Activity activity) {
+    public PersonalFeedAdapter(Activity activity) {
         super();
         this.activity = activity;
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
     }
 
-    public FeedAdapter()
+    public PersonalFeedAdapter()
     {
     }
 
