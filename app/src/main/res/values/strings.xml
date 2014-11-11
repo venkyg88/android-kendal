@@ -58,14 +58,6 @@
     <string name="reviews">Reviews</string>
     <string name="accessories">Accessories</string>
 
-    <!-- Availability -->
-    <string name="avail_nothing">Nothing found</string>
-    <string name="avail_skuset">Varies</string>
-    <string name="avail_retailonly">Retail only</string>
-    <string name="avail_specialorder">Retail only (special order)</string>
-    <string name="avail_instock">In stock</string>
-    <string name="avail_outofstock">Out of stock</string>
-
     <string name="would_you">Would you recommend this to a friend?</string>
 
     <string name="item">Item</string>
