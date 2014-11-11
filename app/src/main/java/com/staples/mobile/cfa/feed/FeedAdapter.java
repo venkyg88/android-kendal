@@ -6,9 +6,6 @@ import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 
-/**
- * Created by Avinash Dodda
- */
 public class FeedAdapter {
 
     private static final String RECOMMENDATION = "v1";
