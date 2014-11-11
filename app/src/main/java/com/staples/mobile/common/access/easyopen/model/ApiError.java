@@ -79,6 +79,15 @@ public class ApiError {
     }
 
 
+    /** convenience method for retrieving API error msg from response object when success() callback called */
+    public static String getApiSuccessError(BaseResponse responseObject) {
+        List<ApiError> errors = responseObject.getErrors();
+        if (errors != null && errors.size() > 0) {
+            ApiError apiError = errors.get(0);
+            return (apiError.getErrorMessage() != null)? apiError.getErrorMessage() : apiError.getErrorKey();
+        }
+        return null;
+    }
 
     /** convenience method for retrieving API error from RetrofitError error
      * (have response object extend BaseResponse) */
@@ -106,10 +115,6 @@ public class ApiError {
      * (have response object extend BaseResponse) */
     public static String getErrorMessage(RetrofitError error) {
         ApiError apiError = getApiError(error);
-        if (apiError.getErrorMessage() != null) {
-            return apiError.getErrorMessage();
-        } else {
-            return apiError.getErrorKey();
-        }
+        return (apiError.getErrorMessage() != null)? apiError.getErrorMessage() : apiError.getErrorKey();
     }
 }
