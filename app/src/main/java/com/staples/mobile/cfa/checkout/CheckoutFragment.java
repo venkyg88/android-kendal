@@ -122,6 +122,21 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
     PrecheckoutListener precheckoutListener;
 //    OrderStatusListener orderStatusListener;
 
+
+    /**
+     * Create a new instance of ConfirmationFragment that will be initialized
+     * with the given arguments.
+     */
+    public static CheckoutFragment newInstance(String deliveryRange, float preTaxSubtotal) {
+        CheckoutFragment f = new CheckoutFragment();
+        Bundle args = new Bundle();
+        args.putString(CheckoutFragment.BUNDLE_PARAM_DELIVERYRANGE, deliveryRange);
+        args.putFloat(CheckoutFragment.BUNDLE_PARAM_PRETAXSUBTOTAL, preTaxSubtotal);
+        f.setArguments(args);
+        return f;
+    }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
@@ -445,16 +460,17 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
         return b.toString();
     }
 
+    /** parses shipping charge if possible (might be "Free") and formats for currency */
+    public static String formatShippingCharge(String shippingCharge, NumberFormat currencyFormat) {
+        try { // if possible, parse floating value and format as money
+            shippingCharge = currencyFormat.format(Float.parseFloat(shippingCharge));
+        } catch(NumberFormatException e) { /* normal to fail (e.g. if equal to "Free") */}
+        return shippingCharge;
+    }
+
     // Retrofit callbacks
 
-//    @Override
-//    public void success(SkuDetails sku, Response response) {
-//    }
-//
-//    @Override
-//    public void failure(RetrofitError retrofitError) {
-//        Log.d(TAG, "Failure callback " + retrofitError);
-//    }
+
     /************* api listeners ************/
 
 
@@ -598,15 +614,10 @@ public class CheckoutFragment extends Fragment implements View.OnClickListener {
             }
 
             if (shippingChargeListener) {
-                String shippingCharge = cart.getShippingCharge(); // this may be text (e.g. "Free")
-                try { // if possible, parse floating value and format as money
-                    shippingCharge = currencyFormat.format(Float.parseFloat(shippingCharge));
-                } catch(NumberFormatException e) { /* normal to fail (e.g. if equal to "Free") */}
-                shippingChargeVw.setText(shippingCharge);
+                shippingChargeVw.setText(formatShippingCharge(cart.getShippingCharge(), currencyFormat));
                 shippingLayout.setVisibility(View.VISIBLE);
             }
         }
-
 
         @Override
         public void failure(RetrofitError retrofitError) {
