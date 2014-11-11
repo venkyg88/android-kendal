@@ -120,6 +120,14 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         return maxExpectedBusinessDays;
     }
 
+    public String getExpectedDeliveryRange() {
+        if (maxExpectedBusinessDays > minExpectedBusinessDays) {
+            return minExpectedBusinessDays + " - " + maxExpectedBusinessDays;
+        } else {
+            return ""+minExpectedBusinessDays;
+        }
+    }
+
 /* Views */
 
 
@@ -435,6 +443,12 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
             // if message, display to user (e.g. out-of-stock message)
             if (!TextUtils.isEmpty(cartUpdate.getMessage())) {
                 Toast.makeText(activity, cartUpdate.getMessage(), Toast.LENGTH_LONG).show();
+            } else {
+                // sometimes out-of-stock message is here instead
+                String errMsg = ApiError.getApiSuccessError(cartUpdate);
+                if (!TextUtils.isEmpty(errMsg)) {
+                    Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                }
             }
 
             // if a successful insert, refill cart
