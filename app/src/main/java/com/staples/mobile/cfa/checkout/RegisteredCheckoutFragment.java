@@ -146,6 +146,39 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
 
     }
 
+    /** overriding to handle order submission */
+    @Override
+    protected void onSubmit() {
+        submitPaymentMethod(null); // cid not necessary for registered users
+    }
+
+    private void submitPaymentMethod(final String cid) {
+
+        // first add selected payment method to cart
+        if (selectedPaymentMethod != null) {
+            showProgressIndicator();
+
+            PaymentMethod paymentMethod = new PaymentMethod(selectedPaymentMethod);
+            paymentMethod.setCardVerificationCode(cid);
+            secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+                    new Callback<PaymentMethodResponse>() {
+                        @Override
+                        public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
+                            // upon payment method success, submit the order
+                            submitOrder(cid);
+                        }
+
+                        @Override
+                        public void failure(RetrofitError retrofitError) {
+                            hideProgressIndicator();
+                            Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            );
+        }
+    }
+
+
 
     @Override
     public void onClick(View view) {
@@ -159,6 +192,9 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                 break;
             case R.id.billing_addr_add:
                 Toast.makeText(activity, "TBD", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.co_submission_layout:
+                submitPaymentMethod(null); // cid not necessary for registered users
                 break;
         }
     }

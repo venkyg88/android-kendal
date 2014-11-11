@@ -105,7 +105,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
      * with the given arguments.
      */
     public static CheckoutFragment newInstance(String deliveryRange, float preTaxSubtotal, boolean registered) {
-        CheckoutFragment f = registered? new RegisteredCheckoutFragment() : new RegisteredCheckoutFragment(); // todo: go to guest checkout when available
+        CheckoutFragment f = registered? new RegisteredCheckoutFragment() : new GuestCheckoutFragment();
         Bundle args = new Bundle();
         args.putString(CheckoutFragment.BUNDLE_PARAM_DELIVERYRANGE, deliveryRange);
         args.putFloat(CheckoutFragment.BUNDLE_PARAM_PRETAXSUBTOTAL, preTaxSubtotal);
@@ -192,14 +192,18 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
     }
 
+    /** override this to handle other clicks, but call this super method */
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.co_submission_layout:
-                submitPaymentMethod(null); // cid not necessary for registered users
+                onSubmit();
                 break;
         }
     }
+
+    /** override this to handle order submission */
+    protected abstract void onSubmit();
 
     /** override this to specify layout for entry area */
     protected abstract int getEntryLayoutId();
@@ -212,33 +216,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         secureApi.precheckout(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, precheckoutListener);
     }
 
-    private void submitPaymentMethod(final String cid) {
-
-        // first add selected payment method to cart
-        if (selectedPaymentMethod != null) {
-            showProgressIndicator();
-
-            PaymentMethod paymentMethod = new PaymentMethod(selectedPaymentMethod);
-            paymentMethod.setCardVerificationCode(cid);
-            secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
-                    new Callback<PaymentMethodResponse>() {
-                        @Override
-                        public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
-                            // upon payment method success, submit the order
-                            submitOrder(cid);
-                        }
-
-                        @Override
-                        public void failure(RetrofitError retrofitError) {
-                            hideProgressIndicator();
-                            Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-            );
-        }
-    }
-
-    private void submitOrder(String cid) {
+    protected void submitOrder(String cid) {
         // upon payment method success, submit the order
         SubmitOrderRequest submitOrderRequest = new SubmitOrderRequest();
         submitOrderRequest.setCardVerificationCode(cid);
