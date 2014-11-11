@@ -24,7 +24,7 @@ import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.checkout.ConfirmationFragment;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
-import com.staples.mobile.cfa.profile.MemberObject;
+import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.cfa.search.SearchBarView;
@@ -32,7 +32,6 @@ import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
-import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.lms.LmsManager;
@@ -345,7 +344,7 @@ public class MainActivity extends Activity
 
         // set text of free shipping msg
 
-        if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !MemberObject.isRewardsMember()) {
+        if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !ProfileDetails.isRewardsMember()) {
             // need to spend more to qualify for free shipping
             NumberFormat nf = DecimalFormat.getCurrencyInstance();
             cartFreeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),

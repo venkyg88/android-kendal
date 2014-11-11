@@ -57,7 +57,8 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>,
     public void success(MemberDetail memberDetail, Response response) {
         int code = response.getStatus();
         Member member = memberDetail.getMember().get(0);
-        MemberObject.setMember(member);
+        ProfileDetails.setMember(member);
+        ProfileDetails.mergeMember(member);
         if (member==null) return;
 
         String email = member.getEmailAddress();
