@@ -18,6 +18,8 @@
     <string name="rewards_title">Rewards</string>
     <string name="order_title">Order</string>
     <string name="profile_title">Profile</string>
+    <string name="about_title">About</string>
+
     <string name="checkout_title">Checkout</string>
     <string name="backtotop_title">Back to Menu</string>
     <string name="store_info_title">Store Info</string>
@@ -80,4 +82,5 @@
 
     <string name="original_hint">Search</string>
     <string name="searching">Searching&#8230;</string>
+
 </resources>
