@@ -10,7 +10,7 @@ import java.util.List;
 public class Member {
 
     private String autoLoginFlag;
-    private String creditCardCount;
+    private int creditCardCount;
     private String emailAddress;
     private String isUserSubscribed;
     private String openAccountEnabledFlag;
@@ -18,7 +18,7 @@ public class Member {
     private String reminderQuestion;
     private String rewardsNumber;
     private String rewardsNumberVerified;
-    private String storedAddressCount;
+    private int storedAddressCount;
     private String userName;
     private String welcomeMessage;
     private Reward[] rewardDetails;
@@ -59,11 +59,11 @@ public class Member {
         this.autoLoginFlag = autoLoginFlag;
     }
 
-    public String getCreditCardCount() {
+    public int getCreditCardCount() {
         return creditCardCount;
     }
 
-    public void setCreditCardCount(String creditCardCount) {
+    public void setCreditCardCount(int creditCardCount) {
         this.creditCardCount = creditCardCount;
     }
 
@@ -123,11 +123,11 @@ public class Member {
         this.rewardsNumberVerified = rewardsNumberVerified;
     }
 
-    public String getStoredAddressCount() {
+    public int getStoredAddressCount() {
         return storedAddressCount;
     }
 
-    public void setStoredAddressCount(String storedAddressCount) {
+    public void setStoredAddressCount(int storedAddressCount) {
         this.storedAddressCount = storedAddressCount;
     }
 

@@ -23,7 +23,7 @@ public class Access {
     private static final RestAdapter.LogLevel LOGLEVEL = RestAdapter.LogLevel.BASIC;
 
     private static final String USER_AGENT = "Staples Mobile App 1.0";
-    private static final int TIMEOUT = 15; // Seconds
+    private static final int TIMEOUT = 100; // Seconds
 
     private static Access instance;
 

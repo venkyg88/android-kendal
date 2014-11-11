@@ -29,4 +29,14 @@ public class MemberObject {
             return false;
         }
     }
+
+    /** returns true if profile as at least one address or at least one payment method */
+    public static boolean hasAddressOrPaymentMethod() {
+        if (getMember() != null) {
+            if (getMember().getCreditCardCount() > 0 || getMember().getStoredAddressCount() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -233,48 +233,45 @@ public class MainActivity extends Activity
     // Navigation
 
     public boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
-        // dls: calling more generic selectFragments which supports multiple fragments in the activity
-        List<Fragment> fragments = new ArrayList<Fragment>();
-        fragments.add(fragment);
-        return selectFragments(fragments, transition, push);
-//        // Make sure all drawers are closed
-//        drawerLayout.closeDrawers();
-//
-//        // Swap Fragments
-//        FragmentManager manager = getFragmentManager();
-//        FragmentTransaction transaction = manager.beginTransaction();
-//        if (transition!=null) transition.setAnimation(transaction);
-//        transaction.replace(R.id.content, fragment);
-//        if (push)
-//            transaction.addToBackStack(null);
-//        transaction.commit();
-//        return(true);
-    }
-
-    public boolean selectFragments(List<Fragment> fragments, Transition transition, boolean push) {
         // Make sure all drawers are closed
         drawerLayout.closeDrawers();
 
-        // Swap fragments
+        // Swap Fragments
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        for (int i=0;  i < fragments.size();  i++) {
-            Fragment fragment = fragments.get(i);
-            if (i == 0) {
-                transaction.replace(R.id.content, fragment);
-            } else {
-                transaction.add(R.id.content, fragment);
-            }
-        }
-        if (transition!=null) {
-            transition.setAnimation(transaction);
-        }
-        if (push) {
+        if (transition!=null) transition.setAnimation(transaction);
+        transaction.replace(R.id.content, fragment);
+        if (push)
             transaction.addToBackStack(null);
-        }
         transaction.commit();
         return(true);
     }
+
+//    // dls: considering whether to support multiple fragments
+//    public boolean selectFragments(List<Fragment> fragments, Transition transition, boolean push) {
+//        // Make sure all drawers are closed
+//        drawerLayout.closeDrawers();
+//
+//        // Swap fragments
+//        FragmentManager manager = getFragmentManager();
+//        FragmentTransaction transaction = manager.beginTransaction();
+//        for (int i=0;  i < fragments.size();  i++) {
+//            Fragment fragment = fragments.get(i);
+//            if (i == 0) {
+//                transaction.replace(R.id.content, fragment);
+//            } else {
+//                transaction.add(R.id.content, fragment);
+//            }
+//        }
+//        if (transition!=null) {
+//            transition.setAnimation(transaction);
+//        }
+//        if (push) {
+//            transaction.addToBackStack(null);
+//        }
+//        transaction.commit();
+//        return(true);
+//    }
 
     private boolean selectDrawerItem(DrawerItem item, Transition transition, boolean push) {
         // Safety check
@@ -288,9 +285,15 @@ public class MainActivity extends Activity
 
 
     public boolean selectOrderCheckout() {
-        Fragment fragment = CheckoutFragment.newInstance(cartAdapter.getExpectedDeliveryRange(),
-                cartAdapter.getCart().getPreTaxTotal());
-        return selectFragment(fragment, Transition.NONE, true);
+        LoginHelper loginHelper = new LoginHelper(this);
+        if (loginHelper.isLoggedIn()) {
+            // if guest or if no profile info, then go to single-page checkout, otherwise open checkout with profile editing options
+            CheckoutFragment fragment = CheckoutFragment.newInstance(cartAdapter.getExpectedDeliveryRange(),
+                        cartAdapter.getCart().getPreTaxTotal(),
+                        !loginHelper.isGuestLogin() && MemberObject.hasAddressOrPaymentMethod());
+            return selectFragment(fragment, Transition.NONE, true);
+        }
+        return false;
     }
 
     public boolean selectOrderConfirmation(String orderId, String orderNumber) {
