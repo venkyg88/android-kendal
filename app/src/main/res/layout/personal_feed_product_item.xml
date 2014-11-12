@@ -21,13 +21,14 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_gravity="left|center_vertical">
-
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:maxLines="3"
+                android:paddingRight="25dp"/>
             <com.staples.mobile.cfa.widget.RatingStars
                 android:id="@+id/rating"
                 style="@style/SmallRatingStars"/>
@@ -38,11 +39,13 @@
     </LinearLayout>
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/arrow"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:adjustViewBounds="true"
+        android:paddingRight="5dp"
         android:src="@drawable/more_arrow"/>
 </RelativeLayout>
 
