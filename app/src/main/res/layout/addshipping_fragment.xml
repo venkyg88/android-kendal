@@ -93,7 +93,6 @@
         android:ems="10"
         android:id="@+id/zipCode"
         android:layout_below="@+id/city"
-        android:layout_toRightOf="@+id/addressSaveBtn"
-        android:layout_toEndOf="@+id/addressSaveBtn" />
+        android:layout_toRightOf="@+id/state"  />
 
 </RelativeLayout>

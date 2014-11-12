@@ -6,6 +6,7 @@ package com.staples.mobile.cfa.checkout;
 
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -39,6 +40,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
     private View guestEntryView;
     Switch useShipAddrAsBillingAddrSwitch;
+    ViewGroup billingAddrContainer;
 
     private boolean shippingAddrNeedsApplying = true;
     private boolean billingAddrNeedsApplying = true;
@@ -65,6 +67,10 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         // hide imported view's Save button
         View shippingAddrLayoutVw = view.findViewById(R.id.shipping_addr_layout);
         shippingAddrLayoutVw.findViewById(R.id.addressSaveBtn).setVisibility(View.GONE);
+        View billingAddrLayoutVw = view.findViewById(R.id.billing_addr_layout);
+        billingAddrLayoutVw.findViewById(R.id.addressSaveBtn).setVisibility(View.GONE);
+
+        billingAddrContainer = (ViewGroup)view.findViewById(R.id.billing_addr_container);
 
 
         // use temp button for now to fake address entry
@@ -89,7 +95,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
     /** implements CompoundButton.OnCheckedChangeListener */
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        Toast.makeText(activity, "Checked: " + isChecked, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(activity, "Checked: " + isChecked, Toast.LENGTH_SHORT).show();
+        billingAddrContainer.setVisibility(isChecked? View.GONE: View.VISIBLE);
     }
 
     /** gets shipping address from user's entries */

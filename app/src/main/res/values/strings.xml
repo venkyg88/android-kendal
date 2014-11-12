@@ -55,6 +55,9 @@
         <item quantity="one">1 business day</item>
         <item quantity="other">%s business days</item>
     </plurals>
+    <string name="email">Email</string>
+    <string name="reenter_email">Re-enter Email</string>
+
 
     <string name="description">Description</string>
     <string name="specifications">Specifications</string>

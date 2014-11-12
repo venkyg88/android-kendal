@@ -14,19 +14,24 @@
 
     <!--email address-->
     <EditText
+        android:id="@+id/emailAddr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
-        android:ems="10"
-        android:id="@+id/emailIdRegister"
-        android:hint="Email"
+        android:ems="15"
+        android:hint="@string/email"
         android:imeOptions="actionNext"
-        android:singleLine="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:singleLine="true"/>
+    <EditText
+        android:id="@+id/emailAddrReenter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="15"
+        android:hint="@string/reenter_email"
+        android:imeOptions="actionNext"
+        android:singleLine="true"/>
+
 
     <!--todo: include this when available -->
     <!-- <include layout="@layout/addpayment_fragment" android:id="@+id/shipping_addr_layout" />-->
@@ -35,22 +40,28 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textSize="24sp"
         android:text="TBD: payment method entry will go here"/>
 
     <!--widget for choosing billing addr to match shipping addr-->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginRight="10dp"
             android:text="@string/use_as_billing_addr"/>
         <Switch
             android:id="@+id/useShipAddrAsBillingAddr_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
            />
+
     </LinearLayout>
 
     <!--temporary button-->
@@ -58,8 +69,26 @@
         android:id="@+id/temp_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Fake above entry"/>
+        android:layout_marginTop="20dp"
+        android:text="Fake all entry"/>
 
+    <!-- billing address (visible when different from shipping address) -->
+    <LinearLayout
+        android:id="@+id/billing_addr_container"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:visibility="gone">
+
+        <TextView
+            style="@style/CheckoutSubheading"
+            android:text="@string/billing_addr"/>
+
+        <!--billing address-->
+        <include layout="@layout/addshipping_fragment" android:id="@+id/billing_addr_layout" />
+
+    </LinearLayout>
 
 
 </LinearLayout>
