@@ -1,7 +1,5 @@
 package com.staples.mobile.cfa.profile;
 
-import android.provider.ContactsContract;
-
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 
 /**
@@ -46,7 +44,7 @@ public class ProfileDetails {
             if(member.getAddress()!=null){
                 ProfileDetails.member.setAddress(member.getAddress());
             }
-            
+
             if(member.getCreditCard()!=null){
                 ProfileDetails.member.setCreditCard(member.getCreditCard());
             }

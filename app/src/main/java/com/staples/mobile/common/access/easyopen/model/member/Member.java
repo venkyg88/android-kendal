@@ -1,7 +1,5 @@
 package com.staples.mobile.common.access.easyopen.model.member;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 /**
