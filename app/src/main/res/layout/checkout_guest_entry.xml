@@ -69,7 +69,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Fake all entry"/>
+        android:text="Use entered addresses"/>
+    <Button
+        android:id="@+id/temp_fake_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Use fake addresses"/>
 
     <!-- billing address (visible when different from shipping address) -->
     <LinearLayout

@@ -57,6 +57,8 @@
     </plurals>
     <string name="email">Email</string>
     <string name="reenter_email">Re-enter Email</string>
+    <string name="email_mismatch">Email address must match</string>
+    <string name="required">Required</string>
 
 
     <string name="description">Description</string>

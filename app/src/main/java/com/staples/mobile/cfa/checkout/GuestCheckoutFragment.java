@@ -4,10 +4,13 @@
 
 package com.staples.mobile.cfa.checkout;
 
+import android.content.res.Resources;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -19,6 +22,8 @@ import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethodResponse;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
+
+import org.w3c.dom.Text;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -41,9 +46,15 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     private View guestEntryView;
     Switch useShipAddrAsBillingAddrSwitch;
     ViewGroup billingAddrContainer;
+    View shippingAddrLayoutVw;
+    View billingAddrLayoutVw;
+    EditText emailAddrVw;
+    EditText emailAddrReenterVw;
 
     private boolean shippingAddrNeedsApplying = true;
     private boolean billingAddrNeedsApplying = true;
+
+    private boolean fakingIt;
 
 
     /** override this to specify layout for entry area */
@@ -57,6 +68,11 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     protected void initEntryArea(View view) {
 
         guestEntryView = view;
+        shippingAddrLayoutVw = view.findViewById(R.id.shipping_addr_layout);
+        billingAddrLayoutVw = view.findViewById(R.id.billing_addr_layout);
+        billingAddrContainer = (ViewGroup)view.findViewById(R.id.billing_addr_container);
+        emailAddrVw = (EditText)guestEntryView.findViewById(R.id.emailAddr);
+        emailAddrReenterVw = (EditText)guestEntryView.findViewById(R.id.emailAddrReenter);
 
         // if logged in as guest, show sign-in button
         LoginHelper loginHelper = new LoginHelper(activity);
@@ -64,13 +80,9 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
             view.findViewById(R.id.signin_button).setVisibility(View.VISIBLE);
         }
 
-        // hide imported view's Save button
-        View shippingAddrLayoutVw = view.findViewById(R.id.shipping_addr_layout);
+        // hide imported views' Save buttons
         shippingAddrLayoutVw.findViewById(R.id.addressSaveBtn).setVisibility(View.GONE);
-        View billingAddrLayoutVw = view.findViewById(R.id.billing_addr_layout);
         billingAddrLayoutVw.findViewById(R.id.addressSaveBtn).setVisibility(View.GONE);
-
-        billingAddrContainer = (ViewGroup)view.findViewById(R.id.billing_addr_container);
 
 
         // use temp button for now to fake address entry
@@ -80,11 +92,20 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
             public void onClick(View v) {
                 shippingAddrNeedsApplying = true;
                 billingAddrNeedsApplying = true;
-
+                fakingIt = false;
                 applyShippingAddress();
             }
         });
-
+        View temporaryFakeButton = view.findViewById(R.id.temp_fake_button);
+        temporaryFakeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shippingAddrNeedsApplying = true;
+                billingAddrNeedsApplying = true;
+                fakingIt = true;
+                applyShippingAddress();
+            }
+        });
 
         // add listener to billing addr toggle button switch
         useShipAddrAsBillingAddrSwitch = (Switch)view.findViewById(R.id.useShipAddrAsBillingAddr_switch);
@@ -99,36 +120,99 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         billingAddrContainer.setVisibility(isChecked? View.GONE: View.VISIBLE);
     }
 
+    private boolean validateRequiredField(EditText editText, String msg) {
+        if (TextUtils.isEmpty(editText.getText())) {
+            editText.setError(msg);
+            return false;
+        }
+        return true;
+    }
+
+    /** gets shipping address from user's entries */
+    private ShippingAddress getShippingAddress(View layoutView, boolean includeEmail) {
+        Resources resources = getResources();
+        boolean errors = false;
+
+        EditText firstNameVw = (EditText)layoutView.findViewById(R.id.firstName);
+        EditText lastNameVw = (EditText)layoutView.findViewById(R.id.lastName);
+        EditText addressVw = (EditText)layoutView.findViewById(R.id.address);
+        EditText cityVw = (EditText)layoutView.findViewById(R.id.city);
+        EditText stateVw = (EditText)layoutView.findViewById(R.id.state);
+        EditText phoneNumberVw = (EditText)layoutView.findViewById(R.id.phoneNumber);
+        EditText zipCodeVw = (EditText)layoutView.findViewById(R.id.zipCode);
+
+        ShippingAddress shippingAddress = new ShippingAddress();
+        shippingAddress.setDeliveryFirstName(firstNameVw.getText().toString());
+        shippingAddress.setDeliveryLastName(lastNameVw.getText().toString());
+        shippingAddress.setDeliveryAddress1(addressVw.getText().toString());
+        shippingAddress.setDeliveryCity(cityVw.getText().toString());
+        shippingAddress.setDeliveryState(stateVw.getText().toString());
+        shippingAddress.setDeliveryPhone(phoneNumberVw.getText().toString());
+        shippingAddress.setDeliveryZipCode(zipCodeVw.getText().toString());
+
+        // validate required fields
+        String requiredMsg = resources.getString(R.string.required);
+        if (!validateRequiredField(firstNameVw, requiredMsg)) { errors = true; }
+        if (!validateRequiredField(firstNameVw, requiredMsg)) { errors = true; }
+        if (!validateRequiredField(lastNameVw, requiredMsg)) { errors = true; }
+        if (!validateRequiredField(addressVw, requiredMsg)) { errors = true; }
+        if (!validateRequiredField(cityVw, requiredMsg)) { errors = true; }
+        if (!validateRequiredField(stateVw, requiredMsg)) { errors = true; }
+        if (!validateRequiredField(phoneNumberVw, requiredMsg)) { errors = true; }
+        if (!validateRequiredField(zipCodeVw, requiredMsg)) { errors = true; }
+
+        if (includeEmail) {
+            shippingAddress.setEmailAddress(emailAddrVw.getText().toString());
+            shippingAddress.setReenterEmailAddress(emailAddrReenterVw.getText().toString());
+            if (!validateRequiredField(emailAddrVw, requiredMsg)) { errors = true; }
+            if (!validateRequiredField(emailAddrReenterVw, requiredMsg)) { errors = true; }
+            if (!shippingAddress.getEmailAddress().equals(shippingAddress.getReenterEmailAddress())) {
+                String mismatchMsg = resources.getString(R.string.email_mismatch);
+                emailAddrReenterVw.setError(mismatchMsg);
+                Toast.makeText(activity, mismatchMsg, Toast.LENGTH_LONG);
+                errors = true;
+            }
+        }
+        return errors? null:shippingAddress;
+    }
+
+
     /** gets shipping address from user's entries */
     private ShippingAddress getShippingAddress() {
-        ShippingAddress fakeShippingAddress = new ShippingAddress();
-        fakeShippingAddress.setDeliveryFirstName("Diana");
-        fakeShippingAddress.setDeliveryLastName("Sutlief");
-        fakeShippingAddress.setDeliveryAddress1("16041 27th Ave NE");
-        fakeShippingAddress.setDeliveryCity("Shoreline");
-        fakeShippingAddress.setDeliveryState("WA");
-        fakeShippingAddress.setDeliveryZipCode("98155");
-        fakeShippingAddress.setDeliveryPhone("206-362-8024");
-        fakeShippingAddress.setEmailAddress("diana.sutlief@staples.com");
-        fakeShippingAddress.setReenterEmailAddress("diana.sutlief@staples.com");
-        return fakeShippingAddress;
+        if (fakingIt) {
+            return getFakeShippingAddress();
+        }
+        return getShippingAddress(shippingAddrLayoutVw, true);
     }
 
     /** gets billing address from user's entries */
     private BillingAddress getBillingAddress() {
-        if (useShipAddrAsBillingAddrSwitch.isChecked()) {
-            return new BillingAddress(getShippingAddress());
-        } else {
-            BillingAddress fakeBillingAddress = new BillingAddress();
-            fakeBillingAddress.setBillingFirstName("Diana");
-            fakeBillingAddress.setBillingLastName("Sutlief");
-            fakeBillingAddress.setBillingAddress1("16041 27th Ave NE");
-            fakeBillingAddress.setBillingCity("Shoreline");
-            fakeBillingAddress.setBillingState("WA");
-            fakeBillingAddress.setBillingZipCode("98155");
-            fakeBillingAddress.setBillingPhone("206-362-8024");
-            return fakeBillingAddress;
+        if (fakingIt) {
+            return getFakeBillingAddress();
         }
+        ShippingAddress shippingAddress = getShippingAddress(useShipAddrAsBillingAddrSwitch.isChecked()?
+                shippingAddrLayoutVw : billingAddrLayoutVw, false);
+        return (shippingAddress == null)? null : new BillingAddress(shippingAddress);
+    }
+
+    /** gets fake shipping address */
+    private ShippingAddress getFakeShippingAddress() {
+        ShippingAddress shippingAddress = new ShippingAddress();
+        shippingAddress.setDeliveryFirstName("Diana");
+        shippingAddress.setDeliveryLastName("Sutlief");
+        shippingAddress.setDeliveryAddress1("16041 27th Ave NE");
+        shippingAddress.setDeliveryCity("Shoreline");
+        shippingAddress.setDeliveryState("WA");
+        shippingAddress.setDeliveryZipCode("98155");
+        shippingAddress.setDeliveryPhone("206-362-8024");
+        shippingAddress.setEmailAddress("diana.sutlief@staples.com");
+        shippingAddress.setReenterEmailAddress("diana.sutlief@staples.com");
+        return shippingAddress;
+    }
+
+    /** gets fake billing address */
+    private BillingAddress getFakeBillingAddress() {
+        return new BillingAddress(getFakeShippingAddress());
     }
 
     /** gets billing address from user's entries */
@@ -209,6 +293,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                             hideProgressIndicator();
                         }
                     });
+        } else {
+            hideProgressIndicator();
         }
     }
 
