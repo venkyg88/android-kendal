@@ -4,28 +4,20 @@
 
 package com.staples.mobile.cfa.checkout;
 
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.login.LoginHelper;
-import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.cart.Address;
-import com.staples.mobile.common.access.easyopen.model.cart.AddressDetail;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
+import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
+import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethodResponse;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
-import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
-import com.staples.mobile.common.access.easyopen.model.member.Member;
-import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
-
-import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -46,6 +38,10 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     private static final int MAXFETCH = 50;
 
     private View guestEntryView;
+    Switch useShipAddrAsBillingAddrSwitch;
+
+    private boolean shippingAddrNeedsApplying = true;
+    private boolean billingAddrNeedsApplying = true;
 
 
     /** override this to specify layout for entry area */
@@ -70,8 +66,22 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         View shippingAddrLayoutVw = view.findViewById(R.id.shipping_addr_layout);
         shippingAddrLayoutVw.findViewById(R.id.addressSaveBtn).setVisibility(View.GONE);
 
+
+        // use temp button for now to fake address entry
+        View temporaryButton = view.findViewById(R.id.temp_button);
+        temporaryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shippingAddrNeedsApplying = true;
+                billingAddrNeedsApplying = true;
+
+                applyShippingAddress();
+            }
+        });
+
+
         // add listener to billing addr toggle button switch
-        Switch useShipAddrAsBillingAddrSwitch = (Switch)view.findViewById(R.id.useShipAddrAsBillingAddr_switch);
+        useShipAddrAsBillingAddrSwitch = (Switch)view.findViewById(R.id.useShipAddrAsBillingAddr_switch);
         useShipAddrAsBillingAddrSwitch.setChecked(true);
         useShipAddrAsBillingAddrSwitch.setOnCheckedChangeListener(this);
 
@@ -82,110 +92,156 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         Toast.makeText(activity, "Checked: " + isChecked, Toast.LENGTH_SHORT).show();
     }
 
+    /** gets shipping address from user's entries */
+    private ShippingAddress getShippingAddress() {
+        ShippingAddress fakeShippingAddress = new ShippingAddress();
+        fakeShippingAddress.setDeliveryFirstName("Diana");
+        fakeShippingAddress.setDeliveryLastName("Sutlief");
+        fakeShippingAddress.setDeliveryAddress1("16041 27th Ave NE");
+        fakeShippingAddress.setDeliveryCity("Shoreline");
+        fakeShippingAddress.setDeliveryState("WA");
+        fakeShippingAddress.setDeliveryZipCode("98155");
+        fakeShippingAddress.setDeliveryPhone("206-362-8024");
+        fakeShippingAddress.setEmailAddress("diana.sutlief@staples.com");
+        fakeShippingAddress.setReenterEmailAddress("diana.sutlief@staples.com");
+        return fakeShippingAddress;
+    }
+
+    /** gets billing address from user's entries */
+    private BillingAddress getBillingAddress() {
+        if (useShipAddrAsBillingAddrSwitch.isChecked()) {
+            return new BillingAddress(getShippingAddress());
+        } else {
+            BillingAddress fakeBillingAddress = new BillingAddress();
+            fakeBillingAddress.setBillingFirstName("Diana");
+            fakeBillingAddress.setBillingLastName("Sutlief");
+            fakeBillingAddress.setBillingAddress1("16041 27th Ave NE");
+            fakeBillingAddress.setBillingCity("Shoreline");
+            fakeBillingAddress.setBillingState("WA");
+            fakeBillingAddress.setBillingZipCode("98155");
+            fakeBillingAddress.setBillingPhone("206-362-8024");
+            return fakeBillingAddress;
+        }
+    }
+
+    /** gets billing address from user's entries */
+    private PaymentMethod getPaymentMethod() {
+        PaymentMethod fakePaymentMethod = new PaymentMethod();
+        fakePaymentMethod.setCardType("Visa");
+        fakePaymentMethod.setCardVerificationCode("123");
+        fakePaymentMethod.setCardNumber("4111111111111111 but need to encrypt!!!!!!!!!!");
+        fakePaymentMethod.setCardExpirationMonth("12");
+        fakePaymentMethod.setCardExpirationYear("2020");
+        return fakePaymentMethod;
+    }
+    
+    private void applyShippingAddress() {
+        ShippingAddress shippingAddress = getShippingAddress();
+
+        // add shipping address to cart
+        if (shippingAddress != null) {
+            showProgressIndicator();
+            secureApi.addShippingAddressToCart(shippingAddress, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+                    new Callback<AddressValidationAlert>() {
+
+                        @Override
+                        public void success(AddressValidationAlert precheckoutResponse, Response response) {
+                            String validationAlert = precheckoutResponse.getAddressValidationAlert();
+
+                            if (validationAlert != null) {
+                                Toast.makeText(activity, "Address alert: " + validationAlert, Toast.LENGTH_SHORT).show();
+                            } else {
+                                shippingAddrNeedsApplying = false;
+                            }
+
+                            if (!shippingAddrNeedsApplying && billingAddrNeedsApplying) {
+                                applyBillingAddress();
+                            }
+
+                            startPrecheckoutIfReady();
+                        }
+
+                        @Override
+                        public void failure(RetrofitError retrofitError) {
+                            String msg = "Address error: " + ApiError.getErrorMessage(retrofitError);
+                            Log.d(TAG, msg);
+                            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+                            hideProgressIndicator();
+                        }
+                    });
+        }
+    }
+
+    private void applyBillingAddress() {
+        BillingAddress billingAddress = getBillingAddress();
+
+        // add shipping address to cart
+        if (billingAddress != null) {
+            showProgressIndicator();
+            secureApi.addBillingAddressToCart(billingAddress, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+                    new Callback<AddressValidationAlert>() {
+
+                        @Override
+                        public void success(AddressValidationAlert precheckoutResponse, Response response) {
+                            String validationAlert = precheckoutResponse.getAddressValidationAlert();
+
+                            if (validationAlert != null) {
+                                Toast.makeText(activity, "Address alert: " + validationAlert, Toast.LENGTH_SHORT).show();
+                            } else {
+                                billingAddrNeedsApplying = false;
+                            }
+
+                            startPrecheckoutIfReady();
+                        }
+
+                        @Override
+                        public void failure(RetrofitError retrofitError) {
+                            String msg = "Address error: " + ApiError.getErrorMessage(retrofitError);
+                            Log.d(TAG, msg);
+                            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+                            hideProgressIndicator();
+                        }
+                    });
+        }
+    }
+
+    private void startPrecheckoutIfReady() {
+        if (!shippingAddrNeedsApplying && !billingAddrNeedsApplying) {
+            startPrecheckout();
+        } else {
+            hideProgressIndicator();
+        }
+    }
+
     /** overriding to handle order submission */
     @Override
     protected void onSubmit() {
-        Toast.makeText(activity, "TBD", Toast.LENGTH_SHORT).show();
+        submitPaymentMethod();
     }
 
+    private void submitPaymentMethod() {
 
-    /************* api listeners ************/
+        final PaymentMethod paymentMethod = getPaymentMethod();
 
+        // first add selected payment method to cart
+        if (paymentMethod != null) {
+            showProgressIndicator();
+            secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+                    new Callback<PaymentMethodResponse>() {
+                        @Override
+                        public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
+                            // upon payment method success, submit the order
+                            submitOrder(paymentMethod.getCardVerificationCode());
+                        }
 
-//    /** listens for completion of cart address request */
-//    class AddressDetailListener implements Callback<AddressDetail> {
-//
-//        boolean listeningForShippingAddr; // true if shipping address listener, false if billing address listener
-//
-//        AddressDetailListener(boolean listeningForShippingAddr) {
-//            this.listeningForShippingAddr = listeningForShippingAddr;
-//        }
-//
-//        @Override
-//        public void success(AddressDetail addressDetail, Response response) {
-//
-//            Address address = null;
-//            if (addressDetail != null && addressDetail.getAddress() != null &&
-//                    addressDetail.getAddress().size() > 0) {
-//                address = addressDetail.getAddress().get(0);
-//            }
-//
-//            if (listeningForShippingAddr) {
-//                shippingAddrResponseReceived = true;
-//                GuestCheckoutFragment.this.shippingAddress = address;
-//                shippingAddrVw.setText(formatAddress(address)); //"Paul Gates\n56 Frost St #1\nCambridge, MA 02140"
-//            } else {
-//                billingAddrResponseReceived = true;
-//                GuestCheckoutFragment.this.billingAddress = address;
-//                billingAddrVw.setText(formatAddress(address));
-//            }
-//            startSecondWaveIfReady();
-//        }
-//
-//        @Override
-//        public void failure(RetrofitError retrofitError) {
-//
-//            boolean normalAddrNotAvailResponse = (retrofitError.getResponse() != null &&
-//                    retrofitError.getResponse().getStatus() == 400);
-//
-//
-//            if (listeningForShippingAddr) {
-//
-//                // query for profile addresses
-//                shippingAddrResponseReceived = true;
-//            } else {
-//                billingAddrResponseReceived = true;
-//            }
-//
-//            if (!normalAddrNotAvailResponse) {
-//                String msg = "Error getting " + (listeningForShippingAddr ? "shipping" : "billing") + " address: " + ApiError.getErrorMessage(retrofitError);
-//                Log.d(TAG, msg);
-//                Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
-//            }
-//
-//            startSecondWaveIfReady();
-//       }
-//    }
-//
-//    /** listens for completion of precheckout */
-//    class AddAddressListener implements Callback<AddressValidationAlert> {
-//
-//        boolean listeningForShippingAddr; // true if shipping address listener, false if billing address listener
-//
-//        AddAddressListener(boolean listeningForShippingAddr) {
-//            this.listeningForShippingAddr = listeningForShippingAddr;
-//        }
-//
-//        @Override
-//        public void success(AddressValidationAlert precheckoutResponse, Response response) {
-//            String validationAlert = precheckoutResponse.getAddressValidationAlert();
-//
-//            if (validationAlert != null) {
-//                Toast.makeText(activity, "Address alert: " + validationAlert, Toast.LENGTH_SHORT).show();
-//            }
-//
-//            if (listeningForShippingAddr) {
-//                shippingAddrAddToCartResponseReceived = true;
-//            } else {
-//                billingAddrAddToCartResponseReceived = true;
-//            }
-//            startPrecheckoutIfReady();
-//        }
-//
-//        @Override
-//        public void failure(RetrofitError retrofitError) {
-//
-//            if (listeningForShippingAddr) {
-//                shippingAddrAddToCartResponseReceived = true;
-//            } else {
-//                billingAddrAddToCartResponseReceived = true;
-//            }
-//
-//            String msg = "Address error: " + ApiError.getErrorMessage(retrofitError);
-//            Log.d(TAG, msg);
-//            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
-//            hideProgressIndicator();
-//        }
-//    }
+                        @Override
+                        public void failure(RetrofitError retrofitError) {
+                            hideProgressIndicator();
+                            Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            );
+        }
+    }
 
 }

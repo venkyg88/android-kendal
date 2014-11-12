@@ -53,6 +53,21 @@ public class BillingAddress {
         this.billingZipCode = profileAddress.getZipcode();
     }
 
+
+    // conversion constructor
+    public BillingAddress(ShippingAddress shippingAddress) {
+        this.billingAddress1 = shippingAddress.getDeliveryAddress1();
+        this.billingAddress2 = shippingAddress.getDeliveryAddress2();
+        this.billingCity = shippingAddress.getDeliveryCity();
+        this.billingFirstName = shippingAddress.getDeliveryFirstName();
+        this.billingLastName = shippingAddress.getDeliveryLastName();
+        this.billingCompanyName = shippingAddress.getDeliveryCompanyName();
+        this.billingPhoneExtension = shippingAddress.getDeliveryPhoneExtension();
+        this.billingPhone = shippingAddress.getDeliveryPhone();
+        this.billingState = shippingAddress.getDeliveryState();
+        this.billingZipCode = shippingAddress.getDeliveryZipCode();
+    }
+
     public String getBillingAddress1() {
         return billingAddress1;
     }

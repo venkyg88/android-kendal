@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,23 +22,13 @@ import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.cart.Address;
-import com.staples.mobile.common.access.easyopen.model.cart.AddressDetail;
-import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
-import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
-import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethodResponse;
-import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.access.easyopen.model.checkout.SubmitOrderRequest;
 import com.staples.mobile.common.access.easyopen.model.checkout.SubmitOrderResponse;
-import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
-import com.staples.mobile.common.access.easyopen.model.member.Member;
-import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
 import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
 
 import java.text.NumberFormat;
-import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -91,8 +80,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     // data initialized from cart drawer
     Float pretaxSubtotal;
 
-    // payment method associated with the order
-    CCDetails selectedPaymentMethod;
 
     // api listeners
     CartListener shippingChargeListener;
