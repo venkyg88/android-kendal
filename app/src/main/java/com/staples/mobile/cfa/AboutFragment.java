@@ -30,14 +30,15 @@ public class AboutFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
-        TableLayout table = (TableLayout) inflater.inflate(R.layout.about_fragment, container, false);
+        View view = inflater.inflate(R.layout.about_fragment, container, false);
+        TableLayout table = (TableLayout) view.findViewById(R.id.about_table);
 
         dateFormat = new SimpleDateFormat(("yyyy-MM-dd HH:mm"));
         addRow(inflater, table, "Android API version", Integer.toString(Build.VERSION.SDK_INT));
         addDisplayRows(inflater, table);
         addPackageRows(inflater, table);
 
-        return(table);
+        return(view);
     }
 
     private void addDisplayRows(LayoutInflater inflater, TableLayout table) {
