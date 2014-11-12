@@ -1,16 +1,13 @@
 package com.staples.mobile.cfa.login;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.cfa.profile.ProfileFragment;
+import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
@@ -179,6 +176,7 @@ public class LoginHelper {
             public void success(Response empty, Response response) {
                 Access.getInstance().setTokens(null, null, true); //set these to null since they're definitely unusable now
                 getGuestTokens(); // re-establish a guest login since user may try to add to cart after signing out
+                ProfileDetails.resetMember();
                 Log.i("Code for signout", " " + response.getStatus());
             }
 
