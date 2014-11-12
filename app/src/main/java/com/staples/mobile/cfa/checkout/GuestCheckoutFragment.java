@@ -241,6 +241,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                         }
                     }
             );
+        } else {
+            Toast.makeText(activity, R.string.payment_method_required, Toast.LENGTH_SHORT).show();
         }
     }
 
