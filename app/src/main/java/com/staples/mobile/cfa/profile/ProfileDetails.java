@@ -1,5 +1,7 @@
 package com.staples.mobile.cfa.profile;
 
+import android.provider.ContactsContract;
+
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 
 /**
@@ -18,31 +20,36 @@ public class ProfileDetails {
     }
 
     public static void mergeMember(Member member) {
-        if(member.getUserName()!=null){
-            ProfileDetails.member.setUserName(member.getUserName());
-            ProfileDetails.member.setEmailAddress(member.getEmailAddress());
-            ProfileDetails.member.setAutoLoginFlag(member.getAutoLoginFlag());
-            ProfileDetails.member.setCreditCardCount(member.getCreditCardCount());
-            ProfileDetails.member.setIsUserSubscribed(member.getIsUserSubscribed());
-            ProfileDetails.member.setOpenAccountEnabledFlag(member.getOpenAccountEnabledFlag());
-            ProfileDetails.member.setReminderQuestion(member.getReminderQuestion());
-            ProfileDetails.member.setRewardsNumberVerified(member.getRewardsNumberVerified());
-            ProfileDetails.member.setRewardsNumber(member.getRewardsNumber());
-            ProfileDetails.member.setStoredAddressCount(member.getStoredAddressCount());
-            ProfileDetails.member.setWelcomeMessage(member.getWelcomeMessage());
-            
-        }
 
-        if(member.getAddress()!=null){
-            ProfileDetails.member.setAddress(member.getAddress());
-        }
-        if(member.getCreditCard()!=null){
-            ProfileDetails.member.setCreditCard(member.getCreditCard());
-        }
-        if(member.getRewardsNumber()!=null) {
-            ProfileDetails.member.setEmailAddress(member.getEmailAddress());
-            ProfileDetails.member.setUserName(member.getUserName());
-            ProfileDetails.member.setRewardsNumber(member.getRewardsNumber());
+        if(ProfileDetails.member == null){
+            ProfileDetails.member = member;
+        } else {
+            if(member.getUserName()!=null){
+                ProfileDetails.member.setUserName(member.getUserName());
+                ProfileDetails.member.setEmailAddress(member.getEmailAddress());
+                ProfileDetails.member.setAutoLoginFlag(member.getAutoLoginFlag());
+                ProfileDetails.member.setCreditCardCount(member.getCreditCardCount());
+                ProfileDetails.member.setIsUserSubscribed(member.getIsUserSubscribed());
+                ProfileDetails.member.setOpenAccountEnabledFlag(member.getOpenAccountEnabledFlag());
+                ProfileDetails.member.setReminderQuestion(member.getReminderQuestion());
+                ProfileDetails.member.setRewardsNumberVerified(member.getRewardsNumberVerified());
+                ProfileDetails.member.setRewardsNumber(member.getRewardsNumber());
+                ProfileDetails.member.setStoredAddressCount(member.getStoredAddressCount());
+                ProfileDetails.member.setWelcomeMessage(member.getWelcomeMessage());
+                ProfileDetails.member.setRewardDetails(member.getRewardDetails());
+                ProfileDetails.member.setFavoritesList(member.getFavoritesList());
+                ProfileDetails.member.setCreditCard(member.getCreditCard());
+                ProfileDetails.member.setPreferredStore(member.getPreferredStore());
+                ProfileDetails.member.setAddress(member.getAddress());
+            }
+
+            if(member.getAddress()!=null){
+                ProfileDetails.member.setAddress(member.getAddress());
+            }
+            
+            if(member.getCreditCard()!=null){
+                ProfileDetails.member.setCreditCard(member.getCreditCard());
+            }
         }
     }
 
