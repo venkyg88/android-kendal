@@ -24,7 +24,7 @@ import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.checkout.ConfirmationFragment;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
-import com.staples.mobile.cfa.profile.MemberObject;
+import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.cfa.search.SearchBarView;
@@ -37,12 +37,10 @@ import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.lms.LmsManager;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int SURRENDER_TIMEOUT = 5000;
 
@@ -290,7 +288,7 @@ public class MainActivity extends Activity
             // if guest or if no profile info, then go to single-page checkout, otherwise open checkout with profile editing options
             CheckoutFragment fragment = CheckoutFragment.newInstance(cartAdapter.getExpectedDeliveryRange(),
                         cartAdapter.getCart().getPreTaxTotal(),
-                        !loginHelper.isGuestLogin() && MemberObject.hasAddressOrPaymentMethod());
+                        !loginHelper.isGuestLogin() && ProfileDetails.hasAddressOrPaymentMethod());
             return selectFragment(fragment, Transition.NONE, true);
         }
         return false;
@@ -374,7 +372,7 @@ public class MainActivity extends Activity
         }
 
         // set text of free shipping msg
-        if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !MemberObject.isRewardsMember()) {
+        if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !ProfileDetails.isRewardsMember()) {
             // need to spend more to qualify for free shipping
             cartFreeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
                     currencyFormat.format(freeShippingThreshold), currencyFormat.format(freeShippingThreshold - subtotal)));
@@ -493,6 +491,13 @@ public class MainActivity extends Activity
                     adapter.pushStack(item);
                 }
                 break;
+
+            case PROFILE:
+                if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
+                    selectProfileFragment();
+                } else {
+                    selectLoginFragment();
+                }
         }
     }
 }
