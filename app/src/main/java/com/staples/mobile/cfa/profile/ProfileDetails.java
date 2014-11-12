@@ -36,9 +36,9 @@ public class ProfileDetails {
                 ProfileDetails.member.setWelcomeMessage(member.getWelcomeMessage());
                 ProfileDetails.member.setRewardDetails(member.getRewardDetails());
                 ProfileDetails.member.setFavoritesList(member.getFavoritesList());
-                ProfileDetails.member.setCreditCard(member.getCreditCard());
+//                ProfileDetails.member.setCreditCard(member.getCreditCard());
                 ProfileDetails.member.setPreferredStore(member.getPreferredStore());
-                ProfileDetails.member.setAddress(member.getAddress());
+//                ProfileDetails.member.setAddress(member.getAddress());
             }
 
             if(member.getAddress()!=null){
