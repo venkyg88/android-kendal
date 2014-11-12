@@ -14,12 +14,25 @@ public class ProfileDetails {
     }
 
     public static void setMember(Member member) {
-        if(ProfileDetails.member == null) {
-            ProfileDetails.member = member;
-        }
+        ProfileDetails.member = member;
     }
 
     public static void mergeMember(Member member) {
+        if(member.getUserName()!=null){
+            ProfileDetails.member.setUserName(member.getUserName());
+            ProfileDetails.member.setEmailAddress(member.getEmailAddress());
+            ProfileDetails.member.setAutoLoginFlag(member.getAutoLoginFlag());
+            ProfileDetails.member.setCreditCardCount(member.getCreditCardCount());
+            ProfileDetails.member.setIsUserSubscribed(member.getIsUserSubscribed());
+            ProfileDetails.member.setOpenAccountEnabledFlag(member.getOpenAccountEnabledFlag());
+            ProfileDetails.member.setReminderQuestion(member.getReminderQuestion());
+            ProfileDetails.member.setRewardsNumberVerified(member.getRewardsNumberVerified());
+            ProfileDetails.member.setRewardsNumber(member.getRewardsNumber());
+            ProfileDetails.member.setStoredAddressCount(member.getStoredAddressCount());
+            ProfileDetails.member.setWelcomeMessage(member.getWelcomeMessage());
+            
+        }
+
         if(member.getAddress()!=null){
             ProfileDetails.member.setAddress(member.getAddress());
         }
@@ -31,6 +44,10 @@ public class ProfileDetails {
             ProfileDetails.member.setUserName(member.getUserName());
             ProfileDetails.member.setRewardsNumber(member.getRewardsNumber());
         }
+    }
+
+    public static void resetMember() {
+        ProfileDetails.setMember(null);
     }
 
     public static boolean isRewardsMember(){
