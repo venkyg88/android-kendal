@@ -480,6 +480,13 @@ public class MainActivity extends Activity
                     adapter.pushStack(item);
                 }
                 break;
+
+            case PROFILE:
+                if(!loginHelper.isLoggedIn()) {
+                    selectLoginFragment();
+                } else {
+                    selectProfileFragment();
+                }
         }
     }
 }
