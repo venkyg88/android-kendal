@@ -15,19 +15,17 @@
     <!--email address-->
     <EditText
         android:id="@+id/emailAddr"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
-        android:ems="15"
         android:hint="@string/email"
         android:imeOptions="actionNext"
         android:singleLine="true"/>
     <EditText
         android:id="@+id/emailAddrReenter"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
-        android:ems="15"
         android:hint="@string/reenter_email"
         android:imeOptions="actionNext"
         android:singleLine="true"/>
@@ -42,6 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:textSize="24sp"
+        android:textColor="#FF0000"
         android:text="TBD: payment method entry will go here"/>
 
     <!--widget for choosing billing addr to match shipping addr-->
