@@ -1,4 +1,4 @@
-package com.staples.mobile.cfa.personal_feed;
+package com.staples.mobile.cfa.feed;
 
 /**
  * Author: Yongnan Zhou
