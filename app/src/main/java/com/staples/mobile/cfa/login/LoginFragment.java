@@ -138,7 +138,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             {
                 Access.getInstance().setTokens(null, null, false);
                 loginHelper.registerUser(getEmaiId(), getRegisterUsername(), getRegisterPassword());
-
             }
             else{
                 Toast.makeText(getActivity(), "Username or Password cannot be null", Toast.LENGTH_LONG).show();

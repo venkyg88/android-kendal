@@ -482,10 +482,10 @@ public class MainActivity extends Activity
                 break;
 
             case PROFILE:
-                if(!loginHelper.isLoggedIn()) {
-                    selectLoginFragment();
-                } else {
+                if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
                     selectProfileFragment();
+                } else {
+                    selectLoginFragment();
                 }
         }
     }
