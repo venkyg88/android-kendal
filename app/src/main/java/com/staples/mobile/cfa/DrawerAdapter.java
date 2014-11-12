@@ -1,7 +1,6 @@
 package com.staples.mobile.cfa;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +15,7 @@ import com.staples.mobile.cfa.feed.FeedFragment;
 import com.staples.mobile.cfa.home.LmsFragment;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.store.StoreFragment;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -144,12 +144,13 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse>{
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.home_title, LmsFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.personal_feed_title, FeedFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.BROWSE, activity, 0&R.drawable.logo, R.string.category_title));
-        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.store_locator_title, ToBeDoneFragment.class));
+        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.store_locator_title, StoreFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.weekly_ad_title, ToBeDoneFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.ACCOUNT, activity, 0&R.drawable.logo, R.string.account_title, LoginFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.rewards_title, ToBeDoneFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.order_title, ToBeDoneFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.profile_title, ToBeDoneFragment.class));
+        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.about_title, AboutFragment.class));
 
         // Fill stack list
         stackList.add(new DrawerItem(DrawerItem.Type.BACKTOTOP, activity, R.drawable.logo, R.string.backtotop_title));
