@@ -15,6 +15,7 @@ import com.staples.mobile.cfa.feed.FeedFragment;
 import com.staples.mobile.cfa.home.LmsFragment;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.store.StoreFragment;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
@@ -149,7 +150,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse>{
         menuList.add(new DrawerItem(DrawerItem.Type.ACCOUNT, activity, 0&R.drawable.logo, R.string.account_title, LoginFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.rewards_title, ToBeDoneFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.order_title, ToBeDoneFragment.class));
-        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.profile_title, ToBeDoneFragment.class));
+        menuList.add(new DrawerItem(DrawerItem.Type.PROFILE, activity, 0&R.drawable.logo, R.string.profile_title, ProfileFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.about_title, AboutFragment.class));
 
         // Fill stack list
