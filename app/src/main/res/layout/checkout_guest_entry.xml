@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="6dp">
+
+    <!--shipping address-->
+    <include layout="@layout/addshipping_fragment" android:id="@+id/shipping_addr_layout" />
+
+    <!--email address-->
+    <EditText
+        android:id="@+id/emailAddr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:hint="@string/email"
+        android:imeOptions="actionNext"
+        android:singleLine="true"/>
+    <EditText
+        android:id="@+id/emailAddrReenter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:hint="@string/reenter_email"
+        android:imeOptions="actionDone"
+        android:singleLine="true"/>
+
+
+    <!--todo: include this when available -->
+    <!-- <include layout="@layout/addpayment_fragment" android:id="@+id/shipping_addr_layout" />-->
+
+    <!--for now, hard code payment method-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textSize="24sp"
+        android:textColor="#FF0000"
+        android:text="TBD: payment method entry will go here"/>
+
+    <!--widget for choosing billing addr to match shipping addr-->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginRight="10dp"
+            android:text="@string/use_as_billing_addr"/>
+        <Switch
+            android:id="@+id/useShipAddrAsBillingAddr_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+           />
+
+    </LinearLayout>
+
+
+    <!-- billing address (visible when different from shipping address) -->
+    <LinearLayout
+        android:id="@+id/billing_addr_container"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:visibility="gone">
+
+        <TextView
+            style="@style/CheckoutSubheading"
+            android:text="@string/billing_addr"/>
+
+        <!--billing address-->
+        <include layout="@layout/addshipping_fragment" android:id="@+id/billing_addr_layout" />
+
+    </LinearLayout>
+
+    <!--temporary buttons-->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/temp_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Use entered"/>
+        <Button
+            android:id="@+id/temp_fake_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Use fake"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -36,9 +36,9 @@ public class ProfileDetails {
                 ProfileDetails.member.setWelcomeMessage(member.getWelcomeMessage());
                 ProfileDetails.member.setRewardDetails(member.getRewardDetails());
                 ProfileDetails.member.setFavoritesList(member.getFavoritesList());
-                ProfileDetails.member.setCreditCard(member.getCreditCard());
+//                ProfileDetails.member.setCreditCard(member.getCreditCard());
                 ProfileDetails.member.setPreferredStore(member.getPreferredStore());
-                ProfileDetails.member.setAddress(member.getAddress());
+//                ProfileDetails.member.setAddress(member.getAddress());
             }
 
             if(member.getAddress()!=null){
@@ -66,5 +66,15 @@ public class ProfileDetails {
         }else{
             return false;
         }
+    }
+
+    /** returns true if profile as at least one address or at least one payment method */
+    public static boolean hasAddressOrPaymentMethod() {
+        if (getMember() != null) {
+            if (getMember().getCreditCardCount() > 0 || getMember().getStoredAddressCount() > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 }
