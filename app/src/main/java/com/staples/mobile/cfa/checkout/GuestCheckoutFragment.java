@@ -4,6 +4,7 @@
 
 package com.staples.mobile.cfa.checkout;
 
+import android.app.Fragment;
 import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,15 +16,26 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.profile.ProfileFragment;
+import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethodResponse;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
+import com.staples.mobile.common.access.easyopen.model.member.AddCreditCard;
+import com.staples.mobile.common.access.easyopen.model.member.AddCreditCardPOW;
+import com.staples.mobile.common.access.easyopen.model.member.CreditCardID;
+import com.staples.mobile.common.access.easyopen.model.member.POWResponse;
 
 import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -220,7 +232,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         PaymentMethod fakePaymentMethod = new PaymentMethod();
         fakePaymentMethod.setCardType("Visa");
         fakePaymentMethod.setCardVerificationCode("123");
-        fakePaymentMethod.setCardNumber("4111111111111111 but need to encrypt!!!!!!!!!!");
+        fakePaymentMethod.setCardNumber("4111111111111111");
         fakePaymentMethod.setCardExpirationMonth("12");
         fakePaymentMethod.setCardExpirationYear("2020");
         return fakePaymentMethod;
@@ -305,6 +317,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         }
     }
 
+
+
     /** overriding to handle order submission */
     @Override
     protected void onSubmit() {
@@ -317,24 +331,52 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
         // first add selected payment method to cart
         if (paymentMethod != null) {
-            Toast.makeText(activity, "TBD - waiting on CC encryption code", Toast.LENGTH_SHORT).show();
+            showProgressIndicator();
+            // encrypt payment method
+            EasyOpenApi powApi = Access.getInstance().getPOWApi();
+            String powCardType = paymentMethod.getCardType().toUpperCase();
+            if ("StaplesBureauEnGros".equals(paymentMethod.getCardType())) {
+                powCardType = "STAPLES";
+            }
+            AddCreditCardPOW creditCard = new AddCreditCardPOW(paymentMethod.getCardNumber(), powCardType);
+            List<AddCreditCardPOW> ccList = new ArrayList<AddCreditCardPOW>();
+            ccList.add(creditCard);
+            powApi.addCreditPOWCall(ccList, new Callback<POWResponse[]>() {
+                @Override
+                public void success(POWResponse[] powList, Response response) {
+                    Log.i("packet", powList[0].getPacket());
+                    if ("0".equals(powList[0].getStatus()) && !TextUtils.isEmpty(powList[0].getPacket())) {
+                        paymentMethod.setCardNumber(powList[0].getPacket());
 
-//            showProgressIndicator();
-//            secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
-//                    new Callback<PaymentMethodResponse>() {
-//                        @Override
-//                        public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
-//                            // upon payment method success, submit the order
-//                            submitOrder(paymentMethod.getCardVerificationCode());
-//                        }
-//
-//                        @Override
-//                        public void failure(RetrofitError retrofitError) {
-//                            hideProgressIndicator();
-//                            Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//            );
+                        // add payment method to cart
+                        secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+                                new Callback<PaymentMethodResponse>() {
+                                    @Override
+                                    public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
+                                        // upon payment method success, submit the order
+                                        submitOrder(paymentMethod.getCardVerificationCode());
+                                    }
+
+                                    @Override
+                                    public void failure(RetrofitError retrofitError) {
+                                        hideProgressIndicator();
+                                        Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                        );
+                    } else {
+                        hideProgressIndicator();
+                        Toast.makeText(activity, "Payment Error", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError retrofitError) {
+                    hideProgressIndicator();
+                    Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
+                }
+            });
+
         } else {
             Toast.makeText(activity, R.string.payment_method_required, Toast.LENGTH_SHORT).show();
         }
