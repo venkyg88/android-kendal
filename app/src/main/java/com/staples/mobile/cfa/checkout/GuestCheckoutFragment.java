@@ -247,9 +247,10 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
                             if (!shippingAddrNeedsApplying && billingAddrNeedsApplying) {
                                 applyBillingAddress();
+                            } else {
+                                hideProgressIndicator();
+                                startPrecheckoutIfReady();
                             }
-
-                            startPrecheckoutIfReady();
                         }
 
                         @Override
@@ -301,8 +302,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     private void startPrecheckoutIfReady() {
         if (!shippingAddrNeedsApplying && !billingAddrNeedsApplying) {
             startPrecheckout();
-        } else {
-            hideProgressIndicator();
         }
     }
 
@@ -318,7 +317,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
         // first add selected payment method to cart
         if (paymentMethod != null) {
-            Toast.makeText(activity, "TBD - waiting on encryption code", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "TBD - waiting on CC encryption code", Toast.LENGTH_SHORT).show();
 
 //            showProgressIndicator();
 //            secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
