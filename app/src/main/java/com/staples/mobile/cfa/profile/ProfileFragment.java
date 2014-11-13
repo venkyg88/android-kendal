@@ -27,7 +27,7 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>,
 
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;;
+    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
     private static final String LOCALE = "en_US";
 
     private EasyOpenApi easyOpenApi;
