@@ -23,9 +23,7 @@ import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.feed.PersonalFeedData;
-import com.staples.mobile.cfa.feed.PersonalFeedFragment;
 import com.staples.mobile.cfa.feed.SeenProductsRowItem;
-import com.staples.mobile.cfa.feed.SizedStack;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PagerStripe;
@@ -48,7 +46,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Stack;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;

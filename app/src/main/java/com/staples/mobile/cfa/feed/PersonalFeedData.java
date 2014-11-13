@@ -1,7 +1,5 @@
 package com.staples.mobile.cfa.feed;
 
-import java.util.Stack;
-
 /**
  * Author: Yongnan Zhou
  */

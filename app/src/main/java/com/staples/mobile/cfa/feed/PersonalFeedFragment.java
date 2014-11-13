@@ -16,11 +16,9 @@ import android.widget.ListView;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.cfa.widget.DataWrapper;
 
 public class PersonalFeedFragment extends Fragment {
     private static final String TAG = "PersonalFeedFragment";
-
     private ListView seenProductsListView;
     private SeenProductsAdapter seenProductsListAdapter;
 
@@ -39,22 +37,12 @@ public class PersonalFeedFragment extends Fragment {
 
     private void setAdapter(){
         seenProductsListAdapter = new SeenProductsAdapter(getActivity());
-//        SeenProductsRowItem(String productName,
-//                            String currentPrice,
-//                            String reviewAmount,
-//                            String rating,
-//                            String sku,
-//                            String unitOfMeasure,
-//                            String imageUrl)
-        SeenProductsRowItem item = new SeenProductsRowItem("Product", "99", "100", "2", "223456",
-                "Each", "http://www.staples-3p.com/s7/is/image/Staples/s0795727_sc7");
-        SeenProductsRowItem item2 = new SeenProductsRowItem("Product Product Product Product Product Product", "99", "100", "2", "122374",
-                "Each", "http://www.staples-3p.com/s7/is/image/Staples/s0795727_sc7");
-        SeenProductsRowItem item3 = new SeenProductsRowItem("Product Product Product asdf asdf Product Product Product Product Product fdasdf Product Product Product Product Product", "99", "100", "2", "123456",
-                "Each", "http://www.staples-3p.com/s7/is/image/Staples/s0795727_sc7");
-        seenProductsListAdapter.add(item);
-        seenProductsListAdapter.add(item2);
-        seenProductsListAdapter.add(item3);
+
+        SizedStack<SeenProductsRowItem> seenProducts = PersonalFeedData.getInstance().getSavedSeenProducts();
+
+        for(SeenProductsRowItem savedProduct : seenProducts){
+            seenProductsListAdapter.add(savedProduct);
+        }
 
         seenProductsListView.setAdapter(seenProductsListAdapter);
     }
