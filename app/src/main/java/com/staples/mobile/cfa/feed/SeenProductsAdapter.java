@@ -42,7 +42,7 @@ public class SeenProductsAdapter extends ArrayAdapter<SeenProductsRowItem> {
         if (title!=null) title.setText(rowItem.getProduceName());
 
         RatingStars ratingStars = (RatingStars) convertView.findViewById(R.id.rating);
-        ratingStars.setRating(Float.parseFloat(rowItem.getRating()), Integer.parseInt(rowItem.getReviewAmount()));
+        ratingStars.setRating(Float.parseFloat(rowItem.getRating()), Integer.parseInt(rowItem.getReviewCount()));
 
         PriceSticker priceSticker = (PriceSticker) convertView.findViewById(R.id.pricing);
         priceSticker.setPricing(Float.parseFloat(rowItem.getCurrentPrice()), rowItem.getUnitOfMeasure());
