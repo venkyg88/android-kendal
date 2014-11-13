@@ -136,7 +136,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
             if(!getRegisterUsername().isEmpty() && !getRegisterPassword().isEmpty())
             {
-                Access.getInstance().setTokens(null, null, false);
+                if (!loginHelper.isGuestLogin()) {
+                    Access.getInstance().setTokens(null, null, false);
+                }
                 loginHelper.registerUser(getEmaiId(), getRegisterUsername(), getRegisterPassword());
             }
             else{
