@@ -22,6 +22,10 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.feed.PersonalFeedData;
+import com.staples.mobile.cfa.feed.PersonalFeedFragment;
+import com.staples.mobile.cfa.feed.SeenProductsRowItem;
+import com.staples.mobile.cfa.feed.SizedStack;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PagerStripe;
@@ -44,6 +48,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Stack;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -346,6 +351,22 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     }
 
+    private void saveSeenProducts(Product product){
+        String productName = product.getProductName();
+        String currentPrice = String.valueOf(product.getPricing().get(0).getFinalPrice());
+        String reviewCount = String.valueOf(product.getCustomerReviewCount());
+        String rating = String.valueOf(product.getCustomerReviewRating());
+        String sku = product.getSku();
+        String unitOfMeasure = product.getPricing().get(0).getUnitOfMeasure();
+        String imageUrl = product.getImage().get(0).getUrl();
+
+        SeenProductsRowItem item = new SeenProductsRowItem(productName, currentPrice, reviewCount,
+                rating, sku, unitOfMeasure, imageUrl);
+
+        PersonalFeedData feedSingleton = PersonalFeedData.getInstance();
+        feedSingleton.getSavedSeenProducts().push(item);
+    }
+
     // Retrofit callbacks
 
     private class SkuDetailsCallback implements Callback<SkuDetails> {
@@ -454,6 +475,9 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 summary.findViewById(R.id.accessory_title).setVisibility(View.GONE);
                 Log.d(TAG, "Product has no accessories.");
             }
+
+            // Save seen products detail for personal feed
+            saveSeenProducts(product);
         }
     }
 
