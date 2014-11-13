@@ -141,6 +141,23 @@ public class Access {
         return(api);
     }
 
+    // POW for adding Credit card
+    public EasyOpenApi getPOWApi() {
+
+        // Build API
+        RestAdapter.Builder builder = new RestAdapter.Builder();
+        builder.setClient(okClient);
+        builder.setEndpoint(EasyOpenApi.POW_SECURE_ENDPOINT);
+        builder.setRequestInterceptor(new SecureInterceptor());
+        builder.setConverter(converter);
+        builder.setLogLevel(LOGLEVEL);
+        builder.setLog(new AndroidLog(TAG));
+        RestAdapter adapter = builder.build();
+        EasyOpenApi api = adapter.create(EasyOpenApi.class);
+        return(api);
+    }
+
+
     public EasyOpenApi getMockEasyOpenApi(Context context) {
         if (mockEasyOpenApi!=null) return(mockEasyOpenApi);
         InvocationHandler handler = new MockApiHandler(context);

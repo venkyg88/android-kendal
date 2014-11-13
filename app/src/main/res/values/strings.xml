@@ -82,4 +82,13 @@
     <string name="original_hint">Search</string>
     <string name="searching">Searching&#8230;</string>
 
+    <string-array name="cardtype_array">
+        <item>Visa</item>
+        <item>MasterCard</item>
+        <item>AMEX</item>
+        <item>Staples Enterprise</item>
+        <item>Staples Credit Card</item>
+        <item>Discover Card</item>
+    </string-array>
+
 </resources>

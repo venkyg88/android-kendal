@@ -23,22 +23,9 @@ public class ProfileDetails {
             ProfileDetails.member = member;
         } else {
             if(member.getUserName()!=null){
-                ProfileDetails.member.setUserName(member.getUserName());
-                ProfileDetails.member.setEmailAddress(member.getEmailAddress());
-                ProfileDetails.member.setAutoLoginFlag(member.getAutoLoginFlag());
-                ProfileDetails.member.setCreditCardCount(member.getCreditCardCount());
-                ProfileDetails.member.setIsUserSubscribed(member.getIsUserSubscribed());
-                ProfileDetails.member.setOpenAccountEnabledFlag(member.getOpenAccountEnabledFlag());
-                ProfileDetails.member.setReminderQuestion(member.getReminderQuestion());
-                ProfileDetails.member.setRewardsNumberVerified(member.getRewardsNumberVerified());
-                ProfileDetails.member.setRewardsNumber(member.getRewardsNumber());
-                ProfileDetails.member.setStoredAddressCount(member.getStoredAddressCount());
-                ProfileDetails.member.setWelcomeMessage(member.getWelcomeMessage());
-                ProfileDetails.member.setRewardDetails(member.getRewardDetails());
-                ProfileDetails.member.setFavoritesList(member.getFavoritesList());
-                ProfileDetails.member.setCreditCard(member.getCreditCard());
-                ProfileDetails.member.setPreferredStore(member.getPreferredStore());
-                ProfileDetails.member.setAddress(member.getAddress());
+                member.setCreditCard(ProfileDetails.member.getCreditCard());
+                member.setAddress(ProfileDetails.member.getAddress());
+                ProfileDetails.member = member;
             }
 
             if(member.getAddress()!=null){

@@ -4,7 +4,7 @@ package com.staples.mobile.common.access.easyopen.model.member;
 /**
  * Created by Avinash Dodda.
  */
-public class AddressId {
+public class AddressID {
 
     private String addressId;
 

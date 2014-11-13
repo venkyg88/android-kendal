@@ -1,6 +1,8 @@
 package com.staples.mobile.common.access.easyopen.api;
 
 import retrofit.client.Response;
+
+import com.staples.mobile.cfa.profile.CreditCardFragment;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.SearchResult;
 import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
@@ -20,14 +22,19 @@ import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
 import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInfo;
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
-import com.staples.mobile.common.access.easyopen.model.login.EmptyResponse;
-import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 import com.staples.mobile.common.access.easyopen.model.member.AddAddress;
-import com.staples.mobile.common.access.easyopen.model.member.AddressId;
+import com.staples.mobile.common.access.easyopen.model.member.AddCreditCard;
+import com.staples.mobile.common.access.easyopen.model.member.AddCreditCardPOW;
+import com.staples.mobile.common.access.easyopen.model.member.AddressID;
+import com.staples.mobile.common.access.easyopen.model.member.CreditCardID;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.staples.mobile.common.access.easyopen.model.member.POWResponse;
+import com.staples.mobile.common.access.easyopen.model.member.POWResponseList;
 import com.staples.mobile.common.access.easyopen.model.reviews.ReviewSet;
+
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.http.Body;
@@ -46,6 +53,15 @@ public interface EasyOpenApi {
 
     public static final String SECURE_ENDPOINT = "https://sapi.staples.com";
 //    public static final String SECURE_ENDPOINT = "https://api.staples.com";
+    public static final String POW_SECURE_ENDPOINT = "https://powdps.staples.com";
+
+
+    //https://powdps.staples.com/ProtectOnlyWeb/restapi/pow/
+    @POST("/ProtectOnlyWeb/restapi/pow/")
+    void addCreditPOWCall(
+            @Body List<AddCreditCardPOW> body,
+            Callback<POWResponseList> callback
+    );
 
     // Browsing & product details
 
@@ -381,6 +397,17 @@ public interface EasyOpenApi {
             @EncodedPath("storeId") String storeId,
             @Query("locale") String locale,
             @Query("client_id") String client_id,
-            Callback<AddressId> callback
+            Callback<AddressID> callback
+    );
+
+    // https://api.staples.com/v1/10001/member/profile/creditcard?locale=en_US&client_id={your- client-id}
+    @POST("/{version}/{storeId}/member/profile/creditcard")
+    void addMemberCreditCard(
+            @Body AddCreditCard body,
+            @EncodedPath("version") String version,
+            @EncodedPath("storeId") String storeId,
+            @Query("locale") String locale,
+            @Query("client_id") String client_id,
+            Callback<CreditCardID> callback
     );
 }
