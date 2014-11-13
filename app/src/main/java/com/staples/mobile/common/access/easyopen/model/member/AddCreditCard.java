@@ -11,7 +11,16 @@ public class AddCreditCard {
     private String cardExpirationYear;
     private String notes;
 
+    public AddCreditCard(String cardType, String cardNumber, String cardExpirationMonth, String cardExpirationYear, String notes) {
+        this.cardType = cardType;
+        this.notes = notes;
+        this.cardNumber = cardNumber;
+        this.cardExpirationMonth = cardExpirationMonth;
+        this.cardExpirationYear = cardExpirationYear;
+    }
+
     public String getCardType() {
+
         return cardType;
     }
 

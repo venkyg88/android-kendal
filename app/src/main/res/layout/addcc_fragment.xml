@@ -17,7 +17,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:imeOptions="actionNext"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -26,7 +27,8 @@
         android:hint="EXP MM"
         android:layout_below="@+id/cardNumber"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:imeOptions="actionNext"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -36,7 +38,8 @@
         android:layout_below="@+id/cardNumber"
         android:layout_toRightOf="@+id/expirationMonth"
         android:layout_toEndOf="@+id/expirationMonth"
-        android:layout_marginLeft="71dp" />
+        android:layout_marginLeft="71dp"
+        android:imeOptions="actionDone"/>
 
     <Button
         android:layout_width="wrap_content"

@@ -31,7 +31,6 @@ import com.staples.mobile.common.access.easyopen.model.member.AddressID;
 import com.staples.mobile.common.access.easyopen.model.member.CreditCardID;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
 import com.staples.mobile.common.access.easyopen.model.member.POWResponse;
-import com.staples.mobile.common.access.easyopen.model.member.POWResponseList;
 import com.staples.mobile.common.access.easyopen.model.reviews.ReviewSet;
 
 import java.util.List;
@@ -60,7 +59,7 @@ public interface EasyOpenApi {
     @POST("/ProtectOnlyWeb/restapi/pow/")
     void addCreditPOWCall(
             @Body List<AddCreditCardPOW> body,
-            Callback<POWResponseList> callback
+            Callback<POWResponse[]> callback
     );
 
     // Browsing & product details

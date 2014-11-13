@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.AddAddress;
@@ -29,8 +30,6 @@ public class ShippingFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "Add Shipping Fragment";
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
-    //    public static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
-    public static final String CLIENT_ID = "JxP9wlnIfCSeGc9ifRAAGku7F4FSdErd"; // a client_id that works in all env incl prod
     private static final String LOCALE = "en_US";
 
     Button addShippingBtn;
@@ -69,7 +68,7 @@ public class ShippingFragment extends Fragment implements View.OnClickListener {
         if(!firstName.isEmpty() && !lastName.isEmpty() && !addressLine1.isEmpty() && !city.isEmpty() &&
                 !state.isEmpty() && !phoneNumber.isEmpty() && !zipCode.isEmpty()) {
             AddAddress address = new AddAddress(firstName, lastName, addressLine1, city, state, phoneNumber, zipCode);
-            easyOpenApi.addMemberAddress(address,RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<AddressID>() {
+            easyOpenApi.addMemberAddress(address,RECOMMENDATION, STORE_ID, LOCALE, LoginHelper.CLIENT_ID, new Callback<AddressID>() {
                 @Override
                 public void success(AddressID addressId, Response response) {
                     Toast.makeText(getActivity(), "Address Id " + addressId.getAddressId(), Toast.LENGTH_LONG).show();

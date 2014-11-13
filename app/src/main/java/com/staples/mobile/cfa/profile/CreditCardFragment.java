@@ -11,20 +11,20 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.AddCreditCard;
 import com.staples.mobile.common.access.easyopen.model.member.AddCreditCardPOW;
+import com.staples.mobile.common.access.easyopen.model.member.CreditCardID;
 import com.staples.mobile.common.access.easyopen.model.member.POWResponse;
-import com.staples.mobile.common.access.easyopen.model.member.POWResponseList;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -36,6 +36,9 @@ import retrofit.client.Response;
 public class CreditCardFragment extends Fragment implements View.OnClickListener{
 
     private static final String TAG = "Add Credit Card Fragment";
+    private static final String RECOMMENDATION = "v1";
+    private static final String STORE_ID = "10001";
+    private static final String LOCALE = "en_US";
     Button addCCBtn;
     Spinner spinner;
     String creditCardNumber;
@@ -43,6 +46,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
     String expirationMonth;
     String expirationYear;
     EasyOpenApi easyOpenApi;
+    String encryptedPacket;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -75,10 +79,30 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
             List<AddCreditCardPOW> ccList = new ArrayList<AddCreditCardPOW>();
             ccList.add(creditCard);
 
-            easyOpenApi.addCreditPOWCall(ccList, new Callback<POWResponseList>() {
+            easyOpenApi.addCreditPOWCall(ccList, new Callback<POWResponse[]>() {
                 @Override
-                public void success(POWResponseList powList, Response response) {
-                    Log.i("Response POW", "success");
+                public void success(POWResponse[] powList, Response response) {
+                    Log.i("packet", powList[0].getPacket());
+                    encryptedPacket = powList[0].getPacket();
+                    if(!encryptedPacket.isEmpty()) {
+                        AddCreditCard addCC = new AddCreditCard(cardType, encryptedPacket, expirationMonth, expirationYear, "notes");
+                        easyOpenApi = Access.getInstance().getEasyOpenApi(true);
+                        easyOpenApi.addMemberCreditCard(addCC,RECOMMENDATION,STORE_ID,LOCALE, LoginHelper.CLIENT_ID,new Callback<CreditCardID>() {
+                            @Override
+                            public void success(CreditCardID creditCardID, Response response) {
+                                Log.i("Success", creditCardID.getCreditCardId());
+                                Toast.makeText(getActivity(), "Credit Card Id: "+ creditCardID.getCreditCardId(), Toast.LENGTH_LONG).show();
+                                Fragment profileFragment = Fragment.instantiate(getActivity(), ProfileFragment.class.getName());
+                                ((MainActivity)getActivity()).navigateToFragment(profileFragment);
+                            }
+
+                            @Override
+                            public void failure(RetrofitError error) {
+                                Log.i("Add CC Fail Message", error.getMessage());
+                                Log.i("url", error.getUrl());
+                            }
+                        } );
+                    }
                 }
 
                 @Override
