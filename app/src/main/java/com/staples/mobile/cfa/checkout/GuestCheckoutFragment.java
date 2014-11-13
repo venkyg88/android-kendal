@@ -318,22 +318,24 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
         // first add selected payment method to cart
         if (paymentMethod != null) {
-            showProgressIndicator();
-            secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
-                    new Callback<PaymentMethodResponse>() {
-                        @Override
-                        public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
-                            // upon payment method success, submit the order
-                            submitOrder(paymentMethod.getCardVerificationCode());
-                        }
+            Toast.makeText(activity, "TBD - waiting on encryption code", Toast.LENGTH_SHORT).show();
 
-                        @Override
-                        public void failure(RetrofitError retrofitError) {
-                            hideProgressIndicator();
-                            Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-            );
+//            showProgressIndicator();
+//            secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+//                    new Callback<PaymentMethodResponse>() {
+//                        @Override
+//                        public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
+//                            // upon payment method success, submit the order
+//                            submitOrder(paymentMethod.getCardVerificationCode());
+//                        }
+//
+//                        @Override
+//                        public void failure(RetrofitError retrofitError) {
+//                            hideProgressIndicator();
+//                            Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//            );
         } else {
             Toast.makeText(activity, R.string.payment_method_required, Toast.LENGTH_SHORT).show();
         }
