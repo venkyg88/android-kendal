@@ -30,6 +30,7 @@ public class ShippingFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "Add Shipping Fragment";
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
+    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
     private static final String LOCALE = "en_US";
 
     Button addShippingBtn;
@@ -68,7 +69,7 @@ public class ShippingFragment extends Fragment implements View.OnClickListener {
         if(!firstName.isEmpty() && !lastName.isEmpty() && !addressLine1.isEmpty() && !city.isEmpty() &&
                 !state.isEmpty() && !phoneNumber.isEmpty() && !zipCode.isEmpty()) {
             AddAddress address = new AddAddress(firstName, lastName, addressLine1, city, state, phoneNumber, zipCode);
-            easyOpenApi.addMemberAddress(address,RECOMMENDATION, STORE_ID, LOCALE, LoginHelper.CLIENT_ID, new Callback<AddressID>() {
+            easyOpenApi.addMemberAddress(address,RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<AddressID>() {
                 @Override
                 public void success(AddressID addressId, Response response) {
                     Toast.makeText(getActivity(), "Address Id " + addressId.getAddressId(), Toast.LENGTH_LONG).show();

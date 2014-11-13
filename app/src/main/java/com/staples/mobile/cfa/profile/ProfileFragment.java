@@ -27,6 +27,7 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>,
 
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
+    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
     private static final String LOCALE = "en_US";
 
     private EasyOpenApi easyOpenApi;
@@ -45,9 +46,9 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>,
         ccBtn.setOnClickListener(this);
 
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
-        easyOpenApi.getMemberProfile(RECOMMENDATION, STORE_ID, LOCALE, LoginHelper.CLIENT_ID, this);
-        easyOpenApi.getMemberAddress(RECOMMENDATION, STORE_ID, LOCALE, LoginHelper.CLIENT_ID, this);
-        easyOpenApi.getMemberCreditCardDetails(RECOMMENDATION, STORE_ID, LOCALE, LoginHelper.CLIENT_ID, this);
+        easyOpenApi.getMemberProfile(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, this);
+        easyOpenApi.getMemberAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, this);
+        easyOpenApi.getMemberCreditCardDetails(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, this);
 
         return (view);
     }

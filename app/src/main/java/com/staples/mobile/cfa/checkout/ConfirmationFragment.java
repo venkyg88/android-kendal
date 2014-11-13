@@ -103,6 +103,21 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
     OrderStatusListener orderStatusListener;
 
 
+    /**
+     * Create a new instance of ConfirmationFragment that will be initialized
+     * with the given arguments.
+     */
+    public static ConfirmationFragment newInstance(String orderId, String orderNumber) {
+        ConfirmationFragment f = new ConfirmationFragment();
+        Bundle args = new Bundle();
+        if (orderNumber != null) {
+            args.putString(ConfirmationFragment.BUNDLE_PARAM_ORDERID, orderId);
+            args.putString(ConfirmationFragment.BUNDLE_PARAM_ORDERNUMBER, orderNumber);
+        }
+        f.setArguments(args);
+        return f;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");

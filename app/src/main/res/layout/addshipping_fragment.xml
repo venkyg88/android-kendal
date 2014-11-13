@@ -14,7 +14,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/lastName"
-        android:layout_toLeftOf="@+id/lastName" />
+        android:layout_toLeftOf="@+id/lastName"
+        android:nextFocusDown="@+id/lastName"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -53,14 +54,6 @@
         android:layout_alignRight="@+id/lastName"
         android:layout_alignEnd="@+id/lastName" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save"
-        android:id="@+id/addressSaveBtn"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -77,13 +70,15 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:inputType="textPostalAddress"
         android:hint="State"
         android:id="@+id/state"
         android:layout_below="@+id/city"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/lastName"
-        android:layout_toLeftOf="@+id/lastName" />
+        android:layout_toLeftOf="@+id/lastName"
+        android:nextFocusDown="@+id/zipCode"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -93,7 +88,14 @@
         android:ems="10"
         android:id="@+id/zipCode"
         android:layout_below="@+id/city"
-        android:layout_toRightOf="@+id/addressSaveBtn"
-        android:layout_toEndOf="@+id/addressSaveBtn" />
+        android:layout_toRightOf="@+id/state"  />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:id="@+id/addressSaveBtn"
+        android:layout_below="@+id/state"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
