@@ -1,78 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/emailProfile"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:id="@+id/emailProfile"
+            style="@style/DrawerStyle"/>
+    </LinearLayout>
 
-    <EditText
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/userNameProfile"
-        android:layout_below="@+id/emailProfile"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:id="@+id/userNameProfile"
+            style="@style/DrawerStyle"/>
+        </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Shipping/Billing"
-        android:id="@+id/shippingTV"
-        android:layout_below="@+id/userNameProfile"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="46dp" />
+        android:orientation="horizontal"
+        android:background="#cccccc">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="Shipping/Billing"
+            style="@style/DrawerStyle"/>
+    </LinearLayout>
 
-    <EditText
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:ems="10"
-        android:id="@+id/addressET"
-        android:layout_below="@+id/shippingTV"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/addressET"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="@style/DrawerStyle"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/addShippingBtn"/>
+    </LinearLayout>
 
-    <EditText
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:ems="10"
-        android:id="@+id/ccET"
-        android:layout_below="@+id/addressET"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add"
-        android:id="@+id/addShippingBtn"
-        android:layout_above="@+id/ccET"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add"
-        android:id="@+id/addCCBtn"
-        android:layout_alignBottom="@+id/ccET"
-        android:layout_alignLeft="@+id/addShippingBtn"
-        android:layout_alignStart="@+id/addShippingBtn"/>
-
-</RelativeLayout>
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/ccET"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="@style/DrawerStyle"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/addCCBtn"/>
+    </LinearLayout>
+</LinearLayout>
