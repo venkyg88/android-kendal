@@ -38,7 +38,7 @@ public class PersonalFeedFragment extends Fragment {
     private void setAdapter(){
         seenProductsListAdapter = new SeenProductsAdapter(getActivity());
 
-        SizedStack<SeenProductsRowItem> seenProducts = PersonalFeedData.getInstance().getSavedSeenProducts();
+        SizedArrayList<SeenProductsRowItem> seenProducts = PersonalFeedData.getInstance().getSavedSeenProducts();
 
         for(SeenProductsRowItem savedProduct : seenProducts){
             seenProductsListAdapter.add(savedProduct);

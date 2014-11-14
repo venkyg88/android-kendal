@@ -361,7 +361,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 rating, sku, unitOfMeasure, imageUrl);
 
         PersonalFeedData feedSingleton = PersonalFeedData.getInstance();
-        feedSingleton.getSavedSeenProducts().push(item);
+        feedSingleton.getSavedSeenProducts().add(item);
     }
 
     // Retrofit callbacks

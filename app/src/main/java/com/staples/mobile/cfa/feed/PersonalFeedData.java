@@ -7,10 +7,10 @@ package com.staples.mobile.cfa.feed;
 public class PersonalFeedData {
     private static PersonalFeedData singleton = null;
     private static final int SEEN_PRODUCTS_AMOUNT = 3;
-    private SizedStack<SeenProductsRowItem> savedSeenProducts = null;
+    private SizedArrayList<SeenProductsRowItem> savedSeenProducts = null;
 
     private PersonalFeedData(int size){
-        savedSeenProducts = new SizedStack<SeenProductsRowItem>(size);
+        savedSeenProducts = new SizedArrayList<SeenProductsRowItem>(size);
     }
 
     public static PersonalFeedData getInstance( ) {
@@ -20,7 +20,7 @@ public class PersonalFeedData {
         return singleton;
     }
 
-    public SizedStack<SeenProductsRowItem> getSavedSeenProducts(){
+    public SizedArrayList<SeenProductsRowItem> getSavedSeenProducts(){
         return savedSeenProducts;
     }
 }
