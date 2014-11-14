@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.profile;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,22 +87,28 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                     Log.i("packet", powList.get(0).getPacket());
                     Log.i("status", powList.get(0).getStatus());
                     encryptedPacket = powList.get(0).getPacket();
-                    AddCreditCard addCC = new AddCreditCard(cardType, encryptedPacket, expirationMonth, expirationYear, "notes");
-                    easyOpenApi.addMemberCreditCard(addCC, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,new Callback<CreditCardId>() {
-                        @Override
-                        public void success(CreditCardId creditCardID, Response response) {
-                            Log.i("Success", creditCardID.getCreditCardId());
-                            Toast.makeText(getActivity(), "Credit Card Id: "+ creditCardID.getCreditCardId(), Toast.LENGTH_LONG).show();
-                            Fragment profileFragment = Fragment.instantiate(getActivity(), ProfileFragment.class.getName());
-                            ((MainActivity)getActivity()).navigateToFragment(profileFragment);
-                        }
 
-                        @Override
-                        public void failure(RetrofitError error) {
-                            Log.i("Add CC Fail Message", error.getMessage());
-                            Log.i("url", error.getUrl());
-                        }
-                    } );
+                    if(encryptedPacket.isEmpty()) {
+                        Toast.makeText(getActivity(), "Credit card encryption failed" , Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        AddCreditCard addCC = new AddCreditCard(cardType, encryptedPacket, expirationMonth, expirationYear, "notes");
+                        easyOpenApi.addMemberCreditCard(addCC, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,new Callback<CreditCardId>() {
+                            @Override
+                            public void success(CreditCardId creditCardID, Response response) {
+                                Log.i("Success", creditCardID.getCreditCardId());
+                                Toast.makeText(getActivity(), "Credit Card Id: "+ creditCardID.getCreditCardId(), Toast.LENGTH_LONG).show();
+                                Fragment profileFragment = Fragment.instantiate(getActivity(), ProfileFragment.class.getName());
+                                ((MainActivity)getActivity()).navigateToFragment(profileFragment);
+                            }
+
+                            @Override
+                            public void failure(RetrofitError error) {
+                                Log.i("Add CC Fail Message", error.getMessage());
+                                Log.i("url", error.getUrl());
+                            }
+                        } );
+                    }
                 }
 
                 @Override

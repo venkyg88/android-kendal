@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.staples.mobile.R;
-import com.staples.mobile.cfa.feed.FeedFragment;
+import com.staples.mobile.cfa.feed.PersonalFeedFragment;
 import com.staples.mobile.cfa.home.LmsFragment;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
@@ -143,7 +143,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse>{
 
         // Fill menu list TODO icons nulled out
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.home_title, LmsFragment.class));
-        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.personal_feed_title, FeedFragment.class));
+        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.personal_feed_title, PersonalFeedFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.BROWSE, activity, 0&R.drawable.logo, R.string.category_title));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.store_locator_title, StoreFragment.class));
         menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.weekly_ad_title, ToBeDoneFragment.class));
