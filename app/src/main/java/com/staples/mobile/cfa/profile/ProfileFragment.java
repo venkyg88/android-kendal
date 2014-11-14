@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
@@ -65,25 +66,39 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>,
         String userName = member.getUserName();
 
         if (email!=null)
-            ((EditText) getView().findViewById(R.id.emailProfile)).setText(email);
+            ((TextView) getView().findViewById(R.id.emailProfile)).setText(email);
         if (userName!=null)
-            ((EditText) getView().findViewById(R.id.userNameProfile)).setText(userName);
+            ((TextView) getView().findViewById(R.id.userNameProfile)).setText(userName);
 
         List<Address> addresses = member.getAddress();
         if (addresses!=null) {
+            int addressCount = addresses.size();
             Address address = addresses.get(0);
             if (address != null) {
                 String tmpAddress = address.getAddress1() + " " + address.getCity() + " " + address.getState() + " " + address.getZipcode();
-                ((EditText) getView().findViewById(R.id.addressET)).setText(tmpAddress);
+                ((TextView) getView().findViewById(R.id.addressET)).setText(tmpAddress);
+                if(addressCount > 1) {
+                    shippingBtn.setText(addressCount-1 + " more");
+                }
+                else {
+                    shippingBtn.setText("Add");
+                }
             }
         }
 
         List<CCDetails> creditCards = member.getCreditCard();
         if(creditCards !=null) {
+            int creditCardCount = creditCards.size();
             CCDetails creditCard = creditCards.get(0);
             if (creditCard != null) {
                 String tmpCreditCard =  creditCard.getCardNumber() + " " + creditCard.getCardType();
-                ((EditText) getView().findViewById(R.id.ccET)).setText(tmpCreditCard);
+                ((TextView) getView().findViewById(R.id.ccET)).setText(tmpCreditCard);
+                if(creditCardCount > 1) {
+                    ccBtn.setText(creditCardCount-1 + " more");
+                }
+                else {
+                    ccBtn.setText("Add");
+                }
             }
         }
     }
