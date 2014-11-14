@@ -38,10 +38,10 @@ public class PersonalFeedFragment extends Fragment {
     private void setAdapter(){
         seenProductsListAdapter = new SeenProductsAdapter(getActivity());
 
-        SizedArrayList<SeenProductsRowItem> seenProducts = PersonalFeedData.getInstance().getSavedSeenProducts();
+        SizedArrayList<SeenProductsRowItem> saveSeenProducts = PersonalFeedData.getInstance().getSavedSeenProducts();
 
-        for(SeenProductsRowItem savedProduct : seenProducts){
-            seenProductsListAdapter.add(savedProduct);
+        for(SeenProductsRowItem savedSeenProduct : saveSeenProducts){
+            seenProductsListAdapter.add(savedSeenProduct);
         }
 
         seenProductsListView.setAdapter(seenProductsListAdapter);

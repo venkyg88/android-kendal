@@ -24,6 +24,7 @@ import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.feed.PersonalFeedData;
 import com.staples.mobile.cfa.feed.SeenProductsRowItem;
+import com.staples.mobile.cfa.feed.SizedArrayList;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PagerStripe;
@@ -45,6 +46,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import retrofit.Callback;
@@ -338,10 +340,10 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
             // Set accessory rating
             ((RatingStars) skuAccessoryRow.findViewById(R.id.accessory_rating))
-                    .setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
+                    .setRating(accessory.getCustomerReviewRating(), accessory.getCustomerReviewCount());
 
             // Set accessory price
-            ((PriceSticker) skuAccessoryRow.findViewById(R.id.accessory_price)).setPricing(product.getPricing());
+            ((PriceSticker) skuAccessoryRow.findViewById(R.id.accessory_price)).setPricing(accessory.getPricing());
 
             accessoryContainer.addView(skuAccessoryRow);
         }
@@ -360,8 +362,15 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         SeenProductsRowItem item = new SeenProductsRowItem(productName, currentPrice, reviewCount,
                 rating, sku, unitOfMeasure, imageUrl);
 
+        // get saved seen products
         PersonalFeedData feedSingleton = PersonalFeedData.getInstance();
-        feedSingleton.getSavedSeenProducts().add(item);
+        SizedArrayList<SeenProductsRowItem> saveSeenProducts = feedSingleton.getSavedSeenProducts();
+
+        // check if the product was saved before
+        HashSet<String> savedSkus = feedSingleton.getSavedSku();
+        if(!savedSkus.contains(sku)){
+            feedSingleton.getSavedSeenProducts().addSeenProduct(item, sku);
+        }
     }
 
     // Retrofit callbacks
