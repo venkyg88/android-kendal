@@ -1,6 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</LinearLayout>
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/card_type_spinner" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cardNumber"
+        android:hint="Card Number"
+        android:inputType="number"
+        android:layout_below="@+id/card_type_spinner"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:imeOptions="actionNext"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/expirationMonth"
+        android:inputType="number"
+        android:maxLength="2"
+        android:hint="EXP MM"
+        android:layout_below="@+id/cardNumber"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:imeOptions="actionNext"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/expirationYear"
+        android:inputType="number"
+        android:maxLength="4"
+        android:hint="EXP YYYY"
+        android:layout_below="@+id/cardNumber"
+        android:layout_toRightOf="@+id/expirationMonth"
+        android:layout_toEndOf="@+id/expirationMonth"
+        android:layout_marginLeft="71dp"
+        android:imeOptions="actionDone"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:id="@+id/addCCBtn"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+
+</RelativeLayout>

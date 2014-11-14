@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.profile.ProfileFragment;
+import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.Access;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
@@ -27,6 +28,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private String emaiId;
     private String registerUsername;
     private String registerPassword;
+    private LinearLayoutWithProgressOverlay loginLayout;
 
     public String getRegisterPassword() {
         return registerPassword;
@@ -75,6 +77,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         loginHelper = new LoginHelper(getActivity());
         View view = inflater.inflate(R.layout.login_fragment, container, false);
 
+        loginLayout = (LinearLayoutWithProgressOverlay) view.findViewById(R.id.login_fragment_content);
+        loginLayout.setCartProgressOverlay(view.findViewById(R.id.login_progress_overlay));
+
         TabHost tabHost = (TabHost) view.findViewById(R.id.tabHost);
         tabHost.setup();
 
@@ -105,11 +110,20 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    private void showProgressIndicator() {
+        loginLayout.getProgressIndicator().showProgressIndicator();
+    }
+
+    private void hideProgressIndicator() {
+        loginLayout.getProgressIndicator().hideProgressIndicator();
+    }
+
     @Override
     public void onClick(View view) {
 
         if(view == signInBtn)
         {
+            showProgressIndicator();
             String userName = ((EditText) getView().findViewById(R.id.username)).getText().toString();
             String password = ((EditText)getView().findViewById(R.id.password)).getText().toString();
 
@@ -121,9 +135,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             if(!getUserName().isEmpty() && !getPassword().isEmpty())
             {
                 loginHelper.getUserTokens(getUserName(), getPassword());
+                hideProgressIndicator();
             }
             else{
                 Toast.makeText(getActivity(), "Username or Password cannot be null", Toast.LENGTH_LONG).show();
+                hideProgressIndicator();
             }
         }
         if(view == registerBtn)
