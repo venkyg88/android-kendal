@@ -14,6 +14,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
@@ -138,9 +139,9 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         billingAddrContainer.setVisibility(isChecked? View.GONE: View.VISIBLE);
     }
 
-    private boolean validateRequiredField(EditText editText, String msg) {
-        if (TextUtils.isEmpty(editText.getText())) {
-            editText.setError(msg);
+    private boolean validateRequiredField(TextView textView, String msg) {
+        if (TextUtils.isEmpty(textView.getText())) {
+            textView.setError(msg);
             return false;
         }
         return true;
@@ -215,21 +216,17 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
     /** gets payment method from user's entries */
     private PaymentMethod getPaymentMethod() {
-        if (fakingIt) {
-            return getFakePaymentMethod();
-        }
-
         Resources resources = getResources();
         boolean errors = false;
 
         EditText cardNumberVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cardNumber);
         EditText expirationMonthVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationMonth);
         EditText expirationYearVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationYear);
-        EditText cidVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cid);
+        EditText cidVw = (EditText)guestEntryView.findViewById(R.id.cid);
 
         // validate required fields
         String requiredMsg = resources.getString(R.string.required);
-        if (!validateRequiredField((EditText)spinner.getSelectedView(), requiredMsg)) { errors = true; }
+        if (!validateRequiredField((TextView)spinner.getSelectedView(), requiredMsg)) { errors = true; }
         if (!validateRequiredField(cardNumberVw, requiredMsg)) { errors = true; }
         if (!validateRequiredField(expirationMonthVw, requiredMsg)) { errors = true; }
         if (!validateRequiredField(expirationYearVw, requiredMsg)) { errors = true; }
@@ -259,10 +256,10 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         ShippingAddress shippingAddress = new ShippingAddress();
         shippingAddress.setDeliveryFirstName("Diana");
         shippingAddress.setDeliveryLastName("Sutlief");
-        shippingAddress.setDeliveryAddress1("16041 27th Ave NE");
-        shippingAddress.setDeliveryCity("Shoreline");
-        shippingAddress.setDeliveryState("WA");
-        shippingAddress.setDeliveryZipCode("98155");
+        shippingAddress.setDeliveryAddress1("3614 Delverne RD");
+        shippingAddress.setDeliveryCity("Baltimore");
+        shippingAddress.setDeliveryState("MD");
+        shippingAddress.setDeliveryZipCode("21218");
         shippingAddress.setDeliveryPhone("206-362-8024");
         shippingAddress.setEmailAddress("diana.sutlief@staples.com");
         shippingAddress.setReenterEmailAddress("diana.sutlief@staples.com");
@@ -272,16 +269,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     /** gets fake billing address */
     private BillingAddress getFakeBillingAddress() {
         return new BillingAddress(getFakeShippingAddress());
-    }
-
-    private PaymentMethod getFakePaymentMethod() {
-        PaymentMethod fakePaymentMethod = new PaymentMethod();
-        fakePaymentMethod.setCardType("Visa");
-        fakePaymentMethod.setCardVerificationCode("123");
-        fakePaymentMethod.setCardNumber("4111111111111111");
-        fakePaymentMethod.setCardExpirationMonth("12");
-        fakePaymentMethod.setCardExpirationYear("2020");
-        return fakePaymentMethod;
     }
 
     
