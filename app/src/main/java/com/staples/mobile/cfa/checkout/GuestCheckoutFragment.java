@@ -29,8 +29,6 @@ import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidatio
 import com.staples.mobile.common.access.easyopen.model.member.AddCreditCardPOW;
 import com.staples.mobile.common.access.easyopen.model.member.POWResponse;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +58,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     View paymentMethodLayoutVw;
     EditText emailAddrVw;
     EditText emailAddrReenterVw;
+    Spinner spinner;
 
     private boolean shippingAddrNeedsApplying = true;
     private boolean billingAddrNeedsApplying = true;
@@ -86,7 +85,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         emailAddrReenterVw = (EditText)guestEntryView.findViewById(R.id.emailAddrReenter);
 
         // set up cc type spinner
-        Spinner spinner = (Spinner) view.findViewById(R.id.card_type_spinner);
+        spinner = (Spinner) view.findViewById(R.id.card_type_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(activity,
                 R.array.cardtype_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -160,15 +159,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         EditText phoneNumberVw = (EditText)layoutView.findViewById(R.id.phoneNumber);
         EditText zipCodeVw = (EditText)layoutView.findViewById(R.id.zipCode);
 
-        ShippingAddress shippingAddress = new ShippingAddress();
-        shippingAddress.setDeliveryFirstName(firstNameVw.getText().toString());
-        shippingAddress.setDeliveryLastName(lastNameVw.getText().toString());
-        shippingAddress.setDeliveryAddress1(addressVw.getText().toString());
-        shippingAddress.setDeliveryCity(cityVw.getText().toString());
-        shippingAddress.setDeliveryState(stateVw.getText().toString());
-        shippingAddress.setDeliveryPhone(phoneNumberVw.getText().toString());
-        shippingAddress.setDeliveryZipCode(zipCodeVw.getText().toString());
-
         // validate required fields
         String requiredMsg = resources.getString(R.string.required);
         if (!validateRequiredField(firstNameVw, requiredMsg)) { errors = true; }
@@ -179,6 +169,15 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         if (!validateRequiredField(stateVw, requiredMsg)) { errors = true; }
         if (!validateRequiredField(phoneNumberVw, requiredMsg)) { errors = true; }
         if (!validateRequiredField(zipCodeVw, requiredMsg)) { errors = true; }
+
+        ShippingAddress shippingAddress = new ShippingAddress();
+        shippingAddress.setDeliveryFirstName(firstNameVw.getText().toString());
+        shippingAddress.setDeliveryLastName(lastNameVw.getText().toString());
+        shippingAddress.setDeliveryAddress1(addressVw.getText().toString());
+        shippingAddress.setDeliveryCity(cityVw.getText().toString());
+        shippingAddress.setDeliveryState(stateVw.getText().toString());
+        shippingAddress.setDeliveryPhone(phoneNumberVw.getText().toString());
+        shippingAddress.setDeliveryZipCode(zipCodeVw.getText().toString());
 
         if (includeEmail) {
             shippingAddress.setEmailAddress(emailAddrVw.getText().toString());
@@ -214,6 +213,47 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         return (shippingAddress == null)? null : new BillingAddress(shippingAddress);
     }
 
+    /** gets payment method from user's entries */
+    private PaymentMethod getPaymentMethod() {
+        if (fakingIt) {
+            return getFakePaymentMethod();
+        }
+
+        Resources resources = getResources();
+        boolean errors = false;
+
+        EditText cardNumberVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cardNumber);
+        EditText expirationMonthVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationMonth);
+        EditText expirationYearVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationYear);
+        EditText cidVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cid);
+
+        // validate required fields
+        String requiredMsg = resources.getString(R.string.required);
+        if (!validateRequiredField((EditText)spinner.getSelectedView(), requiredMsg)) { errors = true; }
+        if (!validateRequiredField(cardNumberVw, requiredMsg)) { errors = true; }
+        if (!validateRequiredField(expirationMonthVw, requiredMsg)) { errors = true; }
+        if (!validateRequiredField(expirationYearVw, requiredMsg)) { errors = true; }
+        if (!validateRequiredField(cidVw, requiredMsg)) { errors = true; }
+
+        if (!errors) {
+            PaymentMethod paymentMethod = new PaymentMethod();
+            paymentMethod.setCardType(spinner.getSelectedItem().toString());
+            if (paymentMethod.getCardType().equals("MasterCard")) {
+                paymentMethod.setCardType("Mastercard");
+            } else if (paymentMethod.getCardType().startsWith("Discover")) {
+                paymentMethod.setCardType("Discover");
+            } else if (paymentMethod.getCardType().startsWith("Staples")) {
+                paymentMethod.setCardType("Staples");
+            }
+            paymentMethod.setCardNumber(cardNumberVw.getText().toString());
+            paymentMethod.setCardExpirationMonth(expirationMonthVw.getText().toString());
+            paymentMethod.setCardExpirationYear(expirationYearVw.getText().toString());
+            paymentMethod.setCardVerificationCode(cidVw.getText().toString());
+            return paymentMethod;
+        }
+        return null;
+    }
+
     /** gets fake shipping address */
     private ShippingAddress getFakeShippingAddress() {
         ShippingAddress shippingAddress = new ShippingAddress();
@@ -234,8 +274,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         return new BillingAddress(getFakeShippingAddress());
     }
 
-    /** gets billing address from user's entries */
-    private PaymentMethod getPaymentMethod() {
+    private PaymentMethod getFakePaymentMethod() {
         PaymentMethod fakePaymentMethod = new PaymentMethod();
         fakePaymentMethod.setCardType("Visa");
         fakePaymentMethod.setCardVerificationCode("123");
@@ -244,6 +283,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         fakePaymentMethod.setCardExpirationYear("2020");
         return fakePaymentMethod;
     }
+
     
     private void applyShippingAddress() {
         ShippingAddress shippingAddress = getShippingAddress();
@@ -341,9 +381,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
             showProgressIndicator();
             // encrypt payment method
             String powCardType = paymentMethod.getCardType().toUpperCase();
-            if ("StaplesBureauEnGros".equals(paymentMethod.getCardType())) {
-                powCardType = "STAPLES";
-            }
             AddCreditCardPOW creditCard = new AddCreditCardPOW(paymentMethod.getCardNumber(), powCardType);
             List<AddCreditCardPOW> ccList = new ArrayList<AddCreditCardPOW>();
             ccList.add(creditCard);
