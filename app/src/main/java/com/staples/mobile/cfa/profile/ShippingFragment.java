@@ -18,7 +18,7 @@ import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.cart.AddressDetail;
 import com.staples.mobile.common.access.easyopen.model.member.AddAddress;
-import com.staples.mobile.common.access.easyopen.model.member.AddressId;
+import com.staples.mobile.common.access.easyopen.model.member.AddressID;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -71,9 +71,9 @@ public class ShippingFragment extends Fragment implements View.OnClickListener {
         if(!firstName.isEmpty() && !lastName.isEmpty() && !addressLine1.isEmpty() && !city.isEmpty() &&
                 !state.isEmpty() && !phoneNumber.isEmpty() && !zipCode.isEmpty()) {
             AddAddress address = new AddAddress(firstName, lastName, addressLine1, city, state, phoneNumber, zipCode);
-            easyOpenApi.addMemberAddress(address,RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<AddressId>() {
+            easyOpenApi.addMemberAddress(address,RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<AddressID>() {
                 @Override
-                public void success(AddressId addressId, Response response) {
+                public void success(AddressID addressId, Response response) {
                     Toast.makeText(getActivity(), "Address Id " + addressId.getAddressId(), Toast.LENGTH_LONG).show();
                     Fragment profileFragment = Fragment.instantiate(getActivity(), ProfileFragment.class.getName());
                     ((MainActivity)getActivity()).navigateToFragment(profileFragment);
