@@ -4,21 +4,20 @@
 
 package com.staples.mobile.cfa.checkout;
 
-import android.app.Fragment;
 import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
-import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.login.LoginHelper;
-import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -27,9 +26,7 @@ import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethodResponse;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
-import com.staples.mobile.common.access.easyopen.model.member.AddCreditCard;
 import com.staples.mobile.common.access.easyopen.model.member.AddCreditCardPOW;
-import com.staples.mobile.common.access.easyopen.model.member.CreditCardID;
 import com.staples.mobile.common.access.easyopen.model.member.POWResponse;
 
 import org.w3c.dom.Text;
@@ -60,6 +57,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     ViewGroup billingAddrContainer;
     View shippingAddrLayoutVw;
     View billingAddrLayoutVw;
+    View paymentMethodLayoutVw;
     EditText emailAddrVw;
     EditText emailAddrReenterVw;
 
@@ -83,8 +81,16 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         shippingAddrLayoutVw = view.findViewById(R.id.shipping_addr_layout);
         billingAddrLayoutVw = view.findViewById(R.id.billing_addr_layout);
         billingAddrContainer = (ViewGroup)view.findViewById(R.id.billing_addr_container);
+        paymentMethodLayoutVw = view.findViewById(R.id.payment_method_layout);
         emailAddrVw = (EditText)guestEntryView.findViewById(R.id.emailAddr);
         emailAddrReenterVw = (EditText)guestEntryView.findViewById(R.id.emailAddrReenter);
+
+        // set up cc type spinner
+        Spinner spinner = (Spinner) view.findViewById(R.id.card_type_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(activity,
+                R.array.cardtype_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
 
         // if logged in as guest, show sign-in button
         LoginHelper loginHelper = new LoginHelper(activity);
@@ -95,6 +101,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         // hide imported views' Save buttons
         shippingAddrLayoutVw.findViewById(R.id.addressSaveBtn).setVisibility(View.GONE);
         billingAddrLayoutVw.findViewById(R.id.addressSaveBtn).setVisibility(View.GONE);
+        paymentMethodLayoutVw.findViewById(R.id.addCCBtn).setVisibility(View.GONE);
 
 
         // use temp button for now to fake address entry
@@ -327,13 +334,12 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
     private void submitPaymentMethod() {
 
-        final PaymentMethod paymentMethod = getPaymentMethod();
+        PaymentMethod paymentMethod = getPaymentMethod();
 
         // first add selected payment method to cart
         if (paymentMethod != null) {
             showProgressIndicator();
             // encrypt payment method
-            EasyOpenApi powApi = Access.getInstance().getPOWApi();
             String powCardType = paymentMethod.getCardType().toUpperCase();
             if ("StaplesBureauEnGros".equals(paymentMethod.getCardType())) {
                 powCardType = "STAPLES";
@@ -341,44 +347,97 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
             AddCreditCardPOW creditCard = new AddCreditCardPOW(paymentMethod.getCardNumber(), powCardType);
             List<AddCreditCardPOW> ccList = new ArrayList<AddCreditCardPOW>();
             ccList.add(creditCard);
-            powApi.addCreditPOWCall(ccList, new Callback<POWResponse[]>() {
-                @Override
-                public void success(POWResponse[] powList, Response response) {
-                    Log.i("packet", powList[0].getPacket());
-                    if ("0".equals(powList[0].getStatus()) && !TextUtils.isEmpty(powList[0].getPacket())) {
-                        paymentMethod.setCardNumber(powList[0].getPacket());
 
-                        // add payment method to cart
-                        secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
-                                new Callback<PaymentMethodResponse>() {
-                                    @Override
-                                    public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
-                                        // upon payment method success, submit the order
-                                        submitOrder(paymentMethod.getCardVerificationCode());
-                                    }
+            // todo: find a better way to determine current environment
+            if (EasyOpenApi.SECURE_ENDPOINT.equals("https://api.staples.com")) {
+                EasyOpenApi powApi = Access.getInstance().getPOWApi();
+                powApi.addCreditPOWCall(ccList, new PowListener(paymentMethod));
+            } else {
+                secureApi.addCreditPOWCallQA(ccList, RECOMMENDATION, CLIENT_ID, new PowListener(paymentMethod));
+            }
 
-                                    @Override
-                                    public void failure(RetrofitError retrofitError) {
-                                        hideProgressIndicator();
-                                        Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                        );
-                    } else {
-                        hideProgressIndicator();
-                        Toast.makeText(activity, "Payment Error", Toast.LENGTH_SHORT).show();
-                    }
-                }
 
-                @Override
-                public void failure(RetrofitError retrofitError) {
-                    hideProgressIndicator();
-                    Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
-                }
-            });
+//            powApi.addCreditPOWCall(ccList, new Callback<POWResponse[]>() {
+//                @Override
+//                public void success(POWResponse[] powList, Response response) {
+//                    Log.i("packet", powList[0].getPacket());
+//                    if ("0".equals(powList[0].getStatus()) && !TextUtils.isEmpty(powList[0].getPacket())) {
+//                        paymentMethod.setCardNumber(powList[0].getPacket());
+//
+//                        // add payment method to cart
+//                        secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+//                                new Callback<PaymentMethodResponse>() {
+//                                    @Override
+//                                    public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
+//                                        // upon payment method success, submit the order
+//                                        submitOrder(paymentMethod.getCardVerificationCode());
+//                                    }
+//
+//                                    @Override
+//                                    public void failure(RetrofitError retrofitError) {
+//                                        hideProgressIndicator();
+//                                        Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
+//                                    }
+//                                }
+//                        );
+//                    } else {
+//                        hideProgressIndicator();
+//                        Toast.makeText(activity, "Payment Error", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//
+//                @Override
+//                public void failure(RetrofitError retrofitError) {
+//                    hideProgressIndicator();
+//                    Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
+//                }
+//            });
 
         } else {
             Toast.makeText(activity, R.string.payment_method_required, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    class PowListener implements Callback<List<POWResponse>> {
+
+        PaymentMethod paymentMethod;
+
+        PowListener(PaymentMethod paymentMethod) {
+            this.paymentMethod = paymentMethod;
+        }
+
+        @Override
+        public void success(List<POWResponse> powList, Response response) {
+            Log.i("packet", powList.get(0).getPacket());
+            if ("0".equals(powList.get(0).getStatus()) && !TextUtils.isEmpty(powList.get(0).getPacket())) {
+                paymentMethod.setCardNumber(powList.get(0).getPacket());
+
+                // add payment method to cart
+                secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+                        new retrofit.Callback<PaymentMethodResponse>() {
+                            @Override
+                            public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
+                                // upon payment method success, submit the order
+                                submitOrder(paymentMethod.getCardVerificationCode());
+                            }
+
+                            @Override
+                            public void failure(RetrofitError retrofitError) {
+                                hideProgressIndicator();
+                                Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                );
+            } else {
+                hideProgressIndicator();
+                Toast.makeText(activity, "Payment Error", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            hideProgressIndicator();
+            Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
         }
     }
 

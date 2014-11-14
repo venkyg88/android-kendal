@@ -10,7 +10,11 @@
     android:padding="6dp">
 
     <!--shipping address-->
+    <TextView
+        style="@style/CheckoutSubheading"
+        android:text="@string/shipping_addr"/>
     <include layout="@layout/addshipping_fragment" android:id="@+id/shipping_addr_layout" />
+
 
     <!--email address-->
     <EditText
@@ -27,21 +31,37 @@
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
         android:hint="@string/reenter_email"
-        android:imeOptions="actionDone"
+        android:imeOptions="actionNext"
         android:singleLine="true"/>
 
 
-    <!--todo: include this when available -->
-    <!-- <include layout="@layout/addpayment_fragment" android:id="@+id/shipping_addr_layout" />-->
+    <!--payment method-->
+    <TextView
+        style="@style/CheckoutSubheading"
+        android:layout_marginTop="20dp"
+        android:text="@string/payment_method"/>
+
+    <include layout="@layout/addcc_fragment" android:id="@+id/payment_method_layout" />
+
+    <EditText
+        android:id="@+id/cid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:maxLength="4"
+        android:hint="@string/cid"
+        android:imeOptions="actionDone"
+        android:singleLine="true"/>
 
     <!--for now, hard code payment method-->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="24sp"
-        android:textColor="#FF0000"
-        android:text="TBD: payment method entry will go here"/>
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="20dp"-->
+        <!--android:textSize="24sp"-->
+        <!--android:textColor="#FF0000"-->
+        <!--android:text="TBD: payment method entry will go here"/>-->
+
 
     <!--widget for choosing billing addr to match shipping addr-->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
