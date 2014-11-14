@@ -11,6 +11,7 @@ import android.widget.EditText;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.*;
@@ -26,8 +27,7 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>,
 
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
-    public static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
-    //    public static final String CLIENT_ID = "JxP9wlnIfCSeGc9ifRAAGku7F4FSdErd"; // a client_id that works with prod
+    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
     private static final String LOCALE = "en_US";
 
     private EasyOpenApi easyOpenApi;
@@ -57,7 +57,8 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>,
     public void success(MemberDetail memberDetail, Response response) {
         int code = response.getStatus();
         Member member = memberDetail.getMember().get(0);
-        MemberObject.setMember(member);
+
+        ProfileDetails.mergeMember(member);
         if (member==null) return;
 
         String email = member.getEmailAddress();

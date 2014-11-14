@@ -24,7 +24,7 @@ import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.checkout.ConfirmationFragment;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
-import com.staples.mobile.cfa.profile.MemberObject;
+import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.cfa.search.SearchBarView;
@@ -32,19 +32,19 @@ import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
-import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.lms.LmsManager;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int SURRENDER_TIMEOUT = 5000;
+
+    NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 
     private DrawerLayout drawerLayout;
     private View leftDrawer;
@@ -63,10 +63,8 @@ public class MainActivity extends Activity
     private DrawerItem homeDrawerItem;
     private DrawerItem storeDrawerItem;
     private DrawerItem rewardsDrawerItem;
-    private DrawerItem checkoutDrawerItem;
     
     private LoginHelper loginHelper;
-    private DrawerItem confirmationDrawerItem;
 
     public enum Transition {
         NONE  (0, 0, 0, 0, 0),
@@ -177,8 +175,6 @@ public class MainActivity extends Activity
         homeDrawerItem = adapter.getItem(0); // TODO Hard-coded alias
         storeDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.store_info_title, ToBeDoneFragment.class);
         rewardsDrawerItem = adapter.getItem(6); // TODO Hard-coded alias
-        checkoutDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.checkout_title, CheckoutFragment.class);
-        confirmationDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.confirmation_title, ConfirmationFragment.class);
 
         // Initialize topper
         LayoutInflater inflater = getLayoutInflater();
@@ -203,11 +199,10 @@ public class MainActivity extends Activity
             @Override
             public void onChanged() {
                 super.onChanged();
-                updateCartIndicators(cartAdapter.getCart(), cartAdapter.getMinExpectedBusinessDays(),
-                        cartAdapter.getMaxExpectedBusinessDays());
+                updateCartIndicators(cartAdapter.getCart());
             }
         });
-        updateCartIndicators(null, 0, 0); // initialize cart display until we're able to fill the cart (e.g. item count to zero)
+        updateCartIndicators(null); // initialize cart display until we're able to fill the cart (e.g. item count to zero)
         ((ListView) rightDrawer.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
 
         // Fresh start?
@@ -250,6 +245,32 @@ public class MainActivity extends Activity
         return(true);
     }
 
+//    // dls: considering whether to support multiple fragments
+//    public boolean selectFragments(List<Fragment> fragments, Transition transition, boolean push) {
+//        // Make sure all drawers are closed
+//        drawerLayout.closeDrawers();
+//
+//        // Swap fragments
+//        FragmentManager manager = getFragmentManager();
+//        FragmentTransaction transaction = manager.beginTransaction();
+//        for (int i=0;  i < fragments.size();  i++) {
+//            Fragment fragment = fragments.get(i);
+//            if (i == 0) {
+//                transaction.replace(R.id.content, fragment);
+//            } else {
+//                transaction.add(R.id.content, fragment);
+//            }
+//        }
+//        if (transition!=null) {
+//            transition.setAnimation(transaction);
+//        }
+//        if (push) {
+//            transaction.addToBackStack(null);
+//        }
+//        transaction.commit();
+//        return(true);
+//    }
+
     private boolean selectDrawerItem(DrawerItem item, Transition transition, boolean push) {
         // Safety check
         if (item == null || item.fragmentClass == null) return (false);
@@ -260,18 +281,25 @@ public class MainActivity extends Activity
         return(selectFragment(item.fragment, transition, push));
     }
 
+
+    public boolean selectOrderCheckout() {
+        LoginHelper loginHelper = new LoginHelper(this);
+        if (loginHelper.isLoggedIn()) {
+            // if guest or if no profile info, then go to single-page checkout, otherwise open checkout with profile editing options
+            CheckoutFragment fragment = CheckoutFragment.newInstance(cartAdapter.getExpectedDeliveryRange(),
+                        cartAdapter.getCart().getPreTaxTotal(),
+                        !loginHelper.isGuestLogin() && ProfileDetails.hasAddressOrPaymentMethod());
+            return selectFragment(fragment, Transition.NONE, true);
+        }
+        return false;
+    }
+
     public boolean selectOrderConfirmation(String orderId, String orderNumber) {
         // refresh cart since should now be empty
         cartAdapter.fill();
         // open order confirmation fragment
-        Fragment fragment = Fragment.instantiate(this, ConfirmationFragment.class.getName());
-        Bundle args = new Bundle();
-        if (orderNumber != null) {
-            args.putString(ConfirmationFragment.BUNDLE_PARAM_ORDERID, orderId);
-            args.putString(ConfirmationFragment.BUNDLE_PARAM_ORDERNUMBER, orderNumber);
-        }
-        fragment.setArguments(args);
-        return (selectFragment(fragment, Transition.SLIDE, true));
+        Fragment fragment = ConfirmationFragment.newInstance(orderId, orderNumber);
+        return selectFragment(fragment, Transition.SLIDE, true);
     }
 
     public boolean selectBundle(String title, String path) {
@@ -313,7 +341,7 @@ public class MainActivity extends Activity
     }
 
     /** Sets item count indicator on cart icon and cart drawer title */
-    public void updateCartIndicators(Cart cart, int minExpectedBusinessDays, int maxExpectedBusinessDays) {
+    public void updateCartIndicators(Cart cart) {
         Resources r = getResources();
 
         int totalItemCount = 0;
@@ -344,12 +372,10 @@ public class MainActivity extends Activity
         }
 
         // set text of free shipping msg
-
-        if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !MemberObject.isRewardsMember()) {
+        if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !ProfileDetails.isRewardsMember()) {
             // need to spend more to qualify for free shipping
-            NumberFormat nf = DecimalFormat.getCurrencyInstance();
             cartFreeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
-                    nf.format(freeShippingThreshold), nf.format(freeShippingThreshold - subtotal)));
+                    currencyFormat.format(freeShippingThreshold), currencyFormat.format(freeShippingThreshold - subtotal)));
             cartFreeShippingMsg.setBackgroundColor(0xff3f6fff); // blue
         } else {
             // qualifies for free shipping
@@ -358,24 +384,13 @@ public class MainActivity extends Activity
         }
 
         // set text of shipping and subtotal
-        cartShipping.setText(shipping);
-        cartSubtotal.setText("$" + preTaxSubtotal);
+        cartShipping.setText(CheckoutFragment.formatShippingCharge(shipping, currencyFormat));
+        cartSubtotal.setText(currencyFormat.format(preTaxSubtotal));
 
         // only show shipping, subtotal, and proceed-to-checkout when at least one item
         cartFreeShippingMsg.setVisibility(totalItemCount == 0? View.GONE : View.VISIBLE);
         cartSubtotalLayout.setVisibility(totalItemCount == 0? View.GONE : View.VISIBLE);
         cartProceedToCheckout.setVisibility(totalItemCount == 0? View.GONE : View.VISIBLE);
-
-        // add info to checkout fragment which may be displayed behind cart
-        String deliveryRange;
-        if (maxExpectedBusinessDays > minExpectedBusinessDays) {
-            deliveryRange = minExpectedBusinessDays + " - " + maxExpectedBusinessDays;
-        } else {
-            deliveryRange = ""+minExpectedBusinessDays;
-        }
-        Bundle checkoutBundle = checkoutDrawerItem.instantiate(this).getArguments();
-        checkoutBundle.putString(CheckoutFragment.BUNDLE_PARAM_DELIVERYRANGE, deliveryRange);
-        checkoutBundle.putFloat(CheckoutFragment.BUNDLE_PARAM_PRETAXSUBTOTAL, preTaxSubtotal);
     }
 
     /** Adds an item to the cart */
@@ -418,12 +433,7 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.action_checkout:
-                // considering not adding to Back stack, but it doesn't seem to work and possibly
-                // causes problems with opening fragment a second time, might need to override activity's
-                // onBackPressed() method and use popBackStack() when attempting to return to checkout
-                // fragment, but waiting because will probably need to put this fragment in a separate
-                // activity anyway.
-                selectDrawerItem(checkoutDrawerItem, Transition.NONE, true);
+                selectOrderCheckout();
                 break;
         }
     }
@@ -481,6 +491,13 @@ public class MainActivity extends Activity
                     adapter.pushStack(item);
                 }
                 break;
+
+            case PROFILE:
+                if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
+                    selectProfileFragment();
+                } else {
+                    selectLoginFragment();
+                }
         }
     }
 }
