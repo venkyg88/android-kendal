@@ -58,7 +58,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     View billingAddrLayoutVw;
     View paymentMethodLayoutVw;
     EditText emailAddrVw;
-    EditText emailAddrReenterVw;
     Spinner spinner;
 
     private boolean shippingAddrNeedsApplying = true;
@@ -83,7 +82,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         billingAddrContainer = (ViewGroup)view.findViewById(R.id.billing_addr_container);
         paymentMethodLayoutVw = view.findViewById(R.id.payment_method_layout);
         emailAddrVw = (EditText)guestEntryView.findViewById(R.id.emailAddr);
-        emailAddrReenterVw = (EditText)guestEntryView.findViewById(R.id.emailAddrReenter);
 
         // set up cc type spinner
         spinner = (Spinner) view.findViewById(R.id.card_type_spinner);
@@ -182,15 +180,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
         if (includeEmail) {
             shippingAddress.setEmailAddress(emailAddrVw.getText().toString());
-            shippingAddress.setReenterEmailAddress(emailAddrReenterVw.getText().toString());
+            shippingAddress.setReenterEmailAddress(emailAddrVw.getText().toString()); // Kavitha says don't make the user re-enter address, just copy same addr here
             if (!validateRequiredField(emailAddrVw, requiredMsg)) { errors = true; }
-            if (!validateRequiredField(emailAddrReenterVw, requiredMsg)) { errors = true; }
-            if (!shippingAddress.getEmailAddress().equals(shippingAddress.getReenterEmailAddress())) {
-                String mismatchMsg = resources.getString(R.string.email_mismatch);
-                emailAddrReenterVw.setError(mismatchMsg);
-                Toast.makeText(activity, mismatchMsg, Toast.LENGTH_LONG);
-                errors = true;
-            }
         }
         return errors? null:shippingAddress;
     }
@@ -234,6 +225,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
         if (!errors) {
             PaymentMethod paymentMethod = new PaymentMethod();
+            paymentMethod.setSaveCardIndicator("Y");
             paymentMethod.setCardType(spinner.getSelectedItem().toString());
             if (paymentMethod.getCardType().equals("MasterCard")) {
                 paymentMethod.setCardType("Mastercard");
