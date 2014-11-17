@@ -39,7 +39,7 @@
         android:ems="10"
         android:id="@+id/passwordRegister"
         android:hint="Password"
-        android:imeOptions="actionNext"
+        android:imeOptions="actionDone"
         android:singleLine="true"
         android:layout_below="@+id/userNameRegister"
         android:layout_alignParentLeft="true"
