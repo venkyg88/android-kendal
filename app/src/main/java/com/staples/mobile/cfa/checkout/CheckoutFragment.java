@@ -200,6 +200,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
 
     protected void startPrecheckout() {
+        showProgressIndicator();
         secureApi.precheckout(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, precheckoutListener);
     }
 
