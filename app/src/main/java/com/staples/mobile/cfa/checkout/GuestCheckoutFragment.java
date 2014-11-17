@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -281,6 +282,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                                 Toast.makeText(activity, "Address alert: " + validationAlert, Toast.LENGTH_SHORT).show();
                             } else {
                                 shippingAddrNeedsApplying = false;
+                                new ProfileDetails().refreshProfile(null); // refresh cached profile
                             }
 
                             if (!shippingAddrNeedsApplying && billingAddrNeedsApplying) {
@@ -372,43 +374,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                 secureApi.addCreditPOWCallQA(ccList, RECOMMENDATION, CLIENT_ID, new PowListener(paymentMethod));
             }
 
-
-//            powApi.addCreditPOWCall(ccList, new Callback<POWResponse[]>() {
-//                @Override
-//                public void success(POWResponse[] powList, Response response) {
-//                    Log.i("packet", powList[0].getPacket());
-//                    if ("0".equals(powList[0].getStatus()) && !TextUtils.isEmpty(powList[0].getPacket())) {
-//                        paymentMethod.setCardNumber(powList[0].getPacket());
-//
-//                        // add payment method to cart
-//                        secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
-//                                new Callback<PaymentMethodResponse>() {
-//                                    @Override
-//                                    public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
-//                                        // upon payment method success, submit the order
-//                                        submitOrder(paymentMethod.getCardVerificationCode());
-//                                    }
-//
-//                                    @Override
-//                                    public void failure(RetrofitError retrofitError) {
-//                                        hideProgressIndicator();
-//                                        Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
-//                                    }
-//                                }
-//                        );
-//                    } else {
-//                        hideProgressIndicator();
-//                        Toast.makeText(activity, "Payment Error", Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//
-//                @Override
-//                public void failure(RetrofitError retrofitError) {
-//                    hideProgressIndicator();
-//                    Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
-//                }
-//            });
-
         } else {
             Toast.makeText(activity, R.string.payment_method_required, Toast.LENGTH_SHORT).show();
         }
@@ -435,6 +400,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                             public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
                                 // upon payment method success, submit the order
                                 submitOrder(paymentMethod.getCardVerificationCode());
+                                new ProfileDetails().refreshProfile(null); // refresh cached profile
                             }
 
                             @Override
