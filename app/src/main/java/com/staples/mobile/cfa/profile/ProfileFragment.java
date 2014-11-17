@@ -23,7 +23,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ProfileFragment extends Fragment implements Callback<MemberDetail>, View.OnClickListener{
+public class ProfileFragment extends Fragment implements ProfileDetails.ProfileRefreshCallback, View.OnClickListener{
     private static final String TAG = "ProfileFragment";
 
     private static final String RECOMMENDATION = "v1";
@@ -46,20 +46,12 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>,
         shippingBtn.setOnClickListener(this);
         ccBtn.setOnClickListener(this);
 
-        easyOpenApi = Access.getInstance().getEasyOpenApi(true);
-        easyOpenApi.getMemberProfile(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, this);
-        easyOpenApi.getMemberAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, this);
-        easyOpenApi.getMemberCreditCardDetails(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, this);
-
+        new ProfileDetails().refreshProfile(this);
         return (view);
     }
 
-    @Override
-    public void success(MemberDetail memberDetail, Response response) {
-        int code = response.getStatus();
-        Member member = memberDetail.getMember().get(0);
-
-        ProfileDetails.mergeMember(member);
+    /** implements ProfileDetails.ProfileRefreshCallback */
+    public void onProfileRefresh(Member member) {
         if (member==null) return;
 
         String email = member.getEmailAddress();
@@ -103,11 +95,6 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>,
         }
     }
 
-    @Override
-    public void failure(RetrofitError retrofitError) {
-        Log.i("Fail message when getting member details", " " + retrofitError.getMessage());
-        Log.i("URl used to get member details", " " + retrofitError.getUrl());
-    }
 
     @Override
     public void onClick(View view) {
