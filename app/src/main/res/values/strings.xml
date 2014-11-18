@@ -45,7 +45,8 @@
     <string name="payment_method_required">Payment Method is required</string>
     <string name="billing_addr">Billing Address</string>
     <string name="use_as_billing_addr">Use as billing address</string>
-    <string name="delivery_range">Delivery</string>
+    <!--<string name="delivery_range">Delivery</string>-->
+    <string name="item_subtotal">Item total</string>
     <string name="coupons_rewards">Coupons &amp; Rewards</string>
     <string name="tax">Tax</string>
     <string name="submit_order">Submit Order</string>

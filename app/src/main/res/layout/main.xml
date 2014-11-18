@@ -85,20 +85,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <!-- Main content -->
-            <LinearLayout
+            <FrameLayout
+                android:id="@+id/content"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-                <FrameLayout
-                    android:id="@+id/topper"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <FrameLayout
-                    android:id="@+id/content"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-            </LinearLayout>
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
             <!-- Left drawer (menu) -->
             <com.staples.mobile.cfa.widget.DataWrapper
                 android:id="@+id/left_drawer"

@@ -1,5 +1,6 @@
 package com.staples.mobile.cfa.sku;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -35,6 +36,7 @@ import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.Availability;
 import com.staples.mobile.common.access.easyopen.model.browse.BulletDescription;
 import com.staples.mobile.common.access.easyopen.model.browse.Description;
@@ -380,26 +382,41 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private class SkuDetailsCallback implements Callback<SkuDetails> {
         @Override
         public void success(SkuDetails sku, Response response) {
+            Activity activity = getActivity();
+            if (activity==null) return;
+
             processSkuDetails(sku);
             wrapper.setState(DataWrapper.State.DONE);
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            Log.d(TAG, "Failure callback " + retrofitError);
-            wrapper.setState(DataWrapper.State.EMPTY);
+            Activity activity = getActivity();
+            if (activity==null) return;
+
+            String msg = ApiError.getErrorMessage(retrofitError);
+            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+            Log.d(TAG, msg);
         }
     }
 
     private class ReviewSetCallback implements Callback<ReviewSet> {
         @Override
         public void success(ReviewSet reviews, Response response) {
+            Activity activity = getActivity();
+            if (activity==null) return;
+
             processReviewSet(reviews);
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            Log.d(TAG, "Failure callback " + retrofitError);
+            Activity activity = getActivity();
+            if (activity==null) return;
+
+            String msg = ApiError.getErrorMessage(retrofitError);
+            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+            Log.d(TAG, msg);
         }
     }
 

@@ -39,7 +39,6 @@ public class MainActivity extends Activity
     private DrawerLayout drawerLayout;
     private View leftDrawer;
     private SearchBarView searchBar;
-    private ViewGroup topper;
     private BadgeImageView cartIconAction;
     CartFragment cartFragment;
 
@@ -117,15 +116,6 @@ public class MainActivity extends Activity
         findViewById(R.id.main).setVisibility(View.VISIBLE);
     }
 
-    // DLS: TODO: this is temporary. Need to decide what activity to use to present checkout fragment
-    public void showTopper(boolean show) {
-        if (show) {
-            topper.setVisibility(View.VISIBLE);
-        } else {
-            topper.setVisibility(View.GONE);
-        }
-    }
-
     public void prepareMainScreen(boolean freshStart) {
         // Inflate
         setContentView(R.layout.main);
@@ -134,7 +124,6 @@ public class MainActivity extends Activity
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawer = findViewById(R.id.left_drawer);
         searchBar = (SearchBarView) findViewById(R.id.search_text);
-        topper = (ViewGroup) findViewById(R.id.topper);
         cartIconAction = (BadgeImageView)findViewById(R.id.action_show_cart);
 
         // Set action bar listeners
@@ -157,12 +146,6 @@ public class MainActivity extends Activity
         homeDrawerItem = adapter.getItem(0); // TODO Hard-coded alias
         storeDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.store_info_title, ToBeDoneFragment.class);
         rewardsDrawerItem = adapter.getItem(6); // TODO Hard-coded alias
-
-        // Initialize topper
-        LayoutInflater inflater = getLayoutInflater();
-        inflater.inflate(R.layout.topper, topper);
-        topper.findViewById(R.id.action_store).setOnClickListener(this);
-        topper.findViewById(R.id.action_rewards).setOnClickListener(this);
 
         // Cart
         cartFragment = new CartFragment();
@@ -253,8 +236,8 @@ public class MainActivity extends Activity
         if (loginHelper.isLoggedIn()) {
             // if guest or if no profile info, then go to single-page checkout, otherwise open checkout with profile editing options
             CheckoutFragment fragment = CheckoutFragment.newInstance(cartFragment.getExpectedDeliveryRange(),
-                    cartFragment.getCart().getPreTaxTotal(),
-                    !loginHelper.isGuestLogin() && ProfileDetails.hasAddressOrPaymentMethod());
+                    cartFragment.getCart().getSubTotal(), cartFragment.getCart().getPreTaxTotal(),
+                        !loginHelper.isGuestLogin() && ProfileDetails.hasAddressOrPaymentMethod());
             return selectFragment(fragment, Transition.NONE, true);
         }
         return false;
@@ -335,14 +318,6 @@ public class MainActivity extends Activity
 
             case R.id.action_show_cart:
                 selectShoppingCart();
-                break;
-
-            case R.id.action_store:
-                selectDrawerItem(storeDrawerItem, Transition.SLIDE, true);
-                break;
-
-            case R.id.action_rewards:
-                selectDrawerItem(rewardsDrawerItem, Transition.SLIDE, true);
                 break;
         }
     }
