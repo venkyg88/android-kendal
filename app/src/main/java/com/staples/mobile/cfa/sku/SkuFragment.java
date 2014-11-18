@@ -632,7 +632,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
                 int qty = edit.getQtyValue(1);
                 final MainActivity activity = (MainActivity) getActivity();
-                wrapper.setState(DataWrapper.State.ADDING);
+                wrapper.setState(DataWrapper.State.LOADING);
                 activity.addItemToCart(identifier, qty, new CartFragment.AddToCartCallback() {
                     public void onAddToCartComplete() {
                         wrapper.setState(DataWrapper.State.DONE);
