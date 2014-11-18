@@ -166,28 +166,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         return view;
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // hide topper
-        if (activity instanceof MainActivity) {
-            MainActivity a = (MainActivity) activity;
-            a.showTopper(false);
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        // restore topper
-        if (activity instanceof MainActivity) {
-            MainActivity a = (MainActivity) activity;
-            a.showTopper(true);
-        }
-
-    }
-
     /** override this to handle other clicks, but call this super method */
     @Override
     public void onClick(View view) {
