@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -352,16 +351,16 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     }
 
     private void saveSeenProducts(Product product){
+        String sku = product.getSku();
         String productName = product.getProductName();
         String currentPrice = String.valueOf(product.getPricing().get(0).getFinalPrice());
         String reviewCount = String.valueOf(product.getCustomerReviewCount());
         String rating = String.valueOf(product.getCustomerReviewRating());
-        String sku = product.getSku();
         String unitOfMeasure = product.getPricing().get(0).getUnitOfMeasure();
         String imageUrl = product.getImage().get(0).getUrl();
 
-        SeenProductsRowItem item = new SeenProductsRowItem(productName, currentPrice, reviewCount,
-                rating, sku, unitOfMeasure, imageUrl);
+        SeenProductsRowItem item = new SeenProductsRowItem(sku, productName, currentPrice, reviewCount,
+                rating, unitOfMeasure, imageUrl);
 
         // get saved seen products
         PersonalFeedData feedSingleton = PersonalFeedData.getInstance();
@@ -370,30 +369,10 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         // check if the product was saved before
         HashSet<String> savedSkus = feedSingleton.getSavedSku();
         if(!savedSkus.contains(sku)){
-            feedSingleton.getSavedSeenProducts().addSeenProduct(item, sku);
-        }
-    }
+            //feedSingleton.getSavedSeenProducts().addSeenProduct(item, sku);
 
-    private void saveKeyword(String keyword){
-        // Save the keyword before doing the search
-        SharedPreferences sp = getActivity().getSharedPreferences("SAVED_SKU", getActivity().MODE_PRIVATE);
-
-        String savedKeywordsString = sp.getString("KEYWORD_LIST", "");
-        if(savedKeywordsString.equals("")){
-            savedKeywordsString = keyword;
+            feedSingleton.getSavedSeenProducts().addSeenProduct(item, sku, getActivity());
         }
-        else{
-            savedKeywordsString = savedKeywordsString + "/_/" + keyword;
-        }
-
-        if(keyword.equals("clear")){
-            savedKeywordsString = "";
-        }
-
-        // save updated KEYWORD_LIST
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString("KEYWORD_LIST", savedKeywordsString);
-        editor.commit();
     }
 
     // Retrofit callbacks
