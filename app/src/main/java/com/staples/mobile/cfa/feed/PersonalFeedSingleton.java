@@ -81,12 +81,36 @@ public class PersonalFeedSingleton {
     }
 
     // get seen products' sku not persistently
-    public HashSet<String> getSavedSku(){
+    public HashSet<String> getSavedSkus(){
         return savedSkus;
     }
 
     // get seen products' sku persistently
-    public HashSet<String> getSavedSku(Activity activity) {
-        return savedSkus;
+    public HashSet<String> getSavedSkus(Activity activity) {
+        // Get saved seen products info from the phone
+        SharedPreferences sp = activity.getSharedPreferences("SAVED_SEEN_PRODUCTS", activity.MODE_PRIVATE);
+        String savedSkusString = sp.getString("SEEN_PRODUCT_SKU_LIST", "");
+
+        final String FIELD_SEPARATOR = "/_-_/";
+
+        // initialize SeenProductsRowItem list
+        HashSet<String> savedProductSkus = new HashSet<String>();;
+
+        if (!savedSkusString.equals("")) {
+            String[] savedSkusArray = savedSkusString.split(FIELD_SEPARATOR);
+
+            // safe check for empty fields
+            if(savedSkusArray.length > 0) {
+                for (int i = 0; i < savedSkusArray.length; i++) {
+                    savedProductSkus.add(savedSkusArray[i]);
+                    Log.d(TAG, i + "th Saved Sku -> " + savedSkusArray[i]);
+                }
+            }
+            else{
+                Log.d(TAG, "No Saved Sku Yet!");
+            }
+        }
+
+        return savedProductSkus;
     }
 }
