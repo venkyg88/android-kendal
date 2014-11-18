@@ -85,7 +85,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse>{
 
     @Override
     public long getItemId(int position) {
-        return(getItem(position).hashCode());
+        return(position);
     }
 
     @Override
@@ -299,5 +299,4 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse>{
         wrapper.setState(DataWrapper.State.NOMORE);
         notifyDataSetChanged();
     }
-
 }
