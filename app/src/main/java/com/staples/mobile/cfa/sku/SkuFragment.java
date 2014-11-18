@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.cfa.feed.PersonalFeedData;
+import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
 import com.staples.mobile.cfa.feed.SeenProductsRowItem;
 import com.staples.mobile.cfa.feed.SizedArrayList;
 import com.staples.mobile.cfa.login.LoginHelper;
@@ -363,14 +363,12 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 rating, unitOfMeasure, imageUrl);
 
         // get saved seen products
-        PersonalFeedData feedSingleton = PersonalFeedData.getInstance();
+        PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance();
         SizedArrayList<SeenProductsRowItem> saveSeenProducts = feedSingleton.getSavedSeenProducts();
 
         // check if the product was saved before
-        HashSet<String> savedSkus = feedSingleton.getSavedSku();
+        HashSet<String> savedSkus = feedSingleton.getSavedSkus(getActivity());
         if(!savedSkus.contains(sku)){
-            //feedSingleton.getSavedSeenProducts().addSeenProduct(item, sku);
-
             feedSingleton.getSavedSeenProducts().addSeenProduct(item, sku, getActivity());
         }
     }
