@@ -50,22 +50,45 @@
         <!--dynamically add content here-->
     </ScrollView>
 
-    <!-- delivery range -->
+    <!--&lt;!&ndash; delivery range &ndash;&gt;-->
+    <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="#e6e6e6" >-->
+        <!--<TextView-->
+            <!--style="@style/CheckoutFooter"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:text="@string/delivery_range"-->
+            <!--/>-->
+        <!--<TextView-->
+            <!--android:id="@+id/checkout_delivery_range"-->
+            <!--style="@style/CheckoutFooter"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--/>-->
+    <!--</RelativeLayout>-->
+
+    <!-- item subtotal -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#e6e6e6" >
+        android:background="#cccccc" >
         <TextView
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
             android:layout_alignParentLeft="true"
-            android:text="@string/delivery_range"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            android:text="@string/item_subtotal"
             />
         <TextView
-            android:id="@+id/checkout_delivery_range"
+            android:id="@+id/checkout_item_subtotal"
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
             android:layout_alignParentRight="true"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
             />
     </RelativeLayout>
 
@@ -80,6 +103,8 @@
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
             android:layout_alignParentLeft="true"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
             android:text="@string/coupons_rewards"
             />
         <TextView
@@ -87,6 +112,8 @@
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
             android:layout_alignParentRight="true"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
             android:text="TBD"
             android:textColor="#FF0000"
             />
@@ -128,6 +155,8 @@
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
             android:layout_alignParentLeft="true"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
             android:text="@string/tax"
             />
         <TextView
@@ -135,6 +164,8 @@
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
             android:layout_alignParentRight="true"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
             />
     </RelativeLayout>
 
