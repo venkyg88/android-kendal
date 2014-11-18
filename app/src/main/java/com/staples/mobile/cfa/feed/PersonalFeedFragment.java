@@ -6,7 +6,6 @@ package com.staples.mobile.cfa.feed;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,9 +35,8 @@ public class PersonalFeedFragment extends Fragment {
     private void setAdapter(){
         seenProductsListAdapter = new SeenProductsAdapter(getActivity());
 
-        //SizedArrayList<SeenProductsRowItem> saveSeenProducts = PersonalFeedData.getInstance().getSavedSeenProducts();
-
-        SizedArrayList<SeenProductsRowItem> saveSeenProducts = PersonalFeedData.getInstance().getSavedSeenProducts(getActivity());
+        SizedArrayList<SeenProductsRowItem> saveSeenProducts =
+                PersonalFeedSingleton.getInstance().getSavedSeenProducts(getActivity());
 
         for(SeenProductsRowItem savedSeenProduct : saveSeenProducts){
             seenProductsListAdapter.add(savedSeenProduct);
