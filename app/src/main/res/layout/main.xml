@@ -71,7 +71,7 @@
                 android:src="@drawable/ic_search"/>
             <!-- Cart badge -->
             <com.staples.mobile.cfa.widget.BadgeImageView
-                android:id="@+id/action_right_drawer"
+                android:id="@+id/action_show_cart"
                 android:layout_width="@dimen/icon_width"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -130,107 +130,101 @@
                     android:text="@string/empty"/>
             </com.staples.mobile.cfa.widget.DataWrapper>
             <!-- Right drawer (shopping cart) -->
-            <FrameLayout
-                android:id="@+id/right_drawer"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end">
-                <com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay
-                    android:id="@+id/right_drawer_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-                    <TextView
-                        android:id="@+id/cart_title"
-                        android:layout_width="match_parent"
-                        style="@style/CartHeader"/>
-                    <TextView
-                        android:id="@+id/free_shipping_msg"
-                        android:layout_width="match_parent"
-                        style="@style/CartHeader"
-                        android:textColor="#ffffff"
-                        />
-                    <ListView
-                        android:id="@+id/cart_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:layout_gravity="start"
-                        android:choiceMode="singleChoice"
-                        android:background="#ffffff"/>
-                    <RelativeLayout
-                        android:id="@+id/cart_subtotal_layout"
-                        style="@style/CartHeader"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" >
-                        <TextView
-                            android:id="@+id/cart_shipping_label"
-                            style="@style/CartHeader"
-                            android:layout_width="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:text="@string/shipping"
-                            android:paddingTop="2dp"
-                            android:paddingBottom="0dp"
-                            />
-                        <TextView
-                            android:id="@+id/cart_shipping"
-                            style="@style/CartHeader"
-                            android:layout_width="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:paddingTop="2dp"
-                            android:paddingBottom="0dp"
-                            />
-                        <TextView
-                            android:id="@+id/cart_subtotal_label"
-                            style="@style/CartHeader"
-                            android:layout_width="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_below="@id/cart_shipping_label"
-                            android:paddingTop="0dp"
-                            android:paddingBottom="2dp"
-                            android:text="@string/pretax_subtotal" />
-                        <TextView
-                            android:id="@+id/cart_subtotal"
-                            style="@style/CartHeader"
-                            android:layout_width="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_below="@id/cart_shipping"
-                            android:paddingTop="0dp"
-                            android:paddingBottom="2dp"
-                            />
-                    </RelativeLayout>
-                    <TextView
-                        android:id="@+id/action_checkout"
-                        android:layout_height="wrap_content"
-                        android:layout_width="match_parent"
-                        android:gravity="center"
-                        android:text="@string/proceed_to_checkout"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-                        android:textSize="24dp"
-                        android:textColor="#ffffff"
-                        android:background="#3f3f3f"/>
-                    </com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay>
-                <RelativeLayout
-                    android:id="@+id/cart_progress_overlay"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone"
-                    android:clickable="false"
-                    android:background="#6f000022" >
-                    <ProgressBar
-                        android:layout_centerInParent="true"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:indeterminateOnly="true" />
-                </RelativeLayout>
-                <!--<ProgressBar-->
-                    <!--android:id="@+id/cart_progress_bar"-->
+            <!--<FrameLayout-->
+                <!--android:id="@+id/right_drawer"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_gravity="end">-->
+                <!--<com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay-->
+                    <!--android:id="@+id/right_drawer_content"-->
                     <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="center"-->
-                    <!--android:visibility="gone"/>-->
-            </FrameLayout>
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:orientation="vertical">-->
+                    <!--<TextView-->
+                        <!--android:id="@+id/cart_title"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--style="@style/CartHeader"/>-->
+                    <!--<TextView-->
+                        <!--android:id="@+id/free_shipping_msg"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--style="@style/CartHeader"-->
+                        <!--android:textColor="#ffffff"-->
+                        <!--/>-->
+                    <!--<ListView-->
+                        <!--android:id="@+id/cart_list"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="0dp"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:layout_gravity="start"-->
+                        <!--android:choiceMode="singleChoice"-->
+                        <!--android:background="#ffffff"/>-->
+                    <!--<RelativeLayout-->
+                        <!--android:id="@+id/cart_subtotal_layout"-->
+                        <!--style="@style/CartHeader"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content" >-->
+                        <!--<TextView-->
+                            <!--android:id="@+id/cart_shipping_label"-->
+                            <!--style="@style/CartHeader"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_alignParentLeft="true"-->
+                            <!--android:text="@string/shipping"-->
+                            <!--android:paddingTop="2dp"-->
+                            <!--android:paddingBottom="0dp"-->
+                            <!--/>-->
+                        <!--<TextView-->
+                            <!--android:id="@+id/cart_shipping"-->
+                            <!--style="@style/CartHeader"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_alignParentRight="true"-->
+                            <!--android:paddingTop="2dp"-->
+                            <!--android:paddingBottom="0dp"-->
+                            <!--/>-->
+                        <!--<TextView-->
+                            <!--android:id="@+id/cart_subtotal_label"-->
+                            <!--style="@style/CartHeader"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_alignParentLeft="true"-->
+                            <!--android:layout_below="@id/cart_shipping_label"-->
+                            <!--android:paddingTop="0dp"-->
+                            <!--android:paddingBottom="2dp"-->
+                            <!--android:text="@string/pretax_subtotal" />-->
+                        <!--<TextView-->
+                            <!--android:id="@+id/cart_subtotal"-->
+                            <!--style="@style/CartHeader"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_alignParentRight="true"-->
+                            <!--android:layout_below="@id/cart_shipping"-->
+                            <!--android:paddingTop="0dp"-->
+                            <!--android:paddingBottom="2dp"-->
+                            <!--/>-->
+                    <!--</RelativeLayout>-->
+                    <!--<TextView-->
+                        <!--android:id="@+id/action_checkout"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:gravity="center"-->
+                        <!--android:text="@string/proceed_to_checkout"-->
+                        <!--android:paddingTop="10dp"-->
+                        <!--android:paddingBottom="10dp"-->
+                        <!--android:textSize="24dp"-->
+                        <!--android:textColor="#ffffff"-->
+                        <!--android:background="#3f3f3f"/>-->
+                    <!--</com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay>-->
+                <!--<RelativeLayout-->
+                    <!--android:id="@+id/cart_progress_overlay"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:visibility="gone"-->
+                    <!--android:clickable="false"-->
+                    <!--android:background="#6f000022" >-->
+                    <!--<ProgressBar-->
+                        <!--android:layout_centerInParent="true"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:indeterminateOnly="true" />-->
+                <!--</RelativeLayout>-->
+            <!--</FrameLayout>-->
 
         </android.support.v4.widget.DrawerLayout>
     </LinearLayout>

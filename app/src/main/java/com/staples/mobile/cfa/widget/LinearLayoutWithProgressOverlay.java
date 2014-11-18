@@ -19,8 +19,13 @@ import com.staples.mobile.cfa.cart.CartAdapter;
  */
 public class LinearLayoutWithProgressOverlay extends LinearLayout {
 
+    public interface ProgressIndicator {
+        public void showProgressIndicator();
+        public void hideProgressIndicator();
+    }
+
     boolean swallowTouchEvents = false;
-    CartAdapter.ProgressIndicator progressIndicator;
+    ProgressIndicator progressIndicator;
     View cartProgressOverlay;
 
     public LinearLayoutWithProgressOverlay(Context context) {
@@ -35,9 +40,9 @@ public class LinearLayoutWithProgressOverlay extends LinearLayout {
         super(context, attrs, defStyle);
     }
 
-    public CartAdapter.ProgressIndicator getProgressIndicator () {
+    public ProgressIndicator getProgressIndicator () {
         if (progressIndicator == null) {
-            progressIndicator = new CartAdapter.ProgressIndicator() {
+            progressIndicator = new ProgressIndicator() {
                 public void showProgressIndicator() {
                     if (LinearLayoutWithProgressOverlay.this.cartProgressOverlay != null) {
                         LinearLayoutWithProgressOverlay.this.cartProgressOverlay.setVisibility(View.VISIBLE);

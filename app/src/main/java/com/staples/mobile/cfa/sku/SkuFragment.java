@@ -18,10 +18,12 @@ import android.widget.TabHost;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.feed.PersonalFeedData;
 import com.staples.mobile.cfa.feed.SeenProductsRowItem;
 import com.staples.mobile.cfa.feed.SizedArrayList;
@@ -612,8 +614,13 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             case R.id.add_to_cart:
                 QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
                 int qty = edit.getQtyValue(1);
-                MainActivity activity = (MainActivity) getActivity();
-                activity.addItemToCart(identifier, qty);
+                final MainActivity activity = (MainActivity) getActivity();
+                wrapper.setState(DataWrapper.State.ADDING);
+                activity.addItemToCart(identifier, qty, new CartFragment.AddToCartCallback() {
+                    public void onAddToCartComplete() {
+                        wrapper.setState(DataWrapper.State.DONE);
+                    }
+                });
                 break;
         }
     }
