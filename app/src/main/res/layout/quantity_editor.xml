@@ -12,6 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:spinnerMode="dialog"
         />
     <com.staples.mobile.cfa.widget.EditTextWithImeBackEvent
         android:id="@+id/cartitem_qty_edittext"

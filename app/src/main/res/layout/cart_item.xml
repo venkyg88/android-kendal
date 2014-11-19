@@ -61,7 +61,7 @@
                 android:layout_gravity="center_vertical"
                 android:textSize="18sp"
                 android:paddingRight="6dp"
-                app:maxSpinnerValue="6"
+                app:maxSpinnerValue="9"
                 />
             <!--<Button-->
                 <!--android:id="@+id/cartitem_update"-->
