@@ -1,14 +1,16 @@
 package com.staples.mobile.cfa.store;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -26,7 +28,6 @@ import com.staples.mobile.common.access.channel.model.store.StoreData;
 import com.staples.mobile.common.access.channel.model.store.StoreQuery;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Callback;
@@ -38,62 +39,52 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
 
     private MapView mapView;
     private GoogleMap googleMap;
-    private ArrayList<Store> stores;
+    private ListView list;
+    private StoreAdapter adapter;
 
     private double centerLat = 42.3672799; // Velocity lab
     private double centerLng = -71.0900776;
     private double deltaLat;
     private double deltaLng;
 
-    private class Store {
-        private LatLng position;
-        private String storeNumber;
-        private String streetAddress1;
-        private String streetAddress2;
-        private String city;
-        private String state;
-        private String country;
-        private String zipcode;
-        private String phoneNumber;
-
-        private Store(String storeNumber, double latitude, double longitude) {
-            this.storeNumber = storeNumber;
-            position = new LatLng(latitude, longitude);
-        }
-
-        private void expandBounds() {
-            deltaLat = Math.max(deltaLat, Math.abs(position.latitude-centerLat));
-            deltaLng = Math.max(deltaLng, Math.abs(position.longitude-centerLng));
-        }
-
-        private void addMarker() {
-            MarkerOptions options = new MarkerOptions();
-            options.title(streetAddress1);
-            options.position(position);
-            googleMap.addMarker(options);
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        View view =inflater.inflate(R.layout.store_fragment, container, false);
+        View view = inflater.inflate(R.layout.store_fragment, container, false);
         mapView = (MapView) view.findViewById(R.id.map);
-        mapView.onCreate(bundle);
+        list = (ListView) view.findViewById(R.id.list);
+        adapter = new StoreAdapter(getActivity());
+        list.setAdapter(adapter);
 
-        googleMap = mapView.getMap();
-        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        googleMap.setMyLocationEnabled(true);
-        googleMap.setOnMarkerClickListener(this);
+        // Supports Play Services?
+        if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity())==0) {
+            mapView.onCreate(bundle);
 
-        stores = new ArrayList<Store>();
+            googleMap = mapView.getMap();
+            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            googleMap.setMyLocationEnabled(true);
+            googleMap.setOnMarkerClickListener(this);
 
-        MapsInitializer.initialize(getActivity());
-        CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(centerLat, centerLng));
-        googleMap.moveCamera(update);
+            MapsInitializer.initialize(getActivity());
+            CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(centerLat, centerLng));
+            googleMap.moveCamera(update);
+        }
+
+        else mapView.setVisibility(View.GONE);
 
         Access.getInstance().getChannelApi().storeLocations("02139", this);
+        return (view);
+    }
 
-        return(view);
+    private void expandBounds(StoreItem item) {
+        deltaLat = Math.max(deltaLat, Math.abs(item.position.latitude-centerLat));
+        deltaLng = Math.max(deltaLng, Math.abs(item.position.longitude-centerLng));
+    }
+
+    private void addMarker(StoreItem item) {
+        MarkerOptions options = new MarkerOptions();
+        options.title(item.streetAddress1);
+        options.position(item.position);
+        googleMap.addMarker(options);
     }
 
     private void scaleMap() {
@@ -118,28 +109,28 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
     @Override
     public void onResume() {
         super.onResume();
-        mapView.onResume();
+        if (mapView!=null) mapView.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mapView.onPause();
+        if (mapView!=null) mapView.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mapView.onDestroy();
+        if (mapView!=null) mapView.onDestroy();
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mapView.onLowMemory();
+        if (mapView!=null) mapView.onLowMemory();
     }
 
-    private Store addStore(StoreData storeData) {
+    private StoreItem addStore(StoreData storeData) {
         if (storeData==null) return(null);
         Obj obj = storeData.getObj();
         if (obj==null) return(null);
@@ -152,60 +143,77 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         if (lat==null || lng==null) return(null);
 
         String storeNumber = obj.getStoreNumber();
-        Store store = new Store(storeNumber, lat, lng);
-        stores.add(store);
+        StoreItem item = new StoreItem(storeNumber, lat, lng);
 
         // Get store address
         StoreAddress storeAddress = obj.getStoreAddress();
         if (storeAddress!=null) {
-            store.streetAddress1 = storeAddress.getAddressLine1();
-            store.streetAddress2 = storeAddress.getAddressLine2();
-            store.city = storeAddress.getCity();
-            store.state = storeAddress.getState();
-            store.country = storeAddress.getCountry();
-            store.zipcode = storeAddress.getZip();
+            item.streetAddress1 = storeAddress.getAddressLine1();
+            item.streetAddress2 = storeAddress.getAddressLine2();
+            item.city = storeAddress.getCity();
+            item.state = storeAddress.getState();
+            item.country = storeAddress.getCountry();
+            item.zipcode = storeAddress.getZip();
         }
 
-        store.addMarker();
+        adapter.addStore(item);
+        if (googleMap!=null)
+            addMarker(item);
 
-        return(store);
+        return(item);
     }
 
     @Override
     public void success(StoreQuery storeQuery, Response response) {
-        Log.d(TAG, "Callback success");
+        Activity activity = getActivity();
+        if (activity==null) return;
+
         if (storeQuery==null) return;
         List<StoreData> storeDatas = storeQuery.getStoreData();
         if (storeDatas==null) return;
 
+        // Set maximum zoom
         deltaLat = 0.02;
         deltaLng = 0.02/Math.cos(Math.PI/180.0*centerLat);
+
+        // Add stores, but fit only the first 5 in view
         int count = 0;
         for(StoreData storeData : storeDatas) {
-            Store store = addStore(storeData);
-            if (count<5) store.expandBounds();
+            StoreItem item = addStore(storeData);
+            if (count<5) expandBounds(item);
             count++;
         }
 
-        scaleMap();
+        // Set initial display
+        if (googleMap!=null)
+            adapter.setSingleMode(true);
+        adapter.setSingleIndex(0);
+        adapter.notifyDataSetChanged();
+        if (googleMap!=null)
+           scaleMap();
     }
 
     @Override
     public void failure(RetrofitError retrofitError) {
+        Activity activity = getActivity();
+        if (activity==null) return;
+
         String msg = ApiError.getErrorMessage(retrofitError);
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+        Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+        Log.d(TAG, msg);
     }
 
+    @Override
     public boolean onMarkerClick(Marker marker) {
+        // Find store item by matching LatLng
         LatLng location = marker.getPosition();
-        for(Store store : stores) {
-            if (store.position.latitude==location.latitude &&
-                store.position.longitude==location.longitude) {
-                String text = store.city+"\n"+store.streetAddress1 + "\n" + "Store #" + store.storeNumber;
-                ((TextView) getView().findViewById(R.id.title)).setText(text);
-                return(false);
-            }
+        int index = adapter.findPositionByLatLng(location);
+        if (index<0) return(false);
+
+        if (adapter.isSingleMode()) {
+            adapter.setSingleIndex(index);
+            adapter.notifyDataSetChanged();
         }
-        return(false);
+        return(true);
     }
 }

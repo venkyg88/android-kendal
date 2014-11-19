@@ -52,11 +52,8 @@ public class LmsFragment
 
     private MainActivity activity;
     private Resources resources;
-    private LayoutInflater layoutInflater;
 
     private DeviceInfo deviceInfo;
-
-    private LmsPersistentState lmsPersistentState;
 
     private View lmsFrameView;
     private LinearLayout lmsScrollLayout;
@@ -90,6 +87,8 @@ public class LmsFragment
 
     private View.OnClickListener itemOnClickListener;
 
+    private boolean retryGetLms = true;
+
     @Override
     public void onAttach(Activity activity) {
 
@@ -99,8 +98,6 @@ public class LmsFragment
         );
 
         super.onAttach(activity);
-
-        lmsPersistentState = LmsPersistentState.getInstance();
 
         this.activity = (MainActivity) activity;
         resources = activity.getResources();
@@ -126,12 +123,12 @@ public class LmsFragment
 
         noPhoto = resources.getDrawable(R.drawable.no_photo);
 
-        this.layoutInflater = layoutInflater;
         lmsFrameView = layoutInflater.inflate(R.layout.lms_frame, container, false);
 
         lmsScrollLayout = (LinearLayout) lmsFrameView.findViewById(R.id.lmsScrollLayout);
 
         itemOnClickListener = new OnClickListener() {
+
             @Override
             public void onClick(View view) {
 
@@ -139,26 +136,14 @@ public class LmsFragment
                                 + " view[" + view + "]"
                                 + " this[" + this + "]"
                 );
+
                 LmsItem lmsItem = (LmsItem) view.getTag();
                 String path = "/category/identifier/" + lmsItem.identifier;
                 activity.selectBundle(lmsItem.title, path);
             }
         };
 
-        // @@@ TODO Need to make refresh interval settable.
-
-        boolean conditionalLmsRefresh = true;
-        long currentTimeMs = System.currentTimeMillis();
-        long lastTimeLmsRefreshed = lmsPersistentState.getLastTimeLmsRefreshed();
-        long timeToRefreshMs = lastTimeLmsRefreshed + LMS_REFRESH_TIME_MILLIS;
-
-        if (currentTimeMs > timeToRefreshMs) {
-            conditionalLmsRefresh = false; // force Lms refresh
-            lmsPersistentState.setLastTimeLmsRefreshed(currentTimeMs);
-        }
-
-        lmsManager.getLms(this,  // LmsMgrCallback
-                conditionalLmsRefresh); // conditional
+        lmsManager.getLms(this); // LmsMgrCallback
 
         return (lmsFrameView);
     }
@@ -170,9 +155,9 @@ public class LmsFragment
                         + " this[" + this + "]"
         );
 
-        deviceInfo = new DeviceInfo(resources);
-
         if (success) {
+
+            deviceInfo = new DeviceInfo(resources);
 
             screens = lmsManager.getScreen();
             Screen screen = screens.get(0);
@@ -223,6 +208,10 @@ public class LmsFragment
             } else {
                 doLandscape();
             }
+        } else {
+
+            if (retryGetLms) lmsManager.getLms(this); // LmsMgrCallback
+            retryGetLms = false;
         }
         activity.showMainScreen();
     }
