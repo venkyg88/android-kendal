@@ -94,22 +94,4 @@
 
     </LinearLayout>
 
-    <!--temporary buttons-->
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal">
-        <Button
-            android:id="@+id/temp_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Use entered"/>
-        <Button
-            android:id="@+id/temp_fake_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Use fake addresses"/>
-    </LinearLayout>
-
 </LinearLayout>
