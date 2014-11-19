@@ -54,13 +54,13 @@ public class ProfileFragment extends Fragment implements ProfileDetails.ProfileR
 
         showProgressIndicator();
         new ProfileDetails().refreshProfile(this);
-        hideProgressIndicator();
 
         return (view);
     }
 
     /** implements ProfileDetails.ProfileRefreshCallback */
     public void onProfileRefresh(Member member) {
+        hideProgressIndicator();
         if (member==null) return;
 
         String email = member.getEmailAddress();

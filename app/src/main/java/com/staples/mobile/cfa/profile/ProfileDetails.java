@@ -72,6 +72,9 @@ public class ProfileDetails implements Callback<MemberDetail> {
             public void failure(RetrofitError retrofitError) {
                 Log.i("Fail message when getting member details", " " + ApiError.getErrorMessage(retrofitError));
                 Log.i("URl used to get member details", " " + retrofitError.getUrl());
+                if (ProfileDetails.this.callback != null) {
+                    ProfileDetails.this.callback.onProfileRefresh(null);
+                }
             }
         });
 
@@ -120,6 +123,9 @@ public class ProfileDetails implements Callback<MemberDetail> {
     public void failure(RetrofitError retrofitError) {
         Log.i("Fail message when getting member details", " " + ApiError.getErrorMessage(retrofitError));
         Log.i("URl used to get member details", " " + retrofitError.getUrl());
+        if (callback != null) {
+            callback.onProfileRefresh(null);
+        }
     }
 
 
