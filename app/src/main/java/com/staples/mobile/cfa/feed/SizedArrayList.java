@@ -47,7 +47,7 @@ public class SizedArrayList<T> extends ArrayList<T> {
         SeenProductsRowItem seenProduct = (SeenProductsRowItem) object;
         saveSeenProductInPhone(seenProduct, activity);
 
-        PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance();
+        PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(activity);
         HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(activity);
 
         // Remove elements until it's the right size.
@@ -58,11 +58,11 @@ public class SizedArrayList<T> extends ArrayList<T> {
             // remove the earliest saved product in the list
             this.remove(0);
 
-            //
-            feedSingleton.setSavedSeenProducts((SizedArrayList<SeenProductsRowItem>) this);
-
-            //
+            // set updated seen skus
             feedSingleton.setSavedSkus(savedSkuSet);
+
+            // set updated seen products list
+            feedSingleton.setSavedSeenProducts((SizedArrayList<SeenProductsRowItem>) this);
 
             updateSeenProductsInPhone(activity);
         }

@@ -367,8 +367,9 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         SizedArrayList<SeenProductsRowItem> saveSeenProducts = feedSingleton.getSavedSeenProducts();
 
         // check if the product was saved before
-        HashSet<String> savedSkus = feedSingleton.getSavedSkus(getActivity());
-        if(!savedSkus.contains(sku)){
+        HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(getActivity());
+        if(!savedSkuSet.contains(sku)){
+            Log.d(TAG, "Saving seen products - SKU: " + sku);
             feedSingleton.getSavedSeenProducts().addSeenProduct(item, sku, getActivity());
         }
     }
