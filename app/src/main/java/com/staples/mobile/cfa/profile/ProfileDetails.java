@@ -162,9 +162,18 @@ public class ProfileDetails implements Callback<MemberDetail> {
     }
 
     /** returns true if profile as at least one address or at least one payment method */
-    public static boolean hasAddressOrPaymentMethod() {
+    public static boolean hasAddress() {
         if (getMember() != null) {
-            if (getMember().getCreditCardCount() > 0 || getMember().getStoredAddressCount() > 0) {
+            if (getMember().getStoredAddressCount() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasPaymentMethod() {
+        if (getMember() != null) {
+            if (getMember().getCreditCardCount() > 0) {
                 return true;
             }
         }

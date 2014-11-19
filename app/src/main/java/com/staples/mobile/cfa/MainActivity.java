@@ -288,7 +288,7 @@ public class MainActivity extends Activity
             // if guest or if no profile info, then go to single-page checkout, otherwise open checkout with profile editing options
             CheckoutFragment fragment = CheckoutFragment.newInstance(cartAdapter.getExpectedDeliveryRange(),
                         cartAdapter.getCart().getSubTotal(), cartAdapter.getCart().getPreTaxTotal(),
-                        !loginHelper.isGuestLogin() && ProfileDetails.hasAddressOrPaymentMethod());
+                        !loginHelper.isGuestLogin() && ProfileDetails.hasAddress() && ProfileDetails.hasPaymentMethod());
             return selectFragment(fragment, Transition.NONE, true);
         }
         return false;
