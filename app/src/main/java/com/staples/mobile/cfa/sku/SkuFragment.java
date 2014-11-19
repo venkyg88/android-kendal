@@ -350,27 +350,27 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     }
 
-    private void saveSeenProducts(Product product){
-        String sku = product.getSku();
-        String productName = product.getProductName();
-        String currentPrice = String.valueOf(product.getPricing().get(0).getFinalPrice());
-        String reviewCount = String.valueOf(product.getCustomerReviewCount());
-        String rating = String.valueOf(product.getCustomerReviewRating());
-        String unitOfMeasure = product.getPricing().get(0).getUnitOfMeasure();
-        String imageUrl = product.getImage().get(0).getUrl();
-
-        SeenProductsRowItem item = new SeenProductsRowItem(sku, productName, currentPrice, reviewCount,
-                rating, unitOfMeasure, imageUrl);
-
-        // get saved seen products
-        PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance();
-        SizedArrayList<SeenProductsRowItem> saveSeenProducts = feedSingleton.getSavedSeenProducts();
-
+    private void saveSeenProduct(Product product){
         // check if the product was saved before
+        PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(getActivity());
         HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(getActivity());
-        if(!savedSkuSet.contains(sku)){
-            Log.d(TAG, "Saving seen products - SKU: " + sku);
-            feedSingleton.getSavedSeenProducts().addSeenProduct(item, sku, getActivity());
+        if(!savedSkuSet.contains(product.getSku())){
+            Log.d(TAG, "Saving seen product: " + product.getProductName());
+
+            String sku = product.getSku();
+            String productName = product.getProductName();
+            String currentPrice = String.valueOf(product.getPricing().get(0).getFinalPrice());
+            String reviewCount = String.valueOf(product.getCustomerReviewCount());
+            String rating = String.valueOf(product.getCustomerReviewRating());
+            String unitOfMeasure = product.getPricing().get(0).getUnitOfMeasure();
+            String imageUrl = product.getImage().get(0).getUrl();
+            SeenProductsRowItem item = new SeenProductsRowItem(sku, productName, currentPrice, reviewCount,
+                    rating, unitOfMeasure, imageUrl);
+
+            feedSingleton.getSavedSeenProducts(getActivity()).addSeenProduct(item, sku, getActivity());
+        }
+        else{
+            Log.d(TAG, "This product has been saved before: " + product.getProductName());
         }
     }
 
@@ -483,8 +483,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 Log.d(TAG, "Product has no accessories.");
             }
 
-            // Save seen products detail for personal feed
-            saveSeenProducts(product);
+            // Save seen product detail for personal feed
+            saveSeenProduct(product);
         }
     }
 
