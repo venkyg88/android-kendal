@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * Author: Yongnan Zhou
@@ -42,24 +43,32 @@ public class SizedArrayList<T> extends ArrayList<T> {
     // save seen product persistently
     public boolean addSeenProduct(T object, String sku, Activity activity){
         boolean isDone = super.add(object);
-        SeenProductsRowItem seenProduct = (SeenProductsRowItem) object;
 
+        SeenProductsRowItem seenProduct = (SeenProductsRowItem) object;
         saveSeenProductInPhone(seenProduct, activity);
 
         PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance();
-        HashSet<String> savedSkus = feedSingleton.getSavedSkus(activity);
+        HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(activity);
 
         // Remove elements until it's the right size.
         if (size() > maxSize){
-            // remove the earliest saved sku
-            savedSkus.remove(sku);
-            // remove the earliest saved product
+            // remove the earliest saved sku in the set
+            savedSkuSet.remove(sku);
+
+            // remove the earliest saved product in the list
             this.remove(0);
 
-            //saveLastSeenProductInPhone(this);
+            //
+            feedSingleton.setSavedSeenProducts((SizedArrayList<SeenProductsRowItem>) this);
+
+            //
+            feedSingleton.setSavedSkus(savedSkuSet);
+
+            updateSeenProductsInPhone(activity);
         }
 
-        savedSkus.add(sku);
+        savedSkuSet.add(sku);
+
         return isDone;
     }
 
@@ -68,14 +77,14 @@ public class SizedArrayList<T> extends ArrayList<T> {
 
         final String FIELD_SEPARATOR = "/_-_/";
         final String OBJECT_SEPARATOR = "/_&_/";
-        String savedSkuString = sp.getString("SEEN_PRODUCT_SKU_LIST", "");
-        String savedProductString = sp.getString("SEEN_PRODUCT_LIST", "");
+        String savedSkusString = sp.getString("SEEN_PRODUCT_SKU_LIST", "");
+        String savedProductsString = sp.getString("SEEN_PRODUCT_LIST", "");
 
-        // first time
-        if(savedSkuString.equals("") && savedProductString.equals("")){
-            savedSkuString = seenProduct.getSku();
+        // first item
+        if(savedSkusString.equals("") && savedProductsString.equals("")){
+            savedSkusString = seenProduct.getSku();
 
-            savedProductString = seenProduct.getSku() + FIELD_SEPARATOR
+            savedProductsString = seenProduct.getSku() + FIELD_SEPARATOR
                     + seenProduct.getProduceName() + FIELD_SEPARATOR
                     + seenProduct.getCurrentPrice() + FIELD_SEPARATOR
                     + seenProduct.getReviewCount() + FIELD_SEPARATOR
@@ -84,7 +93,7 @@ public class SizedArrayList<T> extends ArrayList<T> {
                     + seenProduct.getImageUrl();
         }
         else{
-            savedSkuString = savedSkuString + FIELD_SEPARATOR + seenProduct.getSku();
+            savedSkusString = savedSkusString + FIELD_SEPARATOR + seenProduct.getSku();
 
             String productString = seenProduct.getSku() + FIELD_SEPARATOR
                     + seenProduct.getProduceName() + FIELD_SEPARATOR
@@ -93,15 +102,64 @@ public class SizedArrayList<T> extends ArrayList<T> {
                     + seenProduct.getRating() + FIELD_SEPARATOR
                     + seenProduct.getUnitOfMeasure() + FIELD_SEPARATOR
                     + seenProduct.getImageUrl();
-            savedProductString = savedProductString + OBJECT_SEPARATOR + productString;
+            savedProductsString = savedProductsString + OBJECT_SEPARATOR + productString;
         }
 
         // save updated data
         SharedPreferences.Editor editor = sp.edit();
-        editor.putString("SEEN_PRODUCT_SKU_LIST", savedSkuString);
-        editor.putString("SEEN_PRODUCT_LIST", savedProductString);
+        editor.putString("SEEN_PRODUCT_SKU_LIST", savedSkusString);
+        editor.putString("SEEN_PRODUCT_LIST", savedProductsString);
         editor.commit();
 
-        Log.d(TAG, "Saved seen products successfully! -> " + savedProductString);
+        Log.d(TAG, "Saved seen products successfully! -> " + savedProductsString);
+    }
+
+    private void updateSeenProductsInPhone(Activity activity){
+        SharedPreferences sp = activity.getSharedPreferences("SAVED_SEEN_PRODUCTS", activity.MODE_PRIVATE);
+
+        String savedSkusString = "";
+        String savedProductsString = "";
+
+        final String FIELD_SEPARATOR = "/_-_/";
+        final String OBJECT_SEPARATOR = "/_&_/";
+
+        PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance();
+
+        // update saved skus after remove the first one
+        HashSet<String> savedSkus = feedSingleton.getSavedSkus();
+        for(String savedSku: savedSkus){
+            if(savedSkusString.equals("")){
+                savedSkusString = savedSku;
+            }
+            else{
+                savedSkusString = savedSkusString + FIELD_SEPARATOR + savedSku;
+            }
+        }
+
+        // update saved products after remove the first one
+        SizedArrayList<SeenProductsRowItem> savedProducts = feedSingleton.getSavedSeenProducts();
+        for(SeenProductsRowItem savedProduct : savedProducts){
+            String savedSeenProductString = savedProduct.getSku() + FIELD_SEPARATOR
+                    + savedProduct.getProduceName() + FIELD_SEPARATOR
+                    + savedProduct.getCurrentPrice() + FIELD_SEPARATOR
+                    + savedProduct.getReviewCount() + FIELD_SEPARATOR
+                    + savedProduct.getRating() + FIELD_SEPARATOR
+                    + savedProduct.getUnitOfMeasure() + FIELD_SEPARATOR
+                    + savedProduct.getImageUrl();
+            if(savedProductsString.equals("")){
+                savedProductsString = savedSeenProductString;
+            }
+            else{
+                savedProductsString = savedProductsString + OBJECT_SEPARATOR + savedSeenProductString;
+            }
+        }
+
+        // save updated data
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("SEEN_PRODUCT_SKU_LIST", savedSkusString);
+        editor.putString("SEEN_PRODUCT_LIST", savedProductsString);
+        editor.commit();
+
+        Log.d(TAG, "Updated seen products successfully! -> " + savedProductsString);
     }
 }
