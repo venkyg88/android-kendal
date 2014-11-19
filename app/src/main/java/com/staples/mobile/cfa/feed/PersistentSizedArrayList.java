@@ -6,46 +6,27 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 
 /**
  * Author: Yongnan Zhou
  */
 
-public class SizedArrayList<T> extends ArrayList<T> {
-    private static final String TAG = "SizedArrayList";
+public class PersistentSizedArrayList<T> extends ArrayList<T> {
+    private static final String TAG = "PersistentSizedArrayList";
     private int maxSize;
 
-    public SizedArrayList(int size) {
+    public PersistentSizedArrayList(int size) {
         super();
         this.maxSize = size;
-    }
-
-    // save seen product not persistently
-    public boolean addSeenProduct(T object, String sku){
-        boolean isDone = super.add(object);
-
-        PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance();
-        HashSet<String> savedSkus = feedSingleton.getSavedSkus();
-
-        // Remove elements until it's the right size.
-        if (size() > maxSize){
-            // remove the earliest saved sku
-            savedSkus.remove(sku);
-            // remove the earliest saved product
-            this.remove(0);
-        }
-
-        savedSkus.add(sku);
-        return isDone;
     }
 
     // save seen product persistently
     public boolean addSeenProduct(T object, String sku, Activity activity){
         boolean isDone = super.add(object);
 
-        SeenProductsRowItem seenProduct = (SeenProductsRowItem) object;
-        saveSeenProductInPhone(seenProduct, activity);
+        // add the last seen product in the phone
+        SeenProductsRowItem notSavedSeenProduct = (SeenProductsRowItem) object;
+        saveSeenProductInPhone(notSavedSeenProduct, activity);
 
         PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(activity);
         HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(activity);
@@ -53,26 +34,35 @@ public class SizedArrayList<T> extends ArrayList<T> {
         // Remove elements until it's the right size.
         if (size() > maxSize){
             // remove the earliest saved sku in the set
-            savedSkuSet.remove(sku);
+            SeenProductsRowItem firstSavedProduct = (SeenProductsRowItem) this.get(0);
+            savedSkuSet.remove(firstSavedProduct.getSku());
 
             // remove the earliest saved product in the list
             this.remove(0);
 
-            // set updated seen skus
+            // set updated seen skus to singleton
             feedSingleton.setSavedSkus(savedSkuSet);
 
-            // set updated seen products list
-            feedSingleton.setSavedSeenProducts((SizedArrayList<SeenProductsRowItem>) this);
+            // set updated seen products list to singleton
+            feedSingleton.setSavedSeenProducts((PersistentSizedArrayList<SeenProductsRowItem>) this);
 
+            // use current set and list to update the data in the phone
             updateSeenProductsInPhone(activity);
         }
+        else {
+            savedSkuSet.add(sku);
 
-        savedSkuSet.add(sku);
+            // set updated seen skus to singleton
+            feedSingleton.setSavedSkus(savedSkuSet);
+
+            // set updated seen products list to singleton
+            feedSingleton.setSavedSeenProducts((PersistentSizedArrayList<SeenProductsRowItem>) this);
+        }
 
         return isDone;
     }
 
-    private void saveSeenProductInPhone(SeenProductsRowItem seenProduct, Activity activity){
+    private void saveSeenProductInPhone(SeenProductsRowItem notSavedSeenProduct, Activity activity){
         SharedPreferences sp = activity.getSharedPreferences("SAVED_SEEN_PRODUCTS", activity.MODE_PRIVATE);
 
         final String FIELD_SEPARATOR = "/_-_/";
@@ -82,26 +72,26 @@ public class SizedArrayList<T> extends ArrayList<T> {
 
         // first item
         if(savedSkusString.equals("") && savedProductsString.equals("")){
-            savedSkusString = seenProduct.getSku();
+            savedSkusString = notSavedSeenProduct.getSku();
 
-            savedProductsString = seenProduct.getSku() + FIELD_SEPARATOR
-                    + seenProduct.getProduceName() + FIELD_SEPARATOR
-                    + seenProduct.getCurrentPrice() + FIELD_SEPARATOR
-                    + seenProduct.getReviewCount() + FIELD_SEPARATOR
-                    + seenProduct.getRating() + FIELD_SEPARATOR
-                    + seenProduct.getUnitOfMeasure() + FIELD_SEPARATOR
-                    + seenProduct.getImageUrl();
+            savedProductsString = notSavedSeenProduct.getSku() + FIELD_SEPARATOR
+                    + notSavedSeenProduct.getProduceName() + FIELD_SEPARATOR
+                    + notSavedSeenProduct.getCurrentPrice() + FIELD_SEPARATOR
+                    + notSavedSeenProduct.getReviewCount() + FIELD_SEPARATOR
+                    + notSavedSeenProduct.getRating() + FIELD_SEPARATOR
+                    + notSavedSeenProduct.getUnitOfMeasure() + FIELD_SEPARATOR
+                    + notSavedSeenProduct.getImageUrl();
         }
         else{
-            savedSkusString = savedSkusString + FIELD_SEPARATOR + seenProduct.getSku();
+            savedSkusString = savedSkusString + FIELD_SEPARATOR + notSavedSeenProduct.getSku();
 
-            String productString = seenProduct.getSku() + FIELD_SEPARATOR
-                    + seenProduct.getProduceName() + FIELD_SEPARATOR
-                    + seenProduct.getCurrentPrice() + FIELD_SEPARATOR
-                    + seenProduct.getReviewCount() + FIELD_SEPARATOR
-                    + seenProduct.getRating() + FIELD_SEPARATOR
-                    + seenProduct.getUnitOfMeasure() + FIELD_SEPARATOR
-                    + seenProduct.getImageUrl();
+            String productString = notSavedSeenProduct.getSku() + FIELD_SEPARATOR
+                    + notSavedSeenProduct.getProduceName() + FIELD_SEPARATOR
+                    + notSavedSeenProduct.getCurrentPrice() + FIELD_SEPARATOR
+                    + notSavedSeenProduct.getReviewCount() + FIELD_SEPARATOR
+                    + notSavedSeenProduct.getRating() + FIELD_SEPARATOR
+                    + notSavedSeenProduct.getUnitOfMeasure() + FIELD_SEPARATOR
+                    + notSavedSeenProduct.getImageUrl();
             savedProductsString = savedProductsString + OBJECT_SEPARATOR + productString;
         }
 
@@ -123,7 +113,7 @@ public class SizedArrayList<T> extends ArrayList<T> {
         final String FIELD_SEPARATOR = "/_-_/";
         final String OBJECT_SEPARATOR = "/_&_/";
 
-        PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance();
+        PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(activity);
 
         // update saved skus after remove the first one
         HashSet<String> savedSkus = feedSingleton.getSavedSkus();
@@ -137,7 +127,7 @@ public class SizedArrayList<T> extends ArrayList<T> {
         }
 
         // update saved products after remove the first one
-        SizedArrayList<SeenProductsRowItem> savedProducts = feedSingleton.getSavedSeenProducts();
+        PersistentSizedArrayList<SeenProductsRowItem> savedProducts = feedSingleton.getSavedSeenProducts();
         for(SeenProductsRowItem savedProduct : savedProducts){
             String savedSeenProductString = savedProduct.getSku() + FIELD_SEPARATOR
                     + savedProduct.getProduceName() + FIELD_SEPARATOR
