@@ -24,7 +24,6 @@ import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
 import com.staples.mobile.cfa.feed.SeenProductsRowItem;
-import com.staples.mobile.cfa.feed.SizedArrayList;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PagerStripe;

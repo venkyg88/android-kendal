@@ -35,8 +35,8 @@ public class PersonalFeedFragment extends Fragment {
     private void setAdapter(){
         seenProductsListAdapter = new SeenProductsAdapter(getActivity());
 
-        SizedArrayList<SeenProductsRowItem> saveSeenProducts =
-                PersonalFeedSingleton.getInstance().getSavedSeenProducts(getActivity());
+        PersistentSizedArrayList<SeenProductsRowItem> saveSeenProducts =
+                PersonalFeedSingleton.getInstance(getActivity()).getSavedSeenProducts(getActivity());
 
         for(SeenProductsRowItem savedSeenProduct : saveSeenProducts){
             seenProductsListAdapter.add(savedSeenProduct);
