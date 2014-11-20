@@ -39,17 +39,7 @@ public class PersonalFeedFragment extends Fragment {
                 PersonalFeedSingleton.getInstance(getActivity()).getSavedSeenProducts(getActivity());
 
         for(SeenProductsRowItem savedSeenProduct : saveSeenProducts){
-            // replace "null" with "" in unitOfMeasure field
-            if(savedSeenProduct.getUnitOfMeasure().equals("null")){
-                savedSeenProduct = new SeenProductsRowItem(savedSeenProduct.getSku(),
-                        savedSeenProduct.getProduceName(), savedSeenProduct.getCurrentPrice(),
-                        savedSeenProduct.getReviewCount(), savedSeenProduct.getRating(),
-                        "", savedSeenProduct.getImageUrl());
                 seenProductsListAdapter.add(savedSeenProduct);
-            }
-            else {
-                seenProductsListAdapter.add(savedSeenProduct);
-            }
         }
 
         seenProductsListView.setAdapter(seenProductsListAdapter);
