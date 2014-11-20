@@ -4,6 +4,7 @@
 
 package com.staples.mobile.cfa.cart;
 
+import android.animation.LayoutTransition;
 import android.app.Fragment;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
@@ -144,6 +145,17 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         // Initialize cart listview
         cartContainer = (LinearLayoutWithProgressOverlay) view.findViewById(R.id.cart_layout);
         cartContainer.setCartProgressOverlay(view.findViewById(R.id.cart_progress_overlay));
+        // when animateLayoutChanges=true on cartContainer, we need to re-layout the list view (via notifyDataSetChanged)
+        // after the animation completes or else the first selection of a spinner following the animation will fail.
+        LayoutTransition layoutTransition = cartContainer.getLayoutTransition();
+        if (layoutTransition != null) {
+            layoutTransition.addTransitionListener(new LayoutTransition.TransitionListener(){
+                @Override public void startTransition(LayoutTransition transition, ViewGroup container, View view, int transitionType) { }
+                @Override public void endTransition(LayoutTransition arg0, ViewGroup arg1, View arg2, int arg3) {
+                    notifyDataSetChanged();
+                }
+            });
+        }
         cartAdapter = new CartAdapter(activity, R.layout.cart_item, qtyChangeListener, qtyDeleteButtonListener);
         cartAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
@@ -217,23 +229,30 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             }
 
             // set text of free shipping msg
-            if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !ProfileDetails.isRewardsMember()) {
-                // need to spend more to qualify for free shipping
-                cartFreeShippingMsg.setVisibility(View.VISIBLE);
-                cartFreeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
-                        currencyFormat.format(freeShippingThreshold), currencyFormat.format(freeShippingThreshold - subtotal)));
-                cartFreeShippingMsg.setBackgroundColor(0xff3f6fff); // blue
-            } else {
-                // qualifies for free shipping
-                cartFreeShippingMsg.setVisibility(View.VISIBLE);
-                cartFreeShippingMsg.setText(R.string.free_shipping_msg2);
-                cartFreeShippingMsg.setBackgroundColor(0xff00ff00); // green
-                // hide after delay
-                cartFreeShippingMsg.postDelayed(new Runnable() {
-                    @Override public void run() {
-                        cartFreeShippingMsg.setVisibility(View.GONE);
+            if (totalItemCount > 0) {
+                if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !ProfileDetails.isRewardsMember()) {
+                    // need to spend more to qualify for free shipping
+                    cartFreeShippingMsg.setVisibility(View.VISIBLE);
+                    cartFreeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
+                            currencyFormat.format(freeShippingThreshold), currencyFormat.format(freeShippingThreshold - subtotal)));
+                    cartFreeShippingMsg.setBackgroundColor(0xff3f6fff); // blue
+                } else {
+                    // qualifies for free shipping
+                    String freeShippingMsg = r.getString(R.string.free_shipping_msg2);
+                    if (!freeShippingMsg.equals(cartFreeShippingMsg.getText().toString())) {
+                        cartFreeShippingMsg.setVisibility(View.VISIBLE);
+                        cartFreeShippingMsg.setText(freeShippingMsg);
+                        cartFreeShippingMsg.setBackgroundColor(0xff00ff00); // green
+                        // hide after a delay
+                        cartFreeShippingMsg.postDelayed(new Runnable() {
+                            @Override public void run() {
+                                cartFreeShippingMsg.setVisibility(View.GONE);
+                            }
+                        }, 3000);
                     }
-                }, 2000);
+                }
+            } else {
+                cartFreeShippingMsg.setVisibility(View.GONE);
             }
 
             // set text of shipping and subtotal
@@ -241,7 +260,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             cartSubtotal.setText(currencyFormat.format(preTaxSubtotal));
 
             // only show shipping, subtotal, and proceed-to-checkout when at least one item
-            cartFreeShippingMsg.setVisibility(totalItemCount == 0 ? View.GONE : View.VISIBLE);
+            cartShippingLayout.setVisibility(totalItemCount == 0 ? View.GONE : View.VISIBLE);
             cartSubtotalLayout.setVisibility(totalItemCount == 0 ? View.GONE : View.VISIBLE);
             cartProceedToCheckout.setVisibility(totalItemCount == 0 ? View.GONE : View.VISIBLE);
         }

@@ -28,7 +28,7 @@
     <string name="search_hint">Search</string>
     <string name="empty">Nothing found</string>
 
-    <string name="delete">Delete</string>
+    <string name="remove">Remove</string>
     <string name="cartitem_qty_label">Qty</string>
     <string name="add_to_cart">Add to cart</string>
     <string name="update_button">Update</string>
