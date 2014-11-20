@@ -11,49 +11,46 @@ import java.util.HashSet;
  */
 
 public class PersonalFeedSingleton {
-    private static final String TAG = "PersonalFeedData";
+    private static final String TAG = "PersonalFeedSingleton";
     private static final int SEEN_PRODUCTS_AMOUNT = 3;
 
     private static PersonalFeedSingleton personalFeedSingleton = null;
-    private SizedArrayList<SeenProductsRowItem> savedSeenProducts = null;
+    private PersistentSizedArrayList<SeenProductsRowItem> savedSeenProducts = null;
     private HashSet<String> savedSkus = null;
 
-    private PersonalFeedSingleton(int size){
-        savedSeenProducts = new SizedArrayList<SeenProductsRowItem>(size);
-        savedSkus = new HashSet<String>();
+    private PersonalFeedSingleton(Activity activity){
+        savedSeenProducts = getSavedSeenProducts(activity);
+        savedSkus = getSavedSkus(activity);
     }
 
-    public static PersonalFeedSingleton getInstance( ) {
+    public static PersonalFeedSingleton getInstance(Activity activity) {
         if(personalFeedSingleton == null){
-            personalFeedSingleton = new PersonalFeedSingleton(SEEN_PRODUCTS_AMOUNT);
+            personalFeedSingleton = new PersonalFeedSingleton(activity);
         }
         return personalFeedSingleton;
     }
 
-    // get seen products not persistently
-    public SizedArrayList<SeenProductsRowItem> getSavedSeenProducts(){
+    public PersistentSizedArrayList<SeenProductsRowItem> getSavedSeenProducts(){
         return savedSeenProducts;
     }
 
-    // get seen products not persistently
-    public SizedArrayList<SeenProductsRowItem> getSavedSeenProducts(Activity activity) {
-        // Get saved seen products info from the phone
-        SharedPreferences sp = activity.getSharedPreferences("SAVED_SEEN_PRODUCTS", activity.MODE_PRIVATE);
-        String savedProductsString = sp.getString("SEEN_PRODUCT_LIST", "");
-
-        final String FIELD_SEPARATOR = "/_-_/";
-        final String OBJECT_SEPARATOR = "/_&_/";
+    // get seen products from the phone
+    public PersistentSizedArrayList<SeenProductsRowItem> getSavedSeenProducts(Activity activity) {
+        SharedPreferences sp =
+                activity.getSharedPreferences(PersistentSizedArrayList.SAVED_SEEN_PRODUCTS, activity.MODE_PRIVATE);
+        String savedProductsString = sp.getString(PersistentSizedArrayList.SEEN_PRODUCT_LIST, "");
 
         // initialize SeenProductsRowItem list
-        SizedArrayList<SeenProductsRowItem> savedProductsList = new SizedArrayList<SeenProductsRowItem>(3);;
+        PersistentSizedArrayList<SeenProductsRowItem> savedProductsList
+                = new PersistentSizedArrayList<SeenProductsRowItem>(SEEN_PRODUCTS_AMOUNT);;
 
         if (!savedProductsString.equals("")) {
             SeenProductsRowItem savedSeenProduct;
-            String[] savedProductsArray = savedProductsString.split(OBJECT_SEPARATOR);
+            String[] savedProductsArray = savedProductsString.split(PersistentSizedArrayList.OBJECT_SEPARATOR);
 
             for (int i = 0; i < savedProductsArray.length; i++) {
                 String savedProductString = savedProductsArray[i];
-                String[] productFields = savedProductString.split(FIELD_SEPARATOR);
+                String[] productFields = savedProductString.split(PersistentSizedArrayList.FIELD_SEPARATOR);
 
                 // safe check for empty fields
                 if(productFields.length > 1) {
@@ -69,48 +66,58 @@ public class PersonalFeedSingleton {
                             rating, unitOfMeasure, imageUrl);
 
                     savedProductsList.add(savedSeenProduct);
-                    Log.d(TAG, i + "th Saved Seen Product -> " + savedProductString);
-                }
-                else{
-                    Log.d(TAG, "No Saved Seen Products Found!");
+
+                    // Log.d(TAG, i + 1 + "th Saved Seen Product -> " + savedProductString);
                 }
             }
+        }
+        else{
+            Log.d(TAG, "No Saved Seen Products Found!");
         }
 
        return savedProductsList;
     }
 
-    // get seen products' sku not persistently
     public HashSet<String> getSavedSkus(){
         return savedSkus;
     }
 
-    // get seen products' sku persistently
+    // get seen products' sku from the phone
     public HashSet<String> getSavedSkus(Activity activity) {
-        // Get saved seen products info from the phone
-        SharedPreferences sp = activity.getSharedPreferences("SAVED_SEEN_PRODUCTS", activity.MODE_PRIVATE);
-        String savedSkusString = sp.getString("SEEN_PRODUCT_SKU_LIST", "");
+        SharedPreferences sp =
+                activity.getSharedPreferences(PersistentSizedArrayList.SAVED_SEEN_PRODUCTS, activity.MODE_PRIVATE);
 
-        final String FIELD_SEPARATOR = "/_-_/";
+        String savedSkusString = sp.getString(PersistentSizedArrayList.SEEN_PRODUCT_SKU_LIST, "");
 
-        // initialize SeenProductsRowItem list
-        HashSet<String> savedProductSkus = new HashSet<String>();;
+        HashSet<String> savedProductSkuSet = new HashSet<String>();
 
         if (!savedSkusString.equals("")) {
-            String[] savedSkusArray = savedSkusString.split(FIELD_SEPARATOR);
+            String[] savedSkusArray = savedSkusString.split(PersistentSizedArrayList.FIELD_SEPARATOR);
 
             // safe check for empty fields
             if(savedSkusArray.length > 0) {
                 for (int i = 0; i < savedSkusArray.length; i++) {
-                    savedProductSkus.add(savedSkusArray[i]);
-                    Log.d(TAG, i + "th Saved Sku -> " + savedSkusArray[i]);
+                    savedProductSkuSet.add(savedSkusArray[i]);
+                    // Log.d(TAG, i + 1 + "th Saved Sku -> " + savedSkusArray[i]);
                 }
             }
             else{
-                Log.d(TAG, "No Saved Sku Yet!");
+                Log.d(TAG, "savedSkusArray[] has nothing. No Saved Sku Yet!");
             }
         }
+        else{
+            Log.d(TAG, "savedSkusString is empty. No Saved Sku Yet!");
+        }
 
-        return savedProductSkus;
+        return savedProductSkuSet;
     }
+
+    public void setSavedSeenProducts(PersistentSizedArrayList<SeenProductsRowItem> updatedSeenProducts){
+        savedSeenProducts = updatedSeenProducts;
+    }
+
+    public void setSavedSkus(HashSet<String> updatedSkuSet){
+        savedSkus = updatedSkuSet;
+    }
+
 }
