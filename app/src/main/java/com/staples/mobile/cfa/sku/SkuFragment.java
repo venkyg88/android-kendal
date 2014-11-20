@@ -25,9 +25,9 @@ import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.cart.CartFragment;
-import com.staples.mobile.cfa.feed.PersonalFeedData;
+import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
 import com.staples.mobile.cfa.feed.SeenProductsRowItem;
-import com.staples.mobile.cfa.feed.SizedArrayList;
+
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PagerStripe;
@@ -354,26 +354,31 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     }
 
-    private void saveSeenProducts(Product product){
-        String productName = product.getProductName();
-        String currentPrice = String.valueOf(product.getPricing().get(0).getFinalPrice());
-        String reviewCount = String.valueOf(product.getCustomerReviewCount());
-        String rating = String.valueOf(product.getCustomerReviewRating());
-        String sku = product.getSku();
-        String unitOfMeasure = product.getPricing().get(0).getUnitOfMeasure();
-        String imageUrl = product.getImage().get(0).getUrl();
-
-        SeenProductsRowItem item = new SeenProductsRowItem(productName, currentPrice, reviewCount,
-                rating, sku, unitOfMeasure, imageUrl);
-
-        // get saved seen products
-        PersonalFeedData feedSingleton = PersonalFeedData.getInstance();
-        SizedArrayList<SeenProductsRowItem> saveSeenProducts = feedSingleton.getSavedSeenProducts();
-
+    private void saveSeenProduct(Product product){
         // check if the product was saved before
-        HashSet<String> savedSkus = feedSingleton.getSavedSku();
-        if(!savedSkus.contains(sku)){
-            feedSingleton.getSavedSeenProducts().addSeenProduct(item, sku);
+        PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(getActivity());
+        HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(getActivity());
+        if(!savedSkuSet.contains(product.getSku())){
+            Log.d(TAG, "Saving seen product: " + product.getProductName());
+
+            String sku = product.getSku();
+            String productName = product.getProductName();
+            String currentPrice = String.valueOf(product.getPricing().get(0).getFinalPrice());
+            String reviewCount = String.valueOf(product.getCustomerReviewCount());
+            String rating = String.valueOf(product.getCustomerReviewRating());
+            String unitOfMeasure = product.getPricing().get(0).getUnitOfMeasure();
+            if(unitOfMeasure == null) {
+                unitOfMeasure = "";
+                Log.d(TAG, "The unitOfMeasure of this product is null.");
+            }
+            String imageUrl = product.getImage().get(0).getUrl();
+            SeenProductsRowItem item = new SeenProductsRowItem(sku, productName, currentPrice, reviewCount,
+                    rating, unitOfMeasure, imageUrl);
+
+            feedSingleton.getSavedSeenProducts(getActivity()).addSeenProduct(item, sku, getActivity());
+        }
+        else{
+            Log.d(TAG, "This product has been saved before: " + product.getProductName());
         }
     }
 
@@ -502,7 +507,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             }
 
             // Save seen products detail for personal feed
-            saveSeenProducts(product);
+            saveSeenProduct(product);
         }
     }
 

@@ -24,8 +24,6 @@ public class PersonalFeedFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Log.d(TAG, "onCreateView()");
-
         LinearLayout personalFeedLayout = (LinearLayout) inflater.inflate(R.layout.personal_feed, container, false);
         seenProductsListView = (ListView) personalFeedLayout.findViewById(R.id.product_list);
 
@@ -38,10 +36,12 @@ public class PersonalFeedFragment extends Fragment {
     private void setAdapter(){
         seenProductsListAdapter = new SeenProductsAdapter(getActivity());
 
-        SizedArrayList<SeenProductsRowItem> saveSeenProducts = PersonalFeedData.getInstance().getSavedSeenProducts();
+        PersistentSizedArrayList<SeenProductsRowItem> saveSeenProducts =
+                PersonalFeedSingleton.getInstance(getActivity()).getSavedSeenProducts(getActivity());
 
         for(SeenProductsRowItem savedSeenProduct : saveSeenProducts){
-            seenProductsListAdapter.add(savedSeenProduct);
+                seenProductsListAdapter.add(savedSeenProduct);
+                Log.d(TAG, "Saved seen products: " + savedSeenProduct.getProduceName());
         }
 
         seenProductsListView.setAdapter(seenProductsListAdapter);
