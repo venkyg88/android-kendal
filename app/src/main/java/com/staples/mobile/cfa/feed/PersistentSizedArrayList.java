@@ -13,16 +13,24 @@ import java.util.HashSet;
 
 public class PersistentSizedArrayList<T> extends ArrayList<T> {
     private static final String TAG = "PersistentSizedArrayList";
-    private int maxSize;
+
+    public static final String SAVED_SEEN_PRODUCTS = "SAVED_SEEN_PRODUCTS";
+    public static final String SEEN_PRODUCT_SKU_LIST = "SEEN_PRODUCT_SKU_LIST";
+    public static final String SEEN_PRODUCT_LIST = "SEEN_PRODUCT_LIST";
+
+    public static final String FIELD_SEPARATOR = "/_-_/";
+    public static final String OBJECT_SEPARATOR = "/_&_/";
+
+    private int maxListSize;
 
     public PersistentSizedArrayList(int size) {
         super();
-        this.maxSize = size;
+        this.maxListSize = size;
     }
 
     // save seen product persistently
-    public boolean addSeenProduct(T object, String sku, Activity activity){
-        boolean isDone = super.add(object);
+    public void addSeenProduct(T object, String sku, Activity activity){
+        super.add(object);
 
         // add the last seen product in the phone
         SeenProductsRowItem notSavedSeenProduct = (SeenProductsRowItem) object;
@@ -32,7 +40,7 @@ public class PersistentSizedArrayList<T> extends ArrayList<T> {
         HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(activity);
 
         // Remove elements until it's the right size.
-        if (size() > maxSize){
+        if (size() > maxListSize){
             // remove the earliest saved sku in the set
             SeenProductsRowItem firstSavedProduct = (SeenProductsRowItem) this.get(0);
             savedSkuSet.remove(firstSavedProduct.getSku());
@@ -58,17 +66,12 @@ public class PersistentSizedArrayList<T> extends ArrayList<T> {
             // set updated seen products list to singleton
             feedSingleton.setSavedSeenProducts((PersistentSizedArrayList<SeenProductsRowItem>) this);
         }
-
-        return isDone;
     }
 
     private void saveSeenProductInPhone(SeenProductsRowItem notSavedSeenProduct, Activity activity){
-        SharedPreferences sp = activity.getSharedPreferences("SAVED_SEEN_PRODUCTS", activity.MODE_PRIVATE);
-
-        final String FIELD_SEPARATOR = "/_-_/";
-        final String OBJECT_SEPARATOR = "/_&_/";
-        String savedSkusString = sp.getString("SEEN_PRODUCT_SKU_LIST", "");
-        String savedProductsString = sp.getString("SEEN_PRODUCT_LIST", "");
+        SharedPreferences sp = activity.getSharedPreferences(SAVED_SEEN_PRODUCTS, activity.MODE_PRIVATE);
+        String savedSkusString = sp.getString(SEEN_PRODUCT_SKU_LIST, "");
+        String savedProductsString = sp.getString(SEEN_PRODUCT_LIST, "");
 
         // first item
         if(savedSkusString.equals("") && savedProductsString.equals("")){
@@ -97,21 +100,18 @@ public class PersistentSizedArrayList<T> extends ArrayList<T> {
 
         // save updated data
         SharedPreferences.Editor editor = sp.edit();
-        editor.putString("SEEN_PRODUCT_SKU_LIST", savedSkusString);
-        editor.putString("SEEN_PRODUCT_LIST", savedProductsString);
+        editor.putString(SEEN_PRODUCT_SKU_LIST, savedSkusString);
+        editor.putString(SEEN_PRODUCT_LIST, savedProductsString);
         editor.commit();
 
-        Log.d(TAG, "Saved seen products successfully! -> " + savedProductsString);
+        Log.d(TAG, "Saved this seen product successfully! -> " + savedProductsString);
     }
 
     private void updateSeenProductsInPhone(Activity activity){
-        SharedPreferences sp = activity.getSharedPreferences("SAVED_SEEN_PRODUCTS", activity.MODE_PRIVATE);
+        SharedPreferences sp = activity.getSharedPreferences(SAVED_SEEN_PRODUCTS, activity.MODE_PRIVATE);
 
         String savedSkusString = "";
         String savedProductsString = "";
-
-        final String FIELD_SEPARATOR = "/_-_/";
-        final String OBJECT_SEPARATOR = "/_&_/";
 
         PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(activity);
 
@@ -146,8 +146,8 @@ public class PersistentSizedArrayList<T> extends ArrayList<T> {
 
         // save updated data
         SharedPreferences.Editor editor = sp.edit();
-        editor.putString("SEEN_PRODUCT_SKU_LIST", savedSkusString);
-        editor.putString("SEEN_PRODUCT_LIST", savedProductsString);
+        editor.putString(SEEN_PRODUCT_SKU_LIST, savedSkusString);
+        editor.putString(SEEN_PRODUCT_LIST, savedProductsString);
         editor.commit();
 
         Log.d(TAG, "Updated seen products successfully! -> " + savedProductsString);

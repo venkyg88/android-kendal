@@ -364,7 +364,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             String unitOfMeasure = product.getPricing().get(0).getUnitOfMeasure();
             if(unitOfMeasure == null) {
                 unitOfMeasure = "";
-                Log.d(TAG, "This unitOfMeasure is null.");
+                Log.d(TAG, "The unitOfMeasure of this product is null.");
             }
             String imageUrl = product.getImage().get(0).getUrl();
             SeenProductsRowItem item = new SeenProductsRowItem(sku, productName, currentPrice, reviewCount,
