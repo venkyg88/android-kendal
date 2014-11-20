@@ -50,7 +50,7 @@ public class DrawerItem {
         this(type, context, iconId, titleId, null);
     }
 
-    public DrawerItem(Type type, Context context, int iconId, int titleId, Class<? extends Fragment> fragmentClass) {
+    public DrawerItem(Type type, Context context, int iconId, int titleId, Class<? extends BaseFragment> fragmentClass) {
         this.type = type;
         if (context!=null) {
             Resources resources = context.getResources();

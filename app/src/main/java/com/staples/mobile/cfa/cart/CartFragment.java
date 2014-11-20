@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
@@ -50,7 +51,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 /** fragment to manage display and update of shopping cart */
-public class CartFragment extends Fragment implements View.OnClickListener {
+public class CartFragment extends BaseFragment implements View.OnClickListener {
 
     public interface AddToCartCallback {
         public void onAddToCartComplete();

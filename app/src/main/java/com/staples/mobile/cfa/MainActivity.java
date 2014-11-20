@@ -7,9 +7,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -122,43 +120,59 @@ public class MainActivity extends Activity
         findViewById(R.id.main).setVisibility(View.VISIBLE);
     }
 
-    /** restores action bar to the default, gets called automatically on every fragment switch */
-    public void showStandardActionBarEntities() {
+    /** sets standard action bar, fragments need to override their onResume methods to set up action bar */
+    public void showStandardActionBar() {
+        // set standard title bar
+        setActionBarTitle(getResources().getString(R.string.staples));
+
         // show standard entities
         leftDrawerAction.setVisibility(View.VISIBLE);
         searchBar.setVisibility(View.VISIBLE);
         searchBarIcon.setVisibility(View.VISIBLE);
         cartIconAction.setVisibility(View.VISIBLE);
+
         // hide non-standard entities
         cartQtyVw.setVisibility(View.GONE);
         signInButton.setVisibility(View.GONE);
     }
 
     public void showCartActionBarEntities() {
-        // hide unwanted standard entities
+        // show cart-specific entities
+        leftDrawerAction.setVisibility(View.VISIBLE);
+        cartQtyVw.setVisibility(View.VISIBLE);
+        // hide unwanted entities
         searchBar.setVisibility(View.GONE);
         searchBarIcon.setVisibility(View.GONE);
         cartIconAction.setVisibility(View.GONE);
-        // show cart-specific entities
-        cartQtyVw.setVisibility(View.VISIBLE);
+        signInButton.setVisibility(View.GONE);
     }
 
     public void showCheckoutActionBarEntities() {
-        // hide unwanted standard entities
-        searchBar.setVisibility(View.GONE);
-        searchBarIcon.setVisibility(View.GONE);
         // show checkout-specific entities
+        leftDrawerAction.setVisibility(View.VISIBLE);
+        cartIconAction.setVisibility(View.VISIBLE);
         LoginHelper loginHelper = new LoginHelper(this);
         if (loginHelper.isLoggedIn() && loginHelper.isGuestLogin()) {
             signInButton.setVisibility(View.VISIBLE);
+        } else {
+            signInButton.setVisibility(View.GONE);
         }
+        // hide unwanted entities
+        searchBar.setVisibility(View.GONE);
+        searchBarIcon.setVisibility(View.GONE);
+        cartQtyVw.setVisibility(View.GONE);
     }
 
 
     public void showOrderConfirmationActionBarEntities() {
-        // hide unwanted standard entities
+        // show cart-specific entities
+        leftDrawerAction.setVisibility(View.VISIBLE);
+        cartQtyVw.setVisibility(View.VISIBLE);
+        // hide unwanted entities
         searchBar.setVisibility(View.GONE);
         searchBarIcon.setVisibility(View.GONE);
+        cartIconAction.setVisibility(View.GONE);
+        cartQtyVw.setVisibility(View.GONE);
     }
 
     /** sets action bar title */
@@ -236,13 +250,10 @@ public class MainActivity extends Activity
 
     // Navigation
 
+
     public boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
         // Make sure all drawers are closed
         drawerLayout.closeDrawers();
-
-        // set action bar defaults (fragments that differ from defaults can modify on resume)
-        showStandardActionBarEntities();
-        setActionBarTitle(getResources().getString(R.string.staples));
 
         // Swap Fragments
         FragmentManager manager = getFragmentManager();

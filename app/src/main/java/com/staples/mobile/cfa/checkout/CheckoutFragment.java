@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
@@ -35,7 +36,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public abstract class CheckoutFragment extends Fragment implements View.OnClickListener {
+public abstract class CheckoutFragment extends BaseFragment implements View.OnClickListener {
     private static final String TAG = CheckoutFragment.class.getSimpleName();
 
     private static final String RECOMMENDATION = "v1";

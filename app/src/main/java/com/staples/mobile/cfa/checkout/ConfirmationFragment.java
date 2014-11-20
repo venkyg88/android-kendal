@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
@@ -50,7 +51,7 @@ import retrofit.client.Response;
 //import com.staples.mobile.common.access.easyopen.model.cart.OrderStatusContents;
 
 
-public class ConfirmationFragment extends Fragment implements View.OnClickListener {
+public class ConfirmationFragment extends BaseFragment implements View.OnClickListener {
     private static final String TAG = ConfirmationFragment.class.getSimpleName();
 
     private static final String RECOMMENDATION = "v1";

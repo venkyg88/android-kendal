@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
@@ -25,7 +26,7 @@ import retrofit.client.Response;
 /**
  * Created by Avinash Raja Dodda.
  */
-public class ShippingFragment extends Fragment implements View.OnClickListener {
+public class ShippingFragment extends BaseFragment implements View.OnClickListener {
 
     private static final String TAG = "Add Shipping Fragment";
     private static final String RECOMMENDATION = "v1";

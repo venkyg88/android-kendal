@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
@@ -57,7 +58,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener,
+public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener,
         View.OnClickListener, FragmentManager.OnBackStackChangedListener {
     private static final String TAG = "SkuFragment";
 
