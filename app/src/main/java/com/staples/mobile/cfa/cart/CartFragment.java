@@ -85,9 +85,9 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     private View cartSubtotalLayout;
     private CartAdapter cartAdapter;
 
-    // cart object
-    private Cart cart;
-    List<CartItem> listItems;
+    // cart object - make these static so they're not lost on device rotation
+    private static Cart cart;
+    private static List<CartItem> cartListItems;
 
 
     int minExpectedBusinessDays;
@@ -182,10 +182,14 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         // Set click listeners
         cartProceedToCheckout.setOnClickListener(this);
 
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         //initialize cart based on what's been returned from api so far
         setAdapterListItems();
-
-        return view;
     }
 
     @Override
@@ -295,13 +299,13 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
 
     /** returns current cart object */
-    public Cart getCart() {
+    public static Cart getCart() {
         return cart;
     }
 
     /** returns current list of cart items */
-    public List<CartItem> getListItems() {
-        return listItems;
+    public static List<CartItem> getListItems() {
+        return cartListItems;
     }
 
 
@@ -405,12 +409,14 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void setAdapterListItems() {
+    // synchronizing this method in case cartListItems updated simultaneously (not sure this would
+    // happen since this should all be on the main UI thread)
+    private synchronized void setAdapterListItems() {
         // if fragment is attached to activity, then update the fragment's views
         if (cartAdapter != null) {
             cartAdapter.clear();
-            if (listItems != null && listItems.size() > 0) {
-                cartAdapter.addAll(listItems);
+            if (cartListItems != null && cartListItems.size() > 0) {
+                cartAdapter.addAll(cartListItems);
             }
             cartAdapter.notifyDataSetChanged();
         } else {
@@ -454,7 +460,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
             // clear the cart before refilling
             cart = null;
-            listItems = new ArrayList<CartItem>();
+            ArrayList<CartItem> listItems = new ArrayList<CartItem>();
 
             // get data from cartContent request
             List<Cart> cartCollection = cartContents.getCart();
@@ -503,6 +509,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
                     }
                 }
             }
+            cartListItems = listItems;
             setAdapterListItems();
         }
 
