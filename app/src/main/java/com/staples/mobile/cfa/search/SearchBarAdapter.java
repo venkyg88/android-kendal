@@ -158,7 +158,7 @@ class SearchBarAdapter extends BaseAdapter implements Filterable {
 
         SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
         String chunk = prefs.getString(HISTORYTAG, null);
-        if (chunk==null) return;
+        if (chunk==null || chunk.isEmpty()) return;
 
         // Explode
         String[] keywords = chunk.split("\\|");
