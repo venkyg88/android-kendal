@@ -76,7 +76,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
     private LinearLayoutWithProgressOverlay cartContainer;
 
-    private TextView cartTitle;
     private TextView cartSubtotal;
     private TextView cartFreeShippingMsg;
     private TextView cartShipping;
@@ -128,7 +127,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         // inflate and get child views
         View view = inflater.inflate(R.layout.cart_fragment, container, false);
 
-        cartTitle = (TextView) view.findViewById(R.id.cart_title);
         cartFreeShippingMsg = (TextView) view.findViewById(R.id.free_shipping_msg);
         cartShipping = (TextView) view.findViewById(R.id.cart_shipping);
         cartSubtotal = (TextView) view.findViewById(R.id.cart_subtotal);
@@ -188,6 +186,11 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
+
+        // update action bar
+        activity.showCartActionBarEntities();
+        activity.setActionBarTitle(getResources().getString(R.string.cart_title));
+
         //initialize cart based on what's been returned from api so far
         setAdapterListItems();
     }
@@ -225,11 +228,11 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         // if fragment is attached to activity, then update the fragment's views
         if (cartAdapter != null) {
 
-            // Set text of cart drawer title
+            // Set text of cart item qty
             if (totalItemCount == 0) {
-                cartTitle.setText(r.getString(R.string.your_cart));
+                activity.setActionBarCartQty("");
             } else {
-                cartTitle.setText(r.getQuantityString(R.plurals.your_cart, totalItemCount, totalItemCount));
+                activity.setActionBarCartQty(r.getQuantityString(R.plurals.cart_qty, totalItemCount, totalItemCount));
             }
 
             // set text of free shipping msg

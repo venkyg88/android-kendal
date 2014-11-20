@@ -13,10 +13,6 @@
         android:animateLayoutChanges="true"
         android:orientation="vertical">
         <TextView
-            android:id="@+id/cart_title"
-            android:layout_width="match_parent"
-            style="@style/CartHeader"/>
-        <TextView
             android:id="@+id/free_shipping_msg"
             android:layout_width="match_parent"
             style="@style/CartHeader"

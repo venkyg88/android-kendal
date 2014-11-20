@@ -72,7 +72,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
 
     // saving around Activity object since getActivity() returns null after user navigates away from
     // fragment, but api call may still be returning
-    private Activity activity;
+    private MainActivity activity;
 
     private LinearLayoutWithProgressOverlay confirmationLayout;
     private TextView orderNumberVw;
@@ -122,7 +122,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
 
-        activity = getActivity();
+        activity = (MainActivity)getActivity();
 
         // inflate and get child views
         View view = inflater.inflate(R.layout.confirmation_fragment, container, false);
@@ -166,6 +166,15 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
         return view;
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // update action bar
+        activity.showOrderConfirmationActionBarEntities();
+        activity.setActionBarTitle(getResources().getString(R.string.order_confirmation_title));
+    }
 
     @Override
     public void onClick(View view) {

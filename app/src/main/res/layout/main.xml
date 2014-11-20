@@ -38,6 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:layout_marginRight="6dp"
                 android:src="@drawable/logo"/>
             <!-- Search Bar -->
             <TextView
@@ -69,15 +70,37 @@
                 android:layout_width="@dimen/icon_width"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_search"/>
-            <!-- Cart badge -->
+            <!--cart item qty (only visible when cart displayed)-->
+            <TextView
+                android:id="@+id/cart_item_qty"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:gravity="center_vertical|right"
+                android:layout_marginRight="6dp"
+                android:textSize="20sp"
+                android:visibility="gone"/>
+            <!--sign-in button (only visible when guest checkout displayed)-->
+            <Button
+                android:id="@+id/signin_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/signin_title"
+                android:visibility="gone"
+                android:layout_marginRight="10dp"
+                android:onClick="signInBtnClick"/>
+            <!-- Cart icon with badge -->
             <com.staples.mobile.cfa.widget.BadgeImageView
                 android:id="@+id/action_show_cart"
                 android:layout_width="@dimen/icon_width"
                 android:layout_height="match_parent"
-                android:gravity="center"
+                android:gravity="center_vertical|right"
                 android:text=""
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
+                android:layout_marginRight="6dp"
                 android:src="@drawable/cart"/>
         </LinearLayout>
         <android.support.v4.widget.DrawerLayout

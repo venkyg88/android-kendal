@@ -57,7 +57,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
     // saving around Activity object since getActivity() returns null after user navigates away from
     // fragment, but api call may still be returning
-    protected Activity activity;
+    protected MainActivity activity;
 
     private LinearLayoutWithProgressOverlay checkoutLayout;
     private View shippingChargeLayout;
@@ -111,7 +111,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
         Resources r = getResources();
 
-        activity = getActivity();
+        activity = (MainActivity)getActivity();
 
         // inflate and get child views
         View view = inflater.inflate(R.layout.checkout_fragment, container, false);
@@ -164,6 +164,17 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         initEntryArea(view);
 
         return view;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // update action bar
+        activity.showCheckoutActionBarEntities();
+        activity.setActionBarTitle(getResources().getString(this instanceof GuestCheckoutFragment?
+                R.string.guest_checkout_title : R.string.checkout_title));
     }
 
     /** override this to handle other clicks, but call this super method */
