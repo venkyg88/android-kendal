@@ -205,6 +205,9 @@ public class MainActivity extends Activity
         findViewById(R.id.action_home).setOnClickListener(this);
         cartIconAction.setOnClickListener(this);
 
+        // initialize action bar
+        showStandardActionBar();
+
         // Init search bar
         searchBar.initSearchBar();
 
