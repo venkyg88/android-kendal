@@ -1,5 +1,6 @@
 package com.staples.mobile.cfa.sku;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -18,12 +19,15 @@ import android.widget.TabHost;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
+import com.staples.mobile.cfa.cart.CartFragment;
+import com.staples.mobile.cfa.feed.PersonalFeedData;
 import com.staples.mobile.cfa.feed.SeenProductsRowItem;
+import com.staples.mobile.cfa.feed.SizedArrayList;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PagerStripe;
@@ -32,6 +36,7 @@ import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.Availability;
 import com.staples.mobile.common.access.easyopen.model.browse.BulletDescription;
 import com.staples.mobile.common.access.easyopen.model.browse.Description;
@@ -349,31 +354,26 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     }
 
-    private void saveSeenProduct(Product product){
+    private void saveSeenProducts(Product product){
+        String productName = product.getProductName();
+        String currentPrice = String.valueOf(product.getPricing().get(0).getFinalPrice());
+        String reviewCount = String.valueOf(product.getCustomerReviewCount());
+        String rating = String.valueOf(product.getCustomerReviewRating());
+        String sku = product.getSku();
+        String unitOfMeasure = product.getPricing().get(0).getUnitOfMeasure();
+        String imageUrl = product.getImage().get(0).getUrl();
+
+        SeenProductsRowItem item = new SeenProductsRowItem(productName, currentPrice, reviewCount,
+                rating, sku, unitOfMeasure, imageUrl);
+
+        // get saved seen products
+        PersonalFeedData feedSingleton = PersonalFeedData.getInstance();
+        SizedArrayList<SeenProductsRowItem> saveSeenProducts = feedSingleton.getSavedSeenProducts();
+
         // check if the product was saved before
-        PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(getActivity());
-        HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(getActivity());
-        if(!savedSkuSet.contains(product.getSku())){
-            Log.d(TAG, "Saving seen product: " + product.getProductName());
-
-            String sku = product.getSku();
-            String productName = product.getProductName();
-            String currentPrice = String.valueOf(product.getPricing().get(0).getFinalPrice());
-            String reviewCount = String.valueOf(product.getCustomerReviewCount());
-            String rating = String.valueOf(product.getCustomerReviewRating());
-            String unitOfMeasure = product.getPricing().get(0).getUnitOfMeasure();
-            if(unitOfMeasure == null) {
-                unitOfMeasure = "";
-                Log.d(TAG, "The unitOfMeasure of this product is null.");
-            }
-            String imageUrl = product.getImage().get(0).getUrl();
-            SeenProductsRowItem item = new SeenProductsRowItem(sku, productName, currentPrice, reviewCount,
-                    rating, unitOfMeasure, imageUrl);
-
-            feedSingleton.getSavedSeenProducts(getActivity()).addSeenProduct(item, sku, getActivity());
-        }
-        else{
-            Log.d(TAG, "This product has been saved before: " + product.getProductName());
+        HashSet<String> savedSkus = feedSingleton.getSavedSku();
+        if(!savedSkus.contains(sku)){
+            feedSingleton.getSavedSeenProducts().addSeenProduct(item, sku);
         }
     }
 
@@ -382,26 +382,41 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private class SkuDetailsCallback implements Callback<SkuDetails> {
         @Override
         public void success(SkuDetails sku, Response response) {
+            Activity activity = getActivity();
+            if (activity==null) return;
+
             processSkuDetails(sku);
             wrapper.setState(DataWrapper.State.DONE);
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            Log.d(TAG, "Failure callback " + retrofitError);
-            wrapper.setState(DataWrapper.State.EMPTY);
+            Activity activity = getActivity();
+            if (activity==null) return;
+
+            String msg = ApiError.getErrorMessage(retrofitError);
+            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+            Log.d(TAG, msg);
         }
     }
 
     private class ReviewSetCallback implements Callback<ReviewSet> {
         @Override
         public void success(ReviewSet reviews, Response response) {
+            Activity activity = getActivity();
+            if (activity==null) return;
+
             processReviewSet(reviews);
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            Log.d(TAG, "Failure callback " + retrofitError);
+            Activity activity = getActivity();
+            if (activity==null) return;
+
+            String msg = ApiError.getErrorMessage(retrofitError);
+            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+            Log.d(TAG, msg);
         }
     }
 
@@ -486,8 +501,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 Log.d(TAG, "Product has no accessories.");
             }
 
-            // Save seen product detail for personal feed
-            saveSeenProduct(product);
+            // Save seen products detail for personal feed
+            saveSeenProducts(product);
         }
     }
 
@@ -616,8 +631,13 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             case R.id.add_to_cart:
                 QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
                 int qty = edit.getQtyValue(1);
-                MainActivity activity = (MainActivity) getActivity();
-                activity.addItemToCart(identifier, qty);
+                final MainActivity activity = (MainActivity) getActivity();
+                wrapper.setState(DataWrapper.State.LOADING);
+                activity.addItemToCart(identifier, qty, new CartFragment.AddToCartCallback() {
+                    public void onAddToCartComplete() {
+                        wrapper.setState(DataWrapper.State.DONE);
+                    }
+                });
                 break;
         }
     }

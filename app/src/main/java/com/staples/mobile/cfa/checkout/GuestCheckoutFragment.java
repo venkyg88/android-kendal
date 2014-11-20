@@ -7,6 +7,7 @@ package com.staples.mobile.cfa.checkout;
 import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -57,13 +59,15 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     View shippingAddrLayoutVw;
     View billingAddrLayoutVw;
     View paymentMethodLayoutVw;
+    EditText cardNumberVw;
+    EditText expirationMonthVw;
+    EditText expirationYearVw;
+    EditText cidVw;
     EditText emailAddrVw;
     Spinner spinner;
 
     private boolean shippingAddrNeedsApplying = true;
     private boolean billingAddrNeedsApplying = true;
-
-    private boolean fakingIt;
 
 
     /** override this to specify layout for entry area */
@@ -81,6 +85,10 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         billingAddrLayoutVw = view.findViewById(R.id.billing_addr_layout);
         billingAddrContainer = (ViewGroup)view.findViewById(R.id.billing_addr_container);
         paymentMethodLayoutVw = view.findViewById(R.id.payment_method_layout);
+        cardNumberVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cardNumber);
+        expirationMonthVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationMonth);
+        expirationYearVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationYear);
+        cidVw = (EditText)guestEntryView.findViewById(R.id.cid);
         emailAddrVw = (EditText)guestEntryView.findViewById(R.id.emailAddr);
 
         // set up cc type spinner
@@ -102,27 +110,26 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         paymentMethodLayoutVw.findViewById(R.id.addCCBtn).setVisibility(View.GONE);
 
 
-        // use temp button for now to fake address entry
-        View temporaryButton = view.findViewById(R.id.temp_button);
-        temporaryButton.setOnClickListener(new View.OnClickListener() {
+        // TODO: replace with real trigger - TEMPORARY: when user completes CID, trigger off that to submit addresses if billing addr set to same as shipping addr
+        cidVw.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public void onClick(View v) {
-                shippingAddrNeedsApplying = true;
-                billingAddrNeedsApplying = true;
-                fakingIt = false;
-                applyShippingAddress();
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (useShipAddrAsBillingAddrSwitch.isChecked()) {
+                    applyAddresses();
+                }
+                return false;
             }
         });
-        View temporaryFakeButton = view.findViewById(R.id.temp_fake_button);
-        temporaryFakeButton.setOnClickListener(new View.OnClickListener() {
+        // TODO: replace with real trigger - TEMPORARY: when user completes billing addr zip code, trigger off that to submit addresses
+        EditText zipCodeVw = (EditText)billingAddrLayoutVw.findViewById(R.id.zipCode);
+        zipCodeVw.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public void onClick(View v) {
-                shippingAddrNeedsApplying = true;
-                billingAddrNeedsApplying = true;
-                fakingIt = true;
-                applyShippingAddress();
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                applyAddresses();
+                return false;
             }
         });
+
 
         // add listener to billing addr toggle button switch
         useShipAddrAsBillingAddrSwitch = (Switch)view.findViewById(R.id.useShipAddrAsBillingAddr_switch);
@@ -158,6 +165,11 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         EditText phoneNumberVw = (EditText)layoutView.findViewById(R.id.phoneNumber);
         EditText zipCodeVw = (EditText)layoutView.findViewById(R.id.zipCode);
 
+        // todo: remove this
+        if (firstNameVw.getText().toString().equals("fake address")) {
+            return getFakeShippingAddress();
+        }
+
         // validate required fields
         String requiredMsg = resources.getString(R.string.required);
         if (!validateRequiredField(firstNameVw, requiredMsg)) { errors = true; }
@@ -189,17 +201,11 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
     /** gets shipping address from user's entries */
     private ShippingAddress getShippingAddress() {
-        if (fakingIt) {
-            return getFakeShippingAddress();
-        }
         return getShippingAddress(shippingAddrLayoutVw, true);
     }
 
     /** gets billing address from user's entries */
     private BillingAddress getBillingAddress() {
-        if (fakingIt) {
-            return getFakeBillingAddress();
-        }
         ShippingAddress shippingAddress = getShippingAddress(useShipAddrAsBillingAddrSwitch.isChecked()?
                 shippingAddrLayoutVw : billingAddrLayoutVw, false);
         return (shippingAddress == null)? null : new BillingAddress(shippingAddress);
@@ -209,11 +215,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     private PaymentMethod getPaymentMethod() {
         Resources resources = getResources();
         boolean errors = false;
-
-        EditText cardNumberVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cardNumber);
-        EditText expirationMonthVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationMonth);
-        EditText expirationYearVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationYear);
-        EditText cidVw = (EditText)guestEntryView.findViewById(R.id.cid);
 
         // validate required fields
         String requiredMsg = resources.getString(R.string.required);
@@ -243,7 +244,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         return null;
     }
 
-    /** gets fake shipping address */
+    /** TODO: remove this - gets fake shipping address */
     private ShippingAddress getFakeShippingAddress() {
         ShippingAddress shippingAddress = new ShippingAddress();
         shippingAddress.setDeliveryFirstName("Diana");
@@ -258,12 +259,13 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         return shippingAddress;
     }
 
-    /** gets fake billing address */
-    private BillingAddress getFakeBillingAddress() {
-        return new BillingAddress(getFakeShippingAddress());
+
+    private void applyAddresses() {
+        shippingAddrNeedsApplying = true;
+        billingAddrNeedsApplying = true;
+        applyShippingAddress();
     }
 
-    
     private void applyShippingAddress() {
         ShippingAddress shippingAddress = getShippingAddress();
 
@@ -281,6 +283,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                                 Toast.makeText(activity, "Address alert: " + validationAlert, Toast.LENGTH_SHORT).show();
                             } else {
                                 shippingAddrNeedsApplying = false;
+                                new ProfileDetails().refreshProfile(null); // refresh cached profile
                             }
 
                             if (!shippingAddrNeedsApplying && billingAddrNeedsApplying) {
@@ -372,43 +375,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                 secureApi.addCreditPOWCallQA(ccList, RECOMMENDATION, CLIENT_ID, new PowListener(paymentMethod));
             }
 
-
-//            powApi.addCreditPOWCall(ccList, new Callback<POWResponse[]>() {
-//                @Override
-//                public void success(POWResponse[] powList, Response response) {
-//                    Log.i("packet", powList[0].getPacket());
-//                    if ("0".equals(powList[0].getStatus()) && !TextUtils.isEmpty(powList[0].getPacket())) {
-//                        paymentMethod.setCardNumber(powList[0].getPacket());
-//
-//                        // add payment method to cart
-//                        secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
-//                                new Callback<PaymentMethodResponse>() {
-//                                    @Override
-//                                    public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
-//                                        // upon payment method success, submit the order
-//                                        submitOrder(paymentMethod.getCardVerificationCode());
-//                                    }
-//
-//                                    @Override
-//                                    public void failure(RetrofitError retrofitError) {
-//                                        hideProgressIndicator();
-//                                        Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
-//                                    }
-//                                }
-//                        );
-//                    } else {
-//                        hideProgressIndicator();
-//                        Toast.makeText(activity, "Payment Error", Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//
-//                @Override
-//                public void failure(RetrofitError retrofitError) {
-//                    hideProgressIndicator();
-//                    Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
-//                }
-//            });
-
         } else {
             Toast.makeText(activity, R.string.payment_method_required, Toast.LENGTH_SHORT).show();
         }
@@ -435,6 +401,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                             public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
                                 // upon payment method success, submit the order
                                 submitOrder(paymentMethod.getCardVerificationCode());
+                                new ProfileDetails().refreshProfile(null); // refresh cached profile
                             }
 
                             @Override

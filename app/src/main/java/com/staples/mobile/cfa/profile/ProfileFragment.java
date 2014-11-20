@@ -13,17 +13,20 @@ import android.widget.TextView;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.*;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ProfileFragment extends Fragment implements Callback<MemberDetail>, View.OnClickListener{
+public class ProfileFragment extends Fragment implements ProfileDetails.ProfileRefreshCallback, View.OnClickListener{
     private static final String TAG = "ProfileFragment";
 
     private static final String RECOMMENDATION = "v1";
@@ -34,32 +37,30 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>,
     private EasyOpenApi easyOpenApi;
     Button shippingBtn;
     Button ccBtn;
+    private LinearLayoutWithProgressOverlay profileLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
 
         Log.d(TAG, "onCreateView()");
         View view = inflater.inflate(R.layout.profile_fragment, container, false);
+        profileLayout = (LinearLayoutWithProgressOverlay) view.findViewById(R.id.profile_fragment_content);
+        profileLayout.setCartProgressOverlay(view.findViewById(R.id.profile_progress_overlay));
 
         shippingBtn = (Button) view.findViewById(R.id.addShippingBtn);
         ccBtn = (Button) view.findViewById(R.id.addCCBtn);
         shippingBtn.setOnClickListener(this);
         ccBtn.setOnClickListener(this);
 
-        easyOpenApi = Access.getInstance().getEasyOpenApi(true);
-        easyOpenApi.getMemberProfile(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, this);
-        easyOpenApi.getMemberAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, this);
-        easyOpenApi.getMemberCreditCardDetails(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, this);
+        showProgressIndicator();
+        new ProfileDetails().refreshProfile(this);
 
         return (view);
     }
 
-    @Override
-    public void success(MemberDetail memberDetail, Response response) {
-        int code = response.getStatus();
-        Member member = memberDetail.getMember().get(0);
-
-        ProfileDetails.mergeMember(member);
+    /** implements ProfileDetails.ProfileRefreshCallback */
+    public void onProfileRefresh(Member member) {
+        hideProgressIndicator();
         if (member==null) return;
 
         String email = member.getEmailAddress();
@@ -91,7 +92,13 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>,
             int creditCardCount = creditCards.size();
             CCDetails creditCard = creditCards.get(0);
             if (creditCard != null) {
-                String tmpCreditCard =  creditCard.getCardNumber() + " " + creditCard.getCardType();
+                String cardNumber;
+                if (creditCard.getCardNumber().length() > 4) {
+                    cardNumber = creditCard.getCardNumber().substring(creditCard.getCardNumber().length() - 4);
+                } else {
+                    cardNumber = creditCard.getCardNumber();
+                }
+                String tmpCreditCard =  cardNumber + " " + creditCard.getCardType();
                 ((TextView) getView().findViewById(R.id.ccET)).setText(tmpCreditCard);
                 if(creditCardCount > 1) {
                     ccBtn.setText(creditCardCount-1 + " more");
@@ -103,23 +110,72 @@ public class ProfileFragment extends Fragment implements Callback<MemberDetail>,
         }
     }
 
-    @Override
-    public void failure(RetrofitError retrofitError) {
-        Log.i("Fail message when getting member details", " " + retrofitError.getMessage());
-        Log.i("URl used to get member details", " " + retrofitError.getUrl());
+    private void showProgressIndicator() {
+        profileLayout.getProgressIndicator().showProgressIndicator();
     }
+
+    private void hideProgressIndicator() {
+        profileLayout.getProgressIndicator().hideProgressIndicator();
+    }
+
 
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.addShippingBtn:
-                Fragment shippingFragment = Fragment.instantiate(getActivity(), ShippingFragment.class.getName());
-                ((MainActivity)getActivity()).navigateToFragment(shippingFragment);
-                break;
+                if(ProfileDetails.hasAddress()) {
+                    ArrayList<String> addressList = new ArrayList<String>();
+                    for(Iterator<Address> addresses = ProfileDetails.getMember().getAddress().iterator(); addresses.hasNext();) {
+                        Address address = addresses.next();
+                        String tmpAddress = address.getFirstname() + "," + address.getLastname() + "," + "\n" +
+                                address.getAddress1() + "," + "\n" +
+                                address.getCity() + ", " + address.getState() + " " + address.getZipcode() + "\n" +
+                                address.getPhone1();
+                        addressList.add(tmpAddress);
+                    }
+
+                    Fragment listFragment = Fragment.instantiate(getActivity(), ListFragment.class.getName());
+                    Bundle bundle = new Bundle();
+                    bundle.putStringArrayList("addresses",addressList);
+                    listFragment.setArguments(bundle);
+                    ((MainActivity)getActivity()).navigateToFragment(listFragment);
+                    break;
+                }
+                else{
+                    Fragment shippingFragment = Fragment.instantiate(getActivity(), ShippingFragment.class.getName());
+                    ((MainActivity) getActivity()).navigateToFragment(shippingFragment);
+                    break;
+                }
+
+
             case R.id.addCCBtn:
-                Fragment ccFragment = Fragment.instantiate(getActivity(), CreditCardFragment.class.getName());
-                ((MainActivity)getActivity()).navigateToFragment(ccFragment);
-                break;
+                if(ProfileDetails.hasPaymentMethod()) {
+                    ArrayList<String> cardList = new ArrayList<String>();
+                    for (Iterator<CCDetails> cards = ProfileDetails.getMember().getCreditCard().iterator(); cards.hasNext(); ) {
+                        CCDetails cardDetail = cards.next();
+                        String cardNumber;
+                        if (cardDetail.getCardNumber().length() > 4) {
+                            cardNumber = cardDetail.getCardNumber().substring(cardDetail.getCardNumber().length() - 4);
+                        } else {
+                            cardNumber = cardDetail.getCardNumber();
+                        }
+                        String tmpCard = "Card ending in " + cardNumber + "\n" +
+                                cardDetail.getCardType() + "\n" +
+                                "Exp. " + cardDetail.getExpirationMonth() + "/" + cardDetail.getExpirationYear();
+                        cardList.add(tmpCard);
+                    }
+                    Fragment listFragment = Fragment.instantiate(getActivity(), ListFragment.class.getName());
+                    Bundle bundle = new Bundle();
+                    bundle.putStringArrayList("cards", cardList);
+                    listFragment.setArguments(bundle);
+                    ((MainActivity) getActivity()).navigateToFragment(listFragment);
+                    break;
+                }
+                else{
+                    Fragment cardFragment = Fragment.instantiate(getActivity(), CreditCardFragment.class.getName());
+                    ((MainActivity) getActivity()).navigateToFragment(cardFragment);
+                    break;
+                }
         }
     }
 }

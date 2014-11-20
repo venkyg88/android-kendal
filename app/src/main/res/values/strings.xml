@@ -32,6 +32,7 @@
     <string name="cartitem_qty_label">Qty</string>
     <string name="add_to_cart">Add to cart</string>
     <string name="update_button">Update</string>
+    <string name="item_added">Item added</string>
     <string name="free_shipping_msg1">Free shipping when you spend %1$s - only %2$s to go!</string>
     <string name="free_shipping_msg2">You qualify for FREE SHIPPING!</string>
     <string name="shipping">Shipping</string>
@@ -44,7 +45,8 @@
     <string name="payment_method_required">Payment Method is required</string>
     <string name="billing_addr">Billing Address</string>
     <string name="use_as_billing_addr">Use as billing address</string>
-    <string name="delivery_range">Delivery</string>
+    <!--<string name="delivery_range">Delivery</string>-->
+    <string name="item_subtotal">Item total</string>
     <string name="coupons_rewards">Coupons &amp; Rewards</string>
     <string name="tax">Tax</string>
     <string name="submit_order">Submit Order</string>
