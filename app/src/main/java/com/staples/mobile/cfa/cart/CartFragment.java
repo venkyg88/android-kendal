@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,6 +80,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     private TextView cartFreeShippingMsg;
     private TextView cartShipping;
     private View cartProceedToCheckout;
+    private View cartShippingLayout;
     private View cartSubtotalLayout;
     private CartAdapter cartAdapter;
 
@@ -129,6 +131,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         cartFreeShippingMsg = (TextView) view.findViewById(R.id.free_shipping_msg);
         cartShipping = (TextView) view.findViewById(R.id.cart_shipping);
         cartSubtotal = (TextView) view.findViewById(R.id.cart_subtotal);
+        cartShippingLayout = view.findViewById(R.id.cart_shipping_layout);
         cartSubtotalLayout = view.findViewById(R.id.cart_subtotal_layout);
         cartProceedToCheckout = view.findViewById(R.id.action_checkout);
 
@@ -149,7 +152,20 @@ public class CartFragment extends Fragment implements View.OnClickListener {
                 updateCartFields();
             }
         });
-        ((ListView) view.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
+        ListView cartListVw = (ListView) view.findViewById(R.id.cart_list);
+        cartListVw.setAdapter(cartAdapter);
+        cartListVw.setOnScrollListener(new AbsListView.OnScrollListener() {
+            int mostRecentFirstVisibleItem = 0;
+            @Override public void onScrollStateChanged(AbsListView view, int scrollState) { }
+            @Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (firstVisibleItem > mostRecentFirstVisibleItem) {
+                    cartShippingLayout.setVisibility(View.GONE); // hide math story
+                } else if (firstVisibleItem == 0 || firstVisibleItem < mostRecentFirstVisibleItem) {
+                    cartShippingLayout.setVisibility(View.VISIBLE); // show math story
+                }
+                mostRecentFirstVisibleItem = firstVisibleItem;
+            }
+        });
 
         // Set click listeners
         cartProceedToCheckout.setOnClickListener(this);
@@ -203,13 +219,21 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             // set text of free shipping msg
             if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !ProfileDetails.isRewardsMember()) {
                 // need to spend more to qualify for free shipping
+                cartFreeShippingMsg.setVisibility(View.VISIBLE);
                 cartFreeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
                         currencyFormat.format(freeShippingThreshold), currencyFormat.format(freeShippingThreshold - subtotal)));
                 cartFreeShippingMsg.setBackgroundColor(0xff3f6fff); // blue
             } else {
                 // qualifies for free shipping
+                cartFreeShippingMsg.setVisibility(View.VISIBLE);
                 cartFreeShippingMsg.setText(R.string.free_shipping_msg2);
                 cartFreeShippingMsg.setBackgroundColor(0xff00ff00); // green
+                // hide after delay
+                cartFreeShippingMsg.postDelayed(new Runnable() {
+                    @Override public void run() {
+                        cartFreeShippingMsg.setVisibility(View.GONE);
+                    }
+                }, 2000);
             }
 
             // set text of shipping and subtotal
@@ -498,9 +522,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             // if a successful insert, refill cart
             if (cartUpdate.getItemsAdded().size() > 0) {
                 notifyAddToCartCallback();
-                if (!update) {
-                    makeToast(R.string.item_added);
-                }
                 refreshCart(activity);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
             } else {
                 // notify data set changed because qty text may have changed, but actual qty not

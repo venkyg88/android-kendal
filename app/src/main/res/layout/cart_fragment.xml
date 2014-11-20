@@ -30,7 +30,7 @@
             android:choiceMode="singleChoice"
             android:background="#ffffff"/>
         <RelativeLayout
-            android:id="@+id/cart_subtotal_layout"
+            android:id="@+id/cart_shipping_layout"
             style="@style/CartHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
@@ -51,12 +51,17 @@
                 android:paddingTop="2dp"
                 android:paddingBottom="0dp"
                 />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/cart_subtotal_layout"
+            style="@style/CartHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
             <TextView
                 android:id="@+id/cart_subtotal_label"
                 style="@style/CartHeader"
                 android:layout_width="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@id/cart_shipping_label"
                 android:paddingTop="0dp"
                 android:paddingBottom="2dp"
                 android:text="@string/pretax_subtotal" />
@@ -65,7 +70,6 @@
                 style="@style/CartHeader"
                 android:layout_width="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_below="@id/cart_shipping"
                 android:paddingTop="0dp"
                 android:paddingBottom="2dp"
                 />
