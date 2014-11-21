@@ -40,6 +40,9 @@ public class CartItem {
         }
     }
 
+    public Product getProduct(){
+        return product;
+    }
 
     public String getDescription() {
         return product.getProductName();
