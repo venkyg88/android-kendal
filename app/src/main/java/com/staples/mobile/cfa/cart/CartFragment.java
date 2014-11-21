@@ -525,14 +525,24 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
                     // calculate expected delivery times
                     String leadTimeDescription = null;
+                    CartItem firstInGroupCartItem = null;
                     minExpectedBusinessDays = -1;
                     maxExpectedBusinessDays = -1;
                     for (int i = 0; i < listItems.size(); i++) {
                         CartItem cartItem = listItems.get(i);
+                        // if lead time different from previous item's lead time, set expected delivery info
                         if (cartItem.getLeadTimeDescription() != null  &&
                                 !cartItem.getLeadTimeDescription().equals(leadTimeDescription)) {
                             leadTimeDescription = cartItem.getLeadTimeDescription();
                             cartItem.setExpectedDelivery(leadTimeDescription);
+                            cartItem.setExpectedDeliveryItemQty(cartItem.getQuantity());
+                            firstInGroupCartItem = cartItem;
+                        } else {
+                            // since lead time same as previous, add item quantity to first cart item in group
+                            if (firstInGroupCartItem != null) {
+                                firstInGroupCartItem.setExpectedDeliveryItemQty(
+                                        firstInGroupCartItem.getExpectedDeliveryItemQty() + cartItem.getQuantity());
+                            }
                         }
                         if (minExpectedBusinessDays == -1 ||
                                 cartItem.getMinExpectedBusinessDays() < minExpectedBusinessDays) {

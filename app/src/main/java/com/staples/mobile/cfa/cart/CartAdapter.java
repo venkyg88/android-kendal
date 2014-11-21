@@ -74,9 +74,11 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         if (cartItem.getExpectedDelivery() != null) {
             String shippingEstimateLabel = activity.getResources().getString(R.string.expected_delivery);
             vh.shipEstimateTextView.setText(shippingEstimateLabel + " " + cartItem.getExpectedDelivery());
-            vh.shipEstimateTextView.setVisibility(View.VISIBLE);
+            vh.shipEstimateItemQtyTextView.setText(activity.getResources().getQuantityString(R.plurals.cart_qty,
+                    cartItem.getExpectedDeliveryItemQty(), cartItem.getExpectedDeliveryItemQty()));
+            vh.shipEstimateLayout.setVisibility(View.VISIBLE);
         } else {
-            vh.shipEstimateTextView.setVisibility(View.GONE);
+            vh.shipEstimateLayout.setVisibility(View.GONE);
         }
 
         // Set image
@@ -124,7 +126,9 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     /************* view holder ************/
 
     static class ViewHolder {
+        ViewGroup shipEstimateLayout;
         TextView shipEstimateTextView;
+        TextView shipEstimateItemQtyTextView;
         ImageView imageView;
         TextView titleTextView;
         PriceSticker priceSticker;
@@ -133,7 +137,9 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 //        Button updateButton;
 
         ViewHolder(View convertView) {
+            shipEstimateLayout = (ViewGroup) convertView.findViewById(R.id.cartitem_shipping_estimate_layout);
             shipEstimateTextView = (TextView) convertView.findViewById(R.id.cartitem_shipping_estimate);
+            shipEstimateItemQtyTextView = (TextView) convertView.findViewById(R.id.cartitem_shipping_estimate_itemqty);
             imageView = (ImageView) convertView.findViewById(R.id.cartitem_image);
             titleTextView = (TextView) convertView.findViewById(R.id.cartitem_title);
             priceSticker = (PriceSticker) convertView.findViewById(R.id.cartitem_price);
