@@ -98,12 +98,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        // if logged in as guest, show sign-in button
-        LoginHelper loginHelper = new LoginHelper(activity);
-        if (loginHelper.isLoggedIn() && loginHelper.isGuestLogin()) {
-            view.findViewById(R.id.signin_button).setVisibility(View.VISIBLE);
-        }
-
         // hide imported views' Save buttons
         shippingAddrLayoutVw.findViewById(R.id.addressSaveBtn).setVisibility(View.GONE);
         billingAddrLayoutVw.findViewById(R.id.addressSaveBtn).setVisibility(View.GONE);

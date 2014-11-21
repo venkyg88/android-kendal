@@ -14,11 +14,12 @@ import android.widget.TabHost;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.Access;
 
-public class LoginFragment extends Fragment implements View.OnClickListener {
+public class LoginFragment extends BaseFragment implements View.OnClickListener {
     private static final String TAG = "LoginFragment";
     Button signInBtn;
     Button registerBtn;

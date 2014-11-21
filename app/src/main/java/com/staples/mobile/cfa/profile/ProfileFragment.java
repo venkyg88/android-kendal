@@ -11,17 +11,16 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-public class ProfileFragment extends Fragment implements ProfileDetails.ProfileRefreshCallback, View.OnClickListener{
+public class ProfileFragment extends BaseFragment implements ProfileDetails.ProfileRefreshCallback, View.OnClickListener{
     private static final String TAG = "ProfileFragment";
 
     private static final String RECOMMENDATION = "v1";

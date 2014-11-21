@@ -20,7 +20,10 @@
     <string name="profile_title">Profile</string>
     <string name="about_title">About</string>
 
+    <string name="cart_title">Cart</string>
     <string name="checkout_title">Checkout</string>
+    <string name="guest_checkout_title">Guest Checkout</string>
+    <string name="order_confirmation_title">Order Confirmation</string>
     <string name="backtotop_title">Back to Menu</string>
     <string name="store_info_title">Store Info</string>
     <string name="tobedone_title">(To be done)</string>
@@ -28,11 +31,10 @@
     <string name="search_hint">Search</string>
     <string name="empty">Nothing found</string>
 
-    <string name="delete">Delete</string>
+    <string name="remove">Remove</string>
     <string name="cartitem_qty_label">Qty</string>
     <string name="add_to_cart">Add to cart</string>
     <string name="update_button">Update</string>
-    <string name="item_added">Item added</string>
     <string name="free_shipping_msg1">Free shipping when you spend %1$s - only %2$s to go!</string>
     <string name="free_shipping_msg2">You qualify for FREE SHIPPING!</string>
     <string name="shipping">Shipping</string>
@@ -74,10 +76,9 @@
     <string name="item">Item</string>
     <string name="model">Model</string>
 
-    <string name="your_cart">Your cart (empty)</string>
-    <plurals name="your_cart">
-        <item quantity="one">Your cart (1 item)</item>
-        <item quantity="other">Your cart (%d items)</item>
+    <plurals name="cart_qty">
+        <item quantity="one">1 item</item>
+        <item quantity="other">%d items</item>
     </plurals>
 
     <string name="original_hint">Search</string>

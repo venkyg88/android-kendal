@@ -12,6 +12,7 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -27,7 +28,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class BundleFragment extends Fragment implements Callback<Browse>, AdapterView.OnItemClickListener {
+public class BundleFragment extends BaseFragment implements Callback<Browse>, AdapterView.OnItemClickListener {
     private static final String TAG = "BundleFragment";
 
     private static final String RECOMMENDATION = "v1";
