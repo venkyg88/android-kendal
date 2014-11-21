@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 
@@ -24,7 +25,7 @@ import java.util.List;
 /**
  * Created by Avinash Dodda.
  */
-public class ShippingListFragment extends Fragment implements View.OnClickListener {
+public class ShippingListFragment extends BaseFragment implements View.OnClickListener {
     private static final String TAG = "ShippingList Fragment";
     ListView listview;
     Button addBtn;
