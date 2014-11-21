@@ -29,14 +29,15 @@ import com.squareup.picasso.RequestCreator;
 
 import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.lms.LmsManager;
-import com.staples.mobile.common.access.lms.LmsManager.LmsMgrCallback;
 import com.staples.mobile.common.access.configurator.model.Area;
 import com.staples.mobile.common.access.configurator.model.Item;
 import com.staples.mobile.common.access.configurator.model.Screen;
+import com.staples.mobile.common.access.lms.LmsManager.LmsMgrCallback;
+import com.staples.mobile.common.access.lms.LmsManager;
 import com.staples.mobile.common.device.DeviceInfo;
+import com.staples.mobile.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +103,7 @@ public class LmsFragment
 
         this.activity = (MainActivity) activity;
         resources = activity.getResources();
-        lmsManager = new LmsManager();
+        lmsManager = new LmsManager(MainApplication.application);
 
         lmsItems = new ArrayList<LmsItem>();
         lmsItemsA = new ArrayList<LmsItem>();
