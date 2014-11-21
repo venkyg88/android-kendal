@@ -13,8 +13,8 @@ public class SeenProductsRowItem {
     private String unitOfMeasure;
     private String imageUrl;
 
-    public SeenProductsRowItem(String productName, String currentPrice, String reviewCount,
-                               String rating, String sku, String unitOfMeasure, String imageUrl) {
+    public SeenProductsRowItem(String sku, String productName, String currentPrice, String reviewCount,
+                               String rating, String unitOfMeasure, String imageUrl) {
         this.productName = productName;
         this.currentPrice = currentPrice;
         this.reviewCount = reviewCount;

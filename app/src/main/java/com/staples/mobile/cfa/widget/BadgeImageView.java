@@ -10,7 +10,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
@@ -102,7 +101,7 @@ public class BadgeImageView extends ImageView {
      * Renders the image with badge text
      */
     @Override
-    protected void onDraw(@NonNull Canvas canvas) {
+    protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (text != null) {
 //        canvas.drawText(text, getPaddingLeft() + textLeftOffset,

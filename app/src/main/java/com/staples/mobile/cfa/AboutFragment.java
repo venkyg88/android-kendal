@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -37,6 +38,7 @@ public class AboutFragment extends Fragment {
         addRow(inflater, table, "Android API version", Integer.toString(Build.VERSION.SDK_INT));
         addDisplayRows(inflater, table);
         addPackageRows(inflater, table);
+        addGoogleRows(inflater, table);
 
         return(view);
     }
@@ -68,6 +70,20 @@ public class AboutFragment extends Fragment {
             addRow(inflater, table, "Last build", dateFormat.format(stamp));
             addRow(inflater, table, "Last install", dateFormat.format(packInfo.lastUpdateTime));
         } catch(Exception e) {}
+    }
+
+    private void addGoogleRows(LayoutInflater inflater, TableLayout table) {
+        Resources res = getActivity().getResources();
+        int x = res.getInteger(R.integer.google_play_services_version);
+        int a = x/1000000; // 2 digits
+        x -= 1000000*a;
+        int b = x/100000; // 1 digit
+        x -= 100000*b;
+        int c = x/1000; // 2 digits
+        x -= 1000*c; // optional 3 digits
+        String version = Integer.toString(a)+"."+Integer.toString(b)+"."+Integer.toString(c);
+        if (x>0) version = version+"."+Integer.toString(x);
+        addRow(inflater, table, "Google Play", version);
     }
 
     private void addRow(LayoutInflater inflater, TableLayout table, String key, String value) {

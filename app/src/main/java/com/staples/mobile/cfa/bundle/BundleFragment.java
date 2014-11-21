@@ -107,6 +107,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
 
         String msg = ApiError.getErrorMessage(retrofitError);
         Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+        wrapper.setState(DataWrapper.State.EMPTY);
         Log.d(TAG, msg);
     }
 
@@ -116,7 +117,16 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
         if (categories==null || categories.size()<1) return(0);
         Category category = categories.get(0);
         if (category==null) return(0);
+
+        // Add straight products
         int count = adapter.fill(category.getProduct());
+
+        // Add promos (in bundle)
+        List<Category> promos = category.getPromoCategory();
+        if (promos!=null) {
+            for(Category promo : promos)
+                count += adapter.fill(promo.getProduct());
+        }
         return(count);
     }
 

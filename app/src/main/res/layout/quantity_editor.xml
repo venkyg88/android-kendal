@@ -4,14 +4,15 @@
   -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:layout_marginRight="6dp">
     <Spinner
         android:id="@+id/cartitem_qty_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:spinnerMode="dialog"
         />
     <com.staples.mobile.cfa.widget.EditTextWithImeBackEvent
         android:id="@+id/cartitem_qty_edittext"
