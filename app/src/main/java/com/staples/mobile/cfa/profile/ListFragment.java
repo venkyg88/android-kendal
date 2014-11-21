@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 /**
  * Created by Avinash Dodda.
  */
-public class ListFragment extends Fragment implements View.OnClickListener {
+public class ListFragment extends BaseFragment implements View.OnClickListener {
     private static final String TAG = "ListFragment";
     ListView listview;
     private ArrayAdapter<String> listAdapter ;

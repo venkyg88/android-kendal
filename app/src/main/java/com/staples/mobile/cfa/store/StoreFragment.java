@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.channel.model.store.*;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -34,7 +35,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class StoreFragment extends Fragment implements Callback<StoreQuery>, GoogleMap.OnMarkerClickListener, AdapterView.OnItemClickListener{
+public class StoreFragment extends BaseFragment implements Callback<StoreQuery>, GoogleMap.OnMarkerClickListener, AdapterView.OnItemClickListener{
     private static final String TAG = "StoreFragment";
 
     private static int FITSTORES = 5; // Number of stores to fit in initial view

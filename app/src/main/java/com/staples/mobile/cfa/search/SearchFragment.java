@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.bundle.BundleAdapter;
@@ -26,7 +27,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SearchFragment extends Fragment implements Callback<SearchResult>, AdapterView.OnItemClickListener {
+public class SearchFragment extends BaseFragment implements Callback<SearchResult>, AdapterView.OnItemClickListener {
     private static final String TAG = "BundleFragment";
 
     private static final String RECOMMENDATION = "v1";
