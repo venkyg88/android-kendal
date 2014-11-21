@@ -45,6 +45,7 @@ public class MainActivity extends Activity
     private TextView titleVw;
     private TextView cartQtyVw;
     private Button signInButton;
+    private View closeButton;
 
     private DrawerItem homeDrawerItem;
     private DrawerItem storeDrawerItem;
@@ -134,6 +135,7 @@ public class MainActivity extends Activity
         // hide non-standard entities
         cartQtyVw.setVisibility(View.GONE);
         signInButton.setVisibility(View.GONE);
+        closeButton.setVisibility(View.GONE);
     }
 
     public void showCartActionBarEntities() {
@@ -145,12 +147,12 @@ public class MainActivity extends Activity
         searchBarIcon.setVisibility(View.GONE);
         cartIconAction.setVisibility(View.GONE);
         signInButton.setVisibility(View.GONE);
+        closeButton.setVisibility(View.GONE);
     }
 
     public void showCheckoutActionBarEntities() {
         // show checkout-specific entities
-        leftDrawerAction.setVisibility(View.VISIBLE);
-        cartIconAction.setVisibility(View.VISIBLE);
+        closeButton.setVisibility(View.VISIBLE);
         LoginHelper loginHelper = new LoginHelper(this);
         if (loginHelper.isLoggedIn() && loginHelper.isGuestLogin()) {
             signInButton.setVisibility(View.VISIBLE);
@@ -158,8 +160,10 @@ public class MainActivity extends Activity
             signInButton.setVisibility(View.GONE);
         }
         // hide unwanted entities
+        leftDrawerAction.setVisibility(View.GONE);
         searchBar.setVisibility(View.GONE);
         searchBarIcon.setVisibility(View.GONE);
+        cartIconAction.setVisibility(View.GONE);
         cartQtyVw.setVisibility(View.GONE);
     }
 
@@ -199,6 +203,7 @@ public class MainActivity extends Activity
         titleVw = (TextView)findViewById(R.id.header);
         cartQtyVw = (TextView)findViewById(R.id.cart_item_qty);
         signInButton = (Button)findViewById(R.id.signin_button);
+        closeButton = findViewById(R.id.close_button);
 
         // Set action bar listeners
         leftDrawerAction.setOnClickListener(this);
@@ -386,6 +391,10 @@ public class MainActivity extends Activity
             selectDrawerItem(homeDrawerItem, Transition.NONE, true);
             accountBtn.setText("Sign In");
         }
+    }
+
+    public void closeBtnClick(View view) {
+        getFragmentManager().popBackStack();
     }
 
     // Left drawer listview clicks
