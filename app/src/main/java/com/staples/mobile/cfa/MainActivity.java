@@ -38,6 +38,7 @@ public class MainActivity extends Activity
     private DrawerLayout drawerLayout;
     private View leftDrawerAction;
     private View leftDrawer;
+    private View homeIcon;
     private SearchBarView searchBar;
     private View searchBarIcon;
     private BadgeImageView cartIconAction;
@@ -128,6 +129,7 @@ public class MainActivity extends Activity
 
         // show standard entities
         leftDrawerAction.setVisibility(View.VISIBLE);
+        homeIcon.setVisibility(View.VISIBLE);
         searchBar.setVisibility(View.VISIBLE);
         searchBarIcon.setVisibility(View.VISIBLE);
         cartIconAction.setVisibility(View.VISIBLE);
@@ -143,6 +145,7 @@ public class MainActivity extends Activity
         leftDrawerAction.setVisibility(View.VISIBLE);
         cartQtyVw.setVisibility(View.VISIBLE);
         // hide unwanted entities
+        homeIcon.setVisibility(View.GONE);
         searchBar.setVisibility(View.GONE);
         searchBarIcon.setVisibility(View.GONE);
         cartIconAction.setVisibility(View.GONE);
@@ -161,6 +164,7 @@ public class MainActivity extends Activity
         }
         // hide unwanted entities
         leftDrawerAction.setVisibility(View.GONE);
+        homeIcon.setVisibility(View.GONE);
         searchBar.setVisibility(View.GONE);
         searchBarIcon.setVisibility(View.GONE);
         cartIconAction.setVisibility(View.GONE);
@@ -173,6 +177,7 @@ public class MainActivity extends Activity
         leftDrawerAction.setVisibility(View.VISIBLE);
         cartQtyVw.setVisibility(View.VISIBLE);
         // hide unwanted entities
+        homeIcon.setVisibility(View.GONE);
         searchBar.setVisibility(View.GONE);
         searchBarIcon.setVisibility(View.GONE);
         cartIconAction.setVisibility(View.GONE);
@@ -196,6 +201,7 @@ public class MainActivity extends Activity
         // Find top-level entities
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawer = findViewById(R.id.left_drawer);
+        homeIcon = findViewById(R.id.action_home);
         searchBar = (SearchBarView) findViewById(R.id.search_text);
         searchBarIcon = findViewById(R.id.search_icon);
         cartIconAction = (BadgeImageView)findViewById(R.id.action_show_cart);
