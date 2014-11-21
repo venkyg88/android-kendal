@@ -12,8 +12,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.staples.mobile.R;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class StoreAdapter extends BaseAdapter {
     private static final String TAG = "StoreAdapter";
@@ -23,11 +25,13 @@ public class StoreAdapter extends BaseAdapter {
     private boolean singleMode;
     private int singleIndex;
     private DecimalFormat mileFormat;
+    private DateFormat timeFormat;
 
     public StoreAdapter(Context context) {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         array = new ArrayList<StoreItem>();
         mileFormat = new DecimalFormat("0.0 mi");
+        timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
     }
 
     // Items
@@ -63,7 +67,8 @@ public class StoreAdapter extends BaseAdapter {
         ((TextView) view.findViewById(R.id.street)).setText(item.streetAddress1);
         ((TextView) view.findViewById(R.id.phone)).setText(item.phoneNumber);
         ((TextView) view.findViewById(R.id.distance)).setText(mileFormat.format(item.distance));
-        ((TextView) view.findViewById(R.id.opentime)).setText("11:00 PM");
+        String openTime = item.formatHours(System.currentTimeMillis(), Calendar.SHORT, timeFormat);
+        ((TextView) view.findViewById(R.id.opentime)).setText(openTime);
 
         return(view);
     }

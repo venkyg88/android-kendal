@@ -153,6 +153,14 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
             item.faxNumber = reformatNumber(storeAddress.getFaxNumber());
         }
 
+        // Get store hours
+        List<StoreHours> list = obj.getStoreHours();
+        for(StoreHours hours : list) {
+            TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
+            if (span!=null)
+                item.addTimeSpan(span);
+        }
+
         adapter.addStore(item);
         return(item);
     }
