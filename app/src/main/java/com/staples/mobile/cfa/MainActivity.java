@@ -7,12 +7,11 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
@@ -37,10 +36,15 @@ public class MainActivity extends Activity
     private static final int SURRENDER_TIMEOUT = 5000;
 
     private DrawerLayout drawerLayout;
+    private View leftDrawerAction;
     private View leftDrawer;
     private SearchBarView searchBar;
+    private View searchBarIcon;
     private BadgeImageView cartIconAction;
     CartFragment cartFragment;
+    private TextView titleVw;
+    private TextView cartQtyVw;
+    private Button signInButton;
 
     private DrawerItem homeDrawerItem;
     private DrawerItem storeDrawerItem;
@@ -116,6 +120,71 @@ public class MainActivity extends Activity
         findViewById(R.id.main).setVisibility(View.VISIBLE);
     }
 
+    /** sets standard action bar, fragments need to override their onResume methods to set up action bar */
+    public void showStandardActionBar() {
+        // set standard title bar
+        setActionBarTitle(getResources().getString(R.string.staples));
+
+        // show standard entities
+        leftDrawerAction.setVisibility(View.VISIBLE);
+        searchBar.setVisibility(View.VISIBLE);
+        searchBarIcon.setVisibility(View.VISIBLE);
+        cartIconAction.setVisibility(View.VISIBLE);
+
+        // hide non-standard entities
+        cartQtyVw.setVisibility(View.GONE);
+        signInButton.setVisibility(View.GONE);
+    }
+
+    public void showCartActionBarEntities() {
+        // show cart-specific entities
+        leftDrawerAction.setVisibility(View.VISIBLE);
+        cartQtyVw.setVisibility(View.VISIBLE);
+        // hide unwanted entities
+        searchBar.setVisibility(View.GONE);
+        searchBarIcon.setVisibility(View.GONE);
+        cartIconAction.setVisibility(View.GONE);
+        signInButton.setVisibility(View.GONE);
+    }
+
+    public void showCheckoutActionBarEntities() {
+        // show checkout-specific entities
+        leftDrawerAction.setVisibility(View.VISIBLE);
+        cartIconAction.setVisibility(View.VISIBLE);
+        LoginHelper loginHelper = new LoginHelper(this);
+        if (loginHelper.isLoggedIn() && loginHelper.isGuestLogin()) {
+            signInButton.setVisibility(View.VISIBLE);
+        } else {
+            signInButton.setVisibility(View.GONE);
+        }
+        // hide unwanted entities
+        searchBar.setVisibility(View.GONE);
+        searchBarIcon.setVisibility(View.GONE);
+        cartQtyVw.setVisibility(View.GONE);
+    }
+
+
+    public void showOrderConfirmationActionBarEntities() {
+        // show cart-specific entities
+        leftDrawerAction.setVisibility(View.VISIBLE);
+        cartQtyVw.setVisibility(View.VISIBLE);
+        // hide unwanted entities
+        searchBar.setVisibility(View.GONE);
+        searchBarIcon.setVisibility(View.GONE);
+        cartIconAction.setVisibility(View.GONE);
+        cartQtyVw.setVisibility(View.GONE);
+    }
+
+    /** sets action bar title */
+    public void setActionBarTitle(String title) {
+        titleVw.setText(title);
+    }
+
+    /** sets action bar cart quantity */
+    public void setActionBarCartQty(String qtyText) {
+        cartQtyVw.setText(qtyText);
+    }
+
     public void prepareMainScreen(boolean freshStart) {
         // Inflate
         setContentView(R.layout.main);
@@ -124,12 +193,20 @@ public class MainActivity extends Activity
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawer = findViewById(R.id.left_drawer);
         searchBar = (SearchBarView) findViewById(R.id.search_text);
+        searchBarIcon = findViewById(R.id.search_icon);
         cartIconAction = (BadgeImageView)findViewById(R.id.action_show_cart);
+        leftDrawerAction = findViewById(R.id.action_left_drawer);
+        titleVw = (TextView)findViewById(R.id.header);
+        cartQtyVw = (TextView)findViewById(R.id.cart_item_qty);
+        signInButton = (Button)findViewById(R.id.signin_button);
 
         // Set action bar listeners
-        findViewById(R.id.action_left_drawer).setOnClickListener(this);
+        leftDrawerAction.setOnClickListener(this);
         findViewById(R.id.action_home).setOnClickListener(this);
         cartIconAction.setOnClickListener(this);
+
+        // initialize action bar
+        showStandardActionBar();
 
         // Init search bar
         searchBar.initSearchBar();
@@ -176,6 +253,7 @@ public class MainActivity extends Activity
 
     // Navigation
 
+
     public boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
         // Make sure all drawers are closed
         drawerLayout.closeDrawers();
@@ -190,32 +268,6 @@ public class MainActivity extends Activity
         transaction.commit();
         return(true);
     }
-
-//    // dls: considering whether to support multiple fragments
-//    public boolean selectFragments(List<Fragment> fragments, Transition transition, boolean push) {
-//        // Make sure all drawers are closed
-//        drawerLayout.closeDrawers();
-//
-//        // Swap fragments
-//        FragmentManager manager = getFragmentManager();
-//        FragmentTransaction transaction = manager.beginTransaction();
-//        for (int i=0;  i < fragments.size();  i++) {
-//            Fragment fragment = fragments.get(i);
-//            if (i == 0) {
-//                transaction.replace(R.id.content, fragment);
-//            } else {
-//                transaction.add(R.id.content, fragment);
-//            }
-//        }
-//        if (transition!=null) {
-//            transition.setAnimation(transaction);
-//        }
-//        if (push) {
-//            transaction.addToBackStack(null);
-//        }
-//        transaction.commit();
-//        return(true);
-//    }
 
     private boolean selectDrawerItem(DrawerItem item, Transition transition, boolean push) {
         // Safety check

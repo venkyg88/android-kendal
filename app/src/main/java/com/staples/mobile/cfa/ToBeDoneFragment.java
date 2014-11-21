@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.staples.mobile.R;
 
-public class ToBeDoneFragment extends Fragment {
+public class ToBeDoneFragment extends BaseFragment {
     private static final String TAG = "ToBeDoneFragment";
     private static String token1;
     private static String token2;

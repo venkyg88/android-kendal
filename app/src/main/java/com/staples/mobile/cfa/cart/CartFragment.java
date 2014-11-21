@@ -4,6 +4,7 @@
 
 package com.staples.mobile.cfa.cart;
 
+import android.animation.LayoutTransition;
 import android.app.Fragment;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
@@ -13,11 +14,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
@@ -48,7 +51,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 /** fragment to manage display and update of shopping cart */
-public class CartFragment extends Fragment implements View.OnClickListener {
+public class CartFragment extends BaseFragment implements View.OnClickListener {
 
     public interface AddToCartCallback {
         public void onAddToCartComplete();
@@ -74,17 +77,17 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
     private LinearLayoutWithProgressOverlay cartContainer;
 
-    private TextView cartTitle;
     private TextView cartSubtotal;
     private TextView cartFreeShippingMsg;
     private TextView cartShipping;
     private View cartProceedToCheckout;
+    private View cartShippingLayout;
     private View cartSubtotalLayout;
     private CartAdapter cartAdapter;
 
-    // cart object
-    private Cart cart;
-    List<CartItem> listItems;
+    // cart object - make these static so they're not lost on device rotation
+    private static Cart cart;
+    private static List<CartItem> cartListItems;
 
 
     int minExpectedBusinessDays;
@@ -125,10 +128,10 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         // inflate and get child views
         View view = inflater.inflate(R.layout.cart_fragment, container, false);
 
-        cartTitle = (TextView) view.findViewById(R.id.cart_title);
         cartFreeShippingMsg = (TextView) view.findViewById(R.id.free_shipping_msg);
         cartShipping = (TextView) view.findViewById(R.id.cart_shipping);
         cartSubtotal = (TextView) view.findViewById(R.id.cart_subtotal);
+        cartShippingLayout = view.findViewById(R.id.cart_shipping_layout);
         cartSubtotalLayout = view.findViewById(R.id.cart_subtotal_layout);
         cartProceedToCheckout = view.findViewById(R.id.action_checkout);
 
@@ -141,6 +144,17 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         // Initialize cart listview
         cartContainer = (LinearLayoutWithProgressOverlay) view.findViewById(R.id.cart_layout);
         cartContainer.setCartProgressOverlay(view.findViewById(R.id.cart_progress_overlay));
+        // when animateLayoutChanges=true on cartContainer, we need to re-layout the list view (via notifyDataSetChanged)
+        // after the animation completes or else the first selection of a spinner following the animation will fail.
+        LayoutTransition layoutTransition = cartContainer.getLayoutTransition();
+        if (layoutTransition != null) {
+            layoutTransition.addTransitionListener(new LayoutTransition.TransitionListener(){
+                @Override public void startTransition(LayoutTransition transition, ViewGroup container, View view, int transitionType) { }
+                @Override public void endTransition(LayoutTransition arg0, ViewGroup arg1, View arg2, int arg3) {
+                    notifyDataSetChanged();
+                }
+            });
+        }
         cartAdapter = new CartAdapter(activity, R.layout.cart_item, qtyChangeListener, qtyDeleteButtonListener);
         cartAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
@@ -149,15 +163,37 @@ public class CartFragment extends Fragment implements View.OnClickListener {
                 updateCartFields();
             }
         });
-        ((ListView) view.findViewById(R.id.cart_list)).setAdapter(cartAdapter);
+        ListView cartListVw = (ListView) view.findViewById(R.id.cart_list);
+        cartListVw.setAdapter(cartAdapter);
+        cartListVw.setOnScrollListener(new AbsListView.OnScrollListener() {
+            int mostRecentFirstVisibleItem = 0;
+            @Override public void onScrollStateChanged(AbsListView view, int scrollState) { }
+            @Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (firstVisibleItem > mostRecentFirstVisibleItem) {
+                    cartShippingLayout.setVisibility(View.GONE); // hide math story
+                } else if (firstVisibleItem == 0 || firstVisibleItem < mostRecentFirstVisibleItem) {
+                    cartShippingLayout.setVisibility(View.VISIBLE); // show math story
+                }
+                mostRecentFirstVisibleItem = firstVisibleItem;
+            }
+        });
 
         // Set click listeners
         cartProceedToCheckout.setOnClickListener(this);
 
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // update action bar
+        activity.showCartActionBarEntities();
+        activity.setActionBarTitle(getResources().getString(R.string.cart_title));
+
         //initialize cart based on what's been returned from api so far
         setAdapterListItems();
-
-        return view;
     }
 
     @Override
@@ -193,23 +229,38 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         // if fragment is attached to activity, then update the fragment's views
         if (cartAdapter != null) {
 
-            // Set text of cart drawer title
+            // Set text of cart item qty
             if (totalItemCount == 0) {
-                cartTitle.setText(r.getString(R.string.your_cart));
+                activity.setActionBarCartQty("");
             } else {
-                cartTitle.setText(r.getQuantityString(R.plurals.your_cart, totalItemCount, totalItemCount));
+                activity.setActionBarCartQty(r.getQuantityString(R.plurals.cart_qty, totalItemCount, totalItemCount));
             }
 
             // set text of free shipping msg
-            if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !ProfileDetails.isRewardsMember()) {
-                // need to spend more to qualify for free shipping
-                cartFreeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
-                        currencyFormat.format(freeShippingThreshold), currencyFormat.format(freeShippingThreshold - subtotal)));
-                cartFreeShippingMsg.setBackgroundColor(0xff3f6fff); // blue
+            if (totalItemCount > 0) {
+                if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !ProfileDetails.isRewardsMember()) {
+                    // need to spend more to qualify for free shipping
+                    cartFreeShippingMsg.setVisibility(View.VISIBLE);
+                    cartFreeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
+                            currencyFormat.format(freeShippingThreshold), currencyFormat.format(freeShippingThreshold - subtotal)));
+                    cartFreeShippingMsg.setBackgroundColor(0xff3f6fff); // blue
+                } else {
+                    // qualifies for free shipping
+                    String freeShippingMsg = r.getString(R.string.free_shipping_msg2);
+                    if (!freeShippingMsg.equals(cartFreeShippingMsg.getText().toString())) {
+                        cartFreeShippingMsg.setVisibility(View.VISIBLE);
+                        cartFreeShippingMsg.setText(freeShippingMsg);
+                        cartFreeShippingMsg.setBackgroundColor(0xff00ff00); // green
+                        // hide after a delay
+                        cartFreeShippingMsg.postDelayed(new Runnable() {
+                            @Override public void run() {
+                                cartFreeShippingMsg.setVisibility(View.GONE);
+                            }
+                        }, 3000);
+                    }
+                }
             } else {
-                // qualifies for free shipping
-                cartFreeShippingMsg.setText(R.string.free_shipping_msg2);
-                cartFreeShippingMsg.setBackgroundColor(0xff00ff00); // green
+                cartFreeShippingMsg.setVisibility(View.GONE);
             }
 
             // set text of shipping and subtotal
@@ -217,7 +268,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             cartSubtotal.setText(currencyFormat.format(preTaxSubtotal));
 
             // only show shipping, subtotal, and proceed-to-checkout when at least one item
-            cartFreeShippingMsg.setVisibility(totalItemCount == 0 ? View.GONE : View.VISIBLE);
+            cartShippingLayout.setVisibility(totalItemCount == 0 ? View.GONE : View.VISIBLE);
             cartSubtotalLayout.setVisibility(totalItemCount == 0 ? View.GONE : View.VISIBLE);
             cartProceedToCheckout.setVisibility(totalItemCount == 0 ? View.GONE : View.VISIBLE);
         }
@@ -252,13 +303,13 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
 
     /** returns current cart object */
-    public Cart getCart() {
+    public static Cart getCart() {
         return cart;
     }
 
     /** returns current list of cart items */
-    public List<CartItem> getListItems() {
-        return listItems;
+    public static List<CartItem> getListItems() {
+        return cartListItems;
     }
 
 
@@ -362,12 +413,14 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void setAdapterListItems() {
+    // synchronizing this method in case cartListItems updated simultaneously (not sure this would
+    // happen since this should all be on the main UI thread)
+    private synchronized void setAdapterListItems() {
         // if fragment is attached to activity, then update the fragment's views
         if (cartAdapter != null) {
             cartAdapter.clear();
-            if (listItems != null && listItems.size() > 0) {
-                cartAdapter.addAll(listItems);
+            if (cartListItems != null && cartListItems.size() > 0) {
+                cartAdapter.addAll(cartListItems);
             }
             cartAdapter.notifyDataSetChanged();
         } else {
@@ -411,7 +464,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
             // clear the cart before refilling
             cart = null;
-            listItems = new ArrayList<CartItem>();
+            ArrayList<CartItem> listItems = new ArrayList<CartItem>();
 
             // get data from cartContent request
             List<Cart> cartCollection = cartContents.getCart();
@@ -460,6 +513,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
                     }
                 }
             }
+            cartListItems = listItems;
             setAdapterListItems();
         }
 
@@ -498,9 +552,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             // if a successful insert, refill cart
             if (cartUpdate.getItemsAdded().size() > 0) {
                 notifyAddToCartCallback();
-                if (!update) {
-                    makeToast(R.string.item_added);
-                }
                 refreshCart(activity);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
             } else {
                 // notify data set changed because qty text may have changed, but actual qty not

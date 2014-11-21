@@ -51,10 +51,21 @@ public class ProfileDetails implements Callback<MemberDetail> {
 
     /** calls API to get refreshed set of profile data */
     public void refreshProfile(ProfileRefreshCallback callback) {
+        Access access = Access.getInstance();
+
+        // handle case where not registered user
+        if (!access.isLoggedIn() || access.isGuestLogin()) {
+            if (callback != null) {
+                callback.onProfileRefresh(null);
+            }
+            resetMember();
+            return;
+        }
+
         this.callback = callback;
         this.timeRefreshRequested = new Date().getTime(); // record when refresh request made to correctly handle simultaneous requests
 
-        easyOpenApi = Access.getInstance().getEasyOpenApi(true);
+        easyOpenApi = access.getEasyOpenApi(true);
         easyOpenApi.getMemberProfile(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<MemberDetail>() {
             @Override
             public void success(MemberDetail memberDetail, Response response) {

@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
@@ -26,7 +27,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ProfileFragment extends Fragment implements ProfileDetails.ProfileRefreshCallback, View.OnClickListener{
+public class ProfileFragment extends BaseFragment implements ProfileDetails.ProfileRefreshCallback, View.OnClickListener{
     private static final String TAG = "ProfileFragment";
 
     private static final String RECOMMENDATION = "v1";

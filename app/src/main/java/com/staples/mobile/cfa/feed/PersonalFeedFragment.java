@@ -15,9 +15,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 
-public class PersonalFeedFragment extends Fragment {
+public class PersonalFeedFragment extends BaseFragment {
     private static final String TAG = "PersonalFeedFragment";
     private ListView seenProductsListView;
     private SeenProductsAdapter seenProductsListAdapter;

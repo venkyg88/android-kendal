@@ -23,7 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class AboutFragment extends Fragment {
+public class AboutFragment extends BaseFragment {
     private static final String TAG = "AboutFragment";
 
     private SimpleDateFormat dateFormat;

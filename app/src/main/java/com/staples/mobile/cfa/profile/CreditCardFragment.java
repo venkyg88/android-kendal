@@ -13,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
@@ -32,7 +33,7 @@ import retrofit.client.Response;
 /**
  * Created by Avinash Dodda.
  */
-public class CreditCardFragment extends Fragment implements View.OnClickListener{
+public class CreditCardFragment extends BaseFragment implements View.OnClickListener{
 
     private static final String TAG = "Add Credit Card Fragment";
     private static final String RECOMMENDATION = "v1";
