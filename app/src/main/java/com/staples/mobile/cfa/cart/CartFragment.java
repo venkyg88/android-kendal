@@ -84,6 +84,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     private View cartShippingLayout;
     private View cartSubtotalLayout;
     private CartAdapter cartAdapter;
+    private ListView cartListVw;
 
     // cart object - make these static so they're not lost on device rotation
     private static Cart cart;
@@ -163,18 +164,36 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
                 updateCartFields();
             }
         });
-        ListView cartListVw = (ListView) view.findViewById(R.id.cart_list);
+        cartListVw = (ListView) view.findViewById(R.id.cart_list);
         cartListVw.setAdapter(cartAdapter);
         cartListVw.setOnScrollListener(new AbsListView.OnScrollListener() {
-            int mostRecentFirstVisibleItem = 0;
-            @Override public void onScrollStateChanged(AbsListView view, int scrollState) { }
-            @Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (firstVisibleItem > mostRecentFirstVisibleItem) {
-                    cartShippingLayout.setVisibility(View.GONE); // hide math story
-                } else if (firstVisibleItem == 0 || firstVisibleItem < mostRecentFirstVisibleItem) {
-                    cartShippingLayout.setVisibility(View.VISIBLE); // show math story
+            int oldFirstVisibleItem = 0;
+            int oldTop = 0;
+            @Override public void onScrollStateChanged(AbsListView absListView, int scrollState) { }
+            @Override public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                int top = getTopOfFirstVisibleView(absListView);
+                if (firstVisibleItem == 0 && top == 0) {
+                    onScrollUp();
+                } else if (firstVisibleItem == oldFirstVisibleItem) {
+                    if (oldTop - top > 5) {
+                        onScrollDown();
+                    } else if (top - oldTop > 5) {
+                        onScrollUp();
+                    }
+                } else if (firstVisibleItem > oldFirstVisibleItem) {
+                    onScrollDown();
+                } else if (firstVisibleItem < oldFirstVisibleItem) {
+                    onScrollUp();
                 }
-                mostRecentFirstVisibleItem = firstVisibleItem;
+                oldFirstVisibleItem = firstVisibleItem;
+                oldTop = top;
+            }
+
+            private void onScrollUp() {
+                cartShippingLayout.setVisibility(View.VISIBLE); // show math story
+            }
+            private void onScrollDown() {
+                cartShippingLayout.setVisibility(View.GONE); // hide math story
             }
         });
 
@@ -268,12 +287,25 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
             cartSubtotal.setText(currencyFormat.format(preTaxSubtotal));
 
             // only show shipping, subtotal, and proceed-to-checkout when at least one item
-            cartShippingLayout.setVisibility(totalItemCount == 0 ? View.GONE : View.VISIBLE);
-            cartSubtotalLayout.setVisibility(totalItemCount == 0 ? View.GONE : View.VISIBLE);
-            cartProceedToCheckout.setVisibility(totalItemCount == 0 ? View.GONE : View.VISIBLE);
+            if (totalItemCount == 0) {
+                cartShippingLayout.setVisibility(View.GONE);
+                cartSubtotalLayout.setVisibility(View.GONE);
+                cartProceedToCheckout.setVisibility(View.GONE);
+            } else {
+                if (cartListVw.getFirstVisiblePosition() == 0 && getTopOfFirstVisibleView(cartListVw) == 0) {
+                    cartShippingLayout.setVisibility(View.VISIBLE);
+                }
+                cartSubtotalLayout.setVisibility(View.VISIBLE);
+                cartProceedToCheckout.setVisibility(View.VISIBLE);
+            }
         }
     }
 
+    /** returns true if list view is scrolled to the very top */
+    private int getTopOfFirstVisibleView(AbsListView listView) {
+        View view = listView.getChildAt(0);
+        return (view == null) ? 0 : view.getTop();
+    }
 
 
     @Override
