@@ -91,16 +91,17 @@
                 <!--/>-->
             <Button
                 android:id="@+id/cartitem_delete"
-                android:layout_width="80dp"
-                android:layout_height="35dp"
+                android:layout_width="34dp"
+                android:layout_height="32dp"
                 android:layout_gravity="center_vertical"
-                android:text="@string/remove"
+                android:text="X"
                 android:textSize="14dp"
+                android:fontFamily="sans-serif"
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                />
+                android:paddingLeft="0dp"
+                android:paddingRight="0dp"
+            />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
