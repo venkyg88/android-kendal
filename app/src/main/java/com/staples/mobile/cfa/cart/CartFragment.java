@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.staples.mobile.R;
 import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileDetails;
@@ -235,7 +236,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();
             preTaxSubtotal = cart.getPreTaxTotal();
-            LmsManager lmsManager = new LmsManager();
+            LmsManager lmsManager = new LmsManager(MainApplication.application);
             Configurator configurator = lmsManager.getConfigurator();
             if (configurator != null) {
                 freeShippingThreshold = configurator.getPromotions().getFreeShippingThreshold().floatValue();
