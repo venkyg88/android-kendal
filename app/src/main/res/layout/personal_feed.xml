@@ -2,97 +2,86 @@
 <com.staples.mobile.cfa.widget.DataWrapper xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:focusable="true"
     android:focusableInTouchMode="true"
+    android:orientation="vertical"
     android:padding="10dp">
 
-    <!-- Clearance Products in Cart -->
-    <LinearLayout
-        android:layout_width="fill_parent"
+    <ScrollView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#ffffff">
+        android:background="#ffffff"
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:id="@+id/clearance_title"
-            android:layout_gravity="left|center_vertical"
-            android:padding="10dp"
-            android:text="The item(s) in your cart on clearance"/>
-
-        <View
+        <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:background="#c0c0c0"/>
-
-        <ListView
-            android:id="@+id/clearance_list"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"/>
-    </LinearLayout>
+            android:background="#ffffff"
+            android:orientation="vertical">
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="5dp"/>
+            <!-- Clearance Products in Cart -->
+            <TextView
+                android:id="@+id/clearance_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:padding="10dp"
+                android:text="The item(s) in your cart on clearance"/>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#c0c0c0"/>
+            <LinearLayout
+                android:id="@+id/clearance_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
 
-    <!-- Daily Deal Products in Cart -->
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#ffffff">
+            <!-- Separator -->
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="5dp"/>
 
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:id="@+id/dailt_deal_title"
-            android:layout_gravity="left|center_vertical"
-            android:padding="10dp"
-            android:text="The item(s) in your cart on Daily Deal"/>
+            <!-- Daily Deal Products in Cart -->
+            <TextView
+                android:id="@+id/daily_deal_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:padding="10dp"
+                android:text="The item(s) in your cart on Daily Deal"/>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#c0c0c0"/>
+            <LinearLayout
+                android:id="@+id/daily_deal_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:background="#c0c0c0"/>
+            <!-- Separator -->
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="5dp"/>
 
-        <ListView
-            android:id="@+id/daily_deal_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"/>
-    </LinearLayout>
+            <!-- Last Seen Products -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:padding="10dp"
+                android:text="The item(s) you looked before"/>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#c0c0c0"/>
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="5dp"/>
-
-    <!-- Last Seen Products -->
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#ffffff">
-
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:id="@+id/seen_product_title"
-            android:layout_gravity="left|center_vertical"
-            android:padding="10dp"
-            android:text="The item(s) you looked before"/>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:background="#c0c0c0"/>
-
-        <ListView
-            android:id="@+id/product_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"/>
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/seen_products_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+        </LinearLayout>
+    </ScrollView>
 </com.staples.mobile.cfa.widget.DataWrapper>
