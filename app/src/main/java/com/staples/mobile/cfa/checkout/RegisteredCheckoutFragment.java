@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.Access;
@@ -23,8 +23,6 @@ import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethodRespons
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
-//import com.staples.mobile.common.access.easyopen.model.member.Member;
-//import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
 
 import java.util.List;
 

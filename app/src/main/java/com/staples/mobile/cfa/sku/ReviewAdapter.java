@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.easyopen.model.reviews.Data;
 

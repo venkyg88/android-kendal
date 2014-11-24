@@ -13,7 +13,7 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 
 /**
  * Created by sutdi001 on 10/10/14.

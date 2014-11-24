@@ -5,7 +5,7 @@ package com.staples.mobile.cfa.feed;
  */
 
 import com.squareup.picasso.Picasso;
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
