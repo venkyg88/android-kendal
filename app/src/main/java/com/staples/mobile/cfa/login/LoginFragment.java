@@ -1,6 +1,5 @@
 package com.staples.mobile.cfa.login;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,9 +12,8 @@ import android.widget.EditText;
 import android.widget.TabHost;
 import android.widget.Toast;
 
-import com.staples.mobile.R;
 import com.staples.mobile.cfa.BaseFragment;
-import com.staples.mobile.cfa.profile.ProfileFragment;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.Access;
 

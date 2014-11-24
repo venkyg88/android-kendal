@@ -19,7 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 
 /**
  * Quantity editor that presents as a spinner for values 0 thru maxSpinnerValue and as an EditText
