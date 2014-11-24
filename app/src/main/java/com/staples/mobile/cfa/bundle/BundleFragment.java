@@ -1,5 +1,6 @@
 package com.staples.mobile.cfa.bundle;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,13 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Category;
 
@@ -24,7 +28,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class BundleFragment extends Fragment implements Callback<Browse>, AdapterView.OnItemClickListener {
+public class BundleFragment extends BaseFragment implements Callback<Browse>, AdapterView.OnItemClickListener {
     private static final String TAG = "BundleFragment";
 
     private static final String RECOMMENDATION = "v1";
@@ -83,11 +87,14 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
 
         // No idea what the path is
         Log.d(TAG, "Unknown path: " + path);
-        wrapper.setState(DataWrapper.State.LOADING);
+        wrapper.setState(DataWrapper.State.EMPTY);
     }
 
     @Override
     public void success(Browse browse, Response response) {
+        Activity activity = getActivity();
+        if (activity==null) return;
+
         int count = processBrowse(browse);
         if (count==0) wrapper.setState(DataWrapper.State.EMPTY);
         else wrapper.setState(DataWrapper.State.DONE);
@@ -96,9 +103,13 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
 
     @Override
     public void failure(RetrofitError retrofitError) {
-        Log.d(TAG, "Failure callback " + retrofitError);
+        Activity activity = getActivity();
+        if (activity==null) return;
+
+        String msg = ApiError.getErrorMessage(retrofitError);
+        Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
         wrapper.setState(DataWrapper.State.EMPTY);
-        adapter.notifyDataSetChanged();
+        Log.d(TAG, msg);
     }
 
     private int processBrowse(Browse browse) {
@@ -107,7 +118,16 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
         if (categories==null || categories.size()<1) return(0);
         Category category = categories.get(0);
         if (category==null) return(0);
+
+        // Add straight products
         int count = adapter.fill(category.getProduct());
+
+        // Add promos (in bundle)
+        List<Category> promos = category.getPromoCategory();
+        if (promos!=null) {
+            for(Category promo : promos)
+                count += adapter.fill(promo.getProduct());
+        }
         return(count);
     }
 

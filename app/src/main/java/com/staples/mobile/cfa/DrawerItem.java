@@ -17,7 +17,8 @@ public class DrawerItem {
         ACCOUNT   (2, R.layout.drawer_account),  // Account fragment in menu
         BACKTOTOP (3, R.layout.drawer_fragment), // Back button in browse
         STACK     (4, R.layout.drawer_stack),    // Breadcrumb in browse
-        CATEGORY  (5, R.layout.drawer_category); // Item in browse
+        CATEGORY  (5, R.layout.drawer_category), // Item in browse
+        PROFILE   (6, R.layout.drawer_fragment);
 
         public int viewType;
         public int layoutId;
@@ -49,7 +50,7 @@ public class DrawerItem {
         this(type, context, iconId, titleId, null);
     }
 
-    public DrawerItem(Type type, Context context, int iconId, int titleId, Class<? extends Fragment> fragmentClass) {
+    public DrawerItem(Type type, Context context, int iconId, int titleId, Class<? extends BaseFragment> fragmentClass) {
         this.type = type;
         if (context!=null) {
             Resources resources = context.getResources();

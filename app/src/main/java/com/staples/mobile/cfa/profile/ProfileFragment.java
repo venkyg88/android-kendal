@@ -1,5 +1,6 @@
 package com.staples.mobile.cfa.profile;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -7,103 +8,140 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.common.access.Access;
+import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.*;
 
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
-public class ProfileFragment extends Fragment implements Callback<MemberDetail>, View.OnClickListener{
+public class ProfileFragment extends BaseFragment implements ProfileDetails.ProfileRefreshCallback, View.OnClickListener{
     private static final String TAG = "ProfileFragment";
 
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
-    public static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
-    //    public static final String CLIENT_ID = "JxP9wlnIfCSeGc9ifRAAGku7F4FSdErd"; // a client_id that works with prod
+    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
     private static final String LOCALE = "en_US";
 
     private EasyOpenApi easyOpenApi;
     Button shippingBtn;
     Button ccBtn;
+    private LinearLayoutWithProgressOverlay profileLayout;
+    Activity activity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
 
         Log.d(TAG, "onCreateView()");
+        activity = getActivity();
         View view = inflater.inflate(R.layout.profile_fragment, container, false);
+        profileLayout = (LinearLayoutWithProgressOverlay) view.findViewById(R.id.profile_fragment_content);
+        profileLayout.setCartProgressOverlay(view.findViewById(R.id.profile_progress_overlay));
 
         shippingBtn = (Button) view.findViewById(R.id.addShippingBtn);
         ccBtn = (Button) view.findViewById(R.id.addCCBtn);
         shippingBtn.setOnClickListener(this);
         ccBtn.setOnClickListener(this);
 
-        easyOpenApi = Access.getInstance().getEasyOpenApi(true);
-        easyOpenApi.getMemberProfile(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, this);
-        easyOpenApi.getMemberAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, this);
-        easyOpenApi.getMemberCreditCardDetails(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, this);
+        showProgressIndicator();
+        new ProfileDetails().refreshProfile(this);
 
         return (view);
     }
 
-    @Override
-    public void success(MemberDetail memberDetail, Response response) {
-        int code = response.getStatus();
-        Member member = memberDetail.getMember().get(0);
-        MemberObject.setMember(member);
+    /** implements ProfileDetails.ProfileRefreshCallback */
+    public void onProfileRefresh(Member member) {
+        hideProgressIndicator();
         if (member==null) return;
 
         String email = member.getEmailAddress();
         String userName = member.getUserName();
 
         if (email!=null)
-            ((EditText) getView().findViewById(R.id.emailProfile)).setText(email);
+            ((TextView) getView().findViewById(R.id.emailProfile)).setText(email);
         if (userName!=null)
-            ((EditText) getView().findViewById(R.id.userNameProfile)).setText(userName);
+            ((TextView) getView().findViewById(R.id.userNameProfile)).setText(userName);
 
         List<Address> addresses = member.getAddress();
         if (addresses!=null) {
+            int addressCount = addresses.size();
             Address address = addresses.get(0);
             if (address != null) {
                 String tmpAddress = address.getAddress1() + " " + address.getCity() + " " + address.getState() + " " + address.getZipcode();
-                ((EditText) getView().findViewById(R.id.addressET)).setText(tmpAddress);
+                ((TextView) getView().findViewById(R.id.addressET)).setText(tmpAddress);
+                if(addressCount > 1) {
+                    shippingBtn.setText(addressCount-1 + " more");
+                }
+                else {
+                    shippingBtn.setText("Add");
+                }
             }
         }
 
         List<CCDetails> creditCards = member.getCreditCard();
         if(creditCards !=null) {
+            int creditCardCount = creditCards.size();
             CCDetails creditCard = creditCards.get(0);
             if (creditCard != null) {
-                String tmpCreditCard =  creditCard.getCardNumber() + " " + creditCard.getCardType();
-                ((EditText) getView().findViewById(R.id.ccET)).setText(tmpCreditCard);
+                String cardNumber;
+                if (creditCard.getCardNumber().length() > 4) {
+                    cardNumber = creditCard.getCardNumber().substring(creditCard.getCardNumber().length() - 4);
+                } else {
+                    cardNumber = creditCard.getCardNumber();
+                }
+                String tmpCreditCard =  cardNumber + " " + creditCard.getCardType();
+                ((TextView) getView().findViewById(R.id.ccET)).setText(tmpCreditCard);
+                if(creditCardCount > 1) {
+                    ccBtn.setText(creditCardCount-1 + " more");
+                }
+                else {
+                    ccBtn.setText("Add");
+                }
             }
         }
     }
 
-    @Override
-    public void failure(RetrofitError retrofitError) {
-        Log.i("Fail message when getting member details", " " + retrofitError.getMessage());
-        Log.i("URl used to get member details", " " + retrofitError.getUrl());
+    private void showProgressIndicator() {
+        profileLayout.getProgressIndicator().showProgressIndicator();
     }
+
+    private void hideProgressIndicator() {
+        profileLayout.getProgressIndicator().hideProgressIndicator();
+    }
+
 
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.addShippingBtn:
-                Fragment shippingFragment = Fragment.instantiate(getActivity(), ShippingFragment.class.getName());
-                ((MainActivity)getActivity()).navigateToFragment(shippingFragment);
-                break;
+                if(ProfileDetails.hasAddress()) {
+                    Fragment shippingListFragment = Fragment.instantiate(activity, ShippingListFragment.class.getName());
+                    ((MainActivity) activity).navigateToFragment(shippingListFragment);
+                    break;
+                }
+                else{
+                    Fragment shippingFragment = Fragment.instantiate(activity, ShippingFragment.class.getName());
+                    ((MainActivity) activity).navigateToFragment(shippingFragment);
+                    break;
+                }
+
+
             case R.id.addCCBtn:
-                Fragment ccFragment = Fragment.instantiate(getActivity(), CreditCardFragment.class.getName());
-                ((MainActivity)getActivity()).navigateToFragment(ccFragment);
-                break;
+                if(ProfileDetails.hasPaymentMethod()) {
+                    Fragment cardListFragment = Fragment.instantiate(activity, CreditCardListFragment.class.getName());
+                    ((MainActivity) activity).navigateToFragment(cardListFragment);
+                    break;
+                }
+                else{
+                    Fragment cardFragment = Fragment.instantiate(activity, CreditCardFragment.class.getName());
+                    ((MainActivity) activity).navigateToFragment(cardFragment);
+                    break;
+                }
         }
     }
 }

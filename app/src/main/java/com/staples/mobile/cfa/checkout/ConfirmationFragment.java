@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.R;
+import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
@@ -50,7 +51,7 @@ import retrofit.client.Response;
 //import com.staples.mobile.common.access.easyopen.model.cart.OrderStatusContents;
 
 
-public class ConfirmationFragment extends Fragment implements View.OnClickListener {
+public class ConfirmationFragment extends BaseFragment implements View.OnClickListener {
     private static final String TAG = ConfirmationFragment.class.getSimpleName();
 
     private static final String RECOMMENDATION = "v1";
@@ -72,7 +73,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
 
     // saving around Activity object since getActivity() returns null after user navigates away from
     // fragment, but api call may still be returning
-    private Activity activity;
+    private MainActivity activity;
 
     private LinearLayoutWithProgressOverlay confirmationLayout;
     private TextView orderNumberVw;
@@ -103,11 +104,26 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
     OrderStatusListener orderStatusListener;
 
 
+    /**
+     * Create a new instance of ConfirmationFragment that will be initialized
+     * with the given arguments.
+     */
+    public static ConfirmationFragment newInstance(String orderId, String orderNumber) {
+        ConfirmationFragment f = new ConfirmationFragment();
+        Bundle args = new Bundle();
+        if (orderNumber != null) {
+            args.putString(ConfirmationFragment.BUNDLE_PARAM_ORDERID, orderId);
+            args.putString(ConfirmationFragment.BUNDLE_PARAM_ORDERNUMBER, orderNumber);
+        }
+        f.setArguments(args);
+        return f;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
 
-        activity = getActivity();
+        activity = (MainActivity)getActivity();
 
         // inflate and get child views
         View view = inflater.inflate(R.layout.confirmation_fragment, container, false);
@@ -151,6 +167,15 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
         return view;
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // update action bar
+        activity.showOrderConfirmationActionBarEntities();
+        activity.setActionBarTitle(getResources().getString(R.string.order_confirmation_title));
+    }
 
     @Override
     public void onClick(View view) {

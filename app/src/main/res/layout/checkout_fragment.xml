@@ -12,124 +12,56 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/checkout_title"
-        android:layout_width="match_parent"
-        style="@style/CartHeader"
-        android:textSize="24sp"
-        android:text="@string/checkout_title"/>
 
-    <!-- scrollable contents -->
+<!-- scrollable contents -->
     <ScrollView
+        android:id="@+id/checkout_entry_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="#ffffff">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="6dp">
-            <!-- Shipping address -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="8dp"
-                >
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-                    <TextView
-                        style="@style/CheckoutSubheading"
-                        android:text="@string/shipping_addr"/>
-                    <TextView
-                        android:id="@+id/checkout_shipping_addr"
-                        style="@style/CheckoutText"/>
-                </LinearLayout>
-                <ImageView
-                    android:id="@+id/shipping_addr_add"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="4dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/more_arrow"/>
-            </LinearLayout>
-            <!-- Payment Method -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="16dp"
-                >
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-                    <TextView
-                        style="@style/CheckoutSubheading"
-                        android:text="@string/payment_method"/>
-                    <TextView
-                        android:id="@+id/checkout_payment_method"
-                        style="@style/CheckoutText"/>
-                </LinearLayout>
-                <ImageView
-                    android:id="@+id/payment_method_add"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="4dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/more_arrow"/>
-            </LinearLayout>
-            <!-- Billing address -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="16dp"
-                >
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-                    <TextView
-                        style="@style/CheckoutSubheading"
-                        android:text="@string/billing_addr"/>
-                    <TextView
-                        android:id="@+id/checkout_billing_addr"
-                        style="@style/CheckoutText"/>
-                </LinearLayout>
-                <ImageView
-                    android:id="@+id/billing_addr_add"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="4dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/more_arrow"/>
-            </LinearLayout>
-        </LinearLayout>
+        <!--dynamically add content here-->
     </ScrollView>
 
-    <!-- delivery range -->
+    <!--&lt;!&ndash; delivery range &ndash;&gt;-->
+    <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="#e6e6e6" >-->
+        <!--<TextView-->
+            <!--style="@style/CheckoutFooter"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:text="@string/delivery_range"-->
+            <!--/>-->
+        <!--<TextView-->
+            <!--android:id="@+id/checkout_delivery_range"-->
+            <!--style="@style/CheckoutFooter"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--/>-->
+    <!--</RelativeLayout>-->
+
+    <!-- item subtotal -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#e6e6e6" >
+        android:background="#cccccc" >
         <TextView
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
             android:layout_alignParentLeft="true"
-            android:text="@string/delivery_range"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            android:text="@string/item_subtotal"
             />
         <TextView
-            android:id="@+id/checkout_delivery_range"
+            android:id="@+id/checkout_item_subtotal"
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
             android:layout_alignParentRight="true"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
             />
     </RelativeLayout>
 
@@ -144,6 +76,8 @@
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
             android:layout_alignParentLeft="true"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
             android:text="@string/coupons_rewards"
             />
         <TextView
@@ -151,12 +85,14 @@
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
             android:layout_alignParentRight="true"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
             android:text="TBD"
             android:textColor="#FF0000"
             />
     </RelativeLayout>
 
-    <!-- shipping -->
+    <!-- shipping charge -->
     <RelativeLayout
         android:id="@+id/co_shipping_layout"
         android:layout_width="match_parent"
@@ -192,6 +128,8 @@
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
             android:layout_alignParentLeft="true"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
             android:text="@string/tax"
             />
         <TextView
@@ -199,6 +137,8 @@
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
             android:layout_alignParentRight="true"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
             />
     </RelativeLayout>
 

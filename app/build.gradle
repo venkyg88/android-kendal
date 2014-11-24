@@ -7,7 +7,7 @@ android {
 
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -23,8 +23,12 @@ android {
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/license.txt'
         exclude 'META-INF/dependencies.txt'
-        exclude 'META-INF/LGPL2.1'    }
+        exclude 'META-INF/LGPL2.1'
+    }
+}
 
+configurations.all {
+    exclude module: 'gson'
 }
 
 dependencies {
@@ -33,13 +37,12 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:+'
     compile 'com.squareup.okhttp:okhttp-urlconnection:+'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
-    compile('com.squareup.retrofit:retrofit:1.6.1') {
-        exclude module: 'gson'
-    }
+    compile 'com.squareup.retrofit:retrofit:1.6.1'
     compile 'com.squareup.retrofit:converter-jackson:1.6.1'
     compile 'com.squareup.picasso:picasso:2.3.4'
+    compile 'com.google.android.gms:play-services:6.1.71'
     //androidTestCompile ('com.jayway.android.robotium:robotium-solo:5.2+')
-    androidTestCompile "org.mockito:mockito-core:1.+"
+    //androidTestCompile "org.mockito:mockito-core:1.+"
     androidTestCompile 'org.hamcrest:hamcrest-integration:1.1'
     androidTestCompile 'org.hamcrest:hamcrest-core:1.1'
     androidTestCompile 'org.hamcrest:hamcrest-library:1.1'
@@ -63,6 +66,7 @@ dependencies {
         exclude module: 'wagon-http-lightweight'
         exclude module: 'wagon-provider-api'
     }
+    compile project(':..:android-common:common')
 }
 
 task showTest {
