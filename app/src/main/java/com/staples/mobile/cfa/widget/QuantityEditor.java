@@ -35,7 +35,7 @@ public class QuantityEditor extends FrameLayout {
 
     private static final String TAG = QuantityEditor.class.getSimpleName();
 
-    public static final int DEFAULT_MAX_SPINNER_VALUE = 5;
+    public static final int DEFAULT_MAX_SPINNER_VALUE = 9;
     public static final float DEFAULT_TEXT_SIZE = 18;
 
     private Context context;
@@ -77,6 +77,7 @@ public class QuantityEditor extends FrameLayout {
         View view = layoutInflater.inflate(R.layout.quantity_editor, this);
         editText = (EditTextWithImeBackEvent)view.findViewById(R.id.cartitem_qty_edittext);
         spinner = (Spinner)view.findViewById(R.id.cartitem_qty_spinner);
+        editText.setSelectAllOnFocus(true);
 
 
         // notify qty change listener when soft keyboard action completed
@@ -122,6 +123,7 @@ public class QuantityEditor extends FrameLayout {
         if (qty <= maxSpinnerValue) {
             setQtyValueDelayed(qty); // this will revert back to spinner mode and take care of notifications
         } else {
+            removeEditTextFocusDelayed();
             // notify listener of change
             if (qtyChangeListener != null) {
                 qtyChangeListener.onQtyChange(QuantityEditor.this, false);
@@ -134,10 +136,20 @@ public class QuantityEditor extends FrameLayout {
     private void setQtyValueDelayed(final int qty) {
         postDelayed(new Runnable() {
             @Override public void run() {
-                setQtyValue(qty); // this will revert back to spinner mode and take care of notifications
+                setQtyValue(qty, true); // this will switch to correct mode and take care of notifications
             }
         }, 10);
     }
+
+    /** delaying the call to clear focus fixes some keyboard issues */
+    private void removeEditTextFocusDelayed() {
+        postDelayed(new Runnable() {
+            @Override public void run() {
+                editText.clearFocus(); // clearing focus so we can get select-all on next click
+            }
+        }, 300); // need this to be long enough to avoid interference with keyboard
+    }
+
 
     /** returns qty value from appropriate widget */
     public int getQtyValue(int defaultValue) {
@@ -162,6 +174,11 @@ public class QuantityEditor extends FrameLayout {
 
     /** sets qty value in appropriate widget */
     public void setQtyValue(int qty) {
+        setQtyValue(qty, false);
+    }
+
+        /** sets qty value in appropriate widget */
+    private void setQtyValue(int qty, boolean showKeyboardOnTransition) {
         String strQty = ""+qty;
         int spinnerPosition = spinnerAdapter.getPosition(strQty);
 
@@ -169,19 +186,29 @@ public class QuantityEditor extends FrameLayout {
         if (spinnerPosition >= 0) {
             if (!inSpinnerMode) {
                 inSpinnerMode = true;
-                spinner.setVisibility(View.VISIBLE);
-                editText.setVisibility(View.GONE);
+                postDelayed(new Runnable() {
+                    @Override public void run() {
+                        spinner.setVisibility(View.VISIBLE);
+                        editText.clearFocus();
+                        editText.setVisibility(View.GONE);
+                    }
+                }, 20);
             }
             spinner.setSelection(spinnerPosition);
         } else {
             editText.setText(strQty);
-            editText.setSelection(0, editText.length());
             if (inSpinnerMode) {
                 inSpinnerMode = false;
                 spinner.setVisibility(View.GONE);
                 editText.setVisibility(View.VISIBLE);
-                editText.requestFocus();
-                showSoftKeyboard();
+                if (showKeyboardOnTransition) {
+                    editText.requestFocus();
+                    showSoftKeyboard();
+                } else {
+                    editText.clearFocus(); // clearing focus so we can get select-all on next click
+                }
+            } else {
+                removeEditTextFocusDelayed();
             }
         }
     }
