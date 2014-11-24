@@ -33,7 +33,7 @@ public class MainApplication
 
         Thread.setDefaultUncaughtExceptionHandler((Thread.UncaughtExceptionHandler) this);
 
-        lmsManager = new LmsManager();
+        lmsManager = new LmsManager(this);
         lmsManager.getLms(this);
 
         /* @@@ STUBBED
