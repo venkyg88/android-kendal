@@ -35,7 +35,7 @@ public class QuantityEditor extends FrameLayout {
 
     private static final String TAG = QuantityEditor.class.getSimpleName();
 
-    public static final int DEFAULT_MAX_SPINNER_VALUE = 5;
+    public static final int DEFAULT_MAX_SPINNER_VALUE = 9;
     public static final float DEFAULT_TEXT_SIZE = 18;
 
     private Context context;
@@ -45,6 +45,7 @@ public class QuantityEditor extends FrameLayout {
     private NumericSpinnerAdapter spinnerAdapter;
     private int maxSpinnerValue;
     private float textSize = DEFAULT_TEXT_SIZE;
+    boolean inSpinnerMode = true;
 
     public QuantityEditor(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -76,33 +77,21 @@ public class QuantityEditor extends FrameLayout {
         View view = layoutInflater.inflate(R.layout.quantity_editor, this);
         editText = (EditTextWithImeBackEvent)view.findViewById(R.id.cartitem_qty_edittext);
         spinner = (Spinner)view.findViewById(R.id.cartitem_qty_spinner);
+        editText.setSelectAllOnFocus(true);
 
-        // this at least helps to select all of the text (e.g. on 2nd click), nothing seems to be foolproof
-        editText.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((EditText)view).selectAll();
-            }
-        });
 
         // notify qty change listener when soft keyboard action completed
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (qtyChangeListener != null) {
-                    qtyChangeListener.onQtyChange(QuantityEditor.this, false);
-                }
+            @Override public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                respondToEditTextChange();
                 return false;
             }
         });
 
         // notify qty change listener when soft keyboard dismissed via back button
         editText.setOnImeBackListener(new EditTextWithImeBackEvent.EditTextImeBackListener() {
-            @Override
-            public void onImeBack(EditTextWithImeBackEvent view, String text) {
-                if (qtyChangeListener != null) {
-                    qtyChangeListener.onQtyChange(QuantityEditor.this, false);
-                }
+            @Override public void onImeBack(EditTextWithImeBackEvent view, String text) {
+                respondToEditTextChange();
             }
         });
 
@@ -129,10 +118,43 @@ public class QuantityEditor extends FrameLayout {
     }
 
 
+    private void respondToEditTextChange() {
+        final int qty = getQtyValue(1);
+        if (qty <= maxSpinnerValue) {
+            setQtyValueDelayed(qty); // this will revert back to spinner mode and take care of notifications
+        } else {
+            removeEditTextFocusDelayed();
+            // notify listener of change
+            if (qtyChangeListener != null) {
+                qtyChangeListener.onQtyChange(QuantityEditor.this, false);
+            }
+        }
+    }
+
+    /** delaying the call to set qty fixes some keyboard issues that occur when trying to
+     * set qty immediately in response to change events */
+    private void setQtyValueDelayed(final int qty) {
+        postDelayed(new Runnable() {
+            @Override public void run() {
+                setQtyValue(qty, true); // this will switch to correct mode and take care of notifications
+            }
+        }, 10);
+    }
+
+    /** delaying the call to clear focus fixes some keyboard issues */
+    private void removeEditTextFocusDelayed() {
+        postDelayed(new Runnable() {
+            @Override public void run() {
+                editText.clearFocus(); // clearing focus so we can get select-all on next click
+            }
+        }, 300); // need this to be long enough to avoid interference with keyboard
+    }
+
+
     /** returns qty value from appropriate widget */
     public int getQtyValue(int defaultValue) {
         String value;
-        if (isSpinnerVisible()) {
+        if (inSpinnerMode) {
             value = spinnerAdapter.getItem(spinner.getSelectedItemPosition());
         } else {
             value = editText.getText().toString();
@@ -152,18 +174,42 @@ public class QuantityEditor extends FrameLayout {
 
     /** sets qty value in appropriate widget */
     public void setQtyValue(int qty) {
+        setQtyValue(qty, false);
+    }
+
+        /** sets qty value in appropriate widget */
+    private void setQtyValue(int qty, boolean showKeyboardOnTransition) {
         String strQty = ""+qty;
         int spinnerPosition = spinnerAdapter.getPosition(strQty);
 
         // if specified value exists in the spinner, use the spinner, otherwise the EditText
         if (spinnerPosition >= 0) {
-            spinner.setVisibility(View.VISIBLE);
-            editText.setVisibility(View.GONE);
+            if (!inSpinnerMode) {
+                inSpinnerMode = true;
+                postDelayed(new Runnable() {
+                    @Override public void run() {
+                        spinner.setVisibility(View.VISIBLE);
+                        editText.clearFocus();
+                        editText.setVisibility(View.GONE);
+                    }
+                }, 20);
+            }
             spinner.setSelection(spinnerPosition);
         } else {
-            spinner.setVisibility(View.GONE);
-            editText.setVisibility(View.VISIBLE);
             editText.setText(strQty);
+            if (inSpinnerMode) {
+                inSpinnerMode = false;
+                spinner.setVisibility(View.GONE);
+                editText.setVisibility(View.VISIBLE);
+                if (showKeyboardOnTransition) {
+                    editText.requestFocus();
+                    showSoftKeyboard();
+                } else {
+                    editText.clearFocus(); // clearing focus so we can get select-all on next click
+                }
+            } else {
+                removeEditTextFocusDelayed();
+            }
         }
     }
 
@@ -174,20 +220,27 @@ public class QuantityEditor extends FrameLayout {
 
 
     public void hideSoftKeyboard() {
-        if (isEditTextVisible()) {
+        if (!inSpinnerMode) {
             InputMethodManager keyboard = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
             keyboard.hideSoftInputFromWindow(editText.getWindowToken(), 0);
         }
     }
 
-
-    private boolean isEditTextVisible() {
-        return View.VISIBLE == editText.getVisibility();
+    public void showSoftKeyboard() {
+        if (!inSpinnerMode) {
+            InputMethodManager keyboard = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            keyboard.showSoftInput(editText, 0);
+        }
     }
 
-    private boolean isSpinnerVisible() {
-        return View.VISIBLE == spinner.getVisibility();
+    public boolean isInSpinnerMode() {
+        return inSpinnerMode;
     }
+
+    public void setInSpinnerMode(boolean inSpinnerMode) {
+        this.inSpinnerMode = inSpinnerMode;
+    }
+
 
     // --------------------------------------------- //
     // ------------- internal classes -------------- //
@@ -200,18 +253,15 @@ public class QuantityEditor extends FrameLayout {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             if (view==null) return; // safety for Robolectric tests
 
-            boolean validSpinnerValue = true;
-
-            // if selection out of range, call setQtyValue to revert to editText widget
+            // if selection out of range, call setQtyValueDelayed to revert to editText widget
             String value = ((TextView) view).getText().toString();
             if (value != null && value.endsWith("+")) {
-                validSpinnerValue = false;
-                setQtyValue(maxSpinnerValue + 1);
-            }
-
-            // notify listener of item selection
-            if (qtyChangeListener != null) {
-                qtyChangeListener.onQtyChange(QuantityEditor.this, validSpinnerValue);
+                setQtyValueDelayed(maxSpinnerValue + 1); // this will transition out of spinner mode and take care of notifications
+            } else {
+                // notify listener of item selection
+                if (qtyChangeListener != null) {
+                    qtyChangeListener.onQtyChange(QuantityEditor.this, true);
+                }
             }
         }
 
