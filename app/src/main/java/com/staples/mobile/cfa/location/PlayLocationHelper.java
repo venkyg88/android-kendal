@@ -1,4 +1,4 @@
-package com.staples.mobile.cfa.location.LatLngService;
+package com.staples.mobile.cfa.location;
 
 import android.content.Context;
 import android.location.Location;
@@ -9,25 +9,26 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.model.LatLng;
+import com.staples.mobile.cfa.location.LocationService;
 
 /**
  * Created by parve002 on 11/24/14.
  */
-public class LatLngService implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
+public class PlayLocationHelper implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
 
     Context context;
     LocationClient locationClient;
     Location currentLocation;
-    public LatLngServiceCallBack latLngServiceCallBack;
+    public LocationService userLocationService;
 
     /**
      * This constructor initiates fetching the location.
      * @param context is the Context of the caller.
-     * @param latLngServiceCallBack is the reference to the caller.
+     * @param userLocationService is the reference to the caller.
      */
-    public LatLngService(Context context, LatLngServiceCallBack latLngServiceCallBack){
+    public PlayLocationHelper(Context context, LocationService userLocationService){
 
-        this.latLngServiceCallBack = latLngServiceCallBack;
+        this.userLocationService = userLocationService;
         this.context = context;
         this.locationClient = new LocationClient(context, this, this);
 
@@ -46,12 +47,12 @@ public class LatLngService implements GooglePlayServicesClient.ConnectionCallbac
     private void locationReceived(Location location) {
 
         if (location != null) {
-            if (this.latLngServiceCallBack == null) {
+            if (this.userLocationService == null) {
                 //TODO: Throw error - latLngServiceCallBack is null
             } else {
                 this.currentLocation = location;
                 LatLng newLatLng = new LatLng(this.currentLocation.getLatitude(), this.currentLocation.getLongitude());
-                this.latLngServiceCallBack.onLatLngServiceCallBack(newLatLng);
+                this.userLocationService.onLatLngServiceReceived(newLatLng);
             }
         }
     }

@@ -20,8 +20,8 @@ import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.checkout.ConfirmationFragment;
-import com.staples.mobile.cfa.location.UserLatLngCallBack;
-import com.staples.mobile.cfa.location.UserLocationService;
+
+import com.staples.mobile.cfa.location.LocationService;
 
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
@@ -39,7 +39,7 @@ import com.staples.mobile.common.access.lms.LmsManager;
 
 
 public class MainActivity extends Activity
-                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener, UserLatLngCallBack {
+                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener, LocationService.UserLatLngCallBack {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int SURRENDER_TIMEOUT = 5000;
@@ -102,9 +102,9 @@ public class MainActivity extends Activity
         boolean freshStart = (bundle == null);
         prepareMainScreen(freshStart);
 
-        String zipCode = UserLocationService.getCachedZipCode(this.getApplicationContext());
+        String zipCode = LocationService.getCachedZipCode(this.getApplicationContext());
         if (zipCode == null) {
-            UserLocationService userLocationService = new UserLocationService(this.getApplicationContext(), this);
+            LocationService userLocationService = new LocationService(this.getApplicationContext(), this);
             userLocationService.getUserLocation();
         }
         loginHelper = new LoginHelper(this);
@@ -475,7 +475,7 @@ public class MainActivity extends Activity
     //UserLocationService callback
     @Override
     public void onUserLatLngCallBack(LatLng latLng) {
-        if (UserLocationService.setCachedUserLocation(this.getApplicationContext(), latLng)){
+        if (LocationService.setCachedUserLocation(this.getApplicationContext(), latLng)){
         //TODO: Work with Steve to incorporate flow.
         }
     }
