@@ -4,14 +4,10 @@
     android:versionName="Kendall">
     <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="21"/>
     <uses-permission android:name="android.permission.INTERNET"/>
-<<<<<<< HEAD
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-=======
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
->>>>>>> Added user permissions for location access.
     <application
 		android:name=".MainApplication"
         android:allowBackup="true"
