@@ -130,6 +130,8 @@ public class UserLocationService implements LatLngServiceCallBack{
         return null;
     }
 
+    // LatLngService callback
+
     @Override
     public void onLatLngServiceCallBack(LatLng latLng) {
         if (this.userLatLngCallBack != null) {

@@ -20,7 +20,11 @@ public class LatLngService implements GooglePlayServicesClient.ConnectionCallbac
     Location currentLocation;
     public LatLngServiceCallBack latLngServiceCallBack;
 
-
+    /**
+     * This constructor initiates fetching the location.
+     * @param context is the Context of the caller.
+     * @param latLngServiceCallBack is the reference to the caller.
+     */
     public LatLngService(Context context, LatLngServiceCallBack latLngServiceCallBack){
 
         this.latLngServiceCallBack = latLngServiceCallBack;
@@ -35,7 +39,10 @@ public class LatLngService implements GooglePlayServicesClient.ConnectionCallbac
         }
     }
 
-
+    /**
+     * This function will be the only one to execute the call back. The Locations received by any mechanism must call this function,
+     * @param location is the current location of the user.
+     */
     private void locationReceived(Location location) {
 
         if (location != null) {
@@ -49,6 +56,8 @@ public class LatLngService implements GooglePlayServicesClient.ConnectionCallbac
         }
     }
 
+
+// GooglePlayServicesClient Call backs
 
     public void onConnected(Bundle bundle) {
 
