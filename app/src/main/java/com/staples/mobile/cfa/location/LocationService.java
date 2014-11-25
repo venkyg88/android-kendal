@@ -6,8 +6,6 @@ import android.location.Address;
 import android.location.Geocoder;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.staples.mobile.cfa.location.LatLngService.LatLngService;
-import com.staples.mobile.cfa.location.LatLngService.LatLngServiceCallBack;
 
 import java.util.List;
 import java.util.Locale;
@@ -18,7 +16,7 @@ import java.util.Locale;
  */
 
 
-public class UserLocationService implements LatLngServiceCallBack{
+public class LocationService {
 
     private UserZipCodeCallBack userZipCodeCallBack;
     private UserLatLngCallBack userLatLngCallBack;
@@ -26,23 +24,31 @@ public class UserLocationService implements LatLngServiceCallBack{
     public static final String PREFS_NAME = "MyPrefsFile";
     Context context;
 
+    public interface UserZipCodeCallBack {
+        void onUserZipCodeCallBack(String zipCode);
+    }
+
+    public interface UserLatLngCallBack {
+        void onUserLatLngCallBack(LatLng latLng);
+    }
+
     /**
-     * Use this constructor for preparing UserLocationService to request an on demand zipcode of the user.
+     * Use this constructor for preparing LocationService to request an on demand zipcode of the user.
      * @param context is the current Context of the caller.
      * @param userZipCodeCallBack is reference to caller.
      */
-    public UserLocationService(Context context, UserZipCodeCallBack userZipCodeCallBack) {
+    public LocationService(Context context, UserZipCodeCallBack userZipCodeCallBack) {
         this.context = context;
         this.userZipCodeCallBack = userZipCodeCallBack;
         this.userLatLngCallBack = null;
     }
 
     /**
-     * Use this constructor for preparing UserLocationService to request an on demand Latitude and Longitude of the user.
+     * Use this constructor for preparing LocationService to request an on demand Latitude and Longitude of the user.
      * @param context is the current Context of the caller.
      * @param userLatLngCallBack is reference to caller.
      */
-    public UserLocationService( Context context, UserLatLngCallBack userLatLngCallBack) {
+    public LocationService( Context context, UserLatLngCallBack userLatLngCallBack) {
         this.context = context;
         this.userZipCodeCallBack = null;
         this.userLatLngCallBack = userLatLngCallBack;
@@ -53,7 +59,7 @@ public class UserLocationService implements LatLngServiceCallBack{
      * This function initiates an on demand location request of the User and returns 5 digit ZipCode string or LatLng Object based on the constructor used.
      */
     public void getUserLocation() {
-        LatLngService latLngService = new LatLngService(this.context, this);
+        PlayLocationHelper latLngService = new PlayLocationHelper(this.context, this);
     }
 
     /**
@@ -132,8 +138,7 @@ public class UserLocationService implements LatLngServiceCallBack{
 
     // LatLngService callback
 
-    @Override
-    public void onLatLngServiceCallBack(LatLng latLng) {
+    public void onLatLngServiceReceived(LatLng latLng) {
         if (this.userLatLngCallBack != null) {
             this.userLatLngCallBack.onUserLatLngCallBack(latLng);
         } else if (this.userZipCodeCallBack != null) {
