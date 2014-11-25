@@ -19,7 +19,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ProductCollection
+public class DailyDealProductCollection
         implements Callback<Browse> {
 
     private static final String TAG = "ProductCollection";
@@ -49,7 +49,7 @@ public class ProductCollection
 
     private List<Product> products;
 
-    public ProductCollection() {
+    public DailyDealProductCollection() {
 
         if (LOGGING) Log.v(TAG, "ProductCollection:ProductCollection():"
                         + " this[" + this + "]"
