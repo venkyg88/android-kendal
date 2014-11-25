@@ -58,10 +58,10 @@ public class UserLocationService implements LatLngServiceCallBack{
 
     /**
      * This function must only be used for setting user location during app launch. The LatLng and ZipCode(Obtained from geocoding LatLng) is added to SharedPreferences.
-     * @param currentLatLng is the Latitude and Longitude values obtained during app stepup.
      * @param context is the Context of the caller.
+     * @param currentLatLng is the Latitude and Longitude values obtained during app stepup.
      */
-    public static void setCachedUserLocation(LatLng currentLatLng, Context context) {
+    public static boolean setCachedUserLocation(Context context, LatLng currentLatLng) {
         SharedPreferences sharedPref = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         sharedPref.edit().putFloat("Latitude", (float) currentLatLng.latitude);
         sharedPref.edit().putFloat("Longitude", (float) currentLatLng.longitude);
@@ -73,6 +73,7 @@ public class UserLocationService implements LatLngServiceCallBack{
             sharedPref.edit().putString("ZipCode", zipcode);
         }
         sharedPref.edit().commit();
+        return true;
     }
 
 
@@ -106,8 +107,8 @@ public class UserLocationService implements LatLngServiceCallBack{
 
     /**
      * This function geocodes the input latitude and longitude into zipcode.
-     * @param latLng is the LatLng object to be geocoded.
      * @param context is the Context of the caller.
+     * @param latLng is the LatLng object to be geocoded.
      * @return 5 digit ZipCode if successfully geocoded else returns null.
      */
     private static String geoCodeLatLng(Context context, LatLng latLng) {

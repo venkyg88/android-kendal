@@ -3,6 +3,7 @@ package com.staples.mobile.cfa.location.LatLngService;
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -37,10 +38,11 @@ public class LatLngService implements GooglePlayServicesClient.ConnectionCallbac
 
     private void locationReceived(Location location) {
 
-        if (this.currentLocation != null) {
+        if (location != null) {
             if (this.latLngServiceCallBack == null) {
                 //TODO: Throw error - latLngServiceCallBack is null
             } else {
+                this.currentLocation = location;
                 LatLng newLatLng = new LatLng(this.currentLocation.getLatitude(), this.currentLocation.getLongitude());
                 this.latLngServiceCallBack.onLatLngServiceCallBack(newLatLng);
             }
@@ -59,11 +61,11 @@ public class LatLngService implements GooglePlayServicesClient.ConnectionCallbac
     }
 
     public void onDisconnected() {
-
+        Log.i("onDisconnected","");
     }
 
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        Log.i("Error connecting","");
     }
 
 }
