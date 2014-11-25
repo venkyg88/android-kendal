@@ -472,6 +472,7 @@ public class MainActivity extends Activity
         }
     }
 
+    //UserLocationService callback
     @Override
     public void onUserLatLngCallBack(LatLng latLng) {
         if (UserLocationService.setCachedUserLocation(this.getApplicationContext(), latLng)){
