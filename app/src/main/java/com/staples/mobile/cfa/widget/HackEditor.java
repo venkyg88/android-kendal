@@ -83,6 +83,7 @@ public class HackEditor extends EditText implements View.OnClickListener {
             setFocusable(true);
             setFocusableInTouchMode(true);
             requestFocus();
+            selectAll();
             return;
         }
     }

@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa;
 
 import android.app.Activity;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -259,6 +260,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse>{
                     String title = description.getText();
                     if (title == null) title = description.getDescription();
                     if (title == null) title = description.getName();
+                    title = Html.fromHtml(title).toString();
                     DrawerItem item = new DrawerItem(DrawerItem.Type.CATEGORY, activity, 0, 0);
                     item.title = title;
                     item.path = category.getCategoryUrl();

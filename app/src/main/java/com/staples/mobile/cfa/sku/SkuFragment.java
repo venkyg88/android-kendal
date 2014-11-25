@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -475,7 +476,8 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
             }
 
             // Add info
-            ((TextView) summary.findViewById(R.id.title)).setText(product.getProductName());
+            String name = Html.fromHtml(product.getProductName()).toString();
+            ((TextView) summary.findViewById(R.id.title)).setText(name);
             ((TextView) summary.findViewById(R.id.numbers)).setText(formatNumbers(product));
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
 
@@ -543,7 +545,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
             parent.addView(view);
 
             // Set items
-            String created = formatTimestamp(item.getCreated_datetime());
+            String created = formatTimestamp(item.getCreatedDatetime());
             if (created != null)
                 ((TextView) view.findViewById(R.id.sku_review_date)).setText(created);
             else ((TextView) view.findViewById(R.id.sku_review_date)).setVisibility(View.GONE);
