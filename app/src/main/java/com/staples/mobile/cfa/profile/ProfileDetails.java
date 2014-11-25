@@ -6,6 +6,7 @@ import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
@@ -195,5 +196,29 @@ public class ProfileDetails implements Callback<MemberDetail> {
             }
         }
         return false;
+    }
+
+    /** returns profile address matching specified addressId */
+    public static Address getAddress(String addressId) {
+        if (member != null && member.getAddress() != null) {
+            for (Address address : member.getAddress()) {
+                if (address.getAddressId().equals(addressId)) {
+                    return address;
+                }
+            }
+        }
+        return null;
+    }
+
+    /** returns profile payment method matching specified paymentMethodId */
+    public static CCDetails getPaymentMethod(String paymentMethodId) {
+        if (member != null && member.getCreditCard() != null) {
+            for (CCDetails creditCard : member.getCreditCard()) {
+                if (creditCard.getCreditCardId().equals(paymentMethodId)) {
+                    return creditCard;
+                }
+            }
+        }
+        return null;
     }
 }
