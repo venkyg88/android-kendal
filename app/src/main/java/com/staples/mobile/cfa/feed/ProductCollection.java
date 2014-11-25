@@ -71,7 +71,7 @@ public class ProductCollection
         public void onProductCollectionResult(ProductCollection.ProductContainer productContainer);
     }
 
-    public class ProductContainer {
+    public static class ProductContainer {
 
         public int recordSetCount;
 
