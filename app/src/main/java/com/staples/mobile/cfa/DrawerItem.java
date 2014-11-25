@@ -6,7 +6,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 
 public class DrawerItem {
     private static final String TAG = "DrawerItem";

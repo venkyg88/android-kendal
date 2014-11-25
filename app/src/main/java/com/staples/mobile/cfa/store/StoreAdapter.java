@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;

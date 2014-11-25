@@ -19,9 +19,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileDetails;
@@ -166,6 +167,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         });
         cartListVw = (ListView) view.findViewById(R.id.cart_list);
         cartListVw.setAdapter(cartAdapter);
+//        cartListVw.setOverScrollMode(View.OVER_SCROLL_NEVER); // need to disable over scroll to prevent bounce effect which messes up our scroll detection
         cartListVw.setOnScrollListener(new AbsListView.OnScrollListener() {
             int oldFirstVisibleItem = 0;
             int oldTop = 0;
@@ -177,7 +179,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
                 } else if (firstVisibleItem == oldFirstVisibleItem) {
                     if (oldTop - top > 5) {
                         onScrollDown();
-                    } else if (top - oldTop > 5) {
+                    } else if (top - oldTop > 5 && firstVisibleItem + visibleItemCount < totalItemCount) { // accounting for scroll bounce at the bottom
                         onScrollUp();
                     }
                 } else if (firstVisibleItem > oldFirstVisibleItem) {
@@ -190,10 +192,14 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
             }
 
             private void onScrollUp() {
-                cartShippingLayout.setVisibility(View.VISIBLE); // show math story
+                if (cartShippingLayout.getVisibility() != View.VISIBLE) {
+                    cartShippingLayout.setVisibility(View.VISIBLE); // show math story
+                }
             }
             private void onScrollDown() {
-                cartShippingLayout.setVisibility(View.GONE); // hide math story
+                if (cartShippingLayout.getVisibility() != View.GONE) {
+                    cartShippingLayout.setVisibility(View.GONE); // hide math story
+                }
             }
         });
 
@@ -235,7 +241,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();
             preTaxSubtotal = cart.getPreTaxTotal();
-            LmsManager lmsManager = new LmsManager();
+            LmsManager lmsManager = new LmsManager(MainApplication.application);
             Configurator configurator = lmsManager.getConfigurator();
             if (configurator != null) {
                 freeShippingThreshold = configurator.getPromotions().getFreeShippingThreshold().floatValue();
@@ -525,14 +531,24 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
                     // calculate expected delivery times
                     String leadTimeDescription = null;
+                    CartItem firstInGroupCartItem = null;
                     minExpectedBusinessDays = -1;
                     maxExpectedBusinessDays = -1;
                     for (int i = 0; i < listItems.size(); i++) {
                         CartItem cartItem = listItems.get(i);
+                        // if lead time different from previous item's lead time, set expected delivery info
                         if (cartItem.getLeadTimeDescription() != null  &&
                                 !cartItem.getLeadTimeDescription().equals(leadTimeDescription)) {
                             leadTimeDescription = cartItem.getLeadTimeDescription();
                             cartItem.setExpectedDelivery(leadTimeDescription);
+                            cartItem.setExpectedDeliveryItemQty(cartItem.getQuantity());
+                            firstInGroupCartItem = cartItem;
+                        } else {
+                            // since lead time same as previous, add item quantity to first cart item in group
+                            if (firstInGroupCartItem != null) {
+                                firstInGroupCartItem.setExpectedDeliveryItemQty(
+                                        firstInGroupCartItem.getExpectedDeliveryItemQty() + cartItem.getQuantity());
+                            }
                         }
                         if (minExpectedBusinessDays == -1 ||
                                 cartItem.getMinExpectedBusinessDays() < minExpectedBusinessDays) {

@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
@@ -45,13 +45,14 @@ public class MainActivity extends Activity
     private DrawerLayout drawerLayout;
     private View leftDrawerAction;
     private View leftDrawer;
+    private View homeIcon;
     private SearchBarView searchBar;
     private View searchBarIcon;
     private BadgeImageView cartIconAction;
     CartFragment cartFragment;
     private TextView titleVw;
     private TextView cartQtyVw;
-    private Button signInButton;
+    private Button checkoutSigninButton;
     private View closeButton;
 
     private DrawerItem homeDrawerItem;
@@ -138,13 +139,14 @@ public class MainActivity extends Activity
 
         // show standard entities
         leftDrawerAction.setVisibility(View.VISIBLE);
+        homeIcon.setVisibility(View.VISIBLE);
         searchBar.setVisibility(View.VISIBLE);
         searchBarIcon.setVisibility(View.VISIBLE);
         cartIconAction.setVisibility(View.VISIBLE);
 
         // hide non-standard entities
         cartQtyVw.setVisibility(View.GONE);
-        signInButton.setVisibility(View.GONE);
+        checkoutSigninButton.setVisibility(View.GONE);
         closeButton.setVisibility(View.GONE);
     }
 
@@ -153,10 +155,11 @@ public class MainActivity extends Activity
         leftDrawerAction.setVisibility(View.VISIBLE);
         cartQtyVw.setVisibility(View.VISIBLE);
         // hide unwanted entities
+        homeIcon.setVisibility(View.GONE);
         searchBar.setVisibility(View.GONE);
         searchBarIcon.setVisibility(View.GONE);
         cartIconAction.setVisibility(View.GONE);
-        signInButton.setVisibility(View.GONE);
+        checkoutSigninButton.setVisibility(View.GONE);
         closeButton.setVisibility(View.GONE);
     }
 
@@ -165,12 +168,13 @@ public class MainActivity extends Activity
         closeButton.setVisibility(View.VISIBLE);
         LoginHelper loginHelper = new LoginHelper(this);
         if (loginHelper.isLoggedIn() && loginHelper.isGuestLogin()) {
-            signInButton.setVisibility(View.VISIBLE);
+            checkoutSigninButton.setVisibility(View.VISIBLE);
         } else {
-            signInButton.setVisibility(View.GONE);
+            checkoutSigninButton.setVisibility(View.GONE);
         }
         // hide unwanted entities
         leftDrawerAction.setVisibility(View.GONE);
+        homeIcon.setVisibility(View.GONE);
         searchBar.setVisibility(View.GONE);
         searchBarIcon.setVisibility(View.GONE);
         cartIconAction.setVisibility(View.GONE);
@@ -183,6 +187,7 @@ public class MainActivity extends Activity
         leftDrawerAction.setVisibility(View.VISIBLE);
         cartQtyVw.setVisibility(View.VISIBLE);
         // hide unwanted entities
+        homeIcon.setVisibility(View.GONE);
         searchBar.setVisibility(View.GONE);
         searchBarIcon.setVisibility(View.GONE);
         cartIconAction.setVisibility(View.GONE);
@@ -206,19 +211,22 @@ public class MainActivity extends Activity
         // Find top-level entities
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawer = findViewById(R.id.left_drawer);
+        homeIcon = findViewById(R.id.action_home);
         searchBar = (SearchBarView) findViewById(R.id.search_text);
         searchBarIcon = findViewById(R.id.search_icon);
         cartIconAction = (BadgeImageView)findViewById(R.id.action_show_cart);
         leftDrawerAction = findViewById(R.id.action_left_drawer);
         titleVw = (TextView)findViewById(R.id.header);
         cartQtyVw = (TextView)findViewById(R.id.cart_item_qty);
-        signInButton = (Button)findViewById(R.id.signin_button);
+        checkoutSigninButton = (Button)findViewById(R.id.co_signin_button);
         closeButton = findViewById(R.id.close_button);
 
         // Set action bar listeners
         leftDrawerAction.setOnClickListener(this);
         findViewById(R.id.action_home).setOnClickListener(this);
         cartIconAction.setOnClickListener(this);
+        checkoutSigninButton.setOnClickListener(this);
+
 
         // initialize action bar
         showStandardActionBar();
@@ -385,6 +393,10 @@ public class MainActivity extends Activity
 
             case R.id.action_show_cart:
                 selectShoppingCart();
+                break;
+
+            case R.id.co_signin_button:
+                selectLoginFragment();
                 break;
         }
     }

@@ -9,7 +9,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 
 public class PagerStripe extends View implements ViewPager.OnPageChangeListener {
     private static final String TAG = "PagerStripe";
