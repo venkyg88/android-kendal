@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa;
 
 import android.app.Activity;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -142,19 +143,19 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse>{
         wrapper.setState(DataWrapper.State.ADDING);
 
         // Fill menu list TODO icons nulled out
-        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.home_title, LmsFragment.class));
-        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.personal_feed_title, PersonalFeedFragment.class));
-        menuList.add(new DrawerItem(DrawerItem.Type.BROWSE, activity, 0&R.drawable.logo, R.string.category_title));
-        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.store_locator_title, StoreFragment.class));
-        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.weekly_ad_title, ToBeDoneFragment.class));
-        menuList.add(new DrawerItem(DrawerItem.Type.ACCOUNT, activity, 0&R.drawable.logo, R.string.account_title, LoginFragment.class));
-        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.rewards_title, ToBeDoneFragment.class));
-        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.order_title, ToBeDoneFragment.class));
-        menuList.add(new DrawerItem(DrawerItem.Type.PROFILE, activity, 0&R.drawable.logo, R.string.profile_title, ProfileFragment.class));
-        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0&R.drawable.logo, R.string.about_title, AboutFragment.class));
+        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.home_title, LmsFragment.class));
+        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.personal_feed_title, PersonalFeedFragment.class));
+        menuList.add(new DrawerItem(DrawerItem.Type.BROWSE, activity, 0, R.string.category_title));
+        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.store_locator_title, StoreFragment.class));
+        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.weekly_ad_title, ToBeDoneFragment.class));
+        menuList.add(new DrawerItem(DrawerItem.Type.ACCOUNT, activity, 0, R.string.account_title, LoginFragment.class));
+        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.rewards_title, ToBeDoneFragment.class));
+        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.order_title, ToBeDoneFragment.class));
+        menuList.add(new DrawerItem(DrawerItem.Type.PROFILE, activity, 0, R.string.profile_title, ProfileFragment.class));
+        menuList.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.about_title, AboutFragment.class));
 
         // Fill stack list
-        stackList.add(new DrawerItem(DrawerItem.Type.BACKTOTOP, activity, R.drawable.logo, R.string.backtotop_title));
+        stackList.add(new DrawerItem(DrawerItem.Type.BACKTOTOP, activity, 0, R.string.backtotop_title));
 
         // Fill browse list
         fill(null);
@@ -259,6 +260,7 @@ public class DrawerAdapter extends BaseAdapter implements Callback<Browse>{
                     String title = description.getText();
                     if (title == null) title = description.getDescription();
                     if (title == null) title = description.getName();
+                    title = Html.fromHtml(title).toString();
                     DrawerItem item = new DrawerItem(DrawerItem.Type.CATEGORY, activity, 0, 0);
                     item.title = title;
                     item.path = category.getCategoryUrl();

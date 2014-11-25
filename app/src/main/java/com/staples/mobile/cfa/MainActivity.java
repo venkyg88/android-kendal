@@ -47,7 +47,6 @@ public class MainActivity extends Activity
     private DrawerLayout drawerLayout;
     private View leftDrawerAction;
     private View leftDrawer;
-    private View homeIcon;
     private SearchBarView searchBar;
     private View searchBarIcon;
     private BadgeImageView cartIconAction;
@@ -56,11 +55,8 @@ public class MainActivity extends Activity
     private TextView cartQtyVw;
     private Button checkoutSigninButton;
     private View closeButton;
-
     private DrawerItem homeDrawerItem;
-    private DrawerItem storeDrawerItem;
-    private DrawerItem rewardsDrawerItem;
-    
+
     private LoginHelper loginHelper;
 
     public enum Transition {
@@ -143,8 +139,7 @@ public class MainActivity extends Activity
 
         // show standard entities
         leftDrawerAction.setVisibility(View.VISIBLE);
-        homeIcon.setVisibility(View.VISIBLE);
-        searchBar.setVisibility(View.VISIBLE);
+        searchBar.setVisibility(View.GONE);
         searchBarIcon.setVisibility(View.VISIBLE);
         cartIconAction.setVisibility(View.VISIBLE);
 
@@ -159,7 +154,6 @@ public class MainActivity extends Activity
         leftDrawerAction.setVisibility(View.VISIBLE);
         cartQtyVw.setVisibility(View.VISIBLE);
         // hide unwanted entities
-        homeIcon.setVisibility(View.GONE);
         searchBar.setVisibility(View.GONE);
         searchBarIcon.setVisibility(View.GONE);
         cartIconAction.setVisibility(View.GONE);
@@ -178,7 +172,6 @@ public class MainActivity extends Activity
         }
         // hide unwanted entities
         leftDrawerAction.setVisibility(View.GONE);
-        homeIcon.setVisibility(View.GONE);
         searchBar.setVisibility(View.GONE);
         searchBarIcon.setVisibility(View.GONE);
         cartIconAction.setVisibility(View.GONE);
@@ -191,7 +184,6 @@ public class MainActivity extends Activity
         leftDrawerAction.setVisibility(View.VISIBLE);
         cartQtyVw.setVisibility(View.VISIBLE);
         // hide unwanted entities
-        homeIcon.setVisibility(View.GONE);
         searchBar.setVisibility(View.GONE);
         searchBarIcon.setVisibility(View.GONE);
         cartIconAction.setVisibility(View.GONE);
@@ -215,7 +207,6 @@ public class MainActivity extends Activity
         // Find top-level entities
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawer = findViewById(R.id.left_drawer);
-        homeIcon = findViewById(R.id.action_home);
         searchBar = (SearchBarView) findViewById(R.id.search_text);
         searchBarIcon = findViewById(R.id.search_icon);
         cartIconAction = (BadgeImageView)findViewById(R.id.action_show_cart);
@@ -227,7 +218,6 @@ public class MainActivity extends Activity
 
         // Set action bar listeners
         leftDrawerAction.setOnClickListener(this);
-        findViewById(R.id.action_home).setOnClickListener(this);
         cartIconAction.setOnClickListener(this);
         checkoutSigninButton.setOnClickListener(this);
 
@@ -248,8 +238,6 @@ public class MainActivity extends Activity
 
         // Create non-drawer DrawerItems
         homeDrawerItem = adapter.getItem(0); // TODO Hard-coded alias
-        storeDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.store_info_title, ToBeDoneFragment.class);
-        rewardsDrawerItem = adapter.getItem(6); // TODO Hard-coded alias
 
         // Cart
         cartFragment = new CartFragment();
@@ -391,7 +379,6 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.continue_shopping_btn:
-            case R.id.action_home:
                 selectDrawerItem(homeDrawerItem, Transition.NONE, true);
                 break;
 

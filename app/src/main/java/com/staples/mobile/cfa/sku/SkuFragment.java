@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ import com.staples.mobile.cfa.feed.SeenProductsRowItem;
 
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
+import com.staples.mobile.cfa.widget.HackEditor;
 import com.staples.mobile.cfa.widget.PagerStripe;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.QuantityEditor;
@@ -152,7 +154,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
         details.setVisibility(View.GONE);
 
         // Disable add-to-cart
-        wrapper.findViewById(R.id.quantity).setEnabled(false);
+//        wrapper.findViewById(R.id.quantity).setEnabled(false);
         wrapper.findViewById(R.id.add_to_cart).setEnabled(false);
 
         // Set listeners
@@ -434,7 +436,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
             tabAdapter.setProduct(product);
 
             // Handle availability
-            QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
+            HackEditor edit = (HackEditor) wrapper.findViewById(R.id.quantity);
             Button button = (Button) wrapper.findViewById(R.id.add_to_cart);
             Availability availability = Availability.getProductAvailability(product);
             switch (availability) {
@@ -449,7 +451,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
                     break;
                 case INSTOCK:
                     edit.setVisibility(View.VISIBLE);
-                    edit.setQtyValue(1);
+                    edit.setQuantity(1);
                     button.setText(R.string.add_to_cart);
                     button.setEnabled(true);
                     break;
@@ -474,7 +476,8 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
             }
 
             // Add info
-            ((TextView) summary.findViewById(R.id.title)).setText(product.getProductName());
+            String name = Html.fromHtml(product.getProductName()).toString();
+            ((TextView) summary.findViewById(R.id.title)).setText(name);
             ((TextView) summary.findViewById(R.id.numbers)).setText(formatNumbers(product));
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
 
@@ -542,7 +545,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
             parent.addView(view);
 
             // Set items
-            String created = formatTimestamp(item.getCreated_datetime());
+            String created = formatTimestamp(item.getCreatedDatetime());
             if (created != null)
                 ((TextView) view.findViewById(R.id.sku_review_date)).setText(created);
             else ((TextView) view.findViewById(R.id.sku_review_date)).setVisibility(View.GONE);
@@ -635,8 +638,8 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
                 shiftToDetail(2);
                 break;
             case R.id.add_to_cart:
-                QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
-                int qty = edit.getQtyValue(1);
+                HackEditor edit = (HackEditor) wrapper.findViewById(R.id.quantity);
+                int qty = edit.getQuantity();
                 final MainActivity activity = (MainActivity) getActivity();
                 wrapper.setState(DataWrapper.State.LOADING);
                 activity.addItemToCart(identifier, qty, new CartFragment.AddToCartCallback() {
