@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.widget;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -79,9 +80,9 @@ public class HackEditor extends EditText implements View.OnClickListener {
                 popup.dismiss();
                 popup = null;
             }
+            setFocusable(true);
+            setFocusableInTouchMode(true);
             requestFocus();
-            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(this, 0);
             return;
         }
     }
@@ -110,6 +111,6 @@ public class HackEditor extends EditText implements View.OnClickListener {
         frame.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
         int width = frame.getMeasuredWidth();
         Log.d(TAG, "Computed width = " + width);
-        window.setLayout(3*width/2, ViewGroup.LayoutParams.WRAP_CONTENT);
+        window.setLayout(5*width/3, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 }

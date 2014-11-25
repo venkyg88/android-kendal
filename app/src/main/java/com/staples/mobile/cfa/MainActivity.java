@@ -125,7 +125,7 @@ public class MainActivity extends Activity
 
         // show standard entities
         leftDrawerAction.setVisibility(View.VISIBLE);
-        searchBar.setVisibility(View.VISIBLE);
+        searchBar.setVisibility(View.GONE);
         searchBarIcon.setVisibility(View.VISIBLE);
         cartIconAction.setVisibility(View.VISIBLE);
 

@@ -61,10 +61,11 @@
             <com.staples.mobile.cfa.search.SearchBarView
                 android:id="@+id/search_text"
                 android:layout_width="0dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:maxWidth="200dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
                 android:layout_gravity="center_vertical|right"
                 android:visibility="gone"
                 android:inputType="textAutoComplete|textAutoCorrect"

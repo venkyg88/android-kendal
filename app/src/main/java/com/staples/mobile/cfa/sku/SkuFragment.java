@@ -435,7 +435,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
             tabAdapter.setProduct(product);
 
             // Handle availability
-//            QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
+            HackEditor edit = (HackEditor) wrapper.findViewById(R.id.quantity);
             Button button = (Button) wrapper.findViewById(R.id.add_to_cart);
             Availability availability = Availability.getProductAvailability(product);
             switch (availability) {
@@ -444,13 +444,13 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
                 case RETAILONLY:
                 case SPECIALORDER:
                 case OUTOFSTOCK:
-//                    edit.setVisibility(View.GONE);
+                    edit.setVisibility(View.GONE);
                     button.setText(availability.getTextResId());
                     button.setEnabled(false);
                     break;
                 case INSTOCK:
-//                    edit.setVisibility(View.VISIBLE);
-//                    edit.setQtyValue(1);
+                    edit.setVisibility(View.VISIBLE);
+                    edit.setQuantity(1);
                     button.setText(R.string.add_to_cart);
                     button.setEnabled(true);
                     break;
