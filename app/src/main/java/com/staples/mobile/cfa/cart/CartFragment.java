@@ -19,9 +19,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileDetails;
@@ -84,6 +85,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     private View cartShippingLayout;
     private View cartSubtotalLayout;
     private CartAdapter cartAdapter;
+    private ListView cartListVw;
 
     // cart object - make these static so they're not lost on device rotation
     private static Cart cart;
@@ -163,18 +165,41 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
                 updateCartFields();
             }
         });
-        ListView cartListVw = (ListView) view.findViewById(R.id.cart_list);
+        cartListVw = (ListView) view.findViewById(R.id.cart_list);
         cartListVw.setAdapter(cartAdapter);
+//        cartListVw.setOverScrollMode(View.OVER_SCROLL_NEVER); // need to disable over scroll to prevent bounce effect which messes up our scroll detection
         cartListVw.setOnScrollListener(new AbsListView.OnScrollListener() {
-            int mostRecentFirstVisibleItem = 0;
-            @Override public void onScrollStateChanged(AbsListView view, int scrollState) { }
-            @Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (firstVisibleItem > mostRecentFirstVisibleItem) {
-                    cartShippingLayout.setVisibility(View.GONE); // hide math story
-                } else if (firstVisibleItem == 0 || firstVisibleItem < mostRecentFirstVisibleItem) {
+            int oldFirstVisibleItem = 0;
+            int oldTop = 0;
+            @Override public void onScrollStateChanged(AbsListView absListView, int scrollState) { }
+            @Override public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                int top = getTopOfFirstVisibleView(absListView);
+                if (firstVisibleItem == 0 && top == 0) {
+                    onScrollUp();
+                } else if (firstVisibleItem == oldFirstVisibleItem) {
+                    if (oldTop - top > 5) {
+                        onScrollDown();
+                    } else if (top - oldTop > 5 && firstVisibleItem + visibleItemCount < totalItemCount) { // accounting for scroll bounce at the bottom
+                        onScrollUp();
+                    }
+                } else if (firstVisibleItem > oldFirstVisibleItem) {
+                    onScrollDown();
+                } else if (firstVisibleItem < oldFirstVisibleItem) {
+                    onScrollUp();
+                }
+                oldFirstVisibleItem = firstVisibleItem;
+                oldTop = top;
+            }
+
+            private void onScrollUp() {
+                if (cartShippingLayout.getVisibility() != View.VISIBLE) {
                     cartShippingLayout.setVisibility(View.VISIBLE); // show math story
                 }
-                mostRecentFirstVisibleItem = firstVisibleItem;
+            }
+            private void onScrollDown() {
+                if (cartShippingLayout.getVisibility() != View.GONE) {
+                    cartShippingLayout.setVisibility(View.GONE); // hide math story
+                }
             }
         });
 
@@ -216,7 +241,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();
             preTaxSubtotal = cart.getPreTaxTotal();
-            LmsManager lmsManager = new LmsManager();
+            LmsManager lmsManager = new LmsManager(MainApplication.application);
             Configurator configurator = lmsManager.getConfigurator();
             if (configurator != null) {
                 freeShippingThreshold = configurator.getPromotions().getFreeShippingThreshold().floatValue();
@@ -268,12 +293,25 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
             cartSubtotal.setText(currencyFormat.format(preTaxSubtotal));
 
             // only show shipping, subtotal, and proceed-to-checkout when at least one item
-            cartShippingLayout.setVisibility(totalItemCount == 0 ? View.GONE : View.VISIBLE);
-            cartSubtotalLayout.setVisibility(totalItemCount == 0 ? View.GONE : View.VISIBLE);
-            cartProceedToCheckout.setVisibility(totalItemCount == 0 ? View.GONE : View.VISIBLE);
+            if (totalItemCount == 0) {
+                cartShippingLayout.setVisibility(View.GONE);
+                cartSubtotalLayout.setVisibility(View.GONE);
+                cartProceedToCheckout.setVisibility(View.GONE);
+            } else {
+                if (cartListVw.getFirstVisiblePosition() == 0 && getTopOfFirstVisibleView(cartListVw) == 0) {
+                    cartShippingLayout.setVisibility(View.VISIBLE);
+                }
+                cartSubtotalLayout.setVisibility(View.VISIBLE);
+                cartProceedToCheckout.setVisibility(View.VISIBLE);
+            }
         }
     }
 
+    /** returns true if list view is scrolled to the very top */
+    private int getTopOfFirstVisibleView(AbsListView listView) {
+        View view = listView.getChildAt(0);
+        return (view == null) ? 0 : view.getTop();
+    }
 
 
     @Override
@@ -493,14 +531,24 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
                     // calculate expected delivery times
                     String leadTimeDescription = null;
+                    CartItem firstInGroupCartItem = null;
                     minExpectedBusinessDays = -1;
                     maxExpectedBusinessDays = -1;
                     for (int i = 0; i < listItems.size(); i++) {
                         CartItem cartItem = listItems.get(i);
+                        // if lead time different from previous item's lead time, set expected delivery info
                         if (cartItem.getLeadTimeDescription() != null  &&
                                 !cartItem.getLeadTimeDescription().equals(leadTimeDescription)) {
                             leadTimeDescription = cartItem.getLeadTimeDescription();
                             cartItem.setExpectedDelivery(leadTimeDescription);
+                            cartItem.setExpectedDeliveryItemQty(cartItem.getQuantity());
+                            firstInGroupCartItem = cartItem;
+                        } else {
+                            // since lead time same as previous, add item quantity to first cart item in group
+                            if (firstInGroupCartItem != null) {
+                                firstInGroupCartItem.setExpectedDeliveryItemQty(
+                                        firstInGroupCartItem.getExpectedDeliveryItemQty() + cartItem.getQuantity());
+                            }
                         }
                         if (minExpectedBusinessDays == -1 ||
                                 cartItem.getMinExpectedBusinessDays() < minExpectedBusinessDays) {

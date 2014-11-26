@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.easyopen.model.reviews.Data;
 
@@ -62,7 +62,7 @@ public class ReviewAdapter extends BaseAdapter {
         Data item = reviews.get(position);
 
         // Set items
-        String created = SkuFragment.formatTimestamp(item.getCreated_datetime());
+        String created = SkuFragment.formatTimestamp(item.getCreatedDatetime());
         setTextView((TextView) view.findViewById(R.id.sku_review_date), created);
 
         ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(item.getRating(), null);

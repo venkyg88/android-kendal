@@ -14,7 +14,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 
 /**
  * This class does all the drawing required to display a star rating and review count.

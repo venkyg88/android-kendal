@@ -2,6 +2,8 @@ package com.staples.mobile.cfa.bundle;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
+import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.RatingStars;
@@ -65,7 +67,8 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements DataWrapp
         if (products==null) return(0);
         int count = 0;
         for (Product product : products) {
-            BundleItem item = new BundleItem(product.getProductName(), product.getSku());
+            String name = Html.fromHtml(product.getProductName()).toString();
+            BundleItem item = new BundleItem(name, product.getSku());
             item.setImageUrl(product.getImage());
             item.setPrice(product.getPricing());
             item.customerRating = product.getCustomerReviewRating();

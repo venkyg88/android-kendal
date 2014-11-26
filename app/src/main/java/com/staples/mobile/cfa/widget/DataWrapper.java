@@ -7,7 +7,7 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 
 /**
  * This class is a ViewGroup wrapper for three child Views:

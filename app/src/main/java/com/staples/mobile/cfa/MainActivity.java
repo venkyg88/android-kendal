@@ -7,17 +7,22 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.staples.mobile.R;
+import com.google.android.gms.maps.model.LatLng;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.checkout.ConfirmationFragment;
+
+import com.staples.mobile.cfa.location.LocationService;
+
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileDetails;
@@ -27,10 +32,14 @@ import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
+import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.configurator.model.Configurator;
+import com.staples.mobile.common.access.easyopen.model.cart.Cart;
+import com.staples.mobile.common.access.lms.LmsManager;
 
 
 public class MainActivity extends Activity
-                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
+                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener, LocationService.UserLatLngCallBack {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int SURRENDER_TIMEOUT = 5000;
@@ -44,12 +53,10 @@ public class MainActivity extends Activity
     CartFragment cartFragment;
     private TextView titleVw;
     private TextView cartQtyVw;
-    private Button signInButton;
-
+    private Button checkoutSigninButton;
+    private View closeButton;
     private DrawerItem homeDrawerItem;
-    private DrawerItem storeDrawerItem;
-    private DrawerItem rewardsDrawerItem;
-    
+
     private LoginHelper loginHelper;
 
     public enum Transition {
@@ -91,6 +98,11 @@ public class MainActivity extends Activity
         boolean freshStart = (bundle == null);
         prepareMainScreen(freshStart);
 
+        String zipCode = LocationService.getCachedZipCode(this.getApplicationContext());
+        if (zipCode == null) {
+            LocationService userLocationService = new LocationService(this.getApplicationContext(), this);
+            userLocationService.getUserLocation();
+        }
         loginHelper = new LoginHelper(this);
         loginHelper.registerLoginCompleteListener(this);
         // if already logged in (e.g. when device is rotated), don't login again, but do notify
@@ -127,13 +139,14 @@ public class MainActivity extends Activity
 
         // show standard entities
         leftDrawerAction.setVisibility(View.VISIBLE);
-        searchBar.setVisibility(View.VISIBLE);
+        searchBar.setVisibility(View.GONE);
         searchBarIcon.setVisibility(View.VISIBLE);
         cartIconAction.setVisibility(View.VISIBLE);
 
         // hide non-standard entities
         cartQtyVw.setVisibility(View.GONE);
-        signInButton.setVisibility(View.GONE);
+        checkoutSigninButton.setVisibility(View.GONE);
+        closeButton.setVisibility(View.GONE);
     }
 
     public void showCartActionBarEntities() {
@@ -144,22 +157,24 @@ public class MainActivity extends Activity
         searchBar.setVisibility(View.GONE);
         searchBarIcon.setVisibility(View.GONE);
         cartIconAction.setVisibility(View.GONE);
-        signInButton.setVisibility(View.GONE);
+        checkoutSigninButton.setVisibility(View.GONE);
+        closeButton.setVisibility(View.GONE);
     }
 
     public void showCheckoutActionBarEntities() {
         // show checkout-specific entities
-        leftDrawerAction.setVisibility(View.VISIBLE);
-        cartIconAction.setVisibility(View.VISIBLE);
+        closeButton.setVisibility(View.VISIBLE);
         LoginHelper loginHelper = new LoginHelper(this);
         if (loginHelper.isLoggedIn() && loginHelper.isGuestLogin()) {
-            signInButton.setVisibility(View.VISIBLE);
+            checkoutSigninButton.setVisibility(View.VISIBLE);
         } else {
-            signInButton.setVisibility(View.GONE);
+            checkoutSigninButton.setVisibility(View.GONE);
         }
         // hide unwanted entities
+        leftDrawerAction.setVisibility(View.GONE);
         searchBar.setVisibility(View.GONE);
         searchBarIcon.setVisibility(View.GONE);
+        cartIconAction.setVisibility(View.GONE);
         cartQtyVw.setVisibility(View.GONE);
     }
 
@@ -198,12 +213,14 @@ public class MainActivity extends Activity
         leftDrawerAction = findViewById(R.id.action_left_drawer);
         titleVw = (TextView)findViewById(R.id.header);
         cartQtyVw = (TextView)findViewById(R.id.cart_item_qty);
-        signInButton = (Button)findViewById(R.id.signin_button);
+        checkoutSigninButton = (Button)findViewById(R.id.co_signin_button);
+        closeButton = findViewById(R.id.close_button);
 
         // Set action bar listeners
         leftDrawerAction.setOnClickListener(this);
-        findViewById(R.id.action_home).setOnClickListener(this);
         cartIconAction.setOnClickListener(this);
+        checkoutSigninButton.setOnClickListener(this);
+
 
         // initialize action bar
         showStandardActionBar();
@@ -221,8 +238,6 @@ public class MainActivity extends Activity
 
         // Create non-drawer DrawerItems
         homeDrawerItem = adapter.getItem(0); // TODO Hard-coded alias
-        storeDrawerItem = new DrawerItem(DrawerItem.Type.FRAGMENT, this, R.drawable.logo, R.string.store_info_title, ToBeDoneFragment.class);
-        rewardsDrawerItem = adapter.getItem(6); // TODO Hard-coded alias
 
         // Cart
         cartFragment = new CartFragment();
@@ -364,12 +379,15 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.continue_shopping_btn:
-            case R.id.action_home:
                 selectDrawerItem(homeDrawerItem, Transition.NONE, true);
                 break;
 
             case R.id.action_show_cart:
                 selectShoppingCart();
+                break;
+
+            case R.id.co_signin_button:
+                selectLoginFragment();
                 break;
         }
     }
@@ -386,6 +404,10 @@ public class MainActivity extends Activity
             selectDrawerItem(homeDrawerItem, Transition.NONE, true);
             accountBtn.setText("Sign In");
         }
+    }
+
+    public void closeBtnClick(View view) {
+        getFragmentManager().popBackStack();
     }
 
     // Left drawer listview clicks
@@ -434,6 +456,14 @@ public class MainActivity extends Activity
                 } else {
                     selectLoginFragment();
                 }
+        }
+    }
+
+    //UserLocationService callback
+    @Override
+    public void onUserLatLngCallBack(LatLng latLng) {
+        if (LocationService.setCachedUserLocation(this.getApplicationContext(), latLng)){
+        //TODO: Work with Steve to incorporate flow.
         }
     }
 }

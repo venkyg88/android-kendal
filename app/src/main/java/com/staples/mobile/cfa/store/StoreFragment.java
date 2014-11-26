@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -23,7 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.channel.model.store.*;
@@ -57,7 +58,7 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
         View view;
 
         // Supports Google Play Services?
-        if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity())==0) {
+        if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity())==ConnectionResult.SUCCESS) {
             view = inflater.inflate(R.layout.store_fragment_map, container, false);
             mapView = (MapView) view.findViewById(R.id.map);
             mapView.onCreate(bundle);
@@ -151,6 +152,14 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
             item.zipcode = storeAddress.getZip();
             item.phoneNumber = reformatNumber(storeAddress.getPhoneNumber());
             item.faxNumber = reformatNumber(storeAddress.getFaxNumber());
+        }
+
+        // Get store hours
+        List<StoreHours> list = obj.getStoreHours();
+        for(StoreHours hours : list) {
+            TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
+            if (span!=null)
+                item.addTimeSpan(span);
         }
 
         adapter.addStore(item);

@@ -17,6 +17,7 @@ public class CartItem {
     private Product product;
     private int proposedQty;
     String expectedDelivery;
+    int expectedDeliveryItemQty;
     int minExpectedBusinessDays;
     int maxExpectedBusinessDays;
 
@@ -116,6 +117,13 @@ public class CartItem {
         this.expectedDelivery = expectedDelivery;
     }
 
+    public int getExpectedDeliveryItemQty() {
+        return expectedDeliveryItemQty;
+    }
+
+    public void setExpectedDeliveryItemQty(int expectedDeliveryItemQty) {
+        this.expectedDeliveryItemQty = expectedDeliveryItemQty;
+    }
 
     public String getLeadTimeDescription() {
         return product.getLeadTimeDescription();
