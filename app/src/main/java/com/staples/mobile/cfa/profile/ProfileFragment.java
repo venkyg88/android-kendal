@@ -119,29 +119,11 @@ public class ProfileFragment extends BaseFragment implements ProfileDetails.Prof
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.addShippingBtn:
-                if(ProfileDetails.hasAddress()) {
-                    Fragment shippingListFragment = Fragment.instantiate(activity, ShippingListFragment.class.getName());
-                    ((MainActivity) activity).navigateToFragment(shippingListFragment);
-                    break;
-                }
-                else{
-                    Fragment shippingFragment = Fragment.instantiate(activity, ShippingFragment.class.getName());
-                    ((MainActivity) activity).navigateToFragment(shippingFragment);
-                    break;
-                }
-
-
+                ((MainActivity) activity).selectProfileAddressesFragment();
+                break;
             case R.id.addCCBtn:
-                if(ProfileDetails.hasPaymentMethod()) {
-                    Fragment cardListFragment = Fragment.instantiate(activity, CreditCardListFragment.class.getName());
-                    ((MainActivity) activity).navigateToFragment(cardListFragment);
-                    break;
-                }
-                else{
-                    Fragment cardFragment = Fragment.instantiate(activity, CreditCardFragment.class.getName());
-                    ((MainActivity) activity).navigateToFragment(cardFragment);
-                    break;
-                }
+                ((MainActivity) activity).selectProfileCreditCardsFragment();
+                break;
         }
     }
 }

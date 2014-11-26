@@ -29,6 +29,15 @@ public class ProfileDetails implements Callback<MemberDetail> {
         public void onProfileRefresh(Member member);
     }
 
+    public interface PaymentMethodSelectionListener {
+        public void onPaymentMethodSelected(String id);
+    }
+
+    public interface AddressSelectionListener {
+        public void onAddressSelected(String id);
+    }
+
+
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
     private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
@@ -42,7 +51,14 @@ public class ProfileDetails implements Callback<MemberDetail> {
     public static void setMember(Member member) {
         ProfileDetails.member = member;
     }
+
+    // other static data
     private static long mostRecentTimeRefreshRequested;
+    public static PaymentMethodSelectionListener paymentMethodSelectionListener;
+    public static AddressSelectionListener addressSelectionListener;
+    public static String currentAddressId;
+    public static String currentPaymentMethodId;
+
 
     // non-static instance data
     private EasyOpenApi easyOpenApi;
