@@ -40,13 +40,8 @@ public class SuggestTask implements Runnable {
     }
 
 	public void run() {
-		ArrayList<String> suggestions;
-		try {
-			suggestions = getSuggestions(key);
-            searchBar.callback(suggestions);
-		} catch (IOException e) {
-			Log.e(TAG, e.toString());
-		}
+		ArrayList<String> suggestions = getSuggestions(key);
+        searchBar.callback(suggestions);
 	}
 
     public static String cleanKeyword(String keyword) {
@@ -85,26 +80,20 @@ public class SuggestTask implements Runnable {
         }
 	}
 
-	private ArrayList<String> getSuggestions(String key) throws IOException{
+	private ArrayList<String> getSuggestions(String key) {
 		InputStream inputStream = null;
 		try {
 			// clear error message if there are any in the auto suggestion list
 			error = null;
 
-			// Check if task has been interrupted
-			if (Thread.interrupted()){
-				throw new InterruptedException();
-			}
+			if (Thread.interrupted()) return(null);
 
             // Query server
             HttpClient httpclient = new DefaultHttpClient();
             HttpGet httpSuggestGet = new HttpGet(SUGGESTSERVER+key+".txt");
             HttpResponse httpResponse = httpclient.execute(httpSuggestGet);
 
-            // Check if task has been interrupted. If it is, that means there is no result returned.
-            if (Thread.interrupted()){
-                throw new InterruptedException();
-            }
+            if (Thread.interrupted()) return(null);
 
             // Check if we get the correct response from http status code
             if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
@@ -117,19 +106,20 @@ public class SuggestTask implements Runnable {
             {
                 Log.d(TAG, "Incorrect HTTP status code: " + httpResponse.getStatusLine().getStatusCode());
             }
-			// Check if the task has been interrupted
-			if (Thread.interrupted()){
-				throw new InterruptedException();
-			}
+
 		} catch (Exception e) {
 			Log.e(TAG, "Exception", e);
 			error = e.toString();
 		} finally {
 			// clean up resources
 			if (inputStream != null) {
-				inputStream.close();
+                try {
+                    inputStream.close();
+                } catch(Exception e) {}
 			}
 		}
+
+        if (Thread.interrupted()) return(null);
 		return suggestionList;
 	} 
 }

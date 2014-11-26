@@ -46,13 +46,6 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:src="@drawable/ic_drawer"/>
-            <ImageView
-                android:id="@+id/action_home"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|left"
-                android:layout_marginRight="6dp"
-                android:src="@drawable/logo"/>
             <TextView
                 android:id="@+id/header"
                 android:layout_width="0dp"
@@ -67,14 +60,17 @@
             <com.staples.mobile.cfa.search.SearchBarView
                 android:id="@+id/search_text"
                 android:layout_width="0dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:maxWidth="200dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
                 android:layout_gravity="center_vertical|right"
                 android:visibility="gone"
                 android:inputType="textAutoComplete|textAutoCorrect"
                 android:imeOptions="actionSearch|flagNoExtractUi"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:singleLine="true"
                 android:hint="@string/original_hint"
                 android:textSize="16sp"/>

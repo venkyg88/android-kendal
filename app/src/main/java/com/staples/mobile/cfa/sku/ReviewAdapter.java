@@ -62,7 +62,7 @@ public class ReviewAdapter extends BaseAdapter {
         Data item = reviews.get(position);
 
         // Set items
-        String created = SkuFragment.formatTimestamp(item.getCreated_datetime());
+        String created = SkuFragment.formatTimestamp(item.getCreatedDatetime());
         setTextView((TextView) view.findViewById(R.id.sku_review_date), created);
 
         ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(item.getRating(), null);
