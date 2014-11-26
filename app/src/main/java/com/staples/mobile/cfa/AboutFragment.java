@@ -1,7 +1,6 @@
 package com.staples.mobile.cfa;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -16,8 +15,6 @@ import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-
-import com.staples.mobile.R;
 
 import java.text.SimpleDateFormat;
 import java.util.zip.ZipEntry;

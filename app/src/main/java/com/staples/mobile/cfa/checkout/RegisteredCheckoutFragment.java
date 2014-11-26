@@ -4,7 +4,6 @@
 
 package com.staples.mobile.cfa.checkout;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,12 +11,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.login.LoginHelper;
-import com.staples.mobile.cfa.profile.CreditCardListFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
-import com.staples.mobile.cfa.profile.ShippingListFragment;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
@@ -27,7 +24,6 @@ import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
-
 
 import java.util.List;
 

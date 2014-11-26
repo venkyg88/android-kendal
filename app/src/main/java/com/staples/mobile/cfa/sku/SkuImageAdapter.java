@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 
 import java.util.ArrayList;
 

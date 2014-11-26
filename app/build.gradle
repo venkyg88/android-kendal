@@ -12,6 +12,10 @@ android {
         }
     }
 
+    defaultConfig {
+        applicationId 'com.staples.mobile.cfa'
+    }
+
     packagingOptions {
         exclude 'LICENSE.txt'
         exclude 'META-INF/DEPENDENCIES.txt'

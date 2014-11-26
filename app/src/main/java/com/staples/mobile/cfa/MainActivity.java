@@ -7,19 +7,22 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.staples.mobile.R;
+import com.google.android.gms.maps.model.LatLng;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.checkout.ConfirmationFragment;
 import com.staples.mobile.cfa.checkout.GuestCheckoutFragment;
 import com.staples.mobile.cfa.checkout.RegisteredCheckoutFragment;
+import com.staples.mobile.cfa.location.LocationService;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.CreditCardFragment;
@@ -33,10 +36,14 @@ import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
+import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.configurator.model.Configurator;
+import com.staples.mobile.common.access.easyopen.model.cart.Cart;
+import com.staples.mobile.common.access.lms.LmsManager;
 
 
 public class MainActivity extends Activity
-                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
+                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener, LocationService.UserLatLngCallBack {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int SURRENDER_TIMEOUT = 5000;
@@ -99,6 +106,11 @@ public class MainActivity extends Activity
         boolean freshStart = (bundle == null);
         prepareMainScreen(freshStart);
 
+        String zipCode = LocationService.getCachedZipCode(this.getApplicationContext());
+        if (zipCode == null) {
+            LocationService userLocationService = new LocationService(this.getApplicationContext(), this);
+            userLocationService.getUserLocation();
+        }
         loginHelper = new LoginHelper(this);
         loginHelper.registerLoginCompleteListener(this);
         // if already logged in (e.g. when device is rotated), don't login again, but do notify
@@ -505,6 +517,14 @@ public class MainActivity extends Activity
                 } else {
                     selectLoginFragment();
                 }
+        }
+    }
+
+    //UserLocationService callback
+    @Override
+    public void onUserLatLngCallBack(LatLng latLng) {
+        if (LocationService.setCachedUserLocation(this.getApplicationContext(), latLng)){
+        //TODO: Work with Steve to incorporate flow.
         }
     }
 }

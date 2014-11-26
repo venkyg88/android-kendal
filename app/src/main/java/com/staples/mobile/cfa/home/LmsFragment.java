@@ -1,43 +1,29 @@
 package com.staples.mobile.cfa.home;
 
 import android.app.Activity;
-import android.app.Fragment;
-
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-
-import android.text.TextUtils;
-
 import android.util.Log;
-
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.View.OnClickListener;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
-
 import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.MainApplication;
-import com.staples.mobile.common.access.Access;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.configurator.model.Area;
 import com.staples.mobile.common.access.configurator.model.Item;
 import com.staples.mobile.common.access.configurator.model.Screen;
-import com.staples.mobile.common.access.lms.LmsManager.LmsMgrCallback;
 import com.staples.mobile.common.access.lms.LmsManager;
+import com.staples.mobile.common.access.lms.LmsManager.LmsMgrCallback;
 import com.staples.mobile.common.device.DeviceInfo;
-import com.staples.mobile.R;
 
 import java.util.ArrayList;
 import java.util.List;

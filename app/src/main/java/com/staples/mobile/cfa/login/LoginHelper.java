@@ -5,7 +5,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.Access;
