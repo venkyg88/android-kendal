@@ -47,7 +47,7 @@ public class ShippingListFragment extends BaseFragment implements View.OnClickLi
 
 
         final ShippingArrayAdapter adapter = new ShippingArrayAdapter(activity,
-                addressList);
+                addressList, ProfileDetails.currentAddressId);
         listview.setAdapter(adapter);
         registerForContextMenu(listview);
 
@@ -55,7 +55,12 @@ public class ShippingListFragment extends BaseFragment implements View.OnClickLi
 
             public void onItemClick(AdapterView<?> a, View v, int position,
                                     long id) {
-                Toast.makeText(activity, addressList.get(position).getAddressId(), Toast.LENGTH_LONG).show();
+                String addressId = addressList.get(position).getAddressId();
+                if (ProfileDetails.addressSelectionListener != null) {
+                    ProfileDetails.addressSelectionListener.onAddressSelected(addressId);
+                } else {
+                    Toast.makeText(activity, addressId, Toast.LENGTH_LONG).show();
+                }
             }
         });
         return (view);
@@ -71,11 +76,13 @@ public class ShippingListFragment extends BaseFragment implements View.OnClickLi
 class ShippingArrayAdapter extends ArrayAdapter<Address> {
     private final Context context;
     private final List<Address> values;
+    private String addressId;
 
-    public ShippingArrayAdapter(Context context, List<Address> values) {
+    public ShippingArrayAdapter(Context context, List<Address> values, String addressId) {
         super(context, R.layout.list_view_row, values);
         this.context = context;
         this.values = values;
+        this.addressId = addressId;
     }
 
     @Override
@@ -90,7 +97,14 @@ class ShippingArrayAdapter extends ArrayAdapter<Address> {
                 address.getCity() + "\n" +
                 address.getState() + "," + address.getZipcode() + "\n" +
                 address.getPhone1();
-
+        if (addressId != null) {
+            View selectionImageView = rowView.findViewById(R.id.selectionImage);
+            if (addressId.equals(address.getAddressId())) {
+                selectionImageView.setVisibility(View.VISIBLE);
+            } else {
+                selectionImageView.setVisibility(View.INVISIBLE);
+            }
+        }
         TextView ccText = (TextView) rowView.findViewById(R.id.rowItemText);
         ccText.setText(tmpAddress);
         return rowView;

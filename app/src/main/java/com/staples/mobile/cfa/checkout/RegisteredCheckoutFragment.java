@@ -262,8 +262,8 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                     public void onAddressSelected(String id) {
                         Bundle args = RegisteredCheckoutFragment.this.getArguments();
                         args.putString(BUNDLE_PARAM_SHIPPING_ADDR_ID, id);
-                        args.putString(BUNDLE_PARAM_SHIPPING_CHARGE, null);
-                        args.putString(BUNDLE_PARAM_TAX, null);
+                        args.putString(BUNDLE_PARAM_SHIPPING_CHARGE, null); // set these to null to force new precheckout step
+                        args.putString(BUNDLE_PARAM_TAX, null);             // set these to null to force new precheckout step
                         activity.selectFragment(RegisteredCheckoutFragment.this, MainActivity.Transition.NONE, true);
                     }
                 }, shippingAddressId);
