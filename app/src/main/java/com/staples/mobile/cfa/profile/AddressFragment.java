@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.profile;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.AddAddress;
 import com.staples.mobile.common.access.easyopen.model.member.AddressId;
+import com.staples.mobile.common.access.easyopen.model.member.Member;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -74,8 +76,14 @@ public class AddressFragment extends BaseFragment implements View.OnClickListene
                 @Override
                 public void success(AddressId addressId, Response response) {
                     Toast.makeText(getActivity(), "Address Id " + addressId.getAddressId(), Toast.LENGTH_LONG).show();
-                    Fragment profileFragment = Fragment.instantiate(getActivity(), ProfileFragment.class.getName());
-                    ((MainActivity)getActivity()).navigateToFragment(profileFragment);
+                    (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
+                        @Override public void onProfileRefresh(Member member) {
+                            FragmentManager fm = getFragmentManager();
+                            if (fm != null) {
+                                fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
+                            }
+                        }
+                    });
                 }
 
                 @Override
