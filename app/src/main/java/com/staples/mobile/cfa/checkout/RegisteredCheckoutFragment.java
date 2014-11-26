@@ -300,10 +300,10 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
     private String formatAddress(com.staples.mobile.common.access.easyopen.model.member.Address address) {
         StringBuilder b = new StringBuilder();
         if (address != null) {
-            if (!TextUtils.isEmpty(address.getFirstName())) {
-                b.append(address.getFirstName());
-                if (!TextUtils.isEmpty(address.getLastName())) {
-                    b.append(" ").append(address.getLastName());
+            if (!TextUtils.isEmpty(address.getFirstname())) {
+                b.append(address.getFirstname());
+                if (!TextUtils.isEmpty(address.getLastname())) {
+                    b.append(" ").append(address.getLastname());
                 }
                 b.append("\n");
             }
@@ -319,8 +319,8 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                 if (!TextUtils.isEmpty(address.getState())) {
                     b.append(" ").append(address.getState());
                 }
-                if (!TextUtils.isEmpty(address.getZipCode())) {
-                    b.append(" ").append(address.getZipCode());
+                if (!TextUtils.isEmpty(address.getZipcode())) {
+                    b.append(" ").append(address.getZipcode());
                 }
                 b.append("\n");
             }
