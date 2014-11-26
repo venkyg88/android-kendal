@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Created by Avinash Dodda.
  */
-public class ShippingListFragment extends BaseFragment implements View.OnClickListener {
+public class AddressListFragment extends BaseFragment implements View.OnClickListener {
     private static final String TAG = "ShippingList Fragment";
     ListView listview;
     Button addBtn;
@@ -46,7 +46,7 @@ public class ShippingListFragment extends BaseFragment implements View.OnClickLi
         activity = getActivity();
 
 
-        final ShippingArrayAdapter adapter = new ShippingArrayAdapter(activity,
+        final AddressArrayAdapter adapter = new AddressArrayAdapter(activity,
                 addressList, ProfileDetails.currentAddressId);
         listview.setAdapter(adapter);
         registerForContextMenu(listview);
@@ -68,17 +68,17 @@ public class ShippingListFragment extends BaseFragment implements View.OnClickLi
 
     @Override
     public void onClick(View view) {
-        Fragment shippingFragment = Fragment.instantiate(activity, ShippingFragment.class.getName());
+        Fragment shippingFragment = Fragment.instantiate(activity, AddressFragment.class.getName());
         ((MainActivity) activity).navigateToFragment(shippingFragment);
     }
 }
 
-class ShippingArrayAdapter extends ArrayAdapter<Address> {
+class AddressArrayAdapter extends ArrayAdapter<Address> {
     private final Context context;
     private final List<Address> values;
     private String addressId;
 
-    public ShippingArrayAdapter(Context context, List<Address> values, String addressId) {
+    public AddressArrayAdapter(Context context, List<Address> values, String addressId) {
         super(context, R.layout.list_view_row, values);
         this.context = context;
         this.values = values;
