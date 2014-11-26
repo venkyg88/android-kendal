@@ -5,6 +5,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -30,8 +31,8 @@ public class AboutFragment extends BaseFragment {
         Log.d(TAG, "onCreateView()");
         View view = inflater.inflate(R.layout.about_fragment, container, false);
         TableLayout table = (TableLayout) view.findViewById(R.id.about_table);
-
         dateFormat = new SimpleDateFormat(("yyyy-MM-dd HH:mm"));
+
         addRow(inflater, table, "Android API version", Integer.toString(Build.VERSION.SDK_INT));
         addDisplayRows(inflater, table);
         addPackageRows(inflater, table);
@@ -81,6 +82,11 @@ public class AboutFragment extends BaseFragment {
         String version = Integer.toString(a)+"."+Integer.toString(b)+"."+Integer.toString(c);
         if (x>0) version = version+"."+Integer.toString(x);
         addRow(inflater, table, "Google Play", version);
+
+        String geo;
+        if (Geocoder.isPresent()) geo = "Yes";
+        else geo = "No";
+        addRow(inflater, table, "Geocoder", geo);
     }
 
     private void addRow(LayoutInflater inflater, TableLayout table, String key, String value) {

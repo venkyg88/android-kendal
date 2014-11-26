@@ -1,7 +1,7 @@
 package com.staples.mobile.cfa.store;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,8 +24,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.BaseFragment;
+import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.channel.model.store.*;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -50,8 +51,8 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
     private BitmapDescriptor coldIcon;
     private Marker hotMarker;
 
-    private double centerLat = 42.3672799; // Velocity lab
-    private double centerLng = -71.0900776;
+    private double centerLat;
+    private double centerLng;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -83,7 +84,13 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
         list.setAdapter(adapter);
         list.setOnItemClickListener(this);
 
-        Access.getInstance().getChannelApi().storeLocations("02139", this);
+        LocationFinder finder = LocationFinder.getInstance(getActivity());
+        Location location = finder.getLocation();
+        centerLat = location.getLatitude();
+        centerLng = location.getLongitude();
+        String postalCode = finder.getPostalCode();
+
+        Access.getInstance().getChannelApi().storeLocations(postalCode, this);
         return (view);
     }
 

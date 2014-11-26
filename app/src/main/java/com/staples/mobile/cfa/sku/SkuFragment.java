@@ -154,7 +154,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
         details.setVisibility(View.GONE);
 
         // Disable add-to-cart
-//        wrapper.findViewById(R.id.quantity).setEnabled(false);
+        wrapper.findViewById(R.id.quantity).setEnabled(false);
         wrapper.findViewById(R.id.add_to_cart).setEnabled(false);
 
         // Set listeners
@@ -240,7 +240,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
         List<Description> paragraphs = product.getParagraph();
         if (paragraphs != null) {
             for (Description paragraph : paragraphs) {
-                String text = paragraph.getText();
+                String text = Html.fromHtml(paragraph.getText()).toString();
                 if (text != null) {
                     TextView item = (TextView) inflater.inflate(R.layout.sku_paragraph_item, parent, false);
                     parent.addView(item);
@@ -256,7 +256,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
         if (bullets != null) {
             for (BulletDescription bullet : bullets) {
                 if (count >= limit) break;
-                String text = bullet.getText();
+                String text = Html.fromHtml(bullet.getText()).toString();
                 if (text != null) {
                     View item = inflater.inflate(R.layout.sku_bullet_item, parent, false);
                     parent.addView(item);
@@ -271,8 +271,6 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
 
     protected static void addSpecifications(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
         int rowCount = 0;
-        String specName;
-        String specValue;
 
         // Add specification
         List<Description> specs = product.getSpecification();
@@ -285,8 +283,8 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
                     break;
                 }
 
-                specName = spec.getName();
-                specValue = spec.getText();
+                String specName = Html.fromHtml(spec.getName()).toString();
+                String specValue = Html.fromHtml(spec.getText()).toString();
 
                 if (specName != null && specValue != null) {
                     TableRow skuSpecRow = (TableRow) inflater.inflate(R.layout.sku_spec_item, table, false);
@@ -309,14 +307,12 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
 
     private void addAccessory(Product product) {
         List<Product> accessories = product.getAccessory();
-        String accessoryImageUrl;
-        String accessoryTitle;
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         for (final Product accessory : accessories) {
-            accessoryImageUrl = accessory.getImage().get(0).getUrl();
-            accessoryTitle = accessory.getProductName();
+            String accessoryImageUrl = accessory.getImage().get(0).getUrl();
+            String accessoryTitle = accessory.getProductName();
             final String sku = accessory.getSku();
 
             View skuAccessoryRow = inflater.inflate(R.layout.sku_accessory_item, null);
@@ -354,7 +350,6 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
 
             accessoryContainer.addView(skuAccessoryRow);
         }
-
     }
 
     private void saveSeenProduct(Product product){
@@ -379,9 +374,6 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
                     rating, unitOfMeasure, imageUrl);
 
             feedSingleton.getSavedSeenProducts(getActivity()).addSeenProduct(item, sku, getActivity());
-        }
-        else{
-            Log.d(TAG, "This product has been saved before: " + product.getProductName());
         }
     }
 

@@ -12,13 +12,13 @@ import android.view.View;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 
 public class PriceSticker extends View {
     private static final String TAG = "StickerPrice";
 
-    private static final DecimalFormat format = new DecimalFormat("$0.00");
+    private static final NumberFormat format = NumberFormat.getCurrencyInstance();
     private Paint pricePaint;
     private Paint unitPaint;
 

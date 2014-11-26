@@ -102,7 +102,10 @@ public class HackEditor extends EditText implements View.OnClickListener {
             TextView digit = (TextView) inflater.inflate(R.layout.hack_item, frame, false);
             digit.setId(i);
             String text = Integer.toString(i);
-            if (i==MAXQUANTITY) text += "+";
+            if (i==MAXQUANTITY) {
+                text += "+";
+                digit.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            }
             digit.setText(text);
             digit.setOnClickListener(this);
             frame.addView(digit);
@@ -111,7 +114,6 @@ public class HackEditor extends EditText implements View.OnClickListener {
         popup.show();
         frame.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
         int width = frame.getMeasuredWidth();
-        Log.d(TAG, "Computed width = " + width);
-        window.setLayout(5*width/3, ViewGroup.LayoutParams.WRAP_CONTENT);
+        window.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 }
