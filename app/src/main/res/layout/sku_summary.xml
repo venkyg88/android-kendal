@@ -195,13 +195,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_horizontal">
-        <com.staples.mobile.cfa.widget.QuantityEditor
+        <com.staples.mobile.cfa.widget.HackEditor
             android:id="@+id/quantity"
-            android:layout_width="wrap_content"
+            style="@style/HackEditorStyle"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:visibility="gone"
-            android:textSize="18sp"
             app:maxSpinnerValue="9"/>
         <Button
             android:id="@+id/add_to_cart"

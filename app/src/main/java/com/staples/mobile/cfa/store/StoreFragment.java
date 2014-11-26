@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -57,7 +58,7 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
         View view;
 
         // Supports Google Play Services?
-        if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity())==0) {
+        if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity())==ConnectionResult.SUCCESS) {
             view = inflater.inflate(R.layout.store_fragment_map, container, false);
             mapView = (MapView) view.findViewById(R.id.map);
             mapView.onCreate(bundle);
