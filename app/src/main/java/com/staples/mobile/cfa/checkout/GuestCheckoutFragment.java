@@ -5,6 +5,7 @@
 package com.staples.mobile.cfa.checkout;
 
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -69,14 +70,26 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     private boolean shippingAddrNeedsApplying = true;
     private boolean billingAddrNeedsApplying = true;
 
+    /**
+     * Create a new instance of GuestCheckoutFragment that will be initialized
+     * with the given arguments.
+     */
+    public static CheckoutFragment newInstance(float itemSubtotal, float preTaxSubtotal) {
+        CheckoutFragment f = new GuestCheckoutFragment();
+        Bundle args = new Bundle();
+        args.putFloat(CheckoutFragment.BUNDLE_PARAM_ITEMSUBTOTAL, itemSubtotal);
+        args.putFloat(CheckoutFragment.BUNDLE_PARAM_PRETAXSUBTOTAL, preTaxSubtotal);
+        f.setArguments(args);
+        return f;
+    }
 
-    /** override this to specify layout for entry area */
+    /** specifies layout for variable entry area */
     @Override
     protected int getEntryLayoutId() {
         return R.layout.checkout_guest_entry;
     }
 
-    /** override this for variation on entry area */
+    /** initializes variable entry area of checkout screen */
     @Override
     protected void initEntryArea(View view) {
 
@@ -342,7 +355,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
 
 
-    /** overriding to handle order submission */
+    /** handles order submission */
     @Override
     protected void onSubmit() {
         submitPaymentMethod();
