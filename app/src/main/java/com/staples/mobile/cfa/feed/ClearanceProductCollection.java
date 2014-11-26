@@ -3,7 +3,6 @@ package com.staples.mobile.cfa.feed;
 import android.util.Log;
 
 import com.staples.mobile.cfa.login.LoginHelper;
-
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -18,7 +17,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class DailyDealProductCollection
+public class ClearanceProductCollection
         implements Callback<Browse> {
 
     private static final String TAG = "ProductCollection";
@@ -37,7 +36,7 @@ public class DailyDealProductCollection
 
     public interface ProductCollectionCallBack {
 
-        public void onProductCollectionResult(List<Product> products);
+        public void onClearanceProductsResult(List<Product> products);
     }
 
     // Instance Variables
@@ -48,7 +47,7 @@ public class DailyDealProductCollection
 
     private List<Product> products;
 
-    public DailyDealProductCollection() {
+    public ClearanceProductCollection() {
 
         if (LOGGING) Log.v(TAG, "ProductCollection:ProductCollection():"
                         + " this[" + this + "]"
@@ -98,7 +97,7 @@ public class DailyDealProductCollection
 
         products = processBrowse(browse);
 
-        if (productCollectionCallBack != null) productCollectionCallBack.onProductCollectionResult(products);
+        if (productCollectionCallBack != null) productCollectionCallBack.onClearanceProductsResult(products);
 
         if (LOGGING) Log.v(TAG, "ProductCollection:success(): Exit."
                         + " products[" + products + "]"
@@ -119,7 +118,7 @@ public class DailyDealProductCollection
                         + " this[" + this + "]"
         );
 
-        if (productCollectionCallBack != null) productCollectionCallBack.onProductCollectionResult(products);
+        if (productCollectionCallBack != null) productCollectionCallBack.onClearanceProductsResult(products);
     }
 
     private List<Product> processBrowse(Browse browse) {

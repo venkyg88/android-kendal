@@ -34,12 +34,21 @@
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
                     android:background="#c0c0c0"/>
+                <TextView
+                    android:id="@+id/clearance_empty"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:text="@string/empty"
+                    android:visibility="gone"
+                    android:padding="5dp"/>
                 <LinearLayout
                     android:id="@+id/clearance_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="10dp"/>
+                    android:paddingLeft="10dp"/>
             </LinearLayout>
 
             <!-- Separator -->
@@ -47,12 +56,12 @@
                 android:layout_width="fill_parent"
                 android:layout_height="10dp"/>
 
+            <!-- Daily Deal Products in Cart -->
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="#ffffff"
                 android:orientation="vertical">
-                <!-- Daily Deal Products in Cart -->
                 <TextView
                     android:id="@+id/daily_deal_title"
                     android:layout_width="wrap_content"
@@ -64,12 +73,21 @@
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
                     android:background="#c0c0c0"/>
+                <TextView
+                    android:id="@+id/daily_deal_empty"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:text="@string/empty"
+                    android:visibility="gone"
+                    android:padding="5dp"/>
                 <LinearLayout
                     android:id="@+id/daily_deal_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="10dp"/>
+                    android:paddingLeft="10dp"/>
             </LinearLayout>
 
             <!-- Separator -->
@@ -93,12 +111,21 @@
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
                     android:background="#c0c0c0"/>
+                <TextView
+                    android:id="@+id/seen_products_empty"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:text="@string/empty"
+                    android:visibility="gone"
+                    android:padding="5dp"/>
                 <LinearLayout
                     android:id="@+id/seen_products_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="10dp"/>
+                    android:paddingLeft="10dp"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
