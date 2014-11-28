@@ -4,6 +4,6 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:drawableBottom="@drawable/hack_divider"
-    android:singleLine="true"
+    android:maxLines="1"
     android:textSize="24sp">
 </TextView>

@@ -1,7 +1,6 @@
 package com.staples.mobile.cfa.sku;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -23,19 +22,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
-import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
 import com.staples.mobile.cfa.feed.SeenProductsRowItem;
-
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.HackEditor;
 import com.staples.mobile.cfa.widget.PagerStripe;
 import com.staples.mobile.cfa.widget.PriceSticker;
-import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -437,13 +434,12 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
                 case RETAILONLY:
                 case SPECIALORDER:
                 case OUTOFSTOCK:
-                    edit.setVisibility(View.GONE);
+                    edit.setEnabled(false);
                     button.setText(availability.getTextResId());
                     button.setEnabled(false);
                     break;
                 case INSTOCK:
-                    edit.setVisibility(View.VISIBLE);
-                    edit.setQuantity(1);
+                    edit.setEnabled(true);
                     button.setText(R.string.add_to_cart);
                     button.setEnabled(true);
                     break;

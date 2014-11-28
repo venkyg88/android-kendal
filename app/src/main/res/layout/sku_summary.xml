@@ -201,6 +201,7 @@
             android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:hint="1"
             app:maxSpinnerValue="9"/>
         <Button
             android:id="@+id/add_to_cart"

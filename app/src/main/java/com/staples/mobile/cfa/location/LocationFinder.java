@@ -22,7 +22,7 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
     private static final String PREFS_LATITUDE = "locationLatitude";
     private static final String PREFS_LONGITUDE = "locationLongitude";
     private static final String PREFS_TIMESTAMP = "locationTimestamp";
-    private static final String PREFS_POSTALCODE = "locationPostalCode";
+    private static final String PREFS_POSTALCODE = "postalCode";
 
     private static LocationFinder instance;
 
@@ -37,6 +37,8 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
 
     private Activity activity;
     private GoogleApiClient client;
+    private Geocoder geocoder;
+
     private boolean connected;
     private Location location;
     private String postalCode;
@@ -47,6 +49,7 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
         GoogleApiClient.Builder builder = new GoogleApiClient.Builder(activity, this, this);
         builder.addApi(LocationServices.API);
         client = builder.build();
+        geocoder = new Geocoder(activity);
         client.connect();
     }
 
@@ -66,11 +69,11 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
         connected = true;
 
         Location latest =  LocationServices.FusedLocationApi.getLastLocation(client);
-        if (latest!=null) location = latest;
+        if (latest==null) return;
+        location = latest;
 
-        Geocoder geo = new Geocoder(activity);
         try {
-            List<Address> addresses = geo.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
             if (addresses!=null && addresses.size()>0) {
                 Address address = addresses.get(0);
                 postalCode = address.getPostalCode();

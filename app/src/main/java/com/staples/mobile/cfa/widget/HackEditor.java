@@ -2,9 +2,10 @@ package com.staples.mobile.cfa.widget;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Rect;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,7 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
 
-public class HackEditor extends EditText implements View.OnClickListener {
+public class HackEditor extends EditText implements View.OnClickListener, TextView.OnEditorActionListener {
     private static final String TAG = "HackEditor";
 
     private int MINQUANTITY = 1;
@@ -23,6 +24,7 @@ public class HackEditor extends EditText implements View.OnClickListener {
 
     private Context context;
     private Dialog popup;
+    private Handler handler;
 
     public HackEditor(Context context) {
         this(context, null, 0);
@@ -35,8 +37,10 @@ public class HackEditor extends EditText implements View.OnClickListener {
     public HackEditor(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.context = context;
+        handler = new Handler();
         setHint(Integer.toString(MINQUANTITY));
         setOnClickListener(this);
+        setOnEditorActionListener(this);
     }
 
     public int getQuantity() {
@@ -80,12 +84,34 @@ public class HackEditor extends EditText implements View.OnClickListener {
                 popup.dismiss();
                 popup = null;
             }
-            setFocusable(true);
-            setFocusableInTouchMode(true);
-            requestFocus();
-            selectAll();
+            handler.postDelayed(new ShowKeyboard(), 100);
             return;
         }
+    }
+
+    private class ShowKeyboard implements Runnable {
+        @Override
+        public void run() {
+            setFocusable(true);
+            setFocusableInTouchMode(true);
+            selectAll();
+            requestFocus();
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(HackEditor.this, InputMethodManager.SHOW_IMPLICIT);
+        }
+    }
+
+    private class DisableFocus implements Runnable {
+        @Override
+        public void run() {
+            setFocusable(false);
+            setFocusableInTouchMode(false);
+        }
+    }
+
+    public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+        handler.post(new DisableFocus());
+        return(false);
     }
 
     private void showPopup()
@@ -95,11 +121,12 @@ public class HackEditor extends EditText implements View.OnClickListener {
         window.requestFeature(Window.FEATURE_NO_TITLE);
 
         LayoutInflater inflater = popup.getLayoutInflater();
-        ViewGroup frame = (ViewGroup) inflater.inflate(R.layout.hack_layout, null, false);
+        View frame = inflater.inflate(R.layout.hack_layout, null, false);
         popup.setContentView(frame);
+        ViewGroup strip = (ViewGroup) frame.findViewById(R.id.strip);
 
         for(int i=MINQUANTITY;i<=MAXQUANTITY;i++) {
-            TextView digit = (TextView) inflater.inflate(R.layout.hack_item, frame, false);
+            TextView digit = (TextView) inflater.inflate(R.layout.hack_item, strip, false);
             digit.setId(i);
             String text = Integer.toString(i);
             if (i==MAXQUANTITY) {
@@ -108,7 +135,7 @@ public class HackEditor extends EditText implements View.OnClickListener {
             }
             digit.setText(text);
             digit.setOnClickListener(this);
-            frame.addView(digit);
+            strip.addView(digit);
         }
 
         popup.show();
