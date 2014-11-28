@@ -7,7 +7,6 @@ import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 class SearchBarAdapter extends BaseAdapter implements Filterable {
     private static final String TAG = "SearchBarAdapter";
 
-    private static final String HISTORYTAG = "search_history";
+    private static final String PREFS_HISTORY = "searchHistory";
     private static final int MAXHISTORY = 10;
 
     private Activity activity;
@@ -155,9 +154,8 @@ class SearchBarAdapter extends BaseAdapter implements Filterable {
 
     public void loadSearchHistory() {
         // Get chunk
-
         SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
-        String chunk = prefs.getString(HISTORYTAG, null);
+        String chunk = prefs.getString(PREFS_HISTORY, null);
         if (chunk==null || chunk.isEmpty()) return;
 
         // Explode
@@ -180,7 +178,7 @@ class SearchBarAdapter extends BaseAdapter implements Filterable {
         // Save in preferences
         SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(HISTORYTAG, chunk.toString());
-        editor.commit();
+        editor.putString(PREFS_HISTORY, chunk.toString());
+        editor.apply();
     }
 }

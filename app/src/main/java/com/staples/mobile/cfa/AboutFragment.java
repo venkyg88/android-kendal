@@ -17,6 +17,9 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+
 import java.text.SimpleDateFormat;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -70,18 +73,41 @@ public class AboutFragment extends BaseFragment {
         } catch(Exception e) {}
     }
 
-    private void addGoogleRows(LayoutInflater inflater, TableLayout table) {
+    String formatGooglePlayVersion() {
         Resources res = getActivity().getResources();
         int x = res.getInteger(R.integer.google_play_services_version);
-        int a = x/1000000; // 2 digits
-        x -= 1000000*a;
-        int b = x/100000; // 1 digit
-        x -= 100000*b;
-        int c = x/1000; // 2 digits
-        x -= 1000*c; // optional 3 digits
-        String version = Integer.toString(a)+"."+Integer.toString(b)+"."+Integer.toString(c);
-        if (x>0) version = version+"."+Integer.toString(x);
-        addRow(inflater, table, "Google Play", version);
+        int a = x / 1000000; // 2 digits
+        x -= 1000000 * a;
+        int b = x / 100000; // 1 digit
+        x -= 100000 * b;
+        int c = x / 1000; // 2 digits
+        x -= 1000 * c; // optional 3 digits
+        String version = Integer.toString(a) + "." + Integer.toString(b) + "." + Integer.toString(c);
+        if (x > 0) version = version + "." + Integer.toString(x);
+        return(version);
+    }
+
+    private void addGoogleRows(LayoutInflater inflater, TableLayout table) {
+        String play;
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity());
+        switch(status) {
+            case ConnectionResult.SUCCESS:
+                play = formatGooglePlayVersion();
+                break;
+            case ConnectionResult.SERVICE_MISSING:
+                play = "Missing";
+                break;
+            case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
+                play = "Update required";
+                break;
+            case ConnectionResult.SERVICE_DISABLED:
+                play = "Disabled";
+                break;
+            default:
+                play = "Error "+status;
+                break;
+        }
+        addRow(inflater, table, "Google Play", play);
 
         String geo;
         if (Geocoder.isPresent()) geo = "Yes";

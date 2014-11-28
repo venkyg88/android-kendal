@@ -84,12 +84,24 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
         list.setAdapter(adapter);
         list.setOnItemClickListener(this);
 
+        // Get location
         LocationFinder finder = LocationFinder.getInstance(getActivity());
         Location location = finder.getLocation();
+        if (location==null) {
+            Toast.makeText(getActivity(), "LocationFinder.getLocation returned null", Toast.LENGTH_LONG).show();
+            return(view);
+        }
         centerLat = location.getLatitude();
         centerLng = location.getLongitude();
-        String postalCode = finder.getPostalCode();
 
+        // Get postal code
+        String postalCode = finder.getPostalCode();
+        if (postalCode==null) {
+            Toast.makeText(getActivity(), "LocationFinder.getPostalCode returned null", Toast.LENGTH_LONG).show();
+            return(view);
+        }
+
+        // Find nearby stores
         Access.getInstance().getChannelApi().storeLocations(postalCode, this);
         return (view);
     }
@@ -128,7 +140,6 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
                        number.substring(6, 10));
         }
 
-        Log.d(TAG, "reformatNumber ->"+number+"<-");
         return(number);
     }
 
