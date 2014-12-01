@@ -2,9 +2,11 @@ package com.staples.mobile.cfa.widget;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,12 +21,12 @@ import com.staples.mobile.cfa.R;
 public class HackEditor extends EditText implements View.OnClickListener, TextView.OnEditorActionListener {
     private static final String TAG = "HackEditor";
 
-    private int MINQUANTITY = 1;
-    private int MAXQUANTITY = 10;
-
     private Context context;
     private Dialog popup;
     private Handler handler;
+    private int minQuantity;
+    private int maxQuantity;
+    private int popupWidth;
 
     public HackEditor(Context context) {
         this(context, null, 0);
@@ -38,7 +40,32 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
         super(context, attrs, defStyle);
         this.context = context;
         handler = new Handler();
-        setHint(Integer.toString(MINQUANTITY));
+
+        // Preset default attributes
+        minQuantity = 1;
+        maxQuantity = 10;
+        popupWidth = 100;
+
+        // Get styled attributes
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.HackEditor);
+        int n = a.getIndexCount();
+        for(int i=0;i<n;i++) {
+            int index = a.getIndex(i);
+            switch(index) {
+                case R.styleable.HackEditor_minQuantity:
+                    minQuantity = a.getInt(index, minQuantity);
+                    break;
+                case R.styleable.HackEditor_maxQuantity:
+                    maxQuantity = a.getInt(index, maxQuantity);
+                    break;
+                case R.styleable.HackEditor_popupWidth:
+                    popupWidth = a.getDimensionPixelSize(index, popupWidth);
+                    break;
+            }
+        }
+        a.recycle();
+
+        setHint(Integer.toString(minQuantity));
         setOnClickListener(this);
         setOnEditorActionListener(this);
     }
@@ -46,12 +73,12 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
     public int getQuantity() {
         String text = getText().toString();
         if (text==null || text.isEmpty())
-            return(MINQUANTITY);
+            return(minQuantity);
         try {
             int qty = Integer.parseInt(text);
             return(qty);
         } catch(Exception e) {
-            return (MINQUANTITY);
+            return (minQuantity);
         }
     }
 
@@ -69,7 +96,7 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
 
         // Dialog quantity select
         int id = view.getId();
-        if (id>=0 && id<MAXQUANTITY) {
+        if (id>=0 && id<maxQuantity) {
             if (popup!=null) {
                 popup.dismiss();
                 popup = null;
@@ -79,7 +106,7 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
         }
 
         // Dialog more select
-        if (id==MAXQUANTITY) {
+        if (id==maxQuantity) {
             if (popup!=null) {
                 popup.dismiss();
                 popup = null;
@@ -125,22 +152,19 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
         popup.setContentView(frame);
         ViewGroup strip = (ViewGroup) frame.findViewById(R.id.strip);
 
-        for(int i=MINQUANTITY;i<=MAXQUANTITY;i++) {
+        for(int i=minQuantity;i<=maxQuantity;i++) {
+            String text;
             TextView digit = (TextView) inflater.inflate(R.layout.hack_item, strip, false);
             digit.setId(i);
-            String text = Integer.toString(i);
-            if (i==MAXQUANTITY) {
-                text += "+";
-                digit.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            }
+            if (i==0) text = context.getResources().getString(R.string.remove);
+            else text = Integer.toString(i);
+            if (i==maxQuantity) text += "+";
             digit.setText(text);
             digit.setOnClickListener(this);
             strip.addView(digit);
         }
 
         popup.show();
-        frame.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
-        int width = frame.getMeasuredWidth();
-        window.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
+        window.setLayout(popupWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 }

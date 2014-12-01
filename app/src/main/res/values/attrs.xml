@@ -1,25 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="RatingStars">
+    <declare-styleable name="BadgeImageView">
+        <attr name="android:text"/>
         <attr name="android:textSize"/>
-        <attr name="android:gravity"/>
-        <attr name="noReviews" format="string"/>
+        <attr name="android:textColor"/>
     </declare-styleable>
-    <declare-styleable name="PriceSticker">
-        <attr name="android:textSize"/>
-        <attr name="android:gravity"/>
+    <declare-styleable name="HackEditor">
+        <attr name="minQuantity" format="integer"/>
+        <attr name="maxQuantity" format="integer"/>
+        <attr name="popupWidth" format="dimension"/>
     </declare-styleable>
     <declare-styleable name="PagerStripe">
         <attr name="stripeThickness" format="dimension"/>
         <attr name="android:textSize"/>
     </declare-styleable>
+    <declare-styleable name="PriceSticker">
+        <attr name="android:textSize"/>
+        <attr name="android:gravity"/>
+    </declare-styleable>
     <declare-styleable name="QtyEditor">
         <attr name="android:textSize"/>
         <attr name="maxSpinnerValue" format="integer"/>
     </declare-styleable>
-    <declare-styleable name="BadgeImageView">
-        <attr name="android:text"/>
+    <declare-styleable name="RatingStars">
         <attr name="android:textSize"/>
-        <attr name="android:textColor"/>
+        <attr name="android:gravity"/>
+        <attr name="noReviews" format="string"/>
     </declare-styleable>
 </resources>
