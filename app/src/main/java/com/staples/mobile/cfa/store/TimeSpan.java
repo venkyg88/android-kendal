@@ -6,11 +6,11 @@ import java.util.Calendar;
 import java.util.Locale;
 
 /** This class represents a span of local time within a repeating week.
- * The basic unit is milliseconds since midnight at the start of Sunday.
+ * The basic unit is milliseconds since midnight at the start of Thursday.
  */
 public class TimeSpan {
-    public static final int ONEWEEK = 604800000;
-    public static final int ONEDAY =   86400000;
+    public static final int ONEWEEK = 7*24*60*60*1000;
+    public static final int ONEDAY = 24*60*60*1000;
 
     // January 1, 1970 was a Thursday
     private static final String[] DAYNAMES = {"Thursday", "Friday", "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday"};
@@ -44,7 +44,7 @@ public class TimeSpan {
         try {
             start += timeFormat.parse(chunks[0]).getTime();
             end += timeFormat.parse(chunks[1]).getTime();
-            if (end < start) end += ONEDAY;
+            if (end<start) end += ONEDAY;
         } catch(Exception e) {
             return(null);
         }
@@ -83,7 +83,7 @@ public class TimeSpan {
         return(0);
     }
 
-    public String format(int dateStyle, DateFormat timeFormat) {
+    public String toString(int dateStyle, DateFormat timeFormat) {
         Calendar calendar = timeFormat.getCalendar();
         calendar.setTimeInMillis(start);
         String dow = calendar.getDisplayName(Calendar.DAY_OF_WEEK, dateStyle, Locale.getDefault());
