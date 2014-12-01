@@ -31,6 +31,7 @@ import java.util.Map;
 public class PersonalFeedFragment extends BaseFragment
         implements DailyDealProductCollection.ProductCollectionCallBack,
                    ClearanceProductCollection.ProductCollectionCallBack{
+                   //ProductCollection.ProductCollectionCallBack{
     private static final String TAG = "PersonalFeedFragment";
 
     public static final String DAILY_DEAL_IDENTIFIER = "BI739472";
@@ -66,6 +67,14 @@ public class PersonalFeedFragment extends BaseFragment
         // make clearance api call
         ClearanceProductCollection clearanceProductCollection = new ClearanceProductCollection();
         clearanceProductCollection.getProducts(CLEARANCE_IDENTIFIER, 1, 50, this); // identifier, offset, limit, callback
+
+
+//        Map clearanceArgs = new HashMap<String, String>();
+//        clearanceArgs.put(ProductCollection.COLLECTION_ARGS.IDENTIFIER, CLEARANCE_IDENTIFIER);
+//        clearanceArgs.put(ProductCollection.COLLECTION_ARGS.MAX_ITEMS, "50");
+//        clearanceArgs.put(ProductCollection.COLLECTION_ARGS.OFFSET, "1");
+//        ProductCollection clearanceProductCollection = new ProductCollection();
+//        clearanceProductCollection.getProducts(clearanceArgs, this);
 
         setSeenProductsAdapter();
 
@@ -135,11 +144,13 @@ public class PersonalFeedFragment extends BaseFragment
         }
 
         List<CartItem> cartItems = CartFragment.getListItems();
-        for (CartItem cartItem : cartItems) {
-            String cartItemSku = cartItem.getProduct().getSku();
-            if(dailyDealSkuSet.contains(cartItemSku)){
-                fillContainer(cartItem, dailyDealContainer);
-                Log.d(TAG, "Daily deal products in cart: " + cartItem.getProduct().getProductName());
+        if(cartItems != null) {
+            for (CartItem cartItem : cartItems) {
+                String cartItemSku = cartItem.getProduct().getSku();
+                if (dailyDealSkuSet.contains(cartItemSku)) {
+                    fillContainer(cartItem, dailyDealContainer);
+                    Log.d(TAG, "Daily deal products in cart: " + cartItem.getProduct().getProductName());
+                }
             }
         }
 
@@ -162,11 +173,13 @@ public class PersonalFeedFragment extends BaseFragment
         }
 
         List<CartItem> cartItems = CartFragment.getListItems();
-        for (CartItem cartItem : cartItems) {
-            String cartItemSku = cartItem.getProduct().getSku();
-            if(clearanceSkuSet.contains(cartItemSku)){
-                fillContainer(cartItem, clearanceContainer);
-                Log.d(TAG, "Clearance products in cart: " + cartItem.getProduct().getProductName());
+        if(cartItems != null){
+            for (CartItem cartItem : cartItems) {
+                String cartItemSku = cartItem.getProduct().getSku();
+                if(clearanceSkuSet.contains(cartItemSku)){
+                    fillContainer(cartItem, clearanceContainer);
+                    Log.d(TAG, "Clearance products in cart: " + cartItem.getProduct().getProductName());
+                }
             }
         }
 
@@ -178,6 +191,39 @@ public class PersonalFeedFragment extends BaseFragment
             clearanceProductsNotFound.setVisibility(View.GONE);
         }
     }
+
+//    @Override
+//    public void onProductCollectionResult(ProductCollection.ProductContainer productContainer) {
+//        List<Product> clearanceProducts = productContainer.products;
+//        for(Product p: clearanceProducts){
+//            fillContainer(p, clearanceContainer);
+//            Log.d(TAG, "Clearance Products: " + p.getProductName() + "-" + p.getSku());
+//        }
+
+//        HashSet<String> clearanceSkuSet = new HashSet<String>();
+//        for(Product p: clearanceProducts){
+//            clearanceSkuSet.add(p.getSku());
+//            fillContainer(p, clearanceContainer);
+//            Log.d(TAG, "Clearance Products: " + p.getProductName() + "-" + p.getSku());
+//        }
+
+//        List<CartItem> cartItems = CartFragment.getListItems();
+//        for (CartItem cartItem : cartItems) {
+//            String cartItemSku = cartItem.getProduct().getSku();
+//            if(clearanceSkuSet.contains(cartItemSku)){
+//                fillContainer(cartItem, clearanceContainer);
+//                Log.d(TAG, "Clearance products in cart: " + cartItem.getProduct().getProductName());
+//            }
+//        }
+//
+//        // display "nothing found" if no clearance products
+//        if(clearanceContainer.getChildCount() == 0){
+//            clearanceProductsNotFound.setVisibility(View.VISIBLE);
+//        }
+//        else{
+//            clearanceProductsNotFound.setVisibility(View.GONE);
+//        }
+    //}
 
     private void fillContainer(CartItem cartItem, LinearLayout container){
         String productName = cartItem.getProduct().getProductName();
