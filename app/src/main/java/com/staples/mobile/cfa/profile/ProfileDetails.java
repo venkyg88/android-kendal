@@ -6,6 +6,7 @@ import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
@@ -28,6 +29,15 @@ public class ProfileDetails implements Callback<MemberDetail> {
         public void onProfileRefresh(Member member);
     }
 
+    public interface PaymentMethodSelectionListener {
+        public void onPaymentMethodSelected(String id);
+    }
+
+    public interface AddressSelectionListener {
+        public void onAddressSelected(String id);
+    }
+
+
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
     private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
@@ -41,7 +51,14 @@ public class ProfileDetails implements Callback<MemberDetail> {
     public static void setMember(Member member) {
         ProfileDetails.member = member;
     }
+
+    // other static data
     private static long mostRecentTimeRefreshRequested;
+    public static PaymentMethodSelectionListener paymentMethodSelectionListener;
+    public static AddressSelectionListener addressSelectionListener;
+    public static String currentAddressId;
+    public static String currentPaymentMethodId;
+
 
     // non-static instance data
     private EasyOpenApi easyOpenApi;
@@ -195,5 +212,29 @@ public class ProfileDetails implements Callback<MemberDetail> {
             }
         }
         return false;
+    }
+
+    /** returns profile address matching specified addressId */
+    public static Address getAddress(String addressId) {
+        if (member != null && member.getAddress() != null) {
+            for (Address address : member.getAddress()) {
+                if (address.getAddressId().equals(addressId)) {
+                    return address;
+                }
+            }
+        }
+        return null;
+    }
+
+    /** returns profile payment method matching specified paymentMethodId */
+    public static CCDetails getPaymentMethod(String paymentMethodId) {
+        if (member != null && member.getCreditCard() != null) {
+            for (CCDetails creditCard : member.getCreditCard()) {
+                if (creditCard.getCreditCardId().equals(paymentMethodId)) {
+                    return creditCard;
+                }
+            }
+        }
+        return null;
     }
 }

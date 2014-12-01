@@ -7,7 +7,6 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -15,16 +14,19 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.checkout.ConfirmationFragment;
-
+import com.staples.mobile.cfa.checkout.GuestCheckoutFragment;
+import com.staples.mobile.cfa.checkout.RegisteredCheckoutFragment;
 import com.staples.mobile.cfa.location.LocationService;
-
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.profile.AddressFragment;
+import com.staples.mobile.cfa.profile.AddressListFragment;
+import com.staples.mobile.cfa.profile.CreditCardFragment;
+import com.staples.mobile.cfa.profile.CreditCardListFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.search.SearchBarView;
@@ -32,10 +34,6 @@ import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
-import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.configurator.model.Configurator;
-import com.staples.mobile.common.access.easyopen.model.cart.Cart;
-import com.staples.mobile.common.access.lms.LmsManager;
 
 
 public class MainActivity extends Activity
@@ -164,6 +162,11 @@ public class MainActivity extends Activity
     public void showCheckoutActionBarEntities() {
         // show checkout-specific entities
         closeButton.setVisibility(View.VISIBLE);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                selectShoppingCart();
+            }
+        });
         LoginHelper loginHelper = new LoginHelper(this);
         if (loginHelper.isLoggedIn() && loginHelper.isGuestLogin()) {
             checkoutSigninButton.setVisibility(View.VISIBLE);
@@ -262,7 +265,7 @@ public class MainActivity extends Activity
         // for faster debugging with registered user (automatic login), uncomment this and use your
         // own credentials, but re-comment out before checking code in
 //        if (guestLevel) {
-//            new LoginHelper(this).getUserTokens("<user>", "<password>");
+//            new LoginHelper(this).getUserTokens("user", "password");
 //        }
     }
 
@@ -301,10 +304,15 @@ public class MainActivity extends Activity
     public boolean selectOrderCheckout() {
         LoginHelper loginHelper = new LoginHelper(this);
         if (loginHelper.isLoggedIn()) {
-            // if guest or if no profile info, then go to single-page checkout, otherwise open checkout with profile editing options
-            CheckoutFragment fragment = CheckoutFragment.newInstance(cartFragment.getExpectedDeliveryRange(),
-                    cartFragment.getCart().getSubTotal(), cartFragment.getCart().getPreTaxTotal(),
-                        !loginHelper.isGuestLogin() && (ProfileDetails.hasAddress() || ProfileDetails.hasPaymentMethod()));
+            CheckoutFragment fragment;
+            // if logged in and have at least an address or a payment method, then use registered flow, otherwise use guest flow
+            if (!loginHelper.isGuestLogin() && (ProfileDetails.hasAddress() || ProfileDetails.hasPaymentMethod())) {
+                fragment = RegisteredCheckoutFragment.newInstance(cartFragment.getCart().getSubTotal(),
+                        cartFragment.getCart().getPreTaxTotal());
+            } else {
+                fragment = GuestCheckoutFragment.newInstance(cartFragment.getCart().getSubTotal(),
+                        cartFragment.getCart().getPreTaxTotal());
+            }
             return selectFragment(fragment, Transition.NONE, true);
         }
         return false;
@@ -344,16 +352,53 @@ public class MainActivity extends Activity
 
     public boolean selectProfileFragment() {
         Fragment fragment = Fragment.instantiate(this, ProfileFragment.class.getName());
-        return (selectFragment(fragment, Transition.SLIDE, true));
+        return (selectFragment(fragment, Transition.NONE, true));
     }
 
     public boolean selectLoginFragment() {
         Fragment fragment = Fragment.instantiate(this, LoginFragment.class.getName());
-        return (selectFragment(fragment, Transition.SLIDE, true));
+        return (selectFragment(fragment, Transition.NONE, true));
     }
 
+    /** opens the profile addresses fragment */
+    public boolean selectProfileAddressesFragment() {
+        return selectProfileAddressesFragment(null, null);
+    }
+
+    /** opens the profile addresses fragment, with optional selection listener */
+    public boolean selectProfileAddressesFragment(ProfileDetails.AddressSelectionListener addressSelectionListener, String currentAddressId) {
+        ProfileDetails.addressSelectionListener = addressSelectionListener;
+        ProfileDetails.currentAddressId = currentAddressId;
+        Fragment fragment;
+        if (ProfileDetails.hasAddress()) {
+            fragment = Fragment.instantiate(this, AddressListFragment.class.getName());
+        } else {
+            fragment = Fragment.instantiate(this, AddressFragment.class.getName());
+        }
+        return navigateToFragment(fragment);
+    }
+
+    /** opens the profile credit cards fragment */
+    public boolean selectProfileCreditCardsFragment() {
+        return selectProfileCreditCardsFragment(null, null);
+    }
+
+    /** opens the profile credit cards fragment, with optional selection listener */
+    public boolean selectProfileCreditCardsFragment(ProfileDetails.PaymentMethodSelectionListener paymentMethodSelectionListener, String currentPaymentMethodId) {
+        ProfileDetails.paymentMethodSelectionListener = paymentMethodSelectionListener;
+        ProfileDetails.currentPaymentMethodId = currentPaymentMethodId;
+        Fragment fragment;
+        if(ProfileDetails.hasPaymentMethod()) {
+            fragment = Fragment.instantiate(this, CreditCardListFragment.class.getName());
+        } else {
+            fragment = Fragment.instantiate(this, CreditCardFragment.class.getName());
+        }
+        return navigateToFragment(fragment);
+    }
+
+
     public boolean navigateToFragment(Fragment fragment) {
-        return (selectFragment(fragment, Transition.SLIDE, true));
+        return (selectFragment(fragment, Transition.NONE, true));
     }
 
     /** Sets item count indicator on cart icon */
@@ -406,9 +451,6 @@ public class MainActivity extends Activity
         }
     }
 
-    public void closeBtnClick(View view) {
-        getFragmentManager().popBackStack();
-    }
 
     // Left drawer listview clicks
 

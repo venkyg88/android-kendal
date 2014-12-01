@@ -45,15 +45,18 @@ public class CreditCardListFragment extends BaseFragment implements View.OnClick
         activity = getActivity();
 
         final CardArrayAdapter adapter = new CardArrayAdapter(activity,
-                cardList);
+                cardList, ProfileDetails.currentPaymentMethodId);
         listview.setAdapter(adapter);
         registerForContextMenu(listview);
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            public void onItemClick(AdapterView<?> a, View v, int position,
-                                    long id) {
-                Toast.makeText(activity, cardList.get(position).getCreditCardId(), Toast.LENGTH_LONG).show();
+            public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+                String paymentMethodId = cardList.get(position).getCreditCardId();
+                if (ProfileDetails.paymentMethodSelectionListener != null) {
+                    ProfileDetails.paymentMethodSelectionListener.onPaymentMethodSelected(paymentMethodId);
+                } else {
+                    Toast.makeText(activity, paymentMethodId, Toast.LENGTH_LONG).show();
+                }
             }
         });
         return (view);
@@ -69,11 +72,13 @@ public class CreditCardListFragment extends BaseFragment implements View.OnClick
 class CardArrayAdapter extends ArrayAdapter<CCDetails> {
     private final Context context;
     private final List<CCDetails> values;
+    private String creditCardId;
 
-    public CardArrayAdapter(Context context, List<CCDetails> values) {
+    public CardArrayAdapter(Context context, List<CCDetails> values, String creditCardId) {
         super(context, R.layout.list_view_row, values);
         this.context = context;
         this.values = values;
+        this.creditCardId = creditCardId;
     }
 
     @Override
@@ -89,12 +94,18 @@ class CardArrayAdapter extends ArrayAdapter<CCDetails> {
         } else {
             cardNumber = creditCard.getCardNumber();
         }
-        String tmpCard = "Card ending in " + cardNumber + "\n" +
-                creditCard.getCardType() + "\n" +
+        String tmpCard = creditCard.getCardType() + " ending in " + cardNumber + "\n" +
                 "Exp. " + creditCard.getExpirationMonth() + "/" + creditCard.getExpirationYear();
-
         TextView ccText = (TextView) rowView.findViewById(R.id.rowItemText);
         ccText.setText(tmpCard);
+        if (creditCardId != null) {
+            View selectionImageView = rowView.findViewById(R.id.selectionImage);
+            if (creditCardId.equals(creditCard.getCreditCardId())) {
+                selectionImageView.setVisibility(View.VISIBLE);
+            } else {
+                selectionImageView.setVisibility(View.INVISIBLE);
+            }
+        }
         return rowView;
     }
 }

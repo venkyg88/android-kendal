@@ -44,6 +44,7 @@
     <string name="shipping_addr">Shipping Address</string>
     <string name="payment_method">Payment Method</string>
     <string name="payment_method_required">Payment Method is required</string>
+    <string name="billing_address_required">Billing address is required</string>
     <string name="billing_addr">Billing Address</string>
     <string name="use_as_billing_addr">Use as billing address</string>
     <!--<string name="delivery_range">Delivery</string>-->

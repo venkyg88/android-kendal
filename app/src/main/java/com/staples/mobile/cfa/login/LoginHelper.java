@@ -10,6 +10,7 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.EmptyResponse;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
@@ -101,7 +102,7 @@ public class LoginHelper {
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
-                        Toast.makeText(activity, "Failed to Login As Guest", Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, "Failed to Login As Guest: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_LONG).show();
                         Log.i("Fail Message For Guest User", " " + retrofitError.getMessage());
                         Log.i("Post URL address For Guest User", " " + retrofitError.getUrl());
                     }
@@ -161,7 +162,7 @@ public class LoginHelper {
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
-                        Toast.makeText(activity, "Failed to Register User" + "\n" + retrofitError.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, "Failed to Register User" + "\n" + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_LONG).show();
                         Log.i("Fail Message to Register User", " " + retrofitError.getMessage());
                         Log.i("Post URL address For Register User", " " + retrofitError.getUrl());
                     }

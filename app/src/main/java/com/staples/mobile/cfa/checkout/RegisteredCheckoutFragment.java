@@ -4,6 +4,7 @@
 
 package com.staples.mobile.cfa.checkout;
 
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -11,18 +12,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.cart.Address;
-import com.staples.mobile.common.access.easyopen.model.cart.AddressDetail;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethodResponse;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
+import com.staples.mobile.common.access.easyopen.model.member.Member;
 
 import java.util.List;
 
@@ -44,44 +45,42 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
 
     private static final int MAXFETCH = 50;
 
+    // additional bundle param keys
+    public static final String BUNDLE_PARAM_SHIPPING_ADDR_ID = "shippingAddrId";
+    public static final String BUNDLE_PARAM_BILLING_ADDR_ID = "billingAddrId";
+    public static final String BUNDLE_PARAM_PAYMENT_METHOD_ID = "paymentMethodId";
+
 
     private TextView shippingAddrVw;
     private TextView paymentMethodVw;
     private TextView billingAddrVw;
 
-    private boolean shippingAddrResponseReceived;
-    private boolean billingAddrResponseReceived;
-//    private boolean profileCcResponseReceived;
-//    private boolean profileAddrResponseReceived;
-    private boolean shippingAddrAddToCartResponseReceived;
-    private boolean billingAddrAddToCartResponseReceived;
+//    ProfileSelections profileSelections;
+    // profile selections
+    String shippingAddressId;
+    String paymentMethodId;
+    String billingAddressId;
 
+    /**
+     * Create a new instance of RegisteredCheckoutFragment that will be initialized
+     * with the given arguments. Used when opening a fresh checkout session from the cart.
+     */
+    public static CheckoutFragment newInstance(float itemSubtotal, float preTaxSubtotal) {
+        CheckoutFragment f = new RegisteredCheckoutFragment();
+        Bundle args = new Bundle();
+        args.putFloat(CheckoutFragment.BUNDLE_PARAM_ITEMSUBTOTAL, itemSubtotal);
+        args.putFloat(CheckoutFragment.BUNDLE_PARAM_PRETAXSUBTOTAL, preTaxSubtotal);
+        f.setArguments(args);
+        return f;
+    }
 
-    // data returned from api
-//    private List<com.staples.mobile.common.access.easyopen.model.member.Address> profileAddresses;
-//    private List<CCDetails> profileCreditCards;
-    private Address shippingAddress;
-    private Address billingAddress;
-
-
-    // payment method associated with the order
-    CCDetails selectedPaymentMethod;
-
-    // api listeners
-    AddressDetailListener shippingAddrListener;
-    AddressDetailListener billingAddrListener;
-//    ProfileListener profileCcListener;
-//    ProfileListener profileAddrListener;
-    AddAddressListener addShippingAddrListener;
-    AddAddressListener addBillingAddrListener;
-
-    /** override this to specify layout for entry area */
+    /** specifies layout for variable entry area */
     @Override
     protected int getEntryLayoutId() {
         return R.layout.checkout_registered_entry;
     }
 
-    /** override this for variation on entry area */
+    /** initializes variable entry area of checkout screen */
     @Override
     protected void initEntryArea(View view) {
 
@@ -91,165 +90,220 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         billingAddrVw = (TextView) view.findViewById(R.id.checkout_billing_addr);
 
         // Set click listeners
-        view.findViewById(R.id.shipping_addr_add).setOnClickListener(this);
-        view.findViewById(R.id.payment_method_add).setOnClickListener(this);
-        view.findViewById(R.id.billing_addr_add).setOnClickListener(this);
+        view.findViewById(R.id.shipping_addresses).setOnClickListener(this);
+        view.findViewById(R.id.payment_methods).setOnClickListener(this);
+        view.findViewById(R.id.billing_addresses).setOnClickListener(this);
 
-        // get api objects
+        // get additional checkout info from bundle (tax, shipping, and subtotals retrieved by super class)
+        Bundle checkoutBundle = this.getArguments();
+        shippingAddressId = checkoutBundle.getString(BUNDLE_PARAM_SHIPPING_ADDR_ID);
+        paymentMethodId = checkoutBundle.getString(BUNDLE_PARAM_PAYMENT_METHOD_ID);
+        billingAddressId = checkoutBundle.getString(BUNDLE_PARAM_BILLING_ADDR_ID);
+
+        // initialize null items with profile data
+        Member member = ProfileDetails.getMember();
+        if (member != null) {
+            List<com.staples.mobile.common.access.easyopen.model.member.Address> profileAddresses = ProfileDetails.getMember().getAddress();
+            if (profileAddresses != null && profileAddresses.size() > 0) {
+                String addrId = profileAddresses.get(0).getAddressId();
+                if (shippingAddressId == null) {
+                    shippingAddressId = addrId;
+                    checkoutBundle.putString(BUNDLE_PARAM_SHIPPING_ADDR_ID, addrId);
+                }
+                if (billingAddressId == null) {
+                    billingAddressId = addrId;
+                    checkoutBundle.putString(BUNDLE_PARAM_BILLING_ADDR_ID, addrId);
+                }
+            }
+            if (paymentMethodId == null) {
+                List<CCDetails> profileCreditCards = ProfileDetails.getMember().getCreditCard();
+                if (profileCreditCards != null && profileCreditCards.size() > 0) {
+                    String ccId = profileCreditCards.get(0).getCreditCardId();
+                    paymentMethodId = ccId;
+                    checkoutBundle.putString(BUNDLE_PARAM_PAYMENT_METHOD_ID, ccId);
+                }
+            }
+        }
+
+        // set widget text with checkout selections
+        com.staples.mobile.common.access.easyopen.model.member.Address shippingAddress = ProfileDetails.getAddress(shippingAddressId);
+        com.staples.mobile.common.access.easyopen.model.member.Address billingAddress = ProfileDetails.getAddress(billingAddressId);
+        CCDetails paymentMethod = ProfileDetails.getPaymentMethod(paymentMethodId);
+        if (shippingAddress != null) {
+            shippingAddrVw.setText(formatAddress(shippingAddress));
+        }
+        if (paymentMethod != null) {
+            paymentMethodVw.setText(formatPaymentMethod(paymentMethod));
+        }
+        if (billingAddress != null) {
+            billingAddrVw.setText(formatAddress(billingAddress));
+        }
+
+        // get api object
         secureApi = Access.getInstance().getEasyOpenApi(true);
 
-        // create api listeners
-//        profileAddrListener = new ProfileListener(true);
-//        profileCcListener = new ProfileListener(false);
-        shippingAddrListener = new AddressDetailListener(true);
-        billingAddrListener = new AddressDetailListener(false);
-        addShippingAddrListener = new AddAddressListener(true);
-        addBillingAddrListener = new AddAddressListener(false);
-
-        // initialize data prior to making api calls which will fill it
-        shippingAddrResponseReceived = false;
-        billingAddrResponseReceived = false;
-//        profileCcResponseReceived = false;
-//        profileAddrResponseReceived = false;
-        shippingAddress = null;
-        billingAddress = null;
-        shippingAddrAddToCartResponseReceived = true; // init to true until we know call will be needed
-        billingAddrAddToCartResponseReceived = true; // init to true until we know call will be needed
-
-        // Set initial visibility
-        showProgressIndicator();
-
-        // make parallel calls for shipping address, billing address, and profile info
-
-        // query for shipping address
-        secureApi.getShippingAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, shippingAddrListener);
-        // query for billing address
-        secureApi.getBillingAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, billingAddrListener);
-        // query for profile credit cards
-//        secureApi.getMemberCreditCardDetails(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, profileCcListener);
-        // query for profile addresses
-//        secureApi.getMemberAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, profileAddrListener);
-
+        // initiate precheckout if necessary, otherwise update screen with shipping and tax
+        if (shippingAddress != null) {
+            if (getTax() == null || getShippingCharge() == null) {
+                applyShippingAddressAndPrecheckout();
+            } else {
+                setShippingAndTax(getShippingCharge(), getTax());
+            }
+        }
     }
 
-    /** overriding to handle order submission */
-    @Override
-    protected void onSubmit() {
-        submitPaymentMethod(null); // cid not necessary for registered users
-    }
 
-    private void submitPaymentMethod(final String cid) {
 
-        // first add selected payment method to cart
-        if (selectedPaymentMethod != null) {
+    /** applies shipping address to cart and initiates precheckout */
+    private void applyShippingAddressAndPrecheckout() {
+        final com.staples.mobile.common.access.easyopen.model.member.Address shippingAddress = ProfileDetails.getAddress(shippingAddressId);
+        if (shippingAddress != null) {
             showProgressIndicator();
-
-            PaymentMethod paymentMethod = new PaymentMethod(selectedPaymentMethod);
-            paymentMethod.setCardVerificationCode(cid);
-            secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
-                    new Callback<PaymentMethodResponse>() {
+            secureApi.addShippingAddressToCart(new ShippingAddress(shippingAddress),
+                    RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<AddressValidationAlert>() {
                         @Override
-                        public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
-                            // upon payment method success, submit the order
-                            submitOrder(cid);
+                        public void success(AddressValidationAlert addressValidationAlert, Response response) {
+                            // applying the shipping address actually modifies the id on the server, so need to fix everything up
+                            Bundle checkoutBundle = RegisteredCheckoutFragment.this.getArguments();
+                            String oldId = shippingAddressId;
+                            String newId = addressValidationAlert.getShippingAddressId();
+                            shippingAddress.setAddressId(newId); // fix id in the profile
+                            shippingAddressId = newId; // fix our local id
+                            checkoutBundle.putString(BUNDLE_PARAM_SHIPPING_ADDR_ID, newId); // fix id in bundle
+                            if (oldId.equals(billingAddressId)) {
+                                billingAddressId = newId; // fix our local id
+                                checkoutBundle.putString(BUNDLE_PARAM_BILLING_ADDR_ID, newId); // fix id in bundle
+                            }
+
+                            startPrecheckout();
                         }
 
                         @Override
                         public void failure(RetrofitError retrofitError) {
                             hideProgressIndicator();
-                            Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
+                            String msg = "Address error: " + ApiError.getErrorMessage(retrofitError);
+                            Log.d(TAG, msg);
+                            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+                            // if timeout, adding address may have triggered a change to the profile,
+                            // therefore refresh cached profile so at least if user leaves page and
+                            // re-enters they have a chance of succeeding
+                            new ProfileDetails().refreshProfile(null);
                         }
-                    }
-            );
-        } else {
-            Toast.makeText(activity, R.string.payment_method_required, Toast.LENGTH_SHORT).show();
+                    });
         }
     }
 
+
+    /** handles order submission */
+    @Override
+    protected void onSubmit() {
+
+        com.staples.mobile.common.access.easyopen.model.member.Address billingAddress = ProfileDetails.getAddress(billingAddressId);
+        final CCDetails profilePaymentMethod = ProfileDetails.getPaymentMethod(paymentMethodId);
+
+        // make sure necessary selections have been made
+        if (profilePaymentMethod == null) {
+            Toast.makeText(activity, R.string.payment_method_required, Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (billingAddress == null) {
+            Toast.makeText(activity, R.string.billing_address_required, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // first add billing address to the cart, then add payment method, then submit
+        secureApi.addBillingAddressToCart(new BillingAddress(billingAddress),
+                RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<AddressValidationAlert>() {
+                    @Override
+                    public void success(AddressValidationAlert precheckoutResponse, Response response) {
+
+                        // next add payment method to cart
+                        showProgressIndicator();
+                        PaymentMethod cartPaymentMethod = new PaymentMethod(profilePaymentMethod);
+                        secureApi.addPaymentMethodToCart(cartPaymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+                                new Callback<PaymentMethodResponse>() {
+                                    @Override
+                                    public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
+                                        // finally, upon payment method success, submit the order
+                                        submitOrder(null);
+                                    }
+
+                                    @Override
+                                    public void failure(RetrofitError retrofitError) {
+                                        hideProgressIndicator();
+                                        Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                        );
+                    }
+
+                    @Override
+                    public void failure(RetrofitError retrofitError) {
+                        String msg = "Address error: " + ApiError.getErrorMessage(retrofitError);
+                        Log.d(TAG, msg);
+                        Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+                        hideProgressIndicator();
+                    }
+                });
+    }
 
 
     @Override
     public void onClick(View view) {
         super.onClick(view);
+
         switch(view.getId()) {
-            case R.id.shipping_addr_add:
-                Toast.makeText(activity, "TBD", Toast.LENGTH_SHORT).show();
+            case R.id.shipping_addresses:
+                activity.selectProfileAddressesFragment(new ProfileDetails.AddressSelectionListener() {
+                    public void onAddressSelected(String id) {
+                        Bundle args = RegisteredCheckoutFragment.this.getArguments();
+                        args.putString(BUNDLE_PARAM_SHIPPING_ADDR_ID, id);
+                        args.putString(BUNDLE_PARAM_SHIPPING_CHARGE, null); // set these to null to force new precheckout step
+                        args.putString(BUNDLE_PARAM_TAX, null);             // set these to null to force new precheckout step
+                        activity.selectFragment(RegisteredCheckoutFragment.this, MainActivity.Transition.NONE, true);
+                    }
+                }, shippingAddressId);
                 break;
-            case R.id.payment_method_add:
-                Toast.makeText(activity, "TBD", Toast.LENGTH_SHORT).show();
+            case R.id.payment_methods:
+                activity.selectProfileCreditCardsFragment(new ProfileDetails.PaymentMethodSelectionListener() {
+                    public void onPaymentMethodSelected(String id) {
+                        Bundle args = RegisteredCheckoutFragment.this.getArguments();
+                        args.putString(BUNDLE_PARAM_PAYMENT_METHOD_ID, id);
+                        activity.selectFragment(RegisteredCheckoutFragment.this, MainActivity.Transition.NONE, true);
+                    }
+                }, paymentMethodId);
                 break;
-            case R.id.billing_addr_add:
-                Toast.makeText(activity, "TBD", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.co_submission_layout:
-                submitPaymentMethod(null); // cid not necessary for registered users
+            case R.id.billing_addresses:
+                activity.selectProfileAddressesFragment(new ProfileDetails.AddressSelectionListener() {
+                    public void onAddressSelected(String id) {
+                        Bundle args = RegisteredCheckoutFragment.this.getArguments();
+                        args.putString(BUNDLE_PARAM_BILLING_ADDR_ID, id);
+                        activity.selectFragment(RegisteredCheckoutFragment.this, MainActivity.Transition.NONE, true);
+                    }
+                }, billingAddressId);
                 break;
         }
     }
 
 
-    protected void startPrecheckoutIfReady() {
-        if (billingAddrAddToCartResponseReceived && shippingAddrAddToCartResponseReceived) {
-            if (shippingAddress != null && billingAddress != null) {
-                startPrecheckout();
-            } else {
-                hideProgressIndicator();
-            }
+    /** formats payment method for display in widget */
+    private String formatPaymentMethod(CCDetails paymentMethod) {
+        StringBuilder b = new StringBuilder();
+        if (paymentMethod != null) {
+            b.append(paymentMethod.getCardType()).append(" ending in ")
+                    .append(paymentMethod.getCardNumber().substring(paymentMethod.getCardNumber().length() - 4));
         }
+        return b.toString();
     }
 
-    protected void applyProfileInfoAsNecessary() {
-
-        List<com.staples.mobile.common.access.easyopen.model.member.Address> profileAddresses = ProfileDetails.getMember().getAddress();
-        List<CCDetails> profileCreditCards = ProfileDetails.getMember().getCreditCard();
-
-        // if profile addresses available
-        if (profileAddresses != null && profileAddresses.size() > 0) {
-            com.staples.mobile.common.access.easyopen.model.member.Address profileAddress = profileAddresses.get(0);
-            Address address = new Address(profileAddress);
-
-            // if cart shipping address null, but address available from profile then add it to cart
-            if (shippingAddress == null) {
-                shippingAddress = address;
-                shippingAddrVw.setText(formatAddress(shippingAddress));
-                // add profile address to cart
-                shippingAddrAddToCartResponseReceived = false;
-                secureApi.addShippingAddressToCart(new ShippingAddress(profileAddress),
-                        RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, addShippingAddrListener);
-            }
-
-            // if cart billing address null, but address available from profile then add it to cart
-            if (billingAddress == null) {
-                billingAddress = address;
-                billingAddrVw.setText(formatAddress(billingAddress));
-                // add profile address to cart
-                billingAddrAddToCartResponseReceived = false;
-                secureApi.addBillingAddressToCart(new BillingAddress(billingAddress),
-                        RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, addBillingAddrListener);
-            }
-        }
-
-        // if CC available from profile
-        if (profileCreditCards != null && profileCreditCards.size() > 0) {
-            CCDetails cc = profileCreditCards.get(0);
-            if (!TextUtils.isEmpty(cc.getCardNumber()) && cc.getCardNumber().length() >= 4) {
-                paymentMethodVw.setText(cc.getCardType() + "  ending in " +
-                        cc.getCardNumber().substring(cc.getCardNumber().length() - 4));
-                selectedPaymentMethod = cc;
-            }
-        }
-
-        // if done because of issues above or addresses already part of order, start precheck if possible
-        startPrecheckoutIfReady();
-    }
-
-    private String formatAddress(Address address) {
+    /** formats address for display in widget */
+    private String formatAddress(com.staples.mobile.common.access.easyopen.model.member.Address address) {
         StringBuilder b = new StringBuilder();
         if (address != null) {
-            if (!TextUtils.isEmpty(address.getFirstName())) {
-                b.append(address.getFirstName());
-                if (!TextUtils.isEmpty(address.getLastName())) {
-                    b.append(" ").append(address.getLastName());
+            if (!TextUtils.isEmpty(address.getFirstname())) {
+                b.append(address.getFirstname());
+                if (!TextUtils.isEmpty(address.getLastname())) {
+                    b.append(" ").append(address.getLastname());
                 }
                 b.append("\n");
             }
@@ -265,174 +319,12 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                 if (!TextUtils.isEmpty(address.getState())) {
                     b.append(" ").append(address.getState());
                 }
-                if (!TextUtils.isEmpty(address.getZipCode())) {
-                    b.append(" ").append(address.getZipCode());
+                if (!TextUtils.isEmpty(address.getZipcode())) {
+                    b.append(" ").append(address.getZipcode());
                 }
                 b.append("\n");
             }
         }
         return b.toString();
     }
-
-
-    /************* api listeners ************/
-
-
-    /** listens for completion of cart address request */
-    class AddressDetailListener implements Callback<AddressDetail> {
-
-        boolean listeningForShippingAddr; // true if shipping address listener, false if billing address listener
-
-        AddressDetailListener(boolean listeningForShippingAddr) {
-            this.listeningForShippingAddr = listeningForShippingAddr;
-        }
-
-        @Override
-        public void success(AddressDetail addressDetail, Response response) {
-
-            Address address = null;
-            if (addressDetail != null && addressDetail.getAddress() != null &&
-                    addressDetail.getAddress().size() > 0) {
-                address = addressDetail.getAddress().get(0);
-            }
-
-            if (listeningForShippingAddr) {
-                shippingAddrResponseReceived = true;
-                RegisteredCheckoutFragment.this.shippingAddress = address;
-                shippingAddrVw.setText(formatAddress(address)); //"Paul Gates\n56 Frost St #1\nCambridge, MA 02140"
-            } else {
-                billingAddrResponseReceived = true;
-                RegisteredCheckoutFragment.this.billingAddress = address;
-                billingAddrVw.setText(formatAddress(address));
-            }
-
-            // if attempts to get both addresses already applied to cart have completed, proceed
-            if (shippingAddrResponseReceived && billingAddrResponseReceived) {
-                applyProfileInfoAsNecessary();
-            }
-        }
-
-        @Override
-        public void failure(RetrofitError retrofitError) {
-
-            // if no address applied yet to cart, this failure callback will be called with status 400
-            boolean normalAddrNotAvailResponse = (retrofitError.getResponse() != null &&
-                    retrofitError.getResponse().getStatus() == 400);
-
-
-            if (listeningForShippingAddr) {
-
-                // query for profile addresses
-                shippingAddrResponseReceived = true;
-            } else {
-                billingAddrResponseReceived = true;
-            }
-
-            if (!normalAddrNotAvailResponse) {
-                String msg = "Error getting " + (listeningForShippingAddr ? "shipping" : "billing") + " address: " + ApiError.getErrorMessage(retrofitError);
-                Log.d(TAG, msg);
-                Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
-            }
-
-            // if attempts to get both addresses already applied to cart have completed, proceed
-            if (shippingAddrResponseReceived && billingAddrResponseReceived) {
-                applyProfileInfoAsNecessary();
-            }
-       }
-    }
-
-
-//    /** listens for completion of profile request */
-//    class ProfileListener implements Callback<MemberDetail> {
-//
-//        boolean listeningForAddresses; // true if profile address listener, false if profile CC listener
-//
-//        ProfileListener(boolean listeningForAddresses) {
-//            this.listeningForAddresses = listeningForAddresses;
-//        }
-//
-//        @Override
-//        public void success(MemberDetail memberDetail, Response response) {
-//
-//            Member member = null;
-//            if (memberDetail != null && memberDetail.getMember() != null &&
-//                    memberDetail.getMember().size() > 0) {
-//                member = memberDetail.getMember().get(0);
-//            }
-//
-//
-//            if (listeningForAddresses) {
-//                if (member != null) {
-//                    profileAddresses = member.getAddress();
-//                }
-//                profileAddrResponseReceived = true;
-//            } else {
-//                if (member != null) {
-//                    profileCreditCards = member.getCreditCard();
-//                }
-//                profileCcResponseReceived = true;
-//            }
-//
-//            startSecondWaveIfReady();
-//        }
-//
-//        @Override
-//        public void failure(RetrofitError retrofitError) {
-//
-//            if (listeningForAddresses) {
-//                profileAddrResponseReceived = true;
-//            } else {
-//                profileCcResponseReceived = true;
-//            }
-//
-//            String msg = "Error getting profile: " + ApiError.getErrorMessage(retrofitError);
-//            Log.d(TAG, msg);
-//            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
-//
-//            startSecondWaveIfReady();
-//        }
-//    }
-
-
-    /** listens for completion of applying address to cart */
-    class AddAddressListener implements Callback<AddressValidationAlert> {
-
-        boolean listeningForShippingAddr; // true if shipping address listener, false if billing address listener
-
-        AddAddressListener(boolean listeningForShippingAddr) {
-            this.listeningForShippingAddr = listeningForShippingAddr;
-        }
-
-        @Override
-        public void success(AddressValidationAlert precheckoutResponse, Response response) {
-            String validationAlert = precheckoutResponse.getAddressValidationAlert();
-
-            if (validationAlert != null) {
-                Toast.makeText(activity, "Address alert: " + validationAlert, Toast.LENGTH_SHORT).show();
-            }
-
-            if (listeningForShippingAddr) {
-                shippingAddrAddToCartResponseReceived = true;
-            } else {
-                billingAddrAddToCartResponseReceived = true;
-            }
-            startPrecheckoutIfReady();
-        }
-
-        @Override
-        public void failure(RetrofitError retrofitError) {
-
-            if (listeningForShippingAddr) {
-                shippingAddrAddToCartResponseReceived = true;
-            } else {
-                billingAddrAddToCartResponseReceived = true;
-            }
-
-            String msg = "Address error: " + ApiError.getErrorMessage(retrofitError);
-            Log.d(TAG, msg);
-            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
-            hideProgressIndicator();
-        }
-    }
-
 }

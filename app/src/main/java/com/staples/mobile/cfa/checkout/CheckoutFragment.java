@@ -49,10 +49,11 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
 
     private static final int MAXFETCH = 50;
 
-
-    public static final String BUNDLE_PARAM_DELIVERYRANGE = "deliveryRange";
+    // bundle param keys
     public static final String BUNDLE_PARAM_ITEMSUBTOTAL = "itemSubtotal";
     public static final String BUNDLE_PARAM_PRETAXSUBTOTAL = "preTaxSubtotal";
+    public static final String BUNDLE_PARAM_SHIPPING_CHARGE = "shippingCharge";
+    public static final String BUNDLE_PARAM_TAX = "tax";
 
     NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 
@@ -65,7 +66,6 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
     private View taxLayout;
     private View submissionLayout;
     private ViewGroup checkoutEntryLayout;
-//    private TextView deliveryRangeVw;
     private TextView itemSubtotalVw;
     private TextView couponsRewardsVw;
     private TextView shippingChargeVw;
@@ -78,32 +78,17 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
 
     // data returned from api
     private Float tax;
+    private String shippingCharge;
 
 
     // data initialized from cart drawer
-    Float itemSubtotal;
-    Float pretaxSubtotal;
+    private Float itemSubtotal;
+    private Float pretaxSubtotal;
 
 
     // api listeners
-    CartListener shippingChargeListener;
-    CartListener taxListener;
     PrecheckoutListener precheckoutListener;
 
-
-    /**
-     * Create a new instance of ConfirmationFragment that will be initialized
-     * with the given arguments.
-     */
-    public static CheckoutFragment newInstance(String deliveryRange, float itemSubtotal, float preTaxSubtotal, boolean registered) {
-        CheckoutFragment f = registered? new RegisteredCheckoutFragment() : new GuestCheckoutFragment();
-        Bundle args = new Bundle();
-        args.putString(CheckoutFragment.BUNDLE_PARAM_DELIVERYRANGE, deliveryRange);
-        args.putFloat(CheckoutFragment.BUNDLE_PARAM_ITEMSUBTOTAL, itemSubtotal);
-        args.putFloat(CheckoutFragment.BUNDLE_PARAM_PRETAXSUBTOTAL, preTaxSubtotal);
-        f.setArguments(args);
-        return f;
-    }
 
 
     @Override
@@ -123,7 +108,6 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
         shippingChargeLayout = view.findViewById(R.id.co_shipping_layout);
         submissionLayout = view.findViewById(R.id.co_submission_layout);
         taxLayout = view.findViewById(R.id.co_tax_layout);
-//        deliveryRangeVw = (TextView) view.findViewById(R.id.checkout_delivery_range);
         itemSubtotalVw = (TextView) view.findViewById(R.id.checkout_item_subtotal);
         couponsRewardsVw = (TextView) view.findViewById(R.id.checkout_coupons_rewards);
         shippingChargeVw = (TextView) view.findViewById(R.id.checkout_shipping);
@@ -133,33 +117,24 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
         // Set click listeners
         submissionLayout.setOnClickListener(this);
 
-        // get order info from bundle
+        // get checkout info from bundle
         Bundle checkoutBundle = this.getArguments();
-        String deliveryRange = checkoutBundle.getString(BUNDLE_PARAM_DELIVERYRANGE);
         itemSubtotal = checkoutBundle.getFloat(BUNDLE_PARAM_ITEMSUBTOTAL);
         pretaxSubtotal = checkoutBundle.getFloat(BUNDLE_PARAM_PRETAXSUBTOTAL);
+        shippingCharge = checkoutBundle.getString(BUNDLE_PARAM_SHIPPING_CHARGE);
+        tax = checkoutBundle.getFloat(BUNDLE_PARAM_TAX, -1);
+        if (tax == -1) {
+            tax = null;
+        }
 
         // set the item subtotal
         itemSubtotalVw.setText(currencyFormat.format(itemSubtotal));
-
-        // set delivery range text
-//        if ("1".equals(deliveryRange)) {
-//            deliveryRangeVw.setText(r.getQuantityString(R.plurals.business_days, 1, "1"));
-//        } else {
-//            deliveryRangeVw.setText(r.getQuantityString(R.plurals.business_days, 2, deliveryRange));
-//        }
 
         // get api objects
         secureApi = Access.getInstance().getEasyOpenApi(true);
 
         // create api listeners
-        shippingChargeListener = new CartListener(true, false);
-        taxListener = new CartListener(false, true);
         precheckoutListener = new PrecheckoutListener();
-
-        // initialize data prior to making api calls which will fill it
-        tax = null;
-
 
         // allow sub-classes to do there initialization
         initEntryArea(view);
@@ -188,13 +163,14 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
         }
     }
 
-    /** override this to handle order submission */
+
+    /** handles order submission */
     protected abstract void onSubmit();
 
-    /** override this to specify layout for entry area */
+    /** specifies layout for variable entry area */
     protected abstract int getEntryLayoutId();
 
-    /** override this for variation on entry area */
+    /** initializes variable entry area of checkout screen */
     protected abstract void initEntryArea(View view);
 
 
@@ -240,6 +216,39 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
     }
 
 
+    /** updates the shipping charge and tax values (may be result of api response or a call from the subclass) */
+    protected void setShippingAndTax(String shippingCharge, float tax){
+        Bundle checkoutBundle = this.getArguments();
+        checkoutBundle.putString(BUNDLE_PARAM_SHIPPING_CHARGE, shippingCharge);
+        checkoutBundle.putFloat(BUNDLE_PARAM_TAX, tax);
+        this.shippingCharge = shippingCharge;
+        this.tax = tax;
+        shippingChargeVw.setText(formatShippingCharge(shippingCharge, currencyFormat));
+        taxVw.setText(currencyFormat.format(tax));
+        checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax));
+        taxLayout.setVisibility(View.VISIBLE);
+        shippingChargeLayout.setVisibility(View.VISIBLE);
+        submissionLayout.setVisibility(View.VISIBLE);
+    }
+
+    /** returns tax value if available */
+    protected Float getTax() {
+        return this.tax;
+    }
+
+    /** returns tax value if available */
+    protected String getShippingCharge() {
+        return this.shippingCharge;
+    }
+
+    public Float getItemSubtotal() {
+        return this.itemSubtotal;
+    }
+
+    public Float getPretaxSubtotal() {
+        return this.pretaxSubtotal;
+    }
+
     /** parses shipping charge if possible (might be "Free") and formats for currency */
     public static String formatShippingCharge(String shippingCharge, NumberFormat currencyFormat) {
         try { // if possible, parse floating value and format as money
@@ -248,77 +257,67 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
         return shippingCharge;
     }
 
-    // Retrofit callbacks
 
 
     /************* api listeners ************/
 
 
-    /** listens for completion of view request */
-    class CartListener implements Callback<CartContents> {
-
-        boolean shippingChargeListener; // true if shipping charge listener
-        boolean taxListener; // true if tax listener
-
-        CartListener(boolean shippingChargeListener, boolean taxListener) {
-            this.shippingChargeListener = shippingChargeListener;
-            this.taxListener = taxListener && !shippingChargeListener;
-        }
-
-        @Override
-        public void success(CartContents cartContents, Response response) {
-
-            Cart cart = null;
-            if (cartContents != null && cartContents.getCart() != null &&
-                    cartContents.getCart().size() > 0) {
-                cart = cartContents.getCart().get(0);
-            }
-
-            if (taxListener) {
-                tax = cart.getTotalTax();
-                taxVw.setText(currencyFormat.format(tax));
-                taxLayout.setVisibility(View.VISIBLE);
-                if (pretaxSubtotal != null && tax != null) {
-                    checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax));
-                    submissionLayout.setVisibility(View.VISIBLE);
-                }
-                hideProgressIndicator();
-            }
-
-            if (shippingChargeListener) {
-                shippingChargeVw.setText(formatShippingCharge(cart.getShippingCharge(), currencyFormat));
-                shippingChargeLayout.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        public void failure(RetrofitError retrofitError) {
-            String msg = "Error getting math story: " + ApiError.getErrorMessage(retrofitError);
-            Log.d(TAG, msg);
-            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
-
-            if (taxListener) {
-                hideProgressIndicator();
-            }
-        }
-    }
-
-
     /** listens for completion of precheckout */
     class PrecheckoutListener implements Callback<AddressValidationAlert> {
 
+        String shippingCharge;
+
         @Override
         public void success(AddressValidationAlert precheckoutResponse, Response response) {
-            // get tax and shipping charge
-            secureApi.getTax(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, taxListener);
-            secureApi.getShippingCharge(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, shippingChargeListener);
+            // get shipping charge, then get tax
+            secureApi.getShippingCharge(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<CartContents>() {
+                @Override
+                public void success(CartContents cartContents, Response response) {
+
+                    Cart cart = getCartFromResponse(cartContents);
+                    if (cart != null) {
+                        shippingCharge = cart.getShippingCharge();
+                        secureApi.getTax(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<CartContents>() {
+                            @Override
+                            public void success(CartContents cartContents, Response response) {
+                                Cart cart = getCartFromResponse(cartContents);
+                                hideProgressIndicator();
+                                setShippingAndTax(shippingCharge, cart.getTotalTax());
+                            }
+
+                            @Override
+                            public void failure(RetrofitError retrofitError) {
+                                handleFailure("Error retrieving tax: " + ApiError.getErrorMessage(retrofitError));
+                            }
+                        });
+
+                    } else {
+                        handleFailure("Error retrieving shipping charge");
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError retrofitError) {
+                    handleFailure("Error retrieving shipping charge: " + ApiError.getErrorMessage(retrofitError));
+                }
+
+                private Cart getCartFromResponse(CartContents cartContents) {
+                    if (cartContents != null && cartContents.getCart() != null && cartContents.getCart().size() > 0) {
+                        return cartContents.getCart().get(0);
+                    }
+                    return null;
+                }
+            });
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            String msg = "Precheckout error: " + ApiError.getErrorMessage(retrofitError);
+            handleFailure("Precheckout error: " + ApiError.getErrorMessage(retrofitError));
+        }
+
+        private void handleFailure(String msg) {
             Log.d(TAG, msg);
-            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
             hideProgressIndicator();
         }
     }
