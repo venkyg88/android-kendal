@@ -7,7 +7,6 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -15,7 +14,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
@@ -25,21 +23,17 @@ import com.staples.mobile.cfa.checkout.RegisteredCheckoutFragment;
 import com.staples.mobile.cfa.location.LocationService;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.profile.AddressFragment;
+import com.staples.mobile.cfa.profile.AddressListFragment;
 import com.staples.mobile.cfa.profile.CreditCardFragment;
 import com.staples.mobile.cfa.profile.CreditCardListFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.profile.ProfileFragment;
-import com.staples.mobile.cfa.profile.ShippingFragment;
-import com.staples.mobile.cfa.profile.ShippingListFragment;
 import com.staples.mobile.cfa.search.SearchBarView;
 import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
-import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.configurator.model.Configurator;
-import com.staples.mobile.common.access.easyopen.model.cart.Cart;
-import com.staples.mobile.common.access.lms.LmsManager;
 
 
 public class MainActivity extends Activity
@@ -358,12 +352,12 @@ public class MainActivity extends Activity
 
     public boolean selectProfileFragment() {
         Fragment fragment = Fragment.instantiate(this, ProfileFragment.class.getName());
-        return (selectFragment(fragment, Transition.SLIDE, true));
+        return (selectFragment(fragment, Transition.NONE, true));
     }
 
     public boolean selectLoginFragment() {
         Fragment fragment = Fragment.instantiate(this, LoginFragment.class.getName());
-        return (selectFragment(fragment, Transition.SLIDE, true));
+        return (selectFragment(fragment, Transition.NONE, true));
     }
 
     /** opens the profile addresses fragment */
@@ -377,9 +371,9 @@ public class MainActivity extends Activity
         ProfileDetails.currentAddressId = currentAddressId;
         Fragment fragment;
         if (ProfileDetails.hasAddress()) {
-            fragment = Fragment.instantiate(this, ShippingListFragment.class.getName());
+            fragment = Fragment.instantiate(this, AddressListFragment.class.getName());
         } else {
-            fragment = Fragment.instantiate(this, ShippingFragment.class.getName());
+            fragment = Fragment.instantiate(this, AddressFragment.class.getName());
         }
         return navigateToFragment(fragment);
     }
@@ -404,7 +398,7 @@ public class MainActivity extends Activity
 
 
     public boolean navigateToFragment(Fragment fragment) {
-        return (selectFragment(fragment, Transition.SLIDE, true));
+        return (selectFragment(fragment, Transition.NONE, true));
     }
 
     /** Sets item count indicator on cart icon */
