@@ -76,13 +76,13 @@ public class AddressListFragment extends BaseFragment implements View.OnClickLis
 class AddressArrayAdapter extends ArrayAdapter<Address> {
     private final Context context;
     private final List<Address> values;
-    private String addressId;
+    private String selectedAddressId;
 
-    public AddressArrayAdapter(Context context, List<Address> values, String addressId) {
+    public AddressArrayAdapter(Context context, List<Address> values, String selectedAddressId) {
         super(context, R.layout.list_view_row, values);
         this.context = context;
         this.values = values;
-        this.addressId = addressId;
+        this.selectedAddressId = selectedAddressId;
     }
 
     @Override
@@ -97,12 +97,12 @@ class AddressArrayAdapter extends ArrayAdapter<Address> {
                 address.getCity() + "\n" +
                 address.getState() + "," + address.getZipcode() + "\n" +
                 address.getPhone1();
-        if (addressId != null) {
+        if (selectedAddressId != null) {
             View selectionImageView = rowView.findViewById(R.id.selectionImage);
-            if (addressId.equals(address.getAddressId())) {
-                selectionImageView.setVisibility(View.VISIBLE);
+            if (selectedAddressId.equals(address.getAddressId())) {
+                selectionImageView.setVisibility(View.VISIBLE); // visible
             } else {
-                selectionImageView.setVisibility(View.INVISIBLE);
+                selectionImageView.setVisibility(View.INVISIBLE); // invisible but taking up space
             }
         }
         TextView ccText = (TextView) rowView.findViewById(R.id.rowItemText);

@@ -72,13 +72,13 @@ public class CreditCardListFragment extends BaseFragment implements View.OnClick
 class CardArrayAdapter extends ArrayAdapter<CCDetails> {
     private final Context context;
     private final List<CCDetails> values;
-    private String creditCardId;
+    private String selectedCreditCardId;
 
-    public CardArrayAdapter(Context context, List<CCDetails> values, String creditCardId) {
+    public CardArrayAdapter(Context context, List<CCDetails> values, String selectedCreditCardId) {
         super(context, R.layout.list_view_row, values);
         this.context = context;
         this.values = values;
-        this.creditCardId = creditCardId;
+        this.selectedCreditCardId = selectedCreditCardId;
     }
 
     @Override
@@ -98,12 +98,12 @@ class CardArrayAdapter extends ArrayAdapter<CCDetails> {
                 "Exp. " + creditCard.getExpirationMonth() + "/" + creditCard.getExpirationYear();
         TextView ccText = (TextView) rowView.findViewById(R.id.rowItemText);
         ccText.setText(tmpCard);
-        if (creditCardId != null) {
+        if (selectedCreditCardId != null) {
             View selectionImageView = rowView.findViewById(R.id.selectionImage);
-            if (creditCardId.equals(creditCard.getCreditCardId())) {
-                selectionImageView.setVisibility(View.VISIBLE);
+            if (selectedCreditCardId.equals(creditCard.getCreditCardId())) {
+                selectionImageView.setVisibility(View.VISIBLE); // visible
             } else {
-                selectionImageView.setVisibility(View.INVISIBLE);
+                selectionImageView.setVisibility(View.INVISIBLE); // invisible but taking up space
             }
         }
         return rowView;
