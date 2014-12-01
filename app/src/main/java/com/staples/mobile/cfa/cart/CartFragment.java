@@ -81,6 +81,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     private TextView cartSubtotal;
     private TextView cartFreeShippingMsg;
     private TextView cartShipping;
+    private View emptyCartMsg;
     private View cartProceedToCheckout;
     private View cartShippingLayout;
     private View cartSubtotalLayout;
@@ -130,6 +131,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         // inflate and get child views
         View view = inflater.inflate(R.layout.cart_fragment, container, false);
 
+        emptyCartMsg = view.findViewById(R.id.empty_cart_msg);
         cartFreeShippingMsg = (TextView) view.findViewById(R.id.free_shipping_msg);
         cartShipping = (TextView) view.findViewById(R.id.cart_shipping);
         cartSubtotal = (TextView) view.findViewById(R.id.cart_subtotal);
@@ -257,8 +259,10 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
             // Set text of cart item qty
             if (totalItemCount == 0) {
                 activity.setActionBarCartQty("");
+                emptyCartMsg.setVisibility(View.VISIBLE);
             } else {
                 activity.setActionBarCartQty(r.getQuantityString(R.plurals.cart_qty, totalItemCount, totalItemCount));
+                emptyCartMsg.setVisibility(View.GONE);
             }
 
             // set text of free shipping msg
