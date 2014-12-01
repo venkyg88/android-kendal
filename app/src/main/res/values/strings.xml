@@ -36,6 +36,7 @@
     <string name="update_button">Update</string>
     <string name="free_shipping_msg1">Free shipping when you spend %1$s - only %2$s to go!</string>
     <string name="free_shipping_msg2">You qualify for FREE SHIPPING!</string>
+    <string name="empty_cart_msg">Your cart is empty</string>
     <string name="shipping">Shipping</string>
     <string name="expected_delivery">Expected Delivery:</string>
     <string name="pretax_subtotal">Pre-tax Subtotal</string>

@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.profile;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.AddCreditCard;
 import com.staples.mobile.common.access.easyopen.model.member.AddCreditCardPOW;
 import com.staples.mobile.common.access.easyopen.model.member.CreditCardId;
+import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.POWResponse;
 
 import java.util.ArrayList;
@@ -98,8 +100,14 @@ public class CreditCardFragment extends BaseFragment implements View.OnClickList
                             public void success(CreditCardId creditCardID, Response response) {
                                 Log.i("Success", creditCardID.getCreditCardId());
                                 Toast.makeText(getActivity(), "Credit Card Id: "+ creditCardID.getCreditCardId(), Toast.LENGTH_LONG).show();
-                                Fragment profileFragment = Fragment.instantiate(getActivity(), ProfileFragment.class.getName());
-                                ((MainActivity)getActivity()).navigateToFragment(profileFragment);
+                                (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
+                                    @Override public void onProfileRefresh(Member member) {
+                                        FragmentManager fm = getFragmentManager();
+                                        if (fm != null) {
+                                            fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
+                                        }                                    }
+                                });
+
                             }
 
                             @Override
