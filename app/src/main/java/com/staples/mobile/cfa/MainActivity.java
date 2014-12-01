@@ -13,14 +13,13 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.checkout.ConfirmationFragment;
 import com.staples.mobile.cfa.checkout.GuestCheckoutFragment;
 import com.staples.mobile.cfa.checkout.RegisteredCheckoutFragment;
-import com.staples.mobile.cfa.location.LocationService;
+import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.AddressFragment;
@@ -35,9 +34,8 @@ import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
 
-
 public class MainActivity extends Activity
-                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener, LocationService.UserLatLngCallBack {
+                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int SURRENDER_TIMEOUT = 5000;
@@ -96,11 +94,14 @@ public class MainActivity extends Activity
         boolean freshStart = (bundle == null);
         prepareMainScreen(freshStart);
 
-        String zipCode = LocationService.getCachedZipCode(this.getApplicationContext());
-        if (zipCode == null) {
-            LocationService userLocationService = new LocationService(this.getApplicationContext(), this);
-            userLocationService.getUserLocation();
-        }
+        LocationFinder.getInstance(this);
+
+//        String zipCode = LocationService.getCachedZipCode(this.getApplicationContext());
+//        if (zipCode == null) {
+//            LocationService userLocationService = new LocationService(this.getApplicationContext(), this);
+//            userLocationService.getUserLocation();
+//        }
+
         loginHelper = new LoginHelper(this);
         loginHelper.registerLoginCompleteListener(this);
         // if already logged in (e.g. when device is rotated), don't login again, but do notify
@@ -116,6 +117,7 @@ public class MainActivity extends Activity
     @Override
     protected void onPause() {
         super.onPause();
+        LocationFinder.getInstance(this).saveRecentLocation();
         searchBar.saveSearchHistory();
     }
 
@@ -163,7 +165,8 @@ public class MainActivity extends Activity
         // show checkout-specific entities
         closeButton.setVisibility(View.VISIBLE);
         closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 selectShoppingCart();
             }
         });
@@ -498,14 +501,6 @@ public class MainActivity extends Activity
                 } else {
                     selectLoginFragment();
                 }
-        }
-    }
-
-    //UserLocationService callback
-    @Override
-    public void onUserLatLngCallBack(LatLng latLng) {
-        if (LocationService.setCachedUserLocation(this.getApplicationContext(), latLng)){
-        //TODO: Work with Steve to incorporate flow.
         }
     }
 }
