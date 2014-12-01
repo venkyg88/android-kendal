@@ -26,7 +26,7 @@ import retrofit.client.Response;
 /**
  * Created by Avinash Raja Dodda.
  */
-public class ShippingFragment extends BaseFragment implements View.OnClickListener {
+public class AddressFragment extends BaseFragment implements View.OnClickListener {
 
     private static final String TAG = "Add Shipping Fragment";
     private static final String RECOMMENDATION = "v1";
