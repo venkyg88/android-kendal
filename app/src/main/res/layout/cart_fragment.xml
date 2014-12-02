@@ -10,13 +10,12 @@
         android:id="@+id/cart_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="#ffffff">
+        android:orientation="vertical">
         <TextView
             android:id="@+id/free_shipping_msg"
             android:layout_width="match_parent"
             style="@style/CartHeader"
-            android:textColor="#ffffff"
+            android:textColor="@color/text_white"
             />
         <TextView
             android:id="@+id/empty_cart_msg"
@@ -38,13 +37,34 @@
             android:choiceMode="singleChoice"
             android:background="#ffffff"/>
         <RelativeLayout
-            android:id="@+id/cart_shipping_layout"
-            style="@style/CartHeader"
+            android:id="@+id/coupons_rewards_layout"
+            style="@style/DrawerStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:background="@color/background_extra_light_gray">
             <TextView
-                android:id="@+id/cart_shipping_label"
-                style="@style/CartHeader"
+                style="@style/DrawerStyle"
+                android:layout_width="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="@string/coupons_rewards"
+                android:textColor="@color/text_blue"
+                />
+            <TextView
+                android:id="@+id/coupons_rewards_value"
+                style="@style/DrawerStyle"
+                android:layout_width="wrap_content"
+                android:layout_alignParentRight="true"
+                android:textColor="@color/text_blue"
+                />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/cart_shipping_layout"
+            style="@style/DrawerStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/background_light_gray">
+            <TextView
+                style="@style/DrawerStyle"
                 android:layout_width="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:text="@string/shipping"
@@ -53,7 +73,7 @@
                 />
             <TextView
                 android:id="@+id/cart_shipping"
-                style="@style/CartHeader"
+                style="@style/DrawerStyle"
                 android:layout_width="wrap_content"
                 android:layout_alignParentRight="true"
                 android:paddingTop="2dp"
@@ -62,12 +82,12 @@
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/cart_subtotal_layout"
-            style="@style/CartHeader"
+            style="@style/DrawerStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:background="@color/background_light_gray">
             <TextView
-                android:id="@+id/cart_subtotal_label"
-                style="@style/CartHeader"
+                style="@style/DrawerStyle"
                 android:layout_width="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:paddingTop="0dp"
@@ -75,7 +95,7 @@
                 android:text="@string/pretax_subtotal" />
             <TextView
                 android:id="@+id/cart_subtotal"
-                style="@style/CartHeader"
+                style="@style/DrawerStyle"
                 android:layout_width="wrap_content"
                 android:layout_alignParentRight="true"
                 android:paddingTop="0dp"
@@ -91,8 +111,8 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:textSize="24dp"
-            android:textColor="#ffffff"
-            android:background="#3f3f3f"/>
+            android:textColor="@color/text_white"
+            android:background="@color/background_red_submission"/>
     </com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay>
     <RelativeLayout
         android:id="@+id/cart_progress_overlay"

@@ -35,6 +35,7 @@ import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
 import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
+import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
 import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
@@ -81,12 +82,19 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     private TextView cartSubtotal;
     private TextView cartFreeShippingMsg;
     private TextView cartShipping;
+    private TextView couponsRewardsValue;
     private View emptyCartMsg;
     private View cartProceedToCheckout;
     private View cartShippingLayout;
     private View cartSubtotalLayout;
     private CartAdapter cartAdapter;
     private ListView cartListVw;
+    private View couponsRewardsLayout;
+    int greenBackground;
+    int blueBackground;
+    int redText;
+    int blackText;
+
 
     // cart object - make these static so they're not lost on device rotation
     private static Cart cart;
@@ -133,11 +141,20 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
         emptyCartMsg = view.findViewById(R.id.empty_cart_msg);
         cartFreeShippingMsg = (TextView) view.findViewById(R.id.free_shipping_msg);
+        couponsRewardsLayout = view.findViewById(R.id.coupons_rewards_layout);
+        couponsRewardsValue = (TextView) view.findViewById(R.id.coupons_rewards_value);
         cartShipping = (TextView) view.findViewById(R.id.cart_shipping);
         cartSubtotal = (TextView) view.findViewById(R.id.cart_subtotal);
         cartShippingLayout = view.findViewById(R.id.cart_shipping_layout);
         cartSubtotalLayout = view.findViewById(R.id.cart_subtotal_layout);
         cartProceedToCheckout = view.findViewById(R.id.action_checkout);
+
+        Resources r = getResources();
+        greenBackground = r.getColor(R.color.background_green);
+        blueBackground = r.getColor(R.color.background_blue);
+        redText = r.getColor(R.color.text_red);
+        blackText = r.getColor(R.color.text_black);
+
 
 
         // create widget listeners
@@ -196,11 +213,13 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
             private void onScrollUp() {
                 if (cartShippingLayout.getVisibility() != View.VISIBLE) {
                     cartShippingLayout.setVisibility(View.VISIBLE); // show math story
+                    couponsRewardsLayout.setVisibility(View.VISIBLE);
                 }
             }
             private void onScrollDown() {
                 if (cartShippingLayout.getVisibility() != View.GONE) {
                     cartShippingLayout.setVisibility(View.GONE); // hide math story
+                    couponsRewardsLayout.setVisibility(View.GONE);
                 }
             }
         });
@@ -235,11 +254,17 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
         int totalItemCount = 0;
         String shipping = "";
+        float couponsRewardsAmount = 0;
         float subtotal = 0;
         float preTaxSubtotal = 0;
         float freeShippingThreshold = 0;
         if (cart != null) {
             totalItemCount = cart.getTotalItems();
+            if (cart.getCoupon() != null) {
+                for (Coupon coupon : cart.getCoupon()) {
+                    couponsRewardsAmount += coupon.getAdjustedAmount();
+                }
+            }
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();
             preTaxSubtotal = cart.getPreTaxTotal();
@@ -272,14 +297,14 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
                     cartFreeShippingMsg.setVisibility(View.VISIBLE);
                     cartFreeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
                             currencyFormat.format(freeShippingThreshold), currencyFormat.format(freeShippingThreshold - subtotal)));
-                    cartFreeShippingMsg.setBackgroundColor(0xff3f6fff); // blue
+                    cartFreeShippingMsg.setBackgroundColor(blueBackground);
                 } else {
                     // qualifies for free shipping
                     String freeShippingMsg = r.getString(R.string.free_shipping_msg2);
                     if (!freeShippingMsg.equals(cartFreeShippingMsg.getText().toString())) {
                         cartFreeShippingMsg.setVisibility(View.VISIBLE);
                         cartFreeShippingMsg.setText(freeShippingMsg);
-                        cartFreeShippingMsg.setBackgroundColor(0xff00ff00); // green
+                        cartFreeShippingMsg.setBackgroundColor(greenBackground);
                         // hide after a delay
                         cartFreeShippingMsg.postDelayed(new Runnable() {
                             @Override public void run() {
@@ -292,17 +317,21 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
                 cartFreeShippingMsg.setVisibility(View.GONE);
             }
 
-            // set text of shipping and subtotal
+            // set text of coupons, shipping, and subtotal
+            couponsRewardsValue.setText(currencyFormat.format(couponsRewardsAmount));
             cartShipping.setText(CheckoutFragment.formatShippingCharge(shipping, currencyFormat));
+            cartShipping.setTextColor("Free".equals(shipping)? redText:blackText);
             cartSubtotal.setText(currencyFormat.format(preTaxSubtotal));
 
             // only show shipping, subtotal, and proceed-to-checkout when at least one item
             if (totalItemCount == 0) {
+                couponsRewardsLayout.setVisibility(View.GONE);
                 cartShippingLayout.setVisibility(View.GONE);
                 cartSubtotalLayout.setVisibility(View.GONE);
                 cartProceedToCheckout.setVisibility(View.GONE);
             } else {
                 if (cartListVw.getFirstVisiblePosition() == 0 && getTopOfFirstVisibleView(cartListVw) == 0) {
+                    couponsRewardsLayout.setVisibility(View.VISIBLE);
                     cartShippingLayout.setVisibility(View.VISIBLE);
                 }
                 cartSubtotalLayout.setVisibility(View.VISIBLE);
