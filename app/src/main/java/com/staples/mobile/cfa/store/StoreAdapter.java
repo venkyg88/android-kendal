@@ -95,6 +95,12 @@ public class StoreAdapter extends BaseAdapter {
         array.add(item);
     }
 
+    public void clear() {
+        array.clear();
+        singleMode = false;
+        singleIndex = 0;
+    }
+
     public int findPositionByMarker(Marker marker) {
         LatLng position = marker.getPosition();
         double latitude = position.latitude;

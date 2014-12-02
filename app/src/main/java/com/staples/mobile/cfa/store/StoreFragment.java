@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -37,13 +40,15 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class StoreFragment extends BaseFragment implements Callback<StoreQuery>, GoogleMap.OnMarkerClickListener, AdapterView.OnItemClickListener{
+public class StoreFragment extends BaseFragment implements Callback<StoreQuery>, GoogleMap.OnMarkerClickListener,
+                           AdapterView.OnItemClickListener, EditText.OnEditorActionListener {
     private static final String TAG = "StoreFragment";
 
     private static int FITSTORES = 5; // Number of stores to fit in initial view
 
     private MapView mapView;
     private GoogleMap googleMap;
+    private EditText search;
     private ListView list;
     private StoreAdapter adapter;
 
@@ -51,8 +56,7 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
     private BitmapDescriptor coldIcon;
     private Marker hotMarker;
 
-    private double centerLat;
-    private double centerLng;
+    private Location location;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -70,8 +74,8 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
             googleMap.setOnMarkerClickListener(this);
 
             MapsInitializer.initialize(getActivity());
-            CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(centerLat, centerLng));
-            googleMap.moveCamera(update);
+//            CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(centerLat, centerLng));
+//            googleMap.moveCamera(update);
         }
 
         // No Google Play Services
@@ -84,15 +88,16 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
         list.setAdapter(adapter);
         list.setOnItemClickListener(this);
 
+        search = (EditText) view.findViewById(R.id.store_search);
+        search.setOnEditorActionListener(this);
+
         // Get location
         LocationFinder finder = LocationFinder.getInstance(getActivity());
-        Location location = finder.getLocation();
+        location = finder.getLocation();
         if (location==null) {
             Toast.makeText(getActivity(), "LocationFinder.getLocation returned null", Toast.LENGTH_LONG).show();
             return(view);
         }
-        centerLat = location.getLatitude();
-        centerLng = location.getLongitude();
 
         // Get postal code
         String postalCode = finder.getPostalCode();
@@ -130,6 +135,13 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
         if (mapView!=null) mapView.onLowMemory();
     }
 
+    private void resetMap() {
+        adapter.clear();
+        if (googleMap!=null) {
+            googleMap.clear();
+        }
+    }
+
     private String reformatNumber(String number) {
         if (number==null) return(null);
         number = number.trim();
@@ -157,7 +169,7 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
 
         String storeNumber = obj.getStoreNumber();
         StoreItem item = new StoreItem(storeNumber, lat, lng);
-       item.distance = storeData.getDis();
+        item.distance = storeData.getDis();
 
         // Get store address
         StoreAddress storeAddress = obj.getStoreAddress();
@@ -212,7 +224,10 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
         }
     }
 
-    private void scaleMap() {
+    private LatLngBounds getCenteredBounds() {
+        double centerLat = location.getLatitude();
+        double centerLng = location.getLongitude();
+
         // Set maximum zoom
         double deltaLat = 0.02;
         double deltaLng = 0.02 / Math.cos(Math.PI / 180.0 * centerLat);
@@ -220,9 +235,9 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
         // Get bounds of first N stores
         int n = Math.min(adapter.getCount(), FITSTORES);
         for(int i=0;i<n;i++) {
-            StoreItem item = adapter.getItem(i);
-            deltaLat = Math.max(deltaLat, Math.abs(item.position.latitude-centerLat));
-            deltaLng = Math.max(deltaLng, Math.abs(item.position.longitude-centerLng));
+            LatLng position = adapter.getItem(i).position;
+            deltaLat = Math.max(deltaLat, Math.abs(position.latitude-centerLat));
+            deltaLng = Math.max(deltaLng, Math.abs(position.longitude-centerLng));
         }
 
         // Inflate deltas to give margins
@@ -233,6 +248,41 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
         LatLng northeast = new LatLng(centerLat+deltaLat, centerLng+deltaLng);
         LatLng southwest = new LatLng(centerLat-deltaLat, centerLng-deltaLng);
         LatLngBounds bounds = new LatLngBounds(southwest, northeast);
+        return(bounds);
+    }
+
+    private LatLngBounds getCollectionBounds() {
+        double minLat = 90.0;
+        double minLng = 180.0;
+        double maxLat = -90.0;
+        double maxLng = -180.0;
+
+        // Get bounds of first N stores
+        int n = Math.min(adapter.getCount(), FITSTORES);
+        for(int i=0;i<n;i++) {
+            LatLng position = adapter.getItem(i).position;
+            minLat = Math.min(minLat, position.latitude);
+            minLng = Math.min(minLng, position.longitude);
+            maxLat = Math.max(maxLat, position.latitude);
+            maxLng = Math.max(minLng, position.longitude);
+        }
+
+        double centerLat = (minLat+maxLat)/2.0;
+        double centerLng = (minLng+maxLng)/2.0;
+        double deltaLat = 1.1*(maxLat-minLat)/2.0;
+        double deltaLng = 1.1*(maxLng-minLng)/2.0;
+
+        // Make bounds
+        LatLng northeast = new LatLng(centerLat+deltaLat, centerLng+deltaLng);
+        LatLng southwest = new LatLng(centerLat-deltaLat, centerLng-deltaLng);
+        LatLngBounds bounds = new LatLngBounds(southwest, northeast);
+        return(bounds);
+    }
+
+    private void scaleMap() {
+        LatLngBounds bounds;
+        if (location==null) bounds = getCollectionBounds();
+        else bounds = getCenteredBounds();
 
         // Get map dimensions
         int width = mapView.getWidth();
@@ -329,5 +379,14 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
             googleMap.moveCamera(update);
             adapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+        String address = search.getText().toString().trim();
+        resetMap();
+        location = null;
+        Access.getInstance().getChannelApi().storeLocations(address, this);
+        return(false);
     }
 }
