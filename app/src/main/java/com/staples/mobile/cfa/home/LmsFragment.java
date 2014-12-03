@@ -18,7 +18,6 @@ import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.feed.ProductCollection;
 import com.staples.mobile.common.access.configurator.model.Area;
 import com.staples.mobile.common.access.configurator.model.Item;
 import com.staples.mobile.common.access.configurator.model.Screen;
@@ -204,8 +203,6 @@ public class LmsFragment
         }
 
         activity.showMainScreen();
-
-        ProductCollection.test(); // @@@ debug
     }
 
     private void doPortrait() {
@@ -685,7 +682,7 @@ public class LmsFragment
         imageView.setAdjustViewBounds(true);
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
-        int padding = 24;
+        int padding = 2;
         imageView.setPadding(padding, padding, padding, padding);
 
         return (imageView);
@@ -836,6 +833,8 @@ public class LmsFragment
                         + " this[" + this + "]"
         );
 
+        int lmsItemsSize = lmsItemsD.size();
+        int lastListItem = (nbrListItems <= lmsItemsSize) ? nbrListItems : lmsItemsSize;
         int lmsItemNdx = 0;
         LmsItem lmsItem = null;
 
@@ -843,7 +842,7 @@ public class LmsFragment
 
         subLayoutContainer.addView(dItemContainer);
 
-        for (lmsItemNdx = 0; lmsItemNdx < nbrListItems; lmsItemNdx++) {
+        for (lmsItemNdx = 0; lmsItemNdx < lastListItem; lmsItemNdx++) {
 
             lmsItem = lmsItemsD.get(0);
 
