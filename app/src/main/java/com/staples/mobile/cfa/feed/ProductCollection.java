@@ -81,15 +81,35 @@ public class ProductCollection {
 
         // Outputs
 
-        public List<ERROR_CODES> errorCodes;
+        private List<ERROR_CODES> errorCodes;
 
-        public int recordSetCount;
-        public int recordSetTotal;
-        public List<Product> products;
+        private int recordSetCount;
+        private int recordSetTotal;
+        private List<Product> products;
+        private RetrofitError retrofitError;
 
         public ProductContainer() {
-
             errorCodes = new ArrayList<ERROR_CODES>();
+        }
+
+        public String getIdentifier() {
+            return identifier;
+        }
+
+        public int getRecordSetCount() {
+            return recordSetCount;
+        }
+
+        public int getRecordSetTotal() {
+            return recordSetTotal;
+        }
+
+        public List<Product> getProducts() {
+            return products;
+        }
+
+        public RetrofitError getRetrofitError() {
+            return retrofitError;
         }
 
         public void browse() {
@@ -160,6 +180,8 @@ public class ProductCollection {
                             + " this[" + this + "]"
             );
 
+            retrofitError = null;
+
             recordSetCount = browse.getRecordSetCount();
             recordSetTotal = browse.getRecordSetTotal();
 
@@ -196,6 +218,7 @@ public class ProductCollection {
                 recordSetCount = 0;
                 recordSetTotal = 0;
                 products = null;
+                this.retrofitError = retrofitError;
 
                 errorCodes.add(ERROR_CODES.RETROFIT_ERROR);
 
@@ -309,10 +332,11 @@ public class ProductCollection {
 
             this.identifier = extractIdentifier(urlExtension);
 
-            String newUrlExtension = setOffset(urlExtension);
+            String newUrlExtension = insertPrefixData(urlExtension);
+            newUrlExtension = setOffset(newUrlExtension);
             newUrlExtension = setLimit(newUrlExtension);
 
-            return (newUrlExtension);
+            return (newUrlExtension.toString());
         }
 
         private String extractIdentifier(String urlExtension) {
@@ -338,7 +362,7 @@ public class ProductCollection {
 
                 int valueIndex = argumentIndex + "identifier/".length();
                 int terminatorIndex = urlExtension.indexOf("?", valueIndex);
-                if (terminatorIndex == -1) terminatorIndex = urlExtension.length();
+                if (terminatorIndex < 0) terminatorIndex = urlExtension.length();
                 identifier = urlExtension.substring(valueIndex, terminatorIndex);
 
                 break; // while (true)
@@ -346,6 +370,34 @@ public class ProductCollection {
             } // while (true)
 
             return (identifier);
+        }
+
+        private String insertPrefixData(String urlExtension) {
+
+            // http://sapi.staples.com/v1/10001/category/identifier/BI739472?catalogId=10051&client_id=JxP9wlnIfCSeGc9ifRAAGku7F4FSdErd&sort=ratingAsc&locale=en_US&offset=1&zipCode=12345&limit=100
+
+            // category/identifier/CL165566?filterList=&limit=8&responseFormat=json
+            // 10001/category/identifier/CL165566?filterList=&limit=8&responseFormat=json
+
+            if (LOGGING) Log.v(TAG, "ProductContainer:insertPrefixData():"
+                            + " urlExtension[" + urlExtension + "]"
+                            + " this[" + this + "]"
+            );
+
+            StringBuilder newUrlExtension = new StringBuilder(urlExtension);
+
+            String prefix = DEFAULT_VERSION + "/";
+
+            int argumentIndex = urlExtension.indexOf("category");
+
+            if (argumentIndex == 0) {
+
+                prefix += DEFAULT_STORE_ID + "/";
+            }
+
+            newUrlExtension.insert(0, prefix);
+
+            return (newUrlExtension.toString());
         }
 
         private String setOffset(String urlExtension) {
@@ -384,7 +436,7 @@ public class ProductCollection {
 
                 int valueIndex = argumentIndex + "&offset=".length();
                 int terminatorIndex = newUrlExtension.indexOf("&", valueIndex);
-                if (terminatorIndex == -1) terminatorIndex = newUrlExtension.length();
+                if (terminatorIndex < 0) terminatorIndex = newUrlExtension.length();
 
                 newUrlExtension.replace(valueIndex, terminatorIndex, this.offset);
 
@@ -431,7 +483,7 @@ public class ProductCollection {
 
                 int valueIndex = argumentIndex + "&limit=".length();
                 int terminatorIndex = newUrlExtension.indexOf("&", valueIndex);
-                if (terminatorIndex == -1) terminatorIndex = newUrlExtension.length();
+                if (terminatorIndex < 0) terminatorIndex = newUrlExtension.length();
 
                 newUrlExtension.replace(valueIndex, terminatorIndex, this.limit);
 
@@ -447,7 +499,7 @@ public class ProductCollection {
     private ProductCollection() {
     }
 
-    static public void getProducts(String urlExtension,
+    public static void getProducts(String urlExtension,
                                    String limit,
                                    String offset,
                                    Map collectionMap,
@@ -472,31 +524,26 @@ public class ProductCollection {
         productContainer.browse();
     }
 
-    public void test() {
+    public static void test() {
 
-        if (LOGGING) Log.v(TAG, "ProductCollection:test():"
-                        + " this[" + this + "]"
-        );
+        if (LOGGING) Log.v(TAG, "ProductCollection:test():");
 
         Map collectionMap = new HashMap<String, String>();
+        String urlExtension = "10001/category/identifier/BI739472?filterList=&limit=8&responseFormat=json";
+        // String urlExtension = "10001/category/identifier/CL165079?filterList=&limit=8&responseFormat=json";
 
-        String identifier = null;
-
-        /* @@@ STUBBED
-        identifier = "BI739472";
-        collectionMap.put(ProductCollection.COLLECTION_ARGS.IDENTIFIER, identifier);
-        collectionMap.put(ProductCollection.COLLECTION_ARGS.MAX_ITEMS, DEFAULT_MAX_ITEMS);
-        collectionMap.put(ProductCollection.COLLECTION_ARGS.OFFSET, DEFAULT_OFFSET);
-
-        this.getProducts(collectionMap, null);
-        @@@ STUBBED */
+        ProductCollection.getProducts(urlExtension,
+                                      DEFAULT_LIMIT,
+                                      DEFAULT_OFFSET,
+                                      collectionMap,
+                                      null); // ProductCollection CallBack
 
         /* @@@ STUBBED
         collectionMap.clear();
 
         identifier = "CL165079";
         collectionMap.put(ProductCollection.COLLECTION_ARGS.IDENTIFIER, identifier);
-        collectionMap.put(ProductCollection.COLLECTION_ARGS.MAX_ITEMS, DEFAULT_MAX_ITEMS);
+        collectionMap.put(ProductCollection.COLLECTION_ARGS.DEFAULT_LIMIT, DEFAULT_LIMIT);
         collectionMap.put(ProductCollection.COLLECTION_ARGS.OFFSET, DEFAULT_OFFSET);
 
         this.getProducts(collectionMap, null);

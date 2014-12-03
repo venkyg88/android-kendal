@@ -18,6 +18,7 @@ import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.feed.ProductCollection;
 import com.staples.mobile.common.access.configurator.model.Area;
 import com.staples.mobile.common.access.configurator.model.Item;
 import com.staples.mobile.common.access.configurator.model.Screen;
@@ -201,7 +202,10 @@ public class LmsFragment
             if (retryGetLms) lmsManager.getLms(this); // LmsMgrCallback
             retryGetLms = false;
         }
+
         activity.showMainScreen();
+
+        ProductCollection.test(); // @@@ debug
     }
 
     private void doPortrait() {
