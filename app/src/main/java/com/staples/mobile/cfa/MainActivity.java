@@ -33,6 +33,7 @@ import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
+import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
@@ -46,7 +47,8 @@ public class MainActivity extends Activity
     private SearchBarView searchBar;
     private View searchBarIcon;
     private BadgeImageView cartIconAction;
-    CartFragment cartFragment;
+    private LinearLayoutWithProgressOverlay mainLayout;
+    private CartFragment cartFragment;
     private TextView titleVw;
     private TextView cartQtyVw;
     private Button checkoutSigninButton;
@@ -222,6 +224,10 @@ public class MainActivity extends Activity
         checkoutSigninButton = (Button)findViewById(R.id.co_signin_button);
         closeButton = findViewById(R.id.close_button);
 
+        mainLayout = (LinearLayoutWithProgressOverlay)findViewById(R.id.main);
+        mainLayout.setCartProgressOverlay(findViewById(R.id.progress_overlay));
+
+
         // Set action bar listeners
         leftDrawerAction.setOnClickListener(this);
         cartIconAction.setOnClickListener(this);
@@ -262,8 +268,10 @@ public class MainActivity extends Activity
 
     @Override
     public void onLoginComplete(boolean guestLevel) {
-        // load cart info (requires successful login)
-        cartFragment.refreshCart(MainActivity.this);
+        // load cart info after successful login (if registered login or if guest login following a signout where cart was non-empty)
+        if (!guestLevel || (guestLevel && cartFragment.getCart() != null && cartFragment.getCart().getTotalItems() > 0)) {
+            cartFragment.refreshCart(MainActivity.this);
+        }
 
         // for faster debugging with registered user (automatic login), uncomment this and use your
         // own credentials, but re-comment out before checking code in
@@ -271,6 +279,15 @@ public class MainActivity extends Activity
 //            new LoginHelper(this).getUserTokens("user", "password");
 //        }
     }
+
+    public void showProgressIndicator() {
+        mainLayout.getProgressIndicator().showProgressIndicator();
+    }
+
+    public void hideProgressIndicator() {
+        mainLayout.getProgressIndicator().hideProgressIndicator();
+    }
+
 
     // Navigation
 
@@ -410,8 +427,8 @@ public class MainActivity extends Activity
     }
 
     /** Adds an item to the cart */
-    public void addItemToCart(String partNumber, int qty, CartFragment.AddToCartCallback callback) {
-        cartFragment.addToCart(partNumber, qty, callback);
+    public void addItemToCart(String partNumber, int qty) {
+        cartFragment.addToCart(partNumber, qty, this);
     }
 
     // Action bar & topper clicks

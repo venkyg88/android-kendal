@@ -4,8 +4,6 @@
 
 package com.staples.mobile.cfa.checkout;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,7 +17,6 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -61,7 +58,6 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
     // fragment, but api call may still be returning
     protected MainActivity activity;
 
-    private LinearLayoutWithProgressOverlay checkoutLayout;
     private View shippingChargeLayout;
     private View taxLayout;
     private View submissionLayout;
@@ -101,8 +97,6 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
 
         // inflate and get child views
         View view = inflater.inflate(R.layout.checkout_fragment, container, false);
-        checkoutLayout = (LinearLayoutWithProgressOverlay) view.findViewById(R.id.checkout);
-        checkoutLayout.setCartProgressOverlay(view.findViewById(R.id.checkout_progress_overlay));
         checkoutEntryLayout = (ViewGroup)view.findViewById(R.id.checkout_entry_layout);
         inflater.inflate(getEntryLayoutId(), checkoutEntryLayout); // dynamically inflate variable entry area
         shippingChargeLayout = view.findViewById(R.id.co_shipping_layout);
@@ -208,11 +202,11 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
 
 
     protected void showProgressIndicator() {
-        checkoutLayout.getProgressIndicator().showProgressIndicator();
+        activity.showProgressIndicator();
     }
 
     protected void hideProgressIndicator() {
-        checkoutLayout.getProgressIndicator().hideProgressIndicator();
+        activity.hideProgressIndicator();
     }
 
 
@@ -251,6 +245,9 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
 
     /** parses shipping charge if possible (might be "Free") and formats for currency */
     public static String formatShippingCharge(String shippingCharge, NumberFormat currencyFormat) {
+        if (shippingCharge == null) { // working around a temporary bug where the cart returns null
+            shippingCharge = "";
+        }
         try { // if possible, parse floating value and format as money
             shippingCharge = currencyFormat.format(Float.parseFloat(shippingCharge));
         } catch(NumberFormatException e) { /* normal to fail (e.g. if equal to "Free") */}

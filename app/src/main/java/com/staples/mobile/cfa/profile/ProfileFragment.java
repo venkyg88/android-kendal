@@ -14,7 +14,6 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.login.LoginHelper;
-import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.*;
 
@@ -31,17 +30,14 @@ public class ProfileFragment extends BaseFragment implements ProfileDetails.Prof
     private EasyOpenApi easyOpenApi;
     Button shippingBtn;
     Button ccBtn;
-    private LinearLayoutWithProgressOverlay profileLayout;
-    Activity activity;
+    MainActivity activity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
 
         Log.d(TAG, "onCreateView()");
-        activity = getActivity();
+        activity = (MainActivity)getActivity();
         View view = inflater.inflate(R.layout.profile_fragment, container, false);
-        profileLayout = (LinearLayoutWithProgressOverlay) view.findViewById(R.id.profile_fragment_content);
-        profileLayout.setCartProgressOverlay(view.findViewById(R.id.profile_progress_overlay));
 
         shippingBtn = (Button) view.findViewById(R.id.addShippingBtn);
         ccBtn = (Button) view.findViewById(R.id.addCCBtn);
@@ -107,11 +103,11 @@ public class ProfileFragment extends BaseFragment implements ProfileDetails.Prof
     }
 
     private void showProgressIndicator() {
-        profileLayout.getProgressIndicator().showProgressIndicator();
+        activity.showProgressIndicator();
     }
 
     private void hideProgressIndicator() {
-        profileLayout.getProgressIndicator().hideProgressIndicator();
+        activity.hideProgressIndicator();
     }
 
 

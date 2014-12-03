@@ -628,13 +628,8 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
             case R.id.add_to_cart:
                 HackEditor edit = (HackEditor) wrapper.findViewById(R.id.quantity);
                 int qty = edit.getQuantity();
-                final MainActivity activity = (MainActivity) getActivity();
-                wrapper.setState(DataWrapper.State.LOADING);
-                activity.addItemToCart(identifier, qty, new CartFragment.AddToCartCallback() {
-                    public void onAddToCartComplete() {
-                        wrapper.setState(DataWrapper.State.DONE);
-                    }
-                });
+                MainActivity activity = (MainActivity) getActivity();
+                activity.addItemToCart(identifier, qty);
                 break;
         }
     }
