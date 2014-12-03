@@ -56,12 +56,50 @@
                 android:layout_alignParentRight="true"
                 android:textColor="@color/text_blue"
                 />
+            <LinearLayout
+                android:id="@+id/coupon_editing_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/coupons_rewards_value"
+                android:visibility="gone">
+                <EditText
+                    android:id="@+id/coupon_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/coupon_code_hint"
+                    android:inputType="number"
+                    android:imeOptions="actionDone"
+                    android:maxLength="10"/>
+                <Button
+                    android:id="@+id/coupon_code_add_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/coupon_list_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/coupon_editing_layout"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/coupon_code_existing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+                <Button
+                    android:id="@+id/coupon_code_delete_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/remove"/>
+            </LinearLayout>
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/cart_shipping_layout"
             style="@style/DrawerStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:background="@color/background_light_gray">
             <TextView
                 style="@style/DrawerStyle"
@@ -85,6 +123,7 @@
             style="@style/DrawerStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:background="@color/background_light_gray">
             <TextView
                 style="@style/DrawerStyle"
@@ -106,6 +145,7 @@
             android:id="@+id/action_checkout"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
+            android:layout_gravity="bottom"
             android:gravity="center"
             android:text="@string/proceed_to_checkout"
             android:paddingTop="10dp"

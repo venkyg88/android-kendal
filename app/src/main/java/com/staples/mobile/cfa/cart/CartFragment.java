@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,7 @@ import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.EmptyResponse;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
 import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
@@ -83,6 +85,10 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     private TextView cartFreeShippingMsg;
     private TextView cartShipping;
     private TextView couponsRewardsValue;
+    private EditText couponCodeEditText;
+    private TextView couponCodeExisting;
+    private View couponEditingLayout;
+    private View couponListLayout;
     private View emptyCartMsg;
     private View cartProceedToCheckout;
     private View cartShippingLayout;
@@ -143,6 +149,10 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         cartFreeShippingMsg = (TextView) view.findViewById(R.id.free_shipping_msg);
         couponsRewardsLayout = view.findViewById(R.id.coupons_rewards_layout);
         couponsRewardsValue = (TextView) view.findViewById(R.id.coupons_rewards_value);
+        couponEditingLayout = view.findViewById(R.id.coupon_editing_layout);
+        couponListLayout = view.findViewById(R.id.coupon_list_layout);
+        couponCodeEditText = (EditText) view.findViewById(R.id.coupon_code);
+        couponCodeExisting = (TextView) view.findViewById(R.id.coupon_code_existing);
         cartShipping = (TextView) view.findViewById(R.id.cart_shipping);
         cartSubtotal = (TextView) view.findViewById(R.id.cart_subtotal);
         cartShippingLayout = view.findViewById(R.id.cart_shipping_layout);
@@ -226,10 +236,31 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
         // Set click listeners
         cartProceedToCheckout.setOnClickListener(this);
+        couponsRewardsLayout.setOnClickListener(this);
+        view.findViewById(R.id.coupon_code_add_button).setOnClickListener(this);
+        view.findViewById(R.id.coupon_code_delete_button).setOnClickListener(this);
 
         return view;
     }
 
+    /*
+                <LinearLayout
+                android:id="@+id/coupon_list_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/coupon_editing_layout"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/coupon_code_existing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+                <Button
+                    android:id="@+id/coupon_code_delete_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/remove"/>
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -263,6 +294,12 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
             if (cart.getCoupon() != null) {
                 for (Coupon coupon : cart.getCoupon()) {
                     couponsRewardsAmount += coupon.getAdjustedAmount();
+                }
+                // for now, just show first coupon
+                if (cart.getCoupon().size() > 0) {
+                    couponCodeExisting.setText(cart.getCoupon().get(0).getCode());
+                } else {
+                    couponCodeExisting.setText("");
                 }
             }
             shipping = cart.getDelivery();
@@ -320,7 +357,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
             // set text of coupons, shipping, and subtotal
             couponsRewardsValue.setText(currencyFormat.format(couponsRewardsAmount));
             cartShipping.setText(CheckoutFragment.formatShippingCharge(shipping, currencyFormat));
-            cartShipping.setTextColor("Free".equals(shipping)? redText:blackText);
+            cartShipping.setTextColor("Free".equals(shipping) ? redText : blackText);
             cartSubtotal.setText(currencyFormat.format(preTaxSubtotal));
 
             // only show shipping, subtotal, and proceed-to-checkout when at least one item
@@ -350,6 +387,63 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
+            case R.id.coupons_rewards_layout:
+                if (cartListVw.getVisibility() == View.VISIBLE) {
+                    cartListVw.setVisibility(View.GONE);
+                    couponEditingLayout.setVisibility(View.VISIBLE);
+                    couponListLayout.setVisibility(View.VISIBLE);
+                } else {
+                    cartListVw.setVisibility(View.VISIBLE);
+                    couponEditingLayout.setVisibility(View.GONE);
+                    couponListLayout.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.coupon_code_add_button:
+                String couponCode = couponCodeEditText.getText().toString();
+                if (!TextUtils.isEmpty(couponCode)) {
+                    EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+                    showProgressIndicator();
+                    Coupon coupon = new Coupon();
+                    coupon.setPromoName(couponCode);
+                    easyOpenApi.addCoupon(coupon, RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CLIENT_ID,
+                            new Callback<EmptyResponse>() {
+                                @Override
+                                public void success(EmptyResponse emptyResponse, Response response) {
+                                    makeToast("Coupon added"); // temporary message
+                                    refreshCart(activity);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
+                                }
+
+                                @Override
+                                public void failure(RetrofitError error) {
+                                    hideProgressIndicator();
+                                    makeToast(ApiError.getErrorMessage(error));
+                                }
+                            });
+                }
+                break;
+            case R.id.coupon_code_delete_button:
+                String couponCodeToDelete = couponCodeExisting.getText().toString();
+                if (!TextUtils.isEmpty(couponCodeToDelete)) {
+                    EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+                    showProgressIndicator();
+                    Coupon coupon = new Coupon();
+                    coupon.setPromoName(couponCodeToDelete);
+                    easyOpenApi.deleteCoupon(RECOMMENDATION, STORE_ID, couponCodeToDelete, LOCALE, CLIENT_ID,
+                            new Callback<EmptyResponse>() {
+                                @Override
+                                public void success(EmptyResponse emptyResponse, Response response) {
+                                    makeToast("Coupon deleted"); // temporary message
+                                    refreshCart(activity);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
+                                }
+
+                                @Override
+                                public void failure(RetrofitError error) {
+                                    hideProgressIndicator();
+                                    makeToast(ApiError.getErrorMessage(error));
+                                }
+                            });
+                }
+                break;
             case R.id.action_checkout:
                 activity.selectOrderCheckout();
                 break;
