@@ -63,6 +63,12 @@ public class CreditCardListFragment extends BaseFragment implements View.OnClick
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity)activity).setActionBarTitle(getResources().getString(R.string.credit_card_title));
+    }
+
+    @Override
     public void onClick(View view) {
         Fragment cardFragment = Fragment.instantiate(activity, CreditCardFragment.class.getName());
         ((MainActivity) activity).navigateToFragment(cardFragment);
