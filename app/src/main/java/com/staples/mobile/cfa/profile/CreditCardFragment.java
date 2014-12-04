@@ -22,6 +22,7 @@ import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.AddCreditCard;
 import com.staples.mobile.common.access.easyopen.model.member.AddCreditCardPOW;
+import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.CreditCardId;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.POWResponse;
@@ -53,14 +54,31 @@ public class CreditCardFragment extends BaseFragment implements View.OnClickList
     EasyOpenApi easyOpenApi;
     String encryptedPacket;
     Activity activity;
+    EditText cardNumberET;
+    EditText expMonthET;
+    EditText expYearET;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-
         Log.d(TAG, "onCreateView()");
+        activity = getActivity();
         View view = inflater.inflate(R.layout.addcc_fragment, container, false);
         spinner = (Spinner) view.findViewById(R.id.card_type_spinner);
-        activity = getActivity();
+        cardNumberET = (EditText) view.findViewById(R.id.cardNumber);
+        expMonthET = (EditText) view.findViewById(R.id.expirationMonth);
+        expYearET = (EditText) view.findViewById(R.id.expirationYear);
+
+        Bundle args = getArguments();
+        if(args != null) {
+            CCDetails creditCard = (CCDetails)args.getSerializable("creditCardData");
+            if(creditCard != null) {
+                cardNumberET.setText(creditCard.getCardNumber());
+                expMonthET.setText(creditCard.getExpirationMonth());
+                expYearET.setText(creditCard.getExpirationYear());
+            }
+        }
+    
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.cardtype_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -81,10 +99,10 @@ public class CreditCardFragment extends BaseFragment implements View.OnClickList
 
     @Override
     public void onClick(View view) {
-        creditCardNumber = ((EditText) getView().findViewById(R.id.cardNumber)).getText().toString();
+        creditCardNumber = cardNumberET.getText().toString();
         cardType = spinner.getSelectedItem().toString();
-        expirationMonth = ((EditText) getView().findViewById(R.id.expirationMonth)).getText().toString();
-        expirationYear = ((EditText) getView().findViewById(R.id.expirationYear)).getText().toString();
+        expirationMonth = expMonthET.getText().toString();
+        expirationYear = expYearET.getText().toString();
 
         if(!creditCardNumber.isEmpty() && !cardType.isEmpty()){
             AddCreditCardPOW creditCard = new AddCreditCardPOW(creditCardNumber, cardType.toUpperCase());
@@ -115,7 +133,6 @@ public class CreditCardFragment extends BaseFragment implements View.OnClickList
                                             fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
                                         }                                    }
                                 });
-
                             }
 
                             @Override
