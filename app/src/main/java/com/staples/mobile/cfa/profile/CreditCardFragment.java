@@ -1,7 +1,6 @@
 package com.staples.mobile.cfa.profile;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -58,12 +57,12 @@ public class CreditCardFragment extends BaseFragment implements View.OnClickList
     EditText expMonthET;
     EditText expYearET;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
         activity = getActivity();
-        View view = inflater.inflate(R.layout.addcc_fragment, container, false);
+
+        View view = inflater.inflate(R.layout.add_creditcard_fragment, container, false);
         spinner = (Spinner) view.findViewById(R.id.card_type_spinner);
         cardNumberET = (EditText) view.findViewById(R.id.cardNumber);
         expMonthET = (EditText) view.findViewById(R.id.expirationMonth);
@@ -110,6 +109,7 @@ public class CreditCardFragment extends BaseFragment implements View.OnClickList
             ccList.add(creditCard);
 
             easyOpenApi.addCreditPOWCallQA(ccList, RECOMMENDATION, CLIENT_ID, new Callback<List<POWResponse>>() {
+
                 @Override
                 public void success(List<POWResponse> powList, Response response) {
                     Log.i("packet", powList.get(0).getPacket());

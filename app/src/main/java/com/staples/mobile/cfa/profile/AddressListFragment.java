@@ -26,25 +26,24 @@ import java.util.List;
  * Created by Avinash Dodda.
  */
 public class AddressListFragment extends BaseFragment implements View.OnClickListener {
-    private static final String TAG = "ShippingList Fragment";
+    private static final String TAG = "Address List Fragment";
     ListView listview;
     Button addBtn;
     List<Address> addressList;
     Activity activity;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
+        activity = getActivity();
 
         View view = inflater.inflate(R.layout.list_fragment, container, false);
+
         listview = (ListView) view.findViewById(R.id.profileListView);
         addBtn = (Button) view.findViewById(R.id.listAddButton);
         addBtn.setText("Add Address");
         addBtn.setOnClickListener(this);
         addressList = ProfileDetails.getMember().getAddress();
-        activity = getActivity();
-
 
         final AddressArrayAdapter adapter = new AddressArrayAdapter(activity,
                 addressList, ProfileDetails.currentAddressId);
@@ -63,6 +62,7 @@ public class AddressListFragment extends BaseFragment implements View.OnClickLis
                 }
             }
         });
+
         return (view);
     }
 

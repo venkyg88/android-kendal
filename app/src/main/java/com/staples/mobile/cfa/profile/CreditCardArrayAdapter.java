@@ -31,16 +31,17 @@ import retrofit.client.Response;
  */
 
 public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements View.OnClickListener{
-    private final Context context;
-    private final List<CCDetails> values;
-    private String selectedCreditCardId;
-    ImageButton optionButton;
-    EasyOpenApi easyOpenApi;
 
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
     private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
     private static final String LOCALE = "en_US";
+
+    private final Context context;
+    private final List<CCDetails> values;
+    private String selectedCreditCardId;
+    ImageButton optionButton;
+    EasyOpenApi easyOpenApi;
 
     public CreditCardArrayAdapter(Context context, List<CCDetails> values, String selectedCreditCardId) {
         super(context, R.layout.list_view_row, values);
@@ -65,6 +66,7 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
         }
         String tmpCard = creditCard.getCardType() + " ending in " + cardNumber + "\n" +
                 "Exp. " + creditCard.getExpirationMonth() + "/" + creditCard.getExpirationYear();
+
         TextView ccText = (TextView) rowView.findViewById(R.id.rowItemText);
         ccText.setText(tmpCard);
 
@@ -121,12 +123,14 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
     public void deleteCreditCard(final int position) {
         String creditCardId = values.get(position).getCreditCardId();
         easyOpenApi.deleteMemberCreditCard(RECOMMENDATION, STORE_ID, creditCardId, LOCALE, "json", CLIENT_ID, new Callback<Response>() {
+
             @Override
             public void success(Response response, Response response2) {
                 values.remove(position);
                 notifyDataSetChanged();
                 Toast.makeText(context, "Credit card deleted", Toast.LENGTH_SHORT).show();
             }
+
             @Override
             public void failure(RetrofitError error) {
                 Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
