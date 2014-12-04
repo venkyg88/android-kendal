@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.staples.mobile.cfa.BaseFragment;
+import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.common.access.Access;
@@ -42,7 +43,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class StoreFragment extends BaseFragment implements Callback<StoreQuery>, GoogleMap.OnMarkerClickListener,
-                           AdapterView.OnItemClickListener, EditText.OnEditorActionListener {
+                           View.OnClickListener, AdapterView.OnItemClickListener, EditText.OnEditorActionListener {
     private static final String TAG = "StoreFragment";
 
     private static int FITSTORES = 5; // Number of stores to fit in initial view
@@ -119,6 +120,7 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
     public void onResume() {
         super.onResume();
         if (mapView!=null) mapView.onResume();
+        ((MainActivity) getActivity()).showActionBar(R.string.store_locator_title, R.drawable.ic_view_list_white, this);
     }
 
     @Override
@@ -368,6 +370,36 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
             }
         }
         return(false);
+    }
+
+    private void toggleView() {
+        if (mapView==null) {
+        }
+
+        // Map with single store
+        else if (adapter.isSingleMode()) {
+            mapView.setVisibility(View.GONE);
+            adapter.setSingleMode(false);
+            adapter.notifyDataSetChanged();
+            list.smoothScrollToPosition(adapter.getSingleIndex());
+        }
+
+        // List of stores with map available
+        else {
+            mapView.setVisibility(View.VISIBLE);
+            adapter.setSingleMode(true);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+Log.d(TAG, "StoreFragment click");
+        switch(view.getId()) {
+            case R.id.option_icon:
+                toggleView();
+                break;
+        }
     }
 
     @Override

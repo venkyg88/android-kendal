@@ -4,8 +4,6 @@
 
 package com.staples.mobile.cfa.checkout;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,19 +13,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.BaseFragment;
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
+import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
 import com.staples.mobile.common.access.easyopen.model.checkout.SubmitOrderRequest;
 import com.staples.mobile.common.access.easyopen.model.checkout.SubmitOrderResponse;
-import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
 
 import java.text.NumberFormat;
 
@@ -149,8 +147,8 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
 
         // update action bar
         activity.showCheckoutActionBarEntities();
-        activity.setActionBarTitle(getResources().getString(this instanceof GuestCheckoutFragment?
-                R.string.guest_checkout_title : R.string.checkout_title));
+        int titleId = this instanceof GuestCheckoutFragment ? R.string.guest_checkout_title : R.string.checkout_title;
+        activity.showActionBar(titleId, 0, null);
     }
 
     /** override this to handle other clicks, but call this super method */
@@ -162,7 +160,6 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
                 break;
         }
     }
-
 
     /** handles order submission */
     protected abstract void onSubmit();

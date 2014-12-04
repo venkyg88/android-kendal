@@ -155,7 +155,7 @@ public class ConfirmationFragment extends BaseFragment implements View.OnClickLi
 
         // update action bar
         activity.showOrderConfirmationActionBarEntities();
-        activity.setActionBarTitle(getResources().getString(R.string.order_confirmation_title));
+        activity.showActionBar(R.string.order_confirmation_title, 0, null);
     }
 
     @Override
