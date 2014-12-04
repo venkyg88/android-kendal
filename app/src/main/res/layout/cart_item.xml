@@ -77,15 +77,27 @@
             <!--android:layout_gravity="center_vertical"-->
             <!--android:text="@string/cartitem_qty_label"-->
             <!--android:textSize="16sp"/>-->
-            <com.staples.mobile.cfa.widget.QuantityEditor
+
+
+            <!--<com.staples.mobile.cfa.widget.QuantityEditor-->
+                <!--android:id="@+id/cartitem_qty"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center_vertical|right"-->
+                <!--android:textSize="18sp"-->
+                <!--android:paddingRight="6dp"-->
+                <!--app:maxSpinnerValue="9"-->
+                <!--/>-->
+            <com.staples.mobile.cfa.widget.HackEditor
                 android:id="@+id/cartitem_qty"
-                android:layout_width="wrap_content"
+                style="@style/HackEditorStyle"
+                android:layout_width="40dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|right"
                 android:textSize="18sp"
-                android:paddingRight="6dp"
-                app:maxSpinnerValue="9"
-                />
+                app:maxQuantity="10"
+                app:popupWidth="120dp"/>
+
             <!--<Button-->
                 <!--android:id="@+id/cartitem_update"-->
                 <!--android:layout_width="wrap_content"-->
