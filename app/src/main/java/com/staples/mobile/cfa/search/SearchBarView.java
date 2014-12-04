@@ -33,7 +33,6 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
     private MainActivity activity;
     private View header;
     private ImageView icon;
-    private Handler handler;
     private StartSuggest startSuggest;
     private SuggestTask suggestTask;
     private Future<?> suggestPending;
@@ -72,7 +71,6 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
         adapter.loadSearchHistory();
 
         // Tasks
-        handler = new Handler();
         startSuggest = new StartSuggest();
         suggestTask = new SuggestTask(this);
         finishSuggest = new FinishSuggest();
@@ -84,7 +82,7 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
         header.setVisibility(View.GONE);
         setVisibility(View.VISIBLE);
 
-        icon.setImageResource(R.drawable.ic_action_cancel);
+        icon.setImageResource(R.drawable.ic_cancel_white);
 
         setText(null);
         requestFocus();
@@ -100,7 +98,7 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
         header.setVisibility(View.VISIBLE);
         setVisibility(View.GONE);
 
-        icon.setImageResource(R.drawable.ic_search);
+        icon.setImageResource(R.drawable.ic_search_white);
 
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getWindowToken(), 0);
@@ -139,10 +137,8 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         keyword = s.toString().trim();
 
-        if (handler!=null) {
-            handler.removeCallbacks(startSuggest);
-            if (open) handler.postDelayed(startSuggest, KEYDELAY);
-        }
+        removeCallbacks(startSuggest);
+        if (open) postDelayed(startSuggest, KEYDELAY);
     }
 
     @Override
@@ -153,7 +149,6 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
             doSearch(null);
-            return true;
         }
         return false;
     }
@@ -169,7 +164,6 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
 
         @Override
         public void run() {
-
             // If key didn't change just return
             String key = SuggestTask.cleanKeyword(keyword);
             if ((lastKey==null && key==null) ||
@@ -229,7 +223,7 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
 
     public void callback(ArrayList<String> suggestions) {
         finishSuggest.setSuggestions(suggestions);
-        handler.post(finishSuggest);
+        post(finishSuggest);
     }
 
     public void saveSearchHistory() {

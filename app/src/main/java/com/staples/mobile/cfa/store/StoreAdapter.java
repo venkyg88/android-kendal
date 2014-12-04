@@ -34,11 +34,14 @@ public class StoreAdapter extends BaseAdapter {
         timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
     }
 
-    // Items
+    // Shadowed standard methods
 
     @Override
     public int getCount() {
-        if (singleMode) return(1);
+        if (singleMode) {
+            if (singleIndex>array.size()) return(0);
+            return(1);
+        }
         else return(array.size());
     }
 
@@ -52,6 +55,26 @@ public class StoreAdapter extends BaseAdapter {
     public StoreItem getItem(int position) {
         if (singleMode) return(array.get(singleIndex));
         else return(array.get(position));
+    }
+
+    // Full backing array methods
+
+    public int getBackingCount() {
+        return(array.size());
+    }
+
+    public StoreItem getBackingItem(int position) {
+        return(array.get(position));
+    }
+
+    public void addStore(StoreItem item) {
+        array.add(item);
+    }
+
+    public void clear() {
+        array.clear();
+        singleMode = false;
+        singleIndex = 0;
     }
 
     // Views
@@ -73,7 +96,7 @@ public class StoreAdapter extends BaseAdapter {
         return(view);
     }
 
-    // Getters & setters
+    // Mode getters & setters
 
     public int getSingleIndex() {
         return(singleIndex);
@@ -91,15 +114,7 @@ public class StoreAdapter extends BaseAdapter {
         this.singleMode = singleMode;
     }
 
-    public void addStore(StoreItem item) {
-        array.add(item);
-    }
-
-    public void clear() {
-        array.clear();
-        singleMode = false;
-        singleIndex = 0;
-    }
+    // Map marker finder
 
     public int findPositionByMarker(Marker marker) {
         LatLng position = marker.getPosition();

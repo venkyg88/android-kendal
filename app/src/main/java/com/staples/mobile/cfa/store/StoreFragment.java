@@ -8,6 +8,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -45,6 +46,9 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
     private static final String TAG = "StoreFragment";
 
     private static int FITSTORES = 5; // Number of stores to fit in initial view
+    private static double EARTHRADIUS = 6371.0; // kilometers
+    private static double minViewAngle = 360.0/(2.0*Math.PI*EARTHRADIUS) * 5.0; // 5 km
+    private static double maxViewAngle = 360.0/(2.0*Math.PI*EARTHRADIUS) * 50.0; // 50 km
 
     private MapView mapView;
     private GoogleMap googleMap;
@@ -137,6 +141,7 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
 
     private void resetMap() {
         adapter.clear();
+        adapter.notifyDataSetChanged();
         if (googleMap!=null) {
             googleMap.clear();
         }
@@ -197,7 +202,7 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
     }
 
     private void addMarkers() {
-        int n = adapter.getCount();
+        int n = adapter.getBackingCount();
         if (n<=0) return;
 
         // Create icons
@@ -205,7 +210,7 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
         coldIcon = BitmapDescriptorFactory.fromResource(R.drawable.store);
 
         // Add hot marker
-        StoreItem item = adapter.getItem(0);
+        StoreItem item = adapter.getBackingItem(0);
         MarkerOptions options = new MarkerOptions();
         options.icon(hotIcon);
         options.anchor(0.5f, 1.0f);
@@ -215,7 +220,7 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
 
         // Add cold markers
         for(int i = 1; i < n; i++) {
-            item = adapter.getItem(i);
+            item = adapter.getBackingItem(i);
             options = new MarkerOptions();
             options.icon(coldIcon);
             options.anchor(0.5f, 0.5f);
@@ -224,30 +229,44 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
         }
     }
 
-    private LatLngBounds getCenteredBounds() {
-        double centerLat = location.getLatitude();
-        double centerLng = location.getLongitude();
+    // Map bounds and scaling
 
-        // Set maximum zoom
-        double deltaLat = 0.02;
-        double deltaLng = 0.02 / Math.cos(Math.PI / 180.0 * centerLat);
-
-        // Get bounds of first N stores
-        int n = Math.min(adapter.getCount(), FITSTORES);
-        for(int i=0;i<n;i++) {
-            LatLng position = adapter.getItem(i).position;
-            deltaLat = Math.max(deltaLat, Math.abs(position.latitude-centerLat));
-            deltaLng = Math.max(deltaLng, Math.abs(position.longitude-centerLng));
-        }
-
+    private LatLngBounds makeBounds(double centerLat, double centerLng, double deltaLat, double deltaLng) {
         // Inflate deltas to give margins
         deltaLat *= 1.1f;
         deltaLng *= 1.1f;
+
+        // Clip deltas to min and max
+        double cos = Math.cos(Math.PI/180.0*centerLat);
+        deltaLat = Math.max(deltaLat, minViewAngle);
+        deltaLng = Math.max(deltaLng, minViewAngle/cos);
+        deltaLat = Math.min(deltaLat, maxViewAngle);
+        deltaLng = Math.min(deltaLng, maxViewAngle/cos);
 
         // Make bounds
         LatLng northeast = new LatLng(centerLat+deltaLat, centerLng+deltaLng);
         LatLng southwest = new LatLng(centerLat-deltaLat, centerLng-deltaLng);
         LatLngBounds bounds = new LatLngBounds(southwest, northeast);
+        return(bounds);
+    }
+
+    private LatLngBounds getCenteredBounds() {
+        double centerLat = location.getLatitude();
+        double centerLng = location.getLongitude();
+
+        // Set maximum zoom
+        double deltaLat = minViewAngle;
+        double deltaLng = minViewAngle/Math.cos(Math.PI/180.0*centerLat);
+
+        // Get bounds of first N stores
+        int n = Math.min(adapter.getBackingCount(), FITSTORES);
+        for(int i=0;i<n;i++) {
+            LatLng position = adapter.getBackingItem(i).position;
+            deltaLat = Math.max(deltaLat, Math.abs(position.latitude-centerLat));
+            deltaLng = Math.max(deltaLng, Math.abs(position.longitude-centerLng));
+        }
+
+        LatLngBounds bounds = makeBounds(centerLat, centerLng, deltaLat, deltaLng);
         return(bounds);
     }
 
@@ -258,24 +277,21 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
         double maxLng = -180.0;
 
         // Get bounds of first N stores
-        int n = Math.min(adapter.getCount(), FITSTORES);
+        int n = Math.min(adapter.getBackingCount(), FITSTORES);
         for(int i=0;i<n;i++) {
-            LatLng position = adapter.getItem(i).position;
+            LatLng position = adapter.getBackingItem(i).position;
             minLat = Math.min(minLat, position.latitude);
             minLng = Math.min(minLng, position.longitude);
             maxLat = Math.max(maxLat, position.latitude);
-            maxLng = Math.max(minLng, position.longitude);
+            maxLng = Math.max(maxLng, position.longitude);
         }
 
         double centerLat = (minLat+maxLat)/2.0;
         double centerLng = (minLng+maxLng)/2.0;
-        double deltaLat = 1.1*(maxLat-minLat)/2.0;
-        double deltaLng = 1.1*(maxLng-minLng)/2.0;
+        double deltaLat = (maxLat-minLat)/2.0;
+        double deltaLng = (maxLng-minLng)/2.0;
 
-        // Make bounds
-        LatLng northeast = new LatLng(centerLat+deltaLat, centerLng+deltaLng);
-        LatLng southwest = new LatLng(centerLat-deltaLat, centerLng-deltaLng);
-        LatLngBounds bounds = new LatLngBounds(southwest, northeast);
+        LatLngBounds bounds = makeBounds(centerLat, centerLng, deltaLat, deltaLng);
         return(bounds);
     }
 
@@ -383,10 +399,12 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
 
     @Override
     public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-        String address = search.getText().toString().trim();
-        resetMap();
-        location = null;
-        Access.getInstance().getChannelApi().storeLocations(address, this);
+        if (actionId== EditorInfo.IME_ACTION_SEARCH) {
+            String address = search.getText().toString().trim();
+            resetMap();
+            location = null;
+            Access.getInstance().getChannelApi().storeLocations(address, this);
+        }
         return(false);
     }
 }

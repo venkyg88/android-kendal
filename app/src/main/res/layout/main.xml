@@ -40,12 +40,12 @@
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/action_left_drawer"
-                android:layout_width="48dp"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:src="@drawable/ic_drawer"/>
+                android:src="@drawable/ic_menu_white"/>
             <TextView
                 android:id="@+id/header"
                 android:layout_width="0dp"
@@ -55,6 +55,7 @@
                 android:paddingRight="4dp"
                 android:gravity="center_vertical|left"
                 android:textSize="24sp"
+                android:textColor="@android:color/white"
                 android:text="@string/staples"/>
             <!-- Search Bar -->
             <com.staples.mobile.cfa.search.SearchBarView
@@ -73,13 +74,14 @@
                 android:focusableInTouchMode="true"
                 android:singleLine="true"
                 android:hint="@string/original_hint"
-                android:textSize="16sp"/>
+                android:textSize="18sp"
+                android:textColor="@android:color/white"/>
             <ImageView
                 android:id="@+id/search_icon"
-                android:layout_width="@dimen/icon_width"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|right"
-                android:src="@drawable/ic_search"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_search_white"/>
             <!--cart item qty (only visible when cart displayed)-->
             <TextView
                 android:id="@+id/cart_item_qty"
@@ -91,27 +93,27 @@
                 android:gravity="center_vertical|right"
                 android:layout_marginRight="6dp"
                 android:textSize="20sp"
+                android:textColor="@android:color/white"
                 android:visibility="gone"/>
             <!--checkout sign-in button (only visible when guest checkout displayed)-->
             <Button
                 android:id="@+id/co_signin_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical|right"
+                android:gravity="center_vertical"
                 android:text="@string/signin_title"
                 android:visibility="gone"
                 android:layout_marginRight="10dp"/>
             <!-- Cart icon with badge -->
             <com.staples.mobile.cfa.widget.BadgeImageView
                 android:id="@+id/action_show_cart"
-                android:layout_width="@dimen/icon_width"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|right"
-                android:text=""
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_marginRight="6dp"
-                android:src="@drawable/cart"/>
+                android:textSize="16sp"
+                android:textColor="@android:color/black"
+                android:src="@drawable/ic_shopping_cart_white"/>
         </LinearLayout>
         <android.support.v4.widget.DrawerLayout
             android:id="@+id/drawer_layout"

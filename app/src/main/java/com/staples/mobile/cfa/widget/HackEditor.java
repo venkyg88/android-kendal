@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -26,7 +27,6 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
 
     private Context context;
     private Dialog popup;
-    private Handler handler;
     private OnQtyChangeListener listener;
 
     private int minQuantity;
@@ -48,7 +48,6 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
     public HackEditor(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.context = context;
-        handler = new Handler();
 
         // Preset default attributes
         minQuantity = 1;
@@ -126,7 +125,7 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
                 popup.dismiss();
                 popup = null;
             }
-            handler.postDelayed(new ShowKeyboard(), 100);
+            postDelayed(new ShowKeyboard(), 100);
             return;
         }
     }
@@ -154,23 +153,25 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
 
     @Override
     public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-        quantity = minQuantity;
-        String text = getText().toString();
-        if (text!=null) {
-            try {
-                quantity = Integer.parseInt(text);
-            } catch(Exception e) {}
+        if (actionId==EditorInfo.IME_ACTION_DONE) {
+            quantity = minQuantity;
+            String text = getText().toString();
+            if (text != null) {
+                try {
+                    quantity = Integer.parseInt(text);
+                } catch(Exception e) { }
+            }
+            if (listener != null)
+                listener.onQtyChange(this, quantity);
+            post(new AfterKeyboard());
         }
-        if (listener!=null)
-            listener.onQtyChange(this, quantity);
-        handler.post(new AfterKeyboard());
         return(false);
     }
 
     @Override
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {
         if (keyCode==KeyEvent.KEYCODE_BACK && event.getAction()==KeyEvent.ACTION_UP) {
-            handler.post(new AfterKeyboard());
+            post(new AfterKeyboard());
         }
         return(false);
     }
@@ -182,11 +183,10 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
         Window window = popup.getWindow();
         window.requestFeature(Window.FEATURE_NO_TITLE);
 
-        LayoutInflater inflater = popup.getLayoutInflater();
-        View frame = inflater.inflate(R.layout.hack_layout, null, false);
-        popup.setContentView(frame);
-        ViewGroup strip = (ViewGroup) frame.findViewById(R.id.strip);
+        popup.setContentView(R.layout.hack_layout);
+        ViewGroup strip = (ViewGroup) popup.findViewById(R.id.strip);
 
+        LayoutInflater inflater = popup.getLayoutInflater();
         for(int i=minQuantity;i<=maxQuantity;i++) {
             String text;
             TextView digit = (TextView) inflater.inflate(R.layout.hack_item, strip, false);
@@ -202,7 +202,6 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
         popup.show();
         window.setLayout(popupWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
-
 
     private void showKeyboard() {
         setFocusable(true);
