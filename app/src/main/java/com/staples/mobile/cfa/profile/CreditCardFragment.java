@@ -76,7 +76,7 @@ public class CreditCardFragment extends BaseFragment implements View.OnClickList
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity)activity).setActionBarTitle(getResources().getString(R.string.add_credit_card_title));
+        ((MainActivity) activity).showActionBar(R.string.add_credit_card_title, 0, null);
     }
 
     @Override
