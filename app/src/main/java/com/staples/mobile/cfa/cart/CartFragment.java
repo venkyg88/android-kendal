@@ -244,7 +244,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
         // update action bar
         activity.showCartActionBarEntities();
-        activity.setActionBarTitle(getResources().getString(R.string.cart_title));
+        activity.showActionBar(R.string.cart_title, 0, null);
 
         //initialize cart based on what's been returned from api so far
         setAdapterListItems();

@@ -55,7 +55,7 @@
     <string name="billing_address_required">Billing address is required</string>
     <string name="billing_addr">Billing Address</string>
     <string name="use_as_billing_addr">Use as billing address</string>
-    <!--<string name="delivery_range">Delivery</string>-->
+
     <string name="item_subtotal">Item total</string>
     <string name="coupons_rewards">Coupon &amp; Reward</string>
     <string name="coupon_code_hint">Add Coupon Code here</string>
@@ -80,6 +80,7 @@
     <string name="reviews">Reviews</string>
     <string name="accessories">Accessories</string>
     <string name="remove">Remove</string>
+
 
     <string name="would_you">Would you recommend this to a friend?</string>
 

@@ -53,7 +53,7 @@ public class ProfileFragment extends BaseFragment implements ProfileDetails.Prof
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity)activity).setActionBarTitle(getResources().getString(R.string.profile_title));
+        ((MainActivity) activity).showActionBar(R.string.profile_title, 0, null);
     }
 
     /** implements ProfileDetails.ProfileRefreshCallback */
