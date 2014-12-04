@@ -10,7 +10,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,7 +71,7 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
 
     private void openSearchBar() {
         setVisibility(View.VISIBLE);
-        activity.showActionBar(0, R.drawable.ic_cancel_white, this);
+        activity.showActionBar(0, R.drawable.ic_close_white, this);
 
         setText(null);
         requestFocus();
