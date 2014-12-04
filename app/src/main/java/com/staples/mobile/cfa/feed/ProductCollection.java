@@ -66,6 +66,10 @@ public class ProductCollection
 
     private Map collectionArgs;
 
+    public ProductCollectionCallBack getCallBack(){
+        return productCollectionCallBack;
+    }
+
     public interface ProductCollectionCallBack {
 
         public void onProductCollectionResult(ProductCollection.ProductContainer productContainer);
@@ -92,7 +96,7 @@ public class ProductCollection
     }
 
     public void getProducts(Map collectionArgs,
-                            ProductCollectionCallBack productCollectionCallBack) {
+                            Callback<ProductCollection> productCollectionCallBack) {
 
         if (LOGGING) Log.v(TAG, "ProductCollection:getProducts():"
                         + " collectionArgs[" + collectionArgs + "]"
@@ -101,7 +105,7 @@ public class ProductCollection
         );
 
         this.collectionArgs = collectionArgs;
-        this.productCollectionCallBack = productCollectionCallBack;
+        this.productCollectionCallBack = (ProductCollectionCallBack) productCollectionCallBack;
 
         this.identifier = (String) collectionArgs.get(COLLECTION_ARGS.IDENTIFIER);
 
