@@ -6,12 +6,17 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +36,7 @@ public class CreditCardListFragment extends BaseFragment implements View.OnClick
     Button addBtn;
     List<CCDetails> cardList;
     Activity activity;
+    ImageButton optionButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -38,6 +44,8 @@ public class CreditCardListFragment extends BaseFragment implements View.OnClick
 
         View view = inflater.inflate(R.layout.list_fragment, container, false);
         listview = (ListView) view.findViewById(R.id.profileListView);
+        optionButton = (ImageButton) view.findViewById(R.id.listOptions);
+        optionButton.setOnClickListener(this);
         addBtn = (Button) view.findViewById(R.id.listAddButton);
         addBtn.setText("Add Credit Card");
         addBtn.setOnClickListener(this);
@@ -64,8 +72,15 @@ public class CreditCardListFragment extends BaseFragment implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        Fragment cardFragment = Fragment.instantiate(activity, CreditCardFragment.class.getName());
-        ((MainActivity) activity).navigateToFragment(cardFragment);
+        switch(view.getId()) {
+            case R.id.listAddButton:
+                Fragment cardFragment = Fragment.instantiate(activity, CreditCardFragment.class.getName());
+                ((MainActivity) activity).navigateToFragment(cardFragment);
+                break;
+            case R.id.listOptions:
+                Toast.makeText(activity, "hello", Toast.LENGTH_LONG).show();
+                break;
+        }
     }
 }
 
