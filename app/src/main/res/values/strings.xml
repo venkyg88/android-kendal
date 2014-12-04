@@ -19,6 +19,12 @@
     <string name="order_title">Order</string>
     <string name="profile_title">Profile</string>
     <string name="about_title">About</string>
+    <string name="credit_card_title">Credit Cards</string>
+    <string name="add_credit_card_title">Add Credit Cards</string>
+    <string name="address_title">Addresses</string>
+    <string name="add_address_title">New Shipping Address</string>
+    <string name="edit_address_title">Shipping Address</string>
+    <string name="edit_credit_card_title">Credit Card</string>
 
     <string name="cart_title">Cart</string>
     <string name="checkout_title">Checkout</string>
