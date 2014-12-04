@@ -249,21 +249,24 @@ public class LmsFragment
 
             String size = lmsItem.size;
             int subLayoutHeight = 0;
+            ImageView categoryImageView = null;
 
             if (size.equalsIgnoreCase("A")) {
 
                 subLayoutHeight = aItemHeight;
+                categoryImageView = getImageView(0, 0, 0, 0);
 
             } else if (size.equalsIgnoreCase("B")) {
 
                 subLayoutHeight = bItemHeight;
+                categoryImageView = getImageView(0, 0, 0, 0);
 
             } else if (size.equalsIgnoreCase("D")) {
 
                 subLayoutHeight = dItemHeight;
+                categoryImageView = getImageView(0, 0, 0, 0);
             }
 
-            ImageView categoryImageView = getImageView();
             setImage(categoryImageView, lmsItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
@@ -301,7 +304,7 @@ public class LmsFragment
                 lmsScrollLayout.addView(subLayoutContainer);
             }
 
-            ImageView categoryImageView = getImageView();
+            ImageView categoryImageView = getImageView(0, 0, 0, 0);
             setImage(categoryImageView, lmsItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
@@ -374,7 +377,7 @@ public class LmsFragment
 
         lmsScrollLayout.addView(subLayout);
 
-        ImageView categoryImageView = getImageView();
+        ImageView categoryImageView = getImageView(0, 0, 0, 0);
         setImage(categoryImageView, lmsItemA.bannerUrl);
 
         // Vertical. Contains selectable content. Used to create a rectangular
@@ -396,6 +399,7 @@ public class LmsFragment
             if (lmsItemsB.size() >= 2) {
 
                 fillAWithB(lmsBCDLayout, 2);
+
                 break; // while (true)
             }
             if (lmsItemsB.size() > 0) {
@@ -458,7 +462,7 @@ public class LmsFragment
 
             // Category ImageView
 
-            ImageView categoryImageView = getImageView();
+            ImageView categoryImageView = getImageView(0, 0, 0, 0);
             setImage(categoryImageView, lmsItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
@@ -508,7 +512,7 @@ public class LmsFragment
                 nbrSubLayoutContainers++;
             }
 
-            ImageView categoryImageView = getImageView();
+            ImageView categoryImageView = getImageView(0, 0, 0, 0);
             setImage(categoryImageView, lmsItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
@@ -548,7 +552,7 @@ public class LmsFragment
 
             // Category ImageView
 
-            ImageView categoryImageView = getImageView();
+            ImageView categoryImageView = getImageView(0, 0, 0, 0);
             setImage(categoryImageView, lmsItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
@@ -577,7 +581,9 @@ public class LmsFragment
         LinearLayout widgetLayout = null;
 
         widgetLayout = new LinearLayout(activity);
+        /* @@@ STUBBED
         widgetLayout.setBackgroundResource(R.drawable.rectangle_frame);
+        @@@ STUBBED */
 
         widgetLayout.setId(widgetLayout.hashCode());
         widgetLayout.setOrientation(LinearLayout.VERTICAL);
@@ -591,7 +597,7 @@ public class LmsFragment
                         layoutHeight); // height
 
         int margin = 0;
-        widgetLayoutParms.setMargins(margin, margin, margin, margin); // left, top, right, bottom
+        widgetLayoutParms.setMargins(margin, margin, margin, 20); // left, top, right, bottom
 
         childView.setLayoutParams(widgetLayoutParms);
 
@@ -639,7 +645,9 @@ public class LmsFragment
         LinearLayout subLayout = new LinearLayout(activity);
 
         subLayout.setLayoutParams(lmsSubLayoutParms);
+        /* @@@ STUBBED
         subLayout.setBackgroundResource(R.drawable.rectangle_frame);
+        @@@ STUBBED */
 
         subLayout.setId(subLayout.hashCode());
         subLayout.setOrientation(orientation);
@@ -671,7 +679,7 @@ public class LmsFragment
 
     } // getSubLayoutContainer()
 
-    private ImageView getImageView() {
+    private ImageView getImageView(int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {
 
         if (LOGGING) Log.v(TAG, "LmsFragment:getImageView():"
                         + " this[" + this + "]"
@@ -682,8 +690,7 @@ public class LmsFragment
         imageView.setAdjustViewBounds(true);
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
-        int padding = 2;
-        imageView.setPadding(padding, padding, padding, padding);
+        imageView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
 
         return (imageView);
 
@@ -753,7 +760,7 @@ public class LmsFragment
                 lmsScrollLayout.addView(subLayoutContainer);
             }
 
-            ImageView categoryImageView = getImageView();
+            ImageView categoryImageView = getImageView(0, 0, 0, 0);
             setImage(categoryImageView, lmsItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
@@ -804,7 +811,7 @@ public class LmsFragment
                 lmsScrollLayout.addView(subLayoutContainer);
             }
 
-            ImageView categoryImageView = getImageView();
+            ImageView categoryImageView = getImageView(0, 0, 0, 0);
             setImage(categoryImageView, lmsItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
@@ -848,7 +855,7 @@ public class LmsFragment
 
             lmsItemsD.remove(0);
 
-            ImageView categoryImageView = getImageView();
+            ImageView categoryImageView = getImageView(0, 0, 0, 0);
             setImage(categoryImageView, lmsItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
@@ -894,7 +901,7 @@ public class LmsFragment
                 lmsScrollLayout.addView(subLayoutContainer);
             }
 
-            ImageView categoryImageView = getImageView();
+            ImageView categoryImageView = getImageView(0, 0, 0, 0);
             setImage(categoryImageView, lmsItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
