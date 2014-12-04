@@ -46,6 +46,65 @@ public class ProductCollection {
                                               List<ProductContainer.ERROR_CODES> errorCodes);
     }
 
+    private ProductCollection() {
+    }
+
+    public static void getProducts(String urlExtension,
+                                   String limit,
+                                   String offset,
+                                   Map collectionMap,
+                                   ProductCollectionCallBack productCollectionCallBack) {
+
+        if (LOGGING) Log.v(TAG, "ProductCollection:getProducts():"
+                        + " limit[" + limit + "]"
+                        + " offset[" + offset + "]"
+                        + " urlExtension[" + urlExtension + "]"
+                        + " collectionMap[" + collectionMap + "]"
+                        + " productCollectionCallBack[" + productCollectionCallBack + "]"
+        );
+
+        ProductContainer productContainer = new ProductContainer();
+
+        productContainer.urlExtension = urlExtension;
+        productContainer.limit = limit;
+        productContainer.offset = offset;
+        productContainer.collectionMap = collectionMap;
+        productContainer.productCollectionCallBack = productCollectionCallBack;
+
+        productContainer.browse();
+    }
+
+    public static void test() {
+
+        if (LOGGING) Log.v(TAG, "ProductCollection:test():");
+
+        Map collectionMap = new HashMap<String, String>();
+        // String urlExtension = "10001/category/identifier/BI739472?filterList=&limit=8&responseFormat=json";
+        String urlExtension = "10001/category/identifier/BI739472?filterList=&limit=8";
+        // String urlExtension = "category/identifier/BI739472";
+        // String urlExtension = "category/identifier/BI739472?filterList=";
+        // String urlExtension = "10001/category/identifier/CL165079?filterList=&limit=8&responseFormat=json";
+        // http://sapi.staples.com/v1/10001/category/identifier/BI739472?catalogId=10051&client_id=JxP9wlnIfCSeGc9ifRAAGku7F4FSdErd&locale=en_US&offset=1&zipCode=12345&limit=100
+
+        ProductCollection.getProducts(urlExtension,
+                DEFAULT_LIMIT,
+                DEFAULT_OFFSET,
+                collectionMap,
+                null); // ProductCollection CallBack
+
+        /* @@@ STUBBED
+        collectionMap.clear();
+
+        identifier = "CL165079";
+        collectionMap.put(ProductCollection.COLLECTION_ARGS.IDENTIFIER, identifier);
+        collectionMap.put(ProductCollection.COLLECTION_ARGS.DEFAULT_LIMIT, DEFAULT_LIMIT);
+        collectionMap.put(ProductCollection.COLLECTION_ARGS.OFFSET, DEFAULT_OFFSET);
+
+        this.getProducts(collectionMap, null);
+        @@@ STUBBED */
+    }
+
+
     public static class ProductContainer implements Callback<Browse> {
 
         private static final String TAG = "ProductContainer";
@@ -614,62 +673,4 @@ public class ProductCollection {
         }
 
     } // ProductContainer
-
-    private ProductCollection() {
-    }
-
-    public static void getProducts(String urlExtension,
-                                   String limit,
-                                   String offset,
-                                   Map collectionMap,
-                                   ProductCollectionCallBack productCollectionCallBack) {
-
-        if (LOGGING) Log.v(TAG, "ProductCollection:getProducts():"
-                        + " limit[" + limit + "]"
-                        + " offset[" + offset + "]"
-                        + " urlExtension[" + urlExtension + "]"
-                        + " collectionMap[" + collectionMap + "]"
-                        + " productCollectionCallBack[" + productCollectionCallBack + "]"
-        );
-
-        ProductContainer productContainer = new ProductContainer();
-
-        productContainer.urlExtension = urlExtension;
-        productContainer.limit = limit;
-        productContainer.offset = offset;
-        productContainer.collectionMap = collectionMap;
-        productContainer.productCollectionCallBack = productCollectionCallBack;
-
-        productContainer.browse();
-    }
-
-    public static void test() {
-
-        if (LOGGING) Log.v(TAG, "ProductCollection:test():");
-
-        Map collectionMap = new HashMap<String, String>();
-        // String urlExtension = "10001/category/identifier/BI739472?filterList=&limit=8&responseFormat=json";
-        String urlExtension = "10001/category/identifier/BI739472?filterList=&limit=8";
-        // String urlExtension = "category/identifier/BI739472";
-        // String urlExtension = "category/identifier/BI739472?filterList=";
-        // String urlExtension = "10001/category/identifier/CL165079?filterList=&limit=8&responseFormat=json";
-        // http://sapi.staples.com/v1/10001/category/identifier/BI739472?catalogId=10051&client_id=JxP9wlnIfCSeGc9ifRAAGku7F4FSdErd&locale=en_US&offset=1&zipCode=12345&limit=100
-
-        ProductCollection.getProducts(urlExtension,
-                DEFAULT_LIMIT,
-                DEFAULT_OFFSET,
-                collectionMap,
-                null); // ProductCollection CallBack
-
-        /* @@@ STUBBED
-        collectionMap.clear();
-
-        identifier = "CL165079";
-        collectionMap.put(ProductCollection.COLLECTION_ARGS.IDENTIFIER, identifier);
-        collectionMap.put(ProductCollection.COLLECTION_ARGS.DEFAULT_LIMIT, DEFAULT_LIMIT);
-        collectionMap.put(ProductCollection.COLLECTION_ARGS.OFFSET, DEFAULT_OFFSET);
-
-        this.getProducts(collectionMap, null);
-        @@@ STUBBED */
-    }
 }
