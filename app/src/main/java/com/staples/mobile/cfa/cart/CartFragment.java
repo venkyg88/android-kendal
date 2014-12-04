@@ -26,7 +26,6 @@ import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileDetails;
-import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.configurator.model.Configurator;
@@ -76,8 +75,6 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     // fragment, but api call may still be returning
     private MainActivity activity;
 
-    private LinearLayoutWithProgressOverlay cartContainer;
-
     private TextView cartSubtotal;
     private TextView cartFreeShippingMsg;
     private TextView cartShipping;
@@ -102,7 +99,6 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     private QtyChangeListener qtyChangeListener;
     //private QtyUpdateButtonListener qtyUpdateButtonListener;
 
-    AddToCartCallback addToCartCallback;
 
     NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 
@@ -146,19 +142,6 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 //        qtyUpdateButtonListener = new QtyUpdateButtonListener();
 
         // Initialize cart listview
-        cartContainer = (LinearLayoutWithProgressOverlay) view.findViewById(R.id.cart_layout);
-        cartContainer.setCartProgressOverlay(view.findViewById(R.id.cart_progress_overlay));
-        // when animateLayoutChanges=true on cartContainer, we need to re-layout the list view (via notifyDataSetChanged)
-        // after the animation completes or else the first selection of a spinner following the animation will fail.
-        LayoutTransition layoutTransition = cartContainer.getLayoutTransition();
-        if (layoutTransition != null) {
-            layoutTransition.addTransitionListener(new LayoutTransition.TransitionListener(){
-                @Override public void startTransition(LayoutTransition transition, ViewGroup container, View view, int transitionType) { }
-                @Override public void endTransition(LayoutTransition arg0, ViewGroup arg1, View arg2, int arg3) {
-                    notifyDataSetChanged();
-                }
-            });
-        }
         cartAdapter = new CartAdapter(activity, R.layout.cart_item, qtyChangeListener, qtyDeleteButtonListener);
         cartAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
@@ -169,7 +152,6 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         });
         cartListVw = (ListView) view.findViewById(R.id.cart_list);
         cartListVw.setAdapter(cartAdapter);
-//        cartListVw.setOverScrollMode(View.OVER_SCROLL_NEVER); // need to disable over scroll to prevent bounce effect which messes up our scroll detection
         cartListVw.setOnScrollListener(new AbsListView.OnScrollListener() {
             int oldFirstVisibleItem = 0;
             int oldTop = 0;
@@ -328,16 +310,14 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     }
 
     private void showProgressIndicator() {
-        // if fragment is attached to activity, then update the fragment's views
-        if (cartAdapter != null) {
-            cartContainer.getProgressIndicator().showProgressIndicator();
+        if (activity != null) {
+            activity.showProgressIndicator();
         }
     }
 
     private void hideProgressIndicator() {
-        // if fragment is attached to activity, then update the fragment's views
-        if (cartAdapter != null) {
-            cartContainer.getProgressIndicator().hideProgressIndicator();
+        if (activity != null) {
+            activity.hideProgressIndicator();
         }
     }
 
@@ -376,18 +356,21 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     public void refreshCart(MainActivity activity) {
         this.activity = activity;
 
-        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        showProgressIndicator();
+        // only show progress indicator when refreshing the cart while cart is in view, not when refreshed from other fragments
+        if (cartAdapter != null) {
+            showProgressIndicator();
+        }
 
         // query for items in cart
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         easyOpenApi.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID,
                 1, 1000, viewCartListener); // 0 offset results in max of 5 items, so using 1
     }
 
     /** adds item to cart */
-    public void addToCart(String sku, int qty, CartFragment.AddToCartCallback callback) {
+    public void addToCart(String sku, int qty, MainActivity activity) {
 
-        addToCartCallback = callback;
+        this.activity = activity;
 
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         showProgressIndicator();
@@ -603,27 +586,17 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
             // if a successful insert, refill cart
             if (cartUpdate.getItemsAdded().size() > 0) {
-                notifyAddToCartCallback();
                 refreshCart(activity);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
             } else {
                 // notify data set changed because qty text may have changed, but actual qty not
                 // and we need update button to be visible
                 notifyDataSetChanged();
-                notifyAddToCartCallback();
             }
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
             respondToFailure("Failed Cart Update: " + ApiError.getErrorMessage(retrofitError));
-            notifyAddToCartCallback();
-        }
-
-        private void notifyAddToCartCallback() {
-            if (!update && addToCartCallback != null) {
-                addToCartCallback.onAddToCartComplete();
-                addToCartCallback = null;
-            }
         }
     }
 

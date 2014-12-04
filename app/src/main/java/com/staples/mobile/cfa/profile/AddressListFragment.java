@@ -67,6 +67,12 @@ public class AddressListFragment extends BaseFragment implements View.OnClickLis
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity)activity).setActionBarTitle(getResources().getString(R.string.address_title));
+    }
+
+    @Override
     public void onClick(View view) {
         Fragment shippingFragment = Fragment.instantiate(activity, AddressFragment.class.getName());
         ((MainActivity) activity).navigateToFragment(shippingFragment);

@@ -14,7 +14,6 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.login.LoginHelper;
-import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.*;
 
@@ -31,17 +30,14 @@ public class ProfileFragment extends BaseFragment implements ProfileDetails.Prof
     private EasyOpenApi easyOpenApi;
     Button shippingBtn;
     Button ccBtn;
-    private LinearLayoutWithProgressOverlay profileLayout;
-    Activity activity;
+    MainActivity activity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
 
         Log.d(TAG, "onCreateView()");
-        activity = getActivity();
+        activity = (MainActivity)getActivity();
         View view = inflater.inflate(R.layout.profile_fragment, container, false);
-        profileLayout = (LinearLayoutWithProgressOverlay) view.findViewById(R.id.profile_fragment_content);
-        profileLayout.setCartProgressOverlay(view.findViewById(R.id.profile_progress_overlay));
 
         shippingBtn = (Button) view.findViewById(R.id.addShippingBtn);
         ccBtn = (Button) view.findViewById(R.id.addCCBtn);
@@ -52,6 +48,12 @@ public class ProfileFragment extends BaseFragment implements ProfileDetails.Prof
         new ProfileDetails().refreshProfile(this);
 
         return (view);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity)activity).setActionBarTitle(getResources().getString(R.string.profile_title));
     }
 
     /** implements ProfileDetails.ProfileRefreshCallback */
@@ -107,11 +109,11 @@ public class ProfileFragment extends BaseFragment implements ProfileDetails.Prof
     }
 
     private void showProgressIndicator() {
-        profileLayout.getProgressIndicator().showProgressIndicator();
+        activity.showProgressIndicator();
     }
 
     private void hideProgressIndicator() {
-        profileLayout.getProgressIndicator().hideProgressIndicator();
+        activity.hideProgressIndicator();
     }
 
 
@@ -119,11 +121,25 @@ public class ProfileFragment extends BaseFragment implements ProfileDetails.Prof
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.addShippingBtn:
-                ((MainActivity) activity).selectProfileAddressesFragment();
-                break;
+                shippingBtn = (Button) view;
+                if (shippingBtn.getText().equals("Add")) {
+                    Fragment addressFragment = Fragment.instantiate(activity, AddressFragment.class.getName());
+                    ((MainActivity) activity).navigateToFragment(addressFragment);
+                    break;
+                } else {
+                    ((MainActivity) activity).selectProfileAddressesFragment();
+                    break;
+                }
             case R.id.addCCBtn:
-                ((MainActivity) activity).selectProfileCreditCardsFragment();
-                break;
+                ccBtn = (Button)view;
+                if(ccBtn.getText().equals("Add")){
+                    Fragment creditFragment = Fragment.instantiate(activity, CreditCardFragment.class.getName());
+                    ((MainActivity)activity).navigateToFragment(creditFragment);
+                    break;
+                } else {
+                    ((MainActivity) activity).selectProfileCreditCardsFragment();
+                    break;
+                }
         }
     }
 }
