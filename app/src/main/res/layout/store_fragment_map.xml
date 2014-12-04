@@ -5,10 +5,14 @@
     android:orientation="vertical"
     android:animateLayoutChanges="true">
     <EditText
+        android:id="@+id/store_search"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="6dp"
-        android:hint="Search field placeholder"/>
+        android:inputType="textPostalAddress"
+        android:imeOptions="actionSearch"
+        android:singleLine="true"
+        android:hint="@string/search"/>
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"
         android:layout_width="fill_parent"

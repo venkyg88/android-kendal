@@ -1,5 +1,6 @@
 package com.staples.mobile.cfa.profile;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
@@ -51,6 +52,7 @@ public class CreditCardFragment extends BaseFragment implements View.OnClickList
     String expirationYear;
     EasyOpenApi easyOpenApi;
     String encryptedPacket;
+    Activity activity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -58,7 +60,7 @@ public class CreditCardFragment extends BaseFragment implements View.OnClickList
         Log.d(TAG, "onCreateView()");
         View view = inflater.inflate(R.layout.addcc_fragment, container, false);
         spinner = (Spinner) view.findViewById(R.id.card_type_spinner);
-
+        activity = getActivity();
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.cardtype_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -69,6 +71,12 @@ public class CreditCardFragment extends BaseFragment implements View.OnClickList
         addCCBtn.setOnClickListener(this);
 
         return (view);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) activity).showActionBar(R.string.add_credit_card_title, 0, null);
     }
 
     @Override

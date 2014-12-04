@@ -1,7 +1,6 @@
 package com.staples.mobile.cfa.sku;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -23,19 +22,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
-import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
 import com.staples.mobile.cfa.feed.SeenProductsRowItem;
-
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.HackEditor;
 import com.staples.mobile.cfa.widget.PagerStripe;
 import com.staples.mobile.cfa.widget.PriceSticker;
-import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -154,7 +151,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
         details.setVisibility(View.GONE);
 
         // Disable add-to-cart
-//        wrapper.findViewById(R.id.quantity).setEnabled(false);
+        wrapper.findViewById(R.id.quantity).setEnabled(false);
         wrapper.findViewById(R.id.add_to_cart).setEnabled(false);
 
         // Set listeners
@@ -240,7 +237,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
         List<Description> paragraphs = product.getParagraph();
         if (paragraphs != null) {
             for (Description paragraph : paragraphs) {
-                String text = paragraph.getText();
+                String text = Html.fromHtml(paragraph.getText()).toString();
                 if (text != null) {
                     TextView item = (TextView) inflater.inflate(R.layout.sku_paragraph_item, parent, false);
                     parent.addView(item);
@@ -256,7 +253,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
         if (bullets != null) {
             for (BulletDescription bullet : bullets) {
                 if (count >= limit) break;
-                String text = bullet.getText();
+                String text = Html.fromHtml(bullet.getText()).toString();
                 if (text != null) {
                     View item = inflater.inflate(R.layout.sku_bullet_item, parent, false);
                     parent.addView(item);
@@ -271,8 +268,6 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
 
     protected static void addSpecifications(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
         int rowCount = 0;
-        String specName;
-        String specValue;
 
         // Add specification
         List<Description> specs = product.getSpecification();
@@ -285,8 +280,8 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
                     break;
                 }
 
-                specName = spec.getName();
-                specValue = spec.getText();
+                String specName = Html.fromHtml(spec.getName()).toString();
+                String specValue = Html.fromHtml(spec.getText()).toString();
 
                 if (specName != null && specValue != null) {
                     TableRow skuSpecRow = (TableRow) inflater.inflate(R.layout.sku_spec_item, table, false);
@@ -309,14 +304,12 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
 
     private void addAccessory(Product product) {
         List<Product> accessories = product.getAccessory();
-        String accessoryImageUrl;
-        String accessoryTitle;
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         for (final Product accessory : accessories) {
-            accessoryImageUrl = accessory.getImage().get(0).getUrl();
-            accessoryTitle = accessory.getProductName();
+            String accessoryImageUrl = accessory.getImage().get(0).getUrl();
+            String accessoryTitle = accessory.getProductName();
             final String sku = accessory.getSku();
 
             View skuAccessoryRow = inflater.inflate(R.layout.sku_accessory_item, null);
@@ -354,7 +347,6 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
 
             accessoryContainer.addView(skuAccessoryRow);
         }
-
     }
 
     private void saveSeenProduct(Product product){
@@ -379,9 +371,6 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
                     rating, unitOfMeasure, imageUrl);
 
             feedSingleton.getSavedSeenProducts(getActivity()).addSeenProduct(item, sku, getActivity());
-        }
-        else{
-            Log.d(TAG, "This product has been saved before: " + product.getProductName());
         }
     }
 
@@ -445,13 +434,12 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
                 case RETAILONLY:
                 case SPECIALORDER:
                 case OUTOFSTOCK:
-                    edit.setVisibility(View.GONE);
+                    edit.setEnabled(false);
                     button.setText(availability.getTextResId());
                     button.setEnabled(false);
                     break;
                 case INSTOCK:
-                    edit.setVisibility(View.VISIBLE);
-                    edit.setQuantity(1);
+                    edit.setEnabled(true);
                     button.setText(R.string.add_to_cart);
                     button.setEnabled(true);
                     break;
@@ -640,13 +628,8 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
             case R.id.add_to_cart:
                 HackEditor edit = (HackEditor) wrapper.findViewById(R.id.quantity);
                 int qty = edit.getQuantity();
-                final MainActivity activity = (MainActivity) getActivity();
-                wrapper.setState(DataWrapper.State.LOADING);
-                activity.addItemToCart(identifier, qty, new CartFragment.AddToCartCallback() {
-                    public void onAddToCartComplete() {
-                        wrapper.setState(DataWrapper.State.DONE);
-                    }
-                });
+                MainActivity activity = (MainActivity) getActivity();
+                activity.addItemToCart(identifier, qty);
                 break;
         }
     }

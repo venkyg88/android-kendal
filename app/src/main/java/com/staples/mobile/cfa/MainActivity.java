@@ -7,20 +7,21 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.checkout.ConfirmationFragment;
 import com.staples.mobile.cfa.checkout.GuestCheckoutFragment;
 import com.staples.mobile.cfa.checkout.RegisteredCheckoutFragment;
-import com.staples.mobile.cfa.location.LocationService;
+import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.AddressFragment;
@@ -34,10 +35,10 @@ import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
-
+import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 
 public class MainActivity extends Activity
-                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener, LocationService.UserLatLngCallBack {
+                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int SURRENDER_TIMEOUT = 5000;
@@ -45,12 +46,14 @@ public class MainActivity extends Activity
     private DrawerLayout drawerLayout;
     private View leftDrawerAction;
     private View leftDrawer;
+    private TextView titleView;
     private SearchBarView searchBar;
-    private View searchBarIcon;
+    private ImageView optionIcon;
+    private View.OnClickListener optionListener;
     private BadgeImageView cartIconAction;
-    CartFragment cartFragment;
-    private TextView titleVw;
-    private TextView cartQtyVw;
+    private LinearLayoutWithProgressOverlay mainLayout;
+    private CartFragment cartFragment;
+    private TextView cartQtyView;
     private Button checkoutSigninButton;
     private View closeButton;
     private DrawerItem homeDrawerItem;
@@ -96,11 +99,14 @@ public class MainActivity extends Activity
         boolean freshStart = (bundle == null);
         prepareMainScreen(freshStart);
 
-        String zipCode = LocationService.getCachedZipCode(this.getApplicationContext());
-        if (zipCode == null) {
-            LocationService userLocationService = new LocationService(this.getApplicationContext(), this);
-            userLocationService.getUserLocation();
-        }
+        LocationFinder.getInstance(this);
+
+//        String zipCode = LocationService.getCachedZipCode(this.getApplicationContext());
+//        if (zipCode == null) {
+//            LocationService userLocationService = new LocationService(this.getApplicationContext(), this);
+//            userLocationService.getUserLocation();
+//        }
+
         loginHelper = new LoginHelper(this);
         loginHelper.registerLoginCompleteListener(this);
         // if already logged in (e.g. when device is rotated), don't login again, but do notify
@@ -116,6 +122,7 @@ public class MainActivity extends Activity
     @Override
     protected void onPause() {
         super.onPause();
+        LocationFinder.getInstance(this).saveRecentLocation();
         searchBar.saveSearchHistory();
     }
 
@@ -130,19 +137,41 @@ public class MainActivity extends Activity
         findViewById(R.id.main).setVisibility(View.VISIBLE);
     }
 
+    public void showActionBar(int titleId, int iconId, View.OnClickListener listener) {
+        if (titleId==0) titleView.setVisibility(View.GONE);
+        else
+        {
+            titleView.setVisibility(View.VISIBLE);
+            titleView.setText(titleId);
+        }
+
+        if (iconId==0) {
+            optionIcon.setVisibility(View.GONE);
+            optionListener = null;
+        } else {
+            optionIcon.setVisibility(View.VISIBLE);
+            optionIcon.setImageResource(iconId);
+            optionListener = listener;
+        }
+    }
+
+    public void showActionBar() {
+        showActionBar(R.string.staples, R.drawable.ic_search_white, searchBar);
+    }
+
     /** sets standard action bar, fragments need to override their onResume methods to set up action bar */
     public void showStandardActionBar() {
         // set standard title bar
-        setActionBarTitle(getResources().getString(R.string.staples));
+        showActionBar();
 
         // show standard entities
         leftDrawerAction.setVisibility(View.VISIBLE);
         searchBar.setVisibility(View.GONE);
-        searchBarIcon.setVisibility(View.VISIBLE);
+        optionIcon.setVisibility(View.VISIBLE);
         cartIconAction.setVisibility(View.VISIBLE);
 
         // hide non-standard entities
-        cartQtyVw.setVisibility(View.GONE);
+        cartQtyView.setVisibility(View.GONE);
         checkoutSigninButton.setVisibility(View.GONE);
         closeButton.setVisibility(View.GONE);
     }
@@ -150,10 +179,10 @@ public class MainActivity extends Activity
     public void showCartActionBarEntities() {
         // show cart-specific entities
         leftDrawerAction.setVisibility(View.VISIBLE);
-        cartQtyVw.setVisibility(View.VISIBLE);
+        cartQtyView.setVisibility(View.VISIBLE);
         // hide unwanted entities
         searchBar.setVisibility(View.GONE);
-        searchBarIcon.setVisibility(View.GONE);
+        optionIcon.setVisibility(View.GONE);
         cartIconAction.setVisibility(View.GONE);
         checkoutSigninButton.setVisibility(View.GONE);
         closeButton.setVisibility(View.GONE);
@@ -163,7 +192,8 @@ public class MainActivity extends Activity
         // show checkout-specific entities
         closeButton.setVisibility(View.VISIBLE);
         closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 selectShoppingCart();
             }
         });
@@ -176,31 +206,25 @@ public class MainActivity extends Activity
         // hide unwanted entities
         leftDrawerAction.setVisibility(View.GONE);
         searchBar.setVisibility(View.GONE);
-        searchBarIcon.setVisibility(View.GONE);
+        optionIcon.setVisibility(View.GONE);
         cartIconAction.setVisibility(View.GONE);
-        cartQtyVw.setVisibility(View.GONE);
+        cartQtyView.setVisibility(View.GONE);
     }
-
 
     public void showOrderConfirmationActionBarEntities() {
         // show cart-specific entities
         leftDrawerAction.setVisibility(View.VISIBLE);
-        cartQtyVw.setVisibility(View.VISIBLE);
+        cartQtyView.setVisibility(View.VISIBLE);
         // hide unwanted entities
         searchBar.setVisibility(View.GONE);
-        searchBarIcon.setVisibility(View.GONE);
+        optionIcon.setVisibility(View.GONE);
         cartIconAction.setVisibility(View.GONE);
-        cartQtyVw.setVisibility(View.GONE);
-    }
-
-    /** sets action bar title */
-    public void setActionBarTitle(String title) {
-        titleVw.setText(title);
+        cartQtyView.setVisibility(View.GONE);
     }
 
     /** sets action bar cart quantity */
     public void setActionBarCartQty(String qtyText) {
-        cartQtyVw.setText(qtyText);
+        cartQtyView.setText(qtyText);
     }
 
     public void prepareMainScreen(boolean freshStart) {
@@ -210,17 +234,22 @@ public class MainActivity extends Activity
         // Find top-level entities
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawer = findViewById(R.id.left_drawer);
+        titleView = (TextView) findViewById(R.id.title);
         searchBar = (SearchBarView) findViewById(R.id.search_text);
-        searchBarIcon = findViewById(R.id.search_icon);
+        optionIcon = (ImageView) findViewById(R.id.option_icon);
         cartIconAction = (BadgeImageView)findViewById(R.id.action_show_cart);
         leftDrawerAction = findViewById(R.id.action_left_drawer);
-        titleVw = (TextView)findViewById(R.id.header);
-        cartQtyVw = (TextView)findViewById(R.id.cart_item_qty);
+        cartQtyView = (TextView)findViewById(R.id.cart_item_qty);
         checkoutSigninButton = (Button)findViewById(R.id.co_signin_button);
         closeButton = findViewById(R.id.close_button);
 
+        mainLayout = (LinearLayoutWithProgressOverlay)findViewById(R.id.main);
+        mainLayout.setCartProgressOverlay(findViewById(R.id.progress_overlay));
+
+
         // Set action bar listeners
         leftDrawerAction.setOnClickListener(this);
+        optionIcon.setOnClickListener(this);
         cartIconAction.setOnClickListener(this);
         checkoutSigninButton.setOnClickListener(this);
 
@@ -259,8 +288,10 @@ public class MainActivity extends Activity
 
     @Override
     public void onLoginComplete(boolean guestLevel) {
-        // load cart info (requires successful login)
-        cartFragment.refreshCart(MainActivity.this);
+        // load cart info after successful login (if registered login or if guest login following a signout where cart was non-empty)
+        if (!guestLevel || (guestLevel && cartFragment.getCart() != null && cartFragment.getCart().getTotalItems() > 0)) {
+            cartFragment.refreshCart(MainActivity.this);
+        }
 
         // for faster debugging with registered user (automatic login), uncomment this and use your
         // own credentials, but re-comment out before checking code in
@@ -269,8 +300,16 @@ public class MainActivity extends Activity
 //        }
     }
 
-    // Navigation
+    public void showProgressIndicator() {
+        mainLayout.getProgressIndicator().showProgressIndicator();
+    }
 
+    public void hideProgressIndicator() {
+        mainLayout.getProgressIndicator().hideProgressIndicator();
+    }
+
+
+    // Navigation
 
     public boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
         // Make sure all drawers are closed
@@ -396,7 +435,6 @@ public class MainActivity extends Activity
         return navigateToFragment(fragment);
     }
 
-
     public boolean navigateToFragment(Fragment fragment) {
         return (selectFragment(fragment, Transition.NONE, true));
     }
@@ -407,8 +445,8 @@ public class MainActivity extends Activity
     }
 
     /** Adds an item to the cart */
-    public void addItemToCart(String partNumber, int qty, CartFragment.AddToCartCallback callback) {
-        cartFragment.addToCart(partNumber, qty, callback);
+    public void addItemToCart(String partNumber, int qty) {
+        cartFragment.addToCart(partNumber, qty, this);
     }
 
     // Action bar & topper clicks
@@ -425,6 +463,11 @@ public class MainActivity extends Activity
 
             case R.id.continue_shopping_btn:
                 selectDrawerItem(homeDrawerItem, Transition.NONE, true);
+                break;
+
+            case R.id.option_icon:
+                if (optionListener!=null)
+                    optionListener.onClick(view);
                 break;
 
             case R.id.action_show_cart:
@@ -450,7 +493,6 @@ public class MainActivity extends Activity
             accountBtn.setText("Sign In");
         }
     }
-
 
     // Left drawer listview clicks
 
@@ -498,14 +540,6 @@ public class MainActivity extends Activity
                 } else {
                     selectLoginFragment();
                 }
-        }
-    }
-
-    //UserLocationService callback
-    @Override
-    public void onUserLatLngCallBack(LatLng latLng) {
-        if (LocationService.setCachedUserLocation(this.getApplicationContext(), latLng)){
-        //TODO: Work with Steve to incorporate flow.
         }
     }
 }

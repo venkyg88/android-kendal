@@ -5,7 +5,6 @@
 package com.staples.mobile.cfa.cart;
 
 import android.animation.LayoutTransition;
-import android.app.Fragment;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
 import android.os.Bundle;
@@ -15,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,21 +26,23 @@ import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileDetails;
-import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.EmptyResponse;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
 import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
+import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
 import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
 import com.staples.mobile.common.access.lms.LmsManager;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,17 +78,27 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     // fragment, but api call may still be returning
     private MainActivity activity;
 
-    private LinearLayoutWithProgressOverlay cartContainer;
-
     private TextView cartSubtotal;
     private TextView cartFreeShippingMsg;
     private TextView cartShipping;
+    private TextView couponsRewardsValue;
+    private EditText couponCodeEditText;
+    private ListView couponListVw;
+    private CouponAdapter couponAdapter;
+    private View couponAdditionLayout;
+    private View couponList;
     private View emptyCartMsg;
     private View cartProceedToCheckout;
     private View cartShippingLayout;
     private View cartSubtotalLayout;
     private CartAdapter cartAdapter;
     private ListView cartListVw;
+    private View couponsRewardsLayout;
+    private int greenBackground;
+    private int blueBackground;
+    private int redText;
+    private int blackText;
+
 
     // cart object - make these static so they're not lost on device rotation
     private static Cart cart;
@@ -102,9 +114,8 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     private QtyChangeListener qtyChangeListener;
     //private QtyUpdateButtonListener qtyUpdateButtonListener;
 
-    AddToCartCallback addToCartCallback;
 
-    NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+    DecimalFormat currencyFormat;
 
 
     // api listeners
@@ -120,6 +131,12 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         addToCartListener = new AddUpdateCartListener(false);
         updateCartListener = new AddUpdateCartListener(true);
         deleteFromCartListener = new DeleteFromCartListener();
+
+        // set up currency format to use minus sign for negative amounts (needed for coupons)
+        currencyFormat = (DecimalFormat)NumberFormat.getCurrencyInstance();
+        String symbol = currencyFormat.getCurrency().getSymbol();
+        currencyFormat.setNegativePrefix("-"+symbol);
+        currencyFormat.setNegativeSuffix("");
     }
 
     @Override
@@ -133,11 +150,24 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
         emptyCartMsg = view.findViewById(R.id.empty_cart_msg);
         cartFreeShippingMsg = (TextView) view.findViewById(R.id.free_shipping_msg);
+        couponsRewardsLayout = view.findViewById(R.id.coupons_rewards_layout);
+        couponsRewardsValue = (TextView) view.findViewById(R.id.coupons_rewards_value);
+        couponAdditionLayout = view.findViewById(R.id.coupon_addition_layout);
+//        couponListLayout = view.findViewById(R.id.coupon_list_layout);
+        couponList = view.findViewById(R.id.coupon_list);
+        couponCodeEditText = (EditText) view.findViewById(R.id.coupon_code);
         cartShipping = (TextView) view.findViewById(R.id.cart_shipping);
         cartSubtotal = (TextView) view.findViewById(R.id.cart_subtotal);
         cartShippingLayout = view.findViewById(R.id.cart_shipping_layout);
         cartSubtotalLayout = view.findViewById(R.id.cart_subtotal_layout);
         cartProceedToCheckout = view.findViewById(R.id.action_checkout);
+
+        Resources r = getResources();
+        greenBackground = r.getColor(R.color.background_green);
+        blueBackground = r.getColor(R.color.background_blue);
+        redText = r.getColor(R.color.text_red);
+        blackText = r.getColor(R.color.text_black);
+
 
 
         // create widget listeners
@@ -145,20 +175,13 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         qtyDeleteButtonListener = new QtyDeleteButtonListener();
 //        qtyUpdateButtonListener = new QtyUpdateButtonListener();
 
+        // Initialize coupon listview
+        couponListVw = (ListView) view.findViewById(R.id.coupon_list);
+        couponAdapter = new CouponAdapter(activity, R.layout.coupon_item, this);
+        couponListVw.setAdapter(couponAdapter);
+
+
         // Initialize cart listview
-        cartContainer = (LinearLayoutWithProgressOverlay) view.findViewById(R.id.cart_layout);
-        cartContainer.setCartProgressOverlay(view.findViewById(R.id.cart_progress_overlay));
-        // when animateLayoutChanges=true on cartContainer, we need to re-layout the list view (via notifyDataSetChanged)
-        // after the animation completes or else the first selection of a spinner following the animation will fail.
-        LayoutTransition layoutTransition = cartContainer.getLayoutTransition();
-        if (layoutTransition != null) {
-            layoutTransition.addTransitionListener(new LayoutTransition.TransitionListener(){
-                @Override public void startTransition(LayoutTransition transition, ViewGroup container, View view, int transitionType) { }
-                @Override public void endTransition(LayoutTransition arg0, ViewGroup arg1, View arg2, int arg3) {
-                    notifyDataSetChanged();
-                }
-            });
-        }
         cartAdapter = new CartAdapter(activity, R.layout.cart_item, qtyChangeListener, qtyDeleteButtonListener);
         cartAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
@@ -169,7 +192,6 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         });
         cartListVw = (ListView) view.findViewById(R.id.cart_list);
         cartListVw.setAdapter(cartAdapter);
-//        cartListVw.setOverScrollMode(View.OVER_SCROLL_NEVER); // need to disable over scroll to prevent bounce effect which messes up our scroll detection
         cartListVw.setOnScrollListener(new AbsListView.OnScrollListener() {
             int oldFirstVisibleItem = 0;
             int oldTop = 0;
@@ -196,20 +218,25 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
             private void onScrollUp() {
                 if (cartShippingLayout.getVisibility() != View.VISIBLE) {
                     cartShippingLayout.setVisibility(View.VISIBLE); // show math story
+                    couponsRewardsLayout.setVisibility(View.VISIBLE);
                 }
             }
             private void onScrollDown() {
                 if (cartShippingLayout.getVisibility() != View.GONE) {
                     cartShippingLayout.setVisibility(View.GONE); // hide math story
+                    couponsRewardsLayout.setVisibility(View.GONE);
                 }
             }
         });
 
         // Set click listeners
         cartProceedToCheckout.setOnClickListener(this);
+        couponsRewardsLayout.setOnClickListener(this);
+        view.findViewById(R.id.coupon_add_button).setOnClickListener(this);
 
         return view;
     }
+
 
     @Override
     public void onResume() {
@@ -217,7 +244,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
         // update action bar
         activity.showCartActionBarEntities();
-        activity.setActionBarTitle(getResources().getString(R.string.cart_title));
+        activity.showActionBar(R.string.cart_title, 0, null);
 
         //initialize cart based on what's been returned from api so far
         setAdapterListItems();
@@ -235,11 +262,21 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
         int totalItemCount = 0;
         String shipping = "";
+        float couponsRewardsAmount = 0;
         float subtotal = 0;
         float preTaxSubtotal = 0;
         float freeShippingThreshold = 0;
         if (cart != null) {
             totalItemCount = cart.getTotalItems();
+            couponAdapter.clear();
+            if (cart.getCoupon() != null) {
+                for (Coupon coupon : cart.getCoupon()) {
+                    couponsRewardsAmount += coupon.getAdjustedAmount();
+                }
+                if (cart.getCoupon().size() > 0) {
+                    couponAdapter.addAll(cart.getCoupon());
+                }
+            }
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();
             preTaxSubtotal = cart.getPreTaxTotal();
@@ -272,14 +309,14 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
                     cartFreeShippingMsg.setVisibility(View.VISIBLE);
                     cartFreeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
                             currencyFormat.format(freeShippingThreshold), currencyFormat.format(freeShippingThreshold - subtotal)));
-                    cartFreeShippingMsg.setBackgroundColor(0xff3f6fff); // blue
+                    cartFreeShippingMsg.setBackgroundColor(blueBackground);
                 } else {
                     // qualifies for free shipping
                     String freeShippingMsg = r.getString(R.string.free_shipping_msg2);
                     if (!freeShippingMsg.equals(cartFreeShippingMsg.getText().toString())) {
                         cartFreeShippingMsg.setVisibility(View.VISIBLE);
                         cartFreeShippingMsg.setText(freeShippingMsg);
-                        cartFreeShippingMsg.setBackgroundColor(0xff00ff00); // green
+                        cartFreeShippingMsg.setBackgroundColor(greenBackground);
                         // hide after a delay
                         cartFreeShippingMsg.postDelayed(new Runnable() {
                             @Override public void run() {
@@ -292,17 +329,21 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
                 cartFreeShippingMsg.setVisibility(View.GONE);
             }
 
-            // set text of shipping and subtotal
+            // set text of coupons, shipping, and subtotal
+            couponsRewardsValue.setText(currencyFormat.format(couponsRewardsAmount));
             cartShipping.setText(CheckoutFragment.formatShippingCharge(shipping, currencyFormat));
+            cartShipping.setTextColor("Free".equals(shipping) ? redText : blackText);
             cartSubtotal.setText(currencyFormat.format(preTaxSubtotal));
 
             // only show shipping, subtotal, and proceed-to-checkout when at least one item
             if (totalItemCount == 0) {
+                couponsRewardsLayout.setVisibility(View.GONE);
                 cartShippingLayout.setVisibility(View.GONE);
                 cartSubtotalLayout.setVisibility(View.GONE);
                 cartProceedToCheckout.setVisibility(View.GONE);
             } else {
                 if (cartListVw.getFirstVisiblePosition() == 0 && getTopOfFirstVisibleView(cartListVw) == 0) {
+                    couponsRewardsLayout.setVisibility(View.VISIBLE);
                     cartShippingLayout.setVisibility(View.VISIBLE);
                 }
                 cartSubtotalLayout.setVisibility(View.VISIBLE);
@@ -321,6 +362,63 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
+            case R.id.coupons_rewards_layout:
+                if (couponAdditionLayout.getVisibility() != View.VISIBLE) {
+                    cartListVw.setVisibility(View.GONE);
+                    couponAdditionLayout.setVisibility(View.VISIBLE);
+//                    couponListLayout.setVisibility(View.VISIBLE);
+                    couponList.setVisibility(View.VISIBLE);
+                } else {
+                    cartListVw.setVisibility(View.VISIBLE);
+                    couponAdditionLayout.setVisibility(View.GONE);
+//                    couponListLayout.setVisibility(View.GONE);
+                    couponList.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.coupon_add_button:
+                String couponCode = couponCodeEditText.getText().toString();
+                if (!TextUtils.isEmpty(couponCode)) {
+                    EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+                    showProgressIndicator();
+                    Coupon coupon = new Coupon();
+                    coupon.setPromoName(couponCode);
+                    easyOpenApi.addCoupon(coupon, RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CLIENT_ID,
+                            new Callback<EmptyResponse>() {
+                                @Override
+                                public void success(EmptyResponse emptyResponse, Response response) {
+                                    refreshCart(activity);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
+                                }
+
+                                @Override
+                                public void failure(RetrofitError error) {
+                                    hideProgressIndicator();
+                                    makeToast(ApiError.getErrorMessage(error));
+                                }
+                            });
+                }
+                break;
+            case R.id.coupon_delete_button:
+                String couponCodeToDelete = couponAdapter.getItem((Integer) view.getTag()).getCode();
+                if (!TextUtils.isEmpty(couponCodeToDelete)) {
+                    EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+                    showProgressIndicator();
+                    Coupon coupon = new Coupon();
+                    coupon.setPromoName(couponCodeToDelete);
+                    easyOpenApi.deleteCoupon(RECOMMENDATION, STORE_ID, couponCodeToDelete, LOCALE, CLIENT_ID,
+                            new Callback<EmptyResponse>() {
+                                @Override
+                                public void success(EmptyResponse emptyResponse, Response response) {
+                                    refreshCart(activity);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
+                                }
+
+                                @Override
+                                public void failure(RetrofitError error) {
+                                    hideProgressIndicator();
+                                    makeToast(ApiError.getErrorMessage(error));
+                                }
+                            });
+                }
+                break;
             case R.id.action_checkout:
                 activity.selectOrderCheckout();
                 break;
@@ -328,16 +426,14 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     }
 
     private void showProgressIndicator() {
-        // if fragment is attached to activity, then update the fragment's views
-        if (cartAdapter != null) {
-            cartContainer.getProgressIndicator().showProgressIndicator();
+        if (activity != null) {
+            activity.showProgressIndicator();
         }
     }
 
     private void hideProgressIndicator() {
-        // if fragment is attached to activity, then update the fragment's views
-        if (cartAdapter != null) {
-            cartContainer.getProgressIndicator().hideProgressIndicator();
+        if (activity != null) {
+            activity.hideProgressIndicator();
         }
     }
 
@@ -376,18 +472,21 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     public void refreshCart(MainActivity activity) {
         this.activity = activity;
 
-        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        showProgressIndicator();
+        // only show progress indicator when refreshing the cart while cart is in view, not when refreshed from other fragments
+        if (cartAdapter != null) {
+            showProgressIndicator();
+        }
 
         // query for items in cart
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         easyOpenApi.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID,
                 1, 1000, viewCartListener); // 0 offset results in max of 5 items, so using 1
     }
 
     /** adds item to cart */
-    public void addToCart(String sku, int qty, CartFragment.AddToCartCallback callback) {
+    public void addToCart(String sku, int qty, MainActivity activity) {
 
-        addToCartCallback = callback;
+        this.activity = activity;
 
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         showProgressIndicator();
@@ -603,27 +702,17 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
             // if a successful insert, refill cart
             if (cartUpdate.getItemsAdded().size() > 0) {
-                notifyAddToCartCallback();
                 refreshCart(activity);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
             } else {
                 // notify data set changed because qty text may have changed, but actual qty not
                 // and we need update button to be visible
                 notifyDataSetChanged();
-                notifyAddToCartCallback();
             }
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
             respondToFailure("Failed Cart Update: " + ApiError.getErrorMessage(retrofitError));
-            notifyAddToCartCallback();
-        }
-
-        private void notifyAddToCartCallback() {
-            if (!update && addToCartCallback != null) {
-                addToCartCallback.onAddToCartComplete();
-                addToCartCallback = null;
-            }
         }
     }
 
