@@ -3,8 +3,9 @@
     <color name="staples_dark">#b30000</color>
     <color name="staples_light">#cc0000</color>
     <color name="background_red_submission">#ff3636</color>
+    <color name="background_white">#ffffff</color>
     <color name="background_light_gray">#c6c6c6</color>
-    <color name="background_extra_light_gray">#efefef</color>
+    <color name="background_extra_light_gray">#e6e6e6</color>
     <color name="background_green">#00ff00</color>
     <color name="background_blue">#3f6fff</color>
     <color name="text_blue">#3f9fff</color>
