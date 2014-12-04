@@ -12,7 +12,7 @@
         android:src="@drawable/splash"
         android:background="#ffffff"/>
     <!-- Main screen -->
-    <LinearLayout
+    <com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -154,5 +154,19 @@
                     android:text="@string/empty"/>
             </com.staples.mobile.cfa.widget.DataWrapper>
         </android.support.v4.widget.DrawerLayout>
-    </LinearLayout>
+    </com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay>
+
+    <RelativeLayout
+        android:id="@+id/progress_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:clickable="false"
+        android:background="#6f000022" >
+        <ProgressBar
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateOnly="true" />
+    </RelativeLayout>
 </FrameLayout>

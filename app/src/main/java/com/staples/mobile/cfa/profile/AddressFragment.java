@@ -1,5 +1,6 @@
 package com.staples.mobile.cfa.profile;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
@@ -45,6 +46,7 @@ public class AddressFragment extends BaseFragment implements View.OnClickListene
     public String phoneNumber;
     public String zipCode;
     EasyOpenApi easyOpenApi;
+    Activity activity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -52,13 +54,18 @@ public class AddressFragment extends BaseFragment implements View.OnClickListene
         Log.d(TAG, "onCreateView()");
         View view = inflater.inflate(R.layout.addshipping_fragment, container, false);
 
+        activity = getActivity();
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
         addShippingBtn = (Button) view.findViewById(R.id.addressSaveBtn);
         addShippingBtn.setOnClickListener(this);
 
         return (view);
     }
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity)activity).setActionBarTitle(getResources().getString(R.string.add_address_title));
+    }
     @Override
     public void onClick(View view) {
         firstName = ((EditText) getView().findViewById(R.id.firstName)).getText().toString();
