@@ -69,7 +69,7 @@ public class AddressListFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity)activity).setActionBarTitle(getResources().getString(R.string.address_title));
+        ((MainActivity) activity).showActionBar(R.string.address_title, 0, null);
     }
 
     @Override

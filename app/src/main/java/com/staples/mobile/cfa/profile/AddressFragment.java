@@ -95,7 +95,7 @@ public class AddressFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity)activity).setActionBarTitle(getResources().getString(R.string.add_address_title));
+        ((MainActivity)activity).showActionBar(R.string.add_address_title, 0, null);
     }
 
     @Override
