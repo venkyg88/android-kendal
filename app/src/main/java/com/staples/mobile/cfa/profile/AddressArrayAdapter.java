@@ -59,10 +59,9 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
         View rowView = inflater.inflate(R.layout.list_view_row, parent, false);
 
         Address address = values.get(position);
-        String tmpAddress = address.getFirstname() + ", " + address.getLastname() +  "\n" +
+        String tmpAddress = address.getFirstname() + ", " + address.getLastname() +  "\n" + "\n" +
                 address.getAddress1() + "\n" +
-                address.getCity() + "\n" +
-                address.getState() + "," + address.getZipcode() + "\n" +
+                address.getCity() + ", " + address.getState() + " " + address.getZipcode() + "\n" + "\n" +
                 address.getPhone1();
 
         optionButton = (ImageButton) rowView.findViewById(R.id.listOptions);

@@ -74,7 +74,7 @@ public class ProfileFragment extends BaseFragment implements ProfileDetails.Prof
             int addressCount = addresses.size();
             Address address = addresses.get(0);
             if (address != null) {
-                String tmpAddress = address.getAddress1() + " " + address.getCity() + " " + address.getState() + " " + address.getZipcode();
+                String tmpAddress = address.getAddress1() + "\n" + address.getCity() + ", " + address.getState() + " " + address.getZipcode();
                 ((TextView) getView().findViewById(R.id.addressET)).setText(tmpAddress);
                 if(addressCount > 1) {
                     shippingBtn.setText(addressCount-1 + " more");

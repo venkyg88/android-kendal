@@ -296,7 +296,7 @@ public class MainActivity extends Activity
         // for faster debugging with registered user (automatic login), uncomment this and use your
         // own credentials, but re-comment out before checking code in
 //        if (guestLevel) {
-//            new LoginHelper(this).getUserTokens("user", "password");
+//            new LoginHelper(this).getUserTokens("testuser2", "password");
 //        }
     }
 
