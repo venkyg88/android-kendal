@@ -13,7 +13,7 @@
     <TextView
         style="@style/CheckoutSubheading"
         android:text="@string/shipping_addr"/>
-    <include layout="@layout/addshipping_fragment" android:id="@+id/shipping_addr_layout" />
+    <include layout="@layout/add_address_fragment" android:id="@+id/shipping_addr_layout" />
 
 
     <!--email address-->
@@ -33,7 +33,7 @@
         android:layout_marginTop="20dp"
         android:text="@string/payment_method"/>
 
-    <include layout="@layout/addcc_fragment" android:id="@+id/payment_method_layout" />
+    <include layout="@layout/add_creditcard_fragment" android:id="@+id/payment_method_layout" />
 
     <EditText
         android:id="@+id/cid"
@@ -90,7 +90,7 @@
             android:text="@string/billing_addr"/>
 
         <!--billing address-->
-        <include layout="@layout/addshipping_fragment" android:id="@+id/billing_addr_layout" />
+        <include layout="@layout/add_address_fragment" android:id="@+id/billing_addr_layout" />
 
     </LinearLayout>
 

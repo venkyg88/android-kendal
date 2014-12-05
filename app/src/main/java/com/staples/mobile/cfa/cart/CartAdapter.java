@@ -17,7 +17,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.widget.QuantityEditor;
+import com.staples.mobile.cfa.widget.HackEditor;
+//import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.PriceSticker;
 
 
@@ -33,11 +34,14 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
     // widget listeners
     private View.OnClickListener qtyDeleteButtonListener;
-    private QuantityEditor.OnQtyChangeListener qtyChangeListener;
+//    private QuantityEditor.OnQtyChangeListener qtyChangeListener;
+    private HackEditor.OnQtyChangeListener qtyChangeListener;
 
 
 
-    public CartAdapter(Activity activity, int cartItemLayoutResId, QuantityEditor.OnQtyChangeListener qtyChangeListener,
+    public CartAdapter(Activity activity, int cartItemLayoutResId,
+//                       QuantityEditor.OnQtyChangeListener qtyChangeListener,
+                       HackEditor.OnQtyChangeListener qtyChangeListener,
                        View.OnClickListener qtyDeleteButtonListener) {
         super(activity, cartItemLayoutResId);
         this.activity = activity;
@@ -110,11 +114,13 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 //        vh.updateButton.setOnClickListener(qtyUpdateButtonListener);
 
         // set quantity (AFTER listeners set up above)
-        vh.qtyWidget.setQtyValue(cartItem.getProposedQty());
+//        vh.qtyWidget.setQtyValue(cartItem.getProposedQty());
+        vh.qtyWidget.setQuantity(cartItem.getProposedQty());
 
         // set visibility of update button
 //        vh.updateButton.setVisibility(cartItem.isProposedQtyDifferent()? View.VISIBLE : View.GONE);
-        vh.qtyWidget.setErrorIndicator(cartItem.isProposedQtyDifferent() ? "Update failed" : null);
+//        vh.qtyWidget.setErrorIndicator(cartItem.isProposedQtyDifferent() ? "Update failed" : null);
+        vh.qtyWidget.setError(cartItem.isProposedQtyDifferent() ? "Update failed" : null);
 
         return(view);
     }
@@ -132,7 +138,8 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         ImageView imageView;
         TextView titleTextView;
         PriceSticker priceSticker;
-        QuantityEditor qtyWidget;
+//        QuantityEditor qtyWidget;
+        HackEditor qtyWidget;
         Button deleteButton;
 //        Button updateButton;
 
@@ -143,7 +150,8 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
             imageView = (ImageView) convertView.findViewById(R.id.cartitem_image);
             titleTextView = (TextView) convertView.findViewById(R.id.cartitem_title);
             priceSticker = (PriceSticker) convertView.findViewById(R.id.cartitem_price);
-            qtyWidget = (QuantityEditor) convertView.findViewById(R.id.cartitem_qty);
+//            qtyWidget = (QuantityEditor) convertView.findViewById(R.id.cartitem_qty);
+            qtyWidget = (HackEditor) convertView.findViewById(R.id.cartitem_qty);
             deleteButton = (Button) convertView.findViewById(R.id.cartitem_delete);
 //            updateButton = (Button) convertView.findViewById(R.id.cartitem_update);
         }
