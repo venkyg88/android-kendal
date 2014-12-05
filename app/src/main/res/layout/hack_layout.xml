@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/strip"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_gravity="center"
-    android:padding="1dp"
-    android:background="#ffcccccc"/>
+    android:layout_height="wrap_content">
+    <!--this is wrapped in a scroll bar so that all values are accessible when the device
+    is landscape mode, particularly for a phone with its narrow screen -->
+    <LinearLayout
+        android:id="@+id/strip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="top"
+        android:padding="1dp"
+        android:background="#ffcccccc"/>
+</ScrollView>
+
