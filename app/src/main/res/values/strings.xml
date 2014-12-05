@@ -25,6 +25,8 @@
     <string name="add_address_title">New Shipping Address</string>
     <string name="edit_address_title">Shipping Address</string>
     <string name="edit_credit_card_title">Credit Card</string>
+    <string name="email_title">Email</string>
+    <string name="username_title">User name</string>
 
     <string name="cart_title">Cart</string>
     <string name="checkout_title">Checkout</string>

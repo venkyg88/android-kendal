@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,8 +13,14 @@
 
     <LinearLayout
     android:orientation="vertical"
-    android:layout_width="match_parent"
+    android:layout_width="382dp"
     android:layout_height="match_parent">
+        <TextView
+            android:layout_width="match_parent"
+            android:text="@string/email_title"
+            android:id="@+id/emailLabel"
+            style="@style/DrawerStyle"
+            android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,6 +32,12 @@
             android:id="@+id/emailProfile"
             style="@style/DrawerStyle"/>
     </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:text="@string/username_title"
+            android:id="@+id/userNameLabel"
+            style="@style/DrawerStyle"
+            android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -62,7 +74,8 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/addShippingBtn"/>
+            android:id="@+id/addShippingBtn"
+            android:layout_gravity="right"/>
     </LinearLayout>
 
     <LinearLayout
@@ -77,8 +90,9 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/addCCBtn"/>
+            android:id="@+id/addCCBtn"
+            android:layout_gravity="right"/>
     </LinearLayout>
     </LinearLayout>
     </LinearLayout>
-</FrameLayout>
+</LinearLayout>
