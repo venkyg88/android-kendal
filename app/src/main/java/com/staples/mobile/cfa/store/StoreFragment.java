@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.store;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -49,7 +50,7 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
     private static int FITSTORES = 5; // Number of stores to fit in initial view
     private static double EARTHRADIUS = 6371.0; // kilometers
     private static double minViewAngle = 360.0/(2.0*Math.PI*EARTHRADIUS) * 5.0; // 5 km
-    private static double maxViewAngle = 360.0/(2.0*Math.PI*EARTHRADIUS) * 50.0; // 50 km
+    private static double maxViewAngle = 360.0/(2.0*Math.PI*EARTHRADIUS) * 100.0; // 100 km
 
     private MapView mapView;
     private GoogleMap googleMap;
@@ -79,8 +80,10 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
             googleMap.setOnMarkerClickListener(this);
 
             MapsInitializer.initialize(getActivity());
-//            CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(centerLat, centerLng));
-//            googleMap.moveCamera(update);
+
+            // Create icons
+            hotIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+            coldIcon = BitmapDescriptorFactory.fromResource(R.drawable.store);
         }
 
         // No Google Play Services
@@ -118,9 +121,12 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
 
     @Override
     public void onResume() {
+        int iconId;
         super.onResume();
         if (mapView!=null) mapView.onResume();
-        ((MainActivity) getActivity()).showActionBar(R.string.store_locator_title, R.drawable.ic_view_list_white, this);
+        if (adapter.isSingleMode()) iconId = R.drawable.ic_view_list_white;
+        else iconId = R.drawable.ic_map_white;
+        ((MainActivity) getActivity()).showActionBar(R.string.store_locator_title, iconId, this);
     }
 
     @Override
@@ -139,27 +145,6 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
     public void onLowMemory() {
         super.onLowMemory();
         if (mapView!=null) mapView.onLowMemory();
-    }
-
-    private void resetMap() {
-        adapter.clear();
-        adapter.notifyDataSetChanged();
-        if (googleMap!=null) {
-            googleMap.clear();
-        }
-    }
-
-    private String reformatNumber(String number) {
-        if (number==null) return(null);
-        number = number.trim();
-
-        if (number.matches("[0-9]{10}")) {
-            return("("+number.substring(0, 3)+") "+
-                       number.substring(3, 6)+"-"+
-                       number.substring(6, 10));
-        }
-
-        return(number);
     }
 
     private StoreItem addStore(StoreData storeData) {
@@ -187,8 +172,8 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
             item.state = storeAddress.getState();
             item.country = storeAddress.getCountry();
             item.zipcode = storeAddress.getZip();
-            item.phoneNumber = reformatNumber(storeAddress.getPhoneNumber());
-            item.faxNumber = reformatNumber(storeAddress.getFaxNumber());
+            item.phoneNumber = StoreItem.reformatNumber(storeAddress.getPhoneNumber());
+            item.faxNumber = StoreItem.reformatNumber(storeAddress.getFaxNumber());
         }
 
         // Get store hours
@@ -206,10 +191,6 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
     private void addMarkers() {
         int n = adapter.getBackingCount();
         if (n<=0) return;
-
-        // Create icons
-        hotIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-        coldIcon = BitmapDescriptorFactory.fromResource(R.drawable.store);
 
         // Add hot marker
         StoreItem item = adapter.getBackingItem(0);
@@ -234,10 +215,6 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
     // Map bounds and scaling
 
     private LatLngBounds makeBounds(double centerLat, double centerLng, double deltaLat, double deltaLng) {
-        // Inflate deltas to give margins
-        deltaLat *= 1.1f;
-        deltaLng *= 1.1f;
-
         // Clip deltas to min and max
         double cos = Math.cos(Math.PI/180.0*centerLat);
         deltaLat = Math.max(deltaLat, minViewAngle);
@@ -255,10 +232,8 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
     private LatLngBounds getCenteredBounds() {
         double centerLat = location.getLatitude();
         double centerLng = location.getLongitude();
-
-        // Set maximum zoom
-        double deltaLat = minViewAngle;
-        double deltaLng = minViewAngle/Math.cos(Math.PI/180.0*centerLat);
+        double deltaLat = 0.0;
+        double deltaLng = 0.0;
 
         // Get bounds of first N stores
         int n = Math.min(adapter.getBackingCount(), FITSTORES);
@@ -288,12 +263,8 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
             maxLng = Math.max(maxLng, position.longitude);
         }
 
-        double centerLat = (minLat+maxLat)/2.0;
-        double centerLng = (minLng+maxLng)/2.0;
-        double deltaLat = (maxLat-minLat)/2.0;
-        double deltaLng = (maxLng-minLng)/2.0;
-
-        LatLngBounds bounds = makeBounds(centerLat, centerLng, deltaLat, deltaLng);
+        LatLngBounds bounds = makeBounds((minLat+maxLat)/2.0, (minLng+maxLng)/2.0,
+                                         (maxLat-minLat)/2.0, (maxLng-minLng)/2.0);
         return(bounds);
     }
 
@@ -311,14 +282,37 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
         googleMap.moveCamera(update);
     }
 
+    // Retrofit callbacks & processing
+
     @Override
     public void success(StoreQuery storeQuery, Response response) {
         Activity activity = getActivity();
         if (activity==null) return;
 
-        if (storeQuery==null) return;
+        int n = processStoreQuery(storeQuery);
+        if (n==0) showFailureDialog();
+    }
+
+    @Override
+    public void failure(RetrofitError retrofitError) {
+        Activity activity = getActivity();
+        if (activity==null) return;
+
+        showFailureDialog();
+        String msg = ApiError.getErrorMessage(retrofitError);
+        Log.d(TAG, msg);
+    }
+
+    private int processStoreQuery(StoreQuery storeQuery) {
+        if (storeQuery==null) return(0);
         List<StoreData> storeDatas = storeQuery.getStoreData();
-        if (storeDatas==null) return;
+        if (storeDatas==null || storeDatas.size()==0) return(0);
+
+        // Reset map
+        adapter.clear();
+        if (googleMap!=null) {
+            googleMap.clear();
+        }
 
         // Add stores
         for(StoreData storeData : storeDatas) {
@@ -334,16 +328,18 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
         }
 
         adapter.notifyDataSetChanged();
+        return(adapter.getBackingCount());
     }
 
-    @Override
-    public void failure(RetrofitError retrofitError) {
-        Activity activity = getActivity();
-        if (activity==null) return;
+    // Failure dialog
 
-        String msg = ApiError.getErrorMessage(retrofitError);
-        Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
-        Log.d(TAG, msg);
+    private void showFailureDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.no_stores_title);
+        builder.setMessage(R.string.no_stores_message);
+        builder.setPositiveButton(R.string.no_stores_ok, null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     // Markers and list items
@@ -378,6 +374,7 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
 
         // Map with single store
         else if (adapter.isSingleMode()) {
+            ((MainActivity) getActivity()).showActionBar(R.string.store_locator_title, R.drawable.ic_view_list_white, this);
             mapView.setVisibility(View.GONE);
             adapter.setSingleMode(false);
             adapter.notifyDataSetChanged();
@@ -386,6 +383,7 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
 
         // List of stores with map available
         else {
+            ((MainActivity) getActivity()).showActionBar(R.string.store_locator_title, R.drawable.ic_map_white, this);
             mapView.setVisibility(View.VISIBLE);
             adapter.setSingleMode(true);
             adapter.notifyDataSetChanged();
@@ -394,7 +392,6 @@ public class StoreFragment extends BaseFragment implements Callback<StoreQuery>,
 
     @Override
     public void onClick(View view) {
-Log.d(TAG, "StoreFragment click");
         switch(view.getId()) {
             case R.id.option_icon:
                 toggleView();
@@ -433,7 +430,6 @@ Log.d(TAG, "StoreFragment click");
     public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
         if (actionId== EditorInfo.IME_ACTION_SEARCH) {
             String address = search.getText().toString().trim();
-            resetMap();
             location = null;
             Access.getInstance().getChannelApi().storeLocations(address, this);
         }

@@ -77,4 +77,16 @@ class StoreItem {
 
         return("Closed");
     }
+    public static String reformatNumber(String number) {
+        if (number==null) return(null);
+        number = number.trim();
+
+        if (number.matches("[0-9]{10}")) {
+            return("("+number.substring(0, 3)+") "+
+                    number.substring(3, 6)+"-"+
+                    number.substring(6, 10));
+        }
+
+        return(number);
+    }
 }
