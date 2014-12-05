@@ -3,9 +3,7 @@ package com.staples.mobile.cfa.widget;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +32,7 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
     private int popupWidth;
 
     private int quantity;
+    private boolean inSpecialNeedOfKeyboard = false;
 
     // Constructors
 
@@ -93,16 +92,19 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
         this.quantity = quantity;
         setText(Integer.toString(quantity));
         setSelection(0);
+        inSpecialNeedOfKeyboard = false;
     }
 
     @Override
     public void onClick(View view) {
         // EditText clicks
         if (view == this) {
-            if (quantity<maxQuantity) showPopup();
+            if (quantity<maxQuantity && !inSpecialNeedOfKeyboard) showPopup();
             else showKeyboard();
             return;
         }
+
+        // otherwise, the click was on the dialog popup
 
         // Dialog quantity select
         int id = view.getId();
@@ -114,6 +116,7 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
             quantity = id;
             setText(Integer.toString(quantity));
             setSelection(0);
+            inSpecialNeedOfKeyboard = false;
             if (listener!=null)
                 listener.onQtyChange(this, id);
             return;
@@ -125,6 +128,11 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
                 popup.dismiss();
                 popup = null;
             }
+            // Sometimes the attempt to automatically show the keyboard doesn't work (e.g. landscape
+            // mode on a small phone). If we don't do something like the following, then the next
+            // click will just open the popup again and the user will get nowhere.
+            inSpecialNeedOfKeyboard = true;
+
             postDelayed(new ShowKeyboard(), 100);
             return;
         }
@@ -146,6 +154,7 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
             setSelection(0);
             setFocusable(false);
             setFocusableInTouchMode(false);
+            inSpecialNeedOfKeyboard = false;
         }
     }
 
