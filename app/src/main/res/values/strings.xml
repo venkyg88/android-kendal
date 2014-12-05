@@ -22,9 +22,9 @@
     <string name="credit_card_title">Credit Cards</string>
     <string name="add_credit_card_title">Add Credit Cards</string>
     <string name="address_title">Addresses</string>
-    <string name="add_address_title">New Shipping Address</string>
-    <string name="edit_address_title">Shipping Address</string>
-    <string name="edit_credit_card_title">Credit Card</string>
+    <string name="add_address_title">New Address</string>
+    <string name="edit_address_title">Update Address</string>
+    <string name="edit_credit_card_title">Update Credit Card</string>
     <string name="email_title">Email</string>
     <string name="username_title">User name</string>
 

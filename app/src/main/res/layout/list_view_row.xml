@@ -19,6 +19,7 @@
         android:layout_width="325dp"
         android:layout_height="wrap_content"
         android:text="New Text"
+        android:textStyle="bold"
         android:id="@+id/rowItemText" />
 
     <ImageButton

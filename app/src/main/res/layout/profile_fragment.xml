@@ -5,94 +5,69 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/profile_fragment">
-    <LinearLayout
-        android:id="@+id/profile_fragment_content"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
 
-    <LinearLayout
-    android:orientation="vertical"
-    android:layout_width="382dp"
-    android:layout_height="match_parent">
-        <TextView
-            android:layout_width="match_parent"
-            android:text="@string/email_title"
-            android:id="@+id/emailLabel"
-            style="@style/DrawerStyle"
-            android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="match_parent"
+        android:text="@string/email_title"
+        android:id="@+id/emailLabel"
+        style="@style/CheckoutSubheading"
+        android:layout_height="wrap_content" />
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:id="@+id/emailProfile"
-            style="@style/DrawerStyle"/>
-    </LinearLayout>
-        <TextView
-            android:layout_width="match_parent"
-            android:text="@string/username_title"
-            android:id="@+id/userNameLabel"
-            style="@style/DrawerStyle"
-            android:layout_height="wrap_content" />
+        android:id="@+id/emailProfile"
+        style="@style/DrawerStyle"/>
 
-    <LinearLayout
+    <TextView
+        android:layout_width="match_parent"
+        android:text="@string/username_title"
+        style="@style/CheckoutSubheading"
+        android:id="@+id/userNameLabel"
+        android:layout_height="wrap_content" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:id="@+id/userNameProfile"
-            style="@style/DrawerStyle"/>
-        </LinearLayout>
+        android:id="@+id/userNameProfile"
+        style="@style/DrawerStyle"/>
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#cccccc">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="Shipping/Billing"
-            style="@style/DrawerStyle"/>
-    </LinearLayout>
+        android:text="Shipping/Billing"
+        android:textSize="16dp"
+        android:background="@color/background_extra_light_gray"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView
             android:id="@+id/addressET"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_alignParentLeft="true"
             style="@style/DrawerStyle"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/addShippingBtn"
-            android:layout_gravity="right"/>
-    </LinearLayout>
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
         <TextView
             android:id="@+id/ccET"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_alignParentLeft="true"
             style="@style/DrawerStyle"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/addCCBtn"
-            android:layout_gravity="right"/>
-    </LinearLayout>
-    </LinearLayout>
-    </LinearLayout>
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+
 </LinearLayout>
