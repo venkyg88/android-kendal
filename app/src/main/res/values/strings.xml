@@ -83,6 +83,10 @@
     <string name="accessories">Accessories</string>
     <string name="remove">Remove</string>
 
+    <string name="store_search_hint">Search Zip, City or Street</string>
+    <string name="no_stores_title">No Results</string>
+    <string name="no_stores_message">We were unable to find any stores near the location provided.</string>
+    <string name="no_stores_ok">Ok</string>
 
     <string name="would_you">Would you recommend this to a friend?</string>
 

@@ -3,6 +3,7 @@ package com.staples.mobile.cfa.widget;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -78,6 +79,15 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
         setOnEditorActionListener(this);
     }
 
+    @Override
+    public void onRestoreInstanceState(Parcelable parcel) {
+        super.onRestoreInstanceState(parcel);
+        quantity = minQuantity;
+        try {
+            quantity = Integer.parseInt(getText().toString());
+        } catch(Exception e) { }
+    }
+
     // Public methods
 
     public void setOnQtyChangeListener(OnQtyChangeListener listener) {
@@ -103,8 +113,6 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
             else showKeyboard();
             return;
         }
-
-        // otherwise, the click was on the dialog popup
 
         // Dialog quantity select
         int id = view.getId();
@@ -164,12 +172,9 @@ public class HackEditor extends EditText implements View.OnClickListener, TextVi
     public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
         if (actionId==EditorInfo.IME_ACTION_DONE) {
             quantity = minQuantity;
-            String text = getText().toString();
-            if (text != null) {
-                try {
-                    quantity = Integer.parseInt(text);
-                } catch(Exception e) { }
-            }
+            try {
+                quantity = Integer.parseInt(getText().toString());
+            } catch(Exception e) { }
             if (listener != null)
                 listener.onQtyChange(this, quantity);
             post(new AfterKeyboard());
