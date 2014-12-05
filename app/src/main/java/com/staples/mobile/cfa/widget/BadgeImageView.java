@@ -57,9 +57,6 @@ public class BadgeImageView extends ImageView {
 
     private void initView(Context context, AttributeSet attrs) {
         text = "";
-//        textLeftOffset = 2;
-//        textBottomOffset = 2;
-
         textPaint = new Paint();
         textPaint.setAntiAlias(true);
         textPaint.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
@@ -88,10 +85,6 @@ public class BadgeImageView extends ImageView {
                 textPaint.setTextSize(textSize);
             }
 
-            // retrieve text offsets and apply them
-//            textLeftOffset = a.getDimensionPixelOffset(R.styleable.BadgeImageView_textLeftOffset, textLeftOffset);
-//            textBottomOffset = a.getDimensionPixelOffset(R.styleable.BadgeImageView_textBottomOffset, textBottomOffset);
-
             a.recycle();
         }
     }
@@ -104,10 +97,9 @@ public class BadgeImageView extends ImageView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (text != null) {
-//        canvas.drawText(text, getPaddingLeft() + textLeftOffset,
-//                getHeight() - getPaddingBottom() - textBottomOffset, textPaint);
+            int adjustUpward = 8;
             canvas.drawText(text, (getWidth() - getPaddingRight()) / 2 + getPaddingLeft() / 2,
-                    (getHeight() - textPaint.ascent() - getPaddingBottom()) / 2 + getPaddingTop() / 2, textPaint);
+                    (getHeight() - textPaint.ascent() - getPaddingBottom()) / 2 + getPaddingTop() / 2 - adjustUpward, textPaint);
         }
     }
 
@@ -132,17 +124,6 @@ public class BadgeImageView extends ImageView {
         invalidate();
     }
 
-//    /**
-//     * Sets the left and bottom offset for positioning text over the image
-//     * @param leftOffset offset from the left
-//     * @param bottomOffset offset from the bottom
-//     */
-//    public void setTextOffsets(int leftOffset, int bottomOffset) {
-//        textLeftOffset = leftOffset;
-//        textBottomOffset = bottomOffset;
-//        requestLayout();
-//        invalidate();
-//    }
 
     /**
      * Sets the text color for the badge

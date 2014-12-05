@@ -111,8 +111,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="6dp"
-                android:textSize="16sp"
-                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:textColor="@color/text_black"
                 android:src="@drawable/ic_shopping_cart_white"/>
         </LinearLayout>
         <android.support.v4.widget.DrawerLayout
