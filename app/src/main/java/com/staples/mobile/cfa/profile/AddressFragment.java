@@ -2,11 +2,13 @@ package com.staples.mobile.cfa.profile;
 
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -22,6 +24,7 @@ import com.staples.mobile.common.access.easyopen.model.member.AddAddress;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.AddressId;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
+import com.staples.mobile.common.access.easyopen.model.member.UpdateAddress;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -48,6 +51,7 @@ public class AddressFragment extends BaseFragment implements View.OnClickListene
     public String zipCode;
     EasyOpenApi easyOpenApi;
     Activity activity;
+    String addressId;
 
     EditText firstNameET;
     EditText lastNameET;
@@ -83,6 +87,7 @@ public class AddressFragment extends BaseFragment implements View.OnClickListene
                 stateET.setText(address.getState());
                 phoneNumberET.setText(address.getPhone1());
                 zipCodeET.setText(address.getZipcode());
+                addressId = address.getAddressId();
             }
         }
 
@@ -98,8 +103,16 @@ public class AddressFragment extends BaseFragment implements View.OnClickListene
         ((MainActivity)activity).showActionBar(R.string.add_address_title, 0, null);
     }
 
+    public void hideKeyboard(View view)
+    {
+        InputMethodManager keyboard = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
     @Override
     public void onClick(View view) {
+        hideKeyboard(view);
+        ((MainActivity)activity).showProgressIndicator();
         firstName = firstNameET.getText().toString();
         lastName = lastNameET.getText().toString();
         addressLine1 = addressLineET.getText().toString();
@@ -110,30 +123,60 @@ public class AddressFragment extends BaseFragment implements View.OnClickListene
 
         if(!firstName.isEmpty() && !lastName.isEmpty() && !addressLine1.isEmpty() && !city.isEmpty() &&
                 !state.isEmpty() && !phoneNumber.isEmpty() && !zipCode.isEmpty()) {
-            AddAddress address = new AddAddress(firstName, lastName, addressLine1, city, state, phoneNumber, zipCode);
-            easyOpenApi.addMemberAddress(address,RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<AddressId>() {
-
-                @Override
-                public void success(AddressId addressId, Response response) {
-                    Toast.makeText(getActivity(), "Address Id " + addressId.getAddressId(), Toast.LENGTH_LONG).show();
-
-                    (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
-                        @Override public void onProfileRefresh(Member member) {
-                            FragmentManager fm = getFragmentManager();
-                            if (fm != null) {
-                                fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
+            if(addressId != null) {
+                UpdateAddress updatedAddress = new UpdateAddress(firstName, lastName, addressLine1, city, state, phoneNumber, zipCode, addressId);
+                easyOpenApi.updateMemberAddress(updatedAddress, RECOMMENDATION, STORE_ID, LOCALE, "xml", CLIENT_ID, new Callback<Response>() {
+                    @Override
+                    public void success(Response response, Response response2) {
+                        (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
+                            @Override public void onProfileRefresh(Member member) {
+                                ((MainActivity)activity).hideProgressIndicator();
+                                Toast.makeText(getActivity(), "Address Updated", Toast.LENGTH_LONG).show();
+                                FragmentManager fm = getFragmentManager();
+                                if (fm != null) {
+                                    fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
+                                }
                             }
-                        }
-                    });
-                }
+                        });
+                    }
 
-                @Override
-                public void failure(RetrofitError error) {
-                    Toast.makeText(getActivity(), "Error Message " + error.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            });
+                    @Override
+                    public void failure(RetrofitError error) {
+                        ((MainActivity)activity).hideProgressIndicator();
+                        Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            else{
+                AddAddress address = new AddAddress(firstName, lastName, addressLine1, city, state, phoneNumber, zipCode);
+                easyOpenApi.addMemberAddress(address,RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<AddressId>() {
+
+                    @Override
+                    public void success(AddressId addressId, Response response) {
+                        Toast.makeText(getActivity(), "Address Id " + addressId.getAddressId(), Toast.LENGTH_LONG).show();
+
+                        (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
+                            @Override public void onProfileRefresh(Member member) {
+                                ((MainActivity)activity).hideProgressIndicator();
+
+                                FragmentManager fm = getFragmentManager();
+                                if (fm != null) {
+                                    fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        ((MainActivity)activity).hideProgressIndicator();
+                        Toast.makeText(getActivity(), "Error Message " + error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
         }
         else {
+            ((MainActivity)activity).hideProgressIndicator();
             Toast.makeText(getActivity(), "All the fields are required. Please fill and try again", Toast.LENGTH_LONG).show();
         }
     }

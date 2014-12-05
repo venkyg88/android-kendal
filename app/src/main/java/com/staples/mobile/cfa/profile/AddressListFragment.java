@@ -50,19 +50,6 @@ public class AddressListFragment extends BaseFragment implements View.OnClickLis
         listview.setAdapter(adapter);
         registerForContextMenu(listview);
 
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            public void onItemClick(AdapterView<?> a, View v, int position,
-                                    long id) {
-                String addressId = addressList.get(position).getAddressId();
-                if (ProfileDetails.addressSelectionListener != null) {
-                    ProfileDetails.addressSelectionListener.onAddressSelected(addressId);
-                } else {
-                    Toast.makeText(activity, addressId, Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
         return (view);
     }
 

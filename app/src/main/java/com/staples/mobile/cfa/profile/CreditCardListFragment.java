@@ -47,16 +47,6 @@ public class CreditCardListFragment extends BaseFragment implements View.OnClick
         listview.setAdapter(adapter);
         registerForContextMenu(listview);
 
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                String paymentMethodId = cardList.get(position).getCreditCardId();
-                if (ProfileDetails.paymentMethodSelectionListener != null) {
-                    ProfileDetails.paymentMethodSelectionListener.onPaymentMethodSelected(paymentMethodId);
-                } else {
-                    Toast.makeText(activity, paymentMethodId, Toast.LENGTH_LONG).show();
-                }
-            }
-        });
         return (view);
     }
 
