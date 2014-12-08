@@ -8,11 +8,12 @@
     android:focusableInTouchMode="true">
 
     <!-- Summary page contents -->
-    <ScrollView
+    <com.staples.mobile.cfa.sku.AnimatedBarScrollView
         android:id="@+id/summary"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:scrollbarStyle="outsideOverlay"
         android:background="#ffffff">
         <LinearLayout
             android:layout_width="match_parent"
@@ -143,7 +144,7 @@
             </LinearLayout>
 
         </LinearLayout>
-    </ScrollView>
+    </com.staples.mobile.cfa.sku.AnimatedBarScrollView>
 
     <!-- Summary page progress whirly -->
     <LinearLayout

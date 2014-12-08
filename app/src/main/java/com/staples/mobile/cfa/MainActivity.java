@@ -4,12 +4,16 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
+import android.view.Display;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -31,6 +35,7 @@ import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.search.SearchBarView;
 import com.staples.mobile.cfa.search.SearchFragment;
+import com.staples.mobile.cfa.sku.AnimatedBarScrollView;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -49,11 +54,13 @@ public class MainActivity extends Activity
     private View searchBarIcon;
     private BadgeImageView cartIconAction;
     CartFragment cartFragment;
-    private TextView titleVw;
+    public static TextView titleVw;
     private TextView cartQtyVw;
     private Button checkoutSigninButton;
     private View closeButton;
     private DrawerItem homeDrawerItem;
+    public static LinearLayout actionBar;
+    public static int screenHeight;
 
     private LoginHelper loginHelper;
 
@@ -111,6 +118,12 @@ public class MainActivity extends Activity
             // otherwise, do login as guest
             loginHelper.getGuestTokens();
         }
+
+        // get height for sku scrollview animation effect
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        screenHeight = size.y;
     }
 
     @Override
@@ -181,7 +194,6 @@ public class MainActivity extends Activity
         cartQtyVw.setVisibility(View.GONE);
     }
 
-
     public void showOrderConfirmationActionBarEntities() {
         // show cart-specific entities
         leftDrawerAction.setVisibility(View.VISIBLE);
@@ -194,7 +206,7 @@ public class MainActivity extends Activity
     }
 
     /** sets action bar title */
-    public void setActionBarTitle(String title) {
+    public static void setActionBarTitle(String title) {
         titleVw.setText(title);
     }
 
@@ -208,6 +220,7 @@ public class MainActivity extends Activity
         setContentView(R.layout.main);
 
         // Find top-level entities
+        actionBar = (LinearLayout) findViewById(R.id.action_bar);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawer = findViewById(R.id.left_drawer);
         searchBar = (SearchBarView) findViewById(R.id.search_text);
@@ -223,7 +236,6 @@ public class MainActivity extends Activity
         leftDrawerAction.setOnClickListener(this);
         cartIconAction.setOnClickListener(this);
         checkoutSigninButton.setOnClickListener(this);
-
 
         // initialize action bar
         showStandardActionBar();
@@ -347,6 +359,11 @@ public class MainActivity extends Activity
         Bundle args = new Bundle();
         if (identifier!=null) args.putString("identifier", identifier);
         fragment.setArguments(args);
+
+        // set default sku action bar
+        AnimatedBarScrollView.isFirstLoad = true;
+        AnimatedBarScrollView.currentAlpha = 0;
+
         return (selectFragment(fragment, Transition.SLIDE, true));
     }
 

@@ -61,13 +61,12 @@ public class PersonalFeedFragment extends BaseFragment
         dailyDealProductsNotFound.setVisibility(View.VISIBLE);
 
         // make daily deal api call
-        DailyDealProductCollection dailyDealProductCollection = new DailyDealProductCollection();
-        dailyDealProductCollection.getProducts(DAILY_DEAL_IDENTIFIER, 1, 50, this); // identifier, offset, limit, callback
+        DailyDealProductCollection dailyDealProductCollection2 = new DailyDealProductCollection();
+        dailyDealProductCollection2.getProducts(DAILY_DEAL_IDENTIFIER, 1, 50, this); // identifier, offset, limit, callback
 
         // make clearance api call
         ClearanceProductCollection clearanceProductCollection = new ClearanceProductCollection();
         clearanceProductCollection.getProducts(CLEARANCE_IDENTIFIER, 1, 50, this); // identifier, offset, limit, callback
-
 
 //        Map clearanceArgs = new HashMap<String, String>();
 //        clearanceArgs.put(ProductCollection.COLLECTION_ARGS.IDENTIFIER, CLEARANCE_IDENTIFIER);
@@ -75,6 +74,14 @@ public class PersonalFeedFragment extends BaseFragment
 //        clearanceArgs.put(ProductCollection.COLLECTION_ARGS.OFFSET, "1");
 //        ProductCollection clearanceProductCollection = new ProductCollection();
 //        clearanceProductCollection.getProducts(clearanceArgs, this);
+
+        ProductCollection dailyDealProductCollection = new ProductCollection();
+        dailyDealProductCollection.getProducts(null, new ProductCollection.ProductCollectionCallBack(){
+            @Override
+            public void onProductCollectionResult(ProductCollection.ProductContainer productContainer) {
+                // productContainer.products =
+            }
+        });
 
         setSeenProductsAdapter();
 

@@ -1,10 +1,10 @@
 package com.staples.mobile.cfa.sku;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -35,7 +35,6 @@ import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.HackEditor;
 import com.staples.mobile.cfa.widget.PagerStripe;
 import com.staples.mobile.cfa.widget.PriceSticker;
-import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -103,7 +102,23 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
     // Spec Table Container
     private TableLayout specContainer;
 
-    private boolean shifted;
+    // Product name for animation
+    public static String productName = "";
+
+    private boolean isShiftedTab;
+
+    public static class DummyFactory implements TabHost.TabContentFactory {
+        private View view;
+
+        public DummyFactory(Context context) {
+            view = new View(context);
+        }
+
+        @Override
+        public View createTabContent(String tag) {
+            return (view);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -181,17 +196,95 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
         manager.removeOnBackStackChangedListener(this);
     }
 
-    public static class DummyFactory implements TabHost.TabContentFactory {
-        private View view;
+    @Override
+    public void onPause() {
+        super.onPause();
 
-        public DummyFactory(Context context) {
-            view = new View(context);
+        // change back the color of action bar to red
+        MainActivity.actionBar.setBackgroundColor(getResources().getColor(R.color.staples_light));
+
+        // change back the alpha/size/padding of action bar title
+        MainActivity.titleVw.setPadding(20, 0, 20, 0);
+        MainActivity.titleVw.setTextSize(24f);
+        MainActivity.titleVw.setTextColor(MainActivity.titleVw.getTextColors().withAlpha(255));
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        FragmentManager manager = getFragmentManager();
+
+        int fragmentEntryCount = manager.getBackStackEntryCount();
+        if (fragmentEntryCount < 1) return;
+
+        String currentFragmentName = manager.getBackStackEntryAt(fragmentEntryCount - 1).getName();
+        if (currentFragmentName != null && currentFragmentName.equals("SkuDetail")) {
+            return;
+        }
+        else{
+            // restore last seen state for sku action bar after sku spec
+            MainActivity.actionBar.getBackground().setAlpha(AnimatedBarScrollView.currentAlpha);
+            MainActivity.titleVw.setTextColor(
+                    MainActivity.titleVw.getTextColors().withAlpha(AnimatedBarScrollView.currentAlpha));
         }
 
-        @Override
-        public View createTabContent(String tag) {
-            return (view);
+        manager.removeOnBackStackChangedListener(this);
+
+        // show sku info
+        wrapper.setState(DataWrapper.State.DONE);
+
+        // hide sku tab spec
+        details.setVisibility(View.GONE);
+
+        isShiftedTab = false;
+    }
+
+    // Detail and add-to-cart clicks
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.description_detail:
+                shiftToDetail(0);
+                break;
+            case R.id.specification_detail:
+                shiftToDetail(1);
+                break;
+            case R.id.review_detail:
+                shiftToDetail(2);
+                break;
+            case R.id.add_to_cart:
+                HackEditor edit = (HackEditor) wrapper.findViewById(R.id.quantity);
+                int qty = edit.getQuantity();
+                final MainActivity activity = (MainActivity) getActivity();
+                wrapper.setState(DataWrapper.State.LOADING);
+                activity.addItemToCart(identifier, qty, new CartFragment.AddToCartCallback() {
+                    public void onAddToCartComplete() {
+                        wrapper.setState(DataWrapper.State.DONE);
+                    }
+                });
+                break;
         }
+    }
+
+    private void shiftToDetail(int position) {
+        if (isShiftedTab) return;
+
+        wrapper.setState(DataWrapper.State.GONE);
+        details.setVisibility(View.VISIBLE);
+        isShiftedTab = true;
+        tabPager.setCurrentItem(position);
+
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.addToBackStack("SkuDetail");
+        transaction.commit();
+        // Add a new listener for changes to the fragment back stack
+        manager.addOnBackStackChangedListener(this);
+
+        // set sku action bar
+        MainActivity.actionBar.setBackgroundColor(getResources().getColor(R.color.staples_light));
+        MainActivity.setActionBarTitle(SkuFragment.productName);
+        MainActivity.titleVw.setTextColor(MainActivity.titleVw.getTextColors().withAlpha(255));
     }
 
     private void addTab(TabHost.TabContentFactory dummy, Resources res, int resid, String tag) {
@@ -481,6 +574,8 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
             ((TextView) summary.findViewById(R.id.numbers)).setText(formatNumbers(product));
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
 
+            productName = name;
+
             // Add pricing
             ((PriceSticker) summary.findViewById(R.id.pricing)).setPricing(product.getPricing());
 
@@ -594,60 +689,5 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
 
     public void onPageSelected(int position) {
         details.setCurrentTab(position);
-    }
-
-    // Detail and add-to-cart clicks
-
-    private void shiftToDetail(int position) {
-        if (shifted) return;
-        wrapper.setState(DataWrapper.State.GONE);
-        details.setVisibility(View.VISIBLE);
-        shifted = true;
-        tabPager.setCurrentItem(position);
-
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.addToBackStack("SkuDetail");
-        transaction.commit();
-        manager.addOnBackStackChangedListener(this);
-    }
-
-    @Override
-    public void onBackStackChanged() {
-        FragmentManager manager = getFragmentManager();
-        int n = manager.getBackStackEntryCount();
-        if (n < 1) return;
-        String name = manager.getBackStackEntryAt(n - 1).getName();
-        if (name != null && name.equals("SkuDetail")) return;
-        manager.removeOnBackStackChangedListener(this);
-        wrapper.setState(DataWrapper.State.DONE);
-        details.setVisibility(View.GONE);
-        shifted = false;
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.description_detail:
-                shiftToDetail(0);
-                break;
-            case R.id.specification_detail:
-                shiftToDetail(1);
-                break;
-            case R.id.review_detail:
-                shiftToDetail(2);
-                break;
-            case R.id.add_to_cart:
-                HackEditor edit = (HackEditor) wrapper.findViewById(R.id.quantity);
-                int qty = edit.getQuantity();
-                final MainActivity activity = (MainActivity) getActivity();
-                wrapper.setState(DataWrapper.State.LOADING);
-                activity.addItemToCart(identifier, qty, new CartFragment.AddToCartCallback() {
-                    public void onAddToCartComplete() {
-                        wrapper.setState(DataWrapper.State.DONE);
-                    }
-                });
-                break;
-        }
     }
 }

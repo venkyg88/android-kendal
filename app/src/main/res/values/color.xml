@@ -5,5 +5,5 @@
 	<color name="text_black">#000000</color>
 	<color name="text_light_gray">#BEC0BB</color>
 	<color name="text_orange_light">#FFA080</color>
-
+    <color name="bg_white">#FFFFFF</color>
 </resources>
