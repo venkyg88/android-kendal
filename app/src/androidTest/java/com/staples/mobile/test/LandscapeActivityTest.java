@@ -4,7 +4,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.staples.mobile.R;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.DrawerAdapter;
 import com.staples.mobile.cfa.MainActivity;
 
@@ -65,17 +65,6 @@ public class LandscapeActivityTest {
         Assert.assertNotNull("Left drawer should have adapter", adapter);
 
         int count = adapter.getCount();
-        Assert.assertEquals("Left drawer should have 9 items", 9, count);
-    }
-
-    @Test
-    public void testRightDrawer() {
-        System.out.println("testRightDrawer");
-
-        ListView list = (ListView) activity.findViewById(R.id.cart_list);
-        Assert.assertNotNull("Right drawer should exist", list);
-
-        ArrayAdapter adapter = (ArrayAdapter) list.getAdapter();
-        Assert.assertNotNull("Right drawer should have adapter", adapter);
+        Assert.assertEquals("Left drawer should have 10 items", 10, count);
     }
 }
