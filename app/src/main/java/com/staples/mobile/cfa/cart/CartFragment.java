@@ -276,6 +276,21 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         cartAdapter = null;
     }
 
+
+    /** returns sum of adjusted amounts for rewards and coupons applied to cart */
+    public float getCouponsRewardsAdjustedAmount() {
+        float totalAdjustedAmount = 0;
+        // coupons
+        if (cart != null && cart.getCoupon() != null) {
+            for (Coupon c : cart.getCoupon()) {
+                totalAdjustedAmount += c.getAdjustedAmount();
+            }
+        }
+        // todo: rewards
+
+        return totalAdjustedAmount;
+    }
+
     /** Sets item count indicator on cart icon and cart drawer title */
     private void updateCartFields() {
         // temporary
@@ -292,7 +307,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         if (cart != null) {
             totalItemCount = cart.getTotalItems();
             couponAdapter.clear();
-            couponsRewardsAmount = cart.getCouponsRewardsAdjustedAmount();
+            couponsRewardsAmount = getCouponsRewardsAdjustedAmount();
             if (cart.getCoupon() != null && cart.getCoupon().size() > 0) {
                 couponAdapter.addAll(cart.getCoupon());
             }
