@@ -8,14 +8,19 @@
 		android:id="@+id/lmsScrollView"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-	>
+        android:layout_margin="0dp"
+        android:padding="0dp"
+        >
 
 		<LinearLayout
 			android:id="@+id/lmsScrollLayout"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
+            android:layout_margin="0dp"
 			android:orientation="vertical"
-		>
+			android:background="@color/background_extra_light_gray"
+            android:padding="0dp"
+        >
 
 		</LinearLayout>
 
