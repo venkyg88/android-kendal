@@ -4,7 +4,6 @@
 
 package com.staples.mobile.cfa.cart;
 
-import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
@@ -31,7 +30,7 @@ import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.HackEditor;
 //import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.configurator.model.Configurator;
+import com.staples.mobile.common.access.configurator.model.AppContext;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.EmptyResponse;
@@ -43,7 +42,7 @@ import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
-import com.staples.mobile.common.access.lms.LmsManager;
+import com.staples.mobile.common.access.config.AppConfigurator;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -314,10 +313,10 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();
             preTaxSubtotal = cart.getPreTaxTotal();
-            LmsManager lmsManager = new LmsManager(MainApplication.application);
-            Configurator configurator = lmsManager.getConfigurator();
-            if (configurator != null) {
-                freeShippingThreshold = configurator.getPromotions().getFreeShippingThreshold().floatValue();
+            AppConfigurator appConfigurator = new AppConfigurator(MainApplication.application);
+            AppContext appContext = appConfigurator.getAppContext();
+            if (appContext != null) {
+                freeShippingThreshold = appContext.getPromotions().getFreeShippingThreshold().floatValue();
             }
         }
 

@@ -46,13 +46,13 @@ public class ProductAdapter
     private static final int MAXFETCH = 50;
 
     private Activity activity;
-    private LmsItem lmsItem;
+    private ConfigItem configItem;
     private LayoutInflater inflater;
 
-    public ProductAdapter(Activity activity, LmsItem lmsItem) {
+    public ProductAdapter(Activity activity, ConfigItem configItem) {
         super(activity, 0);
         this.activity = activity;
-        this.lmsItem = lmsItem;
+        this.configItem = configItem;
         inflater = activity.getLayoutInflater();
     }
 
@@ -106,9 +106,9 @@ public class ProductAdapter
     }
 
     void fill() {
-        add(new ProductItem(null, lmsItem.bannerUrl, null));
+        add(new ProductItem(null, configItem.bannerUrl, null));
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, lmsItem.identifier, CATALOG_ID, LOCALE,
+        easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, configItem.identifier, CATALOG_ID, LOCALE,
                                      ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
     }
 
