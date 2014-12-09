@@ -33,7 +33,7 @@ public class MainApplication
         Thread.setDefaultUncaughtExceptionHandler((Thread.UncaughtExceptionHandler) this);
 
         appConfigurator = new AppConfigurator(this);
-        appConfigurator.getAppContext(this);
+        appConfigurator.getConfigurator(this);
 
         /* @@@ STUBBED
         setStrictMode();
@@ -52,9 +52,9 @@ public class MainApplication
         return;
     }
 
-    public void onGetAppContextResult(boolean success) {
+    public void onGetConfiguratorResult(boolean success) {
 
-        if (LOGGING) Log.v(TAG, "MainApplication:LmsManager.onGetAppContextResult():"
+        if (LOGGING) Log.v(TAG, "MainApplication:LmsManager.onGetConfiguratorResult():"
                         + " success[" + success + "]"
                         + " this[" + this + "]"
         );

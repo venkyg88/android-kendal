@@ -30,7 +30,7 @@ import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.HackEditor;
 //import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.configurator.model.AppContext;
+import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.EmptyResponse;
@@ -314,9 +314,9 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
             subtotal = cart.getSubTotal();
             preTaxSubtotal = cart.getPreTaxTotal();
             AppConfigurator appConfigurator = new AppConfigurator(MainApplication.application);
-            AppContext appContext = appConfigurator.getAppContext();
-            if (appContext != null) {
-                freeShippingThreshold = appContext.getPromotions().getFreeShippingThreshold().floatValue();
+            Configurator configurator = appConfigurator.getConfigurator();
+            if (configurator != null) {
+                freeShippingThreshold = configurator.getAppContext().getPromotions().getFreeShippingThreshold().floatValue();
             }
         }
 

@@ -141,14 +141,14 @@ public class ConfiguratorFragment
             }
         };
 
-        appConfigurator.getAppContext(this); // AppConfiguratorCallback
+        appConfigurator.getConfigurator(this); // AppConfiguratorCallback
 
         return (configFrameView);
     }
 
-    public void onGetAppContextResult(boolean success) {
+    public void onGetConfiguratorResult(boolean success) {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:AppConfigurator.onGetAppContextResult():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:AppConfigurator.onGetConfiguratorResult():"
                         + " success[" + success + "]"
                         + " this[" + this + "]"
         );
@@ -208,7 +208,7 @@ public class ConfiguratorFragment
             }
         } else {
 
-            if (retryGetConfig) appConfigurator.getAppContext(this); // AppConfiguratorCallback
+            if (retryGetConfig) appConfigurator.getConfigurator(this); // AppConfiguratorCallback
             retryGetConfig = false;
         }
 
@@ -378,7 +378,7 @@ public class ConfiguratorFragment
 
         ConfigItem configItemA = configItemsA.get(0);
 
-        // AppContext Sublayout
+        // Configurator Sublayout
 
         // Horizontal. Contains A item and configBCDLayout.
         LinearLayout subLayout = getSubLayout(aItemWidth * 2,
