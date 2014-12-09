@@ -4,11 +4,11 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,13 +23,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
-import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
 import com.staples.mobile.cfa.feed.SeenProductsRowItem;
-
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.HackEditor;
@@ -39,7 +38,6 @@ import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.browse.Availability;
 import com.staples.mobile.common.access.easyopen.model.browse.BulletDescription;
 import com.staples.mobile.common.access.easyopen.model.browse.Description;
 import com.staples.mobile.common.access.easyopen.model.browse.Image;
@@ -80,6 +78,34 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
     private static final int MAXFETCH = 50;
 
     private static SimpleDateFormat iso8601;
+
+    public enum Availability {
+        NOTHING      (R.string.avail_nothing),
+        SKUSET       (R.string.avail_skuset),
+        RETAILONLY   (R.string.avail_retailonly),
+        SPECIALORDER (R.string.avail_specialorder),
+        INSTOCK      (R.string.avail_instock),
+        OUTOFSTOCK   (R.string.avail_outofstock);
+
+        private int resid;
+
+        private Availability(int resid) {
+            this.resid = resid;
+        }
+
+        public static Availability getProductAvailability(Product product) {
+            if (product==null) return(NOTHING);
+            if (product.getProduct()!=null) return(SKUSET);
+            if (product.isRetailOnly()) return(RETAILONLY);
+            if (product.isRetailOnlySpecialOrder()) return(SPECIALORDER);
+            if (product.isInStock()) return(INSTOCK);
+            return(OUTOFSTOCK);
+        }
+
+        public int getTextResId() {
+            return(resid);
+        }
+    }
 
     private String identifier;
 
@@ -169,7 +195,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
         details.setVisibility(View.GONE);
 
         // Disable add-to-cart
-//        wrapper.findViewById(R.id.quantity).setEnabled(false);
+        wrapper.findViewById(R.id.quantity).setEnabled(false);
         wrapper.findViewById(R.id.add_to_cart).setEnabled(false);
 
         // Set listeners
@@ -201,90 +227,16 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
         super.onPause();
 
         // change back the color of action bar to red
-        MainActivity.actionBar.setBackgroundColor(getResources().getColor(R.color.staples_light));
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.getBar().setBackgroundColor(getResources().getColor(R.color.staples_light));
 
         // change back the alpha/size/padding of action bar title
-        MainActivity.titleVw.setPadding(20, 0, 20, 0);
-        MainActivity.titleVw.setTextSize(24f);
-        MainActivity.titleVw.setTextColor(MainActivity.titleVw.getTextColors().withAlpha(255));
-    }
+        mainActivity.getTitleView().setPadding(20, 0, 20, 0);
+        mainActivity.getTitleView().setTextSize(24f);
+        mainActivity.getTitleView().setTextColor(mainActivity.getTitleView().getTextColors().withAlpha(255));
 
-    @Override
-    public void onBackStackChanged() {
-        FragmentManager manager = getFragmentManager();
-
-        int fragmentEntryCount = manager.getBackStackEntryCount();
-        if (fragmentEntryCount < 1) return;
-
-        String currentFragmentName = manager.getBackStackEntryAt(fragmentEntryCount - 1).getName();
-        if (currentFragmentName != null && currentFragmentName.equals("SkuDetail")) {
-            return;
-        }
-        else{
-            // restore last seen state for sku action bar after sku spec
-            MainActivity.actionBar.getBackground().setAlpha(AnimatedBarScrollView.currentAlpha);
-            MainActivity.titleVw.setTextColor(
-                    MainActivity.titleVw.getTextColors().withAlpha(AnimatedBarScrollView.currentAlpha));
-        }
-
-        manager.removeOnBackStackChangedListener(this);
-
-        // show sku info
-        wrapper.setState(DataWrapper.State.DONE);
-
-        // hide sku tab spec
-        details.setVisibility(View.GONE);
-
-        isShiftedTab = false;
-    }
-
-    // Detail and add-to-cart clicks
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.description_detail:
-                shiftToDetail(0);
-                break;
-            case R.id.specification_detail:
-                shiftToDetail(1);
-                break;
-            case R.id.review_detail:
-                shiftToDetail(2);
-                break;
-            case R.id.add_to_cart:
-                HackEditor edit = (HackEditor) wrapper.findViewById(R.id.quantity);
-                int qty = edit.getQuantity();
-                final MainActivity activity = (MainActivity) getActivity();
-                wrapper.setState(DataWrapper.State.LOADING);
-                activity.addItemToCart(identifier, qty, new CartFragment.AddToCartCallback() {
-                    public void onAddToCartComplete() {
-                        wrapper.setState(DataWrapper.State.DONE);
-                    }
-                });
-                break;
-        }
-    }
-
-    private void shiftToDetail(int position) {
-        if (isShiftedTab) return;
-
-        wrapper.setState(DataWrapper.State.GONE);
-        details.setVisibility(View.VISIBLE);
-        isShiftedTab = true;
-        tabPager.setCurrentItem(position);
-
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.addToBackStack("SkuDetail");
-        transaction.commit();
-        // Add a new listener for changes to the fragment back stack
-        manager.addOnBackStackChangedListener(this);
-
-        // set sku action bar
-        MainActivity.actionBar.setBackgroundColor(getResources().getColor(R.color.staples_light));
-        MainActivity.setActionBarTitle(SkuFragment.productName);
-        MainActivity.titleVw.setTextColor(MainActivity.titleVw.getTextColors().withAlpha(255));
+        // restore contain offset
+        mainActivity.getContainFrame().setPadding(0, Math.round(convertDpToPixel(56f, getActivity())), 0, 0);
     }
 
     private void addTab(TabHost.TabContentFactory dummy, Resources res, int resid, String tag) {
@@ -333,7 +285,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
         List<Description> paragraphs = product.getParagraph();
         if (paragraphs != null) {
             for (Description paragraph : paragraphs) {
-                String text = paragraph.getText();
+                String text = Html.fromHtml(paragraph.getText()).toString();
                 if (text != null) {
                     TextView item = (TextView) inflater.inflate(R.layout.sku_paragraph_item, parent, false);
                     parent.addView(item);
@@ -349,7 +301,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
         if (bullets != null) {
             for (BulletDescription bullet : bullets) {
                 if (count >= limit) break;
-                String text = bullet.getText();
+                String text = Html.fromHtml(bullet.getText()).toString();
                 if (text != null) {
                     View item = inflater.inflate(R.layout.sku_bullet_item, parent, false);
                     parent.addView(item);
@@ -364,8 +316,6 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
 
     protected static void addSpecifications(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
         int rowCount = 0;
-        String specName;
-        String specValue;
 
         // Add specification
         List<Description> specs = product.getSpecification();
@@ -378,8 +328,8 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
                     break;
                 }
 
-                specName = spec.getName();
-                specValue = spec.getText();
+                String specName = Html.fromHtml(spec.getName()).toString();
+                String specValue = Html.fromHtml(spec.getText()).toString();
 
                 if (specName != null && specValue != null) {
                     TableRow skuSpecRow = (TableRow) inflater.inflate(R.layout.sku_spec_item, table, false);
@@ -402,14 +352,12 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
 
     private void addAccessory(Product product) {
         List<Product> accessories = product.getAccessory();
-        String accessoryImageUrl;
-        String accessoryTitle;
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         for (final Product accessory : accessories) {
-            accessoryImageUrl = accessory.getImage().get(0).getUrl();
-            accessoryTitle = accessory.getProductName();
+            String accessoryImageUrl = accessory.getImage().get(0).getUrl();
+            String accessoryTitle = accessory.getProductName();
             final String sku = accessory.getSku();
 
             View skuAccessoryRow = inflater.inflate(R.layout.sku_accessory_item, null);
@@ -447,7 +395,6 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
 
             accessoryContainer.addView(skuAccessoryRow);
         }
-
     }
 
     private void saveSeenProduct(Product product){
@@ -474,7 +421,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
             feedSingleton.getSavedSeenProducts(getActivity()).addSeenProduct(item, sku, getActivity());
         }
         else{
-            Log.d(TAG, "This product has been saved before: " + product.getProductName());
+            //Log.d(TAG, "This product has been saved before: " + product.getProductName());
         }
     }
 
@@ -538,13 +485,12 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
                 case RETAILONLY:
                 case SPECIALORDER:
                 case OUTOFSTOCK:
-                    edit.setVisibility(View.GONE);
+                    edit.setEnabled(false);
                     button.setText(availability.getTextResId());
                     button.setEnabled(false);
                     break;
                 case INSTOCK:
-                    edit.setVisibility(View.VISIBLE);
-                    edit.setQuantity(1);
+                    edit.setEnabled(true);
                     button.setText(R.string.add_to_cart);
                     button.setEnabled(true);
                     break;
@@ -570,11 +516,12 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
 
             // Add info
             String name = Html.fromHtml(product.getProductName()).toString();
+
+            productName = name;
+
             ((TextView) summary.findViewById(R.id.title)).setText(name);
             ((TextView) summary.findViewById(R.id.numbers)).setText(formatNumbers(product));
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
-
-            productName = name;
 
             // Add pricing
             ((PriceSticker) summary.findViewById(R.id.pricing)).setPricing(product.getPricing());
@@ -689,5 +636,92 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
 
     public void onPageSelected(int position) {
         details.setCurrentTab(position);
+    }
+
+    // Detail and add-to-cart clicks
+
+    private void shiftToDetail(int position) {
+        if (isShiftedTab) return;
+        wrapper.setState(DataWrapper.State.GONE);
+        details.setVisibility(View.VISIBLE);
+        isShiftedTab = true;
+        tabPager.setCurrentItem(position);
+
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.addToBackStack("SkuDetail");
+        transaction.commit();
+        manager.addOnBackStackChangedListener(this);
+
+        // set sku action bar on spec page
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.getBar().getBackground().setAlpha(255);
+        mainActivity.getTitleView().setText(SkuFragment.productName);
+        mainActivity.getTitleView().setTextColor(mainActivity.getTitleView().getTextColors().withAlpha(255));
+
+        // restore contain offset
+        mainActivity.getContainFrame().setPadding(0, Math.round(convertDpToPixel(56f, getActivity())), 0, 0);
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        FragmentManager manager = getFragmentManager();
+
+        int fragmentEntryCount = manager.getBackStackEntryCount();
+        if (fragmentEntryCount < 1) return;
+
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.getContainFrame().setPadding(0,0,0,0);
+
+        String currentFragmentName = manager.getBackStackEntryAt(fragmentEntryCount - 1).getName();
+        if (currentFragmentName != null && currentFragmentName.equals("SkuDetail")) {
+            // restore contain offset
+            mainActivity.getContainFrame().setPadding(0, Math.round(convertDpToPixel(56f, getActivity())), 0, 0);
+            return;
+        }
+        else{
+            // restore last seen state for sku action bar after sku spec
+            mainActivity.getBar().getBackground().setAlpha(AnimatedBarScrollView.currentAlpha);
+            mainActivity.getTitleView().setTextColor(
+                    mainActivity.getTitleView().getTextColors().withAlpha(AnimatedBarScrollView.currentAlpha));
+        }
+
+        manager.removeOnBackStackChangedListener(this);
+
+        // show sku info
+        wrapper.setState(DataWrapper.State.DONE);
+
+        // hide sku tab spec
+        details.setVisibility(View.GONE);
+
+        isShiftedTab = false;
+    }
+
+    private float convertDpToPixel(float dp, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * (metrics.densityDpi / 160f);
+        return px;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.description_detail:
+                shiftToDetail(0);
+                break;
+            case R.id.specification_detail:
+                shiftToDetail(1);
+                break;
+            case R.id.review_detail:
+                shiftToDetail(2);
+                break;
+            case R.id.add_to_cart:
+                HackEditor edit = (HackEditor) wrapper.findViewById(R.id.quantity);
+                int qty = edit.getQuantity();
+                MainActivity activity = (MainActivity) getActivity();
+                activity.addItemToCart(identifier, qty);
+                break;
+        }
     }
 }
