@@ -118,7 +118,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     //private QtyUpdateButtonListener qtyUpdateButtonListener;
 
 
-    DecimalFormat currencyFormat;
+    private DecimalFormat currencyFormat;
 
 
     // api listeners
@@ -292,13 +292,9 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         if (cart != null) {
             totalItemCount = cart.getTotalItems();
             couponAdapter.clear();
-            if (cart.getCoupon() != null) {
-                for (Coupon coupon : cart.getCoupon()) {
-                    couponsRewardsAmount += coupon.getAdjustedAmount();
-                }
-                if (cart.getCoupon().size() > 0) {
-                    couponAdapter.addAll(cart.getCoupon());
-                }
+            couponsRewardsAmount = cart.getCouponsRewardsAdjustedAmount();
+            if (cart.getCoupon() != null && cart.getCoupon().size() > 0) {
+                couponAdapter.addAll(cart.getCoupon());
             }
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();

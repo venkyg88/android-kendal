@@ -344,13 +344,14 @@ public class MainActivity extends Activity
         LoginHelper loginHelper = new LoginHelper(this);
         if (loginHelper.isLoggedIn()) {
             CheckoutFragment fragment;
+            float couponsRewardsAmount = cartFragment.getCart().getCouponsRewardsAdjustedAmount();
             // if logged in and have at least an address or a payment method, then use registered flow, otherwise use guest flow
             if (!loginHelper.isGuestLogin() && (ProfileDetails.hasAddress() || ProfileDetails.hasPaymentMethod())) {
-                fragment = RegisteredCheckoutFragment.newInstance(cartFragment.getCart().getSubTotal(),
-                        cartFragment.getCart().getPreTaxTotal());
+                fragment = RegisteredCheckoutFragment.newInstance(couponsRewardsAmount,
+                        cartFragment.getCart().getSubTotal(), cartFragment.getCart().getPreTaxTotal());
             } else {
-                fragment = GuestCheckoutFragment.newInstance(cartFragment.getCart().getSubTotal(),
-                        cartFragment.getCart().getPreTaxTotal());
+                fragment = GuestCheckoutFragment.newInstance(couponsRewardsAmount,
+                        cartFragment.getCart().getSubTotal(), cartFragment.getCart().getPreTaxTotal());
             }
             return selectFragment(fragment, Transition.NONE, true);
         }

@@ -74,9 +74,10 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
      * Create a new instance of GuestCheckoutFragment that will be initialized
      * with the given arguments.
      */
-    public static CheckoutFragment newInstance(float itemSubtotal, float preTaxSubtotal) {
+    public static CheckoutFragment newInstance(float couponsRewardsAmount, float itemSubtotal, float preTaxSubtotal) {
         CheckoutFragment f = new GuestCheckoutFragment();
         Bundle args = new Bundle();
+        args.putFloat(CheckoutFragment.BUNDLE_PARAM_COUPONSREWARDS, couponsRewardsAmount);
         args.putFloat(CheckoutFragment.BUNDLE_PARAM_ITEMSUBTOTAL, itemSubtotal);
         args.putFloat(CheckoutFragment.BUNDLE_PARAM_PRETAXSUBTOTAL, preTaxSubtotal);
         f.setArguments(args);
