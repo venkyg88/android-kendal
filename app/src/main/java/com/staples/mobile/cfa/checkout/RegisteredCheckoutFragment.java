@@ -65,9 +65,10 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
      * Create a new instance of RegisteredCheckoutFragment that will be initialized
      * with the given arguments. Used when opening a fresh checkout session from the cart.
      */
-    public static CheckoutFragment newInstance(float itemSubtotal, float preTaxSubtotal) {
+    public static CheckoutFragment newInstance(float couponsRewardsAmount, float itemSubtotal, float preTaxSubtotal) {
         CheckoutFragment f = new RegisteredCheckoutFragment();
         Bundle args = new Bundle();
+        args.putFloat(CheckoutFragment.BUNDLE_PARAM_COUPONSREWARDS, couponsRewardsAmount);
         args.putFloat(CheckoutFragment.BUNDLE_PARAM_ITEMSUBTOTAL, itemSubtotal);
         args.putFloat(CheckoutFragment.BUNDLE_PARAM_PRETAXSUBTOTAL, preTaxSubtotal);
         f.setArguments(args);
