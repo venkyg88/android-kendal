@@ -53,7 +53,7 @@ dependencies {
     androidTestCompile('junit:junit:4+') {
         exclude module: 'hamcrest-core'
     }
-    androidTestCompile('org.robolectric:robolectric:2.3+') {
+    androidTestCompile('org.robolectric:robolectric:2.4') {
         exclude module: 'classworlds'
         exclude module: 'commons-logging'
         exclude module: 'httpclient'
