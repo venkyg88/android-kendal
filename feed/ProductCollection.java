@@ -1,8 +1,10 @@
 package com.staples.mobile.cfa.feed;
 
+import android.app.Activity;
 import android.util.Log;
 
 import com.staples.mobile.cfa.login.LoginHelper;
+
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
