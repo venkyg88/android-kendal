@@ -38,6 +38,8 @@ public class LmsFragment
 
     private static final long LMS_REFRESH_TIME_MILLIS = (5 * 60 * 1000);
 
+    private static final int MARGIN_BOTTOM_DP = 24;
+
     private MainActivity activity;
     private Resources resources;
 
@@ -45,6 +47,8 @@ public class LmsFragment
 
     private View lmsFrameView;
     private LinearLayout lmsScrollLayout;
+    private LinearLayout.LayoutParams subLayoutContainerLayoutParms;
+    private LinearLayout.LayoutParams widgetLayoutParms;
 
     private LmsManager lmsManager;
 
@@ -114,6 +118,13 @@ public class LmsFragment
         lmsFrameView = layoutInflater.inflate(R.layout.lms_frame, container, false);
 
         lmsScrollLayout = (LinearLayout) lmsFrameView.findViewById(R.id.lmsScrollLayout);
+
+        subLayoutContainerLayoutParms =
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, // width
+                        ViewGroup.LayoutParams.MATCH_PARENT); // height
+
+        int margin = 0;
+        subLayoutContainerLayoutParms.setMargins(margin, margin, margin, MARGIN_BOTTOM_DP); // left, top, right, bottom
 
         itemOnClickListener = new OnClickListener() {
 
@@ -271,7 +282,7 @@ public class LmsFragment
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(aItemWidth, subLayoutHeight, categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(aItemWidth, subLayoutHeight, MARGIN_BOTTOM_DP, categoryImageView);
             widgetLayout.setTag(lmsItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
@@ -301,7 +312,7 @@ public class LmsFragment
             if (firstSubInContainer) {
 
                 subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
-                lmsScrollLayout.addView(subLayoutContainer);
+                lmsScrollLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
             }
 
             ImageView categoryImageView = getImageView(0, 0, 0, 0);
@@ -309,7 +320,7 @@ public class LmsFragment
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
             widgetLayout.setTag(lmsItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
@@ -375,14 +386,14 @@ public class LmsFragment
                 aItemHeight,
                 LinearLayout.HORIZONTAL);
 
-        lmsScrollLayout.addView(subLayout);
+        lmsScrollLayout.addView(subLayout, subLayoutContainerLayoutParms);
 
         ImageView categoryImageView = getImageView(0, 0, 0, 0);
         setImage(categoryImageView, lmsItemA.bannerUrl);
 
         // Vertical. Contains selectable content. Used to create a rectangular
         // frame around the content.
-        LinearLayout widgetLayout = getWidgetLayout(aItemWidth, aItemHeight, categoryImageView);
+        LinearLayout widgetLayout = getWidgetLayout(aItemWidth, aItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
         widgetLayout.setTag(lmsItemA);
         widgetLayout.setOnClickListener(itemOnClickListener);
         widgetLayout.addView(categoryImageView);
@@ -467,7 +478,7 @@ public class LmsFragment
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
             widgetLayout.setTag(lmsItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
@@ -507,7 +518,7 @@ public class LmsFragment
             if (firstSubInContainer) {
 
                 subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
-                lmsBCDLayout.addView(subLayoutContainer);
+                lmsBCDLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
 
                 nbrSubLayoutContainers++;
             }
@@ -517,7 +528,7 @@ public class LmsFragment
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
             widgetLayout.setTag(lmsItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
@@ -557,7 +568,7 @@ public class LmsFragment
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
             widgetLayout.setTag(lmsItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
@@ -567,7 +578,7 @@ public class LmsFragment
 
     } // fillAWithD()
 
-    private LinearLayout getWidgetLayout(int layoutWidth, int layoutHeight, View childView) {
+    private LinearLayout getWidgetLayout(int layoutWidth, int layoutHeight, int marginBottom, View childView) {
 
         if (LOGGING) Log.v(TAG, "LmsFragment:getWidgetLayout():"
                         + " layoutWidth[" + layoutWidth + "]"
@@ -592,12 +603,12 @@ public class LmsFragment
         int padding = 0;
         widgetLayout.setPadding(padding, padding, padding, padding);
 
-        LinearLayout.LayoutParams widgetLayoutParms =
+        widgetLayoutParms =
                 new LinearLayout.LayoutParams(layoutWidth, // width
                         layoutHeight); // height
 
         int margin = 0;
-        widgetLayoutParms.setMargins(margin, margin, margin, 20); // left, top, right, bottom
+        widgetLayoutParms.setMargins(margin, margin, margin, marginBottom); // left, top, right, bottom
 
         childView.setLayoutParams(widgetLayoutParms);
 
@@ -757,7 +768,7 @@ public class LmsFragment
             if (firstSubInContainer) {
 
                 subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
-                lmsScrollLayout.addView(subLayoutContainer);
+                lmsScrollLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
             }
 
             ImageView categoryImageView = getImageView(0, 0, 0, 0);
@@ -765,7 +776,7 @@ public class LmsFragment
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
             widgetLayout.setTag(lmsItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
@@ -808,7 +819,7 @@ public class LmsFragment
 
                 subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
 
-                lmsScrollLayout.addView(subLayoutContainer);
+                lmsScrollLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
             }
 
             ImageView categoryImageView = getImageView(0, 0, 0, 0);
@@ -816,7 +827,7 @@ public class LmsFragment
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.setTag(lmsItem);
             widgetLayout.addView(categoryImageView);
@@ -846,7 +857,6 @@ public class LmsFragment
         LmsItem lmsItem = null;
 
         LinearLayout dItemContainer = getSubLayoutContainer(LinearLayout.VERTICAL);
-
         subLayoutContainer.addView(dItemContainer);
 
         for (lmsItemNdx = 0; lmsItemNdx < lastListItem; lmsItemNdx++) {
@@ -860,12 +870,12 @@ public class LmsFragment
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, 0, categoryImageView);
             widgetLayout.setTag(lmsItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 
-            dItemContainer.addView(widgetLayout);
+            dItemContainer.addView(widgetLayout, widgetLayoutParms);
         }
 
     } // padWithDLand()
@@ -898,7 +908,7 @@ public class LmsFragment
             if (firstSubInContainer) {
 
                 subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
-                lmsScrollLayout.addView(subLayoutContainer);
+                lmsScrollLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
             }
 
             ImageView categoryImageView = getImageView(0, 0, 0, 0);
@@ -906,7 +916,7 @@ public class LmsFragment
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
             widgetLayout.setTag(lmsItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
