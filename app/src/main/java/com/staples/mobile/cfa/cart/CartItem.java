@@ -4,7 +4,8 @@
 
 package com.staples.mobile.cfa.cart;
 
-import com.staples.mobile.cfa.widget.QuantityEditor;
+import com.staples.mobile.cfa.widget.HackEditor;
+//import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.easyopen.model.cart.Image;
 import com.staples.mobile.common.access.easyopen.model.cart.Pricing;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
@@ -21,7 +22,8 @@ public class CartItem {
     int minExpectedBusinessDays;
     int maxExpectedBusinessDays;
 
-    QuantityEditor qtyWidget;
+//    QuantityEditor qtyWidget;
+    HackEditor qtyWidget;
 
     // Constructor
     public CartItem(Product product) {
@@ -153,11 +155,19 @@ public class CartItem {
         setProposedQty(getQuantity());
     }
 
-    public QuantityEditor getQtyWidget() {
+//    public QuantityEditor getQtyWidget() {
+//        return qtyWidget;
+//    }
+//
+//    public void setQtyWidget(QuantityEditor qtyWidget) {
+//        this.qtyWidget = qtyWidget;
+//    }
+
+    public HackEditor getQtyWidget() {
         return qtyWidget;
     }
 
-    public void setQtyWidget(QuantityEditor qtyWidget) {
+    public void setQtyWidget(HackEditor qtyWidget) {
         this.qtyWidget = qtyWidget;
     }
 

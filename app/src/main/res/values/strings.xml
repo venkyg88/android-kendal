@@ -22,9 +22,11 @@
     <string name="credit_card_title">Credit Cards</string>
     <string name="add_credit_card_title">Add Credit Cards</string>
     <string name="address_title">Addresses</string>
-    <string name="add_address_title">New Shipping Address</string>
-    <string name="edit_address_title">Shipping Address</string>
-    <string name="edit_credit_card_title">Credit Card</string>
+    <string name="add_address_title">New Address</string>
+    <string name="edit_address_title">Update Address</string>
+    <string name="edit_credit_card_title">Update Credit Card</string>
+    <string name="email_title">Email</string>
+    <string name="username_title">User name</string>
 
     <string name="cart_title">Cart</string>
     <string name="checkout_title">Checkout</string>
@@ -81,6 +83,18 @@
     <string name="accessories">Accessories</string>
     <string name="remove">Remove</string>
 
+    <!-- Availability -->
+    <string name="avail_nothing">Nothing found</string>
+    <string name="avail_skuset">Varies</string>
+    <string name="avail_retailonly">Retail only</string>
+    <string name="avail_specialorder">Retail only (special order)</string>
+    <string name="avail_instock">In stock</string>
+    <string name="avail_outofstock">Out of stock</string>
+
+    <string name="store_search_hint">Search Zip, City or Street</string>
+    <string name="no_stores_title">No Results</string>
+    <string name="no_stores_message">We were unable to find any stores near the location provided.</string>
+    <string name="no_stores_ok">Ok</string>
 
     <string name="would_you">Would you recommend this to a friend?</string>
 

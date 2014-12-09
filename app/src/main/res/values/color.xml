@@ -15,5 +15,6 @@
 	<color name="text_white">#FFFFFF</color>
 	<color name="text_light_gray">#BEC0BB</color>
 	<color name="text_orange_light">#FFA080</color>
-    <color name="bg_white">#FFFFFF</color>
+    <color name="text_gray">#808080</color>
+
 </resources>

@@ -5,6 +5,7 @@
 package com.staples.mobile.cfa.cart;
 
 import android.animation.LayoutTransition;
+import android.content.Context;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -26,7 +28,8 @@ import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileDetails;
-import com.staples.mobile.cfa.widget.QuantityEditor;
+import com.staples.mobile.cfa.widget.HackEditor;
+//import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -148,6 +151,9 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         // inflate and get child views
         View view = inflater.inflate(R.layout.cart_fragment, container, false);
 
+        // temporary
+        try {
+
         emptyCartMsg = view.findViewById(R.id.empty_cart_msg);
         cartFreeShippingMsg = (TextView) view.findViewById(R.id.free_shipping_msg);
         couponsRewardsLayout = view.findViewById(R.id.coupons_rewards_layout);
@@ -234,12 +240,20 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         couponsRewardsLayout.setOnClickListener(this);
         view.findViewById(R.id.coupon_add_button).setOnClickListener(this);
 
+        // temporary
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return view;
     }
 
 
     @Override
     public void onResume() {
+        // temporary
+        try {
+
         super.onResume();
 
         // update action bar
@@ -248,6 +262,12 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
         //initialize cart based on what's been returned from api so far
         setAdapterListItems();
+
+            // temporary
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -258,6 +278,9 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
     /** Sets item count indicator on cart icon and cart drawer title */
     private void updateCartFields() {
+        // temporary
+        try {
+
         Resources r = getResources();
 
         int totalItemCount = 0;
@@ -349,6 +372,12 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
                 cartSubtotalLayout.setVisibility(View.VISIBLE);
                 cartProceedToCheckout.setVisibility(View.VISIBLE);
             }
+        }
+
+
+        // temporary
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -737,25 +766,37 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     /************* widget listeners ************/
 
 
-    /** listener class for text change */
-    class QtyChangeListener implements QuantityEditor.OnQtyChangeListener {
+//    /** listener class for qty change */
+//    class QtyChangeListener implements QuantityEditor.OnQtyChangeListener {
+//        @Override
+//        public void onQtyChange(View view, boolean validSpinnerValue) {
+//            CartItem cartItem = cartAdapter.getItem((Integer) view.getTag());
+//
+//            // default proposed qty to orig in case new value not parseable;
+//            cartItem.setProposedQty(cartItem.getQtyWidget().getQtyValue(cartItem.getQuantity()));
+//
+//            // if valid spinner value, then automatically update the cart
+////            if (validSpinnerValue) {
+////                updateItemQty(cartItem);
+////            } else { // otherwise notify data set changed to make update button appear or disappear
+////                notifyDataSetChanged();
+////            }
+//            updateItemQty(cartItem);
+//        }
+//    }
+
+    /** listener class for qty change */
+    class QtyChangeListener implements HackEditor.OnQtyChangeListener {
         @Override
-        public void onQtyChange(View view, boolean validSpinnerValue) {
+        public void onQtyChange(View view, int value) {
             CartItem cartItem = cartAdapter.getItem((Integer) view.getTag());
 
             // default proposed qty to orig in case new value not parseable;
-            cartItem.setProposedQty(cartItem.getQtyWidget().getQtyValue(cartItem.getQuantity()));
+            cartItem.setProposedQty(value);
 
-            // if valid spinner value, then automatically update the cart
-//            if (validSpinnerValue) {
-//                updateItemQty(cartItem);
-//            } else { // otherwise notify data set changed to make update button appear or disappear
-//                notifyDataSetChanged();
-//            }
             updateItemQty(cartItem);
         }
     }
-
 
     /** listener class for item deletion button */
     class QtyDeleteButtonListener implements View.OnClickListener {
@@ -764,7 +805,9 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         public void onClick(View view) {
             CartItem cartItem = cartAdapter.getItem((Integer) view.getTag());
 
-            cartItem.getQtyWidget().hideSoftKeyboard();
+//            cartItem.getQtyWidget().hideSoftKeyboard();
+            hideSoftKeyboard(view);
+
 
             // delete from cart via API
             cartItem.setProposedQty(0);
@@ -772,6 +815,11 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
 //            cartItem.getQtyWidget().setQtyValue(0);  // this will trigger selection change which will handle the rest
         }
+    }
+
+    public void hideSoftKeyboard(View view) {
+        InputMethodManager keyboard = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
 //    /** listener class for quantity update button */

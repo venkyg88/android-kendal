@@ -37,7 +37,6 @@ public class ProfileDetails implements Callback<MemberDetail> {
         public void onAddressSelected(String id);
     }
 
-
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
     private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
@@ -155,28 +154,6 @@ public class ProfileDetails implements Callback<MemberDetail> {
             callback.onProfileRefresh(null);
         }
     }
-
-
-//    public static void mergeMember(Member member) {
-//
-//        if(ProfileDetails.member == null){
-//            ProfileDetails.member = member;
-//        } else {
-//            if(member.getUserName()!=null){
-//                member.setCreditCard(ProfileDetails.member.getCreditCard());
-//                member.setAddress(ProfileDetails.member.getAddress());
-//                ProfileDetails.member = member;
-//            }
-//
-//            if(member.getAddress()!=null){
-//                ProfileDetails.member.setAddress(member.getAddress());
-//            }
-//
-//            if(member.getCreditCard()!=null){
-//                ProfileDetails.member.setCreditCard(member.getCreditCard());
-//            }
-//        }
-//    }
 
     public static void resetMember() {
         ProfileDetails.setMember(null);

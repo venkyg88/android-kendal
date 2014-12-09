@@ -203,7 +203,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:hint="1"
-            maxQuantity="10"
+            android:maxLength="4"
+            app:maxQuantity="10"
             app:popupWidth="120dp"/>
         <Button
             android:id="@+id/add_to_cart"
