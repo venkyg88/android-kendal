@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:orientation="vertical"
+>
+	<ScrollView
+		android:id="@+id/configScrollView"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+        android:layout_margin="0dp"
+        android:padding="0dp"
+        >
+
+		<LinearLayout
+			android:id="@+id/configScrollLayout"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+            android:layout_margin="0dp"
+			android:orientation="vertical"
+			android:background="@color/background_extra_light_gray"
+            android:padding="0dp"
+        >
+
+		</LinearLayout>
+
+	</ScrollView>
+
+</com.staples.mobile.cfa.widget.AnimatorLayout>
