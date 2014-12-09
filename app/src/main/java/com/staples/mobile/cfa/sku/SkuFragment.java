@@ -37,7 +37,6 @@ import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.browse.Availability;
 import com.staples.mobile.common.access.easyopen.model.browse.BulletDescription;
 import com.staples.mobile.common.access.easyopen.model.browse.Description;
 import com.staples.mobile.common.access.easyopen.model.browse.Image;
@@ -78,6 +77,34 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
     private static final int MAXFETCH = 50;
 
     private static SimpleDateFormat iso8601;
+
+    public enum Availability {
+        NOTHING      (R.string.avail_nothing),
+        SKUSET       (R.string.avail_skuset),
+        RETAILONLY   (R.string.avail_retailonly),
+        SPECIALORDER (R.string.avail_specialorder),
+        INSTOCK      (R.string.avail_instock),
+        OUTOFSTOCK   (R.string.avail_outofstock);
+
+        private int resid;
+
+        private Availability(int resid) {
+            this.resid = resid;
+        }
+
+        public static Availability getProductAvailability(Product product) {
+            if (product==null) return(NOTHING);
+            if (product.getProduct()!=null) return(SKUSET);
+            if (product.isRetailOnly()) return(RETAILONLY);
+            if (product.isRetailOnlySpecialOrder()) return(SPECIALORDER);
+            if (product.isInStock()) return(INSTOCK);
+            return(OUTOFSTOCK);
+        }
+
+        public int getTextResId() {
+            return(resid);
+        }
+    }
 
     private String identifier;
 
