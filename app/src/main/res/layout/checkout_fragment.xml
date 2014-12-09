@@ -87,8 +87,6 @@
             android:layout_alignParentRight="true"
             android:paddingTop="0dp"
             android:paddingBottom="0dp"
-            android:text="TBD"
-            android:textColor="#FF0000"
             />
     </RelativeLayout>
 

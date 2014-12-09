@@ -118,7 +118,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     //private QtyUpdateButtonListener qtyUpdateButtonListener;
 
 
-    DecimalFormat currencyFormat;
+    private DecimalFormat currencyFormat;
 
 
     // api listeners
@@ -276,6 +276,21 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         cartAdapter = null;
     }
 
+
+    /** returns sum of adjusted amounts for rewards and coupons applied to cart */
+    public float getCouponsRewardsAdjustedAmount() {
+        float totalAdjustedAmount = 0;
+        // coupons
+        if (cart != null && cart.getCoupon() != null) {
+            for (Coupon c : cart.getCoupon()) {
+                totalAdjustedAmount += c.getAdjustedAmount();
+            }
+        }
+        // todo: rewards
+
+        return totalAdjustedAmount;
+    }
+
     /** Sets item count indicator on cart icon and cart drawer title */
     private void updateCartFields() {
         // temporary
@@ -292,13 +307,9 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         if (cart != null) {
             totalItemCount = cart.getTotalItems();
             couponAdapter.clear();
-            if (cart.getCoupon() != null) {
-                for (Coupon coupon : cart.getCoupon()) {
-                    couponsRewardsAmount += coupon.getAdjustedAmount();
-                }
-                if (cart.getCoupon().size() > 0) {
-                    couponAdapter.addAll(cart.getCoupon());
-                }
+            couponsRewardsAmount = getCouponsRewardsAdjustedAmount();
+            if (cart.getCoupon() != null && cart.getCoupon().size() > 0) {
+                couponAdapter.addAll(cart.getCoupon());
             }
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();

@@ -26,6 +26,7 @@ import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidatio
 import com.staples.mobile.common.access.easyopen.model.checkout.SubmitOrderRequest;
 import com.staples.mobile.common.access.easyopen.model.checkout.SubmitOrderResponse;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import retrofit.Callback;
@@ -47,12 +48,13 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
     private static final int MAXFETCH = 50;
 
     // bundle param keys
+    public static final String BUNDLE_PARAM_COUPONSREWARDS = "couponsRewards";
     public static final String BUNDLE_PARAM_ITEMSUBTOTAL = "itemSubtotal";
     public static final String BUNDLE_PARAM_PRETAXSUBTOTAL = "preTaxSubtotal";
     public static final String BUNDLE_PARAM_SHIPPING_CHARGE = "shippingCharge";
     public static final String BUNDLE_PARAM_TAX = "tax";
 
-    NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+    private DecimalFormat currencyFormat;
 
     // saving around Activity object since getActivity() returns null after user navigates away from
     // fragment, but api call may still be returning
@@ -78,6 +80,7 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
 
 
     // data initialized from cart drawer
+    private Float couponsRewardsAmount;
     private Float itemSubtotal;
     private Float pretaxSubtotal;
 
@@ -85,7 +88,13 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
     // api listeners
     PrecheckoutListener precheckoutListener;
 
-
+    protected CheckoutFragment() {
+        // set up currency format to use minus sign for negative amounts (needed for coupons)
+        currencyFormat = (DecimalFormat)NumberFormat.getCurrencyInstance();
+        String symbol = currencyFormat.getCurrency().getSymbol();
+        currencyFormat.setNegativePrefix("-"+symbol);
+        currencyFormat.setNegativeSuffix("");
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -113,6 +122,7 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
 
         // get checkout info from bundle
         Bundle checkoutBundle = this.getArguments();
+        couponsRewardsAmount = checkoutBundle.getFloat(BUNDLE_PARAM_COUPONSREWARDS);
         itemSubtotal = checkoutBundle.getFloat(BUNDLE_PARAM_ITEMSUBTOTAL);
         pretaxSubtotal = checkoutBundle.getFloat(BUNDLE_PARAM_PRETAXSUBTOTAL);
         shippingCharge = checkoutBundle.getString(BUNDLE_PARAM_SHIPPING_CHARGE);
@@ -120,6 +130,9 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
         if (tax == -1) {
             tax = null;
         }
+
+        // set coupons/rewards adjusted amount
+        couponsRewardsVw.setText(currencyFormat.format(couponsRewardsAmount));
 
         // set the item subtotal
         itemSubtotalVw.setText(currencyFormat.format(itemSubtotal));
@@ -218,7 +231,7 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
         this.tax = tax;
         shippingChargeVw.setText(formatShippingCharge(shippingCharge, currencyFormat));
         taxVw.setText(currencyFormat.format(tax));
-        checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax));
+        checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax - couponsRewardsAmount));
         taxLayout.setVisibility(View.VISIBLE);
         shippingChargeLayout.setVisibility(View.VISIBLE);
         submissionLayout.setVisibility(View.VISIBLE);
