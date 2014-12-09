@@ -83,6 +83,14 @@
     <string name="accessories">Accessories</string>
     <string name="remove">Remove</string>
 
+    <!-- Availability -->
+    <string name="avail_nothing">Nothing found</string>
+    <string name="avail_skuset">Varies</string>
+    <string name="avail_retailonly">Retail only</string>
+    <string name="avail_specialorder">Retail only (special order)</string>
+    <string name="avail_instock">In stock</string>
+    <string name="avail_outofstock">Out of stock</string>
+
     <string name="store_search_hint">Search Zip, City or Street</string>
     <string name="no_stores_title">No Results</string>
     <string name="no_stores_message">We were unable to find any stores near the location provided.</string>
