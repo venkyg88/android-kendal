@@ -10,42 +10,109 @@
         android:id="@+id/cart_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:animateLayoutChanges="true"
-        android:orientation="vertical"
-        android:background="#ffffff">
+        android:orientation="vertical">
+
+        <!--free shipping message-->
         <TextView
             android:id="@+id/free_shipping_msg"
             android:layout_width="match_parent"
             style="@style/CartHeader"
-            android:textColor="#ffffff"
+            android:textColor="@color/text_white"
             />
+
+        <!--empty cart message-->
         <TextView
             android:id="@+id/empty_cart_msg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
             android:paddingTop="40dp"
             android:textSize="20dp"
             android:text="@string/empty_cart_msg"
             android:visibility="gone"
             />
+
+        <!--cart listview-->
         <ListView
             android:id="@+id/cart_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_gravity="start"
             android:choiceMode="singleChoice"
-            android:background="#ffffff"/>
+            android:background="@color/background_white"/>
+
+        <!--coupon & rewards heading -->
+        <RelativeLayout
+            android:id="@+id/coupons_rewards_layout"
+            style="@style/DrawerStyle"
+            android:layout_width="match_parent"
+            android:background="@color/background_extra_light_gray">
+            <TextView
+                style="@style/DrawerStyle"
+                android:layout_width="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="@string/coupons_rewards"
+                android:textColor="@color/text_blue"
+                />
+            <TextView
+                android:id="@+id/coupons_rewards_value"
+                style="@style/DrawerStyle"
+                android:layout_width="wrap_content"
+                android:layout_alignParentRight="true"
+                android:textColor="@color/text_blue"
+                />
+        </RelativeLayout>
+        <!--add coupon-->
+        <RelativeLayout
+            android:id="@+id/coupon_addition_layout"
+            style="@style/DrawerStyle"
+            android:layout_width="match_parent"
+            android:background="@color/background_extra_light_gray"
+            android:visibility="gone">
+            <EditText
+                android:id="@+id/coupon_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_gravity="center_vertical"
+                android:hint="@string/coupon_code_hint"
+                android:inputType="number"
+                android:imeOptions="actionDone"
+                android:maxLength="10"/>
+            <Button
+                android:id="@+id/coupon_add_button"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center_vertical"
+                android:text="@string/add"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                />
+        </RelativeLayout>
+        <!-- listview of existing coupons -->
+        <ListView
+            android:id="@+id/coupon_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/background_extra_light_gray"
+            android:visibility="gone"/>
+
+
+        <!--shipping info-->
         <RelativeLayout
             android:id="@+id/cart_shipping_layout"
-            style="@style/CartHeader"
+            style="@style/DrawerStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:background="@color/background_light_gray">
             <TextView
-                android:id="@+id/cart_shipping_label"
-                style="@style/CartHeader"
+                style="@style/DrawerStyle"
                 android:layout_width="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:text="@string/shipping"
@@ -54,21 +121,23 @@
                 />
             <TextView
                 android:id="@+id/cart_shipping"
-                style="@style/CartHeader"
+                style="@style/DrawerStyle"
                 android:layout_width="wrap_content"
                 android:layout_alignParentRight="true"
                 android:paddingTop="2dp"
                 android:paddingBottom="0dp"
                 />
         </RelativeLayout>
+
+        <!--subtotal-->
         <RelativeLayout
             android:id="@+id/cart_subtotal_layout"
-            style="@style/CartHeader"
+            style="@style/DrawerStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:background="@color/background_light_gray">
             <TextView
-                android:id="@+id/cart_subtotal_label"
-                style="@style/CartHeader"
+                style="@style/DrawerStyle"
                 android:layout_width="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:paddingTop="0dp"
@@ -76,13 +145,15 @@
                 android:text="@string/pretax_subtotal" />
             <TextView
                 android:id="@+id/cart_subtotal"
-                style="@style/CartHeader"
+                style="@style/DrawerStyle"
                 android:layout_width="wrap_content"
                 android:layout_alignParentRight="true"
                 android:paddingTop="0dp"
                 android:paddingBottom="2dp"
                 />
         </RelativeLayout>
+
+        <!--checkout button-->
         <TextView
             android:id="@+id/action_checkout"
             android:layout_height="wrap_content"
@@ -92,8 +163,10 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:textSize="24dp"
-            android:textColor="#ffffff"
-            android:background="#3f3f3f"/>
+            android:textColor="@color/text_white"
+            android:background="@color/background_red_submission"/>
+
+
     </com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay>
     <RelativeLayout
         android:id="@+id/cart_progress_overlay"

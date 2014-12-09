@@ -4,10 +4,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <EditText
+        android:id="@+id/store_search"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="6dp"
-        android:hint="Search field placeholder"/>
+        android:inputType="textPostalAddress"
+        android:imeOptions="actionSearch"
+        android:singleLine="true"
+        android:hint="@string/search"/>
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"

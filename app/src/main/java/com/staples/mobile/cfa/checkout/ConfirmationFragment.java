@@ -16,7 +16,6 @@ import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.login.LoginHelper;
-import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -56,7 +55,6 @@ public class ConfirmationFragment extends BaseFragment implements View.OnClickLi
     // fragment, but api call may still be returning
     private MainActivity activity;
 
-    private LinearLayoutWithProgressOverlay confirmationLayout;
     private TextView orderNumberVw;
 
 //    private TextView shippingAddrVw;
@@ -82,7 +80,7 @@ public class ConfirmationFragment extends BaseFragment implements View.OnClickLi
 
 
     // api listeners
-    OrderStatusListener orderStatusListener;
+//    OrderStatusListener orderStatusListener;
 
 
     /**
@@ -108,8 +106,6 @@ public class ConfirmationFragment extends BaseFragment implements View.OnClickLi
 
         // inflate and get child views
         View view = inflater.inflate(R.layout.confirmation_fragment, container, false);
-        confirmationLayout = (LinearLayoutWithProgressOverlay) view.findViewById(R.id.confirmation);
-        confirmationLayout.setCartProgressOverlay(view.findViewById(R.id.checkout_progress_overlay));
         orderNumberVw = (TextView) view.findViewById(R.id.order_number);
 //        shippingAddrVw = (TextView) view.findViewById(R.id.checkout_shipping_addr);
 //        paymentMethodVw = (TextView) view.findViewById(R.id.checkout_payment_method);
@@ -136,7 +132,7 @@ public class ConfirmationFragment extends BaseFragment implements View.OnClickLi
         secureApi = Access.getInstance().getEasyOpenApi(true);
 
         // create api listeners
-        orderStatusListener = new OrderStatusListener();
+//        orderStatusListener = new OrderStatusListener();
 
 
         // query for order status
@@ -155,7 +151,7 @@ public class ConfirmationFragment extends BaseFragment implements View.OnClickLi
 
         // update action bar
         activity.showOrderConfirmationActionBarEntities();
-        activity.setActionBarTitle(getResources().getString(R.string.order_confirmation_title));
+        activity.showActionBar(R.string.order_confirmation_title, 0, null);
     }
 
     @Override
@@ -168,11 +164,11 @@ public class ConfirmationFragment extends BaseFragment implements View.OnClickLi
     }
 
     private void showProgressIndicator() {
-        confirmationLayout.getProgressIndicator().showProgressIndicator();
+        activity.showProgressIndicator();
     }
 
     private void hideProgressIndicator() {
-        confirmationLayout.getProgressIndicator().hideProgressIndicator();
+        activity.hideProgressIndicator();
     }
 
 
@@ -180,25 +176,25 @@ public class ConfirmationFragment extends BaseFragment implements View.OnClickLi
 
     /************* api listeners ************/
 
-    /** listens for completion of order status  */
-    class OrderStatusListener implements Callback<OrderStatusContents> {
-
-        @Override
-        public void success(OrderStatusContents orderStatusContents, Response response) {
-
-            Toast.makeText(activity, "Order status successfully retrieved", Toast.LENGTH_SHORT).show();
-
-            hideProgressIndicator();
-        }
-
-        @Override
-        public void failure(RetrofitError retrofitError) {
-            String msg = "Error retrieving order status: " + ApiError.getErrorMessage(retrofitError);
-            Log.d(TAG, msg);
-            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
-            hideProgressIndicator();
-        }
-    }
+//    /** listens for completion of order status  */
+//    class OrderStatusListener implements Callback<OrderStatusContents> {
+//
+//        @Override
+//        public void success(OrderStatusContents orderStatusContents, Response response) {
+//
+//            Toast.makeText(activity, "Order status successfully retrieved", Toast.LENGTH_SHORT).show();
+//
+//            hideProgressIndicator();
+//        }
+//
+//        @Override
+//        public void failure(RetrofitError retrofitError) {
+//            String msg = "Error retrieving order status: " + ApiError.getErrorMessage(retrofitError);
+//            Log.d(TAG, msg);
+//            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+//            hideProgressIndicator();
+//        }
+//    }
 
 
 }

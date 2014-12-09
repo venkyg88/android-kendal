@@ -8,8 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="6dp"
-    android:background="#ffffff">
+    android:padding="6dp">
 
     <!--shipping estimate info-->
     <FrameLayout
@@ -35,15 +34,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="6dp"
-    android:background="#ffffff">
+    android:padding="6dp">
     <ImageView
         android:id="@+id/cartitem_image"
         android:layout_width="@dimen/image_square_size"
         android:layout_height="@dimen/image_square_size"
         android:layout_marginRight="6dp"/>
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical">
@@ -57,21 +55,33 @@
         <com.staples.mobile.cfa.widget.PriceSticker
             android:id="@+id/cartitem_price"
             style="@style/SmallPriceSticker"/>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/cartitem_qty_label"
-                android:textSize="16sp"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/cartitem_delete"
+                android:layout_width="34dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center_vertical|left"
+                android:text="X"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif"
+                android:paddingTop="0dp"
+                android:paddingBottom="0dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="0dp"
+                />
+            <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:text="@string/cartitem_qty_label"-->
+            <!--android:textSize="16sp"/>-->
             <com.staples.mobile.cfa.widget.QuantityEditor
                 android:id="@+id/cartitem_qty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="center_vertical|right"
                 android:textSize="18sp"
                 android:paddingRight="6dp"
                 app:maxSpinnerValue="9"
@@ -89,20 +99,7 @@
                 <!--android:paddingRight="8dp"-->
                 <!--android:visibility="gone"-->
                 <!--/>-->
-            <Button
-                android:id="@+id/cartitem_delete"
-                android:layout_width="34dp"
-                android:layout_height="32dp"
-                android:layout_gravity="center_vertical"
-                android:text="X"
-                android:textSize="14dp"
-                android:fontFamily="sans-serif"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:paddingLeft="0dp"
-                android:paddingRight="0dp"
-            />
-        </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
 </LinearLayout>
 

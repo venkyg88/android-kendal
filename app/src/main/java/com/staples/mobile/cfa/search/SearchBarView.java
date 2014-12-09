@@ -1,18 +1,15 @@
 package com.staples.mobile.cfa.search;
 
 import android.content.Context;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,9 +28,6 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
     private static final int KEYDELAY = 250; // milliseconds
 
     private MainActivity activity;
-    private View header;
-    private ImageView icon;
-    private Handler handler;
     private StartSuggest startSuggest;
     private SuggestTask suggestTask;
     private Future<?> suggestPending;
@@ -56,23 +50,18 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
     }
 
     public void initSearchBar(){
-        // Find elements by going up a level then down
-        View parent = (View) getParent();
-        header = parent.findViewById(R.id.header);
-        icon = (ImageView) parent.findViewById(R.id.search_icon);
+        activity.showActionBar(0, R.drawable.ic_search_white, this);
 
         // Set listeners
         addTextChangedListener(this);
         setOnEditorActionListener(this);
         setOnItemClickListener(this);
-        icon.setOnClickListener(this);
 
         adapter = new SearchBarAdapter(activity, this);
         setAdapter(adapter);
         adapter.loadSearchHistory();
 
         // Tasks
-        handler = new Handler();
         startSuggest = new StartSuggest();
         suggestTask = new SuggestTask(this);
         finishSuggest = new FinishSuggest();
@@ -81,10 +70,8 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
     }
 
     private void openSearchBar() {
-        header.setVisibility(View.GONE);
         setVisibility(View.VISIBLE);
-
-        icon.setImageResource(R.drawable.ic_action_cancel);
+        activity.showActionBar(0, R.drawable.ic_close_white, this);
 
         setText(null);
         requestFocus();
@@ -97,10 +84,8 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
     }
 
     private void closeSearchBar() {
-        header.setVisibility(View.VISIBLE);
         setVisibility(View.GONE);
-
-        icon.setImageResource(R.drawable.ic_search);
+        activity.showActionBar(R.string.staples, R.drawable.ic_search_white, this);
 
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getWindowToken(), 0);
@@ -122,7 +107,7 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.search_icon:
+            case R.id.option_icon:
                 if (open) {
                     if (getText().length()==0) closeSearchBar();
                     else  setText(null);
@@ -139,10 +124,8 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         keyword = s.toString().trim();
 
-        if (handler!=null) {
-            handler.removeCallbacks(startSuggest);
-            if (open) handler.postDelayed(startSuggest, KEYDELAY);
-        }
+        removeCallbacks(startSuggest);
+        if (open) postDelayed(startSuggest, KEYDELAY);
     }
 
     @Override
@@ -153,7 +136,6 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
             doSearch(null);
-            return true;
         }
         return false;
     }
@@ -169,7 +151,6 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
 
         @Override
         public void run() {
-
             // If key didn't change just return
             String key = SuggestTask.cleanKeyword(keyword);
             if ((lastKey==null && key==null) ||
@@ -229,7 +210,7 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
 
     public void callback(ArrayList<String> suggestions) {
         finishSuggest.setSuggestions(suggestions);
-        handler.post(finishSuggest);
+        post(finishSuggest);
     }
 
     public void saveSearchHistory() {

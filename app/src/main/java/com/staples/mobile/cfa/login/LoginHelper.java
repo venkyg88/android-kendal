@@ -12,12 +12,10 @@ import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
-import com.staples.mobile.common.access.easyopen.model.login.EmptyResponse;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Vector;
 
 import retrofit.Callback;
@@ -36,7 +34,7 @@ public class LoginHelper {
     public static final String CLIENT_ID = "JxP9wlnIfCSeGc9ifRAAGku7F4FSdErd"; // a client_id that works in all env incl prod
     private static final String LOCALE = "en_US";
 
-    private Activity activity;
+    private MainActivity activity;
     private EasyOpenApi easyOpenApi;
     Button signInText;
 
@@ -45,7 +43,7 @@ public class LoginHelper {
     private static List<OnLoginCompleteListener> loginCompleteListeners = new Vector<OnLoginCompleteListener>();
 
 
-    public LoginHelper(Activity activity) {
+    public LoginHelper(MainActivity activity) {
         this.activity = activity;
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
     }
@@ -113,11 +111,13 @@ public class LoginHelper {
     //cloned method to take entered username and password..not to break if any one using the above method
     public void getUserTokens(String username, String password)
     {
+        activity.showProgressIndicator();
         RegisteredUserLogin user = new RegisteredUserLogin(username,password);
         easyOpenApi.registeredUserLogin(user, RECOMMENDATION, STORE_ID, CLIENT_ID, new Callback<TokenObject>() {
 
                     @Override
                     public void success(TokenObject tokenObjectReturned, Response response) {
+                        activity.hideProgressIndicator();
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
                         notifyListeners(false);
@@ -132,6 +132,7 @@ public class LoginHelper {
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
+                        activity.hideProgressIndicator();
                         Toast.makeText(activity, "Failed to Login As Registered User", Toast.LENGTH_LONG).show();
                         Log.i("Fail Message For Registered User", " " + retrofitError.getMessage());
                         Log.i("Post URL address For Registered User", " " + retrofitError.getUrl());
@@ -142,12 +143,14 @@ public class LoginHelper {
 
     public void registerUser(String emailAddress, String username, String password)
     {
+        activity.showProgressIndicator();
         CreateUserLogin user = new CreateUserLogin(emailAddress, username, password);
         Log.i("Register User object", " " + user);
         easyOpenApi.registerUser(user, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<TokenObject>() {
 
                     @Override
                     public void success(TokenObject tokenObjectReturned, Response response) {
+                        activity.hideProgressIndicator();
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
                         notifyListeners(false);
@@ -162,6 +165,7 @@ public class LoginHelper {
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
+                        activity.hideProgressIndicator();
                         Toast.makeText(activity, "Failed to Register User" + "\n" + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_LONG).show();
                         Log.i("Fail Message to Register User", " " + retrofitError.getMessage());
                         Log.i("Post URL address For Register User", " " + retrofitError.getUrl());
