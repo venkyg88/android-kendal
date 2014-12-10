@@ -43,6 +43,9 @@ import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
+import com.staples.mobile.common.access.easyopen.model.member.InkRecyclingDetail;
+import com.staples.mobile.common.access.easyopen.model.member.Reward;
+import com.staples.mobile.common.access.easyopen.model.member.RewardDetail;
 import com.staples.mobile.common.access.lms.LmsManager;
 
 import java.text.DecimalFormat;
@@ -151,7 +154,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         // inflate and get child views
         View view = inflater.inflate(R.layout.cart_fragment, container, false);
 
-        // temporary
+        // temporary try-catch
         try {
 
         emptyCartMsg = view.findViewById(R.id.empty_cart_msg);
@@ -251,7 +254,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     public void onResume() {
-        // temporary
+        // temporary try-catch
         try {
 
         super.onResume();
@@ -280,20 +283,56 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     /** returns sum of adjusted amounts for rewards and coupons applied to cart */
     public float getCouponsRewardsAdjustedAmount() {
         float totalAdjustedAmount = 0;
-        // coupons
+        // coupons & rewards
         if (cart != null && cart.getCoupon() != null) {
             for (Coupon c : cart.getCoupon()) {
                 totalAdjustedAmount += c.getAdjustedAmount();
             }
         }
-        // todo: rewards
-
         return totalAdjustedAmount;
+    }
+
+    /** extracts list of rewards from profile */
+    private List<Reward> getProfileRewards() {
+        List<Reward> profileRewards = new ArrayList<Reward>();
+        if (ProfileDetails.getMember() != null) {
+            if (ProfileDetails.getMember().getInkRecyclingDetails() != null) {
+                for (InkRecyclingDetail detail : ProfileDetails.getMember().getInkRecyclingDetails()) {
+                    if (detail.getReward() != null) {
+                        for (Reward reward : detail.getReward()) {
+                            profileRewards.add(reward);
+                        }
+                    }
+                }
+            }
+            if (ProfileDetails.getMember().getRewardDetails() != null) {
+                for (RewardDetail detail : ProfileDetails.getMember().getRewardDetails()) {
+                    if (detail.getReward() != null) {
+                        for (Reward reward : detail.getReward()) {
+                            profileRewards.add(reward);
+                        }
+                    }
+                }
+            }
+        }
+        return profileRewards;
+    }
+
+    /** returns reward within list that matches specified code, if any */
+    private Reward findMatchingReward(List<Reward> rewards, String code) {
+        if (rewards != null) {
+            for (Reward reward : rewards) {
+                if (reward.getCode().equals(code)) {
+                    return reward;
+                }
+            }
+        }
+        return null;
     }
 
     /** Sets item count indicator on cart icon and cart drawer title */
     private void updateCartFields() {
-        // temporary
+        // temporary try-catch
         try {
 
         Resources r = getResources();
@@ -309,7 +348,12 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
             couponAdapter.clear();
             couponsRewardsAmount = getCouponsRewardsAdjustedAmount();
             if (cart.getCoupon() != null && cart.getCoupon().size() > 0) {
-                couponAdapter.addAll(cart.getCoupon());
+                List<CouponItem> couponItems = new ArrayList<CouponItem>();
+                List<Reward> profileRewards = getProfileRewards();
+                for (Coupon coupon : cart.getCoupon()) {
+                    couponItems.add(new CouponItem(coupon, findMatchingReward(profileRewards, coupon.getCode())));
+                }
+                couponAdapter.addAll(couponItems);
             }
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();
@@ -438,7 +482,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
                 }
                 break;
             case R.id.coupon_delete_button:
-                String couponCodeToDelete = couponAdapter.getItem((Integer) view.getTag()).getCode();
+                String couponCodeToDelete = couponAdapter.getItem((Integer) view.getTag()).getCoupon().getCode();
                 if (!TextUtils.isEmpty(couponCodeToDelete)) {
                     EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
                     showProgressIndicator();

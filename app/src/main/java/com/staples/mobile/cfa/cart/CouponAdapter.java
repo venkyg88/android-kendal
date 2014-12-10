@@ -6,7 +6,6 @@ package com.staples.mobile.cfa.cart;
 
 import android.app.Activity;
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,22 +14,17 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.access.easyopen.model.cart.Description;
-import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 
-public class CouponAdapter extends ArrayAdapter<Coupon> {
+public class CouponAdapter extends ArrayAdapter<CouponItem> {
 
     private static final String TAG = CouponAdapter.class.getSimpleName();
 
     private Activity activity;
     private LayoutInflater inflater;
     private int couponLayoutResId;
-
-    NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 
     // widget listeners
     private View.OnClickListener deleteButtonListener;
@@ -64,15 +58,15 @@ public class CouponAdapter extends ArrayAdapter<Coupon> {
             vh = (ViewHolder) view.getTag();
         }
 
-        Coupon coupon = getItem(position);
+        CouponItem couponItem = getItem(position);
 
         // set coupon text
-        vh.couponDescriptionVw.setText(currencyFormat.format(Math.abs(coupon.getAdjustedAmount())) + " off");
-        vh.couponCodeVw.setText("code: " + coupon.getCode());
+        vh.couponField1Vw.setText(couponItem.getCouponField1Text());
+        vh.couponField2Vw.setText(couponItem.getCouponField2Text());
 
         // associate item position with each widget
         vh.couponDeleteButton.setTag(position);
-        vh.couponCodeVw.setTag(position);
+//        vh.couponField2Vw.setTag(position);
 
         // set widget listeners
         vh.couponDeleteButton.setOnClickListener(deleteButtonListener);
@@ -87,13 +81,13 @@ public class CouponAdapter extends ArrayAdapter<Coupon> {
     /************* view holder ************/
 
     static class ViewHolder {
-        private TextView couponCodeVw;
-        private TextView couponDescriptionVw;
+        private TextView couponField1Vw;
+        private TextView couponField2Vw;
         private Button couponDeleteButton;
 
         ViewHolder(View convertView) {
-            couponCodeVw = (TextView) convertView.findViewById(R.id.coupon_item_code);
-            couponDescriptionVw = (TextView) convertView.findViewById(R.id.coupon_item_description);
+            couponField1Vw = (TextView) convertView.findViewById(R.id.coupon_item_field1);
+            couponField2Vw = (TextView) convertView.findViewById(R.id.coupon_item_field2);
             couponDeleteButton = (Button) convertView.findViewById(R.id.coupon_delete_button);
         }
     }
