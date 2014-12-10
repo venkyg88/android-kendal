@@ -4,7 +4,6 @@
 
 package com.staples.mobile.cfa.cart;
 
-import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
@@ -43,7 +42,7 @@ import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
-import com.staples.mobile.common.access.lms.LmsManager;
+import com.staples.mobile.common.access.config.AppConfigurator;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -314,10 +313,10 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();
             preTaxSubtotal = cart.getPreTaxTotal();
-            LmsManager lmsManager = new LmsManager(MainApplication.application);
-            Configurator configurator = lmsManager.getConfigurator();
+            AppConfigurator appConfigurator = new AppConfigurator(MainApplication.application);
+            Configurator configurator = appConfigurator.getConfigurator();
             if (configurator != null) {
-                freeShippingThreshold = configurator.getPromotions().getFreeShippingThreshold().floatValue();
+                freeShippingThreshold = configurator.getAppContext().getPromotions().getFreeShippingThreshold().floatValue();
             }
         }
 
