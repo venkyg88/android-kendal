@@ -1,5 +1,9 @@
 package com.staples.mobile.cfa.sku;
 
+/**
+ * Author: Yongnan Zhou
+ */
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.text.TextUtils;
@@ -20,19 +24,17 @@ public class AnimatedBarScrollView extends ScrollView
     public AnimatedBarScrollView(Context context){
         super(context);
         MainActivity mainActivity = (MainActivity) getContext();
-        mainActivity.getContainFrame().setPadding(0,0,0,0);
     }
 
     public AnimatedBarScrollView(Context context, AttributeSet attributeSet){
         super(context, attributeSet);
         MainActivity mainActivity = (MainActivity) getContext();
-        mainActivity.getContainFrame().setPadding(0,0,0,0);
     }
 
     @Override
     public void onSizeChanged(int w, int h, int oldw, int oldh){
         MainActivity mainActivity = (MainActivity) getContext();
-        mainActivity.getContainFrame().setPadding(0,0,0,0);
+        mainActivity.getContainFrame().setPadding(0, 0, 0, 0);
 
         // hide action bar title at first
         if(isFirstLoad) {
@@ -48,16 +50,18 @@ public class AnimatedBarScrollView extends ScrollView
 
         isFirstLoad = false;
 
+        // set action bar title format
         mainActivity.getTitleView().setSingleLine(true);
         mainActivity.getTitleView().setLines(1);
         mainActivity.getTitleView().setPadding(0, 0, 0, 0);
         mainActivity.getTitleView().setTextSize(18f);
         mainActivity.getTitleView().setEllipsize(TextUtils.TruncateAt.END);
+
+        mainActivity.getLeftDrawer().setPadding(0, (int) convertDpToPixel((float) 56, getContext()), 0, 0);
     }
 
     @Override
     public void onScrollChanged(int l, int t, int oldl, int oldt) {
-        //MainActivity.actionBar.getHeight() + MainActivity.splashHeight
         MainActivity mainActivity = (MainActivity) getContext();
         mainActivity.getBar().setBackgroundColor(getResources().getColor(R.color.staples_light));
 
@@ -84,5 +88,12 @@ public class AnimatedBarScrollView extends ScrollView
         DisplayMetrics metrics = resources.getDisplayMetrics();
         float dp = px / (metrics.densityDpi / 160f);
         return dp;
+    }
+
+    private float convertDpToPixel(float dp, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * (metrics.densityDpi / 160f);
+        return px;
     }
 }

@@ -226,17 +226,28 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
     public void onPause() {
         super.onPause();
 
-        // change back the color of action bar to red
-        MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.getBar().setBackgroundColor(getResources().getColor(R.color.staples_light));
-
         // change back the alpha/size/padding of action bar title
+        restoreBarTitle();
+
+        // restore contain's original offset
+        restoreBarOffset();
+    }
+
+    private void restoreBarTitle(){
+        MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.getTitleView().setPadding(20, 0, 20, 0);
         mainActivity.getTitleView().setTextSize(24f);
         mainActivity.getTitleView().setTextColor(mainActivity.getTitleView().getTextColors().withAlpha(255));
 
-        // restore contain offset
+        // change back the color of action bar to red
+        mainActivity.getBar().setBackgroundColor(getResources().getColor(R.color.staples_light));
+    }
+
+
+    private void restoreBarOffset(){
+        MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.getContainFrame().setPadding(0, Math.round(convertDpToPixel(56f, getActivity())), 0, 0);
+        mainActivity.getLeftDrawer().setPadding(0, 0, 0, 0);
     }
 
     private void addTab(TabHost.TabContentFactory dummy, Resources res, int resid, String tag) {
@@ -654,13 +665,17 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
         manager.addOnBackStackChangedListener(this);
 
         // set sku action bar on spec page
+        setSkuBarOnSpec();
+
+        // restore contain offset
+        restoreBarOffset();
+    }
+
+    private void setSkuBarOnSpec(){
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.getBar().getBackground().setAlpha(255);
         mainActivity.getTitleView().setText(SkuFragment.productName);
         mainActivity.getTitleView().setTextColor(mainActivity.getTitleView().getTextColors().withAlpha(255));
-
-        // restore contain offset
-        mainActivity.getContainFrame().setPadding(0, Math.round(convertDpToPixel(56f, getActivity())), 0, 0);
     }
 
     @Override
@@ -684,6 +699,8 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
             mainActivity.getBar().getBackground().setAlpha(AnimatedBarScrollView.currentAlpha);
             mainActivity.getTitleView().setTextColor(
                     mainActivity.getTitleView().getTextColors().withAlpha(AnimatedBarScrollView.currentAlpha));
+            // restore left drawer offset
+            mainActivity.getLeftDrawer().setPadding(0, (int) convertDpToPixel((float) 56, getActivity()), 0, 0);
         }
 
         manager.removeOnBackStackChangedListener(this);

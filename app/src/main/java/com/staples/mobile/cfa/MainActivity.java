@@ -62,9 +62,7 @@ public class MainActivity extends Activity
     private View closeButton;
     private DrawerItem homeDrawerItem;
     private LinearLayout actionBar;
-    private int screenHeight;
     private FrameLayout containFrame;
-
     private LoginHelper loginHelper;
 
     public enum Transition {
@@ -104,7 +102,10 @@ public class MainActivity extends Activity
     }
 
     public int getScreenHeight(){
-        return screenHeight;
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size.y;
     }
 
     public LinearLayout getBar(){
@@ -113,6 +114,10 @@ public class MainActivity extends Activity
 
     public FrameLayout getContainFrame(){
         return containFrame;
+    }
+
+    public View getLeftDrawer(){
+        return leftDrawer;
     }
 
     @Override
@@ -140,12 +145,6 @@ public class MainActivity extends Activity
             // otherwise, do login as guest
             loginHelper.getGuestTokens();
         }
-
-        // get height for sku scrollview animation effect
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        screenHeight = size.y;
     }
 
     @Override
@@ -420,11 +419,15 @@ public class MainActivity extends Activity
         fragment.setArguments(args);
 
         // set default sku action bar
+        initAnimatedSkuBar();
+
+        return (selectFragment(fragment, Transition.SLIDE, true));
+    }
+
+    private void initAnimatedSkuBar(){
         AnimatedBarScrollView.isFirstLoad = true;
         AnimatedBarScrollView.currentAlpha = 0;
         containFrame.setPadding(0, 0, 0, 0);
-
-        return (selectFragment(fragment, Transition.SLIDE, true));
     }
 
     public boolean selectProfileFragment() {
