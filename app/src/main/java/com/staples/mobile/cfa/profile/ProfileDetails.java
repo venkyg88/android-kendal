@@ -1,5 +1,6 @@
 package com.staples.mobile.cfa.profile;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.staples.mobile.cfa.login.LoginHelper;
@@ -11,6 +12,7 @@ import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.staples.mobile.common.access.easyopen.model.member.RewardDetail;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -92,6 +94,9 @@ public class ProfileDetails implements Callback<MemberDetail> {
                 if (memberUnderConstruction.getCreditCardCount() > 0) {
                     easyOpenApi.getMemberCreditCardDetails(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, ProfileDetails.this);
                 }
+                if (!TextUtils.isEmpty(memberUnderConstruction.getRewardsNumber()) && memberUnderConstruction.isRewardsNumberVerified()) {
+                    easyOpenApi.getMemberRewardsDashboard(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, ProfileDetails.this);
+                }
                 finishMemberIfDone();
             }
 
@@ -114,7 +119,9 @@ public class ProfileDetails implements Callback<MemberDetail> {
                     (memberUnderConstruction.getAddress() != null && memberUnderConstruction.getAddress().size() > 0);
             boolean paymentMethodsDone = memberUnderConstruction.getCreditCardCount() == 0 ||
                     (memberUnderConstruction.getCreditCard() != null && memberUnderConstruction.getCreditCard().size() > 0);
-            if (addressesDone & paymentMethodsDone) {
+            boolean rewardsDone = TextUtils.isEmpty(memberUnderConstruction.getRewardsNumber()) || !memberUnderConstruction.isRewardsNumberVerified() ||
+                    (memberUnderConstruction.getRewardDetails() != null && memberUnderConstruction.getRewardDetails().size() > 0);
+            if (addressesDone && paymentMethodsDone && rewardsDone) {
                 // if simultaneous refresh requests, only record profile returned from later request
                 // (i.e. don't overwrite the response from a later request with a tardy response from
                 // an earlier request). Notify the callback regardless.
@@ -133,14 +140,27 @@ public class ProfileDetails implements Callback<MemberDetail> {
     public void success(MemberDetail memberDetail, Response response) {
         Member memberResponse = memberDetail.getMember().get(0);
 
-        List<Address> addresses = memberResponse.getAddress();
-        if (addresses!=null) {
+        // if addresses response, set addresses
+        if (memberResponse.getAddress()!=null) {
             memberUnderConstruction.setAddress(memberResponse.getAddress());
         }
 
-        List<CCDetails> creditCards = memberResponse.getCreditCard();
-        if(creditCards !=null) {
+        // if credit cards response, set credit cards
+        if(memberResponse.getCreditCard() !=null) {
             memberUnderConstruction.setCreditCard(memberResponse.getCreditCard());
+        }
+
+        // if rewards response, set reward info
+        if (memberResponse.getRewardDetails()!=null) {
+            memberUnderConstruction.setRewardDetails(memberResponse.getRewardDetails());
+            memberUnderConstruction.setInkRecyclingDetails(memberResponse.getInkRecyclingDetails());
+            memberUnderConstruction.setYearToDateSave(memberResponse.getYearToDateSave());
+            memberUnderConstruction.setYearToDateSpend(memberResponse.getYearToDateSpend());
+            memberUnderConstruction.setDisclaimerText(memberResponse.getDisclaimerText());
+            memberUnderConstruction.setFooterBannerImage(memberResponse.getFooterBannerImage());
+            memberUnderConstruction.setFooterBannerLink(memberResponse.getFooterBannerLink());
+            memberUnderConstruction.setLastUpdate(memberResponse.getLastUpdate());
+            memberUnderConstruction.setLogoImage(memberResponse.getLogoImage());
         }
 
         finishMemberIfDone();
