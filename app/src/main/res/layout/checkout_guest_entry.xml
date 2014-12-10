@@ -11,7 +11,7 @@
 
     <!--shipping address-->
     <TextView
-        style="@style/CheckoutSubheading"
+        style="@style/GraySubheading"
         android:text="@string/shipping_addr"/>
     <include layout="@layout/add_address_fragment" android:id="@+id/shipping_addr_layout" />
 
@@ -29,7 +29,7 @@
 
     <!--payment method-->
     <TextView
-        style="@style/CheckoutSubheading"
+        style="@style/GraySubheading"
         android:layout_marginTop="20dp"
         android:text="@string/payment_method"/>
 
@@ -86,7 +86,7 @@
         android:visibility="gone">
 
         <TextView
-            style="@style/CheckoutSubheading"
+            style="@style/GraySubheading"
             android:text="@string/billing_addr"/>
 
         <!--billing address-->
