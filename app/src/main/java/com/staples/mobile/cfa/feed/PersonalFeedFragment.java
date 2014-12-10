@@ -4,6 +4,7 @@ package com.staples.mobile.cfa.feed;
  * Author: Yongnan Zhou
  */
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,11 +14,10 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 
-public class PersonalFeedFragment extends BaseFragment {
+public class PersonalFeedFragment extends Fragment {
     private static final String TAG = "PersonalFeedFragment";
     private ListView seenProductsListView;
     private SeenProductsAdapter seenProductsListAdapter;
