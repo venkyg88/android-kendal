@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.store;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,12 +30,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.channel.model.store.*;
+import com.staples.mobile.common.access.channel.model.store.Obj;
+import com.staples.mobile.common.access.channel.model.store.StoreAddress;
+import com.staples.mobile.common.access.channel.model.store.StoreData;
+import com.staples.mobile.common.access.channel.model.store.StoreHours;
+import com.staples.mobile.common.access.channel.model.store.StoreQuery;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 
 import java.util.List;
@@ -43,7 +47,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class StoreFragment extends BaseFragment implements Callback<StoreQuery>, GoogleMap.OnMarkerClickListener,
+public class StoreFragment extends Fragment implements Callback<StoreQuery>, GoogleMap.OnMarkerClickListener,
                            View.OnClickListener, AdapterView.OnItemClickListener, EditText.OnEditorActionListener {
     private static final String TAG = "StoreFragment";
 

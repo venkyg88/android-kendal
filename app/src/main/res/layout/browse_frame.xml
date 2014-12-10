@@ -4,13 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <GridView
+    <ListView
         android:id="@+id/products"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:horizontalSpacing="3dp"
         android:verticalSpacing="3dp"
-        android:choiceMode="singleChoice"/>
+        android:choiceMode="singleChoice"
+        android:background="#ffffffff"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

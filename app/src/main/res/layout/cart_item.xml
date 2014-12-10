@@ -88,7 +88,7 @@
                 <!--android:paddingRight="6dp"-->
                 <!--app:maxSpinnerValue="9"-->
                 <!--/>-->
-            <com.staples.mobile.cfa.widget.HackEditor
+            <com.staples.mobile.cfa.widget.QuantityEditor
                 android:id="@+id/cartitem_qty"
                 style="@style/HackEditorStyle"
                 android:layout_width="40dp"

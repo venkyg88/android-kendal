@@ -4,6 +4,7 @@
 
 package com.staples.mobile.cfa.cart;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
@@ -20,15 +21,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.MainApplication;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileDetails;
-import com.staples.mobile.cfa.widget.HackEditor;
-//import com.staples.mobile.cfa.widget.QuantityEditor;
+import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -55,8 +54,10 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+//import com.staples.mobile.cfa.widget.QuantityEditor;
+
 /** fragment to manage display and update of shopping cart */
-public class CartFragment extends BaseFragment implements View.OnClickListener {
+public class CartFragment extends Fragment implements View.OnClickListener {
 
     public interface AddToCartCallback {
         public void onAddToCartComplete();
@@ -172,8 +173,6 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         blueBackground = r.getColor(R.color.background_blue);
         redText = r.getColor(R.color.text_red);
         blackText = r.getColor(R.color.text_black);
-
-
 
         // create widget listeners
         qtyChangeListener = new QtyChangeListener();
@@ -796,7 +795,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 //    }
 
     /** listener class for qty change */
-    class QtyChangeListener implements HackEditor.OnQtyChangeListener {
+    class QtyChangeListener implements QuantityEditor.OnQtyChangeListener {
         @Override
         public void onQtyChange(View view, int value) {
             CartItem cartItem = cartAdapter.getItem((Integer) view.getTag());
