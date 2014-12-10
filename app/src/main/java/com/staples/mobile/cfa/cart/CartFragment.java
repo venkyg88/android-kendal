@@ -88,10 +88,8 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     private TextView cartFreeShippingMsg;
     private TextView cartShipping;
     private TextView couponsRewardsValue;
-    private EditText couponCodeEditText;
     private ListView couponListVw;
     private CouponAdapter couponAdapter;
-    private View couponAdditionLayout;
     private View couponList;
     private View emptyCartMsg;
     private View cartProceedToCheckout;
@@ -161,10 +159,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         cartFreeShippingMsg = (TextView) view.findViewById(R.id.free_shipping_msg);
         couponsRewardsLayout = view.findViewById(R.id.coupons_rewards_layout);
         couponsRewardsValue = (TextView) view.findViewById(R.id.coupons_rewards_value);
-        couponAdditionLayout = view.findViewById(R.id.coupon_addition_layout);
-//        couponListLayout = view.findViewById(R.id.coupon_list_layout);
         couponList = view.findViewById(R.id.coupon_list);
-        couponCodeEditText = (EditText) view.findViewById(R.id.coupon_code);
         cartShipping = (TextView) view.findViewById(R.id.cart_shipping);
         cartSubtotal = (TextView) view.findViewById(R.id.cart_subtotal);
         cartShippingLayout = view.findViewById(R.id.cart_shipping_layout);
@@ -186,7 +181,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
         // Initialize coupon listview
         couponListVw = (ListView) view.findViewById(R.id.coupon_list);
-        couponAdapter = new CouponAdapter(activity, R.layout.coupon_item, this);
+        couponAdapter = new CouponAdapter(activity, this, this);
         couponListVw.setAdapter(couponAdapter);
 
 
@@ -241,7 +236,6 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         // Set click listeners
         cartProceedToCheckout.setOnClickListener(this);
         couponsRewardsLayout.setOnClickListener(this);
-        view.findViewById(R.id.coupon_add_button).setOnClickListener(this);
 
         // temporary
         } catch (Exception e) {
@@ -293,7 +287,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
     }
 
     /** extracts list of rewards from profile */
-    private List<Reward> getProfileRewards() {
+    private List<Reward> createProfileRewardList() {
         List<Reward> profileRewards = new ArrayList<Reward>();
         if (ProfileDetails.getMember() != null) {
             if (ProfileDetails.getMember().getInkRecyclingDetails() != null) {
@@ -345,16 +339,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
         float freeShippingThreshold = 0;
         if (cart != null) {
             totalItemCount = cart.getTotalItems();
-            couponAdapter.clear();
             couponsRewardsAmount = getCouponsRewardsAdjustedAmount();
-            if (cart.getCoupon() != null && cart.getCoupon().size() > 0) {
-                List<CouponItem> couponItems = new ArrayList<CouponItem>();
-                List<Reward> profileRewards = getProfileRewards();
-                for (Coupon coupon : cart.getCoupon()) {
-                    couponItems.add(new CouponItem(coupon, findMatchingReward(profileRewards, coupon.getCode())));
-                }
-                couponAdapter.addAll(couponItems);
-            }
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();
             preTaxSubtotal = cart.getPreTaxTotal();
@@ -413,6 +398,33 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
             cartShipping.setTextColor("Free".equals(shipping) ? redText : blackText);
             cartSubtotal.setText(currencyFormat.format(preTaxSubtotal));
 
+            // update coupon list
+            List<CouponItem> couponItems = new ArrayList<CouponItem>();
+            List<Reward> profileRewards = createProfileRewardList();
+            // add line to add a coupon
+            couponItems.add(new CouponItem(null, null, CouponItem.TYPE_COUPON_TO_ADD));
+            // add list of applied coupons
+            if (cart.getCoupon() != null && cart.getCoupon().size() > 0) {
+                for (Coupon coupon : cart.getCoupon()) {
+                    // coupon may or may not have a matching reward
+                    Reward reward = findMatchingReward(profileRewards, coupon.getCode());
+                    if (reward != null) {
+                        profileRewards.remove(reward); // remove the applied rewards from the list
+                    }
+                    couponItems.add(new CouponItem(coupon, reward, CouponItem.TYPE_APPLIED_COUPON));
+                }
+            }
+            // if any unapplied redeemable rewards
+            if (profileRewards.size() > 0) {
+                // add redeemable rewards heading
+                couponItems.add(new CouponItem(null, null, CouponItem.TYPE_REDEEMABLE_REWARD_HEADING));
+                // add redeemable rewards
+                for (Reward reward : profileRewards) {
+                    couponItems.add(new CouponItem(null, reward, CouponItem.TYPE_REDEEMABLE_REWARD));
+                }
+            }
+            couponAdapter.setItems(couponItems);
+
             // only show shipping, subtotal, and proceed-to-checkout when at least one item
             if (totalItemCount == 0) {
                 couponsRewardsLayout.setVisibility(View.GONE);
@@ -445,67 +457,73 @@ public class CartFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        hideSoftKeyboard(view);
         switch(view.getId()) {
             case R.id.coupons_rewards_layout:
-                if (couponAdditionLayout.getVisibility() != View.VISIBLE) {
+                if (couponList.getVisibility() != View.VISIBLE) {
                     cartListVw.setVisibility(View.GONE);
-                    couponAdditionLayout.setVisibility(View.VISIBLE);
-//                    couponListLayout.setVisibility(View.VISIBLE);
                     couponList.setVisibility(View.VISIBLE);
                 } else {
                     cartListVw.setVisibility(View.VISIBLE);
-                    couponAdditionLayout.setVisibility(View.GONE);
-//                    couponListLayout.setVisibility(View.GONE);
                     couponList.setVisibility(View.GONE);
                 }
                 break;
             case R.id.coupon_add_button:
-                String couponCode = couponCodeEditText.getText().toString();
-                if (!TextUtils.isEmpty(couponCode)) {
-                    EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-                    showProgressIndicator();
-                    Coupon coupon = new Coupon();
-                    coupon.setPromoName(couponCode);
-                    easyOpenApi.addCoupon(coupon, RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CLIENT_ID,
-                            new Callback<EmptyResponse>() {
-                                @Override
-                                public void success(EmptyResponse emptyResponse, Response response) {
-                                    refreshCart(activity);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
-                                }
-
-                                @Override
-                                public void failure(RetrofitError error) {
-                                    hideProgressIndicator();
-                                    makeToast(ApiError.getErrorMessage(error));
-                                }
-                            });
-                }
+                addCoupon(couponAdapter.getItem((Integer) view.getTag()).getCouponCodeToAdd());
+                break;
+            case R.id.reward_add_button:
+                addCoupon(couponAdapter.getItem((Integer) view.getTag()).getReward().getCode());
                 break;
             case R.id.coupon_delete_button:
-                String couponCodeToDelete = couponAdapter.getItem((Integer) view.getTag()).getCoupon().getCode();
-                if (!TextUtils.isEmpty(couponCodeToDelete)) {
-                    EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-                    showProgressIndicator();
-                    Coupon coupon = new Coupon();
-                    coupon.setPromoName(couponCodeToDelete);
-                    easyOpenApi.deleteCoupon(RECOMMENDATION, STORE_ID, couponCodeToDelete, LOCALE, CLIENT_ID,
-                            new Callback<EmptyResponse>() {
-                                @Override
-                                public void success(EmptyResponse emptyResponse, Response response) {
-                                    refreshCart(activity);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
-                                }
-
-                                @Override
-                                public void failure(RetrofitError error) {
-                                    hideProgressIndicator();
-                                    makeToast(ApiError.getErrorMessage(error));
-                                }
-                            });
-                }
+                deleteCoupon(couponAdapter.getItem((Integer) view.getTag()).getCoupon().getCode());
                 break;
             case R.id.action_checkout:
                 activity.selectOrderCheckout();
                 break;
+        }
+    }
+
+    private void addCoupon(String couponCode) {
+        if (!TextUtils.isEmpty(couponCode)) {
+            EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+            showProgressIndicator();
+            Coupon coupon = new Coupon();
+            coupon.setPromoName(couponCode);
+            easyOpenApi.addCoupon(coupon, RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CLIENT_ID,
+                    new Callback<EmptyResponse>() {
+                        @Override
+                        public void success(EmptyResponse emptyResponse, Response response) {
+                            refreshCart(activity);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            hideProgressIndicator();
+                            makeToast(ApiError.getErrorMessage(error));
+                        }
+                    });
+        }
+    }
+
+    private void deleteCoupon(String couponCode) {
+        if (!TextUtils.isEmpty(couponCode)) {
+            EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+            showProgressIndicator();
+            Coupon coupon = new Coupon();
+            coupon.setPromoName(couponCode);
+            easyOpenApi.deleteCoupon(RECOMMENDATION, STORE_ID, couponCode, LOCALE, CLIENT_ID,
+                    new Callback<EmptyResponse>() {
+                        @Override
+                        public void success(EmptyResponse emptyResponse, Response response) {
+                            refreshCart(activity);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            hideProgressIndicator();
+                            makeToast(ApiError.getErrorMessage(error));
+                        }
+                    });
         }
     }
 

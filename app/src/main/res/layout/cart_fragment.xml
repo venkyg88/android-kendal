@@ -63,39 +63,7 @@
                 android:textColor="@color/text_blue"
                 />
         </RelativeLayout>
-        <!--add coupon-->
-        <RelativeLayout
-            android:id="@+id/coupon_addition_layout"
-            style="@style/DrawerStyle"
-            android:layout_width="match_parent"
-            android:background="@color/background_extra_light_gray"
-            android:visibility="gone">
-            <EditText
-                android:id="@+id/coupon_code"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_gravity="center_vertical"
-                android:hint="@string/coupon_code_hint"
-                android:inputType="number"
-                android:imeOptions="actionDone"
-                android:maxLength="10"/>
-            <Button
-                android:id="@+id/coupon_add_button"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="center_vertical"
-                android:text="@string/add"
-                android:textSize="14dp"
-                android:fontFamily="sans-serif"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                />
-        </RelativeLayout>
-        <!-- listview of existing coupons -->
+        <!-- listview for coupons -->
         <ListView
             android:id="@+id/coupon_list"
             android:layout_width="match_parent"
@@ -103,7 +71,7 @@
             android:layout_weight="1"
             android:background="@color/background_extra_light_gray"
             android:visibility="gone"/>
-        <!--NOTE: we may or may not implement the link-rewards-acct feature-->
+        <!--NOTE: we may or may not implement the link-rewards-acct feature, so commenting out for now-->
         <!--link rewards account -->
         <!--<LinearLayout-->
             <!--android:id="@+id/link_rewards_acct_layout"-->
@@ -147,14 +115,7 @@
                 <!--android:paddingRight="8dp"-->
                 <!--/>-->
         <!--</LinearLayout>-->
-        <!-- listview of existing rewards -->
-        <ListView
-            android:id="@+id/rewards_list"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@color/background_extra_light_gray"
-            android:visibility="gone"/>
+
 
         <!--shipping info-->
         <RelativeLayout
