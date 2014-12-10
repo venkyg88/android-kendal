@@ -54,7 +54,7 @@ public class MainApplication
 
     public void onGetConfiguratorResult(boolean success) {
 
-        if (LOGGING) Log.v(TAG, "MainApplication:LmsManager.onGetConfiguratorResult():"
+        if (LOGGING) Log.v(TAG, "MainApplication:AppConfigurator.onGetConfiguratorResult():"
                         + " success[" + success + "]"
                         + " this[" + this + "]"
         );
