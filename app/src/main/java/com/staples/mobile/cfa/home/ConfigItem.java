@@ -3,9 +3,9 @@ package com.staples.mobile.cfa.home;
 import android.util.Log;
 import android.widget.ListView;
 
-public class LmsItem {
+public class ConfigItem {
 
-    public static final String TAG = "LmsItem";
+    public static final String TAG = "ConfigItem";
 
     public String title;
     public String bannerUrl;
@@ -13,9 +13,9 @@ public class LmsItem {
     public String size;
     public ListView productListView;
 
-    LmsItem(String title, String bannerUrl, String identifier, String size) {
+    ConfigItem(String title, String bannerUrl, String identifier, String size) {
 
-        Log.v(TAG, "LmsItem:LmsItem():"
+        Log.v(TAG, "ConfigItem:ConfigItem():"
                 + " size[" + size + "]"
                 + " title[" + title + "]"
                 + " bannerUrl[" + bannerUrl + "]"

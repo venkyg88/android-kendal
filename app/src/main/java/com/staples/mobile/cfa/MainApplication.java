@@ -8,21 +8,20 @@ import android.os.StrictMode;
 
 import android.util.Log;
 
-import com.staples.mobile.common.access.lms.LmsManager;
-import com.staples.mobile.common.access.lms.LmsManager.LmsMgrCallback;
+import com.staples.mobile.common.access.config.AppConfigurator;
 
 public class MainApplication
         extends Application
-        implements LmsMgrCallback,
+        implements AppConfigurator.AppConfiguratorCallback,
         Thread.UncaughtExceptionHandler {
 
     private static final String TAG = "MainApplication";
 
-    private static final boolean LOGGING = false;
+    private static final boolean LOGGING = true;
 
     public static MainApplication application = null;
 
-    private LmsManager lmsManager;
+    private AppConfigurator appConfigurator;
 
     @Override
     public void onCreate() {
@@ -33,8 +32,8 @@ public class MainApplication
 
         Thread.setDefaultUncaughtExceptionHandler((Thread.UncaughtExceptionHandler) this);
 
-        lmsManager = new LmsManager(this);
-        lmsManager.getLms(this);
+        appConfigurator = new AppConfigurator(this);
+        appConfigurator.getConfigurator(this);
 
         /* @@@ STUBBED
         setStrictMode();
@@ -53,9 +52,9 @@ public class MainApplication
         return;
     }
 
-    public void onGetLmsResult(boolean success) {
+    public void onGetConfiguratorResult(boolean success) {
 
-        if (LOGGING) Log.v(TAG, "MainApplication:LmsManager.onGetLmsResult():"
+        if (LOGGING) Log.v(TAG, "MainApplication:AppConfigurator.onGetConfiguratorResult():"
                         + " success[" + success + "]"
                         + " this[" + this + "]"
         );
