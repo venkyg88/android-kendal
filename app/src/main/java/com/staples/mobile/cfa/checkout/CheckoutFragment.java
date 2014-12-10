@@ -231,7 +231,7 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
         this.tax = tax;
         shippingChargeVw.setText(formatShippingCharge(shippingCharge, currencyFormat));
         taxVw.setText(currencyFormat.format(tax));
-        checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax - couponsRewardsAmount));
+        checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax + couponsRewardsAmount));
         taxLayout.setVisibility(View.VISIBLE);
         shippingChargeLayout.setVisibility(View.VISIBLE);
         submissionLayout.setVisibility(View.VISIBLE);
