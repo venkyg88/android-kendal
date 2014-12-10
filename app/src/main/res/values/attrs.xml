@@ -5,7 +5,7 @@
         <attr name="android:textSize"/>
         <attr name="android:textColor"/>
     </declare-styleable>
-    <declare-styleable name="HackEditor">
+    <declare-styleable name="QuantityEditor">
         <attr name="minQuantity" format="integer"/>
         <attr name="maxQuantity" format="integer"/>
         <attr name="popupWidth" format="dimension"/>
@@ -17,10 +17,6 @@
     <declare-styleable name="PriceSticker">
         <attr name="android:textSize"/>
         <attr name="android:gravity"/>
-    </declare-styleable>
-    <declare-styleable name="QtyEditor">
-        <attr name="android:textSize"/>
-        <attr name="maxSpinnerValue" format="integer"/>
     </declare-styleable>
     <declare-styleable name="RatingStars">
         <attr name="android:textSize"/>

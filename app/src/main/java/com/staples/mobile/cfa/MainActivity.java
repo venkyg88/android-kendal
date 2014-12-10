@@ -45,7 +45,7 @@ public class MainActivity extends Activity
 
     private DrawerLayout drawerLayout;
     private View leftDrawerAction;
-    private View leftDrawer;
+    private ListView leftDrawer;
     private TextView titleView;
     private SearchBarView searchBar;
     private ImageView optionIcon;
@@ -155,14 +155,10 @@ public class MainActivity extends Activity
         }
     }
 
-    public void showActionBar() {
-        showActionBar(R.string.staples, R.drawable.ic_search_white, searchBar);
-    }
-
     /** sets standard action bar, fragments need to override their onResume methods to set up action bar */
     public void showStandardActionBar() {
         // set standard title bar
-        showActionBar();
+        showActionBar(R.string.staples, R.drawable.ic_search_white, searchBar);
 
         // show standard entities
         leftDrawerAction.setVisibility(View.VISIBLE);
@@ -233,7 +229,7 @@ public class MainActivity extends Activity
 
         // Find top-level entities
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        leftDrawer = findViewById(R.id.left_drawer);
+        leftDrawer = (ListView) findViewById(R.id.left_drawer);
         titleView = (TextView) findViewById(R.id.title);
         searchBar = (SearchBarView) findViewById(R.id.search_text);
         optionIcon = (ImageView) findViewById(R.id.option_icon);
@@ -261,12 +257,10 @@ public class MainActivity extends Activity
         searchBar.initSearchBar();
 
         // Initialize left drawer listview
-        DataWrapper wrapper = (DataWrapper) findViewById(R.id.left_drawer);
-        ListView menu = (ListView) wrapper.findViewById(R.id.menu);
-        DrawerAdapter adapter = new DrawerAdapter(this, wrapper);
-        menu.setAdapter(adapter);
+        DrawerAdapter adapter = new DrawerAdapter(this);
+        leftDrawer.setAdapter(adapter);
         adapter.fill();
-        menu.setOnItemClickListener(this);
+        leftDrawer.setOnItemClickListener(this);
 
         // Create non-drawer DrawerItems
         homeDrawerItem = adapter.getItem(0); // TODO Hard-coded alias
@@ -366,16 +360,17 @@ public class MainActivity extends Activity
         return selectFragment(fragment, Transition.SLIDE, true);
     }
 
-    public boolean selectBundle(String title, String path) {
-        Fragment fragment = Fragment.instantiate(this, BundleFragment.class.getName());
+    public boolean selectBundle(String title, String identifier) {
+        Fragment fragment = new BundleFragment();
         Bundle args = new Bundle();
-        if (path != null) args.putString("path", path);
+        if (title!=null) args.putString(BundleFragment.TITLE, title);
+        if (identifier!=null) args.putString(BundleFragment.IDENTIFIER, identifier);
         fragment.setArguments(args);
         return (selectFragment(fragment, Transition.SLIDE, true));
     }
 
     public boolean selectSearch(String keyword) {
-        Fragment fragment = Fragment.instantiate(this, SearchFragment.class.getName());
+        Fragment fragment = new SearchFragment();
         Bundle args = new Bundle();
         if (keyword!=null) args.putString("identifier", keyword);
         fragment.setArguments(args);
@@ -383,7 +378,7 @@ public class MainActivity extends Activity
     }
 
     public boolean selectSkuItem(String identifier) {
-        Fragment fragment = Fragment.instantiate(this, SkuFragment.class.getName());
+        Fragment fragment = new SkuFragment();
         Bundle args = new Bundle();
         if (identifier!=null) args.putString("identifier", identifier);
         fragment.setArguments(args);
@@ -391,12 +386,12 @@ public class MainActivity extends Activity
     }
 
     public boolean selectProfileFragment() {
-        Fragment fragment = Fragment.instantiate(this, ProfileFragment.class.getName());
+        Fragment fragment = new ProfileFragment();
         return (selectFragment(fragment, Transition.NONE, true));
     }
 
     public boolean selectLoginFragment() {
-        Fragment fragment = Fragment.instantiate(this, LoginFragment.class.getName());
+        Fragment fragment = new LoginFragment();
         return (selectFragment(fragment, Transition.NONE, true));
     }
 
@@ -507,32 +502,6 @@ public class MainActivity extends Activity
             case ACCOUNT:
                 drawerLayout.closeDrawers();
                 selectDrawerItem(item, Transition.SLIDE, true);
-                break;
-
-            case BROWSE:
-                adapter = (DrawerAdapter) parent.getAdapter();
-                adapter.setBrowseMode(true);
-                break;
-
-            case BACKTOTOP:
-                adapter = (DrawerAdapter) parent.getAdapter();
-                adapter.setBrowseMode(false);
-                break;
-
-            case STACK:
-                adapter = (DrawerAdapter) parent.getAdapter();
-                adapter.popStack(item);
-                break;
-
-            case CATEGORY:
-                String identifier = item.getBundleIdentifier();
-                if (identifier!=null) {
-                    drawerLayout.closeDrawers();
-                    selectBundle(item.title, item.path);
-                } else {
-                    adapter = (DrawerAdapter) parent.getAdapter();
-                    adapter.pushStack(item);
-                }
                 break;
 
             case PROFILE:

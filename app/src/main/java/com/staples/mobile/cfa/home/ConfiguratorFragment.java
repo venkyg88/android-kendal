@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.home;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -14,7 +15,6 @@ import android.widget.LinearLayout;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
-import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.R;
@@ -28,9 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConfiguratorFragment
-        extends BaseFragment
+        extends Fragment
         implements AppConfigurator.AppConfiguratorCallback {
-
     private static final String TAG = "ConfiguratorFragment";
 
     private static final boolean LOGGING = true;
@@ -146,8 +145,14 @@ public class ConfiguratorFragment
         return (configFrameView);
     }
 
-    public void onGetConfiguratorResult(boolean success) {
+    @Override
+    public void onResume() {
+        super.onResume();
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity!=null) activity.showStandardActionBar();
+    }
 
+    public void onGetConfiguratorResult(boolean success) {
         if (LOGGING) Log.v(TAG, "ConfiguratorFragment:AppConfigurator.onGetConfiguratorResult():"
                         + " success[" + success + "]"
                         + " this[" + this + "]"

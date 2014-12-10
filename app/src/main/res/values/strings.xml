@@ -10,7 +10,7 @@
     <!-- Drawer header titles -->
     <string name="home_title">Home</string>
     <string name="personal_feed_title">Personal Feed</string>
-    <string name="category_title">Shop by Category</string>
+    <string name="browse_title">Shop by Category</string>
     <string name="store_locator_title">Store Locator</string>
     <string name="weekly_ad_title">Weekly Ad</string>
     <string name="account_title">Account</string>

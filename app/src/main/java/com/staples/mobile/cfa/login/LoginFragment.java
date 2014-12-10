@@ -1,5 +1,6 @@
 package com.staples.mobile.cfa.login;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,12 +13,11 @@ import android.widget.EditText;
 import android.widget.TabHost;
 import android.widget.Toast;
 
-import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.Access;
 
-public class LoginFragment extends BaseFragment implements View.OnClickListener {
+public class LoginFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "LoginFragment";
     Button signInBtn;
     Button registerBtn;

@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -27,7 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class AboutFragment extends BaseFragment {
+public class AboutFragment extends Fragment {
     private static final String TAG = "AboutFragment";
 
     private SimpleDateFormat dateFormat;
