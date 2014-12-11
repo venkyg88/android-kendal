@@ -489,7 +489,7 @@ public class ConfiguratorFragment
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
             int marginBottom = (configItemNdx == (nbrListItems - 1)) ? MARGIN_ZERO : MARGIN_BOTTOM_DP;
-            LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, marginBottom categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, marginBottom, categoryImageView);
             widgetLayout.setTag(configItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
