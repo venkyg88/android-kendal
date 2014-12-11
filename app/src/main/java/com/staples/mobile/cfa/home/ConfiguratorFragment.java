@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.home;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -14,45 +15,46 @@ import android.widget.LinearLayout;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
-import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.configurator.model.Area;
 import com.staples.mobile.common.access.configurator.model.Item;
 import com.staples.mobile.common.access.configurator.model.Screen;
-import com.staples.mobile.common.access.lms.LmsManager;
-import com.staples.mobile.common.access.lms.LmsManager.LmsMgrCallback;
+import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.device.DeviceInfo;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LmsFragment
-        extends BaseFragment
-        implements LmsMgrCallback {
+public class ConfiguratorFragment
+        extends Fragment
+        implements AppConfigurator.AppConfiguratorCallback {
+    private static final String TAG = "ConfiguratorFragment";
 
-    private static final String TAG = "LmsFragment";
+    private static final boolean LOGGING = true;
 
-    private static final boolean LOGGING = false;
+    private static final long CONFIGURATOR_REFRESH_TIME_MILLIS = (5 * 60 * 1000);
 
-    private static final long LMS_REFRESH_TIME_MILLIS = (5 * 60 * 1000);
+    private static final int MARGIN_BOTTOM_DP = 24;
 
     private MainActivity activity;
     private Resources resources;
 
     private DeviceInfo deviceInfo;
 
-    private View lmsFrameView;
-    private LinearLayout lmsScrollLayout;
+    private View configFrameView;
+    private LinearLayout configScrollLayout;
+    private LinearLayout.LayoutParams subLayoutContainerLayoutParms;
+    private LinearLayout.LayoutParams widgetLayoutParms;
 
-    private LmsManager lmsManager;
+    private AppConfigurator appConfigurator;
 
-    private List<LmsItem> lmsItems;
-    private List<LmsItem> lmsItemsA;
-    private List<LmsItem> lmsItemsB;
-    private List<LmsItem> lmsItemsC;
-    private List<LmsItem> lmsItemsD;
+    private List<ConfigItem> configItems;
+    private List<ConfigItem> configItemsA;
+    private List<ConfigItem> configItemsB;
+    private List<ConfigItem> configItemsC;
+    private List<ConfigItem> configItemsD;
 
     private List<Screen> screens;
 
@@ -75,12 +77,12 @@ public class LmsFragment
 
     private View.OnClickListener itemOnClickListener;
 
-    private boolean retryGetLms = true;
+    private boolean retryGetConfig = true;
 
     @Override
     public void onAttach(Activity activity) {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:onAttach():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:onAttach():"
                         + " activity[" + activity + "]"
                         + " this[" + this + "]"
         );
@@ -89,13 +91,13 @@ public class LmsFragment
 
         this.activity = (MainActivity) activity;
         resources = activity.getResources();
-        lmsManager = new LmsManager(MainApplication.application);
+        appConfigurator = new AppConfigurator(MainApplication.application);
 
-        lmsItems = new ArrayList<LmsItem>();
-        lmsItemsA = new ArrayList<LmsItem>();
-        lmsItemsB = new ArrayList<LmsItem>();
-        lmsItemsC = new ArrayList<LmsItem>();
-        lmsItemsD = new ArrayList<LmsItem>();
+        configItems = new ArrayList<ConfigItem>();
+        configItemsA = new ArrayList<ConfigItem>();
+        configItemsB = new ArrayList<ConfigItem>();
+        configItemsC = new ArrayList<ConfigItem>();
+        configItemsD = new ArrayList<ConfigItem>();
 
         return;
     }
@@ -103,7 +105,7 @@ public class LmsFragment
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup container, Bundle bundle) {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:onCreateView():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:onCreateView():"
                         + " this[" + this + "]"
         );
 
@@ -111,34 +113,46 @@ public class LmsFragment
 
         noPhoto = resources.getDrawable(R.drawable.no_photo);
 
-        lmsFrameView = layoutInflater.inflate(R.layout.lms_frame, container, false);
+        configFrameView = layoutInflater.inflate(R.layout.config_frame, container, false);
 
-        lmsScrollLayout = (LinearLayout) lmsFrameView.findViewById(R.id.lmsScrollLayout);
+        configScrollLayout = (LinearLayout) configFrameView.findViewById(R.id.configScrollLayout);
+
+        subLayoutContainerLayoutParms =
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, // width
+                        ViewGroup.LayoutParams.MATCH_PARENT); // height
+
+        int margin = 0;
+        subLayoutContainerLayoutParms.setMargins(margin, margin, margin, MARGIN_BOTTOM_DP); // left, top, right, bottom
 
         itemOnClickListener = new OnClickListener() {
 
             @Override
             public void onClick(View view) {
 
-                if (LOGGING) Log.v(TAG, "LmsFragment:OnClickListener.onClick():"
+                if (LOGGING) Log.v(TAG, "ConfiguratorFragment:OnClickListener.onClick():"
                                 + " view[" + view + "]"
                                 + " this[" + this + "]"
                 );
 
-                LmsItem lmsItem = (LmsItem) view.getTag();
-                String path = "/category/identifier/" + lmsItem.identifier;
-                activity.selectBundle(lmsItem.title, path);
+                ConfigItem configItem = (ConfigItem) view.getTag();
+                activity.selectBundle(configItem.title, configItem.identifier);
             }
         };
 
-        lmsManager.getLms(this); // LmsMgrCallback
+        appConfigurator.getConfigurator(this); // AppConfiguratorCallback
 
-        return (lmsFrameView);
+        return (configFrameView);
     }
 
-    public void onGetLmsResult(boolean success) {
+    @Override
+    public void onResume() {
+        super.onResume();
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity!=null) activity.showActionBar(R.string.staples, R.drawable.ic_search_white, null);
+    }
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:LmsManager.onGetLmsResult():"
+    public void onGetConfiguratorResult(boolean success) {
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:AppConfigurator.onGetConfiguratorResult():"
                         + " success[" + success + "]"
                         + " this[" + this + "]"
         );
@@ -147,45 +161,45 @@ public class LmsFragment
 
             deviceInfo = new DeviceInfo(resources);
 
-            screens = lmsManager.getScreen();
+            screens = appConfigurator.getScreen();
             Screen screen = screens.get(0);
             items = screen.getItem();
 
-            LmsItem lmsItem = null;
+            ConfigItem configItem = null;
             List<Area> areas = null;
             String skuList = null;
 
-            lmsItems.clear();
-            lmsItemsA.clear();
-            lmsItemsB.clear();
-            lmsItemsC.clear();
-            lmsItemsD.clear();
+            configItems.clear();
+            configItemsA.clear();
+            configItemsB.clear();
+            configItemsC.clear();
+            configItemsD.clear();
 
             for (Item item : items) {
 
                 areas = item.getArea();
                 skuList = areas.get(0).getSkuList();
 
-                lmsItem = new LmsItem(item.getTitle(), item.getBanner(), skuList, item.getSize());
-                lmsItems.add(lmsItem);
+                configItem = new ConfigItem(item.getTitle(), item.getBanner(), skuList, item.getSize());
+                configItems.add(configItem);
 
-                String size = lmsItem.size;
+                String size = configItem.size;
 
                 if (size.equalsIgnoreCase("A")) {
 
-                    lmsItemsA.add(lmsItem);
+                    configItemsA.add(configItem);
 
                 } else if (size.equalsIgnoreCase("B")) {
 
-                    lmsItemsB.add(lmsItem);
+                    configItemsB.add(configItem);
 
                 } else if (size.equalsIgnoreCase("C")) {
 
-                    lmsItemsC.add(lmsItem);
+                    configItemsC.add(configItem);
 
                 } else if (size.equalsIgnoreCase("D")) {
 
-                    lmsItemsD.add(lmsItem);
+                    configItemsD.add(configItem);
                 }
             }
 
@@ -198,8 +212,8 @@ public class LmsFragment
             }
         } else {
 
-            if (retryGetLms) lmsManager.getLms(this); // LmsMgrCallback
-            retryGetLms = false;
+            if (retryGetConfig) appConfigurator.getConfigurator(this); // AppConfiguratorCallback
+            retryGetConfig = false;
         }
 
         activity.showMainScreen();
@@ -207,7 +221,7 @@ public class LmsFragment
 
     private void doPortrait() {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:doPortrait():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:doPortrait():"
                         + " this[" + this + "]"
         );
 
@@ -223,31 +237,31 @@ public class LmsFragment
         dItemWidth = aItemWidth;        // same width as an A item.
         dItemHeight = aItemHeight / 4;  // quarter the height of an A item.
 
-        if (lmsItemsA.size() > 0) {
-            doLmsItemsABDPort(lmsItemsA);
+        if (configItemsA.size() > 0) {
+            doConfigItemsABDPort(configItemsA);
         }
-        if (lmsItemsB.size() > 0) {
-            doLmsItemsABDPort(lmsItemsB);
+        if (configItemsB.size() > 0) {
+            doConfigItemsABDPort(configItemsB);
         }
-        if (lmsItemsC.size() > 0) {
-            doLmsItemsCPort();
+        if (configItemsC.size() > 0) {
+            doConfigItemsCPort();
         }
-        if (lmsItemsD.size() > 0) {
-            doLmsItemsABDPort(lmsItemsD);
+        if (configItemsD.size() > 0) {
+            doConfigItemsABDPort(configItemsD);
         }
 
     } // doPortrait()
 
-    private void doLmsItemsABDPort(List<LmsItem> lmsItems) {
+    private void doConfigItemsABDPort(List<ConfigItem> configItems) {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsABDPort():"
-                        + " lmsItems[" + lmsItems + "]"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:doConfigItemsABDPort():"
+                        + " configItems[" + configItems + "]"
                         + " this[" + this + "]"
         );
 
-        for (LmsItem lmsItem : lmsItems) {
+        for (ConfigItem configItem : configItems) {
 
-            String size = lmsItem.size;
+            String size = configItem.size;
             int subLayoutHeight = 0;
             ImageView categoryImageView = null;
 
@@ -267,61 +281,61 @@ public class LmsFragment
                 categoryImageView = getImageView(0, 0, 0, 0);
             }
 
-            setImage(categoryImageView, lmsItem.bannerUrl);
+            setImage(categoryImageView, configItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(aItemWidth, subLayoutHeight, categoryImageView);
-            widgetLayout.setTag(lmsItem);
+            LinearLayout widgetLayout = getWidgetLayout(aItemWidth, subLayoutHeight, MARGIN_BOTTOM_DP, categoryImageView);
+            widgetLayout.setTag(configItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 
-            lmsScrollLayout.addView(widgetLayout);
+            configScrollLayout.addView(widgetLayout);
         }
 
-    } // doLmsItemsABDPort()
+    } // doConfigItemsABDPort()
 
-    private void doLmsItemsCPort() {
+    private void doConfigItemsCPort() {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsCPort():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:doConfigItemsCPort():"
                         + " this[" + this + "]"
         );
 
         LinearLayout subLayoutContainer = null;
 
         boolean firstSubInContainer = true;
-        int lmsItemNbr = -1;
+        int configItemNbr = -1;
 
-        for (LmsItem lmsItem : lmsItemsC) {
+        for (ConfigItem configItem : configItemsC) {
 
-            lmsItemNbr++;
+            configItemNbr++;
 
-            firstSubInContainer = (lmsItemNbr % 2 == 0);
+            firstSubInContainer = (configItemNbr % 2 == 0);
 
             if (firstSubInContainer) {
 
                 subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
-                lmsScrollLayout.addView(subLayoutContainer);
+                configScrollLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
             }
 
             ImageView categoryImageView = getImageView(0, 0, 0, 0);
-            setImage(categoryImageView, lmsItem.bannerUrl);
+            setImage(categoryImageView, configItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, categoryImageView);
-            widgetLayout.setTag(lmsItem);
+            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
+            widgetLayout.setTag(configItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 
             subLayoutContainer.addView(widgetLayout);
         }
 
-    } // doLmsItemsCPort()
+    } // doConfigItemsCPort()
 
     private void doLandscape() {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:doLandscape():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:doLandscape():"
                         + " this[" + this + "]"
         );
 
@@ -338,7 +352,7 @@ public class LmsFragment
         dItemWidth = aItemWidth;        // same width as an A item.
         dItemHeight = aItemHeight / 4;  // quarter the height of an A item.
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:doLandscape():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:doLandscape():"
                         + " aItemWidth[" + aItemWidth + "]"
                         + " aItemHeight[" + aItemHeight + "]"
                         + " bItemWidth[" + bItemWidth + "]"
@@ -350,136 +364,136 @@ public class LmsFragment
                         + " this[" + this + "]"
         );
 
-        if (lmsItemsA.size() > 0) {
-            doLmsItemsALand();
+        if (configItemsA.size() > 0) {
+            doConfigItemsALand();
         } else {
-            doLmsItemsLand();
+            doConfigItemsLand();
         }
 
     } // doLandscape()
 
-    private void doLmsItemsALand() {
+    private void doConfigItemsALand() {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsALand():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:doConfigItemsALand():"
                         + " this[" + this + "]"
         );
 
         // Handle the A item.
 
-        LmsItem lmsItemA = lmsItemsA.get(0);
+        ConfigItem configItemA = configItemsA.get(0);
 
-        // LMS Sublayout
+        // Configurator Sublayout
 
-        // Horizontal. Contains A item and lmsBCDLayout.
+        // Horizontal. Contains A item and configBCDLayout.
         LinearLayout subLayout = getSubLayout(aItemWidth * 2,
                 aItemHeight,
                 LinearLayout.HORIZONTAL);
 
-        lmsScrollLayout.addView(subLayout);
+        configScrollLayout.addView(subLayout, subLayoutContainerLayoutParms);
 
         ImageView categoryImageView = getImageView(0, 0, 0, 0);
-        setImage(categoryImageView, lmsItemA.bannerUrl);
+        setImage(categoryImageView, configItemA.bannerUrl);
 
         // Vertical. Contains selectable content. Used to create a rectangular
         // frame around the content.
-        LinearLayout widgetLayout = getWidgetLayout(aItemWidth, aItemHeight, categoryImageView);
-        widgetLayout.setTag(lmsItemA);
+        LinearLayout widgetLayout = getWidgetLayout(aItemWidth, aItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
+        widgetLayout.setTag(configItemA);
         widgetLayout.setOnClickListener(itemOnClickListener);
         widgetLayout.addView(categoryImageView);
 
         subLayout.addView(widgetLayout);
 
         // Vertical. Contains one or more B, C, and/or D items.
-        LinearLayout lmsBCDLayout = getBCDLayout();
+        LinearLayout configBCDLayout = getBCDLayout();
 
-        subLayout.addView(lmsBCDLayout);
+        subLayout.addView(configBCDLayout);
 
         while (true) {
 
-            if (lmsItemsB.size() >= 2) {
+            if (configItemsB.size() >= 2) {
 
-                fillAWithB(lmsBCDLayout, 2);
+                fillAWithB(configBCDLayout, 2);
 
                 break; // while (true)
             }
-            if (lmsItemsB.size() > 0) {
+            if (configItemsB.size() > 0) {
 
-                fillAWithB(lmsBCDLayout, 1);
+                fillAWithB(configBCDLayout, 1);
 
-                if (lmsItemsC.size() > 0) {
+                if (configItemsC.size() > 0) {
 
-                    fillAWithC(lmsBCDLayout, 1);
+                    fillAWithC(configBCDLayout, 1);
 
-                } else if (lmsItemsD.size() >= 2) {
+                } else if (configItemsD.size() >= 2) {
 
-                    fillAWithD(lmsBCDLayout, 1);
+                    fillAWithD(configBCDLayout, 1);
                 }
                 break; // while (true)
 
-            } else if (lmsItemsC.size() >= 4) {
+            } else if (configItemsC.size() >= 4) {
 
-                fillAWithC(lmsBCDLayout, 2);
+                fillAWithC(configBCDLayout, 2);
 
-            } else if (lmsItemsC.size() > 0) {
+            } else if (configItemsC.size() > 0) {
 
-                fillAWithC(lmsBCDLayout, 1);
-                fillAWithD(lmsBCDLayout, 2);
+                fillAWithC(configBCDLayout, 1);
+                fillAWithD(configBCDLayout, 2);
 
-            } else if (lmsItemsD.size() > 0) {
+            } else if (configItemsD.size() > 0) {
 
-                fillAWithD(lmsBCDLayout, 4);
+                fillAWithD(configBCDLayout, 4);
             }
             break; // while (true)
 
         } // while (true)
 
-        doLmsItemsLand();
+        doConfigItemsLand();
 
-    } // doLmsItemsALand()
+    } // doConfigItemsALand()
 
-    private void fillAWithB(LinearLayout lmsBCDLayout, int maxItems) {
+    private void fillAWithB(LinearLayout configBCDLayout, int maxItems) {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:fillAWithB():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:fillAWithB():"
                         + " this[" + this + "]"
         );
 
-        int nbrListItems = Math.min(lmsItemsB.size(), maxItems);
+        int nbrListItems = Math.min(configItemsB.size(), maxItems);
 
-        int lmsItemNdx = 0;
-        LmsItem lmsItem = null;
+        int configItemNdx = 0;
+        ConfigItem configItem = null;
 
-        for (lmsItemNdx = 0; lmsItemNdx < nbrListItems; lmsItemNdx++) {
+        for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
-            lmsItem = lmsItemsB.get(0);
+            configItem = configItemsB.get(0);
 
-            lmsItemsB.remove(0);
+            configItemsB.remove(0);
 
-            if (LOGGING) Log.v(TAG, "LmsFragment:fillAWithB(): lmsItem:"
-                            + " lmsItem.title[" + lmsItem.title + "]"
-                            + " lmsItem.bannerUrl[" + lmsItem.bannerUrl + "]"
+            if (LOGGING) Log.v(TAG, "ConfiguratorFragment:fillAWithB(): configItem:"
+                            + " configItem.title[" + configItem.title + "]"
+                            + " configItem.bannerUrl[" + configItem.bannerUrl + "]"
                             + " this[" + this + "]"
             );
 
             // Category ImageView
 
             ImageView categoryImageView = getImageView(0, 0, 0, 0);
-            setImage(categoryImageView, lmsItem.bannerUrl);
+            setImage(categoryImageView, configItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, categoryImageView);
-            widgetLayout.setTag(lmsItem);
+            LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
+            widgetLayout.setTag(configItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 
-            lmsBCDLayout.addView(widgetLayout);
+            configBCDLayout.addView(widgetLayout);
         }
 
     } // fillAWithB()
 
-    private void fillAWithC(LinearLayout lmsBCDLayout, int maxItems) {
+    private void fillAWithC(LinearLayout configBCDLayout, int maxItems) {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:fillAWithC():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:fillAWithC():"
                         + " this[" + this + "]"
         );
 
@@ -487,38 +501,38 @@ public class LmsFragment
 
         // maxItems is the maximum number of SubLayout containers allowed. Each
         // SubLayout container can contain 2 list items.
-        int nbrListItems = Math.min(lmsItemsC.size(), (maxItems * 2));
+        int nbrListItems = Math.min(configItemsC.size(), (maxItems * 2));
 
         boolean firstSubInContainer = true;
 
         int nbrSubLayoutContainers = 0;
 
-        int lmsItemNdx = 0;
-        LmsItem lmsItem = null;
+        int configItemNdx = 0;
+        ConfigItem configItem = null;
 
-        for (lmsItemNdx = 0; lmsItemNdx < nbrListItems; lmsItemNdx++) {
+        for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
-            lmsItem = lmsItemsC.get(0);
+            configItem = configItemsC.get(0);
 
-            lmsItemsC.remove(0);
+            configItemsC.remove(0);
 
-            firstSubInContainer = (lmsItemNdx % 2 == 0);
+            firstSubInContainer = (configItemNdx % 2 == 0);
 
             if (firstSubInContainer) {
 
                 subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
-                lmsBCDLayout.addView(subLayoutContainer);
+                configBCDLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
 
                 nbrSubLayoutContainers++;
             }
 
             ImageView categoryImageView = getImageView(0, 0, 0, 0);
-            setImage(categoryImageView, lmsItem.bannerUrl);
+            setImage(categoryImageView, configItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, categoryImageView);
-            widgetLayout.setTag(lmsItem);
+            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
+            widgetLayout.setTag(configItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 
@@ -527,49 +541,49 @@ public class LmsFragment
 
     } // fillAWithC()
 
-    private void fillAWithD(LinearLayout lmsBCDLayout, int maxItems) {
+    private void fillAWithD(LinearLayout configBCDLayout, int maxItems) {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:fillAWithD():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:fillAWithD():"
                         + " this[" + this + "]"
         );
 
-        int nbrListItems = Math.min(lmsItemsD.size(), maxItems);
+        int nbrListItems = Math.min(configItemsD.size(), maxItems);
 
-        int lmsItemNdx = 0;
-        LmsItem lmsItem = null;
+        int configItemNdx = 0;
+        ConfigItem configItem = null;
 
-        for (lmsItemNdx = 0; lmsItemNdx < nbrListItems; lmsItemNdx++) {
+        for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
-            lmsItem = lmsItemsD.get(0);
+            configItem = configItemsD.get(0);
 
-            lmsItemsD.remove(0);
+            configItemsD.remove(0);
 
-            if (LOGGING) Log.v(TAG, "LmsFragment:fillAWithD(): lmsItem:"
-                            + " lmsItem.title[" + lmsItem.title + "]"
-                            + " lmsItem.bannerUrl[" + lmsItem.bannerUrl + "]"
+            if (LOGGING) Log.v(TAG, "ConfiguratorFragment:fillAWithD(): configItem:"
+                            + " configItem.title[" + configItem.title + "]"
+                            + " configItem.bannerUrl[" + configItem.bannerUrl + "]"
                             + " this[" + this + "]"
             );
 
             // Category ImageView
 
             ImageView categoryImageView = getImageView(0, 0, 0, 0);
-            setImage(categoryImageView, lmsItem.bannerUrl);
+            setImage(categoryImageView, configItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, categoryImageView);
-            widgetLayout.setTag(lmsItem);
+            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
+            widgetLayout.setTag(configItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 
-            lmsBCDLayout.addView(widgetLayout);
+            configBCDLayout.addView(widgetLayout);
         }
 
     } // fillAWithD()
 
-    private LinearLayout getWidgetLayout(int layoutWidth, int layoutHeight, View childView) {
+    private LinearLayout getWidgetLayout(int layoutWidth, int layoutHeight, int marginBottom, View childView) {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:getWidgetLayout():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:getWidgetLayout():"
                         + " layoutWidth[" + layoutWidth + "]"
                         + " layoutHeight[" + layoutHeight + "]"
                         + " childView[" + childView + "]"
@@ -592,12 +606,12 @@ public class LmsFragment
         int padding = 0;
         widgetLayout.setPadding(padding, padding, padding, padding);
 
-        LinearLayout.LayoutParams widgetLayoutParms =
+        widgetLayoutParms =
                 new LinearLayout.LayoutParams(layoutWidth, // width
                         layoutHeight); // height
 
         int margin = 0;
-        widgetLayoutParms.setMargins(margin, margin, margin, 20); // left, top, right, bottom
+        widgetLayoutParms.setMargins(margin, margin, margin, marginBottom); // left, top, right, bottom
 
         childView.setLayoutParams(widgetLayoutParms);
 
@@ -607,44 +621,44 @@ public class LmsFragment
 
     private LinearLayout getBCDLayout() {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:getBCDLayout():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:getBCDLayout():"
                         + " this[" + this + "]"
         );
 
-        LinearLayout.LayoutParams lmsBCDLayoutParms =
+        LinearLayout.LayoutParams configBCDLayoutParms =
 
                 new LinearLayout.LayoutParams(aItemWidth, // width
                         aItemHeight); // height
 
-        LinearLayout lmsBCDLayout = new LinearLayout(activity);
-        lmsBCDLayout.setLayoutParams(lmsBCDLayoutParms);
+        LinearLayout configBCDLayout = new LinearLayout(activity);
+        configBCDLayout.setLayoutParams(configBCDLayoutParms);
 
-        lmsBCDLayout.setId(lmsBCDLayout.hashCode());
-        lmsBCDLayout.setOrientation(LinearLayout.VERTICAL);
-        lmsBCDLayout.setMeasureWithLargestChildEnabled(true);
+        configBCDLayout.setId(configBCDLayout.hashCode());
+        configBCDLayout.setOrientation(LinearLayout.VERTICAL);
+        configBCDLayout.setMeasureWithLargestChildEnabled(true);
 
         int padding = 0;
-        lmsBCDLayout.setPadding(padding, padding, padding, padding);
+        configBCDLayout.setPadding(padding, padding, padding, padding);
 
-        return (lmsBCDLayout);
+        return (configBCDLayout);
 
     } // getBCDLayout()
 
     private LinearLayout getSubLayout(int layoutWidth, int layoutHeight, int orientation) {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:getSubLayout():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:getSubLayout():"
                         + " layoutWidth[" + layoutWidth + "]"
                         + " layoutHeight[" + layoutHeight + "]"
                         + " this[" + this + "]"
         );
 
-        LinearLayout.LayoutParams lmsSubLayoutParms =
+        LinearLayout.LayoutParams configSubLayoutParms =
                 new LinearLayout.LayoutParams(layoutWidth, // width
                         layoutHeight); // height
 
         LinearLayout subLayout = new LinearLayout(activity);
 
-        subLayout.setLayoutParams(lmsSubLayoutParms);
+        subLayout.setLayoutParams(configSubLayoutParms);
         /* @@@ STUBBED
         subLayout.setBackgroundResource(R.drawable.rectangle_frame);
         @@@ STUBBED */
@@ -662,7 +676,7 @@ public class LmsFragment
 
     private LinearLayout getSubLayoutContainer(int orientation) {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:getSubLayoutContainer():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:getSubLayoutContainer():"
                         + " orientation[" + orientation + "]"
                         + " this[" + this + "]"
         );
@@ -681,7 +695,7 @@ public class LmsFragment
 
     private ImageView getImageView(int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:getImageView():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:getImageView():"
                         + " this[" + this + "]"
         );
 
@@ -698,7 +712,7 @@ public class LmsFragment
 
     private void setImage(ImageView imageView, String imageUrl) {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:setImage():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:setImage():"
                         + " imageUrl[" + imageUrl + "]"
                         + " imageView[" + imageView + "]"
                         + " this[" + this + "]"
@@ -711,62 +725,62 @@ public class LmsFragment
 
     } // setImage()
 
-    private void doLmsItemsLand() {
+    private void doConfigItemsLand() {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:doLmsItemsLand():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:doConfigItemsLand():"
                         + " this[" + this + "]"
         );
 
-        if (lmsItemsB.size() > 0) {
+        if (configItemsB.size() > 0) {
             fillWithBLand();
         }
-        if (lmsItemsC.size() > 0) {
+        if (configItemsC.size() > 0) {
             fillWithCLand();
         }
-        if (lmsItemsD.size() > 0) {
+        if (configItemsD.size() > 0) {
             fillWithDLand();
         }
 
-    } // doLmsItemsLand()
+    } // doConfigItemsLand()
 
     private void fillWithBLand() {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:fillWithBLand():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:fillWithBLand():"
                         + " this[" + this + "]"
         );
 
         final int NBR_ITEMS_IN_CONTAINER = 2;
 
-        int nbrListItems = lmsItemsB.size();
+        int nbrListItems = configItemsB.size();
 
         boolean firstSubInContainer = true;
 
-        int lmsItemNdx = 0;
-        LmsItem lmsItem = null;
+        int configItemNdx = 0;
+        ConfigItem configItem = null;
 
         LinearLayout subLayoutContainer = null;
 
-        for (lmsItemNdx = 0; lmsItemNdx < nbrListItems; lmsItemNdx++) {
+        for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
-            lmsItem = lmsItemsB.get(0);
+            configItem = configItemsB.get(0);
 
-            lmsItemsB.remove(0);
+            configItemsB.remove(0);
 
-            firstSubInContainer = (lmsItemNdx % NBR_ITEMS_IN_CONTAINER == 0);
+            firstSubInContainer = (configItemNdx % NBR_ITEMS_IN_CONTAINER == 0);
 
             if (firstSubInContainer) {
 
                 subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
-                lmsScrollLayout.addView(subLayoutContainer);
+                configScrollLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
             }
 
             ImageView categoryImageView = getImageView(0, 0, 0, 0);
-            setImage(categoryImageView, lmsItem.bannerUrl);
+            setImage(categoryImageView, configItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, categoryImageView);
-            widgetLayout.setTag(lmsItem);
+            LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
+            widgetLayout.setTag(configItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 
@@ -777,30 +791,30 @@ public class LmsFragment
 
     private void fillWithCLand() {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:fillWithCLand():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:fillWithCLand():"
                         + " this[" + this + "]"
         );
 
         final int NBR_ITEMS_IN_CONTAINER = 4;
 
-        int nbrListItems = lmsItemsC.size();
+        int nbrListItems = configItemsC.size();
 
         boolean firstSubInContainer = true;
 
         int nbrCItemsInContainer = 0;
 
-        int lmsItemNdx = 0;
-        LmsItem lmsItem = null;
+        int configItemNdx = 0;
+        ConfigItem configItem = null;
 
         LinearLayout subLayoutContainer = null;
 
-        for (lmsItemNdx = 0; lmsItemNdx < nbrListItems; lmsItemNdx++) {
+        for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
-            lmsItem = lmsItemsC.get(0);
+            configItem = configItemsC.get(0);
 
-            lmsItemsC.remove(0);
+            configItemsC.remove(0);
 
-            firstSubInContainer = (lmsItemNdx % NBR_ITEMS_IN_CONTAINER == 0);
+            firstSubInContainer = (configItemNdx % NBR_ITEMS_IN_CONTAINER == 0);
 
             if (firstSubInContainer) {
 
@@ -808,17 +822,17 @@ public class LmsFragment
 
                 subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
 
-                lmsScrollLayout.addView(subLayoutContainer);
+                configScrollLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
             }
 
             ImageView categoryImageView = getImageView(0, 0, 0, 0);
-            setImage(categoryImageView, lmsItem.bannerUrl);
+            setImage(categoryImageView, configItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
             widgetLayout.setOnClickListener(itemOnClickListener);
-            widgetLayout.setTag(lmsItem);
+            widgetLayout.setTag(configItem);
             widgetLayout.addView(categoryImageView);
 
             subLayoutContainer.addView(widgetLayout);
@@ -835,79 +849,78 @@ public class LmsFragment
 
     private void padWithDLand(LinearLayout subLayoutContainer, int nbrListItems) {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:padWithDLand():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:padWithDLand():"
                         + " nbrListItems[" + nbrListItems + "]"
                         + " this[" + this + "]"
         );
 
-        int lmsItemsSize = lmsItemsD.size();
-        int lastListItem = (nbrListItems <= lmsItemsSize) ? nbrListItems : lmsItemsSize;
-        int lmsItemNdx = 0;
-        LmsItem lmsItem = null;
+        int configItemsSize = configItemsD.size();
+        int lastListItem = (nbrListItems <= configItemsSize) ? nbrListItems : configItemsSize;
+        int configItemNdx = 0;
+        ConfigItem configItem = null;
 
         LinearLayout dItemContainer = getSubLayoutContainer(LinearLayout.VERTICAL);
-
         subLayoutContainer.addView(dItemContainer);
 
-        for (lmsItemNdx = 0; lmsItemNdx < lastListItem; lmsItemNdx++) {
+        for (configItemNdx = 0; configItemNdx < lastListItem; configItemNdx++) {
 
-            lmsItem = lmsItemsD.get(0);
+            configItem = configItemsD.get(0);
 
-            lmsItemsD.remove(0);
+            configItemsD.remove(0);
 
             ImageView categoryImageView = getImageView(0, 0, 0, 0);
-            setImage(categoryImageView, lmsItem.bannerUrl);
+            setImage(categoryImageView, configItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, categoryImageView);
-            widgetLayout.setTag(lmsItem);
+            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, 0, categoryImageView);
+            widgetLayout.setTag(configItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 
-            dItemContainer.addView(widgetLayout);
+            dItemContainer.addView(widgetLayout, widgetLayoutParms);
         }
 
     } // padWithDLand()
 
     private void fillWithDLand() {
 
-        if (LOGGING) Log.v(TAG, "LmsFragment:fillWithDLand():"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:fillWithDLand():"
                         + " this[" + this + "]"
         );
 
         final int NBR_ITEMS_IN_CONTAINER = 2;
 
-        int nbrListItems = lmsItemsD.size();
+        int nbrListItems = configItemsD.size();
 
         boolean firstSubInContainer = true;
 
-        int lmsItemNdx = 0;
-        LmsItem lmsItem = null;
+        int configItemNdx = 0;
+        ConfigItem configItem = null;
 
         LinearLayout subLayoutContainer = null;
 
-        for (lmsItemNdx = 0; lmsItemNdx < nbrListItems; lmsItemNdx++) {
+        for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
-            lmsItem = lmsItemsD.get(0);
+            configItem = configItemsD.get(0);
 
-            lmsItemsD.remove(0);
+            configItemsD.remove(0);
 
-            firstSubInContainer = (lmsItemNdx % NBR_ITEMS_IN_CONTAINER == 0);
+            firstSubInContainer = (configItemNdx % NBR_ITEMS_IN_CONTAINER == 0);
 
             if (firstSubInContainer) {
 
                 subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
-                lmsScrollLayout.addView(subLayoutContainer);
+                configScrollLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
             }
 
             ImageView categoryImageView = getImageView(0, 0, 0, 0);
-            setImage(categoryImageView, lmsItem.bannerUrl);
+            setImage(categoryImageView, configItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, categoryImageView);
-            widgetLayout.setTag(lmsItem);
+            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
+            widgetLayout.setTag(configItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 

@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.profile;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
@@ -13,13 +14,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-
 import com.staples.mobile.common.access.easyopen.model.member.AddAddress;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.AddressId;
@@ -33,7 +32,7 @@ import retrofit.client.Response;
 /**
  * Created by Avinash Raja Dodda.
  */
-public class AddressFragment extends BaseFragment implements View.OnClickListener {
+public class AddressFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "Add Shipping Fragment";
     private static final String RECOMMENDATION = "v1";

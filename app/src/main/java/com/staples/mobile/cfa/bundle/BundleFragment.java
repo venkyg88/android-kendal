@@ -11,10 +11,9 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
-import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.BaseFragment;
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -28,8 +27,11 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class BundleFragment extends BaseFragment implements Callback<Browse>, AdapterView.OnItemClickListener {
+public class BundleFragment extends Fragment implements Callback<Browse>, AdapterView.OnItemClickListener {
     private static final String TAG = "BundleFragment";
+
+    public static final String TITLE = "title";
+    public static final String IDENTIFIER = "identifier";
 
     private static final String RECOMMENDATION = "v1";
     private static final String STORE_ID = "10001";
@@ -43,17 +45,18 @@ public class BundleFragment extends BaseFragment implements Callback<Browse>, Ad
     private DataWrapper wrapper;
     private GridView products;
     private BundleAdapter adapter;
+    private String title;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        String path = null;
+        String identifier = null;
 
-        Log.d(TAG, "onCreateView()");
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
 
         Bundle args = getArguments();
         if (args!=null) {
-            path = args.getString("path");
+            title = args.getString(TITLE);
+            identifier = args.getString(IDENTIFIER);
         }
 
         wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
@@ -62,32 +65,19 @@ public class BundleFragment extends BaseFragment implements Callback<Browse>, Ad
         products.setAdapter(adapter);
         products.setOnItemClickListener(this);
 
-        fill(path);
+        wrapper.setState(DataWrapper.State.LOADING);
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+        easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
+                ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
 
         return (view);
     }
 
-    private void fill(String path) {
-        int i, j;
-
-        wrapper.setState(DataWrapper.State.LOADING);
-        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-
-        // Decode category alphanumeric identifiers
-        i = path.indexOf("/category/identifier/");
-        if (i >= 0) {
-            i += "/category/identifier/".length();
-            j = path.indexOf('?', i);
-            if (j <= 0) j = path.length();
-            String identifier = path.substring(i, j);
-            easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
-                                         ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
-            return;
-        }
-
-        // No idea what the path is
-        Log.d(TAG, "Unknown path: " + path);
-        wrapper.setState(DataWrapper.State.EMPTY);
+    @Override
+    public void onResume() {
+        super.onResume();
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity!=null) activity.showActionBar(R.string.staples, R.drawable.ic_search_white, null);
     }
 
     @Override

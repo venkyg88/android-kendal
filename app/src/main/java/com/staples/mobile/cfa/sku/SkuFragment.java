@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.sku;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -23,15 +24,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
-import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
 import com.staples.mobile.cfa.feed.SeenProductsRowItem;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
-import com.staples.mobile.cfa.widget.HackEditor;
+import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.PagerStripe;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.RatingStars;
@@ -57,7 +56,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener,
+public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener,
         View.OnClickListener, FragmentManager.OnBackStackChangedListener {
     private static final String TAG = "SkuFragment";
 
@@ -487,7 +486,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
             tabAdapter.setProduct(product);
 
             // Handle availability
-            HackEditor edit = (HackEditor) wrapper.findViewById(R.id.quantity);
+            QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
             Button button = (Button) wrapper.findViewById(R.id.add_to_cart);
             Availability availability = Availability.getProductAvailability(product);
             switch (availability) {
@@ -734,7 +733,7 @@ public class SkuFragment extends BaseFragment implements TabHost.OnTabChangeList
                 shiftToDetail(2);
                 break;
             case R.id.add_to_cart:
-                HackEditor edit = (HackEditor) wrapper.findViewById(R.id.quantity);
+                QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
                 int qty = edit.getQuantity();
                 MainActivity activity = (MainActivity) getActivity();
                 activity.addItemToCart(identifier, qty);

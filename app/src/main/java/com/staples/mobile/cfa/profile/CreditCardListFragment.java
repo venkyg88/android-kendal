@@ -7,14 +7,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 
 import java.util.List;
@@ -22,7 +19,7 @@ import java.util.List;
 /**
  * Created by Avinash Dodda.
  */
-public class CreditCardListFragment extends BaseFragment implements View.OnClickListener {
+public class CreditCardListFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "CreditCardList Fragment";
     ListView listview;
     Button addBtn;

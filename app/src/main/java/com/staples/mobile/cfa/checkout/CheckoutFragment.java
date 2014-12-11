@@ -4,6 +4,7 @@
 
 package com.staples.mobile.cfa.checkout;
 
+import android.app.Fragment;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.login.LoginHelper;
@@ -34,7 +34,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public abstract class CheckoutFragment extends BaseFragment implements View.OnClickListener {
+public abstract class CheckoutFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = CheckoutFragment.class.getSimpleName();
 
     private static final String RECOMMENDATION = "v1";
@@ -231,7 +231,7 @@ public abstract class CheckoutFragment extends BaseFragment implements View.OnCl
         this.tax = tax;
         shippingChargeVw.setText(formatShippingCharge(shippingCharge, currencyFormat));
         taxVw.setText(currencyFormat.format(tax));
-        checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax - couponsRewardsAmount));
+        checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax)); // coupons/rewards are already factored into pretaxSubtotal
         taxLayout.setVisibility(View.VISIBLE);
         shippingChargeLayout.setVisibility(View.VISIBLE);
         submissionLayout.setVisibility(View.VISIBLE);

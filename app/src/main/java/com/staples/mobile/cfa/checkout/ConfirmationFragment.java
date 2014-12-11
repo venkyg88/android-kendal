@@ -4,34 +4,27 @@
 
 package com.staples.mobile.cfa.checkout;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.cart.OrderStatusContents;
 
 import java.text.NumberFormat;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 //import com.staples.mobile.common.access.easyopen.model.cart.OrderStatus;
 //import com.staples.mobile.common.access.easyopen.model.cart.OrderStatusContents;
 
 
-public class ConfirmationFragment extends BaseFragment implements View.OnClickListener {
+public class ConfirmationFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = ConfirmationFragment.class.getSimpleName();
 
     private static final String RECOMMENDATION = "v1";

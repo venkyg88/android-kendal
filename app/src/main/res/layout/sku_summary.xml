@@ -196,7 +196,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_horizontal">
-        <com.staples.mobile.cfa.widget.HackEditor
+        <com.staples.mobile.cfa.widget.QuantityEditor
             android:id="@+id/quantity"
             style="@style/HackEditorStyle"
             android:layout_width="40dp"
