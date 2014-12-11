@@ -135,8 +135,7 @@ public class ConfiguratorFragment
                 );
 
                 ConfigItem configItem = (ConfigItem) view.getTag();
-                String path = "/category/identifier/" + configItem.identifier;
-                activity.selectBundle(configItem.title, path);
+                activity.selectBundle(configItem.title, configItem.identifier);
             }
         };
 
@@ -149,7 +148,7 @@ public class ConfiguratorFragment
     public void onResume() {
         super.onResume();
         MainActivity activity = (MainActivity) getActivity();
-        if (activity!=null) activity.showStandardActionBar();
+        if (activity!=null) activity.showActionBar(R.string.staples, R.drawable.ic_search_white, null);
     }
 
     public void onGetConfiguratorResult(boolean success) {

@@ -77,7 +77,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
     public void onResume() {
         super.onResume();
         MainActivity activity = (MainActivity) getActivity();
-        if (activity!=null) activity.showStandardActionBar();
+        if (activity!=null) activity.showActionBar(R.string.staples, R.drawable.ic_search_white, null);
     }
 
     @Override

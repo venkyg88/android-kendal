@@ -51,6 +51,13 @@ public class AboutFragment extends Fragment {
         return(view);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity!=null) activity.showActionBar(R.string.about_title, R.drawable.ic_search_white, null);
+    }
+
     private void addDisplayRows(LayoutInflater inflater, TableLayout table) {
         DisplayMetrics metrics = getActivity().getResources().getDisplayMetrics();
         addRow(inflater, table, "Display width", Integer.toString(metrics.widthPixels));
