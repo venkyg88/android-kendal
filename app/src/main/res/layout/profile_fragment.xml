@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:text="@string/email_title"
         android:id="@+id/emailLabel"
-        style="@style/CheckoutSubheading"
+        style="@style/GraySubheading"
         android:layout_height="wrap_content" />
 
     <TextView
@@ -22,7 +22,7 @@
     <TextView
         android:layout_width="match_parent"
         android:text="@string/username_title"
-        style="@style/CheckoutSubheading"
+        style="@style/GraySubheading"
         android:id="@+id/userNameLabel"
         android:layout_height="wrap_content" />
 

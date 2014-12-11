@@ -6,78 +6,167 @@ package com.staples.mobile.cfa.cart;
 
 import android.app.Activity;
 import android.content.Context;
-import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.access.easyopen.model.cart.Description;
-import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
+import com.staples.mobile.cfa.widget.EditTextWithImeBackEvent;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class CouponAdapter extends ArrayAdapter<Coupon> {
+public class CouponAdapter extends BaseAdapter {
 
     private static final String TAG = CouponAdapter.class.getSimpleName();
 
     private Activity activity;
     private LayoutInflater inflater;
-    private int couponLayoutResId;
-
-    NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+    private ArrayList<CouponItem> couponItems = new ArrayList<CouponItem>();
 
     // widget listeners
+    private View.OnClickListener addButtonListener;
     private View.OnClickListener deleteButtonListener;
 
 
-    public CouponAdapter(Activity activity, int couponLayoutResId, View.OnClickListener deleteButtonListener) {
-        super(activity, couponLayoutResId);
+    public CouponAdapter(Activity activity, View.OnClickListener addButtonListener, View.OnClickListener deleteButtonListener) {
         this.activity = activity;
-        this.couponLayoutResId = couponLayoutResId;
+        this.addButtonListener = addButtonListener;
         this.deleteButtonListener = deleteButtonListener;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
+    public void setItems(List<CouponItem> items) {
+        couponItems.clear();
+        couponItems.addAll(items);
+        notifyDataSetChanged();
+    }
+
+
+    @Override
+    public int getItemViewType(int position) {
+        return getItem(position).getItemType();
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return CouponItem.TYPE_MAX_COUNT;
+    }
+
+    @Override
+    public int getCount() {
+        return couponItems.size();
+    }
+
+    @Override
+    public CouponItem getItem(int position) {
+        return couponItems.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
 
 /* Views */
 
 
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
 
         // use view holder pattern to improve listview performance
         ViewHolder vh = null;
 
+        int type = getItemViewType(position);
+
         // Get a new or recycled view of the right type
-        if (view == null) {
-            view = inflater.inflate(couponLayoutResId, parent, false);
-            vh = new ViewHolder(view); // get various widgets and place in view holder
-            view.setTag(vh);
+        if (convertView == null) {
+            vh = new ViewHolder();
+            switch (type) {
+                case CouponItem.TYPE_COUPON_TO_ADD:
+                    convertView = inflater.inflate(R.layout.coupon_item_add, parent, false);
+                    vh.couponCodeEditVw = (EditTextWithImeBackEvent) convertView.findViewById(R.id.coupon_code);
+                    vh.couponAddButton = (Button) convertView.findViewById(R.id.coupon_add_button);
+                    break;
+                case CouponItem.TYPE_APPLIED_COUPON:
+                    convertView = inflater.inflate(R.layout.coupon_item_applied, parent, false);
+                    vh.couponField1Vw = (TextView) convertView.findViewById(R.id.coupon_item_field1);
+                    vh.couponField2Vw = (TextView) convertView.findViewById(R.id.coupon_item_field2);
+                    vh.couponDeleteButton = (Button) convertView.findViewById(R.id.coupon_delete_button);
+                    break;
+                case CouponItem.TYPE_REDEEMABLE_REWARD_HEADING:
+                    convertView = inflater.inflate(R.layout.coupon_item_redeemable_heading, parent, false);
+                    break;
+                case CouponItem.TYPE_REDEEMABLE_REWARD:
+                    convertView = inflater.inflate(R.layout.coupon_item_redeemable, parent, false);
+                    vh.couponField1Vw = (TextView) convertView.findViewById(R.id.coupon_item_field1);
+                    vh.couponField2Vw = (TextView) convertView.findViewById(R.id.coupon_item_field2);
+                    vh.couponAddButton = (Button) convertView.findViewById(R.id.reward_add_button);
+                    break;
+            }
+            convertView.setTag(vh);
         } else {
-            vh = (ViewHolder) view.getTag();
+            vh = (ViewHolder) convertView.getTag();
         }
 
-        Coupon coupon = getItem(position);
+        CouponItem couponItem = getItem(position);
+
+        // set up coupon code entry view
+        if (vh.couponCodeEditVw != null) {
+            vh.couponCodeEditVw.setText(couponItem.getCouponCodeToAdd());
+            vh.couponCodeEditVw.setTag(position);
+            vh.couponCodeEditVw.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                    retrieveCouponCodeFromEditText(textView);
+                    return false;
+                }
+            });
+            vh.couponCodeEditVw.setOnImeBackListener(new EditTextWithImeBackEvent.EditTextImeBackListener() {
+                @Override public void onImeBack(EditTextWithImeBackEvent view, String text) {
+                retrieveCouponCodeFromEditText((TextView) view);
+                }
+            });
+            vh.couponCodeEditVw.setOnKeyListener(new View.OnKeyListener() {
+                @Override public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    retrieveCouponCodeFromEditText((TextView) v);
+                    return false;
+                }
+            });
+        }
 
         // set coupon text
-        vh.couponDescriptionVw.setText(currencyFormat.format(Math.abs(coupon.getAdjustedAmount())) + " off");
-        vh.couponCodeVw.setText("code: " + coupon.getCode());
+        if (vh.couponField1Vw != null) {
+            vh.couponField1Vw.setText(couponItem.getCouponField1Text());
+            vh.couponField2Vw.setText(couponItem.getCouponField2Text());
+        }
 
-        // associate item position with each widget
-        vh.couponDeleteButton.setTag(position);
-        vh.couponCodeVw.setTag(position);
+        // set up delete button
+        if (vh.couponDeleteButton != null) {
+            vh.couponDeleteButton.setTag(position);
+            vh.couponDeleteButton.setOnClickListener(deleteButtonListener);
+        }
 
-        // set widget listeners
-        vh.couponDeleteButton.setOnClickListener(deleteButtonListener);
+        // set up add button
+        if (vh.couponAddButton != null) {
+            vh.couponAddButton.setTag(position);
+            vh.couponAddButton.setOnClickListener(addButtonListener);
+        }
 
-        return(view);
+        return(convertView);
+    }
+
+    private void retrieveCouponCodeFromEditText(TextView v) {
+        CouponItem couponItem = getItem((Integer) v.getTag());
+        couponItem.setCouponCodeToAdd(v.getText().toString());
     }
 
     //---------------------------------------//
@@ -87,14 +176,10 @@ public class CouponAdapter extends ArrayAdapter<Coupon> {
     /************* view holder ************/
 
     static class ViewHolder {
-        private TextView couponCodeVw;
-        private TextView couponDescriptionVw;
+        private EditTextWithImeBackEvent couponCodeEditVw;
+        private TextView couponField1Vw;
+        private TextView couponField2Vw;
         private Button couponDeleteButton;
-
-        ViewHolder(View convertView) {
-            couponCodeVw = (TextView) convertView.findViewById(R.id.coupon_item_code);
-            couponDescriptionVw = (TextView) convertView.findViewById(R.id.coupon_item_description);
-            couponDeleteButton = (Button) convertView.findViewById(R.id.coupon_delete_button);
-        }
+        private Button couponAddButton;
     }
 }

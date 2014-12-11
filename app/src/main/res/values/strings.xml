@@ -61,10 +61,13 @@
     <string name="item_subtotal">Item total</string>
     <string name="coupons_rewards">Coupon &amp; Reward</string>
     <string name="coupon_code_hint">Add Coupon Code here</string>
-    <string name="link_rewards_account">Link Your Rewards Account</string>
-    <string name="link_account">Link Account</string>
-    <string name="rewards_card_number">Rewards Card Number</string>
-    <string name="rewards_phone_number">Your Rewards Account Phone Number</string>
+    <string name="redeemable_rewards">Redeemable Rewards</string>
+    <string name="no_redeemable_rewards">No Redeemable Rewards</string>
+    <!--NOTE: we may or may not implement the link-rewards-acct feature which uses these strings-->
+    <!--<string name="link_rewards_account">Link Your Rewards Account</string>-->
+    <!--<string name="link_account">Link Account</string>-->
+    <!--<string name="rewards_card_number">Rewards Card Number</string>-->
+    <!--<string name="rewards_phone_number">Your Rewards Account Phone Number</string>-->
     <string name="tax">Tax</string>
     <string name="submit_order">Submit Order</string>
     <string name="confirmation_title">Order Confirmation</string>

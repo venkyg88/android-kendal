@@ -231,7 +231,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         this.tax = tax;
         shippingChargeVw.setText(formatShippingCharge(shippingCharge, currencyFormat));
         taxVw.setText(currencyFormat.format(tax));
-        checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax - couponsRewardsAmount));
+        checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax)); // coupons/rewards are already factored into pretaxSubtotal
         taxLayout.setVisibility(View.VISIBLE);
         shippingChargeLayout.setVisibility(View.VISIBLE);
         submissionLayout.setVisibility(View.VISIBLE);
