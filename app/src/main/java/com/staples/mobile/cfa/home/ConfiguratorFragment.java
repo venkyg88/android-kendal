@@ -36,7 +36,13 @@ public class ConfiguratorFragment
 
     private static final long CONFIGURATOR_REFRESH_TIME_MILLIS = (5 * 60 * 1000);
 
-    private static final int MARGIN_BOTTOM_DP = 24;
+    private static final int PADDING_ZERO = 0;
+
+    private static final int MARGIN_ZERO = 0;
+    private static final int MARGIN_LEFT_DP = 0;
+    private static final int MARGIN_TOP_DP = 0;
+    private static final int MARGIN_RIGHT_DP = 0;
+    private static final int MARGIN_BOTTOM_DP = 20;
 
     private MainActivity activity;
     private Resources resources;
@@ -121,8 +127,7 @@ public class ConfiguratorFragment
                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, // width
                         ViewGroup.LayoutParams.MATCH_PARENT); // height
 
-        int margin = 0;
-        subLayoutContainerLayoutParms.setMargins(margin, margin, margin, MARGIN_BOTTOM_DP); // left, top, right, bottom
+        subLayoutContainerLayoutParms.setMargins(MARGIN_LEFT_DP, MARGIN_TOP_DP, MARGIN_RIGHT_DP, MARGIN_BOTTOM_DP); // left, top, right, bottom
 
         itemOnClickListener = new OnClickListener() {
 
@@ -268,17 +273,17 @@ public class ConfiguratorFragment
             if (size.equalsIgnoreCase("A")) {
 
                 subLayoutHeight = aItemHeight;
-                categoryImageView = getImageView(0, 0, 0, 0);
+                categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
 
             } else if (size.equalsIgnoreCase("B")) {
 
                 subLayoutHeight = bItemHeight;
-                categoryImageView = getImageView(0, 0, 0, 0);
+                categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
 
             } else if (size.equalsIgnoreCase("D")) {
 
                 subLayoutHeight = dItemHeight;
-                categoryImageView = getImageView(0, 0, 0, 0);
+                categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
             }
 
             setImage(categoryImageView, configItem.bannerUrl);
@@ -315,15 +320,16 @@ public class ConfiguratorFragment
             if (firstSubInContainer) {
 
                 subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
+                subLayoutContainerLayoutParms.setMargins(MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO, MARGIN_BOTTOM_DP); // left, top, right, bottom
                 configScrollLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
             }
 
-            ImageView categoryImageView = getImageView(0, 0, 0, 0);
+            ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
             setImage(categoryImageView, configItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, MARGIN_ZERO, categoryImageView);
             widgetLayout.setTag(configItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
@@ -389,14 +395,15 @@ public class ConfiguratorFragment
                 aItemHeight,
                 LinearLayout.HORIZONTAL);
 
+        subLayoutContainerLayoutParms.setMargins(MARGIN_LEFT_DP, MARGIN_TOP_DP, MARGIN_RIGHT_DP, MARGIN_BOTTOM_DP); // left, top, right, bottom
         configScrollLayout.addView(subLayout, subLayoutContainerLayoutParms);
 
-        ImageView categoryImageView = getImageView(0, 0, 0, 0);
+        ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
         setImage(categoryImageView, configItemA.bannerUrl);
 
         // Vertical. Contains selectable content. Used to create a rectangular
         // frame around the content.
-        LinearLayout widgetLayout = getWidgetLayout(aItemWidth, aItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
+        LinearLayout widgetLayout = getWidgetLayout(aItemWidth, aItemHeight, MARGIN_ZERO, categoryImageView);
         widgetLayout.setTag(configItemA);
         widgetLayout.setOnClickListener(itemOnClickListener);
         widgetLayout.addView(categoryImageView);
@@ -476,12 +483,13 @@ public class ConfiguratorFragment
 
             // Category ImageView
 
-            ImageView categoryImageView = getImageView(0, 0, 0, 0);
+            ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
             setImage(categoryImageView, configItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
+            int marginBottom = (configItemNdx == (nbrListItems - 1)) ? MARGIN_ZERO : MARGIN_BOTTOM_DP;
+            LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, marginBottom, categoryImageView);
             widgetLayout.setTag(configItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
@@ -526,12 +534,13 @@ public class ConfiguratorFragment
                 nbrSubLayoutContainers++;
             }
 
-            ImageView categoryImageView = getImageView(0, 0, 0, 0);
+            ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
             setImage(categoryImageView, configItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
+            int marginBottom = (configItemNdx == (nbrListItems - 1)) ? MARGIN_ZERO : MARGIN_BOTTOM_DP;
+            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, marginBottom, categoryImageView);
             widgetLayout.setTag(configItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
@@ -566,12 +575,13 @@ public class ConfiguratorFragment
 
             // Category ImageView
 
-            ImageView categoryImageView = getImageView(0, 0, 0, 0);
+            ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
             setImage(categoryImageView, configItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
+            int marginBottom = (configItemNdx == (nbrListItems - 1)) ? MARGIN_ZERO : MARGIN_BOTTOM_DP;
+            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, marginBottom, categoryImageView);
             widgetLayout.setTag(configItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
@@ -603,8 +613,7 @@ public class ConfiguratorFragment
         widgetLayout.setOrientation(LinearLayout.VERTICAL);
         widgetLayout.setMeasureWithLargestChildEnabled(true);
 
-        int padding = 0;
-        widgetLayout.setPadding(padding, padding, padding, padding);
+        widgetLayout.setPadding(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
 
         widgetLayoutParms =
                 new LinearLayout.LayoutParams(layoutWidth, // width
@@ -637,8 +646,7 @@ public class ConfiguratorFragment
         configBCDLayout.setOrientation(LinearLayout.VERTICAL);
         configBCDLayout.setMeasureWithLargestChildEnabled(true);
 
-        int padding = 0;
-        configBCDLayout.setPadding(padding, padding, padding, padding);
+        configBCDLayout.setPadding(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
 
         return (configBCDLayout);
 
@@ -667,8 +675,7 @@ public class ConfiguratorFragment
         subLayout.setOrientation(orientation);
         subLayout.setMeasureWithLargestChildEnabled(true);
 
-        int padding = 0;
-        subLayout.setPadding(padding, padding, padding, padding);
+        subLayout.setPadding(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
 
         return (subLayout);
 
@@ -686,8 +693,7 @@ public class ConfiguratorFragment
         subLayoutContainer.setOrientation(orientation);
         subLayoutContainer.setMeasureWithLargestChildEnabled(true);
 
-        int padding = 0;
-        subLayoutContainer.setPadding(padding, padding, padding, padding);
+        subLayoutContainer.setPadding(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
 
         return (subLayoutContainer);
 
@@ -771,10 +777,12 @@ public class ConfiguratorFragment
             if (firstSubInContainer) {
 
                 subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
+                subLayoutContainerLayoutParms.setMargins(MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO); // left, top, right, bottom
                 configScrollLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
+                subLayoutContainerLayoutParms.setMargins(MARGIN_LEFT_DP, MARGIN_TOP_DP, MARGIN_RIGHT_DP, MARGIN_BOTTOM_DP); // left, top, right, bottom
             }
 
-            ImageView categoryImageView = getImageView(0, 0, 0, 0);
+            ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
             setImage(categoryImageView, configItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
@@ -822,15 +830,17 @@ public class ConfiguratorFragment
 
                 subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
 
+                subLayoutContainerLayoutParms.setMargins(MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO, MARGIN_BOTTOM_DP); // left, top, right, bottom
                 configScrollLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
+                subLayoutContainerLayoutParms.setMargins(MARGIN_LEFT_DP, MARGIN_TOP_DP, MARGIN_RIGHT_DP, MARGIN_BOTTOM_DP); // left, top, right, bottom
             }
 
-            ImageView categoryImageView = getImageView(0, 0, 0, 0);
+            ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
             setImage(categoryImageView, configItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, MARGIN_ZERO, categoryImageView);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.setTag(configItem);
             widgetLayout.addView(categoryImageView);
@@ -868,12 +878,12 @@ public class ConfiguratorFragment
 
             configItemsD.remove(0);
 
-            ImageView categoryImageView = getImageView(0, 0, 0, 0);
+            ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
             setImage(categoryImageView, configItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, 0, categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, MARGIN_ZERO, categoryImageView);
             widgetLayout.setTag(configItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
@@ -911,15 +921,17 @@ public class ConfiguratorFragment
             if (firstSubInContainer) {
 
                 subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
+                subLayoutContainerLayoutParms.setMargins(MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO, MARGIN_BOTTOM_DP); // left, top, right, bottom
                 configScrollLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
+                subLayoutContainerLayoutParms.setMargins(MARGIN_LEFT_DP, MARGIN_TOP_DP, MARGIN_RIGHT_DP, MARGIN_BOTTOM_DP); // left, top, right, bottom
             }
 
-            ImageView categoryImageView = getImageView(0, 0, 0, 0);
+            ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
             setImage(categoryImageView, configItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
+            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, MARGIN_ZERO, categoryImageView);
             widgetLayout.setTag(configItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
