@@ -155,7 +155,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         super.onResume();
 
         // update action bar
-        activity.showCheckoutActionBarEntities();
         int titleId = this instanceof GuestCheckoutFragment ? R.string.guest_checkout_title : R.string.checkout_title;
         activity.showActionBar(titleId, 0, null);
     }
