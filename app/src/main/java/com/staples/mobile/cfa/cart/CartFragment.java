@@ -252,7 +252,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         super.onResume();
 
         // update action bar
-        activity.showCartActionBarEntities();
         activity.showActionBar(R.string.cart_title, 0, null);
 
         //initialize cart based on what's been returned from api so far

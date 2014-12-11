@@ -154,74 +154,68 @@ public class MainActivity extends Activity
             optionListener = listener;
         }
 
-        // Show standard entities
-        leftDrawerAction.setVisibility(View.VISIBLE);
-        searchBar.setVisibility(View.GONE);
-        optionIcon.setVisibility(View.VISIBLE);
-        cartIconAction.setVisibility(View.VISIBLE);
-
-        // hide non-standard entities
-        cartQtyView.setVisibility(View.GONE);
-        checkoutSigninButton.setVisibility(View.GONE);
-        closeButton.setVisibility(View.GONE);
 
         // TODO Interim hacked fixes
         switch(titleId) {
+            case R.string.cart_title:
+                // show cart-specific entities
+                leftDrawerAction.setVisibility(View.VISIBLE);
+                cartQtyView.setVisibility(View.VISIBLE);
+                // hide unwanted entities
+                cartIconAction.setVisibility(View.GONE);
+                checkoutSigninButton.setVisibility(View.GONE);
+                closeButton.setVisibility(View.GONE);
+                break;
+            case R.string.guest_checkout_title:
+            case R.string.checkout_title:
+                // show checkout-specific entities
+                closeButton.setVisibility(View.VISIBLE);
+                closeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        selectShoppingCart();
+                    }
+                });
+                LoginHelper loginHelper = new LoginHelper(this);
+                if (loginHelper.isLoggedIn() && loginHelper.isGuestLogin()) {
+                    checkoutSigninButton.setVisibility(View.VISIBLE);
+                } else {
+                    checkoutSigninButton.setVisibility(View.GONE);
+                }
+                // hide unwanted entities
+                leftDrawerAction.setVisibility(View.GONE);
+                cartIconAction.setVisibility(View.GONE);
+                cartQtyView.setVisibility(View.GONE);
+                break;
+            case R.string.order_confirmation_title:
+                // show cart-specific entities
+                leftDrawerAction.setVisibility(View.VISIBLE);
+                cartQtyView.setVisibility(View.VISIBLE);
+                // hide unwanted entities
+                cartIconAction.setVisibility(View.GONE);
+                cartQtyView.setVisibility(View.GONE);
+                break;
+            default:
+                // Show standard entities
+                leftDrawerAction.setVisibility(View.VISIBLE);
+                cartIconAction.setVisibility(View.VISIBLE);
 
+                // hide non-standard entities
+                cartQtyView.setVisibility(View.GONE);
+                checkoutSigninButton.setVisibility(View.GONE);
+                closeButton.setVisibility(View.GONE);
         }
 
         // TODO Interim hacked fixes
         switch(iconId) {
             case R.drawable.ic_search_white:
+            case R.drawable.ic_close_white:
                 optionListener = searchBar;
+                searchBar.setVisibility(View.VISIBLE);
                 break;
+            default:
+                searchBar.setVisibility(View.GONE);
         }
-    }
-
-    public void showCartActionBarEntities() {
-        // show cart-specific entities
-        leftDrawerAction.setVisibility(View.VISIBLE);
-        cartQtyView.setVisibility(View.VISIBLE);
-        // hide unwanted entities
-        searchBar.setVisibility(View.GONE);
-        optionIcon.setVisibility(View.GONE);
-        cartIconAction.setVisibility(View.GONE);
-        checkoutSigninButton.setVisibility(View.GONE);
-        closeButton.setVisibility(View.GONE);
-    }
-
-    public void showCheckoutActionBarEntities() {
-        // show checkout-specific entities
-        closeButton.setVisibility(View.VISIBLE);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectShoppingCart();
-            }
-        });
-        LoginHelper loginHelper = new LoginHelper(this);
-        if (loginHelper.isLoggedIn() && loginHelper.isGuestLogin()) {
-            checkoutSigninButton.setVisibility(View.VISIBLE);
-        } else {
-            checkoutSigninButton.setVisibility(View.GONE);
-        }
-        // hide unwanted entities
-        leftDrawerAction.setVisibility(View.GONE);
-        searchBar.setVisibility(View.GONE);
-        optionIcon.setVisibility(View.GONE);
-        cartIconAction.setVisibility(View.GONE);
-        cartQtyView.setVisibility(View.GONE);
-    }
-
-    public void showOrderConfirmationActionBarEntities() {
-        // show cart-specific entities
-        leftDrawerAction.setVisibility(View.VISIBLE);
-        cartQtyView.setVisibility(View.VISIBLE);
-        // hide unwanted entities
-        searchBar.setVisibility(View.GONE);
-        optionIcon.setVisibility(View.GONE);
-        cartIconAction.setVisibility(View.GONE);
-        cartQtyView.setVisibility(View.GONE);
     }
 
     /** sets action bar cart quantity */

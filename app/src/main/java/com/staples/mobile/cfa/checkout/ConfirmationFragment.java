@@ -143,7 +143,6 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
         super.onResume();
 
         // update action bar
-        activity.showOrderConfirmationActionBarEntities();
         activity.showActionBar(R.string.order_confirmation_title, 0, null);
     }
 
