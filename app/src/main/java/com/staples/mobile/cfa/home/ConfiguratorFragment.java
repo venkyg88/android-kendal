@@ -135,8 +135,7 @@ public class ConfiguratorFragment
                 );
 
                 ConfigItem configItem = (ConfigItem) view.getTag();
-                String path = "/category/identifier/" + configItem.identifier;
-                activity.selectBundle(configItem.title, path);
+                activity.selectBundle(configItem.title, configItem.identifier);
             }
         };
 
