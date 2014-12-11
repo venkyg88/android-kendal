@@ -5,6 +5,7 @@ package com.staples.mobile.cfa.feed;
  */
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +18,6 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.BaseFragment;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.cart.CartItem;
@@ -40,7 +40,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class PersonalFeedFragment extends BaseFragment{
+public class PersonalFeedFragment extends Fragment {
     private static final String TAG = "PersonalFeedFragment";
 
     public static final String DAILY_DEAL_IDENTIFIER = "BI739472";
