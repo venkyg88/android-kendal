@@ -153,14 +153,8 @@ public class MainActivity extends Activity
             optionIcon.setImageResource(iconId);
             optionListener = listener;
         }
-    }
 
-    /** sets standard action bar, fragments need to override their onResume methods to set up action bar */
-    public void showStandardActionBar() {
-        // set standard title bar
-        showActionBar(R.string.staples, R.drawable.ic_search_white, searchBar);
-
-        // show standard entities
+        // Show standard entities
         leftDrawerAction.setVisibility(View.VISIBLE);
         searchBar.setVisibility(View.GONE);
         optionIcon.setVisibility(View.VISIBLE);
@@ -170,6 +164,18 @@ public class MainActivity extends Activity
         cartQtyView.setVisibility(View.GONE);
         checkoutSigninButton.setVisibility(View.GONE);
         closeButton.setVisibility(View.GONE);
+
+        // TODO Interim hacked fixes
+        switch(titleId) {
+
+        }
+
+        // TODO Interim hacked fixes
+        switch(iconId) {
+            case R.drawable.ic_search_white:
+                optionListener = searchBar;
+                break;
+        }
     }
 
     public void showCartActionBarEntities() {
@@ -251,7 +257,7 @@ public class MainActivity extends Activity
 
 
         // initialize action bar
-        showStandardActionBar();
+        showActionBar(R.string.staples, R.drawable.ic_search_white, searchBar);
 
         // Init search bar
         searchBar.initSearchBar();

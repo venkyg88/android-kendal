@@ -3,11 +3,8 @@
 
     <string name="app_name">Kendall</string>
     <string name="staples">Staples</string>
-    <string name="left_drawer">Left Drawer</string>
-    <string name="search">Search</string>
-    <string name="right_drawer">Right Drawer</string>
 
-    <!-- Drawer header titles -->
+    <!-- Fragment titles -->
     <string name="home_title">Home</string>
     <string name="personal_feed_title">Personal Feed</string>
     <string name="browse_title">Shop by Category</string>
@@ -98,6 +95,7 @@
     <string name="avail_instock">In stock</string>
     <string name="avail_outofstock">Out of stock</string>
 
+    <!-- Store locator -->
     <string name="store_search_hint">Search Zip, City or Street</string>
     <string name="no_stores_title">No Results</string>
     <string name="no_stores_message">We were unable to find any stores near the location provided.</string>

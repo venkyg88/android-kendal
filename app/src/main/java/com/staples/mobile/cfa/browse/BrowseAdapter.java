@@ -28,6 +28,8 @@ public class BrowseAdapter extends BaseAdapter {
         inflater = activity.getLayoutInflater();
         stackList = new ArrayList<BrowseItem>();
         browseList = new ArrayList<BrowseItem>();
+
+        stackList.add(new BrowseItem(BrowseItem.Type.ACTIVE, activity.getResources().getString(R.string.browse_title), null));
     }
 
     // Items
@@ -81,8 +83,13 @@ public class BrowseAdapter extends BaseAdapter {
     }
 
     public void pushStack(BrowseItem item) {
+        // Change old active to regular stack
+        int size = stackList.size();
+        if (size>0)
+            stackList.get(size-1).type = BrowseItem.Type.STACK;
+
         // Push new stack item
-        item.type = BrowseItem.Type.STACK;
+        item.type = BrowseItem.Type.ACTIVE;
         stackList.add(item);
 
         // Clear browse list
@@ -94,21 +101,17 @@ public class BrowseAdapter extends BaseAdapter {
         int index = stackList.indexOf(item);
         if (index < 0) return (null);
 
-        // Get identifier
-        String identifier = null;
-        if (index > 0) identifier = stackList.get(index - 1).identifier;
+        // Change new active
+        item.type = BrowseItem.Type.ACTIVE;
 
         // Pop stack
-        int size = stackList.size();
-        for(; index < size; ) {
-            size--;
-            BrowseItem dead = (BrowseItem) stackList.remove(size);
-        }
+        for(int i = stackList.size()-1;i>index;i--)
+            stackList.remove(i);
 
         // Clear browse list
         browseList.clear();
 
-        return (identifier);
+        return (item.identifier);
     }
 
     public void addItem(BrowseItem item) {
