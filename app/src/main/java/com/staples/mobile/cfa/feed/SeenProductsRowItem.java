@@ -24,7 +24,7 @@ public class SeenProductsRowItem {
         this.imageUrl = imageUrl;
     }
 
-	public String getProduceName() {
+	public String getProductName() {
 		return productName;
 	}
 

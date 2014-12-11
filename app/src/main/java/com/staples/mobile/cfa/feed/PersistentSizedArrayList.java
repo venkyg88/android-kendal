@@ -78,7 +78,7 @@ public class PersistentSizedArrayList<T> extends ArrayList<T> {
             savedSkusString = notSavedSeenProduct.getSku();
 
             savedProductsString = notSavedSeenProduct.getSku() + FIELD_SEPARATOR
-                    + notSavedSeenProduct.getProduceName() + FIELD_SEPARATOR
+                    + notSavedSeenProduct.getProductName() + FIELD_SEPARATOR
                     + notSavedSeenProduct.getCurrentPrice() + FIELD_SEPARATOR
                     + notSavedSeenProduct.getReviewCount() + FIELD_SEPARATOR
                     + notSavedSeenProduct.getRating() + FIELD_SEPARATOR
@@ -89,7 +89,7 @@ public class PersistentSizedArrayList<T> extends ArrayList<T> {
             savedSkusString = savedSkusString + FIELD_SEPARATOR + notSavedSeenProduct.getSku();
 
             String productString = notSavedSeenProduct.getSku() + FIELD_SEPARATOR
-                    + notSavedSeenProduct.getProduceName() + FIELD_SEPARATOR
+                    + notSavedSeenProduct.getProductName() + FIELD_SEPARATOR
                     + notSavedSeenProduct.getCurrentPrice() + FIELD_SEPARATOR
                     + notSavedSeenProduct.getReviewCount() + FIELD_SEPARATOR
                     + notSavedSeenProduct.getRating() + FIELD_SEPARATOR
@@ -130,7 +130,7 @@ public class PersistentSizedArrayList<T> extends ArrayList<T> {
         PersistentSizedArrayList<SeenProductsRowItem> savedProducts = feedSingleton.getSavedSeenProducts();
         for(SeenProductsRowItem savedProduct : savedProducts){
             String savedSeenProductString = savedProduct.getSku() + FIELD_SEPARATOR
-                    + savedProduct.getProduceName() + FIELD_SEPARATOR
+                    + savedProduct.getProductName() + FIELD_SEPARATOR
                     + savedProduct.getCurrentPrice() + FIELD_SEPARATOR
                     + savedProduct.getReviewCount() + FIELD_SEPARATOR
                     + savedProduct.getRating() + FIELD_SEPARATOR

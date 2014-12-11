@@ -39,7 +39,7 @@ public class SeenProductsAdapter extends ArrayAdapter<SeenProductsRowItem> {
         }
 
         TextView title = (TextView) convertView.findViewById(R.id.title);
-        if (title!=null) title.setText(rowItem.getProduceName());
+        if (title!=null) title.setText(rowItem.getProductName());
 
         RatingStars ratingStars = (RatingStars) convertView.findViewById(R.id.rating);
         ratingStars.setRating(Float.parseFloat(rowItem.getRating()), Integer.parseInt(rowItem.getReviewCount()));
