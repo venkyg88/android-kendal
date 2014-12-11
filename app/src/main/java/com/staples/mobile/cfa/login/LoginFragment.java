@@ -27,6 +27,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private String emaiId;
     private String registerUsername;
     private String registerPassword;
+    MainActivity activity;
 
     public String getRegisterPassword() {
         return registerPassword;
@@ -72,6 +73,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
+        activity = (MainActivity)getActivity();
         loginHelper = new LoginHelper((MainActivity)getActivity());
         View view = inflater.inflate(R.layout.login_fragment, container, false);
 
@@ -97,6 +99,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         registerBtn.setOnClickListener(this);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        activity.showActionBar(R.string.signin_title, 0, null);
     }
 
     public void hideKeyboard(View view)
