@@ -198,6 +198,12 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).showActionBar(R.string.staples, R.drawable.ic_search_white, null);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         FragmentManager manager = getFragmentManager();
