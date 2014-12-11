@@ -402,7 +402,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             // add line to add a coupon
             couponItems.add(new CouponItem(null, null, CouponItem.TYPE_COUPON_TO_ADD));
             // add list of applied coupons
-            if (cart.getCoupon() != null && cart.getCoupon().size() > 0) {
+            if (cart != null && cart.getCoupon() != null && cart.getCoupon().size() > 0) {
                 for (Coupon coupon : cart.getCoupon()) {
                     // coupon may or may not have a matching reward
                     Reward reward = findMatchingReward(profileRewards, coupon.getCode());
