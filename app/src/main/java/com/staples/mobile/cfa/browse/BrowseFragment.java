@@ -67,7 +67,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
         list.setAdapter(adapter);
         list.setOnItemClickListener(this);
 
-        wrapper.setState(DataWrapper.State.LOADING);
+        wrapper.setState(DataWrapper.State.ADDING);
         fill(null);
         return (view);
     }
@@ -76,7 +76,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
     public void onResume() {
         super.onResume();
         MainActivity activity = (MainActivity) getActivity();
-        if (activity!=null) activity.showStandardActionBar();
+        if (activity!=null) activity.showActionBar(R.string.staples, R.drawable.ic_search_white, null);
     }
 
     void fill(String identifier) {
@@ -140,9 +140,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
                     if (title == null) title = description.getDescription();
                     if (title == null) title = description.getName();
                     title = Html.fromHtml(title).toString();
-                    BrowseItem item = new BrowseItem();
-                    item.title = title;
-                    item.identifier = category.getIdentifier();
+                    BrowseItem item = new BrowseItem(BrowseItem.Type.ITEM, title, category.getIdentifier());
                     adapter.addItem(item);
                 }
             }
@@ -161,9 +159,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
                     Description description = descriptions.get(0);
                     String title = description.getName();
                     if (title == null) title = description.getDescription();
-                    BrowseItem item = new BrowseItem();
-                    item.title = title;
-                    item.identifier = subCategory.getIdentifier();
+                    BrowseItem item = new BrowseItem(BrowseItem.Type.ITEM, title, subCategory.getIdentifier());
                     adapter.addItem(item);
                 }
             }

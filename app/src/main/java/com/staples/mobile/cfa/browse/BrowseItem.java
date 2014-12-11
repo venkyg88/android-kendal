@@ -6,8 +6,9 @@ public class BrowseItem {
     private static final String TAG = "BrowseItem";
 
     public enum Type {
-        STACK (0, R.layout.browse_stack),
-        ITEM  (1, R.layout.browse_item);
+        STACK  (0, R.layout.browse_stack),
+        ACTIVE (1, R.layout.browse_active),
+        ITEM   (2, R.layout.browse_item);
 
         public int viewType;
         public int layoutId;
@@ -23,4 +24,10 @@ public class BrowseItem {
     public Type type;
     public String title;
     public String identifier;
+
+    public BrowseItem(Type type, String title, String identifier) {
+        this.type = type;
+        this.title = title;
+        this.identifier = identifier;
+    }
 }
