@@ -277,6 +277,14 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
         @Override
         public void success(AddressValidationAlert precheckoutResponse, Response response) {
+
+            // check for alerts
+            if (precheckoutResponse.getAddressValidationAlert() != null) {
+                Toast.makeText(activity, precheckoutResponse.getAddressValidationAlert(), Toast.LENGTH_LONG).show();
+            } else if (precheckoutResponse.getInventoryCheckAlert() != null) {
+                Toast.makeText(activity, precheckoutResponse.getInventoryCheckAlert(), Toast.LENGTH_LONG).show();
+            }
+
             // get shipping charge, then get tax
             secureApi.getShippingCharge(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<CartContents>() {
                 @Override
