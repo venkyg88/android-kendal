@@ -9,7 +9,6 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -127,23 +126,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     // Spec Table Container
     private TableLayout specContainer;
 
-    // Product name for animation
-    public static String productName = "";
-
-    private boolean isShiftedTab;
-
-    public static class DummyFactory implements TabHost.TabContentFactory {
-        private View view;
-
-        public DummyFactory(Context context) {
-            view = new View(context);
-        }
-
-        @Override
-        public View createTabContent(String tag) {
-            return (view);
-        }
-    }
+    private boolean shifted;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -215,38 +198,29 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).showActionBar(R.string.staples, R.drawable.ic_search_white, null);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         FragmentManager manager = getFragmentManager();
         manager.removeOnBackStackChangedListener(this);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
+    public static class DummyFactory implements TabHost.TabContentFactory {
+        private View view;
 
-        // change back the alpha/size/padding of action bar title
-        restoreBarTitle();
+        public DummyFactory(Context context) {
+            view = new View(context);
+        }
 
-        // restore contain's original offset
-        restoreBarOffset();
-    }
-
-    private void restoreBarTitle(){
-        MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.getTitleView().setPadding(20, 0, 20, 0);
-        mainActivity.getTitleView().setTextSize(24f);
-        mainActivity.getTitleView().setTextColor(mainActivity.getTitleView().getTextColors().withAlpha(255));
-
-        // change back the color of action bar to red
-        mainActivity.getBar().setBackgroundColor(getResources().getColor(R.color.staples_light));
-    }
-
-
-    private void restoreBarOffset(){
-        MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.getContainFrame().setPadding(0, Math.round(convertDpToPixel(56f, getActivity())), 0, 0);
-        mainActivity.getLeftDrawer().setPadding(0, 0, 0, 0);
+        @Override
+        public View createTabContent(String tag) {
+            return (view);
+        }
     }
 
     private void addTab(TabHost.TabContentFactory dummy, Resources res, int resid, String tag) {
@@ -430,9 +404,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
             feedSingleton.getSavedSeenProducts(getActivity()).addSeenProduct(item, sku, getActivity());
         }
-        else{
-            //Log.d(TAG, "This product has been saved before: " + product.getProductName());
-        }
     }
 
     // Retrofit callbacks
@@ -526,9 +497,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
             // Add info
             String name = Html.fromHtml(product.getProductName()).toString();
-
-            productName = name;
-
             ((TextView) summary.findViewById(R.id.title)).setText(name);
             ((TextView) summary.findViewById(R.id.numbers)).setText(formatNumbers(product));
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
@@ -651,10 +619,10 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     // Detail and add-to-cart clicks
 
     private void shiftToDetail(int position) {
-        if (isShiftedTab) return;
+        if (shifted) return;
         wrapper.setState(DataWrapper.State.GONE);
         details.setVisibility(View.VISIBLE);
-        isShiftedTab = true;
+        shifted = true;
         tabPager.setCurrentItem(position);
 
         FragmentManager manager = getFragmentManager();
@@ -662,62 +630,19 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         transaction.addToBackStack("SkuDetail");
         transaction.commit();
         manager.addOnBackStackChangedListener(this);
-
-        // set sku action bar on spec page
-        setSkuBarOnSpec();
-
-        // restore contain offset
-        restoreBarOffset();
-    }
-
-    private void setSkuBarOnSpec(){
-        MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.getBar().getBackground().setAlpha(255);
-        mainActivity.getTitleView().setText(SkuFragment.productName);
-        mainActivity.getTitleView().setTextColor(mainActivity.getTitleView().getTextColors().withAlpha(255));
     }
 
     @Override
     public void onBackStackChanged() {
         FragmentManager manager = getFragmentManager();
-
-        int fragmentEntryCount = manager.getBackStackEntryCount();
-        if (fragmentEntryCount < 1) return;
-
-        MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.getContainFrame().setPadding(0,0,0,0);
-
-        String currentFragmentName = manager.getBackStackEntryAt(fragmentEntryCount - 1).getName();
-        if (currentFragmentName != null && currentFragmentName.equals("SkuDetail")) {
-            // restore contain offset
-            mainActivity.getContainFrame().setPadding(0, Math.round(convertDpToPixel(56f, getActivity())), 0, 0);
-            return;
-        }
-        else{
-            // restore last seen state for sku action bar after sku spec
-            mainActivity.getBar().getBackground().setAlpha(AnimatedBarScrollView.currentAlpha);
-            mainActivity.getTitleView().setTextColor(
-                    mainActivity.getTitleView().getTextColors().withAlpha(AnimatedBarScrollView.currentAlpha));
-            // restore left drawer offset
-            mainActivity.getLeftDrawer().setPadding(0, (int) convertDpToPixel((float) 56, getActivity()), 0, 0);
-        }
-
+        int n = manager.getBackStackEntryCount();
+        if (n < 1) return;
+        String name = manager.getBackStackEntryAt(n - 1).getName();
+        if (name != null && name.equals("SkuDetail")) return;
         manager.removeOnBackStackChangedListener(this);
-
-        // show sku info
         wrapper.setState(DataWrapper.State.DONE);
-
-        // hide sku tab spec
         details.setVisibility(View.GONE);
-
-        isShiftedTab = false;
-    }
-
-    private float convertDpToPixel(float dp, Context context){
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        float px = dp * (metrics.densityDpi / 160f);
-        return px;
+        shifted = false;
     }
 
     @Override

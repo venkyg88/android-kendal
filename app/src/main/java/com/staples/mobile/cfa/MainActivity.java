@@ -4,17 +4,14 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
-import android.view.Display;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -35,7 +32,6 @@ import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.search.SearchBarView;
 import com.staples.mobile.cfa.search.SearchFragment;
-import com.staples.mobile.cfa.sku.AnimatedBarScrollView;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -61,8 +57,7 @@ public class MainActivity extends Activity
     private Button checkoutSigninButton;
     private View closeButton;
     private DrawerItem homeDrawerItem;
-    private LinearLayout actionBar;
-    private FrameLayout containFrame;
+
     private LoginHelper loginHelper;
 
     public enum Transition {
@@ -95,29 +90,6 @@ public class MainActivity extends Activity
                 transaction.setCustomAnimations(push_enter, push_exit);
             }
         }
-    }
-
-    public TextView getTitleView(){
-        return titleView;
-    }
-
-    public int getScreenHeight(){
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        return size.y;
-    }
-
-    public LinearLayout getBar(){
-        return actionBar;
-    }
-
-    public FrameLayout getContainFrame(){
-        return containFrame;
-    }
-
-    public View getLeftDrawer(){
-        return leftDrawer;
     }
 
     @Override
@@ -256,9 +228,6 @@ public class MainActivity extends Activity
         setContentView(R.layout.main);
 
         // Find top-level entities
-        actionBar = (LinearLayout) findViewById(R.id.action_bar);
-        containFrame = (FrameLayout) findViewById(R.id.contain_frame);
-
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawer = (ListView) findViewById(R.id.left_drawer);
         titleView = (TextView) findViewById(R.id.title);
@@ -413,17 +382,7 @@ public class MainActivity extends Activity
         Bundle args = new Bundle();
         if (identifier!=null) args.putString("identifier", identifier);
         fragment.setArguments(args);
-
-        // set default sku action bar
-        initAnimatedSkuBar();
-
         return (selectFragment(fragment, Transition.SLIDE, true));
-    }
-
-    private void initAnimatedSkuBar(){
-        AnimatedBarScrollView.isFirstLoad = true;
-        AnimatedBarScrollView.currentAlpha = 0;
-        containFrame.setPadding(0, 0, 0, 0);
     }
 
     public boolean selectProfileFragment() {
