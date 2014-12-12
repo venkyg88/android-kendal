@@ -229,6 +229,12 @@ public class PersonalFeedFragment extends Fragment {
         return (personalFeedLayout);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).showActionBar(R.string.personal_feed_title, 0, null);
+    }
+
     private void setSeenProductsAdapter(){
         // set seen products list
         PersistentSizedArrayList<SeenProductsRowItem> saveSeenProducts =
