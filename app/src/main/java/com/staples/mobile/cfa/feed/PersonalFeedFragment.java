@@ -33,6 +33,12 @@ public class PersonalFeedFragment extends Fragment {
         return (personalFeedLayout);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).showActionBar(R.string.staples, 0, null);
+    }
+
     private void setAdapter(){
         seenProductsListAdapter = new SeenProductsAdapter(getActivity());
 

@@ -45,10 +45,11 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
 
     private static final int MAXFETCH = 50;
 
+    private static Bundle adapterState; // TODO Using global state
+
     private DataWrapper wrapper;
     private ListView list;
     private BrowseAdapter adapter;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -68,7 +69,8 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
         list.setOnItemClickListener(this);
 
         wrapper.setState(DataWrapper.State.ADDING);
-        fill(null);
+        adapter.restoreState(adapterState);
+        fill(adapter.getActiveIdentifier());
         return (view);
     }
 
@@ -177,6 +179,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
             case STACK:
                 identifier = adapter.popStack(item);
                 fill(identifier);
+                adapterState = adapter.saveState(adapterState);
                 wrapper.setState(DataWrapper.State.ADDING);
                 adapter.notifyDataSetChanged();
                 break;
@@ -189,6 +192,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
                 } else {
                     adapter.pushStack(item);
                     fill(item.identifier);
+                    adapterState = adapter.saveState(adapterState);
                     wrapper.setState(DataWrapper.State.ADDING);
                     adapter.notifyDataSetChanged();
                 }
