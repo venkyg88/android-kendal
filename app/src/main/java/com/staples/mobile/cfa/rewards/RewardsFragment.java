@@ -25,20 +25,17 @@ public class RewardsFragment extends Fragment {
         activity = (MainActivity)getActivity();
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.rewards_fragment, container, false);
 
-        TabHost tabHost = (TabHost) view.findViewById(R.id.tabHost);
+        TabHost tabHost = (TabHost) view.findViewById(android.R.id.tabhost);
         tabHost.setup();
 
         TabHost.TabSpec tab1 = tabHost.newTabSpec("First Tab");
         TabHost.TabSpec tab2 = tabHost.newTabSpec("Second Tab");
         TabHost.TabSpec tab3 = tabHost.newTabSpec("Third Tab");
 
-        tab1.setIndicator(r.getString(R.string.rewards_summary_tabtitle));
+        tab1.setIndicator(r.getString(R.string.rewards_list_tabtitle));
         tab1.setContent(R.id.tab1_rewards);
-
-        tab2.setIndicator(r.getString(R.string.rewards_summary_tabtitle));
+        tab2.setIndicator(r.getString(R.string.rewards_ink_tabtitle));
         tab2.setContent(R.id.tab2_ink_recycling);
-
-
         tab3.setIndicator(r.getString(R.string.rewards_summary_tabtitle));
         tab3.setContent(R.id.tab3_summary);
 
@@ -46,15 +43,13 @@ public class RewardsFragment extends Fragment {
         tabHost.addTab(tab2);
         tabHost.addTab(tab3);
 
-
-
         return(view);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        activity.showActionBar(R.string.signin_title, 0, null);
+        activity.showActionBar(R.string.rewards_title, 0, null);
     }
 
 }
