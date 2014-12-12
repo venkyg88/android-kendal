@@ -132,6 +132,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                     encryptedPacket = powList.get(0).getPacket();
 
                     if(encryptedPacket.isEmpty()) {
+                        ((MainActivity)activity).hideProgressIndicator();
                         Toast.makeText(getActivity(), "Credit card encryption failed" , Toast.LENGTH_LONG).show();
                     }
                     else if(creditCardId != null) {

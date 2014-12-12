@@ -26,6 +26,7 @@ import retrofit.client.Response;
  * Created by Avinash Dodda.
  */
 public class ProfileDetails implements Callback<MemberDetail> {
+    private static final String TAG = ProfileDetails.class.getSimpleName();
 
     public interface ProfileRefreshCallback {
         public void onProfileRefresh(Member member);
@@ -138,32 +139,40 @@ public class ProfileDetails implements Callback<MemberDetail> {
 
     /** implements Callback<MemberDetail> */
     public void success(MemberDetail memberDetail, Response response) {
-        Member memberResponse = memberDetail.getMember().get(0);
+        if (memberDetail.getMember() != null && memberDetail.getMember().size() > 0) {
+            Member memberResponse = memberDetail.getMember().get(0);
 
-        // if addresses response, set addresses
-        if (memberResponse.getAddress()!=null) {
-            memberUnderConstruction.setAddress(memberResponse.getAddress());
+            // if addresses response, set addresses
+            if (memberResponse.getAddress() != null) {
+                memberUnderConstruction.setAddress(memberResponse.getAddress());
+            }
+
+            // if credit cards response, set credit cards
+            if (memberResponse.getCreditCard() != null) {
+                memberUnderConstruction.setCreditCard(memberResponse.getCreditCard());
+            }
+
+            // if rewards response, set reward info
+            if (memberResponse.getRewardDetails() != null) {
+                memberUnderConstruction.setRewardDetails(memberResponse.getRewardDetails());
+                memberUnderConstruction.setInkRecyclingDetails(memberResponse.getInkRecyclingDetails());
+                memberUnderConstruction.setYearToDateSave(memberResponse.getYearToDateSave());
+                memberUnderConstruction.setYearToDateSpend(memberResponse.getYearToDateSpend());
+                memberUnderConstruction.setDisclaimerText(memberResponse.getDisclaimerText());
+                memberUnderConstruction.setFooterBannerImage(memberResponse.getFooterBannerImage());
+                memberUnderConstruction.setFooterBannerLink(memberResponse.getFooterBannerLink());
+                memberUnderConstruction.setLastUpdate(memberResponse.getLastUpdate());
+                memberUnderConstruction.setLogoImage(memberResponse.getLogoImage());
+            }
+
+            finishMemberIfDone();
+
+        } else {
+            Log.w(TAG, "empty MemberDetail returned"); // this can happen, need to determine why
+            if (callback != null) {
+                callback.onProfileRefresh(null);
+            }
         }
-
-        // if credit cards response, set credit cards
-        if(memberResponse.getCreditCard() !=null) {
-            memberUnderConstruction.setCreditCard(memberResponse.getCreditCard());
-        }
-
-        // if rewards response, set reward info
-        if (memberResponse.getRewardDetails()!=null) {
-            memberUnderConstruction.setRewardDetails(memberResponse.getRewardDetails());
-            memberUnderConstruction.setInkRecyclingDetails(memberResponse.getInkRecyclingDetails());
-            memberUnderConstruction.setYearToDateSave(memberResponse.getYearToDateSave());
-            memberUnderConstruction.setYearToDateSpend(memberResponse.getYearToDateSpend());
-            memberUnderConstruction.setDisclaimerText(memberResponse.getDisclaimerText());
-            memberUnderConstruction.setFooterBannerImage(memberResponse.getFooterBannerImage());
-            memberUnderConstruction.setFooterBannerLink(memberResponse.getFooterBannerLink());
-            memberUnderConstruction.setLastUpdate(memberResponse.getLastUpdate());
-            memberUnderConstruction.setLogoImage(memberResponse.getLogoImage());
-        }
-
-        finishMemberIfDone();
     }
 
     /** implements Callback<MemberDetail> */
