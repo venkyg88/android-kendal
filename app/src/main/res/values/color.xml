@@ -6,6 +6,7 @@
     <color name="background_white">#ffffff</color>
     <color name="background_light_gray">#c6c6c6</color>
     <color name="background_extra_light_gray">#e6e6e6</color>
+    <color name="background_extra_light_gray_2">#eeeeee</color>
     <color name="background_green">#00ff00</color>
     <color name="background_blue">#3f6fff</color>
     <color name="text_blue">#3f9fff</color>
