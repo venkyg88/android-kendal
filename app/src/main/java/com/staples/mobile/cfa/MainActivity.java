@@ -154,7 +154,6 @@ public class MainActivity extends Activity
             optionListener = listener;
         }
 
-
         // TODO Interim hacked fixes
         switch(titleId) {
             case R.string.cart_title:
@@ -209,9 +208,12 @@ public class MainActivity extends Activity
         // TODO Interim hacked fixes
         switch(iconId) {
             case R.drawable.ic_search_white:
-            case R.drawable.ic_close_white:
+                searchBar.setVisibility(View.GONE);
                 optionListener = searchBar;
+                break;
+            case R.drawable.ic_close_white:
                 searchBar.setVisibility(View.VISIBLE);
+                optionListener = searchBar;
                 break;
             default:
                 searchBar.setVisibility(View.GONE);
