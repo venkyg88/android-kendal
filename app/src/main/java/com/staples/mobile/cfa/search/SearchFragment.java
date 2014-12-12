@@ -66,6 +66,12 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         return (view);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).showActionBar(R.string.staples, R.drawable.ic_search_white, null);
+    }
+
     private void fill(String keyword) {
         wrapper.setState(DataWrapper.State.LOADING);
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
