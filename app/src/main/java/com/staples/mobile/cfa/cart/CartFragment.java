@@ -98,6 +98,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     private CartAdapter cartAdapter;
     private ListView cartListVw;
     private View couponsRewardsLayout;
+//    private View linkRewardsAcctLayout;
     private int greenBackground;
     private int blueBackground;
     private int redText;
@@ -160,6 +161,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         couponsRewardsLayout = view.findViewById(R.id.coupons_rewards_layout);
         couponsRewardsValue = (TextView) view.findViewById(R.id.coupons_rewards_value);
         couponList = view.findViewById(R.id.coupon_list);
+//        linkRewardsAcctLayout = view.findViewById(R.id.link_rewards_acct_layout);
         cartShipping = (TextView) view.findViewById(R.id.cart_shipping);
         cartSubtotal = (TextView) view.findViewById(R.id.cart_subtotal);
         cartShippingLayout = view.findViewById(R.id.cart_shipping_layout);
@@ -230,6 +232,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
                 }
             }
         });
+
 
         // Set click listeners
         cartProceedToCheckout.setOnClickListener(this);
@@ -411,15 +414,28 @@ public class CartFragment extends Fragment implements View.OnClickListener {
                     couponItems.add(new CouponItem(coupon, reward, CouponItem.TYPE_APPLIED_COUPON));
                 }
             }
-            // if any unapplied redeemable rewards
-            if (profileRewards.size() > 0) {
-                // add redeemable rewards heading
-                couponItems.add(new CouponItem(null, null, CouponItem.TYPE_REDEEMABLE_REWARD_HEADING));
-                // add redeemable rewards
-                for (Reward reward : profileRewards) {
-                    couponItems.add(new CouponItem(null, reward, CouponItem.TYPE_REDEEMABLE_REWARD));
+
+            // if profile exists (registered user logged in and no errors getting profile)
+            if (ProfileDetails.getMember() != null) {
+
+                // if rewards member
+                if (ProfileDetails.isRewardsMember()) {
+
+                    // add redeemable rewards heading
+                    couponItems.add(new CouponItem(null, null, CouponItem.TYPE_REDEEMABLE_REWARD_HEADING));
+
+                    // if any unapplied redeemable rewards
+                    if (profileRewards.size() > 0) {
+                        // add redeemable rewards
+                        for (Reward reward : profileRewards) {
+                            couponItems.add(new CouponItem(null, reward, CouponItem.TYPE_REDEEMABLE_REWARD));
+                        }
+                    } else {
+                        couponItems.add(new CouponItem(null, null, CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG));
+                    }
                 }
             }
+
             couponAdapter.setItems(couponItems);
 
             // only show shipping, subtotal, and proceed-to-checkout when at least one item
@@ -460,9 +476,15 @@ public class CartFragment extends Fragment implements View.OnClickListener {
                 if (couponList.getVisibility() != View.VISIBLE) {
                     cartListVw.setVisibility(View.GONE);
                     couponList.setVisibility(View.VISIBLE);
+                    // if logged in and not a rewards member, display link rewards layout
+//                    if (Access.getInstance().isLoggedIn() && !Access.getInstance().isGuestLogin() &&
+//                            ProfileDetails.getMember() != null && !ProfileDetails.isRewardsMember()) {
+//                        linkRewardsAcctLayout.setVisibility(View.VISIBLE);
+//                    }
                 } else {
                     cartListVw.setVisibility(View.VISIBLE);
                     couponList.setVisibility(View.GONE);
+//                    linkRewardsAcctLayout.setVisibility(View.GONE);
                 }
                 break;
             case R.id.coupon_add_button:

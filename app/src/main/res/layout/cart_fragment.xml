@@ -68,17 +68,19 @@
         android:layout_weight="1"
         android:background="@color/background_extra_light_gray"
         android:visibility="gone"/>
-    <!--NOTE: we may or may not implement the link-rewards-acct feature, so commenting out for now-->
     <!--link rewards account -->
     <!--<LinearLayout-->
         <!--android:id="@+id/link_rewards_acct_layout"-->
-        <!--style="@style/DrawerStyle"-->
         <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="vertical"-->
         <!--android:background="@color/background_extra_light_gray"-->
+        <!--android:padding="6dp"-->
         <!--android:visibility="gone">-->
         <!--<TextView-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="20sp"-->
             <!--android:text="@string/link_rewards_account"-->
             <!--/>-->
         <!--<EditText-->
@@ -102,7 +104,6 @@
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="35dp"-->
             <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_gravity="center_vertical"-->
             <!--android:text="@string/link_account"-->
             <!--android:textSize="14dp"-->
             <!--android:fontFamily="sans-serif"-->
