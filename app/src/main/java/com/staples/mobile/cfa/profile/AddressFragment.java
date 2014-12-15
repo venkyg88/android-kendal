@@ -124,7 +124,7 @@ public class AddressFragment extends Fragment implements View.OnClickListener {
                 !state.isEmpty() && !phoneNumber.isEmpty() && !zipCode.isEmpty()) {
             if(addressId != null) {
                 UpdateAddress updatedAddress = new UpdateAddress(firstName, lastName, addressLine1, city, state, phoneNumber, zipCode, addressId);
-                easyOpenApi.updateMemberAddress(updatedAddress, RECOMMENDATION, STORE_ID, LOCALE, "xml", CLIENT_ID, new Callback<Response>() {
+                easyOpenApi.updateMemberAddress(updatedAddress, RECOMMENDATION, STORE_ID, LOCALE, "json", CLIENT_ID, new Callback<Response>() {
                     @Override
                     public void success(Response response, Response response2) {
                         (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {

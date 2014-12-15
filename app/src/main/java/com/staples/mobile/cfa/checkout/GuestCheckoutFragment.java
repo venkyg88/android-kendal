@@ -106,11 +106,11 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         emailAddrVw = (EditText)guestEntryView.findViewById(R.id.emailAddr);
 
         // set up cc type spinner
-        spinner = (Spinner) view.findViewById(R.id.card_type_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(activity,
-                R.array.cardtype_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+//        spinner = (Spinner) view.findViewById(R.id.card_type_spinner);
+//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(activity,
+//                R.array.cardtype_array, android.R.layout.simple_spinner_item);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spinner.setAdapter(adapter);
 
         // hide imported views' Save buttons
         shippingAddrLayoutVw.findViewById(R.id.addressSaveBtn).setVisibility(View.GONE);

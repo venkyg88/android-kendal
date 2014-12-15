@@ -3,23 +3,18 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/card_type_spinner" />
-
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/cardNumber"
         android:hint="Card Number"
         android:inputType="number"
-        android:layout_below="@+id/card_type_spinner"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:imeOptions="actionNext"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:imeOptions="actionNext"/>
+        android:layout_toEndOf="@+id/card_image"
+        android:layout_toRightOf="@+id/card_image" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -28,10 +23,10 @@
         android:inputType="number"
         android:maxLength="2"
         android:hint="EXP MM"
+        android:imeOptions="actionNext"
         android:layout_below="@+id/cardNumber"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:imeOptions="actionNext"/>
+        android:layout_alignParentStart="true" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -40,19 +35,26 @@
         android:inputType="number"
         android:maxLength="4"
         android:hint="EXP YYYY"
-        android:layout_below="@+id/cardNumber"
-        android:layout_toRightOf="@+id/expirationMonth"
-        android:layout_toEndOf="@+id/expirationMonth"
-        android:layout_marginLeft="71dp"
-        android:imeOptions="actionDone"/>
+        android:imeOptions="actionDone"
+        android:layout_alignTop="@+id/expirationMonth"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"
         android:id="@+id/addCCBtn"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginTop="54dp"
+        android:layout_below="@+id/expirationYear"
+        android:layout_alignLeft="@+id/expirationYear"
+        android:layout_alignStart="@+id/expirationYear" />
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/card_image"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
