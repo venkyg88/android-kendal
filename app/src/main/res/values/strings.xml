@@ -69,6 +69,14 @@
     <string name="rewards_list_tabtitle">REWARDS</string>
     <string name="rewards_ink_tabtitle">INK RECYCLING</string>
     <string name="rewards_summary_tabtitle">SUMMARY</string>
+    <string name="rewards_ytd_savings">Year-to-Date Savings</string>
+    <string name="rewards_ytd_spend">Year-to-Date Spend</string>
+    <plurals name="rewards_ink_recycled">
+        <item quantity="one">Ink cartridge recycled</item>
+        <item quantity="other">Ink cartridges recycled</item>
+    </plurals>
+    <string name="rewards_ink_limit">Limit of %d per month</string>
+    <string name="rewards_earned">Earned</string>
     <string name="tax">Tax</string>
     <string name="submit_order">Submit Order</string>
     <string name="confirmation_title">Order Confirmation</string>
