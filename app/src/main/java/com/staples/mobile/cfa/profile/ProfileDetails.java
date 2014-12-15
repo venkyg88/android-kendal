@@ -40,10 +40,6 @@ public class ProfileDetails implements Callback<MemberDetail> {
         public void onAddressSelected(String id);
     }
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
-    private static final String LOCALE = "en_US";
 
     // static cached member variable
     private static Member member;
@@ -85,18 +81,18 @@ public class ProfileDetails implements Callback<MemberDetail> {
         this.timeRefreshRequested = new Date().getTime(); // record when refresh request made to correctly handle simultaneous requests
 
         easyOpenApi = access.getEasyOpenApi(true);
-        easyOpenApi.getMemberProfile(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<MemberDetail>() {
+        easyOpenApi.getMemberProfile(new Callback<MemberDetail>() {
             @Override
             public void success(MemberDetail memberDetail, Response response) {
                 memberUnderConstruction = memberDetail.getMember().get(0);
                 if (memberUnderConstruction.getStoredAddressCount() > 0) {
-                    easyOpenApi.getMemberAddress(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, ProfileDetails.this);
+                    easyOpenApi.getMemberAddress(ProfileDetails.this);
                 }
                 if (memberUnderConstruction.getCreditCardCount() > 0) {
-                    easyOpenApi.getMemberCreditCardDetails(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, ProfileDetails.this);
+                    easyOpenApi.getMemberCreditCardDetails(ProfileDetails.this);
                 }
                 if (!TextUtils.isEmpty(memberUnderConstruction.getRewardsNumber()) && memberUnderConstruction.isRewardsNumberVerified()) {
-                    easyOpenApi.getMemberRewardsDashboard(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, ProfileDetails.this);
+                    easyOpenApi.getMemberRewardsDashboard(ProfileDetails.this);
                 }
                 finishMemberIfDone();
             }

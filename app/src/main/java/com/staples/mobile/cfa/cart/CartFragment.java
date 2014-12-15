@@ -68,14 +68,8 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = CartFragment.class.getSimpleName();
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
 
-    private static final String CATALOG_ID = "10051";
-    private static final String LOCALE = "en_US";
 
-    private static final String ZIPCODE = "01010";
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     private static final int MAXFETCH = 50;
 
@@ -508,7 +502,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             showProgressIndicator();
             Coupon coupon = new Coupon();
             coupon.setPromoName(couponCode);
-            easyOpenApi.addCoupon(coupon, RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CLIENT_ID,
+            easyOpenApi.addCoupon(coupon,
                     new Callback<EmptyResponse>() {
                         @Override
                         public void success(EmptyResponse emptyResponse, Response response) {
@@ -530,7 +524,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             showProgressIndicator();
             Coupon coupon = new Coupon();
             coupon.setPromoName(couponCode);
-            easyOpenApi.deleteCoupon(RECOMMENDATION, STORE_ID, couponCode, LOCALE, CLIENT_ID,
+            easyOpenApi.deleteCoupon(couponCode,
                     new Callback<EmptyResponse>() {
                         @Override
                         public void success(EmptyResponse emptyResponse, Response response) {
@@ -600,7 +594,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
         // query for items in cart
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.viewCart(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID,
+        easyOpenApi.viewCart(
                 1, 1000, viewCartListener); // 0 offset results in max of 5 items, so using 1
     }
 
@@ -613,8 +607,8 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         showProgressIndicator();
 
         // update quantity of item in cart
-        easyOpenApi.addToCart(createCartRequestBody(sku, qty), RECOMMENDATION, STORE_ID,
-                LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, addToCartListener);
+        easyOpenApi.addToCart(createCartRequestBody(sku, qty),
+                    addToCartListener);
     }
 
     /** updates item quantity */
@@ -627,8 +621,8 @@ public class CartFragment extends Fragment implements View.OnClickListener {
                 showProgressIndicator();
 
                 // update quantity of item in cart
-                easyOpenApi.updateCart(createCartRequestBody(cartItem, cartItem.getProposedQty()), RECOMMENDATION, STORE_ID,
-                        LOCALE, ZIPCODE, CATALOG_ID, CLIENT_ID, updateCartListener);
+                easyOpenApi.updateCart(createCartRequestBody(cartItem, cartItem.getProposedQty()),
+                            updateCartListener);
             }
         }
     }
@@ -641,8 +635,8 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         showProgressIndicator();
 
         // delete item from cart
-        easyOpenApi.deleteFromCart(RECOMMENDATION, STORE_ID, cartItem.getOrderItemId(),
-                LOCALE, CLIENT_ID, deleteFromCartListener);
+        easyOpenApi.deleteFromCart(cartItem.getOrderItemId(),
+                  deleteFromCartListener);
     }
 
     //for updating

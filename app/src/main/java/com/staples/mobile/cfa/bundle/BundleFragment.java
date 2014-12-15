@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -33,13 +32,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
     public static final String TITLE = "title";
     public static final String IDENTIFIER = "identifier";
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
-    private static final String CATALOG_ID = "10051";
-    private static final String LOCALE = "en_US";
-    private static final String ZIPCODE = "01010";
-//    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
     private static final int MAXFETCH = 50;
 
     private DataWrapper wrapper;
@@ -67,8 +59,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
 
         wrapper.setState(DataWrapper.State.LOADING);
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
-                ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
+        easyOpenApi.browseCategories(identifier, null, MAXFETCH, this);
 
         return (view);
     }

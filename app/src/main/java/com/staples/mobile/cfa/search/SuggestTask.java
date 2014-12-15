@@ -121,5 +121,5 @@ public class SuggestTask implements Runnable {
 
         if (Thread.interrupted()) return(null);
 		return suggestionList;
-	} 
+	}
 }

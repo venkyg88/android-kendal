@@ -33,10 +33,6 @@ import retrofit.client.Response;
  */
 public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.OnClickListener{
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
-    private static final String LOCALE = "en_US";
 
     private final Context context;
     private final List<Address> values;
@@ -137,7 +133,7 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
     public void deleteAddress(final int position){
         String addressId = values.get(position).getAddressId();
         ((MainActivity)context).showProgressIndicator();
-        easyOpenApi.deleteMemberAddress(RECOMMENDATION, STORE_ID, addressId, CLIENT_ID, LOCALE, new Callback<Response>() {
+        easyOpenApi.deleteMemberAddress(addressId, new Callback<Response>() {
 
             @Override
             public void success(Response response, Response response2) {

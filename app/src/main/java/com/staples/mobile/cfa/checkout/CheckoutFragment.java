@@ -37,13 +37,8 @@ import retrofit.client.Response;
 public abstract class CheckoutFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = CheckoutFragment.class.getSimpleName();
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
 
-    private static final String CATALOG_ID = "10051";
-    private static final String LOCALE = "en_US";
 
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     private static final int MAXFETCH = 50;
 
@@ -181,14 +176,14 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
     protected void startPrecheckout() {
         showProgressIndicator();
-        secureApi.precheckout(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, precheckoutListener);
+        secureApi.precheckout(precheckoutListener);
     }
 
     protected void submitOrder(String cid) {
         // upon payment method success, submit the order
         SubmitOrderRequest submitOrderRequest = new SubmitOrderRequest();
         submitOrderRequest.setCardVerificationCode(cid);
-        secureApi.submitOrder(submitOrderRequest, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+        secureApi.submitOrder(submitOrderRequest,
                 new Callback<SubmitOrderResponse>() {
 
                     @Override
@@ -286,14 +281,14 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
             }
 
             // get shipping charge, then get tax
-            secureApi.getShippingCharge(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<CartContents>() {
+            secureApi.getShippingCharge(new Callback<CartContents>() {
                 @Override
                 public void success(CartContents cartContents, Response response) {
 
                     Cart cart = getCartFromResponse(cartContents);
                     if (cart != null) {
                         shippingCharge = cart.getShippingCharge();
-                        secureApi.getTax(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<CartContents>() {
+                        secureApi.getTax(new Callback<CartContents>() {
                             @Override
                             public void success(CartContents cartContents, Response response) {
                                 Cart cart = getCartFromResponse(cartContents);

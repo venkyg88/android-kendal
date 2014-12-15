@@ -35,10 +35,6 @@ import retrofit.client.Response;
 public class AddressFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "Add Shipping Fragment";
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
-    private static final String LOCALE = "en_US";
 
     Button addShippingBtn;
     public String firstName;
@@ -124,7 +120,7 @@ public class AddressFragment extends Fragment implements View.OnClickListener {
                 !state.isEmpty() && !phoneNumber.isEmpty() && !zipCode.isEmpty()) {
             if(addressId != null) {
                 UpdateAddress updatedAddress = new UpdateAddress(firstName, lastName, addressLine1, city, state, phoneNumber, zipCode, addressId);
-                easyOpenApi.updateMemberAddress(updatedAddress, RECOMMENDATION, STORE_ID, LOCALE, "xml", CLIENT_ID, new Callback<Response>() {
+                easyOpenApi.updateMemberAddress(updatedAddress, new Callback<Response>() {
                     @Override
                     public void success(Response response, Response response2) {
                         (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
@@ -148,7 +144,7 @@ public class AddressFragment extends Fragment implements View.OnClickListener {
             }
             else{
                 AddAddress address = new AddAddress(firstName, lastName, addressLine1, city, state, phoneNumber, zipCode);
-                easyOpenApi.addMemberAddress(address,RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<AddressId>() {
+                easyOpenApi.addMemberAddress(address, new Callback<AddressId>() {
 
                     @Override
                     public void success(AddressId addressId, Response response) {

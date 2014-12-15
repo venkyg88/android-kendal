@@ -35,13 +35,8 @@ import retrofit.client.Response;
 public class RegisteredCheckoutFragment extends CheckoutFragment implements View.OnClickListener {
     private static final String TAG = RegisteredCheckoutFragment.class.getSimpleName();
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
 
-    private static final String CATALOG_ID = "10051";
-    private static final String LOCALE = "en_US";
 
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     private static final int MAXFETCH = 50;
 
@@ -161,7 +156,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         if (shippingAddress != null) {
             showProgressIndicator();
             secureApi.addShippingAddressToCart(new ShippingAddress(shippingAddress),
-                    RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<AddressValidationAlert>() {
+                        new Callback<AddressValidationAlert>() {
                         @Override
                         public void success(AddressValidationAlert addressValidationAlert, Response response) {
                             // applying the shipping address actually modifies the id on the server, so need to fix everything up
@@ -214,14 +209,14 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
 
         // first add billing address to the cart, then add payment method, then submit
         secureApi.addBillingAddressToCart(new BillingAddress(billingAddress),
-                RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<AddressValidationAlert>() {
+                    new Callback<AddressValidationAlert>() {
                     @Override
                     public void success(AddressValidationAlert precheckoutResponse, Response response) {
 
                         // next add payment method to cart
                         showProgressIndicator();
                         PaymentMethod cartPaymentMethod = new PaymentMethod(profilePaymentMethod);
-                        secureApi.addPaymentMethodToCart(cartPaymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+                        secureApi.addPaymentMethodToCart(cartPaymentMethod,
                                 new Callback<PaymentMethodResponse>() {
                                     @Override
                                     public void success(PaymentMethodResponse paymentMethodResponse, Response response) {

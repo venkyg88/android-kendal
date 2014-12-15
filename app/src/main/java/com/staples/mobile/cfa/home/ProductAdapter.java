@@ -33,15 +33,8 @@ public class ProductAdapter
     private static final int VIEW_BANNER = 0;
     private static final int VIEW_PRODUCT = 1;
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
 
-    private static final String CATALOG_ID = "10051";
-    private static final String LOCALE = "en_US";
 
-    private static final String ZIPCODE = "01010";
-//    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     private static final int MAXFETCH = 50;
 
@@ -108,8 +101,8 @@ public class ProductAdapter
     void fill() {
         add(new ProductItem(null, configItem.bannerUrl, null));
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, configItem.identifier, CATALOG_ID, LOCALE,
-                                     ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
+        easyOpenApi.browseCategories(configItem.identifier,
+                                       null, MAXFETCH, this);
     }
 
     // Retrofit EasyOpen API call
