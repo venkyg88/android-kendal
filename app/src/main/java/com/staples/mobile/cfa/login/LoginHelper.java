@@ -28,11 +28,8 @@ public class LoginHelper {
         public void onLoginComplete(boolean guestLevel);
     }
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
 //    public static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
     public static final String CLIENT_ID = "JxP9wlnIfCSeGc9ifRAAGku7F4FSdErd"; // a client_id that works in all env incl prod
-    private static final String LOCALE = "en_US";
 
     private MainActivity activity;
     private EasyOpenApi easyOpenApi;
@@ -82,7 +79,7 @@ public class LoginHelper {
 
     public void getGuestTokens()
     {
-        easyOpenApi.guestLogin(RECOMMENDATION, STORE_ID, CLIENT_ID, new Callback<TokenObject>() {
+        easyOpenApi.guestLogin(new Callback<TokenObject>() {
 
                     @Override
                     public void success(TokenObject tokenObjectReturned, Response response) {
@@ -111,7 +108,7 @@ public class LoginHelper {
     {
         activity.showProgressIndicator();
         RegisteredUserLogin user = new RegisteredUserLogin(username,password);
-        easyOpenApi.registeredUserLogin(user, RECOMMENDATION, STORE_ID, CLIENT_ID, new Callback<TokenObject>() {
+        easyOpenApi.registeredUserLogin(user, new Callback<TokenObject>() {
 
                     @Override
                     public void success(TokenObject tokenObjectReturned, Response response) {
@@ -144,7 +141,7 @@ public class LoginHelper {
         activity.showProgressIndicator();
         CreateUserLogin user = new CreateUserLogin(emailAddress, username, password);
         Log.i("Register User object", " " + user);
-        easyOpenApi.registerUser(user, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<TokenObject>() {
+        easyOpenApi.registerUser(user, new Callback<TokenObject>() {
 
                     @Override
                     public void success(TokenObject tokenObjectReturned, Response response) {
@@ -174,7 +171,7 @@ public class LoginHelper {
 
     public void userSignOut ()
     {
-        easyOpenApi.registeredUserSignOut(RECOMMENDATION, STORE_ID, CLIENT_ID, new Callback<Response>() {
+        easyOpenApi.registeredUserSignOut(new Callback<Response>() {
             @Override
             public void success(Response empty, Response response) {
                 Access.getInstance().setTokens(null, null, true); //set these to null since they're definitely unusable now
