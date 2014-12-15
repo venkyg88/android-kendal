@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
@@ -21,11 +20,6 @@ import java.util.List;
 
 public class ProfileFragment extends Fragment implements ProfileDetails.ProfileRefreshCallback, View.OnClickListener{
     private static final String TAG = "ProfileFragment";
-
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
-    private static final String LOCALE = "en_US";
 
     private EasyOpenApi easyOpenApi;
     Button shippingBtn;
@@ -115,7 +109,6 @@ public class ProfileFragment extends Fragment implements ProfileDetails.ProfileR
     private void hideProgressIndicator() {
         activity.hideProgressIndicator();
     }
-
 
     @Override
     public void onClick(View view) {

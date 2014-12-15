@@ -48,7 +48,7 @@ public class DrawerAdapter extends BaseAdapter {
     public DrawerItem getItem(int position) {
         return(array.get(position));
     }
-    
+
     /* Views */
 
     @Override
