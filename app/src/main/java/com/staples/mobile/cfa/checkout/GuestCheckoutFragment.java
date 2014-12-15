@@ -44,13 +44,8 @@ import retrofit.client.Response;
 public class GuestCheckoutFragment extends CheckoutFragment implements CompoundButton.OnCheckedChangeListener {
     private static final String TAG = GuestCheckoutFragment.class.getSimpleName();
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
 
-    private static final String CATALOG_ID = "10051";
-    private static final String LOCALE = "en_US";
 
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     private static final int MAXFETCH = 50;
 
@@ -280,7 +275,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         // add shipping address to cart
         if (shippingAddress != null) {
             showProgressIndicator();
-            secureApi.addShippingAddressToCart(shippingAddress, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+            secureApi.addShippingAddressToCart(shippingAddress,
                     new Callback<AddressValidationAlert>() {
 
                         @Override
@@ -319,7 +314,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         // add shipping address to cart
         if (billingAddress != null) {
             showProgressIndicator();
-            secureApi.addBillingAddressToCart(billingAddress, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+            secureApi.addBillingAddressToCart(billingAddress,
                     new Callback<AddressValidationAlert>() {
 
                         @Override
@@ -354,8 +349,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         }
     }
 
-
-
     /** handles order submission */
     @Override
     protected void onSubmit() {
@@ -376,11 +369,13 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
             ccList.add(creditCard);
 
             // todo: find a better way to determine current environment
-            if (EasyOpenApi.SECURE_ENDPOINT.equals("https://api.staples.com")) {
+//            if (EasyOpenApi.SECURE_ENDPOINT.equals("https://api.staples.com"))
+if (false) // TODO Hacked because of refactoring of EasyOpenApi
+            {
                 EasyOpenApi powApi = Access.getInstance().getPOWApi();
                 powApi.addCreditPOWCall(ccList, new PowListener(paymentMethod));
             } else {
-                secureApi.addCreditPOWCallQA(ccList, RECOMMENDATION, CLIENT_ID, new PowListener(paymentMethod));
+                secureApi.addCreditPOWCallQA(ccList, new PowListener(paymentMethod));
             }
 
         } else {
@@ -403,7 +398,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                 paymentMethod.setCardNumber(powList.get(0).getPacket());
 
                 // add payment method to cart
-                secureApi.addPaymentMethodToCart(paymentMethod, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+                secureApi.addPaymentMethodToCart(paymentMethod,
                         new retrofit.Callback<PaymentMethodResponse>() {
                             @Override
                             public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
