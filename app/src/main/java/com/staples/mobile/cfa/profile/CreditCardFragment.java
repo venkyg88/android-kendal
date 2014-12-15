@@ -57,7 +57,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
     EditText cardNumberET;
     EditText expMonthET;
     EditText expYearET;
-   ImageView cardImage;
+    ImageView cardImage;
 
     CCDetails creditCard;
     EasyOpenApi easyOpenApi;
@@ -85,18 +85,22 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
 
                                 if(ccType == CardType.VISA) {
                                     cardImage.setImageResource(R.drawable.visa);
+                                    cardType = "VISA";
                                     expMonthET.requestFocus();
                                 }
                                 if(ccType == CardType.DISCOVER) {
                                     cardImage.setImageResource(R.drawable.discover);
+                                    cardType = "DISCOVER";
                                     expMonthET.requestFocus();
                                 }
                                 if(ccType == CardType.AMERICAN_EXPRESS) {
                                     cardImage.setImageResource(R.drawable.american_express);
+                                    cardType = "AMEX";
                                     expMonthET.requestFocus();
                                 }
                                 if(ccType == CardType.MASTERCARD) {
                                     cardImage.setImageResource(R.drawable.mastercard);
+                                    cardType = "MASTERCARD";
                                     expMonthET.requestFocus();
                                 }
                                 return true; // consume.
@@ -110,6 +114,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
             public boolean onTouch(View v, MotionEvent event) {
                 if (MotionEvent.ACTION_UP == event.getAction()) {
                     cardNumberET.getText().clear();
+                    cardImage.setImageResource(0);
                 }
                 return false; // return is important...
             }
@@ -120,7 +125,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
              creditCard = (CCDetails)args.getSerializable("creditCardData");
             if(creditCard != null) {
                 cardNumberET.setText("Card ending in: " + creditCard.getCardNumber());
-                String cardType = creditCard.getCardType().toUpperCase();
+                cardType = creditCard.getCardType().toUpperCase();
 
                 if( cardType.equals("VI") || cardType.equals("VISA")) {
                     cardImage.setImageResource(R.drawable.visa);
@@ -140,14 +145,6 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                 creditCardId = creditCard.getCreditCardId();
             }
         }
-<<<<<<< HEAD
-=======
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.cardtype_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
->>>>>>> b24fc3d0a5f4a4d54d2f4e832829f9d7e4aed32d
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
 
         addCCBtn = (Button) view.findViewById(R.id.addCCBtn);
@@ -177,7 +174,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         expirationYear = expYearET.getText().toString();
 
         if(!creditCardNumber.isEmpty() && !cardType.isEmpty()){
-            final AddCreditCardPOW creditCard = new AddCreditCardPOW(creditCardNumber, cardType.toUpperCase());
+            final AddCreditCardPOW creditCard = new AddCreditCardPOW(creditCardNumber, cardType);
             List<AddCreditCardPOW> ccList = new ArrayList<AddCreditCardPOW>();
             ccList.add(creditCard);
 
