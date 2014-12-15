@@ -32,7 +32,7 @@ public class ConfiguratorFragment
         implements AppConfigurator.AppConfiguratorCallback {
     private static final String TAG = "ConfiguratorFragment";
 
-    private static final boolean LOGGING = true;
+    private static final boolean LOGGING = false;
 
     private static final long CONFIGURATOR_REFRESH_TIME_MILLIS = (5 * 60 * 1000);
 
@@ -42,7 +42,7 @@ public class ConfiguratorFragment
     private static final int MARGIN_LEFT_DP = 0;
     private static final int MARGIN_TOP_DP = 0;
     private static final int MARGIN_RIGHT_DP = 0;
-    private static final int MARGIN_BOTTOM_DP = 20;
+    private static final int MARGIN_BOTTOM_DP = 24;
 
     private MainActivity activity;
     private Resources resources;

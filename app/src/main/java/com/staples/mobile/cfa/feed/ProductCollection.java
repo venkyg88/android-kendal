@@ -25,7 +25,7 @@ public class ProductCollection {
 
     private static final String TAG = "ProductCollection";
 
-    private static final boolean LOGGING = true;
+    private static final boolean LOGGING = false;
 
     // Default Values
 

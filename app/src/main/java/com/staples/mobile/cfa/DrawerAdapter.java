@@ -22,11 +22,11 @@ import java.util.ArrayList;
 public class DrawerAdapter extends BaseAdapter {
     private static final String TAG = "DrawerAdapter";
 
-    private Activity activity;
+    private MainActivity activity;
     private LayoutInflater inflater;
     private ArrayList<DrawerItem> array;
 
-    public DrawerAdapter(Activity activity) {
+    public DrawerAdapter(MainActivity activity) {
         super();
         this.activity = activity;
         inflater = activity.getLayoutInflater();
@@ -78,6 +78,10 @@ public class DrawerAdapter extends BaseAdapter {
         // Set title
         TextView title = (TextView) view.findViewById(R.id.title);
         if (title!=null) title.setText(item.title);
+
+        // Set callback
+        View button = view.findViewById(R.id.account_button);
+        if (button!=null) button.setOnClickListener(activity);
 
         return(view);
     }

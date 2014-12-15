@@ -304,7 +304,6 @@ public class MainActivity extends Activity
         mainLayout.getProgressIndicator().hideProgressIndicator();
     }
 
-
     // Navigation
 
     public boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
@@ -412,7 +411,7 @@ public class MainActivity extends Activity
         } else {
             fragment = Fragment.instantiate(this, AddressFragment.class.getName());
         }
-        return navigateToFragment(fragment);
+        return(selectFragment(fragment, Transition.NONE, true));
     }
 
     /** opens the profile credit cards fragment */
@@ -430,11 +429,7 @@ public class MainActivity extends Activity
         } else {
             fragment = Fragment.instantiate(this, CreditCardFragment.class.getName());
         }
-        return navigateToFragment(fragment);
-    }
-
-    public boolean navigateToFragment(Fragment fragment) {
-        return (selectFragment(fragment, Transition.NONE, true));
+        return(selectFragment(fragment, Transition.NONE, true));
     }
 
     /** Sets item count indicator on cart icon */
@@ -446,12 +441,14 @@ public class MainActivity extends Activity
     public void addItemToCart(String partNumber, int qty) {
         cartFragment.addToCart(partNumber, qty, this);
     }
+    public boolean navigateToFragment(Fragment fragment) {
+        return (selectFragment(fragment, Transition.NONE, true));
+    }
 
-    // Action bar & topper clicks
+    // Action bar & button clicks
 
     @Override
     public void onClick(View view) {
-
         switch(view.getId()) {
             case R.id.action_left_drawer:
                 if (!drawerLayout.isDrawerOpen(leftDrawer)) {
@@ -475,20 +472,15 @@ public class MainActivity extends Activity
             case R.id.co_signin_button:
                 selectLoginFragment();
                 break;
-        }
-    }
 
-    public void signInBtnClick(View view) {
-        Button accountBtn = (Button)view;
-        String buttonText = accountBtn.getText().toString();
-
-        if(buttonText.equals("Sign In")){
-            selectLoginFragment();
-        }
-        if(buttonText.equals("Sign Out")){
-            loginHelper.userSignOut();
-            selectDrawerItem(homeDrawerItem, Transition.NONE, true);
-            accountBtn.setText("Sign In");
+            case R.id.account_button:
+                if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
+                    loginHelper.userSignOut();
+                    selectDrawerItem(homeDrawerItem, Transition.SLIDE, true);
+                } else {
+                    selectLoginFragment();
+                }
+                break;
         }
     }
 
