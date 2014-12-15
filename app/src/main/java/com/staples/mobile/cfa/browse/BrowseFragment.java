@@ -130,18 +130,27 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
         Log.d(TAG, msg);
     }
 
+    private String getTitleFromDescriptions(List<Description> descriptions) {
+        if (descriptions==null) return(null);
+        for(Description description : descriptions) {
+            String title = description.getName();
+            if (title==null) title = description.getText();
+            if (title==null) title = description.getDescription();
+            if (title!=null) {
+                title = Html.fromHtml(title).toString();
+                return(title);
+            }
+        }
+        return(null);
+    }
+
     private void processCategories(List<Category> categories) {
         // Process categories
         if (categories.size() > 1) {
             for(Category category : categories) {
                 List<Description> descriptions = category.getDescription1();
-                if (descriptions != null && descriptions.size() > 0) {
-                    // Get category title
-                    Description description = descriptions.get(0);
-                    String title = description.getText();
-                    if (title == null) title = description.getDescription();
-                    if (title == null) title = description.getName();
-                    title = Html.fromHtml(title).toString();
+                String title = getTitleFromDescriptions(descriptions);
+                if (title!=null) {
                     BrowseItem item = new BrowseItem(BrowseItem.Type.ITEM, title, category.getIdentifier());
                     adapter.addItem(item);
                 }
@@ -157,10 +166,8 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
         if (subCategories != null) {
             for(SubCategory subCategory : subCategories) {
                 List<Description> descriptions = subCategory.getDescription();
-                if (descriptions != null && descriptions.size() > 0) {
-                    Description description = descriptions.get(0);
-                    String title = description.getName();
-                    if (title == null) title = description.getDescription();
+                String title = getTitleFromDescriptions(descriptions);
+                if (title!=null) {
                     BrowseItem item = new BrowseItem(BrowseItem.Type.ITEM, title, subCategory.getIdentifier());
                     adapter.addItem(item);
                 }

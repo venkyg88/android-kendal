@@ -36,8 +36,6 @@ public class LoginHelper {
 
     private MainActivity activity;
     private EasyOpenApi easyOpenApi;
-    Button signInText;
-
 
     // single static synchronized list of login complete listeners
     private static List<OnLoginCompleteListener> loginCompleteListeners = new Vector<OnLoginCompleteListener>();
@@ -122,8 +120,8 @@ public class LoginHelper {
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
                         notifyListeners(false);
                         ((MainActivity)activity).selectProfileFragment();
-                        signInText = (Button)activity.findViewById(R.id.account_button);
-                        signInText.setText("Sign Out");
+                        Button signInText = (Button) activity.findViewById(R.id.account_button);
+                        signInText.setText(R.string.signout_title);
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
@@ -155,8 +153,8 @@ public class LoginHelper {
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
                         notifyListeners(false);
                         ((MainActivity)activity).selectProfileFragment();
-                        signInText = (Button)activity.findViewById(R.id.account_button);
-                        signInText.setText("Sign Out");
+                        Button signInText = (Button) activity.findViewById(R.id.account_button);
+                        signInText.setText(R.string.signout_title);
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
@@ -182,6 +180,8 @@ public class LoginHelper {
                 Access.getInstance().setTokens(null, null, true); //set these to null since they're definitely unusable now
                 getGuestTokens(); // re-establish a guest login since user may try to add to cart after signing out
                 ProfileDetails.resetMember();
+                Button signInText = (Button)activity.findViewById(R.id.account_button);
+                signInText.setText(R.string.signin_title);
                 Log.i("Code for signout", " " + response.getStatus());
             }
 

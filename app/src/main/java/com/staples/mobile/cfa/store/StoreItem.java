@@ -53,7 +53,7 @@ class StoreItem {
             calendar.setTimeInMillis(best.getStart());
             String dow = calendar.getDisplayName(Calendar.DAY_OF_WEEK, dateStyle, Locale.getDefault());
             String close = timeFormat.format(best.getEnd());
-            return ("Open until\n" + dow + " " + close);
+            return ("Open until " + dow + " " + close);
         }
 
         // Check until open
@@ -71,7 +71,7 @@ class StoreItem {
             calendar.setTimeInMillis(best.getStart());
             String dow = calendar.getDisplayName(Calendar.DAY_OF_WEEK, dateStyle, Locale.getDefault());
             String open = timeFormat.format(best.getStart());
-            return ("Open at\n" + dow + " " + open);
+            return ("Open at " + dow + " " + open);
 
         }
 
