@@ -26,32 +26,39 @@
 
             <FrameLayout
                 android:id="@android:id/tabcontent"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
+                <!--rewards list tab-->
                 <LinearLayout
                     android:id="@+id/tab1_rewards"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="6dp"
                     android:orientation="horizontal">
                     <include layout="@layout/rewards_list"/>
                 </LinearLayout>
 
-                <LinearLayout
+                <!--ink recycling tab-->
+                <ScrollView
                     android:id="@+id/tab2_ink_recycling"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:orientation="horizontal">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="6dp"
+                    android:background="@color/background_white">
                     <include layout="@layout/rewards_ink_recycling"/>
-                </LinearLayout>
+                </ScrollView>
 
-                <LinearLayout
+                <!--summary tab-->
+                <ScrollView
                     android:id="@+id/tab3_summary"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:orientation="horizontal">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="6dp"
+                    android:background="@color/background_white">
                     <include layout="@layout/rewards_summary"/>
-                </LinearLayout>
+                </ScrollView>
+
             </FrameLayout>
         </LinearLayout>
     </TabHost>
