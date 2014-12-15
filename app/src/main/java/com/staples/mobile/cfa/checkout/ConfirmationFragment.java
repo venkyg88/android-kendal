@@ -27,14 +27,8 @@ import java.text.NumberFormat;
 public class ConfirmationFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = ConfirmationFragment.class.getSimpleName();
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
 
-    private static final String CATALOG_ID = "10051";
-    private static final String LOCALE = "en_US";
 
-    private static final String ZIPCODE = "01010";
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     private static final int MAXFETCH = 50;
 
@@ -130,8 +124,8 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
 
         // query for order status
 //        showProgressIndicator();
-//        secureApi.getOrderStatus(RECOMMENDATION, STORE_ID, LOCALE, ZIPCODE, CATALOG_ID,
-//                CLIENT_ID, orderNumber, 1, 100, orderStatusListener);
+//        secureApi.getOrderStatus(
+//                 orderNumber, 1, 100, orderStatusListener);
 
 
         return view;
@@ -143,7 +137,6 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
         super.onResume();
 
         // update action bar
-        activity.showOrderConfirmationActionBarEntities();
         activity.showActionBar(R.string.order_confirmation_title, 0, null);
     }
 

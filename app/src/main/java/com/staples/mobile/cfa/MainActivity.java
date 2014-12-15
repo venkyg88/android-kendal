@@ -153,69 +153,71 @@ public class MainActivity extends Activity
             optionIcon.setImageResource(iconId);
             optionListener = listener;
         }
-    }
 
-    /** sets standard action bar, fragments need to override their onResume methods to set up action bar */
-    public void showStandardActionBar() {
-        // set standard title bar
-        showActionBar(R.string.staples, R.drawable.ic_search_white, searchBar);
+        // TODO Interim hacked fixes
+        switch(titleId) {
+            case R.string.cart_title:
+                // show cart-specific entities
+                leftDrawerAction.setVisibility(View.VISIBLE);
+                cartQtyView.setVisibility(View.VISIBLE);
+                // hide unwanted entities
+                cartIconAction.setVisibility(View.GONE);
+                checkoutSigninButton.setVisibility(View.GONE);
+                closeButton.setVisibility(View.GONE);
+                break;
+            case R.string.guest_checkout_title:
+            case R.string.checkout_title:
+                // show checkout-specific entities
+                closeButton.setVisibility(View.VISIBLE);
+                closeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        selectShoppingCart();
+                    }
+                });
+                LoginHelper loginHelper = new LoginHelper(this);
+                if (loginHelper.isLoggedIn() && loginHelper.isGuestLogin()) {
+                    checkoutSigninButton.setVisibility(View.VISIBLE);
+                } else {
+                    checkoutSigninButton.setVisibility(View.GONE);
+                }
+                // hide unwanted entities
+                leftDrawerAction.setVisibility(View.GONE);
+                cartIconAction.setVisibility(View.GONE);
+                cartQtyView.setVisibility(View.GONE);
+                break;
+            case R.string.order_confirmation_title:
+                // show cart-specific entities
+                leftDrawerAction.setVisibility(View.VISIBLE);
+                cartQtyView.setVisibility(View.VISIBLE);
+                // hide unwanted entities
+                cartIconAction.setVisibility(View.GONE);
+                cartQtyView.setVisibility(View.GONE);
+                break;
+            default:
+                // Show standard entities
+                leftDrawerAction.setVisibility(View.VISIBLE);
+                cartIconAction.setVisibility(View.VISIBLE);
 
-        // show standard entities
-        leftDrawerAction.setVisibility(View.VISIBLE);
-        searchBar.setVisibility(View.GONE);
-        optionIcon.setVisibility(View.VISIBLE);
-        cartIconAction.setVisibility(View.VISIBLE);
-
-        // hide non-standard entities
-        cartQtyView.setVisibility(View.GONE);
-        checkoutSigninButton.setVisibility(View.GONE);
-        closeButton.setVisibility(View.GONE);
-    }
-
-    public void showCartActionBarEntities() {
-        // show cart-specific entities
-        leftDrawerAction.setVisibility(View.VISIBLE);
-        cartQtyView.setVisibility(View.VISIBLE);
-        // hide unwanted entities
-        searchBar.setVisibility(View.GONE);
-        optionIcon.setVisibility(View.GONE);
-        cartIconAction.setVisibility(View.GONE);
-        checkoutSigninButton.setVisibility(View.GONE);
-        closeButton.setVisibility(View.GONE);
-    }
-
-    public void showCheckoutActionBarEntities() {
-        // show checkout-specific entities
-        closeButton.setVisibility(View.VISIBLE);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectShoppingCart();
-            }
-        });
-        LoginHelper loginHelper = new LoginHelper(this);
-        if (loginHelper.isLoggedIn() && loginHelper.isGuestLogin()) {
-            checkoutSigninButton.setVisibility(View.VISIBLE);
-        } else {
-            checkoutSigninButton.setVisibility(View.GONE);
+                // hide non-standard entities
+                cartQtyView.setVisibility(View.GONE);
+                checkoutSigninButton.setVisibility(View.GONE);
+                closeButton.setVisibility(View.GONE);
         }
-        // hide unwanted entities
-        leftDrawerAction.setVisibility(View.GONE);
-        searchBar.setVisibility(View.GONE);
-        optionIcon.setVisibility(View.GONE);
-        cartIconAction.setVisibility(View.GONE);
-        cartQtyView.setVisibility(View.GONE);
-    }
 
-    public void showOrderConfirmationActionBarEntities() {
-        // show cart-specific entities
-        leftDrawerAction.setVisibility(View.VISIBLE);
-        cartQtyView.setVisibility(View.VISIBLE);
-        // hide unwanted entities
-        searchBar.setVisibility(View.GONE);
-        optionIcon.setVisibility(View.GONE);
-        cartIconAction.setVisibility(View.GONE);
-        cartQtyView.setVisibility(View.GONE);
+        // TODO Interim hacked fixes
+        switch(iconId) {
+            case R.drawable.ic_search_white:
+                searchBar.setVisibility(View.GONE);
+                optionListener = searchBar;
+                break;
+            case R.drawable.ic_close_white:
+                searchBar.setVisibility(View.VISIBLE);
+                optionListener = searchBar;
+                break;
+            default:
+                searchBar.setVisibility(View.GONE);
+        }
     }
 
     /** sets action bar cart quantity */
@@ -251,7 +253,7 @@ public class MainActivity extends Activity
 
 
         // initialize action bar
-        showStandardActionBar();
+        showActionBar(R.string.staples, R.drawable.ic_search_white, searchBar);
 
         // Init search bar
         searchBar.initSearchBar();
@@ -301,7 +303,6 @@ public class MainActivity extends Activity
     public void hideProgressIndicator() {
         mainLayout.getProgressIndicator().hideProgressIndicator();
     }
-
 
     // Navigation
 
@@ -410,7 +411,7 @@ public class MainActivity extends Activity
         } else {
             fragment = Fragment.instantiate(this, AddressFragment.class.getName());
         }
-        return navigateToFragment(fragment);
+        return(selectFragment(fragment, Transition.NONE, true));
     }
 
     /** opens the profile credit cards fragment */
@@ -428,11 +429,7 @@ public class MainActivity extends Activity
         } else {
             fragment = Fragment.instantiate(this, CreditCardFragment.class.getName());
         }
-        return navigateToFragment(fragment);
-    }
-
-    public boolean navigateToFragment(Fragment fragment) {
-        return (selectFragment(fragment, Transition.NONE, true));
+        return(selectFragment(fragment, Transition.NONE, true));
     }
 
     /** Sets item count indicator on cart icon */
@@ -444,12 +441,14 @@ public class MainActivity extends Activity
     public void addItemToCart(String partNumber, int qty) {
         cartFragment.addToCart(partNumber, qty, this);
     }
+    public boolean navigateToFragment(Fragment fragment) {
+        return (selectFragment(fragment, Transition.NONE, true));
+    }
 
-    // Action bar & topper clicks
+    // Action bar & button clicks
 
     @Override
     public void onClick(View view) {
-
         switch(view.getId()) {
             case R.id.action_left_drawer:
                 if (!drawerLayout.isDrawerOpen(leftDrawer)) {
@@ -473,20 +472,15 @@ public class MainActivity extends Activity
             case R.id.co_signin_button:
                 selectLoginFragment();
                 break;
-        }
-    }
 
-    public void signInBtnClick(View view) {
-        Button accountBtn = (Button)view;
-        String buttonText = accountBtn.getText().toString();
-
-        if(buttonText.equals("Sign In")){
-            selectLoginFragment();
-        }
-        if(buttonText.equals("Sign Out")){
-            loginHelper.userSignOut();
-            selectDrawerItem(homeDrawerItem, Transition.NONE, true);
-            accountBtn.setText("Sign In");
+            case R.id.account_button:
+                if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
+                    loginHelper.userSignOut();
+                    selectDrawerItem(homeDrawerItem, Transition.SLIDE, true);
+                } else {
+                    selectLoginFragment();
+                }
+                break;
         }
     }
 

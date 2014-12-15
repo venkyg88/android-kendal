@@ -37,13 +37,8 @@ import retrofit.client.Response;
 public abstract class CheckoutFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = CheckoutFragment.class.getSimpleName();
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
 
-    private static final String CATALOG_ID = "10051";
-    private static final String LOCALE = "en_US";
 
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     private static final int MAXFETCH = 50;
 
@@ -155,7 +150,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         super.onResume();
 
         // update action bar
-        activity.showCheckoutActionBarEntities();
         int titleId = this instanceof GuestCheckoutFragment ? R.string.guest_checkout_title : R.string.checkout_title;
         activity.showActionBar(titleId, 0, null);
     }
@@ -182,14 +176,14 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
     protected void startPrecheckout() {
         showProgressIndicator();
-        secureApi.precheckout(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, precheckoutListener);
+        secureApi.precheckout(precheckoutListener);
     }
 
     protected void submitOrder(String cid) {
         // upon payment method success, submit the order
         SubmitOrderRequest submitOrderRequest = new SubmitOrderRequest();
         submitOrderRequest.setCardVerificationCode(cid);
-        secureApi.submitOrder(submitOrderRequest, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,
+        secureApi.submitOrder(submitOrderRequest,
                 new Callback<SubmitOrderResponse>() {
 
                     @Override
@@ -231,7 +225,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         this.tax = tax;
         shippingChargeVw.setText(formatShippingCharge(shippingCharge, currencyFormat));
         taxVw.setText(currencyFormat.format(tax));
-        checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax - couponsRewardsAmount));
+        checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax)); // coupons/rewards are already factored into pretaxSubtotal
         taxLayout.setVisibility(View.VISIBLE);
         shippingChargeLayout.setVisibility(View.VISIBLE);
         submissionLayout.setVisibility(View.VISIBLE);
@@ -278,15 +272,23 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
         @Override
         public void success(AddressValidationAlert precheckoutResponse, Response response) {
+
+            // check for alerts
+            if (precheckoutResponse.getAddressValidationAlert() != null) {
+                Toast.makeText(activity, precheckoutResponse.getAddressValidationAlert(), Toast.LENGTH_LONG).show();
+            } else if (precheckoutResponse.getInventoryCheckAlert() != null) {
+                Toast.makeText(activity, precheckoutResponse.getInventoryCheckAlert(), Toast.LENGTH_LONG).show();
+            }
+
             // get shipping charge, then get tax
-            secureApi.getShippingCharge(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<CartContents>() {
+            secureApi.getShippingCharge(new Callback<CartContents>() {
                 @Override
                 public void success(CartContents cartContents, Response response) {
 
                     Cart cart = getCartFromResponse(cartContents);
                     if (cart != null) {
                         shippingCharge = cart.getShippingCharge();
-                        secureApi.getTax(RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<CartContents>() {
+                        secureApi.getTax(new Callback<CartContents>() {
                             @Override
                             public void success(CartContents cartContents, Response response) {
                                 Cart cart = getCartFromResponse(cartContents);

@@ -25,7 +25,7 @@ public class ProductCollection {
 
     private static final String TAG = "ProductCollection";
 
-    private static final boolean LOGGING = true;
+    private static final boolean LOGGING = false;
 
     // Default Values
 
@@ -430,11 +430,12 @@ public class ProductCollection {
             newUrlExtension = setOffset(newUrlExtension);
             newUrlExtension = setLimit(newUrlExtension);
 
-            newUrlExtension = addUrlParameter(newUrlExtension, AMPERSAND, CATALOG_ID, DEFAULT_CATALOG_ID);
-            newUrlExtension = addUrlParameter(newUrlExtension, AMPERSAND, LOCALE, DEFAULT_LOCALE);
-            newUrlExtension = addUrlParameter(newUrlExtension, AMPERSAND, ZIP_CODE, DEFAULT_ZIP_CODE);
-            newUrlExtension = addUrlParameter(newUrlExtension, AMPERSAND, CLIENT_ID, DEFAULT_CLIENT_ID);
-            newUrlExtension = addUrlParameter(newUrlExtension, AMPERSAND, RESPONSE_FORMAT, JSON);
+// TODO
+//            newUrlExtension = addUrlParameter(newUrlExtension, AMPERSAND, DEFAULT_CATALOG_ID);
+//            newUrlExtension = addUrlParameter(newUrlExtension, AMPERSAND, DEFAULT_LOCALE);
+//            newUrlExtension = addUrlParameter(newUrlExtension, AMPERSAND, ZIP_CODE, DEFAULT_ZIP_CODE);
+//            newUrlExtension = addUrlParameter(newUrlExtension, AMPERSAND, DEFAULT_CLIENT_ID);
+//            newUrlExtension = addUrlParameter(newUrlExtension, AMPERSAND, RESPONSE_FORMAT, JSON);
 
             return (newUrlExtension.toString());
         }

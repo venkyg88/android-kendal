@@ -3,11 +3,8 @@
 
     <string name="app_name">Kendall</string>
     <string name="staples">Staples</string>
-    <string name="left_drawer">Left Drawer</string>
-    <string name="search">Search</string>
-    <string name="right_drawer">Right Drawer</string>
 
-    <!-- Drawer header titles -->
+    <!-- Fragment titles -->
     <string name="home_title">Home</string>
     <string name="personal_feed_title">Personal Feed</string>
     <string name="browse_title">Shop by Category</string>
@@ -15,6 +12,7 @@
     <string name="weekly_ad_title">Weekly Ad</string>
     <string name="account_title">Account</string>
     <string name="signin_title">Sign In</string>
+    <string name="signout_title">Sign Out</string>
     <string name="rewards_title">Rewards</string>
     <string name="order_title">Order</string>
     <string name="profile_title">Profile</string>
@@ -61,10 +59,13 @@
     <string name="item_subtotal">Item total</string>
     <string name="coupons_rewards">Coupon &amp; Reward</string>
     <string name="coupon_code_hint">Add Coupon Code here</string>
-    <string name="link_rewards_account">Link Your Rewards Account</string>
-    <string name="link_account">Link Account</string>
-    <string name="rewards_card_number">Rewards Card Number</string>
-    <string name="rewards_phone_number">Your Rewards Account Phone Number</string>
+    <string name="redeemable_rewards">Redeemable Rewards</string>
+    <string name="no_redeemable_rewards">No Redeemable Rewards</string>
+    <!--NOTE: we may or may not implement the link-rewards-acct feature which uses these strings-->
+    <!--<string name="link_rewards_account">Link Your Rewards Account</string>-->
+    <!--<string name="link_account">Link Account</string>-->
+    <!--<string name="rewards_card_number">Rewards Card Number</string>-->
+    <!--<string name="rewards_phone_number">Your Rewards Account Phone Number</string>-->
     <string name="tax">Tax</string>
     <string name="submit_order">Submit Order</string>
     <string name="confirmation_title">Order Confirmation</string>
@@ -95,6 +96,7 @@
     <string name="avail_instock">In stock</string>
     <string name="avail_outofstock">Out of stock</string>
 
+    <!-- Store locator -->
     <string name="store_search_hint">Search Zip, City or Street</string>
     <string name="no_stores_title">No Results</string>
     <string name="no_stores_message">We were unable to find any stores near the location provided.</string>

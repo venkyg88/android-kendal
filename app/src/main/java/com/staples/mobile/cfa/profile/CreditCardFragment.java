@@ -47,10 +47,6 @@ import retrofit.client.Response;
 public class CreditCardFragment extends Fragment implements View.OnClickListener{
 
     private static final String TAG = "Add Credit Card Fragment";
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
-    private static final String LOCALE = "en_US";
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     Button addCCBtn;
     String creditCardNumber;
@@ -144,6 +140,14 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                 creditCardId = creditCard.getCreditCardId();
             }
         }
+<<<<<<< HEAD
+=======
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.cardtype_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+>>>>>>> b24fc3d0a5f4a4d54d2f4e832829f9d7e4aed32d
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
 
         addCCBtn = (Button) view.findViewById(R.id.addCCBtn);
@@ -177,7 +181,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
             List<AddCreditCardPOW> ccList = new ArrayList<AddCreditCardPOW>();
             ccList.add(creditCard);
 
-            easyOpenApi.addCreditPOWCallQA(ccList, RECOMMENDATION, CLIENT_ID, new Callback<List<POWResponse>>() {
+            easyOpenApi.addCreditPOWCallQA(ccList, new Callback<List<POWResponse>>() {
 
                 @Override
                 public void success(List<POWResponse> powList, Response response) {
@@ -191,7 +195,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                     }
                     else if(creditCardId != null) {
                         UpdateCreditCard updatedCard= new UpdateCreditCard(cardType, encryptedPacket, expirationMonth, expirationYear, "notes", creditCardId);
-                        easyOpenApi.updateMemberCreditCard(updatedCard, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<Response>() {
+                        easyOpenApi.updateMemberCreditCard(updatedCard, new Callback<Response>() {
                             @Override
                             public void success(Response response, Response response2) {
                                 (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
@@ -215,7 +219,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                     }
                     else {
                         AddCreditCard addCC = new AddCreditCard(cardType, encryptedPacket, expirationMonth, expirationYear, "notes");
-                        easyOpenApi.addMemberCreditCard(addCC, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,new Callback<CreditCardId>() {
+                        easyOpenApi.addMemberCreditCard(addCC, new Callback<CreditCardId>() {
                             @Override
                             public void success(CreditCardId creditCardID, Response response) {
                                 Log.i("Success", creditCardID.getCreditCardId());

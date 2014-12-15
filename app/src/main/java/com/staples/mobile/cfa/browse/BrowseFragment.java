@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -33,22 +32,13 @@ import retrofit.client.Response;
 public class BrowseFragment extends Fragment  implements Callback<Browse>, AdapterView.OnItemClickListener {
     private static final String TAG = "BrowseFragment";
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
-
-    private static final String CATALOG_ID = "10051";
-    private static final String LOCALE = "en_US";
-
-    private static final String ZIPCODE = "01010";
-    //    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
-
     private static final int MAXFETCH = 50;
+
+    private static Bundle adapterState; // TODO Using global state
 
     private DataWrapper wrapper;
     private ListView list;
     private BrowseAdapter adapter;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -67,8 +57,9 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
         list.setAdapter(adapter);
         list.setOnItemClickListener(this);
 
-        wrapper.setState(DataWrapper.State.LOADING);
-        fill(null);
+        wrapper.setState(DataWrapper.State.ADDING);
+        adapter.restoreState(adapterState);
+        fill(adapter.getActiveIdentifier());
         return (view);
     }
 
@@ -76,7 +67,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
     public void onResume() {
         super.onResume();
         MainActivity activity = (MainActivity) getActivity();
-        if (activity!=null) activity.showStandardActionBar();
+        if (activity!=null) activity.showActionBar(R.string.staples, R.drawable.ic_search_white, null);
     }
 
     void fill(String identifier) {
@@ -86,23 +77,20 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
 
         // Top categories
         if (identifier==null || identifier.isEmpty()) {
-            easyOpenApi.topCategories(RECOMMENDATION, STORE_ID, CATALOG_ID, LOCALE, null,
-                    ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
+            easyOpenApi.topCategories(null, null, MAXFETCH, this);
             return;
         }
 
         // Alphanumeric identifier?
         char c = identifier.charAt(0);
         if (c>='A' && c<='Z') {
-            easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
-                    ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
+            easyOpenApi.browseCategories(identifier, null, MAXFETCH, this);
             return;
         }
 
         // Numeric identifier
         else {
-            easyOpenApi.topCategories(RECOMMENDATION, STORE_ID, CATALOG_ID, LOCALE, identifier,
-                    ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
+            easyOpenApi.topCategories(identifier, null, MAXFETCH, this);
             return;
         }
     }
@@ -128,21 +116,28 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
         Log.d(TAG, msg);
     }
 
+    private String getTitleFromDescriptions(List<Description> descriptions) {
+        if (descriptions==null) return(null);
+        for(Description description : descriptions) {
+            String title = description.getName();
+            if (title==null) title = description.getText();
+            if (title==null) title = description.getDescription();
+            if (title!=null) {
+                title = Html.fromHtml(title).toString();
+                return(title);
+            }
+        }
+        return(null);
+    }
+
     private void processCategories(List<Category> categories) {
         // Process categories
         if (categories.size() > 1) {
             for(Category category : categories) {
                 List<Description> descriptions = category.getDescription1();
-                if (descriptions != null && descriptions.size() > 0) {
-                    // Get category title
-                    Description description = descriptions.get(0);
-                    String title = description.getText();
-                    if (title == null) title = description.getDescription();
-                    if (title == null) title = description.getName();
-                    title = Html.fromHtml(title).toString();
-                    BrowseItem item = new BrowseItem();
-                    item.title = title;
-                    item.identifier = category.getIdentifier();
+                String title = getTitleFromDescriptions(descriptions);
+                if (title!=null) {
+                    BrowseItem item = new BrowseItem(BrowseItem.Type.ITEM, title, category.getIdentifier());
                     adapter.addItem(item);
                 }
             }
@@ -157,13 +152,9 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
         if (subCategories != null) {
             for(SubCategory subCategory : subCategories) {
                 List<Description> descriptions = subCategory.getDescription();
-                if (descriptions != null && descriptions.size() > 0) {
-                    Description description = descriptions.get(0);
-                    String title = description.getName();
-                    if (title == null) title = description.getDescription();
-                    BrowseItem item = new BrowseItem();
-                    item.title = title;
-                    item.identifier = subCategory.getIdentifier();
+                String title = getTitleFromDescriptions(descriptions);
+                if (title!=null) {
+                    BrowseItem item = new BrowseItem(BrowseItem.Type.ITEM, title, subCategory.getIdentifier());
                     adapter.addItem(item);
                 }
             }
@@ -181,6 +172,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
             case STACK:
                 identifier = adapter.popStack(item);
                 fill(identifier);
+                adapterState = adapter.saveState(adapterState);
                 wrapper.setState(DataWrapper.State.ADDING);
                 adapter.notifyDataSetChanged();
                 break;
@@ -193,6 +185,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
                 } else {
                     adapter.pushStack(item);
                     fill(item.identifier);
+                    adapterState = adapter.saveState(adapterState);
                     wrapper.setState(DataWrapper.State.ADDING);
                     adapter.notifyDataSetChanged();
                 }

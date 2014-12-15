@@ -13,7 +13,6 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.bundle.BundleAdapter;
 import com.staples.mobile.cfa.bundle.BundleItem;
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -29,13 +28,6 @@ import retrofit.client.Response;
 public class SearchFragment extends Fragment implements Callback<SearchResult>, AdapterView.OnItemClickListener {
     private static final String TAG = "BundleFragment";
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
-    private static final String CATALOG_ID = "10051";
-    private static final String LOCALE = "en_US";
-    private static final String ZIPCODE = "01010";
-//    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
     private static final int MAXFETCH = 50;
     private static final int SORT_BY_BEST_MATCH = 0;
 
@@ -66,11 +58,16 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         return (view);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).showActionBar(R.string.staples, R.drawable.ic_search_white, null);
+    }
+
     private void fill(String keyword) {
         wrapper.setState(DataWrapper.State.LOADING);
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.searchResult(RECOMMENDATION, STORE_ID, CATALOG_ID, LOCALE, ZIPCODE, keyword,
-                                 1, MAXFETCH, SORT_BY_BEST_MATCH, CLIENT_ID, null, this);
+        easyOpenApi.searchResult(keyword, 1, MAXFETCH, SORT_BY_BEST_MATCH, null, this);
     }
 
     @Override

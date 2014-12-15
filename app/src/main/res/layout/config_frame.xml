@@ -18,7 +18,7 @@
 			android:layout_height="match_parent"
             android:layout_margin="0dp"
 			android:orientation="vertical"
-			android:background="@color/background_extra_light_gray"
+			android:background="@color/background_extra_light_gray_2"
             android:padding="0dp"
         >
 

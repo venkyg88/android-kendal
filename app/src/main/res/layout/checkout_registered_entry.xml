@@ -21,7 +21,7 @@
             android:layout_weight="1"
             android:orientation="vertical">
             <TextView
-                style="@style/CheckoutSubheading"
+                style="@style/GraySubheading"
                 android:text="@string/shipping_addr"/>
             <TextView
                 android:id="@+id/checkout_shipping_addr"
@@ -48,7 +48,7 @@
             android:layout_weight="1"
             android:orientation="vertical">
             <TextView
-                style="@style/CheckoutSubheading"
+                style="@style/GraySubheading"
                 android:text="@string/payment_method"/>
             <TextView
                 android:id="@+id/checkout_payment_method"
@@ -75,7 +75,7 @@
             android:layout_weight="1"
             android:orientation="vertical">
             <TextView
-                style="@style/CheckoutSubheading"
+                style="@style/GraySubheading"
                 android:text="@string/billing_addr"/>
             <TextView
                 android:id="@+id/checkout_billing_addr"

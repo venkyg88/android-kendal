@@ -36,4 +36,9 @@ public class ToBeDoneFragment extends Fragment {
         return(view);
      }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).showActionBar(R.string.staples, 0, null);
+    }
 }
