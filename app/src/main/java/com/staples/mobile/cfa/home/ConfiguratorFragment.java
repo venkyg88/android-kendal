@@ -153,13 +153,20 @@ public class ConfiguratorFragment
 
     @Override
     public void onResume() {
+
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:onResume():"
+                        + " this[" + this + "]"
+        );
+
         super.onResume();
 
         MainActivity activity = (MainActivity) getActivity();
-        if (activity!=null) activity.showActionBar(R.string.staples, R.drawable.ic_search_white, null);
+
+        if (activity != null) activity.showActionBar(R.string.staples, R.drawable.ic_search_white, null);
     }
 
     public void onGetConfiguratorResult(boolean success) {
+
         if (LOGGING) Log.v(TAG, "ConfiguratorFragment:AppConfigurator.onGetConfiguratorResult():"
                         + " success[" + success + "]"
                         + " this[" + this + "]"
@@ -179,6 +186,11 @@ public class ConfiguratorFragment
 
             screens = staplesAppContext.getScreen();
 
+            if (LOGGING) Log.v(TAG, "ConfiguratorFragment:AppConfigurator.onGetConfiguratorResult():"
+                            + " screens[" + screens + "]"
+                            + " this[" + this + "]"
+            );
+
             if (screens == null) break; // while (true)
 
             Screen screen = screens.get(0);
@@ -193,6 +205,11 @@ public class ConfiguratorFragment
             configItemsB.clear();
             configItemsC.clear();
             configItemsD.clear();
+
+            if (LOGGING) Log.v(TAG, "ConfiguratorFragment:AppConfigurator.onGetConfiguratorResult():"
+                            + " items[" + items + "]"
+                            + " this[" + this + "]"
+            );
 
             if (items == null) break; // while (true)
 
