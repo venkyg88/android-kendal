@@ -45,6 +45,7 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
 
     private ListView rewardsListView;
     private RewardAdapter rewardAdapter;
+    private View noRewardsMessageVw;
     private TextView cartridgesRecycledVw;
     private TextView cartridgesRecycledLabelVw;
     private TextView cartridgesLimitVw;
@@ -82,6 +83,7 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
         tabHost.addTab(tab3);
 
         // get rewards list views
+        noRewardsMessageVw = view.findViewById(R.id.no_rewards_msg);
         rewardsListView = (ListView) view.findViewById(R.id.rewards_list);
         rewardAdapter = new RewardAdapter(activity, this);
         rewardsListView.setAdapter(rewardAdapter);
@@ -190,6 +192,9 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
             rewardAdapter.add(reward);
         }
         rewardAdapter.notifyDataSetChanged();
+
+        // set visibility of no-rewards msg
+        noRewardsMessageVw.setVisibility((profileRewards.size() == 0)? View.VISIBLE:View.GONE);
     }
 
     // when cart refresh done,
