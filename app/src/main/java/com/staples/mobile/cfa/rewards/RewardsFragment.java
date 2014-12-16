@@ -10,25 +10,40 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
+import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.EmptyResponse;
+import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
 import com.staples.mobile.common.access.easyopen.model.member.InkRecyclingDetail;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
+import com.staples.mobile.common.access.easyopen.model.member.Reward;
 import com.staples.mobile.common.access.easyopen.model.member.YearToDateSave;
 import com.staples.mobile.common.access.easyopen.model.member.YearToDateSpend;
 
 import java.text.NumberFormat;
 import java.util.Formatter;
+import java.util.List;
 
-public class RewardsFragment extends Fragment {
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
+public class RewardsFragment extends Fragment implements View.OnClickListener, CartFragment.CartRefreshCallback {
     private static final String TAG = RewardsFragment.class.getSimpleName();
     MainActivity activity;
 
+    private ListView rewardsListView;
+    private RewardAdapter rewardAdapter;
     private TextView cartridgesRecycledVw;
     private TextView cartridgesRecycledLabelVw;
     private TextView cartridgesLimitVw;
@@ -64,7 +79,10 @@ public class RewardsFragment extends Fragment {
         tabHost.addTab(tab3);
 
         // get rewards list views
-
+        rewardsListView = (ListView) view.findViewById(R.id.rewards_list);
+        rewardAdapter = new RewardAdapter(activity, this);
+        rewardsListView.setAdapter(rewardAdapter);
+        fillRewardAdapter();
 
         // set up ink recycling views
         cartridgesRecycledVw = (TextView) view.findViewById(R.id.cartridges_recycled);
@@ -141,5 +159,51 @@ public class RewardsFragment extends Fragment {
         super.onResume();
         activity.showActionBar(R.string.rewards_title, 0, null);
     }
+
+
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()) {
+            case R.id.reward_add_button:
+                int position = (int)view.getTag();
+                Reward reward = rewardAdapter.getItem(position);
+                showProgressIndicator();
+                if (reward.isIsApplied()) {
+                    activity.addCouponToCart(reward.getCode(), this);
+                } else {
+                    activity.removeCouponFromCart(reward.getCode(), this);
+                }
+                break;
+        }
+    }
+
+    private void fillRewardAdapter() {
+        rewardAdapter.clear();
+        List<Reward> profileRewards = ProfileDetails.getAllProfileRewards();
+        for (Reward reward : profileRewards) {
+            rewardAdapter.add(reward);
+        }
+        rewardAdapter.notifyDataSetChanged();
+    }
+
+    // when cart refresh done,
+    public void onCartRefreshComplete() {
+        fillRewardAdapter();
+        hideProgressIndicator();
+    }
+
+    private void showProgressIndicator() {
+        if (activity != null) {
+            activity.showProgressIndicator();
+        }
+    }
+
+    private void hideProgressIndicator() {
+        if (activity != null) {
+            activity.hideProgressIndicator();
+        }
+    }
+
 
 }
