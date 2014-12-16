@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -53,6 +54,8 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
     private TextView ytdSpendGoalVw;
     private ProgressBar ytdProgressBar;
     private TextView ytdMessageVw;
+
+    private String confirmationMsg;
 
     NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 
@@ -170,9 +173,11 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
                 Reward reward = rewardAdapter.getItem(position);
                 showProgressIndicator();
                 if (reward.isIsApplied()) {
-                    activity.addCouponToCart(reward.getCode(), this);
-                } else {
+                    confirmationMsg = getResources().getString(R.string.rewards_removefromcart_confirmation);
                     activity.removeCouponFromCart(reward.getCode(), this);
+                } else {
+                    confirmationMsg = getResources().getString(R.string.rewards_addtocart_confirmation);
+                    activity.addCouponToCart(reward.getCode(), this);
                 }
                 break;
         }
@@ -191,6 +196,7 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
     public void onCartRefreshComplete() {
         fillRewardAdapter();
         hideProgressIndicator();
+        Toast.makeText(activity, confirmationMsg, Toast.LENGTH_LONG).show();
     }
 
     private void showProgressIndicator() {
