@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.feed;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.util.Log;
 
 import com.staples.mobile.cfa.login.LoginHelper;
@@ -55,8 +56,8 @@ public class ProductCollection {
         ProductContainer productContainer = new ProductContainer();
 
         productContainer.urlExtension = urlExtension;
-        productContainer.limit = Integer.parseInt(limit);
-        productContainer.offset = Integer.parseInt(offset);
+        productContainer.limit = limit;
+        productContainer.offset = offset;
         productContainer.collectionMap = collectionMap;
         productContainer.productCollectionCallBack = productCollectionCallBack;
 
@@ -76,8 +77,8 @@ public class ProductCollection {
         // http://sapi.staples.com/v1/10001/category/identifier/BI739472?catalogId=10051&client_id=JxP9wlnIfCSeGc9ifRAAGku7F4FSdErd&locale=en_US&offset=1&zipCode=12345&limit=100
 
         ProductCollection.getProducts(urlExtension,
-                "50",
-                "1",
+                null,  // limit
+                "1",   // offset
                 collectionMap,
                 null); // ProductCollection CallBack
 
@@ -99,16 +100,17 @@ public class ProductCollection {
         private static final String TAG = "ProductContainer";
 
         private static final String DEFAULT_FILTER_LIST = "";
-        private static final int DEFAULT_LIMIT = 50;
-        private static final int DEFAULT_OFFSET = 1;
+        private static final String DEFAULT_LIMIT = "50";
+        private static final String DEFAULT_OFFSET = "1";
 
         private static final String AMPERSAND = "&";
         private static final String QUESTION_MARK = "?";
 
         private static final String IDENTIFIER_ARG = "identifier/";
-        private static final String FILTER_LIST_ARG = "filterList=";
-        private static final String LIMIT_ARG = "limit=";
-        private static final String OFFSET_ARG = "offset=";
+
+        private static final String FILTER_LIST_KEY = "filterList";
+        private static final String LIMIT_KEY = "limit";
+        private static final String OFFSET_KEY = "offset";
 
         // category/identifier/CL165566
         // category/identifier/CL165566?filterList=
@@ -129,10 +131,11 @@ public class ProductCollection {
         // Inputs
 
         private String urlExtension;
+        private Uri uri;
         private String identifier;
         private String filterList;
-        private int limit;
-        private int offset;
+        private String limit;
+        private String offset;
         private Map collectionMap;
         private ProductCollectionCallBack productCollectionCallBack;
 
@@ -202,11 +205,14 @@ public class ProductCollection {
 
                 EasyOpenApi easyOpenApi = access.getEasyOpenApi(false); // not secure
 
+                Integer offsetInt = Integer.parseInt(offset);
+                Integer limitInt = Integer.parseInt(limit);
+
                 easyOpenApi.getCategory(identifier,
-                                        offset,
-                                        limit,
-                                        filterList,
-                                        this); // callback
+                        offsetInt,
+                        limitInt,
+                        filterList,
+                        this); // callback
                 break; // while (true)
 
             } // while (true)
@@ -392,10 +398,28 @@ public class ProductCollection {
                             + " this[" + this + "]"
             );
 
-            this.identifier = extractIdentifier(urlExtension);
-            this.filterList = extractFilterList(urlExtension);
-            this.limit = extractLimit(urlExtension);
-            this.offset = extractOffset(urlExtension);
+            identifier = extractIdentifier(urlExtension);
+
+            uri = Uri.parse(urlExtension);
+
+            filterList = uri.getQueryParameter(FILTER_LIST_KEY);
+            if (filterList == null) filterList = DEFAULT_FILTER_LIST;
+
+            // limit is passed as an argument for getProducts(). if not null, it
+            // should be used in the server request. If null, we need to get
+            // limit from the URL fragment.
+            if (limit == null) {
+                limit = uri.getQueryParameter(LIMIT_KEY);
+                if (limit == null) limit = DEFAULT_LIMIT;
+            }
+
+            // offset is passed as an argument for getProducts(). if not null, it
+            // should be used in the server request. If null, we need to get
+            // offset from the URL fragment.
+            if (offset == null) {
+                offset = uri.getQueryParameter(OFFSET_KEY);
+                if (offset == null) offset = DEFAULT_OFFSET;
+            }
         }
 
         private String extractIdentifier(String urlExtension) {
@@ -426,99 +450,6 @@ public class ProductCollection {
             } // while (true)
 
             return (identifier);
-        }
-
-        private String extractFilterList(String urlExtension) {
-
-            if (LOGGING) Log.v(TAG, "ProductContainer:extractFilterList():"
-                            + " urlExtension[" + urlExtension + "]"
-                            + " this[" + this + "]"
-            );
-
-            String filterList = DEFAULT_FILTER_LIST;
-
-            while (true) {
-
-                int argumentIndex = urlExtension.indexOf(FILTER_LIST_ARG);
-
-                if (argumentIndex < 0) {
-                    break; // while (true)
-                }
-
-                int valueIndex = argumentIndex + FILTER_LIST_ARG.length();
-                int terminatorIndex = urlExtension.indexOf(AMPERSAND, valueIndex);
-                if (terminatorIndex < 0) terminatorIndex = urlExtension.length();
-                filterList = urlExtension.substring(valueIndex, terminatorIndex);
-
-                break; // while (true)
-
-            } // while (true)
-
-            return (filterList);
-        }
-
-        private int extractLimit(String urlExtension) {
-
-            if (LOGGING) Log.v(TAG, "ProductContainer:extractLimit():"
-                            + " urlExtension[" + urlExtension + "]"
-                            + " this[" + this + "]"
-            );
-
-            String limitString = "";
-
-            int limit = DEFAULT_LIMIT;
-
-            while (true) {
-
-                int argumentIndex = urlExtension.indexOf(LIMIT_ARG);
-
-                if (argumentIndex < 0) {
-                    break; // while (true)
-                }
-
-                int valueIndex = argumentIndex + LIMIT_ARG.length();
-                int terminatorIndex = urlExtension.indexOf(AMPERSAND, valueIndex);
-                if (terminatorIndex < 0) terminatorIndex = urlExtension.length();
-                limitString = urlExtension.substring(valueIndex, terminatorIndex);
-                limit = Integer.parseInt(limitString);
-
-                break; // while (true)
-
-            } // while (true)
-
-            return (limit);
-        }
-
-        private int extractOffset(String urlExtension) {
-
-            if (LOGGING) Log.v(TAG, "ProductContainer:extractOffset():"
-                            + " urlExtension[" + urlExtension + "]"
-                            + " this[" + this + "]"
-            );
-
-            String offsetString = "";
-
-            int offset = DEFAULT_OFFSET;
-
-            while (true) {
-
-                int argumentIndex = urlExtension.indexOf(OFFSET_ARG);
-
-                if (argumentIndex < 0) {
-                    break; // while (true)
-                }
-
-                int valueIndex = argumentIndex + OFFSET_ARG.length();
-                int terminatorIndex = urlExtension.indexOf(AMPERSAND, valueIndex);
-                if (terminatorIndex < 0) terminatorIndex = urlExtension.length();
-                offsetString = urlExtension.substring(valueIndex, terminatorIndex);
-                offset = Integer.parseInt(offsetString);
-
-                break; // while (true)
-
-            } // while (true)
-
-            return (offset);
         }
 
     } // ProductContainer
