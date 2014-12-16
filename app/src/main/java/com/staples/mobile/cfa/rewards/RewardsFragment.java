@@ -6,6 +6,7 @@ package com.staples.mobile.cfa.rewards;
 
 import android.app.Fragment;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +44,11 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
     private static final String TAG = RewardsFragment.class.getSimpleName();
     MainActivity activity;
 
+    private TextView memberNameVw;
+    private TextView memberDurationVw;
+    private TextView rewardsNumberLabelVw;
+    private TextView rewardsNumberBarcodeVw;
+    private TextView rewardsNumberVw;
     private ListView rewardsListView;
     private RewardAdapter rewardAdapter;
     private View noRewardsMessageVw;
@@ -82,6 +88,13 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
         tabHost.addTab(tab2);
         tabHost.addTab(tab3);
 
+        // get rewards member card views
+        memberNameVw = (TextView) view.findViewById(R.id.member_name);
+        memberDurationVw = (TextView) view.findViewById(R.id.member_duration);
+        rewardsNumberLabelVw = (TextView) view.findViewById(R.id.rewards_number_label);
+        rewardsNumberBarcodeVw = (TextView) view.findViewById(R.id.rewards_number_barcode);
+        rewardsNumberVw = (TextView) view.findViewById(R.id.rewards_number);
+
         // get rewards list views
         noRewardsMessageVw = view.findViewById(R.id.no_rewards_msg);
         rewardsListView = (ListView) view.findViewById(R.id.rewards_list);
@@ -119,6 +132,15 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
         // if profile info available
         Member m = ProfileDetails.getMember();
         if (m != null) {
+            // membership card text
+            memberNameVw.setText(m.getUserName());
+            memberDurationVw.setText("member since ???????????????");
+            rewardsNumberLabelVw.setText("type of rewards member ?????");
+            rewardsNumberBarcodeVw.setText(m.getRewardsNumber());
+            rewardsNumberBarcodeVw.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/3of9_new.ttf"));
+            rewardsNumberVw.setText(m.getRewardsNumber());
+
+
             // if ink recycling info
             if (m.getInkRecyclingDetails() != null && m.getInkRecyclingDetails().size() > 0) {
                 InkRecyclingDetail inkRecyclingDetail = m.getInkRecyclingDetails().get(0);
