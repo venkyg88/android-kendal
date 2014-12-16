@@ -13,7 +13,6 @@ public class ToBeDoneFragment extends Fragment {
     private static String token1;
     private static String token2;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");

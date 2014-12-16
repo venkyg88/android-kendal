@@ -42,14 +42,7 @@ public class CartModelTest {
         failure = false;
 
         Log.d("TIME",""+System.currentTimeMillis());
-        easyOpenApi.viewCart("v1",
-                "10001",
-                "en_US",
-                "01010",
-                "10051",
-                "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS",
-                0,
-                50,
+        easyOpenApi.viewCart(0, 50,
                 new Callback<CartContents>() {
                     @Override
                     public void success(CartContents cartContents, Response response) {
@@ -96,12 +89,6 @@ public class CartModelTest {
                 "{\"partNumber_1\":487908,\"quantity_1\": \"3\"}" +
                 "]}");
         easyOpenApi.addToCart(body,
-                "v1",
-                "10001",
-                "en_US",
-                "01010",
-                "10051",
-                "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS",
                 new Callback<CartUpdate>() {
                     @Override
                     public void success(CartUpdate cartUpdate, Response response) {

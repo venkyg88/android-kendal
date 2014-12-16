@@ -25,6 +25,7 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements DataWrapp
 
     private Activity activity;
     private LayoutInflater inflater;
+    private View.OnClickListener listener;
     private int layout;
     private Drawable noPhoto;
 
@@ -33,6 +34,10 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements DataWrapp
         this.activity = activity;
         inflater = activity.getLayoutInflater();
         noPhoto = activity.getResources().getDrawable(R.drawable.no_photo);
+    }
+
+    public void setOnClickListener(View.OnClickListener listener) {
+        this.listener = listener;
     }
 
     public void setLayout(DataWrapper.Layout layout) {
@@ -47,6 +52,10 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements DataWrapp
         if (view == null)
             view = inflater.inflate(layout, parent, false);
 
+        ImageView image = (ImageView) view.findViewById(R.id.image);
+        if (item.imageUrl == null) image.setImageDrawable(noPhoto);
+        else Picasso.with(activity).load(item.imageUrl).error(noPhoto).into(image);
+
         TextView title = (TextView) view.findViewById(R.id.title);
         if (title != null) title.setText(item.title);
 
@@ -56,9 +65,10 @@ public class BundleAdapter extends ArrayAdapter<BundleItem> implements DataWrapp
         PriceSticker priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
         priceSticker.setPricing(item.price, item.unit);
 
-        ImageView image = (ImageView) view.findViewById(R.id.image);
-        if (item.imageUrl == null) image.setImageDrawable(noPhoto);
-        else Picasso.with(activity).load(item.imageUrl).error(noPhoto).into(image);
+        ImageView action = (ImageView) view.findViewById(R.id.action);
+        action.setImageResource(R.drawable.ic_launcher);
+        action.setTag(item);
+        action.setOnClickListener(listener);
 
         return (view);
     }
