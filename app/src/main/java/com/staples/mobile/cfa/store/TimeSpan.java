@@ -11,6 +11,7 @@ import java.util.Locale;
 public class TimeSpan {
     public static final int ONEWEEK = 7*24*60*60*1000;
     public static final int ONEDAY = 24*60*60*1000;
+    private static final int QUANTA = 5*60*1000;
 
     // January 1, 1970 was a Thursday
     private static final String[] DAYNAMES = {"Thursday", "Friday", "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday"};
@@ -48,6 +49,11 @@ public class TimeSpan {
         } catch(Exception e) {
             return(null);
         }
+
+        // Quantize
+        start = QUANTA*((start+QUANTA/2)/QUANTA);
+        end = QUANTA*((end+QUANTA/2)/QUANTA);
+        if (end<start) end+= ONEDAY;
 
         // Make TimeSpan
         TimeSpan span = new TimeSpan(start, end);
