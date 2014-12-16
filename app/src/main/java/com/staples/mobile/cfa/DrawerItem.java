@@ -29,6 +29,7 @@ public class DrawerItem {
     public Type type;
     public String title;
     public Drawable icon;
+    public boolean enabled;
 
     // For fragments
     public Class fragmentClass;
@@ -36,11 +37,11 @@ public class DrawerItem {
 
     // Constructor
 
-    public DrawerItem(Type type, Context context, int iconId, int titleId) {
-        this(type, context, iconId, titleId, null);
+    public DrawerItem(Type type, Context context, int iconId, int titleId, Class<? extends Fragment> fragmentClass) {
+        this(type, context, iconId, titleId, fragmentClass, true);
     }
 
-    public DrawerItem(Type type, Context context, int iconId, int titleId, Class<? extends Fragment> fragmentClass) {
+    public DrawerItem(Type type, Context context, int iconId, int titleId, Class<? extends Fragment> fragmentClass, boolean enabled) {
         this.type = type;
         if (context!=null) {
             Resources resources = context.getResources();
@@ -50,6 +51,7 @@ public class DrawerItem {
                 title = resources.getString(titleId);
         }
         this.fragmentClass = fragmentClass;
+        this.enabled = enabled;
     }
 
     // Fragment instantiation
