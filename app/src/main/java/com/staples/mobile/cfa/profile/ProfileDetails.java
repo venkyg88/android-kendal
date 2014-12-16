@@ -10,10 +10,13 @@ import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
+import com.staples.mobile.common.access.easyopen.model.member.InkRecyclingDetail;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.staples.mobile.common.access.easyopen.model.member.Reward;
 import com.staples.mobile.common.access.easyopen.model.member.RewardDetail;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -238,5 +241,32 @@ public class ProfileDetails implements Callback<MemberDetail> {
             }
         }
         return null;
+    }
+
+    /** extracts list of rewards from profile */
+    public static List<Reward> getAllProfileRewards() {
+
+        List<Reward> profileRewards = new ArrayList<Reward>();
+        if (ProfileDetails.getMember() != null) {
+            if (ProfileDetails.getMember().getInkRecyclingDetails() != null) {
+                for (InkRecyclingDetail detail : ProfileDetails.getMember().getInkRecyclingDetails()) {
+                    if (detail.getReward() != null) {
+                        for (Reward reward : detail.getReward()) {
+                            profileRewards.add(reward);
+                        }
+                    }
+                }
+            }
+            if (ProfileDetails.getMember().getRewardDetails() != null) {
+                for (RewardDetail detail : ProfileDetails.getMember().getRewardDetails()) {
+                    if (detail.getReward() != null) {
+                        for (Reward reward : detail.getReward()) {
+                            profileRewards.add(reward);
+                        }
+                    }
+                }
+            }
+        }
+        return profileRewards;
     }
 }

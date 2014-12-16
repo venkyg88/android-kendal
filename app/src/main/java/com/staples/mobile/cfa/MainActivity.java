@@ -286,7 +286,7 @@ public class MainActivity extends Activity
     public void onLoginComplete(boolean guestLevel) {
         // load cart info after successful login (if registered login or if guest login following a signout where cart was non-empty)
         if (!guestLevel || (guestLevel && cartFragment.getCart() != null && cartFragment.getCart().getTotalItems() > 0)) {
-            cartFragment.refreshCart(MainActivity.this);
+            cartFragment.refreshCart(MainActivity.this, null);
         }
 
         // for faster debugging with registered user (automatic login), uncomment this and use your
@@ -355,7 +355,7 @@ public class MainActivity extends Activity
 
     public boolean selectOrderConfirmation(String orderId, String orderNumber) {
         // refresh cart since should now be empty
-        cartFragment.refreshCart(this);
+        cartFragment.refreshCart(this, null);
         // open order confirmation fragment
         Fragment fragment = ConfirmationFragment.newInstance(orderId, orderNumber);
         return selectFragment(fragment, Transition.SLIDE, true);
@@ -441,6 +441,18 @@ public class MainActivity extends Activity
     public void addItemToCart(String partNumber, int qty) {
         cartFragment.addToCart(partNumber, qty, this);
     }
+
+    /** Adds a coupon to the cart */
+    public void addCouponToCart(String couponCode, CartFragment.CartRefreshCallback cartRefreshCallback) {
+        cartFragment.addCoupon(couponCode, cartRefreshCallback);
+    }
+
+    /** removes a coupon from the cart */
+    public void removeCouponFromCart(String couponCode, CartFragment.CartRefreshCallback cartRefreshCallback) {
+        cartFragment.deleteCoupon(couponCode, cartRefreshCallback);
+    }
+
+
     public boolean navigateToFragment(Fragment fragment) {
         return (selectFragment(fragment, Transition.NONE, true));
     }
