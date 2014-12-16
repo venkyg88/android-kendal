@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.bundle;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,11 +27,11 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class BundleFragment extends Fragment implements Callback<Browse>, AdapterView.OnItemClickListener {
+public class BundleFragment extends Fragment implements Callback<Browse>, AdapterView.OnItemClickListener, View.OnClickListener {
     private static final String TAG = "BundleFragment";
 
-    public static final String TITLE = "title";
-    public static final String IDENTIFIER = "identifier";
+    private static final String TITLE = "title";
+    private static final String IDENTIFIER = "identifier";
 
     private static final int MAXFETCH = 50;
 
@@ -38,6 +39,13 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
     private GridView products;
     private BundleAdapter adapter;
     private String title;
+
+    public void setArguments(String title, String identifier) {
+        Bundle args = new Bundle();
+        args.putString(TITLE, title);
+        args.putString(IDENTIFIER, identifier);
+        setArguments(args);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -56,6 +64,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
         adapter = new BundleAdapter(getActivity());
         products.setAdapter(adapter);
         products.setOnItemClickListener(this);
+        adapter.setOnClickListener(this);
 
         wrapper.setState(DataWrapper.State.LOADING);
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
@@ -68,7 +77,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
     public void onResume() {
         super.onResume();
         MainActivity activity = (MainActivity) getActivity();
-        if (activity!=null) activity.showActionBar(R.string.staples, R.drawable.ic_search_white, null);
+        if (activity!=null) activity.showActionBar(title, R.drawable.ic_search_white, null);
     }
 
     @Override
@@ -119,5 +128,12 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
             return;
         }
         ((MainActivity) getActivity()).selectSkuItem(item.identifier);
+    }
+
+    @Override
+    public void onClick(View view) {
+        Object tag = view.getTag();
+        if (tag instanceof BundleItem)
+            Log.d(TAG, "Clicked on action for "+((BundleItem) tag).title);
     }
 }

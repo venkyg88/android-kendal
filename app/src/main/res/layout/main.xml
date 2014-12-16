@@ -52,6 +52,8 @@
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
                 android:gravity="center_vertical|left"
+                android:lines="1"
+                android:ellipsize="end"
                 android:textSize="24sp"
                 android:textColor="@android:color/white"
                 android:text="@string/staples"/>

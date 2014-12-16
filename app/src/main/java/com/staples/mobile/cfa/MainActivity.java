@@ -105,12 +105,6 @@ public class MainActivity extends Activity
 
         LocationFinder.getInstance(this);
 
-//        String zipCode = LocationService.getCachedZipCode(this.getApplicationContext());
-//        if (zipCode == null) {
-//            LocationService userLocationService = new LocationService(this.getApplicationContext(), this);
-//            userLocationService.getUserLocation();
-//        }
-
         loginHelper = new LoginHelper(this);
         loginHelper.registerLoginCompleteListener(this);
         // if already logged in (e.g. when device is rotated), don't login again, but do notify
@@ -141,14 +135,26 @@ public class MainActivity extends Activity
         findViewById(R.id.main).setVisibility(View.VISIBLE);
     }
 
-    public void showActionBar(int titleId, int iconId, View.OnClickListener listener) {
-        if (titleId==0) titleView.setVisibility(View.GONE);
+    public void showActionBar(String title, int iconId, View.OnClickListener listener) {
+        if (title==null) titleView.setVisibility(View.GONE);
         else
         {
             titleView.setVisibility(View.VISIBLE);
+            titleView.setText(title);
+        }
+        showActionBarInternal(0, iconId, listener);
+    }
+
+    public void showActionBar(int titleId, int iconId, View.OnClickListener listener) {
+        if (titleId==0) titleView.setVisibility(View.GONE);
+        else {
+            titleView.setVisibility(View.VISIBLE);
             titleView.setText(titleId);
         }
+        showActionBarInternal(titleId, iconId, listener);
+    }
 
+    private void showActionBarInternal(int titleId, int iconId, View.OnClickListener listener) {
         if (iconId==0) {
             optionIcon.setVisibility(View.GONE);
             optionListener = null;
@@ -375,43 +381,36 @@ public class MainActivity extends Activity
     }
 
     public boolean selectBundle(String title, String identifier) {
-        Fragment fragment = new BundleFragment();
-        Bundle args = new Bundle();
-        if (title!=null) args.putString(BundleFragment.TITLE, title);
-        if (identifier!=null) args.putString(BundleFragment.IDENTIFIER, identifier);
-        fragment.setArguments(args);
-        return (selectFragment(fragment, Transition.SLIDE, true));
+        BundleFragment fragment = new BundleFragment();
+        fragment.setArguments(title, identifier);
+        return(selectFragment(fragment, Transition.SLIDE, true));
     }
 
     public boolean selectSearch(String keyword) {
-        Fragment fragment = new SearchFragment();
-        Bundle args = new Bundle();
-        if (keyword!=null) args.putString("identifier", keyword);
-        fragment.setArguments(args);
-        return (selectFragment(fragment, Transition.SLIDE, true));
+        SearchFragment fragment = new SearchFragment();
+        fragment.setArguments(keyword);
+        return(selectFragment(fragment, Transition.SLIDE, true));
     }
 
     public boolean selectSkuItem(String identifier) {
-        Fragment fragment = new SkuFragment();
-        Bundle args = new Bundle();
-        if (identifier!=null) args.putString("identifier", identifier);
-        fragment.setArguments(args);
-        return (selectFragment(fragment, Transition.SLIDE, true));
+        SkuFragment fragment = new SkuFragment();
+        fragment.setArguments(identifier);
+        return(selectFragment(fragment, Transition.SLIDE, true));
     }
 
     public boolean selectProfileFragment() {
         Fragment fragment = new ProfileFragment();
-        return (selectFragment(fragment, Transition.NONE, true));
+        return(selectFragment(fragment, Transition.NONE, true));
     }
 
     public boolean selectLoginFragment() {
         Fragment fragment = new LoginFragment();
-        return (selectFragment(fragment, Transition.NONE, true));
+        return(selectFragment(fragment, Transition.NONE, true));
     }
 
     /** opens the profile addresses fragment */
     public boolean selectProfileAddressesFragment() {
-        return selectProfileAddressesFragment(null, null);
+        return(selectProfileAddressesFragment(null, null));
     }
 
     /** opens the profile addresses fragment, with optional selection listener */
