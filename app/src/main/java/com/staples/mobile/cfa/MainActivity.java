@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -30,12 +31,14 @@ import com.staples.mobile.cfa.profile.CreditCardFragment;
 import com.staples.mobile.cfa.profile.CreditCardListFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.profile.ProfileFragment;
+import com.staples.mobile.cfa.rewards.RewardsFragment;
 import com.staples.mobile.cfa.search.SearchBarView;
 import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
+import com.staples.mobile.common.access.easyopen.model.member.Reward;
 
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
@@ -46,6 +49,7 @@ public class MainActivity extends Activity
     private DrawerLayout drawerLayout;
     private View leftDrawerAction;
     private ListView leftDrawer;
+    private DrawerAdapter leftDrawerAdapter;
     private TextView titleView;
     private SearchBarView searchBar;
     private ImageView optionIcon;
@@ -259,13 +263,13 @@ public class MainActivity extends Activity
         searchBar.initSearchBar();
 
         // Initialize left drawer listview
-        DrawerAdapter adapter = new DrawerAdapter(this);
-        leftDrawer.setAdapter(adapter);
-        adapter.fill();
+        leftDrawerAdapter = new DrawerAdapter(this);
+        leftDrawer.setAdapter(leftDrawerAdapter);
+        leftDrawerAdapter.fill();
         leftDrawer.setOnItemClickListener(this);
 
         // Create non-drawer DrawerItems
-        homeDrawerItem = adapter.getItem(0); // TODO Hard-coded alias
+        homeDrawerItem = leftDrawerAdapter.getItem(0); // TODO Hard-coded alias
 
         // Cart
         cartFragment = new CartFragment();
@@ -287,6 +291,15 @@ public class MainActivity extends Activity
         // load cart info after successful login (if registered login or if guest login following a signout where cart was non-empty)
         if (!guestLevel || (guestLevel && cartFragment.getCart() != null && cartFragment.getCart().getTotalItems() > 0)) {
             cartFragment.refreshCart(MainActivity.this, null);
+        }
+        // enable/disable left drawer menu items that depend upon login
+        int itemCount = leftDrawerAdapter.getCount();
+        for (int position = 0; position < itemCount; position++) {
+            DrawerItem item = leftDrawerAdapter.getItem(position);
+            if (item.fragmentClass == RewardsFragment.class) {
+                item.enabled = !guestLevel;
+                leftDrawerAdapter.notifyDataSetChanged();
+            }
         }
 
         // for faster debugging with registered user (automatic login), uncomment this and use your
@@ -503,19 +516,20 @@ public class MainActivity extends Activity
         DrawerAdapter adapter;
 
         DrawerItem item = (DrawerItem) parent.getItemAtPosition(position);
-        switch(item.type) {
-            case FRAGMENT:
-            case ACCOUNT:
-                drawerLayout.closeDrawers();
-                selectDrawerItem(item, Transition.SLIDE, true);
-                break;
-
-            case PROFILE:
-                if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
-                    selectProfileFragment();
-                } else {
-                    selectLoginFragment();
-                }
+        if (item.enabled) {
+            switch (item.type) {
+                case FRAGMENT:
+                case ACCOUNT:
+                    drawerLayout.closeDrawers();
+                    selectDrawerItem(item, Transition.SLIDE, true);
+                    break;
+                case PROFILE:
+                    if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
+                        selectProfileFragment();
+                    } else {
+                        selectLoginFragment();
+                    }
+            }
         }
     }
 }
