@@ -18,7 +18,7 @@ import com.staples.mobile.common.access.easyopen.model.member.Member;
 
 import java.util.List;
 
-public class ProfileFragment extends Fragment implements ProfileDetails.ProfileRefreshCallback, View.OnClickListener{
+public class ProfileFragment extends Fragment implements View.OnClickListener{
     private static final String TAG = "ProfileFragment";
 
     private EasyOpenApi easyOpenApi;
@@ -38,8 +38,7 @@ public class ProfileFragment extends Fragment implements ProfileDetails.ProfileR
         shippingBtn.setOnClickListener(this);
         ccBtn.setOnClickListener(this);
 
-        showProgressIndicator();
-        new ProfileDetails().refreshProfile(this);
+        loadProfile(ProfileDetails.getMember(), view);
 
         return (view);
     }
@@ -47,21 +46,19 @@ public class ProfileFragment extends Fragment implements ProfileDetails.ProfileR
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) activity).showActionBar(R.string.profile_title, 0, null);
+        activity.showActionBar(R.string.profile_title, 0, null);
     }
 
-    /** implements ProfileDetails.ProfileRefreshCallback */
-    public void onProfileRefresh(Member member) {
-        hideProgressIndicator();
+    private void loadProfile(Member member, View view) {
         if (member==null) return;
 
         String email = member.getEmailAddress();
         String userName = member.getUserName();
 
         if (email!=null)
-            ((TextView) getView().findViewById(R.id.emailProfile)).setText(email);
+            ((TextView) view.findViewById(R.id.emailProfile)).setText(email);
         if (userName!=null)
-            ((TextView) getView().findViewById(R.id.userNameProfile)).setText(userName);
+            ((TextView) view.findViewById(R.id.userNameProfile)).setText(userName);
 
         List<Address> addresses = member.getAddress();
         if (addresses!=null) {
@@ -69,7 +66,7 @@ public class ProfileFragment extends Fragment implements ProfileDetails.ProfileR
             Address address = addresses.get(0);
             if (address != null) {
                 String tmpAddress = address.getAddress1() + "\n" + address.getCity() + ", " + address.getState() + " " + address.getZipcode();
-                ((TextView) getView().findViewById(R.id.addressET)).setText(tmpAddress);
+                ((TextView) view.findViewById(R.id.addressET)).setText(tmpAddress);
                 if(addressCount > 1) {
                     shippingBtn.setText(addressCount-1 + " more");
                 }
@@ -91,7 +88,7 @@ public class ProfileFragment extends Fragment implements ProfileDetails.ProfileR
                     cardNumber = creditCard.getCardNumber();
                 }
                 String tmpCreditCard =  cardNumber + " " + creditCard.getCardType();
-                ((TextView) getView().findViewById(R.id.ccET)).setText(tmpCreditCard);
+                ((TextView) view.findViewById(R.id.ccET)).setText(tmpCreditCard);
                 if(creditCardCount > 1) {
                     ccBtn.setText(creditCardCount-1 + " more");
                 }
