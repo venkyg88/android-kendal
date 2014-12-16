@@ -26,7 +26,9 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SearchFragment extends Fragment implements Callback<SearchResult>, AdapterView.OnItemClickListener {
-    private static final String TAG = "BundleFragment";
+    private static final String TAG = "SearchFragment";
+
+    private static final String KEYWORD = "keyword";
 
     private static final int MAXFETCH = 50;
     private static final int SORT_BY_BEST_MATCH = 0;
@@ -34,6 +36,12 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
     private DataWrapper wrapper;
     private GridView products;
     private BundleAdapter adapter;
+
+    public void setArguments(String keyword) {
+        Bundle args = new Bundle();
+        args.putString(KEYWORD, keyword);
+        setArguments(args);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -44,7 +52,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
         Bundle args = getArguments();
         if (args!=null) {
-            keyword = args.getString("identifier");
+            keyword = args.getString(KEYWORD);
         }
 
         wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
