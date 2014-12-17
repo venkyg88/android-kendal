@@ -52,13 +52,6 @@ public class PersonalFeedFragment extends Fragment {
     public static final String DAILY_DEAL_IDENTIFIER = "BI739472";
     public static final String CLEARANCE_IDENTIFIER = "BI642994";
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
-    private static final String CATALOG_ID = "10051";
-    private static final String LOCALE = "en_US";
-    private static final String ZIPCODE = "01010";
-    //    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
     private static final int MAXFETCH = 50;
 
     private DataWrapper dailyDealWrapper;
@@ -330,49 +323,6 @@ public class PersonalFeedFragment extends Fragment {
 
         // Set listener for all the items
         final String sku = cartItem.getProduct().getSku();
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity) getActivity()).selectSkuItem(sku);
-            }
-        });
-
-        title.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity) getActivity()).selectSkuItem(sku);
-            }
-        });
-    }
-
-    private void fillContainer(Product cartItemProduct, LinearLayout container){
-        String productName = cartItemProduct.getProductName();
-        String currentPrice = String.valueOf(cartItemProduct.getPricing().get(0).getFinalPrice());
-        String reviewCount = String.valueOf(cartItemProduct.getCustomerReviewCount());
-        String rating = String.valueOf(cartItemProduct.getCustomerReviewRating());
-        String unitOfMeasure = cartItemProduct.getPricing().get(0).getUnitOfMeasure();
-        String imageUrl = cartItemProduct.getImage().get(0).getUrl();
-
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View row = inflater.inflate(R.layout.personal_feed_product_item, null);
-
-        TextView title = (TextView) row.findViewById(R.id.title);
-        title.setText(productName);
-
-        RatingStars ratingStars = (RatingStars) row.findViewById(R.id.rating);
-        ratingStars.setRating(Float.parseFloat(rating),
-                Integer.parseInt(reviewCount));
-
-        PriceSticker priceSticker = (PriceSticker) row.findViewById(R.id.pricing);
-        priceSticker.setPricing(Float.parseFloat(currentPrice), unitOfMeasure);
-
-        ImageView imageView = (ImageView) row.findViewById(R.id.image);
-        Picasso.with(getActivity()).load(imageUrl).error(R.drawable.no_photo).into(imageView);
-
-        container.addView(row);
-
-        // Set listener for all the items
-        final String sku = cartItemProduct.getSku();
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
