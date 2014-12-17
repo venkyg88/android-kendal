@@ -9,18 +9,19 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.profile.CardType;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -55,12 +56,12 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     View shippingAddrLayoutVw;
     View billingAddrLayoutVw;
     View paymentMethodLayoutVw;
+    ImageView cardImage;
     EditText cardNumberVw;
     EditText expirationMonthVw;
     EditText expirationYearVw;
     EditText cidVw;
     EditText emailAddrVw;
-    Spinner spinner;
 
     private boolean shippingAddrNeedsApplying = true;
     private boolean billingAddrNeedsApplying = true;
@@ -95,17 +96,12 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         billingAddrContainer = (ViewGroup)view.findViewById(R.id.billing_addr_container);
         paymentMethodLayoutVw = view.findViewById(R.id.payment_method_layout);
         cardNumberVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cardNumber);
+        cardImage = (ImageView) view.findViewById(R.id.card_image);
         expirationMonthVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationMonth);
         expirationYearVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationYear);
         cidVw = (EditText)guestEntryView.findViewById(R.id.cid);
         emailAddrVw = (EditText)guestEntryView.findViewById(R.id.emailAddr);
 
-        // set up cc type spinner
-//        spinner = (Spinner) view.findViewById(R.id.card_type_spinner);
-//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(activity,
-//                R.array.cardtype_array, android.R.layout.simple_spinner_item);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        spinner.setAdapter(adapter);
 
         // hide imported views' Save buttons
         shippingAddrLayoutVw.findViewById(R.id.addressSaveBtn).setVisibility(View.GONE);
@@ -133,6 +129,33 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
             }
         });
 
+        cardNumberVw.setOnEditorActionListener(
+                new EditText.OnEditorActionListener() {
+
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                            CardType ccType = CardType.detect(cardNumberVw.getText().toString());
+                            if (ccType != CardType.UNKNOWN) {
+                                cardImage.setImageResource(ccType.getImageResource());
+                            }
+                            expirationMonthVw.requestFocus();
+                            return true; // consume.
+                        }
+                        return false; // pass on to other listeners.
+                    }
+                });
+
+        cardNumberVw.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (MotionEvent.ACTION_UP == event.getAction()) {
+                    cardNumberVw.getText().clear();
+                    cardImage.setImageResource(0);
+                }
+                return false; // return is important...
+            }
+        });
 
         // add listener to billing addr toggle button switch
         useShipAddrAsBillingAddrSwitch = (Switch)view.findViewById(R.id.useShipAddrAsBillingAddr_switch);
@@ -221,7 +244,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
         // validate required fields
         String requiredMsg = resources.getString(R.string.required);
-        if (!validateRequiredField((TextView)spinner.getSelectedView(), requiredMsg)) { errors = true; }
         if (!validateRequiredField(cardNumberVw, requiredMsg)) { errors = true; }
         if (!validateRequiredField(expirationMonthVw, requiredMsg)) { errors = true; }
         if (!validateRequiredField(expirationYearVw, requiredMsg)) { errors = true; }
@@ -230,15 +252,9 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         if (!errors) {
             PaymentMethod paymentMethod = new PaymentMethod();
             paymentMethod.setSaveCardIndicator("Y");
-            paymentMethod.setCardType(spinner.getSelectedItem().toString());
-            if (paymentMethod.getCardType().equals("MasterCard")) {
-                paymentMethod.setCardType("Mastercard");
-            } else if (paymentMethod.getCardType().startsWith("Discover")) {
-                paymentMethod.setCardType("Discover");
-            } else if (paymentMethod.getCardType().startsWith("Staples")) {
-                paymentMethod.setCardType("Staples");
-            }
             paymentMethod.setCardNumber(cardNumberVw.getText().toString());
+            CardType ccType = CardType.detect(paymentMethod.getCardNumber());
+            paymentMethod.setCardType(ccType.getCardTypeName());
             paymentMethod.setCardExpirationMonth(expirationMonthVw.getText().toString());
             paymentMethod.setCardExpirationYear(expirationYearVw.getText().toString());
             paymentMethod.setCardVerificationCode(cidVw.getText().toString());
