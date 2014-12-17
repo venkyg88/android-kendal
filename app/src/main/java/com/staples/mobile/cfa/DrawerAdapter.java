@@ -13,8 +13,10 @@ import com.staples.mobile.cfa.feed.PersonalFeedFragment;
 import com.staples.mobile.cfa.home.ConfiguratorFragment;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.profile.ProfileFragment;
+import com.staples.mobile.cfa.rewards.RewardsFragment;
 import com.staples.mobile.cfa.store.StoreFragment;
 import com.staples.mobile.cfa.widget.DataWrapper;
+import com.staples.mobile.common.access.Access;
 
 import java.util.ArrayList;
 
@@ -76,7 +78,10 @@ public class DrawerAdapter extends BaseAdapter {
 
         // Set title
         TextView title = (TextView) view.findViewById(R.id.title);
-        if (title!=null) title.setText(item.title);
+        if (title!=null) {
+            title.setText(item.title);
+            title.setTextColor(activity.getResources().getColor(item.enabled? R.color.text_black : R.color.text_gray));
+        }
 
         // Set callback
         View button = view.findViewById(R.id.account_button);
@@ -93,7 +98,7 @@ public class DrawerAdapter extends BaseAdapter {
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.store_locator_title, StoreFragment.class));
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.weekly_ad_title, ToBeDoneFragment.class));
         array.add(new DrawerItem(DrawerItem.Type.ACCOUNT, activity, 0, R.string.account_title, LoginFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.rewards_title, ToBeDoneFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.rewards_title, RewardsFragment.class, false)); // set initially disabled
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.order_title, ToBeDoneFragment.class));
         array.add(new DrawerItem(DrawerItem.Type.PROFILE, activity, 0, R.string.profile_title, ProfileFragment.class));
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.about_title, AboutFragment.class));

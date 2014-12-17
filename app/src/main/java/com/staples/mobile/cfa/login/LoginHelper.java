@@ -14,6 +14,7 @@ import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
+import com.staples.mobile.common.access.easyopen.model.member.Member;
 
 import java.util.List;
 import java.util.Vector;
@@ -103,6 +104,15 @@ public class LoginHelper {
         );
     }
 
+    private void loadProfileAndOpenProfileFragment() {
+        new ProfileDetails().refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
+            @Override public void onProfileRefresh(Member member) {
+                activity.hideProgressIndicator();
+                activity.selectProfileFragment();
+            }
+        });
+    }
+
     //cloned method to take entered username and password..not to break if any one using the above method
     public void getUserTokens(String username, String password)
     {
@@ -112,13 +122,13 @@ public class LoginHelper {
 
                     @Override
                     public void success(TokenObject tokenObjectReturned, Response response) {
-                        activity.hideProgressIndicator();
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
                         notifyListeners(false);
-                        ((MainActivity)activity).selectProfileFragment();
                         Button signInText = (Button) activity.findViewById(R.id.account_button);
                         signInText.setText(R.string.signout_title);
+
+                        loadProfileAndOpenProfileFragment();
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
@@ -145,13 +155,13 @@ public class LoginHelper {
 
                     @Override
                     public void success(TokenObject tokenObjectReturned, Response response) {
-                        activity.hideProgressIndicator();
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
                         notifyListeners(false);
-                        ((MainActivity)activity).selectProfileFragment();
                         Button signInText = (Button) activity.findViewById(R.id.account_button);
                         signInText.setText(R.string.signout_title);
+
+                        loadProfileAndOpenProfileFragment();
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());

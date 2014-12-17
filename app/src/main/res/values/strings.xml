@@ -13,7 +13,7 @@
     <string name="account_title">Account</string>
     <string name="signin_title">Sign In</string>
     <string name="signout_title">Sign Out</string>
-    <string name="rewards_title">Rewards</string>
+    <string name="rewards_title">Staples Rewards</string>
     <string name="order_title">Order</string>
     <string name="profile_title">Profile</string>
     <string name="about_title">About</string>
@@ -65,6 +65,19 @@
     <string name="link_account">Link Account</string>
     <string name="rewards_card_number">Rewards Card Number</string>
     <string name="rewards_phone_number">Your Rewards Account Phone Number</string>
+    <string name="rewards_list_tabtitle">REWARDS</string>
+    <string name="rewards_ink_tabtitle">INK RECYCLING</string>
+    <string name="rewards_summary_tabtitle">SUMMARY</string>
+    <string name="rewards_addtocart_confirmation">Your reward added to the cart</string>
+    <string name="rewards_removefromcart_confirmation">Your reward removed from the cart</string>
+    <string name="rewards_ytd_savings">Year-to-Date Savings</string>
+    <string name="rewards_ytd_spend">Year-to-Date Spend</string>
+    <plurals name="rewards_ink_recycled">
+        <item quantity="one">Ink cartridge recycled</item>
+        <item quantity="other">Ink cartridges recycled</item>
+    </plurals>
+    <string name="rewards_ink_limit">Limit of %d per month</string>
+    <string name="rewards_earned">Earned</string>
     <string name="tax">Tax</string>
     <string name="submit_order">Submit Order</string>
     <string name="confirmation_title">Order Confirmation</string>

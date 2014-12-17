@@ -1,7 +1,5 @@
 package com.staples.mobile.test;
 
-import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.staples.mobile.cfa.R;
@@ -55,10 +53,7 @@ public class LandscapeActivityTest {
     public void testLeftDrawer() throws InterruptedException {
         System.out.println("testLeftDrawer");
 
-        View drawer = activity.findViewById(R.id.left_drawer);
-        Assert.assertNotNull("Left drawer should exist", drawer);
-
-        ListView menu = (ListView) drawer.findViewById(R.id.menu);
+        ListView menu = (ListView) activity.findViewById(R.id.left_drawer);
         Assert.assertNotNull("Left drawer should contain a list", menu);
 
         DrawerAdapter adapter = (DrawerAdapter) menu.getAdapter();

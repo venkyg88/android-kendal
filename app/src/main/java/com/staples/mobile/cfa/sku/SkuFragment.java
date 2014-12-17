@@ -59,12 +59,11 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         View.OnClickListener, FragmentManager.OnBackStackChangedListener {
     private static final String TAG = "SkuFragment";
 
+    private static final String IDENTIFIER = "identifier";
+
     private static final String DESCRIPTION = " Description";
     private static final String SPECIFICATIONS = " Specifications";
     private static final String REVIEWS = "Reviews";
-
-
-
 
     private static final int MAXFETCH = 50;
 
@@ -121,13 +120,19 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     private boolean shifted;
 
+    public void setArguments(String identifier) {
+        Bundle args = new Bundle();
+        args.putString(IDENTIFIER, identifier);
+        setArguments(args);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
 
         Bundle args = getArguments();
         if (args != null) {
-            identifier = args.getString("identifier");
+            identifier = args.getString(IDENTIFIER);
         }
 
         wrapper = (DataWrapper) inflater.inflate(R.layout.sku_summary, container, false);

@@ -48,8 +48,6 @@ public class InventoryModelTest {
         // Check for success
         Assert.assertNotNull("Activity should exist", activity);
 
-
-
     }
 
     @Test
@@ -58,17 +56,7 @@ public class InventoryModelTest {
         success = false;
         failure = false;
         //http://sapi.staples.com/v1/10001/stores/inventory?locale=en_US&zipCode=05251&catalogId=10051&partNumber=513096&distance=100&client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS
-        easyOpenApi.getStoreInventory(
-                "v1",
-                "10001",
-                "en_US",
-                "05251",
-                "10051",
-                "513096",
-                "25",
-                "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS",
-                0,
-                50,
+        easyOpenApi.getStoreInventory("513096", "25", 0, 50,
                 new Callback<StoreInventory>() {
                     @Override
                     public void success(StoreInventory storeInventory, Response response) {
@@ -96,7 +84,7 @@ public class InventoryModelTest {
         failure = false;
 
         //Parameters to the mock API don't matter since it reads from a json file anyway
-        mockEasyOpenApi.getStoreInventory("","","","","","","","",0,0,new Callback<StoreInventory>() {
+        mockEasyOpenApi.getStoreInventory(null, null, null, null, new Callback<StoreInventory>() {
             @Override
             public void success(StoreInventory storeInventory, Response response) {
                 success = true;
