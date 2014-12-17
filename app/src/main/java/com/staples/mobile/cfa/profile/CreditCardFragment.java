@@ -81,30 +81,34 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                     @Override
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                         if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                           CardType ccType = CardType.detect(cardNumberET.getText().toString());
-
-                                if(ccType == CardType.VISA) {
-                                    cardImage.setImageResource(R.drawable.visa);
-                                    cardType = "VISA";
-                                    expMonthET.requestFocus();
-                                }
-                                if(ccType == CardType.DISCOVER) {
-                                    cardImage.setImageResource(R.drawable.discover);
-                                    cardType = "DISCOVER";
-                                    expMonthET.requestFocus();
-                                }
-                                if(ccType == CardType.AMERICAN_EXPRESS) {
-                                    cardImage.setImageResource(R.drawable.american_express);
-                                    cardType = "AMEX";
-                                    expMonthET.requestFocus();
-                                }
-                                if(ccType == CardType.MASTERCARD) {
-                                    cardImage.setImageResource(R.drawable.mastercard);
-                                    cardType = "MASTERCARD";
-                                    expMonthET.requestFocus();
-                                }
-                                return true; // consume.
+                            CardType ccType = CardType.detect(cardNumberET.getText().toString());
+//                                if(ccType == CardType.VISA) {
+//                                    cardImage.setImageResource(R.drawable.visa);
+//                                    cardType = "VISA";
+//                                    expMonthET.requestFocus();
+//                                }
+//                                if(ccType == CardType.DISCOVER) {
+//                                    cardImage.setImageResource(R.drawable.discover);
+//                                    cardType = "DISCOVER";
+//                                    expMonthET.requestFocus();
+//                                }
+//                                if(ccType == CardType.AMERICAN_EXPRESS) {
+//                                    cardImage.setImageResource(R.drawable.american_express);
+//                                    cardType = "AMEX";
+//                                    expMonthET.requestFocus();
+//                                }
+//                                if(ccType == CardType.MASTERCARD) {
+//                                    cardImage.setImageResource(R.drawable.mastercard);
+//                                    cardType = "MASTERCARD";
+//                                    expMonthET.requestFocus();
+//                                }
+                            if (ccType != CardType.UNKNOWN) {
+                                cardImage.setImageResource(ccType.getImageResource());
+                                cardType = ccType.getCardTypeName();
                             }
+                            expMonthET.requestFocus();
+                            return true; // consume.
+                        }
                         return false; // pass on to other listeners.
                     }
                 });
