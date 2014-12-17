@@ -99,7 +99,7 @@
     <string name="specs">Specs</string>
     <string name="reviews">Reviews</string>
     <string name="accessories">Accessories</string>
-    <string name="remove">Remove</string>
+    <string name="remove">REMOVE</string>
 
     <!-- Availability -->
     <string name="avail_nothing">Nothing found</string>

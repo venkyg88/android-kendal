@@ -32,17 +32,20 @@
     <!--delete button-->
     <Button
         android:id="@+id/coupon_delete_button"
-        android:layout_width="34dp"
-        android:layout_height="32dp"
+        android:layout_width="80dp"
+        android:layout_height="35dp"
         android:layout_alignParentRight="true"
-        android:layout_gravity="bottom"
-        android:text="X"
+        android:layout_gravity="center_vertical"
+        android:background="@color/background_red_submission"
+        android:text="@string/remove"
         android:textSize="14dp"
+        android:textColor="@color/text_white"
         android:fontFamily="sans-serif"
-        android:paddingTop="0dp"
-        android:paddingBottom="0dp"
-        android:paddingLeft="0dp"
-        android:paddingRight="0dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+
         />
 
 </RelativeLayout>
