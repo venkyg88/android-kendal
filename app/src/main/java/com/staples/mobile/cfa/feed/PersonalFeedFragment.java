@@ -6,6 +6,7 @@ package com.staples.mobile.cfa.feed;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +45,10 @@ import retrofit.client.Response;
 public class PersonalFeedFragment extends Fragment {
     private static final String TAG = "PersonalFeedFragment";
 
+    public static final String SAVED_SEEN_PRODUCTS = "SAVED_SEEN_PRODUCTS";
+    public static final String SEEN_PRODUCT_SKU_LIST = "SEEN_PRODUCT_SKU_LIST";
+    public static final String SEEN_PRODUCT_LIST = "SEEN_PRODUCT_LIST";
+
     public static final String DAILY_DEAL_IDENTIFIER = "BI739472";
     public static final String CLEARANCE_IDENTIFIER = "BI642994";
 
@@ -63,9 +69,15 @@ public class PersonalFeedFragment extends Fragment {
     private LinearLayout clearanceContainer;
     private LinearLayout seenProductsContainer;
 
+    private TextView seenProductClearTV;
+    private RelativeLayout seenProductsLoading;
+
     private class SkuDetailsCallback implements Callback<SkuDetails> {
         @Override
         public void success(final SkuDetails sku, Response response) {
+            seenProductClearTV.setVisibility(View.VISIBLE);
+            seenProductsWrapper.setState(DataWrapper.State.DONE);
+
             Activity activity = getActivity();
             if (activity == null) {
                 return;
@@ -109,11 +121,23 @@ public class PersonalFeedFragment extends Fragment {
                 }
             });
 
+            PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(getActivity());
+            HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(getActivity());
+            if(seenProductsContainer.getChildCount() < savedSkuSet.size()) {
+                // still loading other items' data
+                seenProductsLoading.setVisibility(View.VISIBLE);
+            }
+            else{
+                seenProductsLoading.setVisibility(View.GONE);
+            }
+
             Log.d(TAG, "Saved seen products: " + seenProduct.getProductName());
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
+            seenProductsWrapper.setState(DataWrapper.State.EMPTY);
+
             Activity activity = getActivity();
             if (activity == null) {
                 return;
@@ -136,6 +160,28 @@ public class PersonalFeedFragment extends Fragment {
         dailyDealContainer = (LinearLayout) personalFeedLayout.findViewById(R.id.daily_deal_container);
         clearanceContainer = (LinearLayout) personalFeedLayout.findViewById(R.id.clearance_container);
         seenProductsContainer = (LinearLayout) personalFeedLayout.findViewById(R.id.seen_products_container);
+
+        seenProductClearTV = (TextView) personalFeedLayout.findViewById(R.id.seen_products_clear);
+        seenProductClearTV.setVisibility(View.GONE);
+        seenProductClearTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                seenProductsWrapper.setState(DataWrapper.State.LOADING);
+                seenProductsContainer.removeAllViews();
+                seenProductClearTV.setVisibility(View.GONE);
+                seenProductsLoading.setVisibility(View.GONE);
+
+                removeSavedSeenProducts();
+
+                PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(getActivity());
+                feedSingleton.setSavedSkus(new HashSet<String>());
+                feedSingleton.setSavedSeenProducts(
+                        new PersistentSizedArrayList<String>(PersonalFeedSingleton.SEEN_PRODUCTS_AMOUNT));
+                seenProductsWrapper.setState(DataWrapper.State.EMPTY);
+            }
+        });
+
+        seenProductsLoading = (RelativeLayout) personalFeedLayout.findViewById(R.id.seen_products_loading_footer);
 
         seenProductsWrapper.setState(DataWrapper.State.LOADING);
 
@@ -224,6 +270,7 @@ public class PersonalFeedFragment extends Fragment {
             dailyDealWrapper.setState(DataWrapper.State.EMPTY);
             clearanceWrapper.setState(DataWrapper.State.EMPTY);
         }
+
         setSeenProductsAdapter();
 
         return (personalFeedLayout);
@@ -237,26 +284,21 @@ public class PersonalFeedFragment extends Fragment {
 
     private void setSeenProductsAdapter(){
         // set seen products list
-        PersistentSizedArrayList<SeenProductsRowItem> saveSeenProducts =
-                PersonalFeedSingleton.getInstance(getActivity()).getSavedSeenProducts(getActivity());
+        HashSet<String> saveSeenSkus =
+                PersonalFeedSingleton.getInstance(getActivity()).getSavedSkus(getActivity());
 
         // display "nothing found" if no saved seen products
-        if(saveSeenProducts == null){
+        if(saveSeenSkus.isEmpty()){
             seenProductsWrapper.setState(DataWrapper.State.EMPTY);
         }
         else{
             seenProductsWrapper.setState(DataWrapper.State.LOADING);
 
-            for(SeenProductsRowItem savedSeenProduct : saveSeenProducts){
-                String sku = savedSeenProduct.getSku();
-
+            for(String sku : saveSeenSkus){
                 // Initiate SKU API call
                 EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
-                api.getSkuDetails(RECOMMENDATION, STORE_ID, sku, CATALOG_ID, LOCALE,
-                        ZIPCODE, CLIENT_ID, null, MAXFETCH, new SkuDetailsCallback());
+                api.getSkuDetails(sku, 1, MAXFETCH, new SkuDetailsCallback());
             }
-
-            seenProductsWrapper.setState(DataWrapper.State.DONE);
         }
     }
 
@@ -344,5 +386,13 @@ public class PersonalFeedFragment extends Fragment {
                 ((MainActivity) getActivity()).selectSkuItem(sku);
             }
         });
+    }
+
+    private void removeSavedSeenProducts() {
+        SharedPreferences sp = getActivity().getSharedPreferences(SAVED_SEEN_PRODUCTS, getActivity().MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString(SEEN_PRODUCT_SKU_LIST, "");
+        editor.putString(SEEN_PRODUCT_LIST, "");
+        editor.commit();
     }
 }

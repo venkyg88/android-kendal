@@ -13,6 +13,10 @@ public class SeenProductsRowItem {
     private String unitOfMeasure;
     private String imageUrl;
 
+    public SeenProductsRowItem(String sku) {
+        this.sku = sku;
+    }
+
     public SeenProductsRowItem(String sku, String productName, String currentPrice, String reviewCount,
                                String rating, String unitOfMeasure, String imageUrl) {
         this.productName = productName;
@@ -55,5 +59,5 @@ public class SeenProductsRowItem {
 	@Override
 	public String toString() {
 		return productName;
-	}	
+	}
 }
