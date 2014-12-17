@@ -1,8 +1,11 @@
 package com.staples.mobile.cfa.feed;
 
+import android.app.Activity;
+import android.net.Uri;
 import android.util.Log;
 
 import com.staples.mobile.cfa.login.LoginHelper;
+
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -23,18 +26,7 @@ public class ProductCollection {
 
     private static final String TAG = "ProductCollection";
 
-    private static final boolean LOGGING = true;
-
-    // Default Values
-
-    private static final String DEFAULT_CATALOG_ID = "10051";
-    private static final String DEFAULT_CLIENT_ID = LoginHelper.CLIENT_ID;
-    private static final String DEFAULT_LOCALE = "en_US";
-    private static final String DEFAULT_LIMIT = "50";
-    private static final String DEFAULT_OFFSET = "1";
-    private static final String DEFAULT_VERSION = "v1";
-    private static final String DEFAULT_STORE_ID = "10001";
-    private static final String DEFAULT_ZIP_CODE = "01010";
+    private static final boolean LOGGING = false;
 
     // Instance Variables
 
@@ -85,8 +77,8 @@ public class ProductCollection {
         // http://sapi.staples.com/v1/10001/category/identifier/BI739472?catalogId=10051&client_id=JxP9wlnIfCSeGc9ifRAAGku7F4FSdErd&locale=en_US&offset=1&zipCode=12345&limit=100
 
         ProductCollection.getProducts(urlExtension,
-                DEFAULT_LIMIT,
-                DEFAULT_OFFSET,
+                null,  // limit
+                "1",   // offset
                 collectionMap,
                 null); // ProductCollection CallBack
 
@@ -107,19 +99,18 @@ public class ProductCollection {
 
         private static final String TAG = "ProductContainer";
 
+        private static final String DEFAULT_FILTER_LIST = "";
+        private static final String DEFAULT_LIMIT = "50";
+        private static final String DEFAULT_OFFSET = "1";
+
         private static final String AMPERSAND = "&";
-        private static final String COMMA = ",";
-        private static final String EMPTY_STRING = "";
-        private static final String EQUAL_SIGN = "=";
         private static final String QUESTION_MARK = "?";
 
-        private static final String CATALOG_ID = "catalogId";
-        private static final String CLIENT_ID = "client_id";
-        private static final String FILTER_LIST = "filterList";
-        private static final String JSON = "json";
-        private static final String LOCALE = "locale";
-        private static final String RESPONSE_FORMAT = "responseFormat";
-        private static final String ZIP_CODE = "zipCode";
+        private static final String IDENTIFIER_ARG = "identifier/";
+
+        private static final String FILTER_LIST_KEY = "filterList";
+        private static final String LIMIT_KEY = "limit";
+        private static final String OFFSET_KEY = "offset";
 
         // category/identifier/CL165566
         // category/identifier/CL165566?filterList=
@@ -128,14 +119,6 @@ public class ProductCollection {
         // 10001/category/identifier/CL165566
         // 10001/category/identifier/CL165566?filterList=
         // 10001/category/identifier/CL165566?filterList=&limit=8&responseFormat=json
-
-        public enum URL_TYPE {
-
-            RAW,
-            NO_PARAMETERS,
-            FIRST_PARAMETER_ONLY,
-            TWO_OR_MORE_PARAMETERS,
-        }
 
         public enum ERROR_CODES {
 
@@ -147,14 +130,14 @@ public class ProductCollection {
 
         // Inputs
 
-        private String identifier;
         private String urlExtension;
+        private Uri uri;
+        private String identifier;
+        private String filterList;
         private String limit;
         private String offset;
         private Map collectionMap;
         private ProductCollectionCallBack productCollectionCallBack;
-
-        private URL_TYPE urlType = URL_TYPE.RAW;
 
         // Outputs
 
@@ -198,9 +181,6 @@ public class ProductCollection {
                             + " this[" + this + "]"
             );
 
-            // category/identifier/CL165566?filterList=&limit=8&responseFormat=json
-            // 10001/category/identifier/CL165566?filterList=&limit=8&responseFormat=json
-
             while (true) {
 
                 if (urlExtension == null) {
@@ -212,7 +192,7 @@ public class ProductCollection {
                     break; // while (true)
                 }
 
-                urlExtension = parseUrl(urlExtension);
+                parseUrl(urlExtension);
 
                 if (!errorCodes.isEmpty()) {
 
@@ -225,7 +205,13 @@ public class ProductCollection {
 
                 EasyOpenApi easyOpenApi = access.getEasyOpenApi(false); // not secure
 
-                easyOpenApi.getCategory(urlExtension,
+                Integer offsetInt = Integer.parseInt(offset);
+                Integer limitInt = Integer.parseInt(limit);
+
+                easyOpenApi.getCategory(identifier,
+                        offsetInt,
+                        limitInt,
+                        filterList,
                         this); // callback
                 break; // while (true)
 
@@ -395,7 +381,7 @@ public class ProductCollection {
             return (products);
         }
 
-        private String parseUrl(String urlExtension) {
+        private void parseUrl(String urlExtension) {
 
             // http://sapi.staples.com/v1/10001/category/identifier/BI739472?catalogId=10051&client_id=JxP9wlnIfCSeGc9ifRAAGku7F4FSdErd&sort=ratingAsc&locale=en_US&offset=1&zipCode=12345&limit=100
 
@@ -412,35 +398,31 @@ public class ProductCollection {
                             + " this[" + this + "]"
             );
 
-            this.identifier = extractIdentifier(urlExtension);
+            identifier = extractIdentifier(urlExtension);
 
-            String newUrlExtension = urlExtension;
+            uri = Uri.parse(urlExtension);
 
-            newUrlExtension = insertPrefixData(newUrlExtension);
+            filterList = uri.getQueryParameter(FILTER_LIST_KEY);
+            if (filterList == null) filterList = DEFAULT_FILTER_LIST;
 
-            identifyUrlType(newUrlExtension);
-
-            if (urlType == URL_TYPE.NO_PARAMETERS) {
-
-                newUrlExtension = addUrlParameter(newUrlExtension, QUESTION_MARK, FILTER_LIST, EMPTY_STRING);
+            // limit is passed as an argument for getProducts(). if not null, it
+            // should be used in the server request. If null, we need to get
+            // limit from the URL fragment.
+            if (limit == null) {
+                limit = uri.getQueryParameter(LIMIT_KEY);
+                if (limit == null) limit = DEFAULT_LIMIT;
             }
 
-            newUrlExtension = setOffset(newUrlExtension);
-            newUrlExtension = setLimit(newUrlExtension);
-
-            newUrlExtension = addUrlParameter(newUrlExtension, AMPERSAND, CATALOG_ID, DEFAULT_CATALOG_ID);
-            newUrlExtension = addUrlParameter(newUrlExtension, AMPERSAND, LOCALE, DEFAULT_LOCALE);
-            newUrlExtension = addUrlParameter(newUrlExtension, AMPERSAND, ZIP_CODE, DEFAULT_ZIP_CODE);
-            newUrlExtension = addUrlParameter(newUrlExtension, AMPERSAND, CLIENT_ID, DEFAULT_CLIENT_ID);
-            newUrlExtension = addUrlParameter(newUrlExtension, AMPERSAND, RESPONSE_FORMAT, JSON);
-
-            return (newUrlExtension.toString());
+            // offset is passed as an argument for getProducts(). if not null, it
+            // should be used in the server request. If null, we need to get
+            // offset from the URL fragment.
+            if (offset == null) {
+                offset = uri.getQueryParameter(OFFSET_KEY);
+                if (offset == null) offset = DEFAULT_OFFSET;
+            }
         }
 
         private String extractIdentifier(String urlExtension) {
-
-            // category/identifier/CL165566?filterList=&limit=8&responseFormat=json
-            // 10001/category/identifier/CL165566?filterList=&limit=8&responseFormat=json
 
             if (LOGGING) Log.v(TAG, "ProductContainer:extractIdentifier():"
                             + " urlExtension[" + urlExtension + "]"
@@ -451,15 +433,15 @@ public class ProductCollection {
 
             while (true) {
 
-                int argumentIndex = urlExtension.indexOf("identifier/");
+                int argumentIndex = urlExtension.indexOf(IDENTIFIER_ARG);
 
                 if (argumentIndex < 0) {
                     errorCodes.add(ERROR_CODES.PARSE_NO_IDENTIFIER);
                     break; // while (true)
                 }
 
-                int valueIndex = argumentIndex + "identifier/".length();
-                int terminatorIndex = urlExtension.indexOf("?", valueIndex);
+                int valueIndex = argumentIndex + IDENTIFIER_ARG.length();
+                int terminatorIndex = urlExtension.indexOf(QUESTION_MARK, valueIndex);
                 if (terminatorIndex < 0) terminatorIndex = urlExtension.length();
                 identifier = urlExtension.substring(valueIndex, terminatorIndex);
 
@@ -468,206 +450,6 @@ public class ProductCollection {
             } // while (true)
 
             return (identifier);
-        }
-
-        private String insertPrefixData(String urlExtension) {
-
-            // http://sapi.staples.com/v1/10001/category/identifier/BI739472?catalogId=10051&client_id=JxP9wlnIfCSeGc9ifRAAGku7F4FSdErd&sort=ratingAsc&locale=en_US&offset=1&zipCode=12345&limit=100
-
-            // category/identifier/CL165566
-            // category/identifier/CL165566?filterList=
-            // category/identifier/CL165566?filterList=&limit=8&responseFormat=json
-
-            // 10001/category/identifier/CL165566
-            // 10001/category/identifier/CL165566?filterList=
-            // 10001/category/identifier/CL165566?filterList=&limit=8&responseFormat=json
-
-            if (LOGGING) Log.v(TAG, "ProductContainer:insertPrefixData():"
-                            + " urlExtension[" + urlExtension + "]"
-                            + " this[" + this + "]"
-            );
-
-            StringBuilder newUrlExtension = new StringBuilder(urlExtension);
-
-            String prefix = DEFAULT_VERSION + "/";
-
-            int argumentIndex = urlExtension.indexOf("category");
-
-            if (argumentIndex == 0) {
-
-                prefix += DEFAULT_STORE_ID + "/";
-            }
-
-            newUrlExtension.insert(0, prefix);
-
-            return (newUrlExtension.toString());
-        }
-
-        private void identifyUrlType(String urlExtension) {
-
-            // category/identifier/CL165566
-            // category/identifier/CL165566?filterList=
-            // category/identifier/CL165566?filterList=&limit=8&responseFormat=json
-
-            // 10001/category/identifier/CL165566
-            // 10001/category/identifier/CL165566?filterList=
-            // 10001/category/identifier/CL165566?filterList=&limit=8&responseFormat=json
-
-            if (LOGGING) Log.v(TAG, "ProductContainer:identifyUrlType():"
-                            + " urlExtension[" + urlExtension + "]"
-                            + " this[" + this + "]"
-            );
-
-            while (true) {
-
-                int argumentIndex = urlExtension.indexOf(AMPERSAND);
-
-                if (argumentIndex > 0) {
-                    urlType = URL_TYPE.TWO_OR_MORE_PARAMETERS;
-                    break; // while (true)
-                }
-
-                argumentIndex = urlExtension.indexOf(QUESTION_MARK);
-
-                if (argumentIndex > 0) {
-                    urlType = URL_TYPE.FIRST_PARAMETER_ONLY;
-                    break; // while (true)
-                }
-
-                urlType = URL_TYPE.NO_PARAMETERS;
-
-                break; // while (true)
-
-            } // while (true)
-        }
-
-        private String addUrlParameter(String urlExtension,
-                                       String parameterType,
-                                       String parameterName,
-                                       String parameterValue) {
-
-            if (LOGGING) Log.v(TAG, "ProductContainer:addClientId():"
-                            + " urlExtension[" + urlExtension + "]"
-                            + " this[" + this + "]"
-            );
-
-            StringBuilder newUrlExtension = new StringBuilder(urlExtension);
-
-            while (true) {
-
-                // If the parameter already exists in the URL, do nothing.
-                int argumentIndex = newUrlExtension.indexOf(parameterName);
-                if (argumentIndex >= 0) break; // while (true)
-
-                // Parameter not in URL. Add it.
-                newUrlExtension.append(parameterType + parameterName + EQUAL_SIGN + parameterValue);
-
-                break; // while (true)
-
-            } // while (true)
-
-            return (newUrlExtension.toString());
-        }
-
-        private String setOffset(String urlExtension) {
-
-            // http://sapi.staples.com/v1/10001/category/identifier/BI739472?catalogId=10051&client_id=JxP9wlnIfCSeGc9ifRAAGku7F4FSdErd&sort=ratingAsc&locale=en_US&offset=1&zipCode=12345&limit=100
-
-            // category/identifier/CL165566
-            // category/identifier/CL165566?filterList=
-            // category/identifier/CL165566?filterList=&limit=8&responseFormat=json
-
-            // 10001/category/identifier/CL165566
-            // 10001/category/identifier/CL165566?filterList=
-            // 10001/category/identifier/CL165566?filterList=&limit=8&responseFormat=json
-
-            if (LOGGING) Log.v(TAG, "ProductContainer:setOffset():"
-                            + " this.offset[" + this.offset + "]"
-                            + " urlExtension[" + urlExtension + "]"
-                            + " this[" + this + "]"
-            );
-
-            StringBuilder newUrlExtension = new StringBuilder(urlExtension);
-
-            while (true) {
-
-                int argumentIndex = newUrlExtension.indexOf("&offset=");
-
-                if (argumentIndex < 0) {
-                    // No offset in URL. Add default offset to URL.
-                    newUrlExtension.append("&offset=");
-                    String offset = (this.offset == null) ? DEFAULT_OFFSET : this.offset;
-                    newUrlExtension.append(offset);
-                    break; // while (true)
-                }
-
-                if (this.offset == null) {
-                    // We have an offset in the URL but no override supplied.
-                    break; // while (true)
-                }
-
-                // We have an offset in the URL and an override was supplied.
-                // Replace offset in URL with override.
-
-                int valueIndex = argumentIndex + "&offset=".length();
-                int terminatorIndex = newUrlExtension.indexOf("&", valueIndex);
-                if (terminatorIndex < 0) terminatorIndex = newUrlExtension.length();
-
-                newUrlExtension.replace(valueIndex, terminatorIndex, this.offset);
-
-                break; // while (true)
-
-            } // while (true)
-
-            return (newUrlExtension.toString());
-        }
-
-        private String setLimit(String urlExtension) {
-
-            // http://sapi.staples.com/v1/10001/category/identifier/BI739472?catalogId=10051&client_id=JxP9wlnIfCSeGc9ifRAAGku7F4FSdErd&sort=ratingAsc&locale=en_US&offset=1&zipCode=12345&limit=100
-
-            // category/identifier/CL165566?filterList=&limit=8&responseFormat=json
-            // 10001/category/identifier/CL165566?filterList=&limit=8&responseFormat=json
-
-            if (LOGGING) Log.v(TAG, "ProductContainer:setLimit():"
-                            + " this.limit[" + this.limit + "]"
-                            + " urlExtension[" + urlExtension + "]"
-                            + " this[" + this + "]"
-            );
-
-            StringBuilder newUrlExtension = new StringBuilder(urlExtension);
-
-            while (true) {
-
-                int argumentIndex = newUrlExtension.indexOf("&limit=");
-
-                if (argumentIndex < 0) {
-                    // No limit in URL. Add default limit to URL.
-                    newUrlExtension.append("&limit=");
-                    String limit = (this.limit == null) ? DEFAULT_LIMIT : this.limit;
-                    newUrlExtension.append(limit);
-                    break; // while (true)
-                }
-
-                if (this.limit == null) {
-                    // We have a limit in the URL but no override supplied.
-                    break; // while (true)
-                }
-
-                // We have a limit in the URL and an override was supplied.
-                // Replace limit in URL with override.
-
-                int valueIndex = argumentIndex + "&limit=".length();
-                int terminatorIndex = newUrlExtension.indexOf("&", valueIndex);
-                if (terminatorIndex < 0) terminatorIndex = newUrlExtension.length();
-
-                newUrlExtension.replace(valueIndex, terminatorIndex, this.limit);
-
-                break; // while (true)
-
-            } // while (true)
-
-            return (newUrlExtension.toString());
         }
 
     } // ProductContainer

@@ -13,7 +13,6 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.bundle.BundleAdapter;
 import com.staples.mobile.cfa.bundle.BundleItem;
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -27,21 +26,22 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SearchFragment extends Fragment implements Callback<SearchResult>, AdapterView.OnItemClickListener {
-    private static final String TAG = "BundleFragment";
+    private static final String TAG = "SearchFragment";
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
-    private static final String CATALOG_ID = "10051";
-    private static final String LOCALE = "en_US";
-    private static final String ZIPCODE = "01010";
-//    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
+    private static final String KEYWORD = "keyword";
+
     private static final int MAXFETCH = 50;
     private static final int SORT_BY_BEST_MATCH = 0;
 
     private DataWrapper wrapper;
     private GridView products;
     private BundleAdapter adapter;
+
+    public void setArguments(String keyword) {
+        Bundle args = new Bundle();
+        args.putString(KEYWORD, keyword);
+        setArguments(args);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -52,7 +52,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
         Bundle args = getArguments();
         if (args!=null) {
-            keyword = args.getString("identifier");
+            keyword = args.getString(KEYWORD);
         }
 
         wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
@@ -75,8 +75,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
     private void fill(String keyword) {
         wrapper.setState(DataWrapper.State.LOADING);
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.searchResult(RECOMMENDATION, STORE_ID, CATALOG_ID, LOCALE, ZIPCODE, keyword,
-                                 1, MAXFETCH, SORT_BY_BEST_MATCH, CLIENT_ID, null, this);
+        easyOpenApi.searchResult(keyword, 1, MAXFETCH, SORT_BY_BEST_MATCH, null, this);
     }
 
     @Override

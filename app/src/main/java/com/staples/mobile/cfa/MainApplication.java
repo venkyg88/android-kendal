@@ -17,7 +17,7 @@ public class MainApplication
 
     private static final String TAG = "MainApplication";
 
-    private static final boolean LOGGING = true;
+    private static final boolean LOGGING = false;
 
     public static MainApplication application = null;
 

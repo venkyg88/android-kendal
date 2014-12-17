@@ -6,14 +6,19 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
@@ -42,13 +47,8 @@ import retrofit.client.Response;
 public class CreditCardFragment extends Fragment implements View.OnClickListener{
 
     private static final String TAG = "Add Credit Card Fragment";
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
-    private static final String LOCALE = "en_US";
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     Button addCCBtn;
-    Spinner spinner;
     String creditCardNumber;
     String cardType;
     String expirationMonth;
@@ -57,6 +57,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
     EditText cardNumberET;
     EditText expMonthET;
     EditText expYearET;
+    ImageView cardImage;
 
     CCDetails creditCard;
     EasyOpenApi easyOpenApi;
@@ -69,26 +70,85 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         activity = getActivity();
 
         View view = inflater.inflate(R.layout.add_creditcard_fragment, container, false);
-        spinner = (Spinner) view.findViewById(R.id.card_type_spinner);
         cardNumberET = (EditText) view.findViewById(R.id.cardNumber);
         expMonthET = (EditText) view.findViewById(R.id.expirationMonth);
         expYearET = (EditText) view.findViewById(R.id.expirationYear);
+        cardImage = (ImageView) view.findViewById(R.id.card_image);
+
+        cardNumberET.setOnEditorActionListener(
+                new EditText.OnEditorActionListener() {
+
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                            CardType ccType = CardType.detect(cardNumberET.getText().toString());
+//                                if(ccType == CardType.VISA) {
+//                                    cardImage.setImageResource(R.drawable.visa);
+//                                    cardType = "VISA";
+//                                    expMonthET.requestFocus();
+//                                }
+//                                if(ccType == CardType.DISCOVER) {
+//                                    cardImage.setImageResource(R.drawable.discover);
+//                                    cardType = "DISCOVER";
+//                                    expMonthET.requestFocus();
+//                                }
+//                                if(ccType == CardType.AMERICAN_EXPRESS) {
+//                                    cardImage.setImageResource(R.drawable.american_express);
+//                                    cardType = "AMEX";
+//                                    expMonthET.requestFocus();
+//                                }
+//                                if(ccType == CardType.MASTERCARD) {
+//                                    cardImage.setImageResource(R.drawable.mastercard);
+//                                    cardType = "MASTERCARD";
+//                                    expMonthET.requestFocus();
+//                                }
+                            if (ccType != CardType.UNKNOWN) {
+                                cardImage.setImageResource(ccType.getImageResource());
+                                cardType = ccType.getCardTypeName();
+                            }
+                            expMonthET.requestFocus();
+                            return true; // consume.
+                        }
+                        return false; // pass on to other listeners.
+                    }
+                });
+
+        cardNumberET.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (MotionEvent.ACTION_UP == event.getAction()) {
+                    cardNumberET.getText().clear();
+                    cardImage.setImageResource(0);
+                }
+                return false; // return is important...
+            }
+        });
 
         Bundle args = getArguments();
         if(args != null) {
              creditCard = (CCDetails)args.getSerializable("creditCardData");
             if(creditCard != null) {
-                cardNumberET.setText(creditCard.getCardNumber());
+                cardNumberET.setText("Card ending in: " + creditCard.getCardNumber());
+                cardType = creditCard.getCardType().toUpperCase();
+
+                if( cardType.equals("VI") || cardType.equals("VISA")) {
+                    cardImage.setImageResource(R.drawable.visa);
+                }
+                if(cardType.equals("AM")  || cardType.equals("AMEX")) {
+                    cardImage.setImageResource(R.drawable.american_express);
+                }
+                if(cardType.equals("MC") || cardType.equals("MASTERCARD")) {
+                    cardImage.setImageResource(R.drawable.mastercard);
+                }
+                if(cardType.equals("DI") || cardType.equals("DISC") || cardType.equals("DISCOVER")) {
+                    cardImage.setImageResource(R.drawable.discover);
+                }
+
                 expMonthET.setText(creditCard.getExpirationMonth());
                 expYearET.setText(creditCard.getExpirationYear());
                 creditCardId = creditCard.getCreditCardId();
             }
         }
-    
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.cardtype_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
 
         addCCBtn = (Button) view.findViewById(R.id.addCCBtn);
@@ -114,16 +174,15 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         hideKeyboard(view);
         ((MainActivity)activity).showProgressIndicator();
         creditCardNumber = cardNumberET.getText().toString();
-        cardType = spinner.getSelectedItem().toString();
         expirationMonth = expMonthET.getText().toString();
         expirationYear = expYearET.getText().toString();
 
         if(!creditCardNumber.isEmpty() && !cardType.isEmpty()){
-            final AddCreditCardPOW creditCard = new AddCreditCardPOW(creditCardNumber, cardType.toUpperCase());
+            final AddCreditCardPOW creditCard = new AddCreditCardPOW(creditCardNumber, cardType);
             List<AddCreditCardPOW> ccList = new ArrayList<AddCreditCardPOW>();
             ccList.add(creditCard);
 
-            easyOpenApi.addCreditPOWCallQA(ccList, RECOMMENDATION, CLIENT_ID, new Callback<List<POWResponse>>() {
+            easyOpenApi.addCreditPOWCallQA(ccList, new Callback<List<POWResponse>>() {
 
                 @Override
                 public void success(List<POWResponse> powList, Response response) {
@@ -137,7 +196,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                     }
                     else if(creditCardId != null) {
                         UpdateCreditCard updatedCard= new UpdateCreditCard(cardType, encryptedPacket, expirationMonth, expirationYear, "notes", creditCardId);
-                        easyOpenApi.updateMemberCreditCard(updatedCard, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<Response>() {
+                        easyOpenApi.updateMemberCreditCard(updatedCard, new Callback<Response>() {
                             @Override
                             public void success(Response response, Response response2) {
                                 (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
@@ -161,7 +220,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                     }
                     else {
                         AddCreditCard addCC = new AddCreditCard(cardType, encryptedPacket, expirationMonth, expirationYear, "notes");
-                        easyOpenApi.addMemberCreditCard(addCC, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID,new Callback<CreditCardId>() {
+                        easyOpenApi.addMemberCreditCard(addCC, new Callback<CreditCardId>() {
                             @Override
                             public void success(CreditCardId creditCardID, Response response) {
                                 Log.i("Success", creditCardID.getCreditCardId());

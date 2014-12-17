@@ -18,6 +18,7 @@ import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Area;
 import com.staples.mobile.common.access.configurator.model.Item;
 import com.staples.mobile.common.access.configurator.model.Screen;
@@ -30,11 +31,10 @@ import java.util.List;
 public class ConfiguratorFragment
         extends Fragment
         implements AppConfigurator.AppConfiguratorCallback {
+
     private static final String TAG = "ConfiguratorFragment";
 
-    private static final boolean LOGGING = true;
-
-    private static final long CONFIGURATOR_REFRESH_TIME_MILLIS = (5 * 60 * 1000);
+    private static final boolean LOGGING = false;
 
     private static final int PADDING_ZERO = 0;
 
@@ -42,7 +42,7 @@ public class ConfiguratorFragment
     private static final int MARGIN_LEFT_DP = 0;
     private static final int MARGIN_TOP_DP = 0;
     private static final int MARGIN_RIGHT_DP = 0;
-    private static final int MARGIN_BOTTOM_DP = 20;
+    private static final int MARGIN_BOTTOM_DP = 24;
 
     private MainActivity activity;
     private Resources resources;
@@ -55,6 +55,7 @@ public class ConfiguratorFragment
     private LinearLayout.LayoutParams widgetLayoutParms;
 
     private AppConfigurator appConfigurator;
+    private StaplesAppContext staplesAppContext;
 
     private List<ConfigItem> configItems;
     private List<ConfigItem> configItemsA;
@@ -98,6 +99,7 @@ public class ConfiguratorFragment
         this.activity = (MainActivity) activity;
         resources = activity.getResources();
         appConfigurator = new AppConfigurator(MainApplication.application);
+        staplesAppContext = StaplesAppContext.getInstance(MainApplication.application);
 
         configItems = new ArrayList<ConfigItem>();
         configItemsA = new ArrayList<ConfigItem>();
@@ -152,6 +154,7 @@ public class ConfiguratorFragment
     @Override
     public void onResume() {
         super.onResume();
+
         MainActivity activity = (MainActivity) getActivity();
         if (activity!=null) activity.showActionBar(R.string.staples, R.drawable.ic_search_white, null);
     }
@@ -162,11 +165,22 @@ public class ConfiguratorFragment
                         + " this[" + this + "]"
         );
 
-        if (success) {
+        while (true) {
+
+            if ( ! success) {
+
+                if (retryGetConfig) appConfigurator.getConfigurator(this); // AppConfiguratorCallback
+                retryGetConfig = false;
+
+                break; // while (true)
+            }
 
             deviceInfo = new DeviceInfo(resources);
 
-            screens = appConfigurator.getScreen();
+            screens = staplesAppContext.getScreen();
+
+            if (screens == null) break; // while (true)
+
             Screen screen = screens.get(0);
             items = screen.getItem();
 
@@ -179,6 +193,8 @@ public class ConfiguratorFragment
             configItemsB.clear();
             configItemsC.clear();
             configItemsD.clear();
+
+            if (items == null) break; // while (true)
 
             for (Item item : items) {
 
@@ -215,11 +231,10 @@ public class ConfiguratorFragment
             } else {
                 doLandscape();
             }
-        } else {
 
-            if (retryGetConfig) appConfigurator.getConfigurator(this); // AppConfiguratorCallback
-            retryGetConfig = false;
-        }
+            break; // while (true)
+
+        } // while (true)
 
         activity.showMainScreen();
     }

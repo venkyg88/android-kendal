@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
+  -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--ytd savings-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:textSize="16sp"
+        android:textColor="@color/text_black"
+        android:text="@string/rewards_ytd_savings"/>
+    <TextView
+        android:id="@+id/total_ytd_savings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:textColor="@color/text_gray"/>
+
+    <!--ytd spend-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:textSize="16sp"
+        android:textColor="@color/text_black"
+        android:text="@string/rewards_ytd_spend"/>
+    <TextView
+        android:id="@+id/ytd_spend_goal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:textColor="@color/text_gray"/>
+    <ProgressBar
+        android:id="@+id/ytd_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@android:style/Widget.ProgressBar.Horizontal" />
+    <TextView
+        android:id="@+id/ytd_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:textSize="16sp"
+        android:textColor="@color/text_gray"/>
+
+</LinearLayout>

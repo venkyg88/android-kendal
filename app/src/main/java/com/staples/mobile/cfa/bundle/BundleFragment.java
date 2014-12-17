@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.bundle;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +14,6 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -27,25 +27,25 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class BundleFragment extends Fragment implements Callback<Browse>, AdapterView.OnItemClickListener {
+public class BundleFragment extends Fragment implements Callback<Browse>, AdapterView.OnItemClickListener, View.OnClickListener {
     private static final String TAG = "BundleFragment";
 
-    public static final String TITLE = "title";
-    public static final String IDENTIFIER = "identifier";
+    private static final String TITLE = "title";
+    private static final String IDENTIFIER = "identifier";
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
-    private static final String CATALOG_ID = "10051";
-    private static final String LOCALE = "en_US";
-    private static final String ZIPCODE = "01010";
-//    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
     private static final int MAXFETCH = 50;
 
     private DataWrapper wrapper;
     private GridView products;
     private BundleAdapter adapter;
     private String title;
+
+    public void setArguments(String title, String identifier) {
+        Bundle args = new Bundle();
+        args.putString(TITLE, title);
+        args.putString(IDENTIFIER, identifier);
+        setArguments(args);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -64,11 +64,11 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
         adapter = new BundleAdapter(getActivity());
         products.setAdapter(adapter);
         products.setOnItemClickListener(this);
+        adapter.setOnClickListener(this);
 
         wrapper.setState(DataWrapper.State.LOADING);
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.browseCategories(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
-                ZIPCODE, CLIENT_ID, null, MAXFETCH, this);
+        easyOpenApi.browseCategories(identifier, null, MAXFETCH, this);
 
         return (view);
     }
@@ -77,7 +77,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
     public void onResume() {
         super.onResume();
         MainActivity activity = (MainActivity) getActivity();
-        if (activity!=null) activity.showActionBar(R.string.staples, R.drawable.ic_search_white, null);
+        if (activity!=null) activity.showActionBar(title, R.drawable.ic_search_white, null);
     }
 
     @Override
@@ -128,5 +128,12 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
             return;
         }
         ((MainActivity) getActivity()).selectSkuItem(item.identifier);
+    }
+
+    @Override
+    public void onClick(View view) {
+        Object tag = view.getTag();
+        if (tag instanceof BundleItem)
+            Log.d(TAG, "Clicked on action for "+((BundleItem) tag).title);
     }
 }

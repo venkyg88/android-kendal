@@ -14,6 +14,7 @@ import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
+import com.staples.mobile.common.access.easyopen.model.member.Member;
 
 import java.util.List;
 import java.util.Vector;
@@ -28,16 +29,11 @@ public class LoginHelper {
         public void onLoginComplete(boolean guestLevel);
     }
 
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
 //    public static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
     public static final String CLIENT_ID = "JxP9wlnIfCSeGc9ifRAAGku7F4FSdErd"; // a client_id that works in all env incl prod
-    private static final String LOCALE = "en_US";
 
     private MainActivity activity;
     private EasyOpenApi easyOpenApi;
-    Button signInText;
-
 
     // single static synchronized list of login complete listeners
     private static List<OnLoginCompleteListener> loginCompleteListeners = new Vector<OnLoginCompleteListener>();
@@ -84,7 +80,7 @@ public class LoginHelper {
 
     public void getGuestTokens()
     {
-        easyOpenApi.guestLogin(RECOMMENDATION, STORE_ID, CLIENT_ID, new Callback<TokenObject>() {
+        easyOpenApi.guestLogin(new Callback<TokenObject>() {
 
                     @Override
                     public void success(TokenObject tokenObjectReturned, Response response) {
@@ -108,22 +104,31 @@ public class LoginHelper {
         );
     }
 
+    private void loadProfileAndOpenProfileFragment() {
+        new ProfileDetails().refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
+            @Override public void onProfileRefresh(Member member) {
+                activity.hideProgressIndicator();
+                activity.selectProfileFragment();
+            }
+        });
+    }
+
     //cloned method to take entered username and password..not to break if any one using the above method
     public void getUserTokens(String username, String password)
     {
         activity.showProgressIndicator();
         RegisteredUserLogin user = new RegisteredUserLogin(username,password);
-        easyOpenApi.registeredUserLogin(user, RECOMMENDATION, STORE_ID, CLIENT_ID, new Callback<TokenObject>() {
+        easyOpenApi.registeredUserLogin(user, new Callback<TokenObject>() {
 
                     @Override
                     public void success(TokenObject tokenObjectReturned, Response response) {
-                        activity.hideProgressIndicator();
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
                         notifyListeners(false);
-                        ((MainActivity)activity).selectProfileFragment();
-                        signInText = (Button)activity.findViewById(R.id.account_button);
-                        signInText.setText("Sign Out");
+                        Button signInText = (Button) activity.findViewById(R.id.account_button);
+                        signInText.setText(R.string.signout_title);
+
+                        loadProfileAndOpenProfileFragment();
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
@@ -146,17 +151,17 @@ public class LoginHelper {
         activity.showProgressIndicator();
         CreateUserLogin user = new CreateUserLogin(emailAddress, username, password);
         Log.i("Register User object", " " + user);
-        easyOpenApi.registerUser(user, RECOMMENDATION, STORE_ID, LOCALE, CLIENT_ID, new Callback<TokenObject>() {
+        easyOpenApi.registerUser(user, new Callback<TokenObject>() {
 
                     @Override
                     public void success(TokenObject tokenObjectReturned, Response response) {
-                        activity.hideProgressIndicator();
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
                         notifyListeners(false);
-                        ((MainActivity)activity).selectProfileFragment();
-                        signInText = (Button)activity.findViewById(R.id.account_button);
-                        signInText.setText("Sign Out");
+                        Button signInText = (Button) activity.findViewById(R.id.account_button);
+                        signInText.setText(R.string.signout_title);
+
+                        loadProfileAndOpenProfileFragment();
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
@@ -176,12 +181,14 @@ public class LoginHelper {
 
     public void userSignOut ()
     {
-        easyOpenApi.registeredUserSignOut(RECOMMENDATION, STORE_ID, CLIENT_ID, new Callback<Response>() {
+        easyOpenApi.registeredUserSignOut(new Callback<Response>() {
             @Override
             public void success(Response empty, Response response) {
                 Access.getInstance().setTokens(null, null, true); //set these to null since they're definitely unusable now
                 getGuestTokens(); // re-establish a guest login since user may try to add to cart after signing out
                 ProfileDetails.resetMember();
+                Button signInText = (Button)activity.findViewById(R.id.account_button);
+                signInText.setText(R.string.signin_title);
                 Log.i("Code for signout", " " + response.getStatus());
             }
 

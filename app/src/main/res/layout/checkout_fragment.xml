@@ -2,11 +2,7 @@
 <!--
   ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
   -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent" >
-
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/checkout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -167,19 +163,3 @@
 
 </LinearLayout>
 
-<!-- progress whirly -->
-<RelativeLayout
-    android:id="@+id/checkout_progress_overlay"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:visibility="gone"
-    android:clickable="false"
-    android:background="#6f000022" >
-    <ProgressBar
-        android:layout_centerInParent="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminateOnly="true" />
-</RelativeLayout>
-
-</FrameLayout>

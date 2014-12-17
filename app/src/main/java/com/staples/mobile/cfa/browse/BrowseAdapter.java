@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.browse;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +15,9 @@ import java.util.ArrayList;
 public class BrowseAdapter extends BaseAdapter {
     private static final String TAG = "BrowseAdapter";
 
+    private static final String TITLES = "titles";
+    private static final String IDENTIFIERS = "identifiers";
 
-    private Activity activity;
     private LayoutInflater inflater;
 
     private ArrayList<BrowseItem> stackList;
@@ -23,7 +25,6 @@ public class BrowseAdapter extends BaseAdapter {
 
     public BrowseAdapter(Activity activity) {
         super();
-        this.activity = activity;
 
         inflater = activity.getLayoutInflater();
         stackList = new ArrayList<BrowseItem>();
@@ -117,5 +118,69 @@ public class BrowseAdapter extends BaseAdapter {
     public void addItem(BrowseItem item) {
         item.type = BrowseItem.Type.ITEM;
         browseList.add(item);
+    }
+
+    public String getActiveIdentifier() {
+        int size = stackList.size();
+        if (size<1) return(null);
+        return(stackList.get(size-1).identifier);
+    }
+
+    // State save and restore
+
+    public Bundle saveState(Bundle bundle) {
+        if (bundle==null) bundle = new Bundle();
+
+        int size = stackList.size();
+        if (size<2) return(bundle);
+
+        // Build split lists
+        ArrayList<String> titles = new ArrayList<String>(size-1);
+        ArrayList<String> identifiers = new ArrayList<String>(size-1);
+        for(int i=1;i<size;i++) {
+            BrowseItem item = stackList.get(i);
+            titles.add(item.title);
+            identifiers.add(item.identifier);
+        }
+
+        // Put lists in bundle
+        bundle.putStringArrayList(TITLES, titles);
+        bundle.putStringArrayList(IDENTIFIERS, identifiers);
+        return(bundle);
+    }
+
+    public boolean restoreState(Bundle bundle) {
+        // Safety check
+        if (bundle == null) return (false);
+
+        // Get valid arrays from the bundle
+        ArrayList<String> titles = bundle.getStringArrayList(TITLES);
+        ArrayList<String> identifiers = bundle.getStringArrayList(IDENTIFIERS);
+        if (titles == null || identifiers == null) return (false);
+        int ntitles = titles.size();
+        int nidentifiers = identifiers.size();
+        if (ntitles == 0 || nidentifiers == 0 || ntitles != nidentifiers) return (false);
+
+        // Set root item as not active
+        stackList.get(0).type = BrowseItem.Type.STACK;
+
+        // Remove old entries
+        int size = stackList.size();
+        for(int i = size - 1; i > 0; i--)
+            stackList.remove(i);
+
+        // Insert new entries
+        BrowseItem item = null;
+        for(int i = 0; i < ntitles; i++) {
+            item = new BrowseItem(BrowseItem.Type.STACK, titles.get(i), identifiers.get(i));
+            stackList.add(item);
+        }
+
+        // Set last item as active
+        item.type = BrowseItem.Type.ACTIVE;
+
+        // Clear items
+        browseList.clear();
+        return (true);
     }
 }

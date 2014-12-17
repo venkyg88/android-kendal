@@ -60,19 +60,11 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         View.OnClickListener, FragmentManager.OnBackStackChangedListener {
     private static final String TAG = "SkuFragment";
 
+    private static final String IDENTIFIER = "identifier";
+
     private static final String DESCRIPTION = " Description";
     private static final String SPECIFICATIONS = " Specifications";
     private static final String REVIEWS = "Reviews";
-
-    private static final String RECOMMENDATION = "v1";
-    private static final String STORE_ID = "10001";
-
-    private static final String CATALOG_ID = "10051";
-    private static final String LOCALE = "en_US";
-
-    private static final String ZIPCODE = "01010";
-    //    private static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
-    private static final String CLIENT_ID = LoginHelper.CLIENT_ID;
 
     private static final int MAXFETCH = 50;
 
@@ -129,13 +121,19 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     private boolean shifted;
 
+    public void setArguments(String identifier) {
+        Bundle args = new Bundle();
+        args.putString(IDENTIFIER, identifier);
+        setArguments(args);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
 
         Bundle args = getArguments();
         if (args != null) {
-            identifier = args.getString("identifier");
+            identifier = args.getString(IDENTIFIER);
         }
 
         wrapper = (DataWrapper) inflater.inflate(R.layout.sku_summary, container, false);
@@ -191,9 +189,9 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         // Initiate API calls
         EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
-        api.getSkuDetails(RECOMMENDATION, STORE_ID, identifier, CATALOG_ID, LOCALE,
-                ZIPCODE, CLIENT_ID, null, MAXFETCH, new SkuDetailsCallback());
-        api.getReviews(RECOMMENDATION, identifier, CLIENT_ID, new ReviewSetCallback());
+        api.getSkuDetails(identifier,
+                  null, MAXFETCH, new SkuDetailsCallback());
+        api.getReviews(identifier, new ReviewSetCallback());
 
         return (wrapper);
     }
