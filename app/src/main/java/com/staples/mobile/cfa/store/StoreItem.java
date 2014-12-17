@@ -5,8 +5,7 @@ import com.google.android.gms.maps.model.Marker;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
+import java.util.Date;
 
 class StoreItem {
     public String storeNumber;
@@ -34,50 +33,50 @@ class StoreItem {
             spans.add(span);
     }
 
-    public String formatHours(long time, int dateStyle, DateFormat timeFormat) {
+    public String formatHours(long when, DateFormat dateFormat) {
+        long close;
         int until;
-        TimeSpan best;
 
-        // Check until closed
-        until = 0;
-        best = null;
-        for(TimeSpan span : spans) {
-            int x = span.untilOutsideSpan(time);
-            if (x>until) {
-                until = x;
-                best = span;
+        // Loop for contiguous spans
+        close = when;
+        for(;;) {
+            // Loop for span with longest open
+            until = 0;
+            for(TimeSpan span : spans) {
+                int x = span.untilOutsideSpan(close);
+                if (x>until) until = x;
             }
-        }
-        if (best!=null) {
-            Calendar calendar = timeFormat.getCalendar();
-            calendar.setTimeInMillis(best.getStart());
-            String dow = calendar.getDisplayName(Calendar.DAY_OF_WEEK, dateStyle, Locale.getDefault());
-            String close = timeFormat.format(best.getEnd());
-            return ("Open until " + dow + " " + close);
+
+            // No span found
+            if (until==0) break;
+
+            // Extend close
+            close += until;
         }
 
-        // Check until open
+        // Close extended at least once
+        if (close>when) {
+            String clock = dateFormat.format(new Date(close));
+            return ("Open until " + clock);
+        }
+
+        // Loop for span with shortest time until open
         until = TimeSpan.ONEWEEK;
-        best = null;
         for(TimeSpan span : spans) {
-            int x = span.untilInsideSpan(time);
-            if (x<until) {
-                until = x;
-                best = span;
-            }
+            int x = span.untilInsideSpan(when);
+            if (x<until) until = x;
         }
-        if (best!=null) {
-            Calendar calendar = timeFormat.getCalendar();
-            calendar.setTimeInMillis(best.getStart());
-            String dow = calendar.getDisplayName(Calendar.DAY_OF_WEEK, dateStyle, Locale.getDefault());
-            String open = timeFormat.format(best.getStart());
-            return ("Open at " + dow + " " + open);
 
+        // Open in less than one week
+        if (until<TimeSpan.ONEWEEK) {
+            String clock = dateFormat.format(new Date(when+until));
+            return ("Open at " + clock);
         }
 
         return("Closed");
     }
-    public static String reformatNumber(String number) {
+
+    public static String reformatPhoneFaxNumber(String number) {
         if (number==null) return(null);
         number = number.trim();
 
