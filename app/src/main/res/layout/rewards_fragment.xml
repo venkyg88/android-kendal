@@ -9,6 +9,63 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!--rewards membership card-->
+    <!--<android.support.v7.widget.CardView>-->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/rectangle_frame"
+                >
+                <TextView
+                    android:id="@+id/member_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="20sp"/>
+                <TextView
+                    android:id="@+id/member_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/member_name"
+                    android:textSize="14sp"/>
+                <TextView
+                    android:id="@+id/rewards_number_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/member_duration"
+                    android:textSize="18sp"/>
+                <TextView
+                    android:id="@+id/rewards_number_barcode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/rewards_number_label"
+                    android:textSize="36sp"/>
+                <TextView
+                    android:id="@+id/rewards_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/rewards_number_barcode"
+                    android:textSize="20sp"/>
+            </RelativeLayout>
+        </RelativeLayout>
+
+    </FrameLayout>
+    <!--</android.support.v7.widget.CardView>-->
+
     <TabHost
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,7 +79,7 @@
             <TabWidget
                 android:id="@android:id/tabs"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"></TabWidget>
+                android:layout_height="wrap_content"/>
 
             <FrameLayout
                 android:id="@android:id/tabcontent"
