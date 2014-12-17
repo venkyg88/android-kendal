@@ -176,8 +176,8 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
             item.state = storeAddress.getState();
             item.country = storeAddress.getCountry();
             item.zipcode = storeAddress.getZip();
-            item.phoneNumber = StoreItem.reformatNumber(storeAddress.getPhoneNumber());
-            item.faxNumber = StoreItem.reformatNumber(storeAddress.getFaxNumber());
+            item.phoneNumber = StoreItem.reformatPhoneFaxNumber(storeAddress.getPhoneNumber());
+            item.faxNumber = StoreItem.reformatPhoneFaxNumber(storeAddress.getFaxNumber());
         }
 
         // Get store hours
