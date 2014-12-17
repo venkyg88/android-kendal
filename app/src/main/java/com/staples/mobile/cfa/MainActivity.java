@@ -377,7 +377,7 @@ public class MainActivity extends Activity
         cartFragment.refreshCart(this, null);
         // open order confirmation fragment
         Fragment fragment = ConfirmationFragment.newInstance(orderId, orderNumber);
-        return selectFragment(fragment, Transition.SLIDE, true);
+        return selectFragment(fragment, Transition.NONE, true);
     }
 
     public boolean selectBundle(String title, String identifier) {
