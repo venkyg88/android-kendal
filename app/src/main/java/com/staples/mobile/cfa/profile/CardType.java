@@ -1,5 +1,7 @@
 package com.staples.mobile.cfa.profile;
 
+import com.staples.mobile.cfa.R;
+
 import java.util.regex.Pattern;
 
 /**
@@ -9,19 +11,23 @@ import java.util.regex.Pattern;
 public enum CardType {
 
     UNKNOWN,
-    VISA("^4[0-9]{12}(?:[0-9]{3})?$"),
-    MASTERCARD("^5[1-5][0-9]{14}$"),
-    AMERICAN_EXPRESS("^3[47][0-9]{13}$"),
-    DISCOVER("^6(?:011|5[0-9]{2})[0-9]{12}$");
+    VISA("^4[0-9]{12}(?:[0-9]{3})?$", "VISA", R.drawable.visa),
+    MASTERCARD("^5[1-5][0-9]{14}$", "MASTERCARD", R.drawable.mastercard),
+    AMERICAN_EXPRESS("^3[47][0-9]{13}$", "AMEX", R.drawable.american_express),
+    DISCOVER("^6(?:011|5[0-9]{2})[0-9]{12}$", "DISCOVER", R.drawable.discover);
 
     private Pattern pattern;
+    private String cardTypeName;
+    private int imageResource;
 
     CardType() {
         this.pattern = null;
     }
 
-    CardType(String pattern) {
+    CardType(String pattern, String cardTypeName, int imageResource) {
         this.pattern = Pattern.compile(pattern);
+        this.cardTypeName = cardTypeName;
+        this.imageResource = imageResource;
     }
 
     public static CardType detect(String cardNumber) {
@@ -33,4 +39,11 @@ public enum CardType {
         return UNKNOWN;
     }
 
+    public String getCardTypeName() {
+        return cardTypeName;
+    }
+
+    public int getImageResource() {
+        return imageResource;
+    }
 }
