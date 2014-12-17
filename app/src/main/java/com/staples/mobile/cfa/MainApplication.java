@@ -41,7 +41,8 @@ public class MainApplication
     }
 
     public void uncaughtException(Thread terminatedThread, Throwable causeThrowable) {
-        if (LOGGING) Log.v(TAG, "MainApplication:onCreate(): Entry."
+
+        if (LOGGING) Log.v(TAG, "MainApplication:uncaughtException(): Entry."
                         + " terminatedThread[" + terminatedThread + "]"
                         + " causeThrowable[" + causeThrowable + "]"
                         + " this[" + this + "]"
