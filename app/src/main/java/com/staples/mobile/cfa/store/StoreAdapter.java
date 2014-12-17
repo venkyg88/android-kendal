@@ -1,7 +1,6 @@
 package com.staples.mobile.cfa.store;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +11,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.staples.mobile.cfa.R;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class StoreAdapter extends BaseAdapter {
     private static final String TAG = "StoreAdapter";
@@ -25,13 +23,13 @@ public class StoreAdapter extends BaseAdapter {
     private boolean singleMode;
     private int singleIndex;
     private DecimalFormat mileFormat;
-    private DateFormat timeFormat;
+    private SimpleDateFormat dateFormat;
 
     public StoreAdapter(Context context) {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         array = new ArrayList<StoreItem>();
         mileFormat = new DecimalFormat("0.0 mi");
-        timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
+        dateFormat = new SimpleDateFormat("EEE h:mma");
     }
 
     // Shadowed standard methods
@@ -90,7 +88,7 @@ public class StoreAdapter extends BaseAdapter {
         ((TextView) view.findViewById(R.id.street)).setText(item.streetAddress1);
         ((TextView) view.findViewById(R.id.phone)).setText(item.phoneNumber);
         ((TextView) view.findViewById(R.id.distance)).setText(mileFormat.format(item.distance));
-        String openTime = item.formatHours(System.currentTimeMillis(), Calendar.SHORT, timeFormat);
+        String openTime = item.formatHours(System.currentTimeMillis(), dateFormat);
         ((TextView) view.findViewById(R.id.opentime)).setText(openTime);
 
         return(view);
