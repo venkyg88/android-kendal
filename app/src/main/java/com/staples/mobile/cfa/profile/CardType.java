@@ -39,6 +39,21 @@ public enum CardType {
         return UNKNOWN;
     }
 
+    public static CardType matchOnApiName(String cardTypeName) {
+        String upperCaseName = cardTypeName.toUpperCase();
+        if( upperCaseName.equals("VI") || upperCaseName.equals("VISA")) {
+            return VISA;
+        } else if(upperCaseName.equals("AM")  || upperCaseName.equals("AMEX")) {
+            return AMERICAN_EXPRESS;
+        } else if(upperCaseName.equals("MC") || upperCaseName.equals("MASTERCARD")) {
+            return MASTERCARD;
+        } else if(upperCaseName.equals("DI") || upperCaseName.equals("DISC") || upperCaseName.equals("DISCOVER")) {
+            return DISCOVER;
+        } else {
+            return UNKNOWN;
+        }
+    }
+
     public String getCardTypeName() {
         return cardTypeName;
     }
