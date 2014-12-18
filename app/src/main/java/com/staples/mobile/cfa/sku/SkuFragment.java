@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.feed.PersistentSizedArrayList;
 import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
 import com.staples.mobile.cfa.feed.SeenProductsRowItem;
 import com.staples.mobile.cfa.login.LoginHelper;
@@ -380,27 +381,84 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     }
 
     private void saveSeenProduct(Product product){
-        // check if the product was saved before
         PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(getActivity());
         HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(getActivity());
+        PersistentSizedArrayList<String> savedSeenProductList
+                = feedSingleton.getSavedSeenProducts(getActivity());
+
+        // Check if the product was saved before
         if(!savedSkuSet.contains(product.getSku())){
-            Log.d(TAG, "Saving seen product: " + product.getProductName());
+            Log.d(TAG, "Saving seen product's sku: " + product.getProductName());
 
-            String sku = product.getSku();
-            String productName = product.getProductName();
-            String currentPrice = String.valueOf(product.getPricing().get(0).getFinalPrice());
-            String reviewCount = String.valueOf(product.getCustomerReviewCount());
-            String rating = String.valueOf(product.getCustomerReviewRating());
-            String unitOfMeasure = product.getPricing().get(0).getUnitOfMeasure();
-            if(unitOfMeasure == null) {
-                unitOfMeasure = "";
-                Log.d(TAG, "The unitOfMeasure of this product is null.");
+            savedSeenProductList.addSeenProduct(product.getSku(), getActivity());
+        }
+
+        // Update last seen products list's order keeping the last seen item at the end of the list
+        else{
+            if(savedSeenProductList.size() == 2){
+                if(product.getSku().equals(savedSeenProductList.get(0))){
+                    Log.d(TAG, "Shift sku list left to keep last seen sku at the end of the list. Size:2");
+
+                    String skuString = "";
+                    for(String sku : savedSeenProductList){
+                        skuString = sku + "," + skuString;
+                    }
+                    Log.d(TAG, "Before shift sku list:" + skuString);
+
+                    // Shift savedSeenProductList left from index 1 to 0
+                    savedSeenProductList.set(0, savedSeenProductList.get(1));
+
+                    // Set last seen product at the end of the list
+                    savedSeenProductList.set(1, product.getSku());
+
+                    // Update the seen products list in singleton
+                    feedSingleton.setSavedSeenProducts(savedSeenProductList);
+
+                    // Update updated seen products list in the phone
+                    savedSeenProductList.updateSeenProductsInPhone(getActivity());
+
+                    skuString = "";
+                    for(String sku : savedSeenProductList){
+                        skuString = sku + "," + skuString;
+                    }
+                    Log.d(TAG, "After shift sku list:" + skuString);
+                }
             }
-            String imageUrl = product.getImage().get(0).getUrl();
-            SeenProductsRowItem item = new SeenProductsRowItem(sku, productName, currentPrice, reviewCount,
-                    rating, unitOfMeasure, imageUrl);
+            else if(savedSeenProductList.size() == 3){
+                // If current sku equals to the sku in 1st or 2nd index in the sized ArrayList
+                if(!product.getSku().equals(savedSeenProductList.get(2))){
+                    Log.d(TAG, "Shift sku list left to keep last seen sku at the end of the list. Size:3");
 
-            feedSingleton.getSavedSeenProducts(getActivity()).addSeenProduct(item, sku, getActivity());
+                    String skuString = "";
+                    for(String sku : savedSeenProductList){
+                        skuString = sku + "," + skuString;
+                    }
+                    Log.d(TAG, "Before shift sku list:" + skuString);
+
+                    if(product.getSku().equals(savedSeenProductList.get(0))) {
+                        // Shift savedSeenProductList left from index 1 to 0
+                        savedSeenProductList.set(0, savedSeenProductList.get(1));
+                    }
+
+                    // Shift savedSeenProductList left from index 2 to 1
+                    savedSeenProductList.set(1, savedSeenProductList.get(2));
+
+                    // Set last seen product at the end of the list
+                    savedSeenProductList.set(2, product.getSku());
+
+                    // Update the seen products sized ArrayList in singleton
+                    feedSingleton.setSavedSeenProducts(savedSeenProductList);
+
+                    // Update updated seen products sized ArrayList in the phone
+                    savedSeenProductList.updateSeenProductsInPhone(getActivity());
+
+                    skuString = "";
+                    for(String sku : savedSeenProductList){
+                        skuString = sku + "," + skuString;
+                    }
+                    Log.d(TAG, "After shift sku list:" + skuString);
+                }
+            }
         }
     }
 
