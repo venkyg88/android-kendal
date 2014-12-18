@@ -17,5 +17,5 @@
 	<color name="text_light_gray">#BEC0BB</color>
 	<color name="text_orange_light">#FFA080</color>
     <color name="text_gray">#808080</color>
-
+    <color name="horizontal_divider">#fff5f5f5</color>
 </resources>

@@ -39,7 +39,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:support-v4:21+'
     compile 'com.android.support:cardview-v7:21+'
-//    compile 'com.android.support:recyclerview-v7:21.0.+'  // uncomment this for RecyclerView
+    compile 'com.android.support:recyclerview-v7:21+'
     compile 'com.squareup.okhttp:okhttp:+'
     compile 'com.squareup.okhttp:okhttp-urlconnection:+'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
