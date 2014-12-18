@@ -27,6 +27,7 @@ import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
+import com.staples.mobile.cfa.rewards.RewardsLinkingFragment;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.configurator.model.Configurator;
@@ -69,10 +70,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
     public interface CartRefreshCallback {
         public void onCartRefreshComplete();
-    }
-
-    public interface LinkRewardsCallback {
-        public void onLinkRewardsComplete(boolean successful);
     }
 
 
@@ -515,10 +512,14 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             case R.id.rewards_link_acct_button:
                 String rewardsNumber = ((EditText)getView().findViewById(R.id.rewards_card_number)).getText().toString();
                 String phoneNumber = ((EditText)getView().findViewById(R.id.rewards_phone_number)).getText().toString();
-                linkRewardsAccount(rewardsNumber, phoneNumber, new LinkRewardsCallback() {
+                showProgressIndicator();
+                RewardsLinkingFragment.linkRewardsAccount(rewardsNumber, phoneNumber, new RewardsLinkingFragment.LinkRewardsCallback() {
                     @Override
-                    public void onLinkRewardsComplete(boolean successful) {
-                        if (successful) {
+                    public void onLinkRewardsComplete(String errMsg) {
+                        hideProgressIndicator();
+                        if (errMsg != null) {
+                            makeToast(errMsg);
+                        } else {
                             linkRewardsAcctLayout.setVisibility(View.GONE);
                             updateCartFields();
                         }
@@ -584,42 +585,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void linkRewardsAccount(String rewardsNumber, String phoneNumber, final LinkRewardsCallback linkRewardsCallback) {
-        if (!TextUtils.isEmpty(rewardsNumber) && !TextUtils.isEmpty(phoneNumber)) {
-            EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
-            // only show progress indicator when updating the cart while cart is in view, not from other fragments
-            if (cartAdapter != null) {
-                showProgressIndicator();
-            }
-            UpdateProfile updateProfile = new UpdateProfile();
-            updateProfile.setFieldName("rewardsNumber");
-            updateProfile.setRewardsMemberOption("alreadyRewardsMember");
-            updateProfile.setRewardsNumber(rewardsNumber);
-            updateProfile.setRewardsPhoneNumber(phoneNumber);
-            easyOpenApi.updateProfile(updateProfile, new Callback<UpdateProfileResponse>() {
-                @Override
-                public void success(UpdateProfileResponse updateProfileResponse, Response response) {
-                    new ProfileDetails().refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
-                        @Override public void onProfileRefresh(Member member) {
-                            hideProgressIndicator();
-                            if (linkRewardsCallback != null) {
-                                linkRewardsCallback.onLinkRewardsComplete(ProfileDetails.isRewardsMember());
-                            }
-                        }
-                    });
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-                    hideProgressIndicator();
-                    makeToast(ApiError.getErrorMessage(error));
-                    if (linkRewardsCallback != null) {
-                        linkRewardsCallback.onLinkRewardsComplete(false);
-                    }
-                }
-            });
-        }
-    }
 
     private void showProgressIndicator() {
         if (activity != null) {

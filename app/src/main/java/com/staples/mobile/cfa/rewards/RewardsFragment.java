@@ -215,8 +215,9 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
         }
         rewardAdapter.notifyDataSetChanged();
 
-        // set visibility of no-rewards msg
+        // set visibility of list vs. no-rewards msg
         noRewardsMessageVw.setVisibility((profileRewards.size() == 0)? View.VISIBLE:View.GONE);
+        rewardsListView.setVisibility((profileRewards.size() > 0)? View.VISIBLE:View.GONE);
     }
 
     // when cart refresh done,
