@@ -2,6 +2,7 @@ package com.staples.mobile.cfa;
 
 import android.app.Application;
 
+import android.content.res.Resources;
 import android.os.StrictMode.ThreadPolicy;
 import android.os.StrictMode.VmPolicy;
 import android.os.StrictMode;
@@ -9,6 +10,8 @@ import android.os.StrictMode;
 import android.util.Log;
 
 import com.staples.mobile.common.access.config.AppConfigurator;
+import com.staples.mobile.common.access.config.StaplesAppContext;
+import com.staples.mobile.common.access.configurator.model.Configurator;
 
 public class MainApplication
         extends Application
@@ -19,9 +22,13 @@ public class MainApplication
 
     private static final boolean LOGGING = false;
 
-    public static MainApplication application = null;
+    public static MainApplication application;
 
-    private AppConfigurator appConfigurator;
+    public static Resources resources;
+
+    private static AppConfigurator appConfigurator;
+
+    private static StaplesAppContext staplesAppContext;
 
     @Override
     public void onCreate() {
@@ -32,7 +39,10 @@ public class MainApplication
 
         Thread.setDefaultUncaughtExceptionHandler((Thread.UncaughtExceptionHandler) this);
 
-        appConfigurator = new AppConfigurator(this);
+        resources = getResources();
+
+        String configServerUrl = resources.getString(R.string.configuration_destination);
+        appConfigurator = AppConfigurator.getInstance(this, configServerUrl);
         appConfigurator.getConfigurator(this);
 
         /* @@@ STUBBED
@@ -53,12 +63,18 @@ public class MainApplication
         return;
     }
 
-    public void onGetConfiguratorResult(boolean success) {
+    public void onGetConfiguratorResult(Configurator configurator, boolean success) {
 
         if (LOGGING) Log.v(TAG, "MainApplication:AppConfigurator.onGetConfiguratorResult():"
                         + " success[" + success + "]"
                         + " this[" + this + "]"
         );
+
+        if (staplesAppContext == null) {
+            // This will cause StaplesAppContext to obtain a reference to the
+            // newly acquired Configurator class,
+            staplesAppContext = StaplesAppContext.getInstance();
+        }
     }
 
     private void setStrictMode() {

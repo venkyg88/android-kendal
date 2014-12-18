@@ -38,10 +38,12 @@ import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
+import com.staples.mobile.common.access.configurator.model.Configurator;
+import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
 
 public class MainActivity extends Activity
-                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
+                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int SURRENDER_TIMEOUT = 5000;
@@ -63,6 +65,8 @@ public class MainActivity extends Activity
     private DrawerItem homeDrawerItem;
 
     private LoginHelper loginHelper;
+
+    private AppConfigurator appConfigurator;
 
     public enum Transition {
         NONE  (0, 0, 0, 0, 0),
@@ -105,16 +109,8 @@ public class MainActivity extends Activity
 
         LocationFinder.getInstance(this);
 
-        loginHelper = new LoginHelper(this);
-        loginHelper.registerLoginCompleteListener(this);
-        // if already logged in (e.g. when device is rotated), don't login again, but do notify
-        // that login is complete so that cart can be refilled
-        if (loginHelper.isLoggedIn()) {
-            onLoginComplete(loginHelper.isGuestLogin());
-        } else {
-            // otherwise, do login as guest
-            loginHelper.getGuestTokens();
-        }
+        appConfigurator = AppConfigurator.getInstance();
+        appConfigurator.getConfigurator(this); // AppConfiguratorCallback
     }
 
     @Override
@@ -152,6 +148,23 @@ public class MainActivity extends Activity
             titleView.setText(titleId);
         }
         showActionBarInternal(titleId, iconId, listener);
+    }
+
+    public void onGetConfiguratorResult(Configurator configurator, boolean success) {
+
+        if (success) {
+
+            loginHelper = new LoginHelper(this);
+            loginHelper.registerLoginCompleteListener(this);
+            // if already logged in (e.g. when device is rotated), don't login again, but do notify
+            // that login is complete so that cart can be refilled
+            if (loginHelper.isLoggedIn()) {
+                onLoginComplete(loginHelper.isGuestLogin());
+            } else {
+                // otherwise, do login as guest
+                loginHelper.getGuestTokens();
+            }
+        }
     }
 
     private void showActionBarInternal(int titleId, int iconId, View.OnClickListener listener) {
