@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,7 +26,6 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.Access;
@@ -41,10 +41,11 @@ import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
-import com.staples.mobile.common.access.easyopen.model.member.InkRecyclingDetail;
+import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
-import com.staples.mobile.common.access.easyopen.model.member.RewardDetail;
 import com.staples.mobile.common.access.config.AppConfigurator;
+import com.staples.mobile.common.access.easyopen.model.member.UpdateProfile;
+import com.staples.mobile.common.access.easyopen.model.member.UpdateProfileResponse;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -69,6 +70,11 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     public interface CartRefreshCallback {
         public void onCartRefreshComplete();
     }
+
+    public interface LinkRewardsCallback {
+        public void onLinkRewardsComplete(boolean successful);
+    }
+
 
     private static final String TAG = CartFragment.class.getSimpleName();
 
@@ -98,7 +104,8 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     private CartAdapter cartAdapter;
     private ListView cartListVw;
     private View couponsRewardsLayout;
-//    private View linkRewardsAcctLayout;
+    private View linkRewardsAcctLayout;
+    private Button rewardsLinkAcctButton;
     private int greenBackground;
     private int blueBackground;
     private int redText;
@@ -161,12 +168,14 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         couponsRewardsLayout = view.findViewById(R.id.coupons_rewards_layout);
         couponsRewardsValue = (TextView) view.findViewById(R.id.coupons_rewards_value);
         couponList = view.findViewById(R.id.coupon_list);
-//        linkRewardsAcctLayout = view.findViewById(R.id.link_rewards_acct_layout);
+        linkRewardsAcctLayout = view.findViewById(R.id.link_rewards_acct_layout);
         cartShipping = (TextView) view.findViewById(R.id.cart_shipping);
         cartSubtotal = (TextView) view.findViewById(R.id.cart_subtotal);
         cartShippingLayout = view.findViewById(R.id.cart_shipping_layout);
         cartSubtotalLayout = view.findViewById(R.id.cart_subtotal_layout);
         cartProceedToCheckout = view.findViewById(R.id.action_checkout);
+        rewardsLinkAcctButton = (Button)view.findViewById(R.id.rewards_link_acct_button);
+
 
         Resources r = getResources();
         greenBackground = r.getColor(R.color.background_green);
@@ -237,10 +246,12 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         // Set click listeners
         cartProceedToCheckout.setOnClickListener(this);
         couponsRewardsLayout.setOnClickListener(this);
+        rewardsLinkAcctButton.setOnClickListener(this);
 
         // temporary
         } catch (Exception e) {
             e.printStackTrace();
+            Log.d(TAG, e.getMessage());
         }
 
         return view;
@@ -263,6 +274,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             // temporary
         } catch (Exception e) {
             e.printStackTrace();
+            Log.d(TAG, e.getMessage());
         }
 
     }
@@ -458,6 +470,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         // temporary
         } catch (Exception e) {
             e.printStackTrace();
+            Log.d(TAG, e.getMessage());
         }
     }
 
@@ -477,14 +490,14 @@ public class CartFragment extends Fragment implements View.OnClickListener {
                     cartListVw.setVisibility(View.GONE);
                     couponList.setVisibility(View.VISIBLE);
                     // if logged in and not a rewards member, display link rewards layout
-//                    if (Access.getInstance().isLoggedIn() && !Access.getInstance().isGuestLogin() &&
-//                            ProfileDetails.getMember() != null && !ProfileDetails.isRewardsMember()) {
-//                        linkRewardsAcctLayout.setVisibility(View.VISIBLE);
-//                    }
+                    if (Access.getInstance().isLoggedIn() && !Access.getInstance().isGuestLogin() &&
+                            ProfileDetails.getMember() != null && !ProfileDetails.isRewardsMember()) {
+                        linkRewardsAcctLayout.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     cartListVw.setVisibility(View.VISIBLE);
                     couponList.setVisibility(View.GONE);
-//                    linkRewardsAcctLayout.setVisibility(View.GONE);
+                    linkRewardsAcctLayout.setVisibility(View.GONE);
                 }
                 break;
             case R.id.coupon_add_button:
@@ -499,11 +512,25 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             case R.id.action_checkout:
                 activity.selectOrderCheckout();
                 break;
+            case R.id.rewards_link_acct_button:
+                String rewardsNumber = ((EditText)getView().findViewById(R.id.rewards_card_number)).getText().toString();
+                String phoneNumber = ((EditText)getView().findViewById(R.id.rewards_phone_number)).getText().toString();
+                linkRewardsAccount(rewardsNumber, phoneNumber, new LinkRewardsCallback() {
+                    @Override
+                    public void onLinkRewardsComplete(boolean successful) {
+                        if (successful) {
+                            linkRewardsAcctLayout.setVisibility(View.GONE);
+                            updateCartFields();
+                        }
+                    }
+                });
+                break;
         }
     }
 
-    public void addCoupon(String couponCode, final CartRefreshCallback cartRefreshCallback) {
+    public void addCoupon(String couponCode, CartRefreshCallback cartRefreshCallback) {
         if (!TextUtils.isEmpty(couponCode)) {
+            this.cartRefreshCallback = cartRefreshCallback;
             EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
             // only show progress indicator when updating the cart while cart is in view, not from other fragments
             if (cartAdapter != null) {
@@ -514,23 +541,24 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             easyOpenApi.addCoupon(coupon, new Callback<EmptyResponse>() {
                         @Override
                         public void success(EmptyResponse emptyResponse, Response response) {
-                            refreshCart(activity, cartRefreshCallback);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
+                            refreshCart(activity, CartFragment.this.cartRefreshCallback);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
                         }
 
                         @Override
                         public void failure(RetrofitError error) {
                             hideProgressIndicator();
                             makeToast(ApiError.getErrorMessage(error));
-                            if (cartRefreshCallback != null) {
-                                cartRefreshCallback.onCartRefreshComplete();
+                            if (CartFragment.this.cartRefreshCallback != null) {
+                                CartFragment.this.cartRefreshCallback.onCartRefreshComplete();
                             }
                         }
                     });
         }
     }
 
-    public void deleteCoupon(String couponCode, final CartRefreshCallback cartRefreshCallback) {
+    public void deleteCoupon(String couponCode, CartRefreshCallback cartRefreshCallback) {
         if (!TextUtils.isEmpty(couponCode)) {
+            this.cartRefreshCallback = cartRefreshCallback;
             EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
             // only show progress indicator when updating the cart while cart is in view, not from other fragments
             if (cartAdapter != null) {
@@ -541,18 +569,55 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             easyOpenApi.deleteCoupon(couponCode, new Callback<EmptyResponse>() {
                         @Override
                         public void success(EmptyResponse emptyResponse, Response response) {
-                            refreshCart(activity, cartRefreshCallback);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
+                            refreshCart(activity, CartFragment.this.cartRefreshCallback);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
                         }
 
                         @Override
                         public void failure(RetrofitError error) {
                             hideProgressIndicator();
                             makeToast(ApiError.getErrorMessage(error));
-                            if (cartRefreshCallback != null) {
-                                cartRefreshCallback.onCartRefreshComplete();
+                            if (CartFragment.this.cartRefreshCallback != null) {
+                                CartFragment.this.cartRefreshCallback.onCartRefreshComplete();
                             }
                         }
                     });
+        }
+    }
+
+    public void linkRewardsAccount(String rewardsNumber, String phoneNumber, final LinkRewardsCallback linkRewardsCallback) {
+        if (!TextUtils.isEmpty(rewardsNumber) && !TextUtils.isEmpty(phoneNumber)) {
+            EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
+            // only show progress indicator when updating the cart while cart is in view, not from other fragments
+            if (cartAdapter != null) {
+                showProgressIndicator();
+            }
+            UpdateProfile updateProfile = new UpdateProfile();
+            updateProfile.setFieldName("rewardsNumber");
+            updateProfile.setRewardsMemberOption("alreadyRewardsMember");
+            updateProfile.setRewardsNumber(rewardsNumber);
+            updateProfile.setRewardsPhoneNumber(phoneNumber);
+            easyOpenApi.updateProfile(updateProfile, new Callback<UpdateProfileResponse>() {
+                @Override
+                public void success(UpdateProfileResponse updateProfileResponse, Response response) {
+                    new ProfileDetails().refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
+                        @Override public void onProfileRefresh(Member member) {
+                            hideProgressIndicator();
+                            if (linkRewardsCallback != null) {
+                                linkRewardsCallback.onLinkRewardsComplete(ProfileDetails.isRewardsMember());
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    hideProgressIndicator();
+                    makeToast(ApiError.getErrorMessage(error));
+                    if (linkRewardsCallback != null) {
+                        linkRewardsCallback.onLinkRewardsComplete(false);
+                    }
+                }
+            });
         }
     }
 
