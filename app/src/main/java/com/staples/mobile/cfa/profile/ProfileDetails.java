@@ -187,17 +187,11 @@ public class ProfileDetails implements Callback<MemberDetail> {
         ProfileDetails.setMember(null);
     }
 
-    public static boolean isRewardsMember(){
-        if(getMember()!=null){
-            if(getMember().getRewardsNumber()!=null){
-                return true;
-            }
-            else{
-                return false;
-            }
-        }else{
-            return false;
+    public static boolean isRewardsMember() {
+        if (member != null && member.getRewardsNumber() != null && member.isRewardsNumberVerified()) {
+            return true;
         }
+        return false;
     }
 
     /** returns true if profile as at least one address or at least one payment method */

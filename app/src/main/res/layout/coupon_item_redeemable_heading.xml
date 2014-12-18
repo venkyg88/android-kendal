@@ -5,6 +5,8 @@
 
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/GraySubheading"
-    android:padding="6dp"
+    android:paddingTop="20dp"
+    android:paddingBottom="6dp"
+    android:paddingLeft="6dp"
     android:text="@string/redeemable_rewards"
 />
