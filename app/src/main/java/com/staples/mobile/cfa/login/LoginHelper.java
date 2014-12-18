@@ -138,7 +138,7 @@ public class LoginHelper {
                     @Override
                     public void failure(RetrofitError retrofitError) {
                         activity.hideProgressIndicator();
-                        Toast.makeText(activity, "Failed to Login As Registered User", Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, "Failed Login: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_LONG).show();
                         Log.i("Fail Message For Registered User", " " + retrofitError.getMessage());
                         Log.i("Post URL address For Registered User", " " + retrofitError.getUrl());
                     }
