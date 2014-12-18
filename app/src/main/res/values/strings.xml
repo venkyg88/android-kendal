@@ -14,6 +14,7 @@
     <string name="signin_title">Sign In</string>
     <string name="signout_title">Sign Out</string>
     <string name="rewards_title">Staples Rewards</string>
+    <string name="link_rewards_title">Link Rewards Account</string>
     <string name="order_title">Order</string>
     <string name="profile_title">Profile</string>
     <string name="about_title">About</string>

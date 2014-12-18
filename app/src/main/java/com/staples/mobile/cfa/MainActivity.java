@@ -32,6 +32,7 @@ import com.staples.mobile.cfa.profile.CreditCardListFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.rewards.RewardsFragment;
+import com.staples.mobile.cfa.rewards.RewardsLinkingFragment;
 import com.staples.mobile.cfa.search.SearchBarView;
 import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
@@ -380,6 +381,14 @@ public class MainActivity extends Activity
         return selectFragment(fragment, Transition.NONE, true);
     }
 
+    public boolean selectRewardsFragment() {
+        return selectFragment(new RewardsFragment(), Transition.SLIDE, true);
+    }
+
+    public boolean selectRewardsLinkingFragment() {
+        return selectFragment(new RewardsLinkingFragment(), Transition.SLIDE, true);
+    }
+
     public boolean selectBundle(String title, String identifier) {
         BundleFragment fragment = new BundleFragment();
         fragment.setArguments(title, identifier);
@@ -518,8 +527,18 @@ public class MainActivity extends Activity
         if (item.enabled) {
             switch (item.type) {
                 case FRAGMENT:
+                    // special case of RewardsFragment but not registered user not a rewards member
+                    if (item.fragmentClass == RewardsFragment.class) {
+                        if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin() && !ProfileDetails.isRewardsMember()) {
+                            selectRewardsLinkingFragment();
+                        } else {
+                            selectRewardsFragment();
+                        }
+                    } else {
+                        selectDrawerItem(item, Transition.SLIDE, true);
+                    }
+                    break;
                 case ACCOUNT:
-                    drawerLayout.closeDrawers();
                     selectDrawerItem(item, Transition.SLIDE, true);
                     break;
                 case PROFILE:
