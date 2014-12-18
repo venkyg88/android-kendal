@@ -1,11 +1,11 @@
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.GridView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 
 import com.staples.mobile.cfa.R;
 
@@ -89,21 +89,25 @@ public class DataWrapper extends LinearLayout {
     public void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
 
-        // Special handling for GridView
+        // Special handling for RecyclerView
         View list = getChildAt(0);
-        if (list instanceof GridView) {
-            GridView grid = (GridView) list;
-            int viewWidth = View.MeasureSpec.getSize(widthSpec);
-            int colWidth = getResources().getDimensionPixelSize(R.dimen.min_column_width);
-            int n = viewWidth/colWidth;
-            if (n<=0) n = 1;
-            grid.setNumColumns(n);
+        if (list instanceof RecyclerView) {
+            RecyclerView recycle = (RecyclerView) list;
+            RecyclerView.LayoutManager manager = recycle.getLayoutManager();
+            if (manager instanceof GridLayoutManager) {
 
-            // Special handling for Layoutable
-            ListAdapter adapter = grid.getAdapter();
-            if (adapter instanceof Layoutable) {
-                if (n > 1) ((Layoutable) adapter).setLayout(Layout.TALL);
-                else ((Layoutable) adapter).setLayout(Layout.WIDE);
+                int viewWidth = View.MeasureSpec.getSize(widthSpec);
+                int colWidth = getResources().getDimensionPixelSize(R.dimen.min_grid_width);
+                int n = viewWidth/colWidth;
+                if (n<=0) n = 1;
+                ((GridLayoutManager) manager).setSpanCount(n);
+
+                // Special handling for Layoutable
+                RecyclerView.Adapter adapter = recycle.getAdapter();
+                if (adapter instanceof Layoutable) {
+                    if (n>1) ((Layoutable) adapter).setLayout(Layout.TALL);
+                    else ((Layoutable) adapter).setLayout(Layout.WIDE);
+                }
             }
         }
     }

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="min_column_width">175dp</dimen>
-    <dimen name="image_square_size">100dp</dimen>
+    <dimen name="min_grid_width">180dp</dimen>
+    <dimen name="fixed_grid_tall_height">224dp</dimen>
+    <dimen name="fixed_grid_wide_height">100dp</dimen>
+    <dimen name="image_square_size">80dp</dimen>
+    <dimen name="horizontal_divider_thickness">1dp</dimen>
+    <dimen name="horizontal_divider_gap">16dp</dimen>
 </resources>
