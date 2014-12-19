@@ -20,6 +20,7 @@ import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Area;
+import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.configurator.model.Item;
 import com.staples.mobile.common.access.configurator.model.Screen;
 import com.staples.mobile.common.access.config.AppConfigurator;
@@ -97,9 +98,9 @@ public class ConfiguratorFragment
         super.onAttach(activity);
 
         this.activity = (MainActivity) activity;
+
         resources = activity.getResources();
-        appConfigurator = new AppConfigurator(MainApplication.application);
-        staplesAppContext = StaplesAppContext.getInstance(MainApplication.application);
+        appConfigurator = AppConfigurator.getInstance();
 
         configItems = new ArrayList<ConfigItem>();
         configItemsA = new ArrayList<ConfigItem>();
@@ -153,15 +154,23 @@ public class ConfiguratorFragment
 
     @Override
     public void onResume() {
+
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:onResume():"
+                        + " this[" + this + "]"
+        );
+
         super.onResume();
 
         MainActivity activity = (MainActivity) getActivity();
-        if (activity!=null) activity.showActionBar(R.string.staples, R.drawable.ic_search_white, null);
+
+        if (activity != null) activity.showActionBar(R.string.staples, R.drawable.ic_search_white, null);
     }
 
-    public void onGetConfiguratorResult(boolean success) {
+    public void onGetConfiguratorResult(Configurator configurator, boolean success) {
+
         if (LOGGING) Log.v(TAG, "ConfiguratorFragment:AppConfigurator.onGetConfiguratorResult():"
                         + " success[" + success + "]"
+                        + " configurator[" + configurator + "]"
                         + " this[" + this + "]"
         );
 
@@ -177,7 +186,14 @@ public class ConfiguratorFragment
 
             deviceInfo = new DeviceInfo(resources);
 
+            staplesAppContext = StaplesAppContext.getInstance();
+
             screens = staplesAppContext.getScreen();
+
+            if (LOGGING) Log.v(TAG, "ConfiguratorFragment:AppConfigurator.onGetConfiguratorResult():"
+                            + " screens[" + screens + "]"
+                            + " this[" + this + "]"
+            );
 
             if (screens == null) break; // while (true)
 
@@ -193,6 +209,11 @@ public class ConfiguratorFragment
             configItemsB.clear();
             configItemsC.clear();
             configItemsD.clear();
+
+            if (LOGGING) Log.v(TAG, "ConfiguratorFragment:AppConfigurator.onGetConfiguratorResult():"
+                            + " items[" + items + "]"
+                            + " this[" + this + "]"
+            );
 
             if (items == null) break; // while (true)
 
