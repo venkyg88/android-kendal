@@ -8,25 +8,23 @@
         android:id="@+id/image"
         android:layout_width="@dimen/image_square_size"
         android:layout_height="@dimen/image_square_size"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
         android:layout_marginRight="6dp"/>
     <TextView
         android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/image"
-        android:lines="2"
-        android:ellipsize="end"
-        android:textSize="16sp"/>
-    <com.staples.mobile.cfa.widget.RatingStars
-        android:id="@+id/rating"
-        style="@style/SmallRatingStars"
-        android:layout_alignLeft="@+id/title"
-        android:layout_below="@+id/title"/>
+        style="@style/SmallProductTitle"
+        android:layout_toRightOf="@+id/image"/>
     <com.staples.mobile.cfa.widget.PriceSticker
         android:id="@+id/pricing"
         style="@style/SmallPriceSticker"
-        android:layout_alignLeft="@+id/rating"
-        android:layout_below="@+id/rating"/>
+        android:layout_alignLeft="@+id/title"
+        android:layout_below="@+id/title"/>
+    <com.staples.mobile.cfa.widget.RatingStars
+        android:id="@+id/rating"
+        style="@style/SmallRatingStars"
+        android:layout_alignLeft="@+id/pricing"
+        android:layout_below="@+id/pricing"/>
     <ImageView
         android:id="@+id/action"
         android:layout_width="wrap_content"
