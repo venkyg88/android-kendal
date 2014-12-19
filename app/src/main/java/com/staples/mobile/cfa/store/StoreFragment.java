@@ -119,7 +119,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         }
 
         // Find nearby stores
-        Access.getInstance().getChannelApi().storeLocations(postalCode, this);
+        Access.getInstance().getChannelApi(false).storeLocations(postalCode, this);
         return (view);
     }
 
@@ -435,7 +435,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         if (actionId== EditorInfo.IME_ACTION_SEARCH) {
             String address = search.getText().toString().trim();
             location = null;
-            Access.getInstance().getChannelApi().storeLocations(address, this);
+            Access.getInstance().getChannelApi(false).storeLocations(address, this);
         }
         return(false);
     }
