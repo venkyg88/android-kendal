@@ -9,20 +9,16 @@ import java.util.regex.Pattern;
  */
 
 public enum CardType {
-
-    UNKNOWN,
-    VISA("^4[0-9]{12}(?:[0-9]{3})?$", "VISA", R.drawable.visa),
-    MASTERCARD("^5[1-5][0-9]{14}$", "MASTERCARD", R.drawable.mastercard),
-    AMERICAN_EXPRESS("^3[47][0-9]{13}$", "AMEX", R.drawable.american_express),
-    DISCOVER("^6(?:011|5[0-9]{2})[0-9]{12}$", "DISCOVER", R.drawable.discover);
+    UNKNOWN         (null,                            null,         0),
+    AMERICAN_EXPRESS("^3[47][0-9]{13}$",              "AMEX",       R.drawable.american_express),
+    VISA            ("^4[0-9]{12}(?:[0-9]{3})?$",     "VISA",       R.drawable.visa),
+    MASTERCARD      ("^5[1-5][0-9]{14}$",             "MASTERCARD", R.drawable.mastercard),
+    DISCOVER        ("^6(?:011|5[0-9]{2})[0-9]{12}$", "DISCOVER",   R.drawable.discover),
+    STAPLES         ("^7972[0-9]{12}$",               "STAPLES",    R.drawable.ic_launcher);
 
     private Pattern pattern;
     private String cardTypeName;
     private int imageResource;
-
-    CardType() {
-        this.pattern = null;
-    }
 
     CardType(String pattern, String cardTypeName, int imageResource) {
         this.pattern = Pattern.compile(pattern);
