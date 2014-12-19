@@ -25,7 +25,6 @@
     <string name="edit_credit_card_title">Update Credit Card</string>
     <string name="email_title">Email</string>
     <string name="username_title">User name</string>
-
     <string name="cart_title">Cart</string>
     <string name="checkout_title">Checkout</string>
     <string name="guest_checkout_title">Guest Checkout</string>
@@ -36,7 +35,6 @@
     <string name="search_title">Search</string>
     <string name="search_hint">Search</string>
     <string name="empty">Nothing found</string>
-
     <string name="add">ADD</string>
     <string name="cartitem_qty_label">Qty</string>
     <string name="add_to_cart">Add to cart</string>
@@ -55,17 +53,16 @@
     <string name="billing_address_required">Billing address is required</string>
     <string name="billing_addr">Billing Address</string>
     <string name="use_as_billing_addr">Use as billing address</string>
-
     <string name="item_subtotal">Item total</string>
     <string name="coupons_rewards">Coupon &amp; Reward</string>
     <string name="coupon_code_hint">Add Coupon Code here</string>
     <string name="redeemable_rewards">Redeemable Rewards</string>
     <string name="no_redeemable_rewards">No Redeemable Rewards</string>
-    <!--NOTE: we may or may not implement the link-rewards-acct feature which uses these strings-->
-    <!--<string name="link_rewards_account">Link Your Rewards Account</string>-->
-    <!--<string name="link_account">Link Account</string>-->
-    <!--<string name="rewards_card_number">Rewards Card Number</string>-->
-    <!--<string name="rewards_phone_number">Your Rewards Account Phone Number</string>-->
+    <!-- NOTE: we may or may not implement the link-rewards-acct feature which uses these strings -->
+    <!-- <string name="link_rewards_account">Link Your Rewards Account</string> -->
+    <!-- <string name="link_account">Link Account</string> -->
+    <!-- <string name="rewards_card_number">Rewards Card Number</string> -->
+    <!-- <string name="rewards_phone_number">Your Rewards Account Phone Number</string> -->
     <string name="rewards_list_tabtitle">REWARDS</string>
     <string name="rewards_ink_tabtitle">INK RECYCLING</string>
     <string name="rewards_summary_tabtitle">SUMMARY</string>
@@ -73,10 +70,12 @@
     <string name="rewards_removefromcart_confirmation">Your reward removed from the cart</string>
     <string name="rewards_ytd_savings">Year-to-Date Savings</string>
     <string name="rewards_ytd_spend">Year-to-Date Spend</string>
+
     <plurals name="rewards_ink_recycled">
         <item quantity="one">Ink cartridge recycled</item>
         <item quantity="other">Ink cartridges recycled</item>
     </plurals>
+
     <string name="rewards_ink_limit">Limit of %d per month</string>
     <string name="rewards_earned">Earned</string>
     <string name="tax">Tax</string>
@@ -84,16 +83,17 @@
     <string name="confirmation_title">Order Confirmation</string>
     <string name="order_confirmation_msg">Thank you for your order!</string>
     <string name="continue_shopping">Continue Shopping</string>
+
     <plurals name="business_days">
         <item quantity="one">1 business day</item>
         <item quantity="other">%s business days</item>
     </plurals>
+
     <string name="email">Email</string>
     <string name="reenter_email">Re-enter Email</string>
     <string name="email_mismatch">Email address must match</string>
     <string name="required">Required</string>
     <string name="cid">CID</string>
-
     <string name="description">Description</string>
     <string name="specifications">Specifications</string>
     <string name="specs">Specs</string>
@@ -114,9 +114,7 @@
     <string name="no_stores_title">No Results</string>
     <string name="no_stores_message">We were unable to find any stores near the location provided.</string>
     <string name="no_stores_ok">Ok</string>
-
     <string name="would_you">Would you recommend this to a friend?</string>
-
     <string name="item">Item</string>
     <string name="model">Model</string>
 
@@ -126,6 +124,7 @@
     </plurals>
 
     <string name="original_hint">Search</string>
-    <string name="searching">Searching&#8230;</string>
+    <string name="searching">Searching…</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

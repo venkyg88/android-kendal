@@ -177,7 +177,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         expirationMonth = expMonthET.getText().toString();
         expirationYear = expYearET.getText().toString();
 
-        if(!creditCardNumber.isEmpty() && !cardType.isEmpty()){
+        if(!creditCardNumber.isEmpty() || !cardType.isEmpty() || !expirationMonth.isEmpty() || !expirationYear.isEmpty()){
             final AddCreditCardPOW creditCard = new AddCreditCardPOW(creditCardNumber, cardType);
             List<AddCreditCardPOW> ccList = new ArrayList<AddCreditCardPOW>();
             ccList.add(creditCard);
@@ -252,6 +252,9 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                     Log.i("Fail Response POW", error.getUrl() + error.getMessage());
                 }
             });
+        } else {
+            Toast.makeText(getActivity(), "All Fields are required", Toast.LENGTH_LONG).show();
+            ((MainActivity)activity).hideProgressIndicator();
         }
     }
 

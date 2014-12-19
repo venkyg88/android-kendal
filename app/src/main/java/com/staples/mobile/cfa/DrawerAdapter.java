@@ -12,6 +12,7 @@ import com.staples.mobile.cfa.browse.BrowseFragment;
 import com.staples.mobile.cfa.feed.PersonalFeedFragment;
 import com.staples.mobile.cfa.home.ConfiguratorFragment;
 import com.staples.mobile.cfa.login.LoginFragment;
+import com.staples.mobile.cfa.profile.OrderFragment;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.rewards.RewardsFragment;
 import com.staples.mobile.cfa.store.StoreFragment;
@@ -99,7 +100,7 @@ public class DrawerAdapter extends BaseAdapter {
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.weekly_ad_title, ToBeDoneFragment.class));
         array.add(new DrawerItem(DrawerItem.Type.ACCOUNT, activity, 0, R.string.account_title, LoginFragment.class));
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.rewards_title, RewardsFragment.class, false)); // set initially disabled
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.order_title, ToBeDoneFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.order_title, OrderFragment.class));
         array.add(new DrawerItem(DrawerItem.Type.PROFILE, activity, 0, R.string.profile_title, ProfileFragment.class));
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.about_title, AboutFragment.class));
     }
