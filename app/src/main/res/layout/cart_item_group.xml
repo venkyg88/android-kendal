@@ -32,13 +32,20 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:textSize="12sp"/>
+        <!--horizontal rule-->
+        <View
+            android:id="@+id/horizontal_rule"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/cartitem_shipping_estimate"
+            android:background="@color/background_extra_light_gray" />
 
         <!--list of cart items within group on card -->
         <LinearLayout
             android:id="@+id/cart_item_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/cartitem_shipping_estimate"
+            android:layout_below="@id/horizontal_rule"
             android:orientation="vertical">
 
             <!-- fill cart items dynamically-->

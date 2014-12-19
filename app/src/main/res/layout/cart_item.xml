@@ -2,22 +2,26 @@
 <!--
   ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
   -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:padding="6dp">
+
     <ImageView
         android:id="@+id/cartitem_image"
         android:layout_width="@dimen/image_square_size"
         android:layout_height="@dimen/image_square_size"
-        android:layout_marginRight="8dp"/>
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="12dp"/>
     <RelativeLayout
-        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_width="0dp"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_toRightOf="@id/cartitem_image"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true">
         <TextView
             android:id="@+id/cartitem_title"
             android:layout_width="match_parent"
@@ -58,5 +62,19 @@
             app:maxQuantity="10"
             app:popupWidth="120dp"/>
 
+        <!--horizontal rule-->
+        <View
+            android:id="@+id/cart_item_horizontal_rule"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/cartitem_delete"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="8dp"
+            android:background="@color/background_extra_light_gray"
+            android:visibility="gone"/>
+
     </RelativeLayout>
-</LinearLayout>
+
+</RelativeLayout>
+
+<!--</LinearLayout>-->

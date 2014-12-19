@@ -110,7 +110,7 @@ public class CartAdapter extends ArrayAdapter<CartItemGroup> {
             // set price
             ciVh.priceSticker.setPricing(cartItem.getFinalPrice(), cartItem.getPriceUnitOfMeasure());
 
-            // associate cart position with each widget
+            // associate position with each widget (position of card, and position within group)
             CartItemPosition pos = new CartItemPosition(position, i);
             ciVh.qtyWidget.setTag(pos);
             ciVh.deleteButton.setTag(pos);
@@ -131,6 +131,8 @@ public class CartAdapter extends ArrayAdapter<CartItemGroup> {
 //        ciVh.updateButton.setVisibility(cartItem.isProposedQtyDifferent()? View.VISIBLE : View.GONE);
             ciVh.qtyWidget.setError(cartItem.isProposedQtyDifferent() ? "Update failed" : null);
 
+            // set visibility of horizontal rule
+            ciVh.horizontalRule.setVisibility((i < groupSize-1)? View.VISIBLE : View.GONE);
         }
 
         return(view);
@@ -173,6 +175,8 @@ public class CartAdapter extends ArrayAdapter<CartItemGroup> {
         QuantityEditor qtyWidget;
         Button deleteButton;
 //        Button updateButton;
+        View horizontalRule;
+
 
         CartItemViewHolder(View convertView) {
             imageView = (ImageView) convertView.findViewById(R.id.cartitem_image);
@@ -181,6 +185,7 @@ public class CartAdapter extends ArrayAdapter<CartItemGroup> {
             qtyWidget = (QuantityEditor) convertView.findViewById(R.id.cartitem_qty);
             deleteButton = (Button) convertView.findViewById(R.id.cartitem_delete);
 //            updateButton = (Button) convertView.findViewById(R.id.cartitem_update);
+            horizontalRule = convertView.findViewById(R.id.cart_item_horizontal_rule);
         }
     }
 }
