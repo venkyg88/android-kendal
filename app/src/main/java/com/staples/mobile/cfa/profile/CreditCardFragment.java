@@ -130,19 +130,20 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
             if(creditCard != null) {
                 cardNumberET.setText("Card ending in: " + creditCard.getCardNumber());
                 cardType = creditCard.getCardType().toUpperCase();
+                cardImage.setImageResource(CardType.matchOnApiName(cardType).getImageResource());
 
-                if( cardType.equals("VI") || cardType.equals("VISA")) {
-                    cardImage.setImageResource(R.drawable.visa);
-                }
-                if(cardType.equals("AM")  || cardType.equals("AMEX")) {
-                    cardImage.setImageResource(R.drawable.american_express);
-                }
-                if(cardType.equals("MC") || cardType.equals("MASTERCARD")) {
-                    cardImage.setImageResource(R.drawable.mastercard);
-                }
-                if(cardType.equals("DI") || cardType.equals("DISC") || cardType.equals("DISCOVER")) {
-                    cardImage.setImageResource(R.drawable.discover);
-                }
+//                if( cardType.equals("VI") || cardType.equals("VISA")) {
+//                    cardImage.setImageResource(R.drawable.visa);
+//                }
+//                if(cardType.equals("AM")  || cardType.equals("AMEX")) {
+//                    cardImage.setImageResource(R.drawable.american_express);
+//                }
+//                if(cardType.equals("MC") || cardType.equals("MASTERCARD")) {
+//                    cardImage.setImageResource(R.drawable.mastercard);
+//                }
+//                if(cardType.equals("DI") || cardType.equals("DISC") || cardType.equals("DISCOVER")) {
+//                    cardImage.setImageResource(R.drawable.discover);
+//                }
 
                 expMonthET.setText(creditCard.getExpirationMonth());
                 expYearET.setText(creditCard.getExpirationYear());
