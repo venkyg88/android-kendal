@@ -82,6 +82,33 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="SmallProductTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:lines">2</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#ff333333</item>
+    </style>
+
+    <style name="LargePriceSticker">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="majorTextSize">32sp</item>
+        <item name="majorTextColor">@color/staples_light</item>
+        <item name="minorTextSize">24sp</item>
+        <item name="minorTextColor">#ff8a8a8a</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="SmallPriceSticker">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="majorTextSize">14sp</item>
+        <item name="majorTextColor">@color/staples_light</item>
+        <item name="minorTextSize">12sp</item>
+        <item name="minorTextColor">#ff8a8a8a</item>
+    </style>
+
     <style name="LargeRatingStars">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -92,19 +119,7 @@
     <style name="SmallRatingStars">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">12sp</item>
-    </style>
-
-    <style name="LargePriceSticker">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">32sp</item>
-        <item name="android:gravity">center</item>
-    </style>
-    <style name="SmallPriceSticker">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">10sp</item>
     </style>
 
     <style name="SkuSummaryHeader">

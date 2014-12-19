@@ -19,8 +19,8 @@ public class PriceSticker extends View {
     private static final String TAG = "StickerPrice";
 
     private static final NumberFormat format = NumberFormat.getCurrencyInstance();
-    private Paint pricePaint;
-    private Paint unitPaint;
+    private Paint majorPaint;
+    private Paint minorPaint;
 
     private int gravity;
     private int baseline;
@@ -41,7 +41,10 @@ public class PriceSticker extends View {
         super(context, attrs, defStyle);
 
         // Preset default attributes
-        int textSize = 10;
+        int majorTextSize = 20;
+        int minorTextSize = 16;
+        int majorTextColor = 0xff000000;
+        int minorTextColor = 0xff000000;
         gravity = Gravity.LEFT;
 
         // Get styled attributes
@@ -50,32 +53,41 @@ public class PriceSticker extends View {
         for(int i=0;i<n;i++) {
             int index = a.getIndex(i);
             switch(index) {
-                case R.styleable.PriceSticker_android_textSize:
-                    textSize = a.getDimensionPixelSize(index, textSize);
+                case R.styleable.PriceSticker_majorTextSize:
+                    majorTextSize = a.getDimensionPixelSize(index, majorTextSize);
                     break;
-                case R.styleable.RatingStars_android_gravity:
+                case R.styleable.PriceSticker_minorTextSize:
+                    minorTextSize = a.getDimensionPixelSize(index, minorTextSize);
+                    break;
+                case R.styleable.PriceSticker_majorTextColor:
+                    majorTextColor = a.getColor(index, majorTextColor);
+                    break;
+                case R.styleable.PriceSticker_minorTextColor:
+                    minorTextColor = a.getColor(index, minorTextColor);
+                    break;
+                case R.styleable.PriceSticker_android_gravity:
                     gravity = a.getInt(index, gravity)&Gravity.HORIZONTAL_GRAVITY_MASK;
                     break;
             }
         }
         a.recycle();
 
-        // Initialize paint
-        pricePaint = new Paint();
-        pricePaint.setAntiAlias(true);
-        pricePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-        pricePaint.setTextSize(textSize);
-        pricePaint.setColor(0xff000000);
+        // Initialize paints
+        majorPaint = new Paint();
+        majorPaint.setAntiAlias(true);
+        majorPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        majorPaint.setTextSize(majorTextSize);
+        majorPaint.setColor(majorTextColor);
 
-        unitPaint = new Paint();
-        unitPaint.setAntiAlias(true);
-        unitPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-        unitPaint.setTextSize(0.65f*textSize);
-        unitPaint.setColor(0xff666666);
+        minorPaint = new Paint();
+        minorPaint.setAntiAlias(true);
+        minorPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        minorPaint.setTextSize(minorTextSize);
+        minorPaint.setColor(minorTextColor);
 
         // Get metrics
-        baseline = (int) -pricePaint.ascent();
-        height = baseline + (int) pricePaint.descent();
+        baseline = (int) -majorPaint.ascent();
+        height = baseline + (int) majorPaint.descent();
     }
 
     public void setPricing(float price, String unit) { // TODO old code
@@ -113,12 +125,12 @@ public class PriceSticker extends View {
         float slack = getWidth()-getPaddingLeft()-getPaddingRight();
 
         String priceText = format.format(price);
-        float priceWidth = pricePaint.measureText(priceText, 0, priceText.length());
+        float priceWidth = majorPaint.measureText(priceText, 0, priceText.length());
         slack -= priceWidth;
 
         if (unit!=null) {
             unitText = " " + unit;
-            slack -= unitPaint.measureText(unitText, 0, unitText.length());
+            slack -= minorPaint.measureText(unitText, 0, unitText.length());
         }
 
         // Apply gravity
@@ -128,10 +140,10 @@ public class PriceSticker extends View {
         float y = getPaddingTop()+baseline;
 
         // Draw texts
-        canvas.drawText(priceText, x, y, pricePaint);
+        canvas.drawText(priceText, x, y, majorPaint);
         if (unit!=null) {
             x += priceWidth;
-            canvas.drawText(unitText, x, y, unitPaint);
+            canvas.drawText(unitText, x, y, minorPaint);
         }
     }
 }
