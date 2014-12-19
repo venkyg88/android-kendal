@@ -14,6 +14,7 @@
     <string name="signin_title">Sign In</string>
     <string name="signout_title">Sign Out</string>
     <string name="rewards_title">Staples Rewards</string>
+    <string name="link_rewards_title">Link Rewards Account</string>
     <string name="order_title">Order</string>
     <string name="profile_title">Profile</string>
     <string name="about_title">About</string>
@@ -34,7 +35,15 @@
     <string name="tobedone_title">(To be done)</string>
     <string name="search_title">Search</string>
     <string name="search_hint">Search</string>
-    <string name="empty">Nothing found</string>
+    <string name="empty">Nothing Found</string>
+
+    <!-- Personal Feed -->
+    <string name="loading">Loading...</string>
+    <string name="feed_clearance_title">Cart Items On Clearance</string>
+    <string name="feed_daily_deal_title">Cart Items On Daily Deal</string>
+    <string name="feed_seen_products_title">Your Recently Viewed Items</string>
+
+>>>>>>> 66e0fd670d284a9f1cbd59c3610530745e2ba2a6
     <string name="add">ADD</string>
     <string name="cartitem_qty_label">Qty</string>
     <string name="add_to_cart">Add to cart</string>
@@ -58,11 +67,10 @@
     <string name="coupon_code_hint">Add Coupon Code here</string>
     <string name="redeemable_rewards">Redeemable Rewards</string>
     <string name="no_redeemable_rewards">No Redeemable Rewards</string>
-    <!-- NOTE: we may or may not implement the link-rewards-acct feature which uses these strings -->
-    <!-- <string name="link_rewards_account">Link Your Rewards Account</string> -->
-    <!-- <string name="link_account">Link Account</string> -->
-    <!-- <string name="rewards_card_number">Rewards Card Number</string> -->
-    <!-- <string name="rewards_phone_number">Your Rewards Account Phone Number</string> -->
+    <string name="link_rewards_account">Link Your Rewards Account</string>
+    <string name="link_account">Link Account</string>
+    <string name="rewards_card_number">Rewards Card Number</string>
+    <string name="rewards_phone_number">Your Rewards Account Phone Number</string>
     <string name="rewards_list_tabtitle">REWARDS</string>
     <string name="rewards_ink_tabtitle">INK RECYCLING</string>
     <string name="rewards_summary_tabtitle">SUMMARY</string>
@@ -80,7 +88,6 @@
     <string name="rewards_earned">Earned</string>
     <string name="tax">Tax</string>
     <string name="submit_order">Submit Order</string>
-    <string name="confirmation_title">Order Confirmation</string>
     <string name="order_confirmation_msg">Thank you for your order!</string>
     <string name="continue_shopping">Continue Shopping</string>
 
@@ -99,7 +106,7 @@
     <string name="specs">Specs</string>
     <string name="reviews">Reviews</string>
     <string name="accessories">Accessories</string>
-    <string name="remove">Remove</string>
+    <string name="remove">REMOVE</string>
 
     <!-- Availability -->
     <string name="avail_nothing">Nothing found</string>

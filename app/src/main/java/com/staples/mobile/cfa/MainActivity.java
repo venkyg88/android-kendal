@@ -32,6 +32,7 @@ import com.staples.mobile.cfa.profile.CreditCardListFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.rewards.RewardsFragment;
+import com.staples.mobile.cfa.rewards.RewardsLinkingFragment;
 import com.staples.mobile.cfa.search.SearchBarView;
 import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
@@ -41,7 +42,7 @@ import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
 
 public class MainActivity extends Activity
-                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
+        implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int SURRENDER_TIMEOUT = 5000;
@@ -377,7 +378,15 @@ public class MainActivity extends Activity
         cartFragment.refreshCart(this, null);
         // open order confirmation fragment
         Fragment fragment = ConfirmationFragment.newInstance(orderId, orderNumber);
-        return selectFragment(fragment, Transition.SLIDE, true);
+        return selectFragment(fragment, Transition.NONE, true);
+    }
+
+    public boolean selectRewardsFragment() {
+        return selectFragment(new RewardsFragment(), Transition.SLIDE, true);
+    }
+
+    public boolean selectRewardsLinkingFragment() {
+        return selectFragment(new RewardsLinkingFragment(), Transition.SLIDE, true);
     }
 
     public boolean selectBundle(String title, String identifier) {
@@ -518,8 +527,18 @@ public class MainActivity extends Activity
         if (item.enabled) {
             switch (item.type) {
                 case FRAGMENT:
+                    // special case of RewardsFragment but not registered user not a rewards member
+                    if (item.fragmentClass == RewardsFragment.class) {
+                        if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin() && !ProfileDetails.isRewardsMember()) {
+                            selectRewardsLinkingFragment();
+                        } else {
+                            selectRewardsFragment();
+                        }
+                    } else {
+                        selectDrawerItem(item, Transition.SLIDE, true);
+                    }
+                    break;
                 case ACCOUNT:
-                    drawerLayout.closeDrawers();
                     selectDrawerItem(item, Transition.SLIDE, true);
                     break;
                 case PROFILE:

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
+  -->
+
+<com.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background_white">
+
+    <include layout="@layout/rewards_linking" android:id="@+id/link_rewards_acct_layout"/>
+
+</com.staples.mobile.cfa.widget.AnimatorLayout>

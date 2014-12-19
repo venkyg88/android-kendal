@@ -2,19 +2,19 @@ package com.staples.mobile.cfa.bundle;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.DataWrapper;
+import com.staples.mobile.cfa.widget.HorizontalDivider;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -27,7 +27,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class BundleFragment extends Fragment implements Callback<Browse>, AdapterView.OnItemClickListener, View.OnClickListener {
+public class BundleFragment extends Fragment implements Callback<Browse>, View.OnClickListener {
     private static final String TAG = "BundleFragment";
 
     private static final String TITLE = "title";
@@ -36,7 +36,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
     private static final int MAXFETCH = 50;
 
     private DataWrapper wrapper;
-    private GridView products;
     private BundleAdapter adapter;
     private String title;
 
@@ -60,10 +59,11 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
         }
 
         wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
-        products = (GridView) view.findViewById(R.id.products);
+        RecyclerView products = (RecyclerView) view.findViewById(R.id.products);
         adapter = new BundleAdapter(getActivity());
         products.setAdapter(adapter);
-        products.setOnItemClickListener(this);
+        products.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+        products.addItemDecoration(new HorizontalDivider(getActivity()));
         adapter.setOnClickListener(this);
 
         wrapper.setState(DataWrapper.State.LOADING);
@@ -122,18 +122,23 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Adapte
     }
 
     @Override
-    public void onItemClick(AdapterView parent, View view, int position, long id) {
-        BundleItem item = (BundleItem) parent.getItemAtPosition(position);
-        if (item==null || item.identifier==null) {
-            return;
-        }
-        ((MainActivity) getActivity()).selectSkuItem(item.identifier);
-    }
-
-    @Override
     public void onClick(View view) {
-        Object tag = view.getTag();
-        if (tag instanceof BundleItem)
-            Log.d(TAG, "Clicked on action for "+((BundleItem) tag).title);
+        Object tag;
+        switch(view.getId()) {
+            case R.id.bundle_item:
+                tag = view.getTag();
+                if (tag instanceof BundleItem) {
+                    String identifier = ((BundleItem) tag).identifier;
+                    ((MainActivity) getActivity()).selectSkuItem(identifier);
+                }
+                break;
+            case R.id.action:
+                tag = view.getTag();
+                if (tag instanceof BundleItem) {
+                    String title = ((BundleItem) tag).title;
+                    Toast.makeText(getActivity(), "Clicked on "+title, Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
     }
 }

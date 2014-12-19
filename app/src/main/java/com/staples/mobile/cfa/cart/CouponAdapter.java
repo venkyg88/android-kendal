@@ -112,6 +112,9 @@ public class CouponAdapter extends BaseAdapter {
                     vh.couponField2Vw = (TextView) convertView.findViewById(R.id.coupon_item_field2);
                     vh.couponAddButton = (Button) convertView.findViewById(R.id.reward_add_button);
                     break;
+                case CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG:
+                    convertView = inflater.inflate(R.layout.coupon_item_no_rewards_msg, parent, false);
+                    break;
             }
             convertView.setTag(vh);
         } else {

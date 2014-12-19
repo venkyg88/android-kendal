@@ -4,6 +4,7 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/coupon_item_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/background_extra_light_gray"
@@ -32,12 +33,14 @@
     <!--add button-->
     <Button
         android:id="@+id/reward_add_button"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="35dp"
         android:layout_alignParentRight="true"
         android:layout_gravity="center_vertical"
+        android:background="@color/background_red_submission"
         android:text="@string/add"
         android:textSize="14dp"
+        android:textColor="@color/text_white"
         android:fontFamily="sans-serif"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"

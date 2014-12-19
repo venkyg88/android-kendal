@@ -2,7 +2,7 @@
 <resources>
     <color name="staples_dark">#b30000</color>
     <color name="staples_light">#cc0000</color>
-    <color name="background_red_submission">#ff3636</color>
+    <color name="background_red_submission">#cc0000</color>
     <color name="background_white">#ffffff</color>
     <color name="background_light_gray">#c6c6c6</color>
     <color name="background_extra_light_gray">#e6e6e6</color>
@@ -17,5 +17,5 @@
 	<color name="text_light_gray">#BEC0BB</color>
 	<color name="text_orange_light">#FFA080</color>
     <color name="text_gray">#808080</color>
-
+    <color name="horizontal_divider">#fff5f5f5</color>
 </resources>

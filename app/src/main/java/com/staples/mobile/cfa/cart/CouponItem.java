@@ -18,7 +18,8 @@ public class CouponItem {
     public static final int TYPE_APPLIED_COUPON = 1;
     public static final int TYPE_REDEEMABLE_REWARD_HEADING = 2;
     public static final int TYPE_REDEEMABLE_REWARD = 3;
-    public static final int TYPE_MAX_COUNT = TYPE_REDEEMABLE_REWARD + 1;
+    public static final int TYPE_NO_REDEEMABLE_REWARDS_MSG = 4;
+    public static final int TYPE_MAX_COUNT = TYPE_NO_REDEEMABLE_REWARDS_MSG + 1;
 
     private Coupon coupon;
     private Reward reward;

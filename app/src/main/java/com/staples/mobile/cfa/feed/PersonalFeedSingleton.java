@@ -12,10 +12,10 @@ import java.util.HashSet;
 
 public class PersonalFeedSingleton {
     private static final String TAG = "PersonalFeedSingleton";
-    private static final int SEEN_PRODUCTS_AMOUNT = 3;
+    public static final int SEEN_PRODUCTS_AMOUNT = 3;
 
     private static PersonalFeedSingleton personalFeedSingleton = null;
-    private PersistentSizedArrayList<SeenProductsRowItem> savedSeenProducts = null;
+    private PersistentSizedArrayList<String> savedSeenProducts = null;
     private HashSet<String> savedSkus = null;
 
     private PersonalFeedSingleton(Activity activity){
@@ -30,45 +30,29 @@ public class PersonalFeedSingleton {
         return personalFeedSingleton;
     }
 
-    public PersistentSizedArrayList<SeenProductsRowItem> getSavedSeenProducts(){
+    public PersistentSizedArrayList<String> getSavedSeenProducts(){
         return savedSeenProducts;
     }
 
     // get seen products from the phone
-    public PersistentSizedArrayList<SeenProductsRowItem> getSavedSeenProducts(Activity activity) {
+    public PersistentSizedArrayList<String> getSavedSeenProducts(Activity activity) {
         SharedPreferences sp =
                 activity.getSharedPreferences(PersistentSizedArrayList.SAVED_SEEN_PRODUCTS, activity.MODE_PRIVATE);
+
         String savedProductsString = sp.getString(PersistentSizedArrayList.SEEN_PRODUCT_LIST, "");
 
         // initialize SeenProductsRowItem list
-        PersistentSizedArrayList<SeenProductsRowItem> savedProductsList
-                = new PersistentSizedArrayList<SeenProductsRowItem>(SEEN_PRODUCTS_AMOUNT);;
+        PersistentSizedArrayList<String> savedProductsList
+                = new PersistentSizedArrayList<String>(SEEN_PRODUCTS_AMOUNT);;
 
         if (!savedProductsString.equals("")) {
-            SeenProductsRowItem savedSeenProduct;
-            String[] savedProductsArray = savedProductsString.split(PersistentSizedArrayList.OBJECT_SEPARATOR);
+            String[] savedProductsArray = savedProductsString.split(PersistentSizedArrayList.FIELD_SEPARATOR);
 
             for (int i = 0; i < savedProductsArray.length; i++) {
-                String savedProductString = savedProductsArray[i];
-                String[] productFields = savedProductString.split(PersistentSizedArrayList.FIELD_SEPARATOR);
+                String sku = savedProductsArray[i];
+                savedProductsList.add(sku);
 
-                // safe check for empty fields
-                if(productFields.length > 1) {
-                    String sku = productFields[0];
-                    String productName = productFields[1];
-                    String currentPrice = productFields[2];
-                    String reviewCount = productFields[3];
-                    String rating = productFields[4];
-                    String unitOfMeasure = productFields[5];
-                    String imageUrl = productFields[6];
-
-                    savedSeenProduct = new SeenProductsRowItem(sku, productName, currentPrice, reviewCount,
-                            rating, unitOfMeasure, imageUrl);
-
-                    savedProductsList.add(savedSeenProduct);
-
-                    // Log.d(TAG, i + 1 + "th Saved Seen Product -> " + savedProductString);
-                }
+                Log.d(TAG, i + 1 + "th Saved Seen Product -> " + sku);
             }
         }
         else{
@@ -112,7 +96,7 @@ public class PersonalFeedSingleton {
         return savedProductSkuSet;
     }
 
-    public void setSavedSeenProducts(PersistentSizedArrayList<SeenProductsRowItem> updatedSeenProducts){
+    public void setSavedSeenProducts(PersistentSizedArrayList<String> updatedSeenProducts){
         savedSeenProducts = updatedSeenProducts;
     }
 

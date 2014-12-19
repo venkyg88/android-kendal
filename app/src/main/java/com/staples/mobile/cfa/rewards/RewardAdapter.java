@@ -71,6 +71,7 @@ public class RewardAdapter extends ArrayAdapter<Reward> {
         // Get a new or recycled view of the right type
         if (convertView == null) {
             convertView = inflater.inflate(rewardItemLayoutResId, parent, false);
+            convertView.findViewById(R.id.coupon_item_layout).setBackgroundColor(0xffffff); // is default gray for cart, so set to white for rewards
             vh = new ViewHolder();
             convertView.setTag(vh);
         } else {
