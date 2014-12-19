@@ -8,12 +8,14 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.profile.CardType;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -48,6 +50,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
 
     private TextView shippingAddrVw;
     private TextView paymentMethodVw;
+    private ImageView paymentMethodImage;
     private TextView billingAddrVw;
 
 //    ProfileSelections profileSelections;
@@ -83,6 +86,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         // init views
         shippingAddrVw = (TextView) view.findViewById(R.id.checkout_shipping_addr);
         paymentMethodVw = (TextView) view.findViewById(R.id.checkout_payment_method);
+        paymentMethodImage = (ImageView) view.findViewById(R.id.card_image);
         billingAddrVw = (TextView) view.findViewById(R.id.checkout_billing_addr);
 
         // Set click listeners
@@ -130,6 +134,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         }
         if (paymentMethod != null) {
             paymentMethodVw.setText(formatPaymentMethod(paymentMethod));
+            paymentMethodImage.setImageResource(CardType.matchOnApiName(paymentMethod.getCardType()).getImageResource());
         }
         if (billingAddress != null) {
             billingAddrVw.setText(formatAddress(billingAddress));
@@ -286,8 +291,11 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
     private String formatPaymentMethod(CCDetails paymentMethod) {
         StringBuilder b = new StringBuilder();
         if (paymentMethod != null) {
-            b.append(paymentMethod.getCardType()).append(" ending in ")
-                    .append(paymentMethod.getCardNumber().substring(paymentMethod.getCardNumber().length() - 4));
+            String cardNumber = paymentMethod.getCardNumber();
+            if (cardNumber.length() > 4) {
+                cardNumber = cardNumber.substring(cardNumber.length() - 4);
+            }
+            b.append("Card ending in ").append(cardNumber);
         }
         return b.toString();
     }

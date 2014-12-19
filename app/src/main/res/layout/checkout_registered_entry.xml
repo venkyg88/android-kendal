@@ -50,9 +50,19 @@
             <TextView
                 style="@style/GraySubheading"
                 android:text="@string/payment_method"/>
-            <TextView
-                android:id="@+id/checkout_payment_method"
-                style="@style/CheckoutText"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="6dp"
+                    android:id="@+id/card_image"/>
+                <TextView
+                    android:id="@+id/checkout_payment_method"
+                    style="@style/CheckoutText"/>
+            </LinearLayout>
         </LinearLayout>
         <ImageView
             android:id="@+id/payment_methods"
