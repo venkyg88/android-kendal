@@ -30,13 +30,14 @@
         android:visibility="gone"
         />
 
-    <!--cart listview-->
+    <!--cart listview (using cards and no divider)-->
     <ListView
         android:id="@+id/cart_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:choiceMode="singleChoice"
+        android:divider="#ffffffff"
         android:background="@color/background_white"/>
 
     <!--coupon & rewards heading -->
