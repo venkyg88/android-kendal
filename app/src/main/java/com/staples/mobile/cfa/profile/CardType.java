@@ -21,7 +21,7 @@ public enum CardType {
     private int imageResource;
 
     CardType(String pattern, String cardTypeName, int imageResource) {
-        this.pattern = Pattern.compile(pattern);
+        this.pattern = pattern == null? null : Pattern.compile(pattern);
         this.cardTypeName = cardTypeName;
         this.imageResource = imageResource;
     }
@@ -35,19 +35,20 @@ public enum CardType {
         return UNKNOWN;
     }
 
-    public static CardType matchOnApiName(String cardTypeName) {
-        String upperCaseName = cardTypeName.toUpperCase();
-        if( upperCaseName.equals("VI") || upperCaseName.equals("VISA")) {
-            return VISA;
-        } else if(upperCaseName.equals("AM")  || upperCaseName.equals("AMEX")) {
-            return AMERICAN_EXPRESS;
-        } else if(upperCaseName.equals("MC") || upperCaseName.equals("MASTERCARD")) {
-            return MASTERCARD;
-        } else if(upperCaseName.equals("DI") || upperCaseName.equals("DISC") || upperCaseName.equals("DISCOVER")) {
-            return DISCOVER;
-        } else {
-            return UNKNOWN;
+    public static CardType matchOnApiName(String apiCardTypeName) {
+        if (apiCardTypeName != null) {
+            String upperCaseName = apiCardTypeName.toUpperCase();
+            if( upperCaseName.equals("VI") || upperCaseName.equals("VISA")) {
+                return VISA;
+            } else if(upperCaseName.equals("AM")  || upperCaseName.equals("AMEX")) {
+                return AMERICAN_EXPRESS;
+            } else if(upperCaseName.equals("MC") || upperCaseName.equals("MASTERCARD")) {
+                return MASTERCARD;
+            } else if(upperCaseName.equals("DI") || upperCaseName.equals("DISC") || upperCaseName.equals("DISCOVER")) {
+                return DISCOVER;
+            }
         }
+        return UNKNOWN;
     }
 
     public String getCardTypeName() {
