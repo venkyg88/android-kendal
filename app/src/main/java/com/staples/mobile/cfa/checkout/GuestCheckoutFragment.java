@@ -388,7 +388,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 //            if (EasyOpenApi.SECURE_ENDPOINT.equals("https://api.staples.com"))
 if (false) // TODO Hacked because of refactoring of EasyOpenApi
             {
-                EasyOpenApi powApi = Access.getInstance().getPOWApi();
+                EasyOpenApi powApi = Access.getInstance().getPOWApi(true);
                 powApi.addCreditPOWCall(ccList, new PowListener(paymentMethod));
             } else {
                 secureApi.addCreditPOWCallQA(ccList, new PowListener(paymentMethod));

@@ -328,7 +328,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();
             preTaxSubtotal = cart.getPreTaxTotal();
-            AppConfigurator appConfigurator = new AppConfigurator(MainApplication.application);
+            AppConfigurator appConfigurator = AppConfigurator.getInstance();
             Configurator configurator = appConfigurator.getConfigurator();
             if (configurator != null) {
                 freeShippingThreshold = configurator.getAppContext().getPromotions().getFreeShippingThreshold().floatValue();
