@@ -33,13 +33,14 @@
             android:lines="2"
             android:ellipsize="end"
             android:textSize="14sp"
-            android:textColor="@color/text_nearly_black"/>
+            android:textColor="@color/text_nearly_black"
+            android:paddingBottom="0dp"/>
         <com.staples.mobile.cfa.widget.PriceSticker
             android:id="@+id/cartitem_price"
             style="@style/SmallPriceSticker"
             android:layout_below="@id/cartitem_title"
-            android:paddingTop="10dp"
-            android:paddingBottom="11dp"/>
+            android:paddingTop="8dp"
+            android:paddingBottom="6dp"/>
         <ImageView
             android:id="@+id/cartitem_delete"
             android:layout_width="wrap_content"
