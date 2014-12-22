@@ -17,12 +17,9 @@ public class CartItem {
 
     private Product product;
     private int proposedQty;
-//    String expectedDelivery;
-//    int expectedDeliveryItemQty;
     int minExpectedBusinessDays;
     int maxExpectedBusinessDays;
 
-//    QuantityEditor qtyWidget;
     QuantityEditor qtyWidget;
 
     // Constructor
@@ -111,21 +108,6 @@ public class CartItem {
         return null;
     }
 
-//    public String getExpectedDelivery() {
-//        return expectedDelivery;
-//    }
-//
-//    public void setExpectedDelivery(String expectedDelivery) {
-//        this.expectedDelivery = expectedDelivery;
-//    }
-//
-//    public int getExpectedDeliveryItemQty() {
-//        return expectedDeliveryItemQty;
-//    }
-//
-//    public void setExpectedDeliveryItemQty(int expectedDeliveryItemQty) {
-//        this.expectedDeliveryItemQty = expectedDeliveryItemQty;
-//    }
 
     public String getLeadTimeDescription() {
         // CartFragment logic requires this to be non null
