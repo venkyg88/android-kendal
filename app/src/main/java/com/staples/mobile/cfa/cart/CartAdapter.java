@@ -173,7 +173,7 @@ public class CartAdapter extends ArrayAdapter<CartItemGroup> {
         TextView titleTextView;
         PriceSticker priceSticker;
         QuantityEditor qtyWidget;
-        Button deleteButton;
+        View deleteButton;
 //        Button updateButton;
         View horizontalRule;
 
@@ -183,7 +183,7 @@ public class CartAdapter extends ArrayAdapter<CartItemGroup> {
             titleTextView = (TextView) convertView.findViewById(R.id.cartitem_title);
             priceSticker = (PriceSticker) convertView.findViewById(R.id.cartitem_price);
             qtyWidget = (QuantityEditor) convertView.findViewById(R.id.cartitem_qty);
-            deleteButton = (Button) convertView.findViewById(R.id.cartitem_delete);
+            deleteButton = convertView.findViewById(R.id.cartitem_delete);
 //            updateButton = (Button) convertView.findViewById(R.id.cartitem_update);
             horizontalRule = convertView.findViewById(R.id.cart_item_horizontal_rule);
         }

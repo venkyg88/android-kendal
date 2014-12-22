@@ -28,7 +28,7 @@
             android:gravity="center_vertical"
             android:paddingLeft="16dp"
             android:textColor="@color/text_gray"
-            android:textSize="14sp"/>
+            android:textSize="12sp"/>
         <TextView
             android:id="@+id/cartitem_shipping_estimate_itemqty"
             android:layout_width="wrap_content"
@@ -37,7 +37,7 @@
             android:gravity="center_vertical"
             android:paddingRight="16dp"
             android:textColor="@color/text_gray"
-            android:textSize="14sp"/>
+            android:textSize="12sp"/>
         <!--horizontal rule-->
         <View
             android:id="@+id/horizontal_rule"
@@ -55,7 +55,7 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingBottom="8dp"
-            android:paddingTop="8dp"
+            android:paddingTop="0dp"
             android:orientation="vertical">
 
             <!-- fill cart items dynamically-->
