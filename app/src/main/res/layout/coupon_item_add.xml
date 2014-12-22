@@ -7,7 +7,6 @@
     android:id="@+id/coupon_addition_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background_extra_light_gray"
     android:padding="6dp">
     <com.staples.mobile.cfa.widget.EditTextWithImeBackEvent
         android:id="@+id/coupon_code"

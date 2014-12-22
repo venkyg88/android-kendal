@@ -13,16 +13,13 @@ import com.staples.mobile.common.access.easyopen.model.cart.Product;
 import java.util.List;
 
 public class CartItem {
-    private static final String TAG = "CartItem";
+    private static final String TAG = CartItem.class.getSimpleName();
 
     private Product product;
     private int proposedQty;
-    String expectedDelivery;
-    int expectedDeliveryItemQty;
     int minExpectedBusinessDays;
     int maxExpectedBusinessDays;
 
-//    QuantityEditor qtyWidget;
     QuantityEditor qtyWidget;
 
     // Constructor
@@ -111,24 +108,10 @@ public class CartItem {
         return null;
     }
 
-    public String getExpectedDelivery() {
-        return expectedDelivery;
-    }
-
-    public void setExpectedDelivery(String expectedDelivery) {
-        this.expectedDelivery = expectedDelivery;
-    }
-
-    public int getExpectedDeliveryItemQty() {
-        return expectedDeliveryItemQty;
-    }
-
-    public void setExpectedDeliveryItemQty(int expectedDeliveryItemQty) {
-        this.expectedDeliveryItemQty = expectedDeliveryItemQty;
-    }
 
     public String getLeadTimeDescription() {
-        return product.getLeadTimeDescription();
+        // CartFragment logic requires this to be non null
+        return product.getLeadTimeDescription() == null? "" : product.getLeadTimeDescription();
     }
 
     public int getQuantity() {
@@ -154,14 +137,6 @@ public class CartItem {
     public void resetProposedQty() {
         setProposedQty(getQuantity());
     }
-
-//    public QuantityEditor getQtyWidget() {
-//        return qtyWidget;
-//    }
-//
-//    public void setQtyWidget(QuantityEditor qtyWidget) {
-//        this.qtyWidget = qtyWidget;
-//    }
 
     public QuantityEditor getQtyWidget() {
         return qtyWidget;
