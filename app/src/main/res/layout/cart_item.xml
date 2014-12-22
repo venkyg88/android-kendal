@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="6dp">
+    android:padding="0dp">
 
     <ImageView
         android:id="@+id/cartitem_image"
@@ -14,12 +14,15 @@
         android:layout_height="@dimen/image_square_size"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
+        android:layout_marginTop="8dp"
         android:layout_marginRight="12dp"/>
     <RelativeLayout
+        android:id="@+id/cartitem_desc_layout"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_toRightOf="@id/cartitem_image"
+        android:layout_marginTop="8dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true">
         <TextView
@@ -62,18 +65,18 @@
             app:maxQuantity="10"
             app:popupWidth="120dp"/>
 
-        <!--horizontal rule-->
-        <View
-            android:id="@+id/cart_item_horizontal_rule"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/cartitem_delete"
-            android:layout_alignParentBottom="true"
-            android:layout_marginTop="8dp"
-            android:background="@color/background_extra_light_gray"
-            android:visibility="gone"/>
-
     </RelativeLayout>
+
+    <!--horizontal rule-->
+    <View
+        android:id="@+id/cart_item_horizontal_rule"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/cartitem_desc_layout"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="8dp"
+        android:background="@color/hr_extra_light_gray"
+        android:visibility="gone"/>
 
 </RelativeLayout>
 
