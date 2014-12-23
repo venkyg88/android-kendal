@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -75,23 +76,16 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
 
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
 
-        // Top categories
-        if (identifier==null || identifier.isEmpty()) {
-            easyOpenApi.topCategories(null, null, MAXFETCH, this);
-            return;
-        }
-
-        // Alphanumeric identifier?
-        char c = identifier.charAt(0);
-        if (c>='A' && c<='Z') {
-            easyOpenApi.browseCategories(identifier, null, MAXFETCH, this);
-            return;
-        }
-
-        // Numeric identifier
-        else {
-            easyOpenApi.topCategories(identifier, null, MAXFETCH, this);
-            return;
+        switch(IdentifierType.detect(identifier)) {
+            case EMPTY:
+                easyOpenApi.topCategories(null, null, MAXFETCH, this);
+                break;
+            case TOPCATEGORY:
+                easyOpenApi.topCategories(identifier, null, MAXFETCH, this);
+                break;
+            default:
+                easyOpenApi.browseCategories(identifier, null, MAXFETCH, this);
+                break;
         }
     }
 
@@ -178,16 +172,20 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
                 break;
             case ITEM:
                 identifier = item.identifier;
-                if (identifier.startsWith("CL") || identifier.startsWith("BI")) {
-                    MainActivity activity = (MainActivity) getActivity();
-                    if (activity!=null)
-                        activity.selectBundle(item.title, identifier);
-                } else {
-                    adapter.pushStack(item);
-                    fill(item.identifier);
-                    adapterState = adapter.saveState(adapterState);
-                    wrapper.setState(DataWrapper.State.ADDING);
-                    adapter.notifyDataSetChanged();
+                switch(IdentifierType.detect(identifier)) {
+                    case CLASS:
+                    case BUNDLE:
+                        MainActivity activity = (MainActivity) getActivity();
+                        if (activity!=null)
+                            activity.selectBundle(item.title, identifier);
+                        break;
+                    default:
+                        adapter.pushStack(item);
+                        fill(item.identifier);
+                        adapterState = adapter.saveState(adapterState);
+                        wrapper.setState(DataWrapper.State.ADDING);
+                        adapter.notifyDataSetChanged();
+                        break;
                 }
                 break;
         }

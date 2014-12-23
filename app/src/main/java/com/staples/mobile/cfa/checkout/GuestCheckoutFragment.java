@@ -24,6 +24,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.profile.CardType;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
@@ -44,9 +45,6 @@ import retrofit.client.Response;
 
 public class GuestCheckoutFragment extends CheckoutFragment implements CompoundButton.OnCheckedChangeListener {
     private static final String TAG = GuestCheckoutFragment.class.getSimpleName();
-
-
-
 
     private static final int MAXFETCH = 50;
 
@@ -247,13 +245,14 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         if (!validateRequiredField(cardNumberVw, requiredMsg)) { errors = true; }
         if (!validateRequiredField(expirationMonthVw, requiredMsg)) { errors = true; }
         if (!validateRequiredField(expirationYearVw, requiredMsg)) { errors = true; }
-        if (!validateRequiredField(cidVw, requiredMsg)) { errors = true; }
+        CardType ccType = CardType.detect(cardNumberVw.getText().toString());
+        if (ccType!=CardType.STAPLES)
+            if (!validateRequiredField(cidVw, requiredMsg)) { errors = true; }
 
         if (!errors) {
             PaymentMethod paymentMethod = new PaymentMethod();
             paymentMethod.setSaveCardIndicator("Y");
             paymentMethod.setCardNumber(cardNumberVw.getText().toString());
-            CardType ccType = CardType.detect(paymentMethod.getCardNumber());
             paymentMethod.setCardType(ccType.getCardTypeName());
             paymentMethod.setCardExpirationMonth(expirationMonthVw.getText().toString());
             paymentMethod.setCardExpirationYear(expirationYearVw.getText().toString());
@@ -283,6 +282,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         shippingAddrNeedsApplying = true;
         billingAddrNeedsApplying = true;
         applyShippingAddress();
+        applyBillingAddress();
     }
 
     private void applyShippingAddress() {
@@ -299,23 +299,17 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                             String validationAlert = precheckoutResponse.getAddressValidationAlert();
 
                             if (validationAlert != null) {
-                                Toast.makeText(activity, "Address alert: " + validationAlert, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(activity, "Shipping address alert: " + validationAlert, Toast.LENGTH_SHORT).show();
                             } else {
                                 shippingAddrNeedsApplying = false;
                                 new ProfileDetails().refreshProfile(null); // refresh cached profile
                             }
-
-                            if (!shippingAddrNeedsApplying && billingAddrNeedsApplying) {
-                                applyBillingAddress();
-                            } else {
-                                hideProgressIndicator();
-                                startPrecheckoutIfReady();
-                            }
+                            startPrecheckoutIfReady();
                         }
 
                         @Override
                         public void failure(RetrofitError retrofitError) {
-                            String msg = "Address error: " + ApiError.getErrorMessage(retrofitError);
+                            String msg = "Shipping address error: " + ApiError.getErrorMessage(retrofitError);
                             Log.d(TAG, msg);
                             Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
                             hideProgressIndicator();
@@ -338,17 +332,16 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                             String validationAlert = precheckoutResponse.getAddressValidationAlert();
 
                             if (validationAlert != null) {
-                                Toast.makeText(activity, "Address alert: " + validationAlert, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(activity, "Billing address alert: " + validationAlert, Toast.LENGTH_SHORT).show();
                             } else {
                                 billingAddrNeedsApplying = false;
                             }
-
                             startPrecheckoutIfReady();
                         }
 
                         @Override
                         public void failure(RetrofitError retrofitError) {
-                            String msg = "Address error: " + ApiError.getErrorMessage(retrofitError);
+                            String msg = "Billing address error: " + ApiError.getErrorMessage(retrofitError);
                             Log.d(TAG, msg);
                             Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
                             hideProgressIndicator();
@@ -374,28 +367,26 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     private void submitPaymentMethod() {
 
         PaymentMethod paymentMethod = getPaymentMethod();
+        if (paymentMethod==null) {
+            Toast.makeText(activity, R.string.payment_method_required, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // first add selected payment method to cart
-        if (paymentMethod != null) {
-            showProgressIndicator();
-            // encrypt payment method
-            String powCardType = paymentMethod.getCardType().toUpperCase();
-            AddCreditCardPOW creditCard = new AddCreditCardPOW(paymentMethod.getCardNumber(), powCardType);
-            List<AddCreditCardPOW> ccList = new ArrayList<AddCreditCardPOW>();
-            ccList.add(creditCard);
+        showProgressIndicator();
+        // encrypt payment method
+        String powCardType = paymentMethod.getCardType();
+        AddCreditCardPOW creditCard = new AddCreditCardPOW(paymentMethod.getCardNumber(), powCardType);
+        List<AddCreditCardPOW> ccList = new ArrayList<AddCreditCardPOW>();
+        ccList.add(creditCard);
 
-            // todo: find a better way to determine current environment
-//            if (EasyOpenApi.SECURE_ENDPOINT.equals("https://api.staples.com"))
-if (false) // TODO Hacked because of refactoring of EasyOpenApi
-            {
-                EasyOpenApi powApi = Access.getInstance().getPOWApi(true);
-                powApi.addCreditPOWCall(ccList, new PowListener(paymentMethod));
-            } else {
-                secureApi.addCreditPOWCallQA(ccList, new PowListener(paymentMethod));
-            }
-
+        // TODO find a better way to determine current environment
+        if (StaplesAppContext.getInstance().getEasyOpenApiUrl().equals("api.staples.com"))
+        {
+            EasyOpenApi powApi = Access.getInstance().getPOWApi(true);
+            powApi.addCreditPOWCall(ccList, new PowListener(paymentMethod));
         } else {
-            Toast.makeText(activity, R.string.payment_method_required, Toast.LENGTH_SHORT).show();
+            secureApi.addCreditPOWCallQA(ccList, new PowListener(paymentMethod));
         }
     }
 
@@ -409,7 +400,7 @@ if (false) // TODO Hacked because of refactoring of EasyOpenApi
 
         @Override
         public void success(List<POWResponse> powList, Response response) {
-            Log.i("packet", powList.get(0).getPacket());
+            Log.d(TAG, powList.size()+" Packet: "+powList.get(0).getPacket());
             if ("0".equals(powList.get(0).getStatus()) && !TextUtils.isEmpty(powList.get(0).getPacket())) {
                 paymentMethod.setCardNumber(powList.get(0).getPacket());
 
@@ -425,21 +416,25 @@ if (false) // TODO Hacked because of refactoring of EasyOpenApi
 
                             @Override
                             public void failure(RetrofitError retrofitError) {
+                                String msg = "Payment Error #1: " + ApiError.getErrorMessage(retrofitError);
+                                Log.d(TAG, msg);
+                                Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
                                 hideProgressIndicator();
-                                Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
                             }
                         }
                 );
             } else {
+                String msg = "Payment Error #2: Status="+powList.get(0).getStatus();
+                Log.d(TAG, msg);
+                Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
                 hideProgressIndicator();
-                Toast.makeText(activity, "Payment Error", Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
             hideProgressIndicator();
-            Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "Payment Error #3: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
         }
     }
 
