@@ -29,9 +29,6 @@ public class LoginHelper {
         public void onLoginComplete(boolean guestLevel);
     }
 
-//    public static final String CLIENT_ID = "N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS";
-    public static final String CLIENT_ID = "JxP9wlnIfCSeGc9ifRAAGku7F4FSdErd"; // a client_id that works in all env incl prod
-
     private MainActivity activity;
     private EasyOpenApi easyOpenApi;
 

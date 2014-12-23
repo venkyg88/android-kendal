@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">Prod Version of Kendall</string>
+    <string name="app_name">Kendall (Prod)</string>
     <string name="configuration_destination">http://104.130.183.144/</string>
 </resources>
