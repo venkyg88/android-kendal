@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
+  -->
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:layout_margin="8dp"
+    card_view:contentPadding="0dp"
+    card_view:cardCornerRadius="8dp"
+    card_view:cardElevation="4dp">
+
+    <RelativeLayout
+        android:id="@+id/cartitem_shipping_estimate_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="0dp">
+
+        <!--shipping estimate info-->
+        <TextView
+            android:id="@+id/cartitem_shipping_estimate"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_alignParentLeft="true"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
+            android:textColor="@color/text_gray"
+            android:textSize="12sp"/>
+        <TextView
+            android:id="@+id/cartitem_shipping_estimate_itemqty"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            android:paddingRight="16dp"
+            android:textColor="@color/text_gray"
+            android:textSize="12sp"/>
+        <!--horizontal rule-->
+        <View
+            android:id="@+id/horizontal_rule"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/cartitem_shipping_estimate"
+            android:background="@color/hr_extra_light_gray" />
+
+        <!--list of cart items within group on card -->
+        <LinearLayout
+            android:id="@+id/cart_item_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/horizontal_rule"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="8dp"
+            android:paddingTop="0dp"
+            android:orientation="vertical">
+
+            <!-- fill cart items dynamically-->
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

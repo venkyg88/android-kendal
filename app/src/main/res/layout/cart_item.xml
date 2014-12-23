@@ -2,118 +2,82 @@
 <!--
   ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
   -->
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="6dp">
+    android:padding="0dp">
 
-    <!--shipping estimate info-->
-    <FrameLayout
-        android:id="@+id/cartitem_shipping_estimate_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/cartitem_shipping_estimate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:textSize="12sp"/>
-        <TextView
-            android:id="@+id/cartitem_shipping_estimate_itemqty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:textSize="12sp"/>
-    </FrameLayout>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="6dp">
     <ImageView
         android:id="@+id/cartitem_image"
         android:layout_width="@dimen/image_square_size"
         android:layout_height="@dimen/image_square_size"
-        android:layout_marginRight="6dp"/>
-    <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="12dp"/>
+    <RelativeLayout
+        android:id="@+id/cartitem_desc_layout"
         android:layout_height="wrap_content"
+        android:layout_width="0dp"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_toRightOf="@id/cartitem_image"
+        android:layout_marginTop="8dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true">
         <TextView
             android:id="@+id/cartitem_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             android:lines="2"
             android:ellipsize="end"
-            android:textSize="16sp"/>
+            android:textSize="14sp"
+            android:textColor="@color/text_nearly_black"
+            android:paddingBottom="0dp"/>
         <com.staples.mobile.cfa.widget.PriceSticker
             android:id="@+id/cartitem_price"
-            style="@style/SmallPriceSticker"/>
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <Button
-                android:id="@+id/cartitem_delete"
-                android:layout_width="34dp"
-                android:layout_height="32dp"
-                android:layout_gravity="center_vertical|left"
-                android:text="X"
-                android:textSize="14dp"
-                android:fontFamily="sans-serif"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:paddingLeft="0dp"
-                android:paddingRight="0dp"
-                />
-            <!--<TextView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center_vertical"-->
-            <!--android:text="@string/cartitem_qty_label"-->
-            <!--android:textSize="16sp"/>-->
+            style="@style/SmallPriceSticker"
+            android:layout_below="@id/cartitem_title"
+            android:paddingTop="8dp"
+            android:paddingBottom="6dp"/>
+        <ImageView
+            android:id="@+id/cartitem_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cartitem_price"
+            android:layout_alignParentLeft="true"
+            android:layout_gravity="center_vertical"
+            android:padding="1dp"
+            android:src="@drawable/ic_close_black_18dp"
+            />
+        <com.staples.mobile.cfa.widget.QuantityEditor
+            android:id="@+id/cartitem_qty"
+            style="@style/HackEditorStyle"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cartitem_price"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center_vertical"
+            android:textSize="14sp"
+            android:textColor="@color/text_nearly_black"
+            android:maxLength="4"
+            app:maxQuantity="10"
+            app:popupWidth="120dp"/>
 
+    </RelativeLayout>
 
-            <!--<com.staples.mobile.cfa.widget.QuantityEditor-->
-                <!--android:id="@+id/cartitem_qty"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center_vertical|right"-->
-                <!--android:textSize="18sp"-->
-                <!--android:paddingRight="6dp"-->
-                <!--app:maxSpinnerValue="9"-->
-                <!--/>-->
-            <com.staples.mobile.cfa.widget.QuantityEditor
-                android:id="@+id/cartitem_qty"
-                style="@style/HackEditorStyle"
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|right"
-                android:textSize="18sp"
-                android:maxLength="4"
-                app:maxQuantity="10"
-                app:popupWidth="120dp"/>
+    <!--horizontal rule-->
+    <View
+        android:id="@+id/cart_item_horizontal_rule"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/cartitem_desc_layout"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="8dp"
+        android:background="@color/hr_extra_light_gray"
+        android:visibility="gone"/>
 
-            <!--<Button-->
-                <!--android:id="@+id/cartitem_update"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="30dp"-->
-                <!--android:layout_gravity="center_vertical"-->
-                <!--android:text="@string/update_button"-->
-                <!--android:textSize="14dp"-->
-                <!--android:paddingTop="4dp"-->
-                <!--android:paddingBottom="4dp"-->
-                <!--android:paddingLeft="8dp"-->
-                <!--android:paddingRight="8dp"-->
-                <!--android:visibility="gone"-->
-                <!--/>-->
-        </FrameLayout>
-    </LinearLayout>
-</LinearLayout>
+</RelativeLayout>
 
-</LinearLayout>
+<!--</LinearLayout>-->

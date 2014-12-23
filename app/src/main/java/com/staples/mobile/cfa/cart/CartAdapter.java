@@ -18,34 +18,30 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.QuantityEditor;
-//import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.PriceSticker;
 
 
-public class CartAdapter extends ArrayAdapter<CartItem> {
+public class CartAdapter extends ArrayAdapter<CartItemGroup> {
 
     private static final String TAG = CartAdapter.class.getSimpleName();
 
     private Activity activity;
     private LayoutInflater inflater;
-    private int cartItemLayoutResId;
+    private int cartItemGroupLayoutResId;
 
     private Drawable noPhoto;
 
     // widget listeners
     private View.OnClickListener qtyDeleteButtonListener;
-//    private QuantityEditor.OnQtyChangeListener qtyChangeListener;
     private QuantityEditor.OnQtyChangeListener qtyChangeListener;
 
 
-
-    public CartAdapter(Activity activity, int cartItemLayoutResId,
-//                       QuantityEditor.OnQtyChangeListener qtyChangeListener,
+    public CartAdapter(Activity activity, int cartItemGroupLayoutResId,
                        QuantityEditor.OnQtyChangeListener qtyChangeListener,
                        View.OnClickListener qtyDeleteButtonListener) {
-        super(activity, cartItemLayoutResId);
+        super(activity, cartItemGroupLayoutResId);
         this.activity = activity;
-        this.cartItemLayoutResId = cartItemLayoutResId;
+        this.cartItemGroupLayoutResId = cartItemGroupLayoutResId;
         this.qtyChangeListener = qtyChangeListener;
         this.qtyDeleteButtonListener = qtyDeleteButtonListener;
         noPhoto = activity.getResources().getDrawable(R.drawable.no_photo);
@@ -65,62 +61,79 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         // Get a new or recycled view of the right type
         if (view == null) {
-            view = inflater.inflate(cartItemLayoutResId, parent, false);
+            view = inflater.inflate(cartItemGroupLayoutResId, parent, false);
             vh = new ViewHolder(view); // get various widgets and place in view holder
             view.setTag(vh);
         } else {
             vh = (ViewHolder) view.getTag();
         }
 
-        CartItem cartItem = getItem(position);
+        CartItemGroup cartItemGroup = getItem(position);
 
-        // set or hide shipping estimate
-        if (cartItem.getExpectedDelivery() != null) {
-            String shippingEstimateLabel = activity.getResources().getString(R.string.expected_delivery);
-            vh.shipEstimateTextView.setText(shippingEstimateLabel + " " + cartItem.getExpectedDelivery());
-            vh.shipEstimateItemQtyTextView.setText(activity.getResources().getQuantityString(R.plurals.cart_qty,
-                    cartItem.getExpectedDeliveryItemQty(), cartItem.getExpectedDeliveryItemQty()));
-            vh.shipEstimateLayout.setVisibility(View.VISIBLE);
+        // set shipping estimate
+        String shippingEstimateLabel = activity.getResources().getString(R.string.expected_delivery);
+        vh.shipEstimateTextView.setText(shippingEstimateLabel + " " + cartItemGroup.getExpectedDelivery());
+        vh.shipEstimateItemQtyTextView.setText(activity.getResources().getQuantityString(R.plurals.cart_qty,
+                cartItemGroup.getExpectedDeliveryItemQty(), cartItemGroup.getExpectedDeliveryItemQty()));
+
+        // adjust the number of child views in cart item list
+        int listLayoutChildCount = vh.cartItemListLayout.getChildCount();
+        int groupSize = cartItemGroup.getCartItems().size();
+        if (listLayoutChildCount > groupSize) {
+            vh.cartItemListLayout.removeViews(groupSize, listLayoutChildCount - groupSize);
         } else {
-            vh.shipEstimateLayout.setVisibility(View.GONE);
+            for (int i = listLayoutChildCount; i < groupSize; i++) {
+                View v = inflater.inflate(R.layout.cart_item, parent, false);
+                v.setTag(new CartItemViewHolder(v));
+                vh.cartItemListLayout.addView(v);
+            }
         }
 
-        // Set image
-        String imageUrl = cartItem.getImageUrl();
-        if (imageUrl == null) {
-            vh.imageView.setImageDrawable(noPhoto);
-        } else {
-            Picasso.with(activity).load(imageUrl).error(noPhoto).into(vh.imageView);
+        // for each cart item
+        for (int i = 0; i < groupSize; i++) {
+
+            CartItem cartItem = cartItemGroup.getCartItems().get(i);
+            CartItemViewHolder ciVh = (CartItemViewHolder) vh.cartItemListLayout.getChildAt(i).getTag();
+
+            // Set image
+            String imageUrl = cartItem.getImageUrl();
+            if (imageUrl == null) {
+                ciVh.imageView.setImageDrawable(noPhoto);
+            } else {
+                Picasso.with(activity).load(imageUrl).error(noPhoto).into(ciVh.imageView);
+            }
+
+            // Set title
+            ciVh.titleTextView.setText(cartItem.getDescription());
+
+            // TODO: include original price
+            // set price
+            ciVh.priceSticker.setPricing(cartItem.getFinalPrice(), cartItem.getPriceUnitOfMeasure());
+
+            // associate position with each widget (position of card, and position within group)
+            CartItemPosition pos = new CartItemPosition(position, i);
+            ciVh.qtyWidget.setTag(pos);
+            ciVh.deleteButton.setTag(pos);
+//        ciVh.updateButton.setTag(pos);
+
+            // associate qty widget with cart item
+            cartItem.setQtyWidget(ciVh.qtyWidget);
+
+            // set widget listeners
+            ciVh.qtyWidget.setOnQtyChangeListener(qtyChangeListener);
+            ciVh.deleteButton.setOnClickListener(qtyDeleteButtonListener);
+//        ciVh.updateButton.setOnClickListener(qtyUpdateButtonListener);
+
+            // set quantity (AFTER listeners set up above)
+            ciVh.qtyWidget.setQuantity(cartItem.getProposedQty());
+
+            // set visibility of update button
+//        ciVh.updateButton.setVisibility(cartItem.isProposedQtyDifferent()? View.VISIBLE : View.GONE);
+            ciVh.qtyWidget.setError(cartItem.isProposedQtyDifferent() ? "Update failed" : null);
+
+            // set visibility of horizontal rule
+            ciVh.horizontalRule.setVisibility((i < groupSize-1)? View.VISIBLE : View.GONE);
         }
-
-        // Set title
-        vh.titleTextView.setText(cartItem.getDescription());
-
-        // TODO: include original price
-        // set price
-        vh.priceSticker.setPricing(cartItem.getFinalPrice(), cartItem.getPriceUnitOfMeasure());
-
-        // associate cart position with each widget
-        vh.qtyWidget.setTag(position);
-        vh.deleteButton.setTag(position);
-//        vh.updateButton.setTag(position);
-
-        // associate qty widget with cart item
-        cartItem.setQtyWidget(vh.qtyWidget);
-
-        // set widget listeners
-        vh.qtyWidget.setOnQtyChangeListener(qtyChangeListener);
-        vh.deleteButton.setOnClickListener(qtyDeleteButtonListener);
-//        vh.updateButton.setOnClickListener(qtyUpdateButtonListener);
-
-        // set quantity (AFTER listeners set up above)
-//        vh.qtyWidget.setQtyValue(cartItem.getProposedQty());
-        vh.qtyWidget.setQuantity(cartItem.getProposedQty());
-
-        // set visibility of update button
-//        vh.updateButton.setVisibility(cartItem.isProposedQtyDifferent()? View.VISIBLE : View.GONE);
-//        vh.qtyWidget.setErrorIndicator(cartItem.isProposedQtyDifferent() ? "Update failed" : null);
-        vh.qtyWidget.setError(cartItem.isProposedQtyDifferent() ? "Update failed" : null);
 
         return(view);
     }
@@ -131,29 +144,48 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
     /************* view holder ************/
 
+    public static class CartItemPosition {
+        public int groupPosition;
+        public int itemPositionWithinGroup;
+
+        public CartItemPosition(int groupPosition, int itemPositionWithinGroup) {
+            this.groupPosition = groupPosition;
+            this.itemPositionWithinGroup = itemPositionWithinGroup;
+        }
+    }
+
     static class ViewHolder {
         ViewGroup shipEstimateLayout;
         TextView shipEstimateTextView;
         TextView shipEstimateItemQtyTextView;
-        ImageView imageView;
-        TextView titleTextView;
-        PriceSticker priceSticker;
-//        QuantityEditor qtyWidget;
-        QuantityEditor qtyWidget;
-        Button deleteButton;
-//        Button updateButton;
+        ViewGroup cartItemListLayout;
 
         ViewHolder(View convertView) {
             shipEstimateLayout = (ViewGroup) convertView.findViewById(R.id.cartitem_shipping_estimate_layout);
             shipEstimateTextView = (TextView) convertView.findViewById(R.id.cartitem_shipping_estimate);
             shipEstimateItemQtyTextView = (TextView) convertView.findViewById(R.id.cartitem_shipping_estimate_itemqty);
+            cartItemListLayout = (ViewGroup) convertView.findViewById(R.id.cart_item_list);
+        }
+    }
+
+    static class CartItemViewHolder {
+        ImageView imageView;
+        TextView titleTextView;
+        PriceSticker priceSticker;
+        QuantityEditor qtyWidget;
+        View deleteButton;
+//        Button updateButton;
+        View horizontalRule;
+
+
+        CartItemViewHolder(View convertView) {
             imageView = (ImageView) convertView.findViewById(R.id.cartitem_image);
             titleTextView = (TextView) convertView.findViewById(R.id.cartitem_title);
             priceSticker = (PriceSticker) convertView.findViewById(R.id.cartitem_price);
-//            qtyWidget = (QuantityEditor) convertView.findViewById(R.id.cartitem_qty);
             qtyWidget = (QuantityEditor) convertView.findViewById(R.id.cartitem_qty);
-            deleteButton = (Button) convertView.findViewById(R.id.cartitem_delete);
+            deleteButton = convertView.findViewById(R.id.cartitem_delete);
 //            updateButton = (Button) convertView.findViewById(R.id.cartitem_update);
+            horizontalRule = convertView.findViewById(R.id.cart_item_horizontal_rule);
         }
     }
 }

@@ -16,6 +16,18 @@ android {
         applicationId 'com.staples.mobile.cfa'
     }
 
+    productFlavors {
+        dev {
+            applicationId "com.staples.mobile.cfa"
+            versionName "Kendall-dev"
+        }
+
+        prod {
+            applicationId "com.staples.mobile.cfa"
+            versionName "Kendall-prod"
+        }
+    }
+
     packagingOptions {
         exclude 'LICENSE.txt'
         exclude 'META-INF/DEPENDENCIES.txt'

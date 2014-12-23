@@ -13,8 +13,10 @@
     <TextView
         android:id="@+id/free_shipping_msg"
         android:layout_width="match_parent"
-        style="@style/CartHeader"
+        android:layout_height="32dp"
+        android:gravity="center"
         android:textColor="@color/text_white"
+        android:textSize="14sp"
         />
 
     <!--empty cart message-->
@@ -30,33 +32,42 @@
         android:visibility="gone"
         />
 
-    <!--cart listview-->
+    <!--cart listview (using cards and no divider, smoothScrollbar="false" because items vary in height)-->
+    <!--todo: experiment with setting scrollingCache and animationCache to false for performance-->
+    <!--todo: experiment with smoothScrollbar on device-->
     <ListView
         android:id="@+id/cart_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:choiceMode="singleChoice"
+        android:smoothScrollbar="false"
+        android:divider="#ffffffff"
         android:background="@color/background_white"/>
 
     <!--coupon & rewards heading -->
     <RelativeLayout
         android:id="@+id/coupons_rewards_layout"
-        style="@style/DrawerStyle"
+        android:layout_height="48dp"
         android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:background="@color/background_extra_light_gray">
         <TextView
-            style="@style/DrawerStyle"
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_alignParentLeft="true"
             android:text="@string/coupons_rewards"
+            android:textSize="18sp"
             android:textColor="@color/text_blue"
             />
         <TextView
             android:id="@+id/coupons_rewards_value"
-            style="@style/DrawerStyle"
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_alignParentRight="true"
+            android:textSize="18sp"
             android:textColor="@color/text_blue"
             />
     </RelativeLayout>
@@ -66,76 +77,92 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@color/background_extra_light_gray"
+        android:padding="16dp"
+        android:divider="#ffffffff"
+        android:background="@color/background_white"
         android:visibility="gone"/>
 
     <!--link rewards account -->
     <include layout="@layout/rewards_linking"
         android:id="@+id/link_rewards_acct_layout"
+        android:padding="16dp"
         android:visibility="gone"/>
 
 
-    <!--shipping info-->
+    <!--shipping info -->
     <RelativeLayout
         android:id="@+id/cart_shipping_layout"
-        style="@style/DrawerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:background="@color/background_light_gray">
         <TextView
-            style="@style/DrawerStyle"
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_alignParentLeft="true"
             android:text="@string/shipping"
             android:paddingTop="2dp"
             android:paddingBottom="0dp"
-            />
+            android:textSize="18sp"
+            android:textColor="@color/text_black"
+        />
         <TextView
             android:id="@+id/cart_shipping"
-            style="@style/DrawerStyle"
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_alignParentRight="true"
             android:paddingTop="2dp"
             android:paddingBottom="0dp"
+            android:textSize="18sp"
+            android:textColor="@color/text_black"
             />
     </RelativeLayout>
 
-    <!--subtotal-->
+    <!--pre-tax subtotal and checkout button -->
     <RelativeLayout
         android:id="@+id/cart_subtotal_layout"
-        style="@style/DrawerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="8dp"
         android:background="@color/background_light_gray">
         <TextView
-            style="@style/DrawerStyle"
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_alignParentLeft="true"
             android:paddingTop="0dp"
-            android:paddingBottom="2dp"
+            android:paddingBottom="8dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_black"
             android:text="@string/pretax_subtotal" />
         <TextView
+            android:layout_height="wrap_content"
             android:id="@+id/cart_subtotal"
-            style="@style/DrawerStyle"
             android:layout_width="wrap_content"
             android:layout_alignParentRight="true"
             android:paddingTop="0dp"
-            android:paddingBottom="2dp"
+            android:paddingBottom="8dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_black"
             />
+
+        <!--checkout button-->
+        <TextView
+            android:id="@+id/action_checkout"
+            android:layout_height="40dp"
+            android:layout_width="match_parent"
+            android:layout_below="@id/cart_subtotal"
+            android:gravity="center"
+            android:text="@string/proceed_to_checkout"
+            android:textSize="20sp"
+            android:textColor="@color/text_white"
+            android:background="@color/background_red_submission"/>
+
     </RelativeLayout>
-
-    <!--checkout button-->
-    <TextView
-        android:id="@+id/action_checkout"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:text="@string/proceed_to_checkout"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:textSize="24dp"
-        android:textColor="@color/text_white"
-        android:background="@color/background_red_submission"/>
-
 
 </LinearLayout>

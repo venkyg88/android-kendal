@@ -112,10 +112,11 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     // cart object - make these static so they're not lost on device rotation
     private static Cart cart;
     private static List<CartItem> cartListItems;
+    private static List<CartItemGroup> cartItemGroups;
 
 
-    int minExpectedBusinessDays;
-    int maxExpectedBusinessDays;
+//    int minExpectedBusinessDays;
+//    int maxExpectedBusinessDays;
 
 
     // widget listeners
@@ -192,7 +193,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
 
         // Initialize cart listview
-        cartAdapter = new CartAdapter(activity, R.layout.cart_item, qtyChangeListener, qtyDeleteButtonListener);
+        cartAdapter = new CartAdapter(activity, R.layout.cart_item_group, qtyChangeListener, qtyDeleteButtonListener);
         cartAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
@@ -295,31 +296,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         return totalAdjustedAmount;
     }
 
-//    /** extracts list of rewards from profile */
-//    private List<Reward> createProfileRewardList() {
-//        List<Reward> profileRewards = new ArrayList<Reward>();
-//        if (ProfileDetails.getMember() != null) {
-//            if (ProfileDetails.getMember().getInkRecyclingDetails() != null) {
-//                for (InkRecyclingDetail detail : ProfileDetails.getMember().getInkRecyclingDetails()) {
-//                    if (detail.getReward() != null) {
-//                        for (Reward reward : detail.getReward()) {
-//                            profileRewards.add(reward);
-//                        }
-//                    }
-//                }
-//            }
-//            if (ProfileDetails.getMember().getRewardDetails() != null) {
-//                for (RewardDetail detail : ProfileDetails.getMember().getRewardDetails()) {
-//                    if (detail.getReward() != null) {
-//                        for (Reward reward : detail.getReward()) {
-//                            profileRewards.add(reward);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return profileRewards;
-//    }
 
     /** returns reward within list that matches specified code, if any */
     private Reward findMatchingReward(List<Reward> rewards, String code) {
@@ -352,7 +328,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();
             preTaxSubtotal = cart.getPreTaxTotal();
-            AppConfigurator appConfigurator = new AppConfigurator(MainApplication.application);
+            AppConfigurator appConfigurator = AppConfigurator.getInstance();
             Configurator configurator = appConfigurator.getConfigurator();
             if (configurator != null) {
                 freeShippingThreshold = configurator.getAppContext().getPromotions().getFreeShippingThreshold().floatValue();
@@ -613,21 +589,21 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
 
 
-    public int getMinExpectedBusinessDays() {
-        return minExpectedBusinessDays;
-    }
-
-    public int getMaxExpectedBusinessDays() {
-        return maxExpectedBusinessDays;
-    }
-
-    public String getExpectedDeliveryRange() {
-        if (maxExpectedBusinessDays > minExpectedBusinessDays) {
-            return minExpectedBusinessDays + " - " + maxExpectedBusinessDays;
-        } else {
-            return ""+minExpectedBusinessDays;
-        }
-    }
+//    public int getMinExpectedBusinessDays() {
+//        return minExpectedBusinessDays;
+//    }
+//
+//    public int getMaxExpectedBusinessDays() {
+//        return maxExpectedBusinessDays;
+//    }
+//
+//    public String getExpectedDeliveryRange() {
+//        if (maxExpectedBusinessDays > minExpectedBusinessDays) {
+//            return minExpectedBusinessDays + " - " + maxExpectedBusinessDays;
+//        } else {
+//            return ""+minExpectedBusinessDays;
+//        }
+//    }
 
     /** refreshes cart (fills data set with contents of cart) */
     public void refreshCart(MainActivity activity, CartRefreshCallback cartRefreshCallback) {
@@ -719,7 +695,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         if (cartAdapter != null) {
             cartAdapter.clear();
             if (cartListItems != null && cartListItems.size() > 0) {
-                cartAdapter.addAll(cartListItems);
+                cartAdapter.addAll(cartItemGroups);
             }
             cartAdapter.notifyDataSetChanged();
         } else {
@@ -763,7 +739,9 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
             // clear the cart before refilling
             cart = null;
-            ArrayList<CartItem> listItems = new ArrayList<CartItem>();
+            ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
+            ArrayList<CartItemGroup> itemGroups = new ArrayList<CartItemGroup>();
+
 
             // get data from cartContent request
             List<Cart> cartCollection = cartContents.getCart();
@@ -790,15 +768,14 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
                 List<Product> products = cart.getProduct();
                 if (products != null) {
-                    // iterate thru products in reverse order so newest item appears first
-                    for (int i = products.size() - 1;  i >= 0;  i--) {
-                        Product product = products.get(i);
-                        CartItem cartItem = new CartItem(product);
-                        listItems.add(cartItem);
+
+                    // iterate thru products to create list of cart items
+                    for (Product product : products) {
+                        cartItems.add(new CartItem(product));
                     }
 
                     // sort by expected delivery date
-                    Collections.sort(listItems, new Comparator<CartItem>() {
+                    Collections.sort(cartItems, new Comparator<CartItem>() {
                         @Override
                         public int compare(CartItem cartItem1, CartItem cartItem2) {
                             if (cartItem1.getMinExpectedBusinessDays() != cartItem2.getMinExpectedBusinessDays()) {
@@ -811,37 +788,37 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
                     // calculate expected delivery times
                     String leadTimeDescription = null;
-                    CartItem firstInGroupCartItem = null;
-                    minExpectedBusinessDays = -1;
-                    maxExpectedBusinessDays = -1;
-                    for (int i = 0; i < listItems.size(); i++) {
-                        CartItem cartItem = listItems.get(i);
+                    CartItemGroup itemGroup = null;
+//                    minExpectedBusinessDays = -1;
+//                    maxExpectedBusinessDays = -1;
+                    for (int i = 0; i < cartItems.size(); i++) {
+                        CartItem cartItem = cartItems.get(i);
                         // if lead time different from previous item's lead time, set expected delivery info
-                        if (cartItem.getLeadTimeDescription() != null  &&
-                                !cartItem.getLeadTimeDescription().equals(leadTimeDescription)) {
+                        if (!cartItem.getLeadTimeDescription().equals(leadTimeDescription)) {
+                            itemGroup = new CartItemGroup();
+                            itemGroups.add(itemGroup);
+                            itemGroup.setExpectedDelivery(cartItem.getLeadTimeDescription());
+                            itemGroup.setExpectedDeliveryItemQty(cartItem.getQuantity());
                             leadTimeDescription = cartItem.getLeadTimeDescription();
-                            cartItem.setExpectedDelivery(leadTimeDescription);
-                            cartItem.setExpectedDeliveryItemQty(cartItem.getQuantity());
-                            firstInGroupCartItem = cartItem;
                         } else {
-                            // since lead time same as previous, add item quantity to first cart item in group
-                            if (firstInGroupCartItem != null) {
-                                firstInGroupCartItem.setExpectedDeliveryItemQty(
-                                        firstInGroupCartItem.getExpectedDeliveryItemQty() + cartItem.getQuantity());
-                            }
+                            // since lead time same as previous, add item quantity to group
+                            itemGroup.setExpectedDeliveryItemQty(itemGroup.getExpectedDeliveryItemQty() + cartItem.getQuantity());
                         }
-                        if (minExpectedBusinessDays == -1 ||
-                                cartItem.getMinExpectedBusinessDays() < minExpectedBusinessDays) {
-                            minExpectedBusinessDays = cartItem.getMinExpectedBusinessDays();
-                        }
-                        if (maxExpectedBusinessDays == -1 ||
-                                cartItem.getMaxExpectedBusinessDays() > maxExpectedBusinessDays) {
-                            maxExpectedBusinessDays = cartItem.getMaxExpectedBusinessDays();
-                        }
+                        itemGroup.addItem(cartItem);
+
+//                        if (minExpectedBusinessDays == -1 ||
+//                                cartItem.getMinExpectedBusinessDays() < minExpectedBusinessDays) {
+//                            minExpectedBusinessDays = cartItem.getMinExpectedBusinessDays();
+//                        }
+//                        if (maxExpectedBusinessDays == -1 ||
+//                                cartItem.getMaxExpectedBusinessDays() > maxExpectedBusinessDays) {
+//                            maxExpectedBusinessDays = cartItem.getMaxExpectedBusinessDays();
+//                        }
                     }
                 }
             }
-            cartListItems = listItems;
+            cartListItems = cartItems;
+            cartItemGroups = itemGroups;
             setAdapterListItems();
 
             if (cartRefreshCallback != null) {
@@ -922,30 +899,13 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     /************* widget listeners ************/
 
 
-//    /** listener class for qty change */
-//    class QtyChangeListener implements QuantityEditor.OnQtyChangeListener {
-//        @Override
-//        public void onQtyChange(View view, boolean validSpinnerValue) {
-//            CartItem cartItem = cartAdapter.getItem((Integer) view.getTag());
-//
-//            // default proposed qty to orig in case new value not parseable;
-//            cartItem.setProposedQty(cartItem.getQtyWidget().getQtyValue(cartItem.getQuantity()));
-//
-//            // if valid spinner value, then automatically update the cart
-////            if (validSpinnerValue) {
-////                updateItemQty(cartItem);
-////            } else { // otherwise notify data set changed to make update button appear or disappear
-////                notifyDataSetChanged();
-////            }
-//            updateItemQty(cartItem);
-//        }
-//    }
-
     /** listener class for qty change */
     class QtyChangeListener implements QuantityEditor.OnQtyChangeListener {
         @Override
         public void onQtyChange(View view, int value) {
-            CartItem cartItem = cartAdapter.getItem((Integer) view.getTag());
+            CartAdapter.CartItemPosition position = (CartAdapter.CartItemPosition)view.getTag();
+            CartItemGroup cartItemGroup = cartAdapter.getItem(position.groupPosition);
+            CartItem cartItem = cartItemGroup.getCartItems().get(position.itemPositionWithinGroup);
 
             // default proposed qty to orig in case new value not parseable;
             cartItem.setProposedQty(value);
@@ -959,11 +919,11 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public void onClick(View view) {
-            CartItem cartItem = cartAdapter.getItem((Integer) view.getTag());
+            CartAdapter.CartItemPosition position = (CartAdapter.CartItemPosition)view.getTag();
+            CartItemGroup cartItemGroup = cartAdapter.getItem(position.groupPosition);
+            CartItem cartItem = cartItemGroup.getCartItems().get(position.itemPositionWithinGroup);
 
-//            cartItem.getQtyWidget().hideSoftKeyboard();
             hideSoftKeyboard(view);
-
 
             // delete from cart via API
             cartItem.setProposedQty(0);

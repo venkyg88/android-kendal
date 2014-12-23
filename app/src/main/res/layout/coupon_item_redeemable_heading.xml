@@ -3,10 +3,25 @@
   ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
   -->
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/GraySubheading"
-    android:paddingTop="20dp"
-    android:paddingBottom="6dp"
-    android:paddingLeft="6dp"
-    android:text="@string/redeemable_rewards"
-/>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="12dp"
+    >
+
+    <!--horizontal rule-->
+    <View
+        android:id="@+id/rewards_horizontal_rule"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/hr_extra_light_gray"/>
+
+    <TextView
+        style="@style/GraySubheading"
+        android:layout_below="@id/rewards_horizontal_rule"
+        android:paddingTop="8dp"
+        android:paddingBottom="6dp"
+        android:text="@string/redeemable_rewards"
+        />
+
+</RelativeLayout>

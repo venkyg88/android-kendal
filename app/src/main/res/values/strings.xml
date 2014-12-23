@@ -54,7 +54,7 @@
     <string name="shipping">Shipping</string>
     <string name="expected_delivery">Expected Delivery:</string>
     <string name="pretax_subtotal">Pre-tax Subtotal</string>
-    <string name="proceed_to_checkout">Secure Checkout</string>
+    <string name="proceed_to_checkout">SECURE CHECKOUT</string>
     <string name="no_reviews">no reviews</string>
     <string name="shipping_addr">Shipping Address</string>
     <string name="payment_method">Payment Method</string>
@@ -63,7 +63,7 @@
     <string name="billing_addr">Billing Address</string>
     <string name="use_as_billing_addr">Use as billing address</string>
     <string name="item_subtotal">Item total</string>
-    <string name="coupons_rewards">Coupon &amp; Reward</string>
+    <string name="coupons_rewards">Coupons &amp; Rewards</string>
     <string name="coupon_code_hint">Add Coupon Code here</string>
     <string name="redeemable_rewards">Redeemable Rewards</string>
     <string name="no_redeemable_rewards">No Redeemable Rewards</string>
