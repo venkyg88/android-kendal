@@ -165,7 +165,6 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                         Log.i("Success", response.getUrl());
                     }
                     else if(creditCardId != null) {
-                        cardType = Character.toUpperCase(cardType.charAt(0)) + cardType.substring(1).toLowerCase();
                         UpdateCreditCard updatedCard= new UpdateCreditCard(cardType, encryptedPacket, expirationMonth, expirationYear, "notes", creditCardId);
                         easyOpenApi.updateMemberCreditCard(updatedCard, new Callback<Response>() {
                             @Override
@@ -190,7 +189,6 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                         });
                     }
                     else {
-                        cardType = Character.toUpperCase(cardType.charAt(0)) + cardType.substring(1).toLowerCase();
                         AddCreditCard addCC = new AddCreditCard(cardType, encryptedPacket, expirationMonth, expirationYear, "notes");
                         easyOpenApi.addMemberCreditCard(addCC, new Callback<CreditCardId>() {
                             @Override
