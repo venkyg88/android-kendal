@@ -7,8 +7,7 @@
     android:id="@+id/coupon_item_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background_extra_light_gray"
-    android:padding="6dp">
+    android:paddingTop="8dp">
 
     <!--text fields-->
     <LinearLayout
