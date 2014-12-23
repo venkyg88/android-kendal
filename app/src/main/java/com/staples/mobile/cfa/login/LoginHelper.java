@@ -107,8 +107,8 @@ public class LoginHelper {
     private void loadProfileAndOpenProfileFragment() {
         new ProfileDetails().refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
             @Override public void onProfileRefresh(Member member) {
-                activity.hideProgressIndicator();
                 activity.selectProfileFragment();
+                activity.hideProgressIndicator();
             }
         });
     }

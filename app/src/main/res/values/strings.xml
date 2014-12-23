@@ -15,7 +15,7 @@
     <string name="signout_title">Sign Out</string>
     <string name="rewards_title">Staples Rewards</string>
     <string name="link_rewards_title">Link Rewards Account</string>
-    <string name="order_title">Order</string>
+    <string name="order_title">Orders</string>
     <string name="profile_title">Profile</string>
     <string name="about_title">About</string>
     <string name="credit_card_title">Credit Cards</string>
@@ -26,7 +26,6 @@
     <string name="edit_credit_card_title">Update Credit Card</string>
     <string name="email_title">Email</string>
     <string name="username_title">User name</string>
-
     <string name="cart_title">Cart</string>
     <string name="checkout_title">Checkout</string>
     <string name="guest_checkout_title">Guest Checkout</string>
@@ -44,6 +43,7 @@
     <string name="feed_daily_deal_title">Cart Items On Daily Deal</string>
     <string name="feed_seen_products_title">Your Recently Viewed Items</string>
 
+>>>>>>> 66e0fd670d284a9f1cbd59c3610530745e2ba2a6
     <string name="add">ADD</string>
     <string name="cartitem_qty_label">Qty</string>
     <string name="add_to_cart">Add to cart</string>
@@ -62,7 +62,6 @@
     <string name="billing_address_required">Billing address is required</string>
     <string name="billing_addr">Billing Address</string>
     <string name="use_as_billing_addr">Use as billing address</string>
-
     <string name="item_subtotal">Item total</string>
     <string name="coupons_rewards">Coupons &amp; Rewards</string>
     <string name="coupon_code_hint">Add Coupon Code here</string>
@@ -79,26 +78,29 @@
     <string name="rewards_removefromcart_confirmation">Your reward removed from the cart</string>
     <string name="rewards_ytd_savings">Year-to-Date Savings</string>
     <string name="rewards_ytd_spend">Year-to-Date Spend</string>
+
     <plurals name="rewards_ink_recycled">
         <item quantity="one">Ink cartridge recycled</item>
         <item quantity="other">Ink cartridges recycled</item>
     </plurals>
+
     <string name="rewards_ink_limit">Limit of %d per month</string>
     <string name="rewards_earned">Earned</string>
     <string name="tax">Tax</string>
     <string name="submit_order">Submit Order</string>
     <string name="order_confirmation_msg">Thank you for your order!</string>
     <string name="continue_shopping">Continue Shopping</string>
+
     <plurals name="business_days">
         <item quantity="one">1 business day</item>
         <item quantity="other">%s business days</item>
     </plurals>
+
     <string name="email">Email</string>
     <string name="reenter_email">Re-enter Email</string>
     <string name="email_mismatch">Email address must match</string>
     <string name="required">Required</string>
     <string name="cid">CID</string>
-
     <string name="description">Description</string>
     <string name="specifications">Specifications</string>
     <string name="specs">Specs</string>
@@ -119,9 +121,7 @@
     <string name="no_stores_title">No Results</string>
     <string name="no_stores_message">We were unable to find any stores near the location provided.</string>
     <string name="no_stores_ok">Ok</string>
-
     <string name="would_you">Would you recommend this to a friend?</string>
-
     <string name="item">Item</string>
     <string name="model">Model</string>
 
@@ -131,6 +131,7 @@
     </plurals>
 
     <string name="original_hint">Search</string>
-    <string name="searching">Searching&#8230;</string>
+    <string name="searching">Searching…</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

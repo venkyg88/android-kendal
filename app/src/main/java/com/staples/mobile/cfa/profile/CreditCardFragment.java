@@ -143,23 +143,26 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         creditCardNumber = cardNumberET.getText().toString();
         expirationMonth = expMonthET.getText().toString();
         expirationYear = expYearET.getText().toString();
+        cardType = CardType.detect(creditCardNumber).getCardTypeName();
 
         if(!creditCardNumber.isEmpty() && !cardType.isEmpty()){
             final AddCreditCardPOW creditCard = new AddCreditCardPOW(creditCardNumber, cardType.toUpperCase());
             List<AddCreditCardPOW> ccList = new ArrayList<AddCreditCardPOW>();
             ccList.add(creditCard);
-
+            Log.i("Card", creditCardNumber);
+            Log.i("CCN",cardType);
             easyOpenApi.addCreditPOWCallQA(ccList, new Callback<List<POWResponse>>() {
 
                 @Override
                 public void success(List<POWResponse> powList, Response response) {
                     Log.i("packet", powList.get(0).getPacket());
-                    Log.i("status", powList.get(0).getStatus());
+                    Log.i("status",powList.get(0).getStatus());
                     encryptedPacket = powList.get(0).getPacket();
 
                     if(encryptedPacket.isEmpty()) {
                         ((MainActivity)activity).hideProgressIndicator();
                         Toast.makeText(getActivity(), "Credit card encryption failed" , Toast.LENGTH_LONG).show();
+                        Log.i("Success", response.getUrl());
                     }
                     else if(creditCardId != null) {
                         UpdateCreditCard updatedCard= new UpdateCreditCard(cardType, encryptedPacket, expirationMonth, expirationYear, "notes", creditCardId);
@@ -219,6 +222,9 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                     Log.i("Fail Response POW", error.getUrl() + error.getMessage());
                 }
             });
+        } else {
+            Toast.makeText(getActivity(), "All Fields are required", Toast.LENGTH_LONG).show();
+            ((MainActivity)activity).hideProgressIndicator();
         }
     }
 
