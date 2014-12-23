@@ -31,12 +31,12 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class OrderFragment extends Fragment {
-    private static final String TAG = "Order Fragment";
+    private static final String TAG = "OrderFragment";
     MainActivity activity;
     EasyOpenApi easyOpenApi;
     String orderNumber;
     ListView listview;
-    List<OrderStatus> orders;
+    OrderArrayAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -46,8 +46,19 @@ public class OrderFragment extends Fragment {
         View view = inflater.inflate(R.layout.order_fragment, container, false);
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
         listview = (ListView) view.findViewById(R.id.orderListView);
-        orders = new ArrayList<OrderStatus>();
+        adapter = new OrderArrayAdapter(activity);
+        listview.setAdapter(adapter);
+        fill();
+        return (view);
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        activity.showActionBar(R.string.order_title, 0, null);
+    }
+
+    public void fill(){
         easyOpenApi.getMemberOrderDetails(new Callback<OrderDetail>() {
             @Override
             public void success(OrderDetail orderDetail, Response response) {
@@ -56,7 +67,7 @@ public class OrderFragment extends Fragment {
                     easyOpenApi.getMemberOrderStatus(orderNumber,new Callback<OrderStatusDetail>() {
                         @Override
                         public void success(OrderStatusDetail orderStatusDetail, Response response) {
-                            orders.add(orderStatusDetail.getOrderStatus().get(0));
+                            adapter.add(orderStatusDetail.getOrderStatus().get(0));
                         }
 
                         @Override
@@ -74,9 +85,5 @@ public class OrderFragment extends Fragment {
                 Log.i("Fail Response Order History", error.getUrl() + error.getMessage());
             }
         });
-        final OrderArrayAdapter adapter = new OrderArrayAdapter(activity,
-                orders);
-        listview.setAdapter(adapter);
-        return (view);
     }
 }

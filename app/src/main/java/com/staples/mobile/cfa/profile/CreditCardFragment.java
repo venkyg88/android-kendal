@@ -176,25 +176,29 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         creditCardNumber = cardNumberET.getText().toString();
         expirationMonth = expMonthET.getText().toString();
         expirationYear = expYearET.getText().toString();
+        cardType = CardType.detect(creditCardNumber).getCardTypeName();
 
         if(!creditCardNumber.isEmpty() || !cardType.isEmpty() || !expirationMonth.isEmpty() || !expirationYear.isEmpty()){
             final AddCreditCardPOW creditCard = new AddCreditCardPOW(creditCardNumber, cardType);
             List<AddCreditCardPOW> ccList = new ArrayList<AddCreditCardPOW>();
             ccList.add(creditCard);
-
+            Log.i("Card", creditCardNumber);
+            Log.i("CCN",cardType);
             easyOpenApi.addCreditPOWCallQA(ccList, new Callback<List<POWResponse>>() {
 
                 @Override
                 public void success(List<POWResponse> powList, Response response) {
                     Log.i("packet", powList.get(0).getPacket());
-                    Log.i("status", powList.get(0).getStatus());
+                    Log.i("status",powList.get(0).getStatus());
                     encryptedPacket = powList.get(0).getPacket();
 
                     if(encryptedPacket.isEmpty()) {
                         ((MainActivity)activity).hideProgressIndicator();
                         Toast.makeText(getActivity(), "Credit card encryption failed" , Toast.LENGTH_LONG).show();
+                        Log.i("Success", response.getUrl());
                     }
                     else if(creditCardId != null) {
+                        cardType = Character.toUpperCase(cardType.charAt(0)) + cardType.substring(1).toLowerCase();
                         UpdateCreditCard updatedCard= new UpdateCreditCard(cardType, encryptedPacket, expirationMonth, expirationYear, "notes", creditCardId);
                         easyOpenApi.updateMemberCreditCard(updatedCard, new Callback<Response>() {
                             @Override
@@ -219,6 +223,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                         });
                     }
                     else {
+                        cardType = Character.toUpperCase(cardType.charAt(0)) + cardType.substring(1).toLowerCase();
                         AddCreditCard addCC = new AddCreditCard(cardType, encryptedPacket, expirationMonth, expirationYear, "notes");
                         easyOpenApi.addMemberCreditCard(addCC, new Callback<CreditCardId>() {
                             @Override

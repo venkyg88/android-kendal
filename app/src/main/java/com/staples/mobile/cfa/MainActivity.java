@@ -29,6 +29,7 @@ import com.staples.mobile.cfa.profile.AddressFragment;
 import com.staples.mobile.cfa.profile.AddressListFragment;
 import com.staples.mobile.cfa.profile.CreditCardFragment;
 import com.staples.mobile.cfa.profile.CreditCardListFragment;
+import com.staples.mobile.cfa.profile.OrderFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.rewards.RewardsFragment;
@@ -303,7 +304,7 @@ public class MainActivity extends Activity
         int itemCount = leftDrawerAdapter.getCount();
         for (int position = 0; position < itemCount; position++) {
             DrawerItem item = leftDrawerAdapter.getItem(position);
-            if (item.fragmentClass == RewardsFragment.class) {
+            if (item.fragmentClass == RewardsFragment.class || item.fragmentClass == OrderFragment.class) {
                 item.enabled = !guestLevel;
                 leftDrawerAdapter.notifyDataSetChanged();
             }
