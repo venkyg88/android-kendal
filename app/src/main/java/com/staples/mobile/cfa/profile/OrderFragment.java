@@ -59,6 +59,7 @@ public class OrderFragment extends Fragment {
     }
 
     public void fill(){
+        ((MainActivity)activity).showProgressIndicator();
         easyOpenApi.getMemberOrderDetails(new Callback<OrderDetail>() {
             @Override
             public void success(OrderDetail orderDetail, Response response) {
@@ -68,10 +69,12 @@ public class OrderFragment extends Fragment {
                         @Override
                         public void success(OrderStatusDetail orderStatusDetail, Response response) {
                             adapter.add(orderStatusDetail.getOrderStatus().get(0));
+                            ((MainActivity)activity).hideProgressIndicator();
                         }
 
                         @Override
                         public void failure(RetrofitError error) {
+                            ((MainActivity)activity).hideProgressIndicator();
                             Toast.makeText(getActivity(), "Failed to fetch order status", Toast.LENGTH_LONG).show();
                             Log.i("Fail Response Order Status", error.getUrl() + error.getMessage());
                         }
@@ -81,6 +84,7 @@ public class OrderFragment extends Fragment {
 
             @Override
             public void failure(RetrofitError error) {
+                ((MainActivity)activity).hideProgressIndicator();
                 Toast.makeText(getActivity(), "Failed to get orders associated with the account", Toast.LENGTH_LONG).show();
                 Log.i("Fail Response Order History", error.getUrl() + error.getMessage());
             }
