@@ -44,9 +44,9 @@ import retrofit.client.Response;
 /**
  * Created by Avinash Dodda.
  */
-public class CreditCardFragment extends Fragment implements View.OnClickListener{
+public class CreditCardFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener{
 
-    private static final String TAG = "Add Credit Card Fragment";
+    private static final String TAG = "CreditCardFragment";
 
     Button addCCBtn;
     String creditCardNumber;
@@ -74,35 +74,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         expMonthET = (EditText) view.findViewById(R.id.expirationMonth);
         expYearET = (EditText) view.findViewById(R.id.expirationYear);
         cardImage = (ImageView) view.findViewById(R.id.card_image);
-
-        cardNumberET.setOnEditorActionListener(
-                new EditText.OnEditorActionListener() {
-
-                    @Override
-                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                            CardType ccType = CardType.detect(cardNumberET.getText().toString());
-                            if (ccType != CardType.UNKNOWN) {
-                                cardImage.setImageResource(ccType.getImageResource());
-                                cardType = ccType.getCardTypeName();
-                            }
-                            expMonthET.requestFocus();
-                            return true; // consume.
-                        }
-                        return false; // pass on to other listeners.
-                    }
-                });
-
-        cardNumberET.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (MotionEvent.ACTION_UP == event.getAction()) {
-                    cardNumberET.getText().clear();
-                    cardImage.setImageResource(0);
-                }
-                return false; // return is important...
-            }
-        });
+        expMonthET.setOnFocusChangeListener(this);
 
         Bundle args = getArguments();
         if(args != null) {
@@ -121,6 +93,18 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         addCCBtn = (Button) view.findViewById(R.id.addCCBtn);
         addCCBtn.setOnClickListener(this);
 
+        cardNumberET.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (MotionEvent.ACTION_UP == event.getAction()) {
+                    cardNumberET.getText().clear();
+                    cardImage.setImageResource(0);
+                    expMonthET.clearFocus();
+                }
+                return false; // return is important...
+            }
+        });
+
         return (view);
     }
 
@@ -128,6 +112,17 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
     public void onResume() {
         super.onResume();
         ((MainActivity) activity).showActionBar(R.string.add_credit_card_title, 0, null);
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if(expMonthET.requestFocus()) {
+            CardType ccType = CardType.detect(cardNumberET.getText().toString());
+            if (ccType != CardType.UNKNOWN) {
+                cardImage.setImageResource(ccType.getImageResource());
+                cardType = ccType.getCardTypeName();
+            }
+        }
     }
 
     public void hideKeyboard(View view)
