@@ -173,7 +173,7 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="HackEditorStyle">
+    <style name="QtyEditorStyle">
         <item name="android:inputType">number</item>
         <item name="android:imeOptions">actionDone</item>
         <item name="android:singleLine">true</item>
