@@ -191,18 +191,18 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
 
     @Override
     public void onClick(View view) {
+        int position = (int)view.getTag();
+        Reward reward = rewardAdapter.getItem(position);
         switch(view.getId()) {
             case R.id.reward_add_button:
-                int position = (int)view.getTag();
-                Reward reward = rewardAdapter.getItem(position);
                 showProgressIndicator();
-                if (reward.isIsApplied()) {
-                    confirmationMsg = getResources().getString(R.string.rewards_removefromcart_confirmation);
-                    activity.removeCouponFromCart(reward.getCode(), this);
-                } else {
-                    confirmationMsg = getResources().getString(R.string.rewards_addtocart_confirmation);
-                    activity.addCouponToCart(reward.getCode(), this);
-                }
+                confirmationMsg = getResources().getString(R.string.rewards_addtocart_confirmation);
+                activity.addCouponToCart(reward.getCode(), this);
+                break;
+            case R.id.reward_remove_button:
+                showProgressIndicator();
+                confirmationMsg = getResources().getString(R.string.rewards_removefromcart_confirmation);
+                activity.removeCouponFromCart(reward.getCode(), this);
                 break;
         }
     }

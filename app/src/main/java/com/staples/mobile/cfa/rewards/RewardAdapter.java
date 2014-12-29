@@ -7,33 +7,16 @@ package com.staples.mobile.cfa.rewards;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.cart.CartItem;
-import com.staples.mobile.cfa.widget.PriceSticker;
-import com.staples.mobile.cfa.widget.QuantityEditor;
-import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.EmptyResponse;
-import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
-//import com.staples.mobile.cfa.widget.QuantityEditor;
 
 
 public class RewardAdapter extends ArrayAdapter<Reward> {
@@ -45,15 +28,15 @@ public class RewardAdapter extends ArrayAdapter<Reward> {
     private int rewardItemLayoutResId;
 
     // widget listeners
-    private View.OnClickListener rewardAddDeleteButtonListener;
+    private View.OnClickListener rewardButtonListener;
 
 
 
-    public RewardAdapter(Activity activity, View.OnClickListener rewardAddDeleteButtonListener) {
+    public RewardAdapter(Activity activity, View.OnClickListener rewardButtonListener) {
         super(activity, R.layout.coupon_item_redeemable);
         rewardItemLayoutResId = R.layout.coupon_item_redeemable;
         this.activity = (MainActivity)activity;
-        this.rewardAddDeleteButtonListener = rewardAddDeleteButtonListener;
+        this.rewardButtonListener = rewardButtonListener;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -71,7 +54,6 @@ public class RewardAdapter extends ArrayAdapter<Reward> {
         // Get a new or recycled view of the right type
         if (convertView == null) {
             convertView = inflater.inflate(rewardItemLayoutResId, parent, false);
-            convertView.findViewById(R.id.coupon_item_layout).setBackgroundColor(0xffffff); // is default gray for cart, so set to white for rewards
             vh = new ViewHolder();
             convertView.setTag(vh);
         } else {
@@ -82,30 +64,36 @@ public class RewardAdapter extends ArrayAdapter<Reward> {
 
         vh.couponField1Vw = (TextView) convertView.findViewById(R.id.coupon_item_field1);
         vh.couponField2Vw = (TextView) convertView.findViewById(R.id.coupon_item_field2);
-        vh.couponAddDeleteButton = (Button) convertView.findViewById(R.id.reward_add_button);
+        vh.couponAddButton = (Button) convertView.findViewById(R.id.reward_add_button);
+        vh.couponRemoveButton = (Button) convertView.findViewById(R.id.reward_remove_button);
 
         // set reward text
         vh.couponField1Vw.setText(reward.getAmount());
         vh.couponField2Vw.setText("exp " + reward.getExpiryDate());
 
-        // set up applied state
         Resources r = activity.getResources();
+
+        // set up applied state
+        int blackTextColor = r.getColor(R.color.text_black);
+        int grayTextColor = r.getColor(R.color.text_gray);
         if (reward.isIsApplied()) {
-            vh.couponAddDeleteButton.setText(r.getString(R.string.remove));
-            int gray = r.getColor(R.color.text_gray);
-            vh.couponField1Vw.setTextColor(gray);
-            vh.couponField2Vw.setTextColor(gray);
+            vh.couponField1Vw.setTextColor(grayTextColor);
+            vh.couponField2Vw.setTextColor(grayTextColor);
+            vh.couponAddButton.setVisibility(View.GONE);
+            vh.couponRemoveButton.setVisibility(View.VISIBLE);
         } else {
-            vh.couponAddDeleteButton.setText(r.getString(R.string.add));
-            int black = r.getColor(R.color.text_black);
-            vh.couponField1Vw.setTextColor(black);
-            vh.couponField2Vw.setTextColor(black);
+            vh.couponField1Vw.setTextColor(blackTextColor);
+            vh.couponField2Vw.setTextColor(blackTextColor);
+            vh.couponAddButton.setVisibility(View.VISIBLE);
+            vh.couponRemoveButton.setVisibility(View.GONE);
         }
 
-        vh.couponAddDeleteButton.setTag(position);
+        vh.couponAddButton.setTag(position);
+        vh.couponRemoveButton.setTag(position);
 
         // set widget listeners
-        vh.couponAddDeleteButton.setOnClickListener(rewardAddDeleteButtonListener);
+        vh.couponAddButton.setOnClickListener(rewardButtonListener);
+        vh.couponRemoveButton.setOnClickListener(rewardButtonListener);
 
         return(convertView);
     }
@@ -120,6 +108,7 @@ public class RewardAdapter extends ArrayAdapter<Reward> {
     static class ViewHolder {
         private TextView couponField1Vw;
         private TextView couponField2Vw;
-        private Button couponAddDeleteButton;
+        private Button couponAddButton;
+        private Button couponRemoveButton;
     }
 }
