@@ -5,12 +5,11 @@
 package com.staples.mobile.cfa.rewards;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.res.Resources;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -18,54 +17,45 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
 
+import java.util.List;
 
-public class RewardAdapter extends ArrayAdapter<Reward> {
+
+public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.ViewHolder> {
 
     private static final String TAG = RewardAdapter.class.getSimpleName();
 
     private MainActivity activity;
-    private LayoutInflater inflater;
     private int rewardItemLayoutResId;
+
+    List<Reward> rewards;
 
     // widget listeners
     private View.OnClickListener rewardButtonListener;
 
-
-
+    /** constructor */
     public RewardAdapter(Activity activity, View.OnClickListener rewardButtonListener) {
-        super(activity, R.layout.coupon_item_redeemable);
         rewardItemLayoutResId = R.layout.coupon_item_redeemable;
         this.activity = (MainActivity)activity;
         this.rewardButtonListener = rewardButtonListener;
-        inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
-
-
 
 /* Views */
 
-
+    // Create new views (invoked by the layout manager)
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public RewardAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(activity)
+                .inflate(rewardItemLayoutResId, parent, false);
+        return new ViewHolder(v);
+    }
 
-        // use view holder pattern to improve listview performance
-        ViewHolder vh = null;
+    // Replace the contents of a view (invoked by the layout manager)
+    @Override
+    public void onBindViewHolder(ViewHolder vh, int position) {
+        // - get element from your dataset at this position
+        // - replace the contents of the view with that element
 
-        // Get a new or recycled view of the right type
-        if (convertView == null) {
-            convertView = inflater.inflate(rewardItemLayoutResId, parent, false);
-            vh = new ViewHolder();
-            convertView.setTag(vh);
-        } else {
-            vh = (ViewHolder) convertView.getTag();
-        }
-
-        Reward reward = getItem(position);
-
-        vh.couponField1Vw = (TextView) convertView.findViewById(R.id.coupon_item_field1);
-        vh.couponField2Vw = (TextView) convertView.findViewById(R.id.coupon_item_field2);
-        vh.couponAddButton = (Button) convertView.findViewById(R.id.reward_add_button);
-        vh.couponRemoveButton = (Button) convertView.findViewById(R.id.reward_remove_button);
+        Reward reward = rewards.get(position);
 
         // set reward text
         vh.couponField1Vw.setText(reward.getAmount());
@@ -94,8 +84,21 @@ public class RewardAdapter extends ArrayAdapter<Reward> {
         // set widget listeners
         vh.couponAddButton.setOnClickListener(rewardButtonListener);
         vh.couponRemoveButton.setOnClickListener(rewardButtonListener);
+    }
 
-        return(convertView);
+    // Return the size of your dataset (invoked by the layout manager)
+    @Override
+    public int getItemCount() {
+        return rewards.size();
+    }
+
+
+    public List<Reward> getRewards() {
+        return rewards;
+    }
+
+    public void setRewards(List<Reward> rewards) {
+        this.rewards = rewards;
     }
 
 
@@ -105,10 +108,20 @@ public class RewardAdapter extends ArrayAdapter<Reward> {
 
     /************* view holder ************/
 
-    static class ViewHolder {
+//    static class ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView couponField1Vw;
         private TextView couponField2Vw;
         private Button couponAddButton;
         private Button couponRemoveButton;
+
+        /** constructor */
+        public ViewHolder (View itemView) {
+            super(itemView);
+            couponField1Vw = (TextView) itemView.findViewById(R.id.coupon_item_field1);
+            couponField2Vw = (TextView) itemView.findViewById(R.id.coupon_item_field2);
+            couponAddButton = (Button) itemView.findViewById(R.id.reward_add_button);
+            couponRemoveButton = (Button) itemView.findViewById(R.id.reward_remove_button);
+        }
     }
 }
