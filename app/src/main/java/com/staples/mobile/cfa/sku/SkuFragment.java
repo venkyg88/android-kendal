@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.feed.PersistentSizedArrayList;
 import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
 import com.staples.mobile.cfa.feed.SeenProductsRowItem;
@@ -716,8 +717,15 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             case R.id.add_to_cart:
                 QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
                 int qty = edit.getQuantity();
-                MainActivity activity = (MainActivity) getActivity();
-                activity.addItemToCart(identifier, qty);
+                final MainActivity activity = (MainActivity) getActivity();
+                activity.showProgressIndicator();
+                CartApiManager.addItemToCart(identifier, qty, new CartApiManager.CartRefreshCallback() {
+                    @Override
+                    public void onCartRefreshComplete(String errMsg) {
+                        activity.hideProgressIndicator();
+                        activity.updateCartIcon(CartApiManager.getCartTotalItems());
+                    }
+                });
                 break;
         }
     }

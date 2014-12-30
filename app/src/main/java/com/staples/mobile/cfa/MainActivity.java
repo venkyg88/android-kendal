@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.bundle.BundleFragment;
+import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.checkout.ConfirmationFragment;
@@ -241,11 +242,6 @@ public class MainActivity extends Activity
         }
     }
 
-    /** sets action bar cart quantity */
-    public void setActionBarCartQty(String qtyText) {
-        cartQtyView.setText(qtyText);
-    }
-
     public void prepareMainScreen(boolean freshStart) {
         // Inflate
         setContentView(R.layout.main);
@@ -306,8 +302,12 @@ public class MainActivity extends Activity
     @Override
     public void onLoginComplete(boolean guestLevel) {
         // load cart info after successful login (if registered login or if guest login following a signout where cart was non-empty)
-        if (!guestLevel || (guestLevel && cartFragment.getCart() != null && cartFragment.getCart().getTotalItems() > 0)) {
-            cartFragment.refreshCart(MainActivity.this, null);
+        if (!guestLevel || (guestLevel && CartApiManager.getCart() != null && CartApiManager.getCartTotalItems() > 0)) {
+            CartApiManager.loadCart(new CartApiManager.CartRefreshCallback() {
+                @Override public void onCartRefreshComplete(String errMsg) {
+                    updateCartIcon(CartApiManager.getCartTotalItems());
+                }
+            });
         }
         // enable/disable left drawer menu items that depend upon login
         int itemCount = leftDrawerAdapter.getCount();
@@ -373,10 +373,10 @@ public class MainActivity extends Activity
             // if logged in and have at least an address or a payment method, then use registered flow, otherwise use guest flow
             if (!loginHelper.isGuestLogin() && (ProfileDetails.hasAddress() || ProfileDetails.hasPaymentMethod())) {
                 fragment = RegisteredCheckoutFragment.newInstance(couponsRewardsAmount,
-                        cartFragment.getCart().getSubTotal(), cartFragment.getCart().getPreTaxTotal());
+                        CartApiManager.getCart().getSubTotal(), CartApiManager.getCart().getPreTaxTotal());
             } else {
                 fragment = GuestCheckoutFragment.newInstance(couponsRewardsAmount,
-                        cartFragment.getCart().getSubTotal(), cartFragment.getCart().getPreTaxTotal());
+                        CartApiManager.getCart().getSubTotal(), CartApiManager.getCart().getPreTaxTotal());
             }
             return selectFragment(fragment, Transition.NONE, true);
         }
@@ -385,7 +385,7 @@ public class MainActivity extends Activity
 
     public boolean selectOrderConfirmation(String orderId, String orderNumber) {
         // refresh cart since should now be empty
-        cartFragment.refreshCart(this, null);
+        CartApiManager.loadCart(null);
         // open order confirmation fragment
         Fragment fragment = ConfirmationFragment.newInstance(orderId, orderNumber);
         return selectFragment(fragment, Transition.NONE, true);
@@ -468,19 +468,9 @@ public class MainActivity extends Activity
         cartIconAction.setText(totalItemCount == 0 ? null : Integer.toString(totalItemCount));
     }
 
-    /** Adds an item to the cart */
-    public void addItemToCart(String partNumber, int qty) {
-        cartFragment.addToCart(partNumber, qty, this);
-    }
-
-    /** Adds a coupon to the cart */
-    public void addCouponToCart(String couponCode, CartFragment.CartRefreshCallback cartRefreshCallback) {
-        cartFragment.addCoupon(couponCode, cartRefreshCallback);
-    }
-
-    /** removes a coupon from the cart */
-    public void removeCouponFromCart(String couponCode, CartFragment.CartRefreshCallback cartRefreshCallback) {
-        cartFragment.deleteCoupon(couponCode, cartRefreshCallback);
+    /** sets action bar cart quantity (text visible when cart is open) */
+    public void setActionBarCartQty(String qtyText) {
+        cartQtyView.setText(qtyText); // (e.g. "4 items")
     }
 
 
