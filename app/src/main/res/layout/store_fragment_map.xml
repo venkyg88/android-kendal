@@ -2,11 +2,10 @@
 <com.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:animateLayoutChanges="true">
+    android:orientation="vertical">
     <EditText
         android:id="@+id/store_search"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="6dp"
         android:inputType="textPostalAddress"
@@ -15,11 +14,11 @@
         android:hint="@string/store_search_hint"/>
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="100dp"/>
 </com.staples.mobile.cfa.widget.AnimatorLayout>

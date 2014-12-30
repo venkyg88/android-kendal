@@ -27,6 +27,7 @@ import com.staples.mobile.cfa.R;
 public class RatingStars extends View {
     private static final String TAG = "RatingStars";
 
+    private static final int NSTARS = 5;
     private static final double DELTA = Math.PI/5.0; // I love geometry
     private static final double INDENTFACTOR = 2.0/(Math.sqrt(5.0)+3.0); // 0.381966
     private static final double WIDTHFACTOR = Math.sqrt(2.0*Math.sqrt(5)+10.0)/4.0; // 0.951056
@@ -179,25 +180,33 @@ public class RatingStars extends View {
         invalidate();
     }
 
+    private String getText() {
+       if (reviews==null) return(null);
+        if (reviews<=0 && noReviews!=null) return(" (" + noReviews + ")");
+        return("(" + Integer.toString(reviews) + ")");
+    }
+
     @Override
     public void onMeasure(int widthSpec, int heightSpec) {
-        heightSpec = getPaddingTop()+config.starHeight+getPaddingBottom();
-        setMeasuredDimension(widthSpec, heightSpec);
+        int width = NSTARS*config.starWidth+getPaddingLeft()+getPaddingRight();
+        String text = getText();
+        if (text!=null) width += config.textPaint.measureText(text, 0, text.length());
+        int height = getPaddingTop()+config.starHeight+getPaddingBottom();
+        width = resolveSize(width, widthSpec);
+        height = resolveSize(height, heightSpec);
+        setMeasuredDimension(width, height);
     }
 
     @Override
     public void onDraw(Canvas canvas) {
         // Get text
-        String text;
-        if (reviews==null) text = null;
-        else if (reviews<=0 && noReviews!=null) text = " (" + noReviews + ")";
-        else text = " (" + reviews + ")";
+        String text =  getText();
 
         // Use gravity to determine left position
         if (gravity==Gravity.LEFT) {
             dst.left = getPaddingLeft();
         } else {
-            float slack = getWidth()-getPaddingLeft()-getPaddingRight()-5*config.starWidth;
+            float slack = getWidth()-getPaddingLeft()-getPaddingRight()-NSTARS*config.starWidth;
             if (text!=null) slack -= config.textPaint.measureText(text, 0, text.length());
             dst.left = getPaddingLeft();
             if (gravity==Gravity.CENTER_HORIZONTAL) dst.left += slack/2.0f;
@@ -210,7 +219,7 @@ public class RatingStars extends View {
         src.top = 0;
         src.bottom = config.starHeight;
         float f = rating;
-        for(int i=0;i<5;i++) {
+        for(int i=0;i<NSTARS;i++) {
             // Get source rectangle
             if (f>=0.75f) src.left = 0;
             else if (f>=0.25f) src.left = config.starWidth;

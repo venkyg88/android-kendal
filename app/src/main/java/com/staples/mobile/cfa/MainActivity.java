@@ -50,6 +50,7 @@ public class MainActivity extends Activity
     private View leftDrawerAction;
     private ListView leftDrawer;
     private DrawerAdapter leftDrawerAdapter;
+    private ImageView logoView;
     private TextView titleView;
     private SearchBarView searchBar;
     private ImageView optionIcon;
@@ -129,10 +130,16 @@ public class MainActivity extends Activity
         findViewById(R.id.main).setVisibility(View.VISIBLE);
     }
 
+    // Action bar
+
     public void showActionBar(String title, int iconId, View.OnClickListener listener) {
-        if (title==null) titleView.setVisibility(View.GONE);
+        if (title==null) {
+            logoView.setVisibility(View.VISIBLE);
+            titleView.setVisibility(View.GONE);
+        }
         else
         {
+            logoView.setVisibility(View.GONE);
             titleView.setVisibility(View.VISIBLE);
             titleView.setText(title);
         }
@@ -140,29 +147,20 @@ public class MainActivity extends Activity
     }
 
     public void showActionBar(int titleId, int iconId, View.OnClickListener listener) {
-        if (titleId==0) titleView.setVisibility(View.GONE);
+        if (titleId==0) {
+            logoView.setVisibility(View.GONE);
+            titleView.setVisibility(View.GONE);
+        }
+        else if (titleId==R.string.staples) {
+            logoView.setVisibility(View.VISIBLE);
+            titleView.setVisibility(View.GONE);
+        }
         else {
+            logoView.setVisibility(View.GONE);
             titleView.setVisibility(View.VISIBLE);
             titleView.setText(titleId);
         }
         showActionBarInternal(titleId, iconId, listener);
-    }
-
-    public void onGetConfiguratorResult(Configurator configurator, boolean success) {
-
-        if (success) {
-
-            loginHelper = new LoginHelper(this);
-            loginHelper.registerLoginCompleteListener(this);
-            // if already logged in (e.g. when device is rotated), don't login again, but do notify
-            // that login is complete so that cart can be refilled
-            if (loginHelper.isLoggedIn()) {
-                onLoginComplete(loginHelper.isGuestLogin());
-            } else {
-                // otherwise, do login as guest
-                loginHelper.getGuestTokens();
-            }
-        }
     }
 
     private void showActionBarInternal(int titleId, int iconId, View.OnClickListener listener) {
@@ -190,12 +188,6 @@ public class MainActivity extends Activity
             case R.string.checkout_title:
                 // show checkout-specific entities
                 closeButton.setVisibility(View.VISIBLE);
-                closeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        selectShoppingCart();
-                    }
-                });
                 LoginHelper loginHelper = new LoginHelper(this);
                 if (loginHelper.isLoggedIn() && loginHelper.isGuestLogin()) {
                     checkoutSigninButton.setVisibility(View.VISIBLE);
@@ -250,28 +242,30 @@ public class MainActivity extends Activity
         // Inflate
         setContentView(R.layout.main);
 
+        // Find 9 action bar entities
+        View actionBar = findViewById(R.id.action_bar);
+        closeButton = actionBar.findViewById(R.id.close_button);
+        leftDrawerAction = actionBar.findViewById(R.id.action_left_drawer);
+        logoView = (ImageView) actionBar.findViewById(R.id.action_logo);
+        titleView = (TextView) actionBar.findViewById(R.id.title);
+        searchBar = (SearchBarView) actionBar.findViewById(R.id.search_text);
+        optionIcon = (ImageView) actionBar.findViewById(R.id.option_icon);
+        cartQtyView = (TextView) actionBar.findViewById(R.id.cart_item_qty);
+        cartIconAction = (BadgeImageView) actionBar.findViewById(R.id.action_show_cart);
+        checkoutSigninButton = (Button) actionBar.findViewById(R.id.co_signin_button);
+
         // Find top-level entities
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawer = (ListView) findViewById(R.id.left_drawer);
-        titleView = (TextView) findViewById(R.id.title);
-        searchBar = (SearchBarView) findViewById(R.id.search_text);
-        optionIcon = (ImageView) findViewById(R.id.option_icon);
-        cartIconAction = (BadgeImageView)findViewById(R.id.action_show_cart);
-        leftDrawerAction = findViewById(R.id.action_left_drawer);
-        cartQtyView = (TextView)findViewById(R.id.cart_item_qty);
-        checkoutSigninButton = (Button)findViewById(R.id.co_signin_button);
-        closeButton = findViewById(R.id.close_button);
-
         mainLayout = (LinearLayoutWithProgressOverlay)findViewById(R.id.main);
         mainLayout.setCartProgressOverlay(findViewById(R.id.progress_overlay));
-
 
         // Set action bar listeners
         leftDrawerAction.setOnClickListener(this);
         optionIcon.setOnClickListener(this);
         cartIconAction.setOnClickListener(this);
         checkoutSigninButton.setOnClickListener(this);
-
+        closeButton.setOnClickListener(this);
 
         // initialize action bar
         showActionBar(R.string.staples, R.drawable.ic_search_white, searchBar);
@@ -300,6 +294,23 @@ public class MainActivity extends Activity
             new Handler().postDelayed(runs, SURRENDER_TIMEOUT);
         } else {
             showMainScreen();
+        }
+    }
+
+    public void onGetConfiguratorResult(Configurator configurator, boolean success) {
+
+        if (success) {
+
+            loginHelper = new LoginHelper(this);
+            loginHelper.registerLoginCompleteListener(this);
+            // if already logged in (e.g. when device is rotated), don't login again, but do notify
+            // that login is complete so that cart can be refilled
+            if (loginHelper.isLoggedIn()) {
+                onLoginComplete(loginHelper.isGuestLogin());
+            } else {
+                // otherwise, do login as guest
+                loginHelper.getGuestTokens();
+            }
         }
     }
 
@@ -514,6 +525,10 @@ public class MainActivity extends Activity
 
             case R.id.co_signin_button:
                 selectLoginFragment();
+                break;
+
+            case R.id.close_button:
+                selectShoppingCart();
                 break;
 
             case R.id.account_button:
