@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
 import com.staples.mobile.common.access.Access;
@@ -154,7 +155,17 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                     if (item.type==IdentifierType.SKUSET) {
                         ((MainActivity) getActivity()).selectSkuItem(item.identifier);
                     } else {
-                        ((MainActivity) getActivity()).addItemToCart(item.identifier, 1);
+                        final MainActivity activity = (MainActivity) getActivity();
+                        activity.showProgressIndicator();
+                        CartApiManager.addItemToCart(item.identifier, 1, new CartApiManager.CartRefreshCallback() {
+                            @Override
+                            public void onCartRefreshComplete(String errMsg) {
+                                activity.hideProgressIndicator();
+                                activity.updateCartIcon(CartApiManager.getCartTotalItems());
+                            }
+                        });
+//                        ((MainActivity) getActivity()).addItemToCart(item.identifier, 1);
+                        // TODO: use above callback to trun off flasher
                         ((ImageView) view).setImageDrawable(view.getResources().getDrawable(R.drawable.ic_launcher));
                         view.postDelayed(new Flasher((ImageView) view), 2000);
                     }
