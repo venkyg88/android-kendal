@@ -122,7 +122,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
                     ((MainActivity) getActivity()).selectSkuItem(identifier);
                 }
                 break;
-            case R.id.action:
+            case R.id.bundle_action:
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
                     String title = ((BundleItem) tag).title;

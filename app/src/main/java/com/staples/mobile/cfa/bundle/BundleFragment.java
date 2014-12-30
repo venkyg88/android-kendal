@@ -9,8 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -59,11 +61,11 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         }
 
         wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
-        RecyclerView products = (RecyclerView) view.findViewById(R.id.products);
+        RecyclerView list = (RecyclerView) view.findViewById(R.id.products);
         adapter = new BundleAdapter(getActivity());
-        products.setAdapter(adapter);
-        products.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-        products.addItemDecoration(new HorizontalDivider(getActivity()));
+        list.setAdapter(adapter);
+        list.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+        list.addItemDecoration(new HorizontalDivider(getActivity()));
         adapter.setOnClickListener(this);
 
         wrapper.setState(DataWrapper.State.LOADING);
@@ -121,6 +123,19 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         return(count);
     }
 
+    private class Flasher implements Runnable {
+        private ImageView view;
+
+        private Flasher(ImageView view) {
+            this.view = view;
+        }
+
+        @Override
+        public void run() {
+            view.setImageDrawable(view.getResources().getDrawable(R.drawable.added_to_cart));
+        }
+    }
+
     @Override
     public void onClick(View view) {
         Object tag;
@@ -132,11 +147,17 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                     ((MainActivity) getActivity()).selectSkuItem(identifier);
                 }
                 break;
-            case R.id.action:
+            case R.id.bundle_action:
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
-                    String title = ((BundleItem) tag).title;
-                    Toast.makeText(getActivity(), "Clicked on "+title, Toast.LENGTH_LONG).show();
+                    BundleItem item = (BundleItem) tag;
+                    if (item.type==IdentifierType.SKUSET) {
+                        ((MainActivity) getActivity()).selectSkuItem(item.identifier);
+                    } else {
+                        ((MainActivity) getActivity()).addItemToCart(item.identifier, 1);
+                        ((ImageView) view).setImageDrawable(view.getResources().getDrawable(R.drawable.ic_launcher));
+                        view.postDelayed(new Flasher((ImageView) view), 2000);
+                    }
                 }
                 break;
         }

@@ -282,7 +282,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         shippingAddrNeedsApplying = true;
         billingAddrNeedsApplying = true;
         applyShippingAddress();
-        applyBillingAddress();
     }
 
     private void applyShippingAddress() {
@@ -304,7 +303,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                                 shippingAddrNeedsApplying = false;
                                 new ProfileDetails().refreshProfile(null); // refresh cached profile
                             }
-                            startPrecheckoutIfReady();
+                            applyBillingAddress();
                         }
 
                         @Override

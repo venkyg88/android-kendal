@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/store_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -29,7 +30,7 @@
             style="@style/StoreItem"
             android:layout_gravity="right"/>
         <TextView
-            android:id="@+id/opentime"
+            android:id="@+id/open_time"
             style="@style/StoreItem"
             android:layout_gravity="right"/>
         <LinearLayout
@@ -38,6 +39,7 @@
             android:orientation="horizontal"
             android:layout_gravity="right">
             <ImageView
+                android:id="@+id/call_store"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_phone_black"/>
@@ -45,6 +47,7 @@
                 android:layout_width="20dp"
                 android:layout_height="wrap_content"/>
             <ImageView
+                android:id="@+id/directions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_directions_black"/>

@@ -24,7 +24,7 @@
         style="@style/SmallRatingStars"
         android:layout_below="@+id/pricing"/>
     <ImageView
-        android:id="@+id/action"
+        android:id="@+id/bundle_action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

@@ -15,6 +15,14 @@ import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 import java.text.NumberFormat;
 import java.util.List;
 
+/**
+ * <b>XML attributes</b>
+ * majorTextSize,
+ * majorTextColor,
+ * minorTextSize,
+ * minorTextColor,
+ * android:gravity
+ */
 public class PriceSticker extends View {
     private static final String TAG = "StickerPrice";
 
@@ -24,7 +32,7 @@ public class PriceSticker extends View {
 
     private int gravity;
     private int baseline;
-    private int height;
+    private int majorHeight;
 
     private float price;
     private String unit;
@@ -87,12 +95,13 @@ public class PriceSticker extends View {
 
         // Get metrics
         baseline = (int) -majorPaint.ascent();
-        height = baseline + (int) majorPaint.descent();
+        majorHeight = baseline + (int) majorPaint.descent();
     }
 
     public void setPricing(float price, String unit) { // TODO old code
         this.price = price;
         this.unit = unit;
+        if (this.unit!=null && this.unit.isEmpty()) this.unit = null;
         invalidate();
     }
 
@@ -108,14 +117,24 @@ public class PriceSticker extends View {
         if (pricing==null) return(false);
         price = pricing.getFinalPrice();
         unit = pricing.getUnitOfMeasure();
+        if (unit!=null && unit.isEmpty()) unit = null;
         invalidate();
         return(true);
     }
 
     @Override
     public void onMeasure(int widthSpec, int heightSpec) {
-        heightSpec = getPaddingTop() + height + getPaddingBottom();
-        setMeasuredDimension(widthSpec, heightSpec);
+        float x = getPaddingLeft() + getPaddingRight();
+        String text = format.format(price);
+        x += majorPaint.measureText(text, 0, text.length());
+        if (unit!=null) {
+            text = " " + unit;
+            x += minorPaint.measureText(text, 0, text.length());
+        }
+        int height = getPaddingTop() + majorHeight + getPaddingBottom();
+        int width = resolveSize((int) Math.ceil(x), widthSpec);
+        height = resolveSize(height, heightSpec);
+        setMeasuredDimension(width, height);
     }
 
     @Override
