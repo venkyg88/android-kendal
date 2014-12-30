@@ -71,14 +71,14 @@
             android:textColor="@color/text_blue"
             />
     </RelativeLayout>
-    <!-- listview for coupons -->
-    <ListView
+    <!-- RecyclerView for coupons -->
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/coupon_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:padding="16dp"
-        android:divider="#ffffffff"
+        android:scrollbars="vertical"
         android:background="@color/background_white"
         android:visibility="gone"/>
 

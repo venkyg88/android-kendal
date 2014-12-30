@@ -8,10 +8,11 @@ import android.app.Fragment;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -40,7 +41,7 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
     private TextView rewardsNumberLabelVw;
     private TextView rewardsNumberBarcodeVw;
     private TextView rewardsNumberVw;
-    private ListView rewardsListView;
+    private RecyclerView rewardsListView;
     private RewardAdapter rewardAdapter;
     private View noRewardsMessageVw;
     private TextView cartridgesRecycledVw;
@@ -88,9 +89,10 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
 
         // get rewards list views
         noRewardsMessageVw = view.findViewById(R.id.no_rewards_msg);
-        rewardsListView = (ListView) view.findViewById(R.id.rewards_list);
+        rewardsListView = (RecyclerView) view.findViewById(R.id.rewards_list);
         rewardAdapter = new RewardAdapter(activity, this);
         rewardsListView.setAdapter(rewardAdapter);
+        rewardsListView.setLayoutManager(new LinearLayoutManager(activity));
         fillRewardAdapter();
 
         // set up ink recycling views
@@ -182,28 +184,25 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
 
     @Override
     public void onClick(View view) {
+        int position = (int)view.getTag();
+        Reward reward = rewardAdapter.getRewards().get(position);
         switch(view.getId()) {
             case R.id.reward_add_button:
-                int position = (int)view.getTag();
-                Reward reward = rewardAdapter.getItem(position);
                 showProgressIndicator();
-                if (reward.isIsApplied()) {
-                    confirmationMsg = getResources().getString(R.string.rewards_removefromcart_confirmation);
-                    CartApiManager.deleteCoupon(reward.getCode(), this);
-                } else {
-                    confirmationMsg = getResources().getString(R.string.rewards_addtocart_confirmation);
-                    CartApiManager.addCoupon(reward.getCode(), this);
-                }
+                confirmationMsg = getResources().getString(R.string.rewards_addtocart_confirmation);
+                CartApiManager.addCoupon(reward.getCode(), this);
+                break;
+            case R.id.reward_remove_button:
+                showProgressIndicator();
+                confirmationMsg = getResources().getString(R.string.rewards_removefromcart_confirmation);
+                CartApiManager.deleteCoupon(reward.getCode(), this);
                 break;
         }
     }
 
     private void fillRewardAdapter() {
-        rewardAdapter.clear();
         List<Reward> profileRewards = ProfileDetails.getAllProfileRewards();
-        for (Reward reward : profileRewards) {
-            rewardAdapter.add(reward);
-        }
+        rewardAdapter.setRewards(profileRewards);
         rewardAdapter.notifyDataSetChanged();
 
         // set visibility of list vs. no-rewards msg

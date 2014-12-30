@@ -6,6 +6,7 @@ package com.staples.mobile.cfa.cart;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,13 +25,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CouponAdapter extends BaseAdapter {
+public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder> {
 
     private static final String TAG = CouponAdapter.class.getSimpleName();
 
     private Activity activity;
     private LayoutInflater inflater;
-    private ArrayList<CouponItem> couponItems = new ArrayList<CouponItem>();
+    private List<CouponItem> couponItems = new ArrayList<CouponItem>();
 
     // widget listeners
     private View.OnClickListener addButtonListener;
@@ -45,81 +46,56 @@ public class CouponAdapter extends BaseAdapter {
     }
 
     public void setItems(List<CouponItem> items) {
-        couponItems.clear();
-        couponItems.addAll(items);
+        couponItems = items;
         notifyDataSetChanged();
     }
 
+    private int getLayoutId(int viewType) {
+        switch (viewType) {
+            case CouponItem.TYPE_COUPON_TO_ADD: return R.layout.coupon_item_add;
+            case CouponItem.TYPE_APPLIED_COUPON: return R.layout.coupon_item_applied;
+            case CouponItem.TYPE_REDEEMABLE_REWARD_HEADING: return R.layout.coupon_item_redeemable_heading;
+            case CouponItem.TYPE_REDEEMABLE_REWARD: return R.layout.coupon_item_redeemable;
+            case CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG: return R.layout.coupon_item_no_rewards_msg;
+        }
+        return 0;
+    }
+
+    // Return the size of your dataset (invoked by the layout manager)
+    @Override
+    public int getItemCount() {
+        return couponItems.size();
+    }
 
     @Override
     public int getItemViewType(int position) {
         return getItem(position).getItemType();
     }
 
-    @Override
-    public int getViewTypeCount() {
-        return CouponItem.TYPE_MAX_COUNT;
-    }
 
-    @Override
-    public int getCount() {
-        return couponItems.size();
-    }
-
-    @Override
     public CouponItem getItem(int position) {
         return couponItems.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
     }
 
 
 /* Views */
 
-
+    // Create new views (invoked by the layout manager)
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public CouponAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // create a new view
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(getLayoutId(viewType), parent, false);
+        ViewHolder vh = new ViewHolder(v, viewType);
+        return vh;
+    }
 
-        // use view holder pattern to improve listview performance
-        ViewHolder vh = null;
 
-        int type = getItemViewType(position);
-
-        // Get a new or recycled view of the right type
-        if (convertView == null) {
-            vh = new ViewHolder();
-            switch (type) {
-                case CouponItem.TYPE_COUPON_TO_ADD:
-                    convertView = inflater.inflate(R.layout.coupon_item_add, parent, false);
-                    vh.couponCodeEditVw = (EditTextWithImeBackEvent) convertView.findViewById(R.id.coupon_code);
-                    vh.couponAddButton = (Button) convertView.findViewById(R.id.coupon_add_button);
-                    break;
-                case CouponItem.TYPE_APPLIED_COUPON:
-                    convertView = inflater.inflate(R.layout.coupon_item_applied, parent, false);
-                    vh.couponField1Vw = (TextView) convertView.findViewById(R.id.coupon_item_field1);
-                    vh.couponField2Vw = (TextView) convertView.findViewById(R.id.coupon_item_field2);
-                    vh.couponDeleteButton = (Button) convertView.findViewById(R.id.coupon_delete_button);
-                    break;
-                case CouponItem.TYPE_REDEEMABLE_REWARD_HEADING:
-                    convertView = inflater.inflate(R.layout.coupon_item_redeemable_heading, parent, false);
-                    break;
-                case CouponItem.TYPE_REDEEMABLE_REWARD:
-                    convertView = inflater.inflate(R.layout.coupon_item_redeemable, parent, false);
-                    vh.couponField1Vw = (TextView) convertView.findViewById(R.id.coupon_item_field1);
-                    vh.couponField2Vw = (TextView) convertView.findViewById(R.id.coupon_item_field2);
-                    vh.couponAddButton = (Button) convertView.findViewById(R.id.reward_add_button);
-                    break;
-                case CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG:
-                    convertView = inflater.inflate(R.layout.coupon_item_no_rewards_msg, parent, false);
-                    break;
-            }
-            convertView.setTag(vh);
-        } else {
-            vh = (ViewHolder) convertView.getTag();
-        }
+    // Replace the contents of a view (invoked by the layout manager)
+    @Override
+    public void onBindViewHolder(ViewHolder vh, int position) {
+        // - get element from your dataset at this position
+        // - replace the contents of the view with that element
 
         CouponItem couponItem = getItem(position);
 
@@ -135,7 +111,7 @@ public class CouponAdapter extends BaseAdapter {
             });
             vh.couponCodeEditVw.setOnImeBackListener(new EditTextWithImeBackEvent.EditTextImeBackListener() {
                 @Override public void onImeBack(EditTextWithImeBackEvent view, String text) {
-                retrieveCouponCodeFromEditText((TextView) view);
+                    retrieveCouponCodeFromEditText((TextView) view);
                 }
             });
             vh.couponCodeEditVw.setOnKeyListener(new View.OnKeyListener() {
@@ -163,9 +139,8 @@ public class CouponAdapter extends BaseAdapter {
             vh.couponAddButton.setTag(position);
             vh.couponAddButton.setOnClickListener(addButtonListener);
         }
-
-        return(convertView);
     }
+
 
     private void retrieveCouponCodeFromEditText(TextView v) {
         CouponItem couponItem = getItem((Integer) v.getTag());
@@ -178,11 +153,36 @@ public class CouponAdapter extends BaseAdapter {
 
     /************* view holder ************/
 
-    static class ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         private EditTextWithImeBackEvent couponCodeEditVw;
         private TextView couponField1Vw;
         private TextView couponField2Vw;
         private Button couponDeleteButton;
         private Button couponAddButton;
+
+        /** constructor */
+        public ViewHolder(View itemView, int type) {
+            super(itemView);
+            switch (type) {
+                case CouponItem.TYPE_COUPON_TO_ADD:
+                    couponCodeEditVw = (EditTextWithImeBackEvent) itemView.findViewById(R.id.coupon_code);
+                    couponAddButton = (Button) itemView.findViewById(R.id.coupon_add_button);
+                    break;
+                case CouponItem.TYPE_APPLIED_COUPON:
+                    couponField1Vw = (TextView) itemView.findViewById(R.id.coupon_item_field1);
+                    couponField2Vw = (TextView) itemView.findViewById(R.id.coupon_item_field2);
+                    couponDeleteButton = (Button) itemView.findViewById(R.id.coupon_delete_button);
+                    break;
+                case CouponItem.TYPE_REDEEMABLE_REWARD_HEADING:
+                    break;
+                case CouponItem.TYPE_REDEEMABLE_REWARD:
+                    couponField1Vw = (TextView) itemView.findViewById(R.id.coupon_item_field1);
+                    couponField2Vw = (TextView) itemView.findViewById(R.id.coupon_item_field2);
+                    couponAddButton = (Button) itemView.findViewById(R.id.reward_add_button);
+                    break;
+                case CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG:
+                    break;
+            }
+        }
     }
 }
