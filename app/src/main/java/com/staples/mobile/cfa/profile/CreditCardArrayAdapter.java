@@ -40,6 +40,7 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
     ImageButton optionButton;
     EasyOpenApi easyOpenApi;
     ImageView cardTypeImg;
+    View rowView;
 
     public CreditCardArrayAdapter(Context context, List<CCDetails> values, String selectedCreditCardId) {
         super(context, R.layout.profile_listview_row, values);
@@ -51,6 +52,14 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        if(convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            rowView = inflater.inflate(R.layout.profile_listview_row, parent, false);
+        }
+        else {
+            rowView  = convertView;
+        }
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.profile_listview_row, parent, false);

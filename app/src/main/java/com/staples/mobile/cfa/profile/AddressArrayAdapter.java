@@ -38,6 +38,7 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
     private String selectedAddressId;
     ImageButton optionButton;
     EasyOpenApi easyOpenApi;
+    View rowView;
 
     public AddressArrayAdapter(Context context, List<Address> values, String selectedAddressId) {
         super(context, R.layout.profile_listview_row, values);
@@ -49,10 +50,14 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.profile_listview_row, parent, false);
-
+        if(convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            rowView = inflater.inflate(R.layout.profile_listview_row, parent, false);
+        }
+        else {
+            rowView  = convertView;
+        }
         Address address = values.get(position);
         String tmpName = Character.toUpperCase(address.getFirstname().charAt(0)) + address.getFirstname().substring(1) + " " + Character.toUpperCase(address.getLastname().charAt(0)) + address.getLastname().substring(1);
         String tmpAddress = Character.toUpperCase(address.getAddress1().charAt(0)) +  address.getAddress1().substring(1) + "," + "\n" +
