@@ -9,13 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
@@ -39,9 +39,11 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
     private String selectedCreditCardId;
     ImageButton optionButton;
     EasyOpenApi easyOpenApi;
+    ImageView cardTypeImg;
+    View rowView;
 
     public CreditCardArrayAdapter(Context context, List<CCDetails> values, String selectedCreditCardId) {
-        super(context, R.layout.list_view_row, values);
+        super(context, R.layout.profile_listview_row, values);
         this.context = context;
         this.values = values;
         this.selectedCreditCardId = selectedCreditCardId;
@@ -50,9 +52,17 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        if(convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            rowView = inflater.inflate(R.layout.profile_listview_row, parent, false);
+        }
+        else {
+            rowView  = convertView;
+        }
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.list_view_row, parent, false);
+        View rowView = inflater.inflate(R.layout.profile_listview_row, parent, false);
 
         CCDetails creditCard = values.get(position);
         String cardNumber;
@@ -61,14 +71,17 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
         } else {
             cardNumber = creditCard.getCardNumber();
         }
-        String tmpCard = creditCard.getCardType() + " ending in " + cardNumber + "\n" +
-                "Exp. " + creditCard.getExpirationMonth() + "/" + creditCard.getExpirationYear();
-
+        String tmpCard ="Card ending in " + cardNumber;
+        String expDate = "Exp. " + creditCard.getExpirationMonth() + "/" + creditCard.getExpirationYear().substring(2,4);
         TextView ccText = (TextView) rowView.findViewById(R.id.rowItemText);
+        TextView expText = (TextView) rowView.findViewById(R.id.secondItemText);
         ccText.setText(tmpCard);
+        expText.setText(expDate);
         ccText.setTag(position);
         ccText.setOnClickListener(this);
 
+        cardTypeImg = (ImageView)rowView.findViewById(R.id.cardTypeImg);
+        cardTypeImg.setImageResource(CardType.matchOnApiName(creditCard.getCardType()).getImageResource());
         optionButton = (ImageButton) rowView.findViewById(R.id.listOptions);
         optionButton.setTag(position);
         optionButton.setOnClickListener(this);

@@ -24,6 +24,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private EasyOpenApi easyOpenApi;
     Button shippingBtn;
     Button ccBtn;
+    TextView addressTV;
+    TextView creditCardTv;
     MainActivity activity;
 
     @Override
@@ -35,9 +37,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         shippingBtn = (Button) view.findViewById(R.id.addShippingBtn);
         ccBtn = (Button) view.findViewById(R.id.addCCBtn);
+        addressTV = (TextView) view.findViewById(R.id.addressET);
+        creditCardTv = (TextView) view.findViewById(R.id.ccET);
         shippingBtn.setOnClickListener(this);
         ccBtn.setOnClickListener(this);
-
         loadProfile(ProfileDetails.getMember(), view);
 
         return (view);
@@ -66,13 +69,18 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             Address address = addresses.get(0);
             if (address != null) {
                 String tmpAddress = address.getAddress1() + "\n" + address.getCity() + ", " + address.getState() + " " + address.getZipcode();
-                ((TextView) view.findViewById(R.id.addressET)).setText(tmpAddress);
+                addressTV.setText(tmpAddress);
                 if(addressCount > 1) {
                     shippingBtn.setText(addressCount-1 + " more");
                 }
                 else {
-                    shippingBtn.setText("Add");
+                    addressTV.setText(tmpAddress);
+                    shippingBtn.setText("+ Add");
                 }
+            }
+            else {
+                addressTV.setText("Shipping Addresses");
+                shippingBtn.setText("+ Add");
             }
         }
 
@@ -88,24 +96,22 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                     cardNumber = creditCard.getCardNumber();
                 }
                 String tmpCreditCard =  cardNumber + " " + creditCard.getCardType();
-                ((TextView) view.findViewById(R.id.ccET)).setText(tmpCreditCard);
+                creditCardTv.setText(tmpCreditCard);
                 if(creditCardCount > 1) {
                     ccBtn.setText(creditCardCount-1 + " more");
                 }
                 else {
-                    ccBtn.setText("Add");
+                    creditCardTv.setText(tmpCreditCard);
+                    ccBtn.setText("+ Add");
                 }
+              }else {
+                addressTV.setText("Credit Cards");
+                shippingBtn.setText("+ Add");
             }
         }
     }
 
-    private void showProgressIndicator() {
-        activity.showProgressIndicator();
-    }
 
-    private void hideProgressIndicator() {
-        activity.hideProgressIndicator();
-    }
 
     @Override
     public void onClick(View view) {

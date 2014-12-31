@@ -1,8 +1,8 @@
 package com.staples.mobile.cfa.profile;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
@@ -39,9 +38,10 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
     private String selectedAddressId;
     ImageButton optionButton;
     EasyOpenApi easyOpenApi;
+    View rowView;
 
     public AddressArrayAdapter(Context context, List<Address> values, String selectedAddressId) {
-        super(context, R.layout.list_view_row, values);
+        super(context, R.layout.profile_listview_row, values);
         this.context = context;
         this.values = values;
         this.selectedAddressId = selectedAddressId;
@@ -50,14 +50,18 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.list_view_row, parent, false);
-
+        if(convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            rowView = inflater.inflate(R.layout.profile_listview_row, parent, false);
+        }
+        else {
+            rowView  = convertView;
+        }
         Address address = values.get(position);
-        String tmpAddress = address.getFirstname() + ", " + address.getLastname() +  "\n" + "\n" +
-                address.getAddress1() + "\n" +
-                address.getCity() + ", " + address.getState() + " " + address.getZipcode() + "\n" + "\n" +
+        String tmpName = Character.toUpperCase(address.getFirstname().charAt(0)) + address.getFirstname().substring(1) + " " + Character.toUpperCase(address.getLastname().charAt(0)) + address.getLastname().substring(1);
+        String tmpAddress = Character.toUpperCase(address.getAddress1().charAt(0)) +  address.getAddress1().substring(1) + "," + "\n" +
+                Character.toUpperCase(address.getCity().charAt(0)) +  address.getCity().substring(1) + ", " + address.getState().toUpperCase() + " " + address.getZipcode().substring(0,5) + "\n" +
                 address.getPhone1();
 
         optionButton = (ImageButton) rowView.findViewById(R.id.listOptions);
@@ -73,10 +77,14 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
             }
         }
 
-        TextView ccText = (TextView) rowView.findViewById(R.id.rowItemText);
-        ccText.setText(tmpAddress);
-        ccText.setTag(position);
-        ccText.setOnClickListener(this);
+        TextView nameText = (TextView) rowView.findViewById(R.id.rowItemText);
+        TextView addressText = (TextView) rowView.findViewById(R.id.secondItemText);
+        addressText.setText(tmpAddress);
+        addressText.setTextColor(context.getResources().getColor(R.color.text_black));
+        nameText.setText(tmpName);
+        nameText.setTypeface(null, Typeface.BOLD);
+        nameText.setTag(position);
+        nameText.setOnClickListener(this);
 
         return rowView;
     }
