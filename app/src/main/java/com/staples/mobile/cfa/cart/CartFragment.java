@@ -735,7 +735,10 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public void success(CartContents cartContents, Response response) {
-            hideProgressIndicator();
+            // only hide progress indicator when refreshing the cart while cart is in view, not when refreshed from other fragments
+            if (cartAdapter != null) {
+                hideProgressIndicator();
+            }
 
             // clear the cart before refilling
             cart = null;

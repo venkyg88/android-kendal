@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +40,7 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
     private String selectedCreditCardId;
     ImageButton optionButton;
     EasyOpenApi easyOpenApi;
+    ImageView cardTypeImg;
 
     public CreditCardArrayAdapter(Context context, List<CCDetails> values, String selectedCreditCardId) {
         super(context, R.layout.list_view_row, values);
@@ -61,14 +63,17 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
         } else {
             cardNumber = creditCard.getCardNumber();
         }
-        String tmpCard = creditCard.getCardType() + " ending in " + cardNumber + "\n" +
-                "Exp. " + creditCard.getExpirationMonth() + "/" + creditCard.getExpirationYear();
-
+        String tmpCard ="Card ending in " + cardNumber;
+        String expDate = "Exp. " + creditCard.getExpirationMonth() + "/" + creditCard.getExpirationYear().substring(2,4);
         TextView ccText = (TextView) rowView.findViewById(R.id.rowItemText);
+        TextView expText = (TextView) rowView.findViewById(R.id.secondItemText);
         ccText.setText(tmpCard);
+        expText.setText(expDate);
         ccText.setTag(position);
         ccText.setOnClickListener(this);
 
+        cardTypeImg = (ImageView)rowView.findViewById(R.id.cardTypeImg);
+        cardTypeImg.setImageResource(CardType.matchOnApiName(creditCard.getCardType()).getImageResource());
         optionButton = (ImageButton) rowView.findViewById(R.id.listOptions);
         optionButton.setTag(position);
         optionButton.setOnClickListener(this);
