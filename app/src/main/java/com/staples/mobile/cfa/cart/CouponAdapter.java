@@ -29,8 +29,6 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
 
     private static final String TAG = CouponAdapter.class.getSimpleName();
 
-    private Activity activity;
-    private LayoutInflater inflater;
     private List<CouponItem> couponItems = new ArrayList<CouponItem>();
 
     // widget listeners
@@ -38,11 +36,9 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
     private View.OnClickListener deleteButtonListener;
 
 
-    public CouponAdapter(Activity activity, View.OnClickListener addButtonListener, View.OnClickListener deleteButtonListener) {
-        this.activity = activity;
+    public CouponAdapter(View.OnClickListener addButtonListener, View.OnClickListener deleteButtonListener) {
         this.addButtonListener = addButtonListener;
         this.deleteButtonListener = deleteButtonListener;
-        inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public void setItems(List<CouponItem> items) {
