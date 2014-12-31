@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.staples.mobile.cfa.MainActivity;
@@ -22,7 +23,7 @@ import java.util.List;
 public class CreditCardListFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "CreditCardListFragment";
     ListView listview;
-    Button addBtn;
+    ImageButton addBtn;
     List<CCDetails> cardList;
     Activity activity;
 
@@ -30,11 +31,10 @@ public class CreditCardListFragment extends Fragment implements View.OnClickList
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
 
-        View view = inflater.inflate(R.layout.list_fragment, container, false);
+        View view = inflater.inflate(R.layout.profile_list_fragment, container, false);
         listview = (ListView) view.findViewById(R.id.profileListView);
         activity = getActivity();
-        addBtn = (Button) view.findViewById(R.id.listAddButton);
-        addBtn.setText("Add Credit Card");
+        addBtn = (ImageButton) view.findViewById(R.id.listAddButton);
         addBtn.setOnClickListener(this);
         cardList = ProfileDetails.getMember().getCreditCard();
 

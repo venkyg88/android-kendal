@@ -1,7 +1,6 @@
 package com.staples.mobile.cfa.profile;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -17,7 +16,6 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
@@ -42,7 +40,7 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
     EasyOpenApi easyOpenApi;
 
     public AddressArrayAdapter(Context context, List<Address> values, String selectedAddressId) {
-        super(context, R.layout.list_view_row, values);
+        super(context, R.layout.profile_listview_row, values);
         this.context = context;
         this.values = values;
         this.selectedAddressId = selectedAddressId;
@@ -53,7 +51,7 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.list_view_row, parent, false);
+        View rowView = inflater.inflate(R.layout.profile_listview_row, parent, false);
 
         Address address = values.get(position);
         String tmpName = Character.toUpperCase(address.getFirstname().charAt(0)) + address.getFirstname().substring(1) + " " + Character.toUpperCase(address.getLastname().charAt(0)) + address.getLastname().substring(1);

@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
@@ -43,7 +42,7 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
     ImageView cardTypeImg;
 
     public CreditCardArrayAdapter(Context context, List<CCDetails> values, String selectedCreditCardId) {
-        super(context, R.layout.list_view_row, values);
+        super(context, R.layout.profile_listview_row, values);
         this.context = context;
         this.values = values;
         this.selectedCreditCardId = selectedCreditCardId;
@@ -54,7 +53,7 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.list_view_row, parent, false);
+        View rowView = inflater.inflate(R.layout.profile_listview_row, parent, false);
 
         CCDetails creditCard = values.get(position);
         String cardNumber;

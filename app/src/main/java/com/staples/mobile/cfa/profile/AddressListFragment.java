@@ -2,12 +2,14 @@ package com.staples.mobile.cfa.profile;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.graphics.Outline;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.staples.mobile.cfa.MainActivity;
@@ -22,7 +24,7 @@ import java.util.List;
 public class AddressListFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "Address List Fragment";
     ListView listview;
-    Button addBtn;
+    ImageButton addBtn;
     List<Address> addressList;
     Activity activity;
 
@@ -31,12 +33,10 @@ public class AddressListFragment extends Fragment implements View.OnClickListene
         Log.d(TAG, "onCreateView()");
         activity = getActivity();
 
-        View view = inflater.inflate(R.layout.list_fragment, container, false);
-
+        View view = inflater.inflate(R.layout.profile_list_fragment, container, false);
         listview = (ListView) view.findViewById(R.id.profileListView);
-        addBtn = (Button) view.findViewById(R.id.listAddButton);
-        addBtn.setText("Add Address");
-        addBtn.setOnClickListener(this);
+        ImageButton addButton =(ImageButton) view.findViewById(R.id.listAddButton);
+        addButton.setOnClickListener(this);
         addressList = ProfileDetails.getMember().getAddress();
 
         final AddressArrayAdapter adapter = new AddressArrayAdapter(activity,
