@@ -7,6 +7,8 @@ import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.cart.Cart;
+import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
@@ -262,5 +264,38 @@ public class ProfileDetails implements Callback<MemberDetail> {
             }
         }
         return profileRewards;
+    }
+
+    /** rather than call the api to refresh the profile, use the info from the cart to update coupon info in the profile */
+    public static void updateRewardsFromCart(Cart cart) {
+        if (cart != null) {
+            List<Reward> profileRewards = getAllProfileRewards();
+            if (cart.getCoupon() != null && cart.getCoupon().size() > 0) {
+                for (Coupon coupon : cart.getCoupon()) {
+                    // coupon may or may not have a matching reward
+                    Reward reward = findMatchingReward(profileRewards, coupon.getCode());
+                    if (reward != null) {
+                        reward.setIsApplied(true);
+                        profileRewards.remove(reward); // remove the applied reward from the list
+                    }
+                }
+            }
+            // set remaining rewards to not applied
+            for (Reward reward : profileRewards) {
+                reward.setIsApplied(false);
+            }
+        }
+    }
+
+    /** returns reward within list that matches specified code, if any */
+    public static Reward findMatchingReward(List<Reward> rewards, String code) {
+        if (rewards != null) {
+            for (Reward reward : rewards) {
+                if (reward.getCode().equals(code)) {
+                    return reward;
+                }
+            }
+        }
+        return null;
     }
 }

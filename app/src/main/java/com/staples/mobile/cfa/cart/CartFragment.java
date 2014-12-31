@@ -11,7 +11,6 @@ import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,17 +31,9 @@ import com.staples.mobile.cfa.rewards.RewardsLinkingFragment;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.configurator.model.Configurator;
-import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.EmptyResponse;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
-import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
-import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
 import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
-import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
-import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
-import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
 import com.staples.mobile.common.access.config.AppConfigurator;
 
@@ -53,37 +44,17 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
-//import com.staples.mobile.cfa.widget.QuantityEditor;
 
 /** fragment to manage display and update of shopping cart */
-public class CartFragment extends Fragment implements View.OnClickListener {
-
-    public interface AddToCartCallback {
-        public void onAddToCartComplete();
-    }
-
-    public interface CartRefreshCallback {
-        public void onCartRefreshComplete();
-    }
-
+public class CartFragment extends Fragment implements View.OnClickListener, CartApiManager.CartRefreshCallback {
 
     private static final String TAG = CartFragment.class.getSimpleName();
-
-
-
-
-    private static final int MAXFETCH = 50;
 
 
     // saving around Activity object since getActivity() returns null after user navigates away from
     // fragment, but api call may still be returning
     private MainActivity activity;
 
-    CartRefreshCallback cartRefreshCallback;
 
     private TextView cartSubtotal;
     private TextView cartFreeShippingMsg;
@@ -108,7 +79,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
 
     // cart object - make these static so they're not lost on device rotation
-    private static Cart cart;
     private static List<CartItem> cartListItems;
     private static List<CartItemGroup> cartItemGroups;
 
@@ -126,20 +96,8 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     private DecimalFormat currencyFormat;
 
 
-    // api listeners
-    private ViewCartListener viewCartListener;
-    private AddUpdateCartListener addToCartListener;
-    private AddUpdateCartListener updateCartListener;
-    private DeleteFromCartListener deleteFromCartListener;
-
     /** default constructor - note that fragment instance will be retained whereas view will come and go as attached to activity */
     public CartFragment() {
-        // create api listeners
-        viewCartListener = new ViewCartListener();
-        addToCartListener = new AddUpdateCartListener(false);
-        updateCartListener = new AddUpdateCartListener(true);
-        deleteFromCartListener = new DeleteFromCartListener();
-
         // set up currency format to use minus sign for negative amounts (needed for coupons)
         currencyFormat = (DecimalFormat)NumberFormat.getCurrencyInstance();
         String symbol = currencyFormat.getCurrency().getSymbol();
@@ -266,7 +224,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         activity.showActionBar(R.string.cart_title, 0, null);
 
         //initialize cart based on what's been returned from api so far
-        setAdapterListItems();
+        convertCart(CartApiManager.getCart());
 
             // temporary
         } catch (Exception e) {
@@ -286,6 +244,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     /** returns sum of adjusted amounts for rewards and coupons applied to cart */
     public float getCouponsRewardsAdjustedAmount() {
         float totalAdjustedAmount = 0;
+        Cart cart = CartApiManager.getCart();
         // coupons & rewards
         if (cart != null && cart.getCoupon() != null) {
             for (Coupon c : cart.getCoupon()) {
@@ -295,18 +254,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         return totalAdjustedAmount;
     }
 
-
-    /** returns reward within list that matches specified code, if any */
-    private Reward findMatchingReward(List<Reward> rewards, String code) {
-        if (rewards != null) {
-            for (Reward reward : rewards) {
-                if (reward.getCode().equals(code)) {
-                    return reward;
-                }
-            }
-        }
-        return null;
-    }
 
     /** Sets item count indicator on cart icon and cart drawer title */
     private void updateCartFields() {
@@ -321,6 +268,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         float subtotal = 0;
         float preTaxSubtotal = 0;
         float freeShippingThreshold = 0;
+        Cart cart = CartApiManager.getCart();
         if (cart != null) {
             totalItemCount = cart.getTotalItems();
             couponsRewardsAmount = getCouponsRewardsAdjustedAmount();
@@ -391,7 +339,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             if (cart != null && cart.getCoupon() != null && cart.getCoupon().size() > 0) {
                 for (Coupon coupon : cart.getCoupon()) {
                     // coupon may or may not have a matching reward
-                    Reward reward = findMatchingReward(profileRewards, coupon.getCode());
+                    Reward reward = ProfileDetails.findMatchingReward(profileRewards, coupon.getCode());
                     if (reward != null) {
                         profileRewards.remove(reward); // remove the applied rewards from the list
                     }
@@ -473,13 +421,16 @@ public class CartFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.coupon_add_button:
-                addCoupon(couponAdapter.getItem((Integer) view.getTag()).getCouponCodeToAdd(), null);
+                showProgressIndicator();
+                CartApiManager.addCoupon(couponAdapter.getItem((Integer) view.getTag()).getCouponCodeToAdd(), this);
                 break;
             case R.id.reward_add_button:
-                addCoupon(couponAdapter.getItem((Integer) view.getTag()).getReward().getCode(), null);
+                showProgressIndicator();
+                CartApiManager.addCoupon(couponAdapter.getItem((Integer) view.getTag()).getReward().getCode(), this);
                 break;
             case R.id.coupon_delete_button:
-                deleteCoupon(couponAdapter.getItem((Integer) view.getTag()).getCoupon().getCode(), null);
+                showProgressIndicator();
+                CartApiManager.deleteCoupon(couponAdapter.getItem((Integer) view.getTag()).getCoupon().getCode(), this);
                 break;
             case R.id.action_checkout:
                 activity.selectOrderCheckout();
@@ -504,62 +455,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void addCoupon(String couponCode, CartRefreshCallback cartRefreshCallback) {
-        if (!TextUtils.isEmpty(couponCode)) {
-            this.cartRefreshCallback = cartRefreshCallback;
-            EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-            // only show progress indicator when updating the cart while cart is in view, not from other fragments
-            if (cartAdapter != null) {
-                showProgressIndicator();
-            }
-            Coupon coupon = new Coupon();
-            coupon.setPromoName(couponCode);
-            easyOpenApi.addCoupon(coupon, new Callback<EmptyResponse>() {
-                        @Override
-                        public void success(EmptyResponse emptyResponse, Response response) {
-                            refreshCart(activity, CartFragment.this.cartRefreshCallback);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
-                        }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                            hideProgressIndicator();
-                            makeToast(ApiError.getErrorMessage(error));
-                            if (CartFragment.this.cartRefreshCallback != null) {
-                                CartFragment.this.cartRefreshCallback.onCartRefreshComplete();
-                            }
-                        }
-                    });
-        }
-    }
-
-    public void deleteCoupon(String couponCode, CartRefreshCallback cartRefreshCallback) {
-        if (!TextUtils.isEmpty(couponCode)) {
-            this.cartRefreshCallback = cartRefreshCallback;
-            EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-            // only show progress indicator when updating the cart while cart is in view, not from other fragments
-            if (cartAdapter != null) {
-                showProgressIndicator();
-            }
-            Coupon coupon = new Coupon();
-            coupon.setPromoName(couponCode);
-            easyOpenApi.deleteCoupon(couponCode, new Callback<EmptyResponse>() {
-                        @Override
-                        public void success(EmptyResponse emptyResponse, Response response) {
-                            refreshCart(activity, CartFragment.this.cartRefreshCallback);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
-                        }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                            hideProgressIndicator();
-                            makeToast(ApiError.getErrorMessage(error));
-                            if (CartFragment.this.cartRefreshCallback != null) {
-                                CartFragment.this.cartRefreshCallback.onCartRefreshComplete();
-                            }
-                        }
-                    });
-        }
-    }
-
 
     private void showProgressIndicator() {
         if (activity != null) {
@@ -571,14 +466,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         if (activity != null) {
             activity.hideProgressIndicator();
         }
-    }
-
-
-
-
-    /** returns current cart object */
-    public static Cart getCart() {
-        return cart;
     }
 
     /** returns current list of cart items */
@@ -604,79 +491,18 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 //        }
 //    }
 
-    /** refreshes cart (fills data set with contents of cart) */
-    public void refreshCart(MainActivity activity, CartRefreshCallback cartRefreshCallback) {
-        this.activity = activity;
-        this.cartRefreshCallback = cartRefreshCallback;
 
-        // only show progress indicator when refreshing the cart while cart is in view, not when refreshed from other fragments
-        if (cartAdapter != null) {
-            showProgressIndicator();
-        }
-
-        // query for items in cart
-        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.viewCart(1, 1000, viewCartListener); // 0 offset results in max of 5 items, so using 1
-    }
-
-    /** adds item to cart */
-    public void addToCart(String sku, int qty, MainActivity activity) {
-
-        this.activity = activity;
-
-        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        showProgressIndicator();
-
-        // update quantity of item in cart
-        easyOpenApi.addToCart(createCartRequestBody(sku, qty), addToCartListener);
-    }
 
     /** updates item quantity */
     private void updateItemQty(CartItem cartItem) {
         if (cartItem.isProposedQtyDifferent()) {
+            showProgressIndicator();
             if (cartItem.getProposedQty() == 0) {
-                deleteItem(cartItem);
+                CartApiManager.deleteItem(cartItem.getOrderItemId(), this);
             } else {
-                EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-                showProgressIndicator();
-
-                // update quantity of item in cart
-                easyOpenApi.updateCart(createCartRequestBody(cartItem, cartItem.getProposedQty()), updateCartListener);
+                CartApiManager.updateItemQty(cartItem.getOrderItemId(), cartItem.getSku(), cartItem.getProposedQty(), this);
             }
         }
-    }
-
-    /** deletes an item from the cart */
-    private void deleteItem(CartItem cartItem) {
-        cartItem.setProposedQty(0); // record the value we're trying to set, update the model upon success
-
-        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        showProgressIndicator();
-
-        // delete item from cart
-        easyOpenApi.deleteFromCart(cartItem.getOrderItemId(), deleteFromCartListener);
-    }
-
-    //for updating
-    private TypedJsonString createCartRequestBody(CartItem cartItem, int newQty) {
-        OrderItem orderItem = new OrderItem(cartItem.getOrderItemId(), cartItem.getSku(), newQty);
-        List<OrderItem> orderItems = new ArrayList<OrderItem>();
-        orderItems.add(orderItem);
-        //TODO add more cart items as required
-        //generates json string for corresponding updates
-        String json = CartBodyGenerator.generateUpdateBody(orderItems);
-        return new TypedJsonString(json);
-    }
-
-    //for adding
-    private TypedJsonString createCartRequestBody(String sku, int qty) {
-        OrderItem addOrderItem = new OrderItem(null, sku, qty);
-        List<OrderItem> addOrderItems = new ArrayList<OrderItem>();
-        addOrderItems.add(addOrderItem);
-        //TODO add more cart items as required
-        //generates json string for corresponding updates
-        String json = CartBodyGenerator.generateAddBody(addOrderItems);
-        return new TypedJsonString(json);
     }
 
 
@@ -699,114 +525,81 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             cartAdapter.notifyDataSetChanged();
         } else {
             if (activity != null) {
+                Cart cart = CartApiManager.getCart();
                 activity.updateCartIcon(cart == null ? 0 : cart.getTotalItems());
             }
         }
     }
 
     private void makeToast(String msg) {
-        if (activity != null) {
+        if (activity != null && msg != null) {
             Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
         }
     }
-    private void makeToast(int msgId) {
-        if (activity != null) {
-            Toast.makeText(activity, msgId, Toast.LENGTH_LONG).show();
-        }
-    }
 
-    // called by cart listeners below
-    private void respondToFailure(String msg) {
+
+
+    public void onCartRefreshComplete(String errMsg) {
         hideProgressIndicator();
-        Log.d(TAG, msg);
-        makeToast(msg);
-        notifyDataSetChanged();
+        if (errMsg != null) {
+            makeToast(errMsg);
+        }
+        convertCart(CartApiManager.getCart());
     }
 
 
-    // Retrofit callbacks
 
-    /************* api listeners ************/
+    private void convertCart(Cart cart) {
 
+        // clear the cart before refilling
+        ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
+        ArrayList<CartItemGroup> itemGroups = new ArrayList<CartItemGroup>();
 
-    /** listens for completion of view request */
-    class ViewCartListener implements Callback<CartContents> {
+        if (cart != null) {
 
-        @Override
-        public void success(CartContents cartContents, Response response) {
-            // only hide progress indicator when refreshing the cart while cart is in view, not when refreshed from other fragments
-            if (cartAdapter != null) {
-                hideProgressIndicator();
-            }
-
-            // clear the cart before refilling
-            cart = null;
-            ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
-            ArrayList<CartItemGroup> itemGroups = new ArrayList<CartItemGroup>();
+            // rather than call the api to refresh the profile, use the info from the cart to update coupon info in the profile
+            ProfileDetails.updateRewardsFromCart(cart);
 
 
-            // get data from cartContent request
-            List<Cart> cartCollection = cartContents.getCart();
-            if (cartCollection != null && cartCollection.size() > 0) {
-                cart = cartCollection.get(0);
+            List<Product> products = cart.getProduct();
+            if (products != null) {
 
-                // rather than call the api to refresh the profile, use the info from the cart to update coupon info in the profile
-                List<Reward> profileRewards = ProfileDetails.getAllProfileRewards();
-                if (cart.getCoupon() != null && cart.getCoupon().size() > 0) {
-                    for (Coupon coupon : cart.getCoupon()) {
-                        // coupon may or may not have a matching reward
-                        Reward reward = findMatchingReward(profileRewards, coupon.getCode());
-                        if (reward != null) {
-                            reward.setIsApplied(true);
-                            profileRewards.remove(reward); // remove the applied reward from the list
-                        }
-                    }
-                }
-                // set remaining rewards to not applied
-                for (Reward reward : profileRewards) {
-                    reward.setIsApplied(false);
+                // iterate thru products to create list of cart items
+                for (Product product : products) {
+                    cartItems.add(new CartItem(product));
                 }
 
-
-                List<Product> products = cart.getProduct();
-                if (products != null) {
-
-                    // iterate thru products to create list of cart items
-                    for (Product product : products) {
-                        cartItems.add(new CartItem(product));
-                    }
-
-                    // sort by expected delivery date
-                    Collections.sort(cartItems, new Comparator<CartItem>() {
-                        @Override
-                        public int compare(CartItem cartItem1, CartItem cartItem2) {
-                            if (cartItem1.getMinExpectedBusinessDays() != cartItem2.getMinExpectedBusinessDays()) {
-                                return cartItem1.getMinExpectedBusinessDays() - cartItem2.getMinExpectedBusinessDays();
-                            } else {
-                                return cartItem1.getMaxExpectedBusinessDays() - cartItem2.getMaxExpectedBusinessDays();
-                            }
+                // sort by expected delivery date
+                Collections.sort(cartItems, new Comparator<CartItem>() {
+                    @Override
+                    public int compare(CartItem cartItem1, CartItem cartItem2) {
+                        if (cartItem1.getMinExpectedBusinessDays() != cartItem2.getMinExpectedBusinessDays()) {
+                            return cartItem1.getMinExpectedBusinessDays() - cartItem2.getMinExpectedBusinessDays();
+                        } else {
+                            return cartItem1.getMaxExpectedBusinessDays() - cartItem2.getMaxExpectedBusinessDays();
                         }
-                    });
+                    }
+                });
 
-                    // calculate expected delivery times
-                    String leadTimeDescription = null;
-                    CartItemGroup itemGroup = null;
+                // calculate expected delivery times
+                String leadTimeDescription = null;
+                CartItemGroup itemGroup = null;
 //                    minExpectedBusinessDays = -1;
 //                    maxExpectedBusinessDays = -1;
-                    for (int i = 0; i < cartItems.size(); i++) {
-                        CartItem cartItem = cartItems.get(i);
-                        // if lead time different from previous item's lead time, set expected delivery info
-                        if (!cartItem.getLeadTimeDescription().equals(leadTimeDescription)) {
-                            itemGroup = new CartItemGroup();
-                            itemGroups.add(itemGroup);
-                            itemGroup.setExpectedDelivery(cartItem.getLeadTimeDescription());
-                            itemGroup.setExpectedDeliveryItemQty(cartItem.getQuantity());
-                            leadTimeDescription = cartItem.getLeadTimeDescription();
-                        } else {
-                            // since lead time same as previous, add item quantity to group
-                            itemGroup.setExpectedDeliveryItemQty(itemGroup.getExpectedDeliveryItemQty() + cartItem.getQuantity());
-                        }
-                        itemGroup.addItem(cartItem);
+                for (int i = 0; i < cartItems.size(); i++) {
+                    CartItem cartItem = cartItems.get(i);
+                    // if lead time different from previous item's lead time, set expected delivery info
+                    if (!cartItem.getLeadTimeDescription().equals(leadTimeDescription)) {
+                        itemGroup = new CartItemGroup();
+                        itemGroups.add(itemGroup);
+                        itemGroup.setExpectedDelivery(cartItem.getLeadTimeDescription());
+                        itemGroup.setExpectedDeliveryItemQty(cartItem.getQuantity());
+                        leadTimeDescription = cartItem.getLeadTimeDescription();
+                    } else {
+                        // since lead time same as previous, add item quantity to group
+                        itemGroup.setExpectedDeliveryItemQty(itemGroup.getExpectedDeliveryItemQty() + cartItem.getQuantity());
+                    }
+                    itemGroup.addItem(cartItem);
 
 //                        if (minExpectedBusinessDays == -1 ||
 //                                cartItem.getMinExpectedBusinessDays() < minExpectedBusinessDays) {
@@ -816,87 +609,13 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 //                                cartItem.getMaxExpectedBusinessDays() > maxExpectedBusinessDays) {
 //                            maxExpectedBusinessDays = cartItem.getMaxExpectedBusinessDays();
 //                        }
-                    }
                 }
             }
-            cartListItems = cartItems;
-            cartItemGroups = itemGroups;
-            setAdapterListItems();
-
-            if (cartRefreshCallback != null) {
-                cartRefreshCallback.onCartRefreshComplete();
-            }
         }
-
-        @Override
-        public void failure(RetrofitError retrofitError) {
-            respondToFailure("Unable to obtain cart information: " + ApiError.getErrorMessage(retrofitError));
-            // note: workaround to unknown field errors is to annotate model with @JsonIgnoreProperties(ignoreUnknown = true)
-
-            if (cartRefreshCallback != null) {
-                cartRefreshCallback.onCartRefreshComplete();
-            }
-        }
+        cartListItems = cartItems;
+        cartItemGroups = itemGroups;
+        setAdapterListItems();
     }
-
-
-    /** listens for completion of additions and updates to cart */
-    class AddUpdateCartListener implements Callback<CartUpdate> {
-
-        boolean update;
-
-        AddUpdateCartListener(boolean update) {
-            this.update = update;
-        }
-
-        @Override
-        public void success(CartUpdate cartUpdate, Response response) {
-            hideProgressIndicator();
-
-            // if message, display to user (e.g. out-of-stock message)
-            if (!TextUtils.isEmpty(cartUpdate.getMessage())) {
-                makeToast(cartUpdate.getMessage());
-            } else {
-                // sometimes out-of-stock message is here instead
-                String errMsg = ApiError.getApiSuccessError(cartUpdate);
-                if (!TextUtils.isEmpty(errMsg)) {
-                    makeToast(errMsg);
-                }
-            }
-
-            // if a successful insert, refill cart
-            if (cartUpdate.getItemsAdded().size() > 0) {
-                refreshCart(activity, null);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
-            } else {
-                // notify data set changed because qty text may have changed, but actual qty not
-                // and we need update button to be visible
-                notifyDataSetChanged();
-            }
-        }
-
-        @Override
-        public void failure(RetrofitError retrofitError) {
-            respondToFailure("Failed Cart Update: " + ApiError.getErrorMessage(retrofitError));
-        }
-    }
-
-
-
-    /** listens for completion of deletion request */
-    class DeleteFromCartListener implements Callback<DeleteFromCart> {
-
-        @Override
-        public void success(DeleteFromCart cartContents, Response response) {
-            hideProgressIndicator();
-            refreshCart(activity, null);
-        }
-
-        @Override
-        public void failure(RetrofitError retrofitError) {
-            respondToFailure("Failed Cart Item Deletion: " + ApiError.getErrorMessage(retrofitError));
-        }
-    }
-
 
     /************* widget listeners ************/
 

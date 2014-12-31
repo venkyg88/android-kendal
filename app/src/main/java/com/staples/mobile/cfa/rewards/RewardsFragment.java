@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.cart.CartFragment;
+import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.easyopen.model.member.InkRecyclingDetail;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
@@ -32,7 +32,7 @@ import java.text.NumberFormat;
 import java.util.List;
 
 
-public class RewardsFragment extends Fragment implements View.OnClickListener, CartFragment.CartRefreshCallback {
+public class RewardsFragment extends Fragment implements View.OnClickListener, CartApiManager.CartRefreshCallback {
     private static final String TAG = RewardsFragment.class.getSimpleName();
     MainActivity activity;
 
@@ -190,12 +190,12 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
             case R.id.reward_add_button:
                 showProgressIndicator();
                 confirmationMsg = getResources().getString(R.string.rewards_addtocart_confirmation);
-                activity.addCouponToCart(reward.getCode(), this);
+                CartApiManager.addCoupon(reward.getCode(), this);
                 break;
             case R.id.reward_remove_button:
                 showProgressIndicator();
                 confirmationMsg = getResources().getString(R.string.rewards_removefromcart_confirmation);
-                activity.removeCouponFromCart(reward.getCode(), this);
+                CartApiManager.deleteCoupon(reward.getCode(), this);
                 break;
         }
     }
@@ -211,10 +211,15 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
     }
 
     // when cart refresh done,
-    public void onCartRefreshComplete() {
-        fillRewardAdapter();
+    public void onCartRefreshComplete(String errMsg) {
         hideProgressIndicator();
-        Toast.makeText(activity, confirmationMsg, Toast.LENGTH_LONG).show();
+        ProfileDetails.updateRewardsFromCart(CartApiManager.getCart());
+        fillRewardAdapter(); // note that error may occur on cart refresh rather than on coupon add/delete, so need to update rewards regardless
+        if (errMsg != null) {
+            Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(activity, confirmationMsg, Toast.LENGTH_LONG).show();
+        }
     }
 
     private void showProgressIndicator() {
