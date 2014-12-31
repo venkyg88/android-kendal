@@ -1,6 +1,5 @@
-package com.staples.mobile.cfa.bundle;
+package com.staples.mobile.cfa.skuset;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
@@ -12,57 +11,65 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.widget.DataWrapper;
-import com.staples.mobile.cfa.widget.PriceSticker;
-import com.staples.mobile.cfa.widget.RatingStars;
+import com.staples.mobile.common.access.easyopen.model.browse.Image;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder> implements DataWrapper.Layoutable {
-    private static final String TAG = "BundleAdapter";
+public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder> {
+    private static final String TAG = "SkuSetAdapter";
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView image;
         private TextView title;
-        private RatingStars ratingStars;
-        private PriceSticker priceSticker;
-        private ImageView action;
 
         private ViewHolder(View view) {
             super(view);
             image = (ImageView) view.findViewById(R.id.image);
             title = (TextView) view.findViewById(R.id.title);
-            ratingStars = (RatingStars) view.findViewById(R.id.rating);
-            priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
-            action = (ImageView) view.findViewById(R.id.bundle_action);
+        }
+    }
+
+    public static class Item
+    {
+        public String title;
+        public String identifier;
+        public String imageUrl;
+
+        private Item(String title, String identifier) {
+            this.title = title;
+            this.identifier = identifier;
+        }
+        public String setImageUrl(List<Image> images) {
+            if (images==null) return(null);
+            for(Image image : images) {
+                String url = image.getUrl();
+                if (url!=null) {
+                    imageUrl = url;
+                    return(imageUrl);
+                }
+            }
+            return(null);
         }
     }
 
     private Context context;
     private LayoutInflater inflater;
-    private ArrayList<BundleItem> array;
+    private ArrayList<Item> array;
     private View.OnClickListener listener;
-    private int layout;
     private Drawable noPhoto;
 
-    public BundleAdapter(Context context) {
+    public SkuSetAdapter(Context context) {
         this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        array = new ArrayList<BundleItem>();
+        array = new ArrayList<Item>();
         noPhoto = context.getResources().getDrawable(R.drawable.no_photo);
     }
 
     public void setOnClickListener(View.OnClickListener listener) {
         this.listener = listener;
-    }
-
-    public void setLayout(DataWrapper.Layout layout) {
-        if (layout==DataWrapper.Layout.TALL) this.layout = R.layout.bundle_item_tall;
-        else  this.layout = R.layout.bundle_item_wide;
     }
 
     @Override
@@ -72,31 +79,25 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int type) {
-        View view = inflater.inflate(layout, parent, false);
+        View view = inflater.inflate(R.layout.skuset_item, parent, false);
         ViewHolder vh = new ViewHolder(view);
 
         // Set onClickListeners
         vh.itemView.setOnClickListener(listener);
-        vh.action.setOnClickListener(listener);
         return(vh);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder vh, int position) {
-        BundleItem item = array.get(position);
+        Item item = array.get(position);
 
         // Set tag for onClickListeners
         vh.itemView.setTag(item);
-        vh.action.setTag(item);
 
         // Set content
         if (item.imageUrl == null) vh.image.setImageDrawable(noPhoto);
         else Picasso.with(context).load(item.imageUrl).error(noPhoto).into(vh.image);
         vh.title.setText(item.title);
-        vh.ratingStars.setRating(item.customerRating, item.customerCount);
-        vh.priceSticker.setPricing(item.price, item.unit);
-        if (item.type==IdentifierType.SKUSET) vh.action.setImageResource(R.drawable.sku_set);
-        else vh.action.setImageResource(R.drawable.add_to_cart);
     }
 
     public int fill(List<Product> products) {
@@ -104,11 +105,8 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         int count = 0;
         for (Product product : products) {
             String name = Html.fromHtml(product.getProductName()).toString();
-            BundleItem item = new BundleItem(name, product.getSku());
+            Item item = new Item(name, product.getSku());
             item.setImageUrl(product.getImage());
-            item.setPrice(product.getPricing());
-            item.customerRating = product.getCustomerReviewRating();
-            item.customerCount = product.getCustomerReviewCount();
             array.add(item);
             count++;
         }
