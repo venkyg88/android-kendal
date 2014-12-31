@@ -167,7 +167,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 super.onScrolled(recyclerView, dx, dy);
                 if (dy > 5) {
                     onScrollDown();
-                } else if (dy < -5 || isTopOfFirstItemVisible(recyclerView)) {
+                } else if (dy < -5 || (dy < 0 && isTopOfFirstItemVisible(recyclerView))) {
                     onScrollUp();
                 }
             }
@@ -387,9 +387,9 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     /** returns true if list view is scrolled to the very top */
     private boolean isTopOfFirstItemVisible(RecyclerView listView) {
         if (cartListLayoutMgr.findFirstVisibleItemPosition() == 0) {
-            View view = listView.getChildAt(0);
-//            View view = cartListLayoutMgr.findViewByPosition(0); // lesser performance
-            return view != null && view.getTop() > 0;
+//            View view = listView.getChildAt(0); // might not get first child
+            View view = cartListLayoutMgr.findViewByPosition(0); // lesser performance
+            return view != null && view.getTop() >= 0;
         }
         return false;
     }
