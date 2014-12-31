@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
@@ -42,11 +43,8 @@ import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
-import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
 import com.staples.mobile.common.access.config.AppConfigurator;
-import com.staples.mobile.common.access.easyopen.model.member.UpdateProfile;
-import com.staples.mobile.common.access.easyopen.model.member.UpdateProfileResponse;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -91,7 +89,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     private TextView cartFreeShippingMsg;
     private TextView cartShipping;
     private TextView couponsRewardsValue;
-    private ListView couponListVw;
+    private RecyclerView couponListVw;
     private CouponAdapter couponAdapter;
     private View couponList;
     private View emptyCartMsg;
@@ -187,9 +185,10 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 //        qtyUpdateButtonListener = new QtyUpdateButtonListener();
 
         // Initialize coupon listview
-        couponListVw = (ListView) view.findViewById(R.id.coupon_list);
+        couponListVw = (RecyclerView) view.findViewById(R.id.coupon_list);
         couponAdapter = new CouponAdapter(activity, this, this);
         couponListVw.setAdapter(couponAdapter);
+        couponListVw.setLayoutManager(new LinearLayoutManager(activity));
 
 
         // Initialize cart listview

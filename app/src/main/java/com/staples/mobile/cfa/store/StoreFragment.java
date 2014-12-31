@@ -3,17 +3,21 @@ package com.staples.mobile.cfa.store;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +52,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class StoreFragment extends Fragment implements Callback<StoreQuery>, GoogleMap.OnMarkerClickListener,
-                           View.OnClickListener, AdapterView.OnItemClickListener, EditText.OnEditorActionListener {
+                           View.OnClickListener, EditText.OnEditorActionListener {
     private static final String TAG = "StoreFragment";
 
     private static int FITSTORES = 5; // Number of stores to fit in initial view
@@ -59,7 +63,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
     private MapView mapView;
     private GoogleMap googleMap;
     private EditText search;
-    private ListView list;
+    private RecyclerView list;
     private StoreAdapter adapter;
 
     private BitmapDescriptor hotIcon;
@@ -67,6 +71,8 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
     private Marker hotMarker;
 
     private Location location;
+
+    private int singleHeight;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -95,10 +101,12 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
             view = inflater.inflate(R.layout.store_fragment_nomap, container, false);
         }
 
-        list = (ListView) view.findViewById(R.id.list);
+        list = (RecyclerView) view.findViewById(R.id.list);
         adapter = new StoreAdapter(getActivity());
         list.setAdapter(adapter);
-        list.setOnItemClickListener(this);
+        list.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        adapter.setOnClickListener(this);
+        adapter.setSingleMode(mapView!=null);
 
         search = (EditText) view.findViewById(R.id.store_search);
         search.setOnEditorActionListener(this);
@@ -378,55 +386,61 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
 
         // Map with single store
         else if (adapter.isSingleMode()) {
-            ((MainActivity) getActivity()).showActionBar(R.string.store_locator_title, R.drawable.ic_view_list_white, this);
+            ((MainActivity) getActivity()).showActionBar(R.string.store_locator_title, R.drawable.ic_map_white, this);
             mapView.setVisibility(View.GONE);
+            ViewGroup.LayoutParams params = list.getLayoutParams();
+            singleHeight = params.height;
+            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
             adapter.setSingleMode(false);
             adapter.notifyDataSetChanged();
-            list.smoothScrollToPosition(adapter.getSingleIndex());
+            list.scrollToPosition(adapter.getSingleIndex());
+            list.requestLayout();
         }
 
         // List of stores with map available
         else {
-            ((MainActivity) getActivity()).showActionBar(R.string.store_locator_title, R.drawable.ic_map_white, this);
+            ((MainActivity) getActivity()).showActionBar(R.string.store_locator_title, R.drawable.ic_view_list_white, this);
             mapView.setVisibility(View.VISIBLE);
+            ViewGroup.LayoutParams params = list.getLayoutParams();
+            params.height = singleHeight;
             adapter.setSingleMode(true);
             adapter.notifyDataSetChanged();
+            list.requestLayout();
+        }
+    }
+
+    private boolean dialPhoneNumber(String phone) {
+        if (phone==null || phone.isEmpty()) return(false);
+        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone));
+        try {
+            startActivity(intent);
+            return(true);
+        } catch(ActivityNotFoundException e) {
+            Toast.makeText(getActivity(), "There is no phone application on this device.", Toast.LENGTH_LONG).show();
+            return(false);
         }
     }
 
     @Override
     public void onClick(View view) {
+        Object obj;
         switch(view.getId()) {
             case R.id.option_icon:
                 toggleView();
                 break;
-        }
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        // List of stores with no map available
-        if (mapView==null) {
-        }
-
-        // Map with single store
-        else if (adapter.isSingleMode()) {
-            mapView.setVisibility(View.GONE);
-            adapter.setSingleMode(false);
-            adapter.notifyDataSetChanged();
-            list.smoothScrollToPosition(adapter.getSingleIndex());
-        }
-
-        // List of stores with map available
-        else {
-            mapView.setVisibility(View.VISIBLE);
-            adapter.setSingleMode(true);
-            adapter.setSingleIndex(position);
-            StoreItem item = adapter.getItem(position);
-            selectMarker(item.marker);
-            CameraUpdate update = CameraUpdateFactory.newLatLng(item.position);
-            googleMap.moveCamera(update);
-            adapter.notifyDataSetChanged();
+            case R.id.store_item:
+                Toast.makeText(getActivity(), "Whole store", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.call_store:
+                obj = view.getTag();
+                if (obj instanceof StoreItem) {
+                    String phone = ((StoreItem) obj).phoneNumber;
+                    dialPhoneNumber(phone);
+                }
+                break;
+            case R.id.directions:
+                Toast.makeText(getActivity(), "Directions", Toast.LENGTH_SHORT).show();
+                break;
         }
     }
 

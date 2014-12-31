@@ -1,5 +1,6 @@
 package com.staples.mobile.cfa.bundle;
 
+import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.common.access.easyopen.model.browse.*;
 
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.List;
 public class BundleItem {
     public String title;
     public String identifier;
+    public IdentifierType type;
     public String imageUrl;
     public float price;
     public String unit;
@@ -16,6 +18,7 @@ public class BundleItem {
     public BundleItem(String title, String identifier) {
         this.title = title;
         this.identifier = identifier;
+        type = IdentifierType.detect(identifier);
     }
 
     public String setImageUrl(List<Image> images) {

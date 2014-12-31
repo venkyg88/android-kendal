@@ -53,7 +53,7 @@
             />
         <com.staples.mobile.cfa.widget.QuantityEditor
             android:id="@+id/cartitem_qty"
-            style="@style/HackEditorStyle"
+            style="@style/QtyEditorStyle"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/cartitem_price"

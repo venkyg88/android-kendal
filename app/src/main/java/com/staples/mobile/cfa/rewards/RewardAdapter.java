@@ -5,109 +5,100 @@
 package com.staples.mobile.cfa.rewards;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.cart.CartItem;
-import com.staples.mobile.cfa.widget.PriceSticker;
-import com.staples.mobile.cfa.widget.QuantityEditor;
-import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.EmptyResponse;
-import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
-//import com.staples.mobile.cfa.widget.QuantityEditor;
+import java.util.List;
 
 
-public class RewardAdapter extends ArrayAdapter<Reward> {
+public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.ViewHolder> {
 
     private static final String TAG = RewardAdapter.class.getSimpleName();
 
     private MainActivity activity;
-    private LayoutInflater inflater;
     private int rewardItemLayoutResId;
 
+    List<Reward> rewards;
+
     // widget listeners
-    private View.OnClickListener rewardAddDeleteButtonListener;
+    private View.OnClickListener rewardButtonListener;
 
-
-
-    public RewardAdapter(Activity activity, View.OnClickListener rewardAddDeleteButtonListener) {
-        super(activity, R.layout.coupon_item_redeemable);
+    /** constructor */
+    public RewardAdapter(Activity activity, View.OnClickListener rewardButtonListener) {
         rewardItemLayoutResId = R.layout.coupon_item_redeemable;
         this.activity = (MainActivity)activity;
-        this.rewardAddDeleteButtonListener = rewardAddDeleteButtonListener;
-        inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.rewardButtonListener = rewardButtonListener;
     }
-
-
 
 /* Views */
 
-
+    // Create new views (invoked by the layout manager)
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public RewardAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(activity)
+                .inflate(rewardItemLayoutResId, parent, false);
+        return new ViewHolder(v);
+    }
 
-        // use view holder pattern to improve listview performance
-        ViewHolder vh = null;
+    // Replace the contents of a view (invoked by the layout manager)
+    @Override
+    public void onBindViewHolder(ViewHolder vh, int position) {
+        // - get element from your dataset at this position
+        // - replace the contents of the view with that element
 
-        // Get a new or recycled view of the right type
-        if (convertView == null) {
-            convertView = inflater.inflate(rewardItemLayoutResId, parent, false);
-            convertView.findViewById(R.id.coupon_item_layout).setBackgroundColor(0xffffff); // is default gray for cart, so set to white for rewards
-            vh = new ViewHolder();
-            convertView.setTag(vh);
-        } else {
-            vh = (ViewHolder) convertView.getTag();
-        }
-
-        Reward reward = getItem(position);
-
-        vh.couponField1Vw = (TextView) convertView.findViewById(R.id.coupon_item_field1);
-        vh.couponField2Vw = (TextView) convertView.findViewById(R.id.coupon_item_field2);
-        vh.couponAddDeleteButton = (Button) convertView.findViewById(R.id.reward_add_button);
+        Reward reward = rewards.get(position);
 
         // set reward text
         vh.couponField1Vw.setText(reward.getAmount());
         vh.couponField2Vw.setText("exp " + reward.getExpiryDate());
 
-        // set up applied state
         Resources r = activity.getResources();
+
+        // set up applied state
+        int blackTextColor = r.getColor(R.color.text_black);
+        int grayTextColor = r.getColor(R.color.text_gray);
         if (reward.isIsApplied()) {
-            vh.couponAddDeleteButton.setText(r.getString(R.string.remove));
-            int gray = r.getColor(R.color.text_gray);
-            vh.couponField1Vw.setTextColor(gray);
-            vh.couponField2Vw.setTextColor(gray);
+            vh.couponField1Vw.setTextColor(grayTextColor);
+            vh.couponField2Vw.setTextColor(grayTextColor);
+            vh.couponAddButton.setVisibility(View.GONE);
+            vh.couponRemoveButton.setVisibility(View.VISIBLE);
         } else {
-            vh.couponAddDeleteButton.setText(r.getString(R.string.add));
-            int black = r.getColor(R.color.text_black);
-            vh.couponField1Vw.setTextColor(black);
-            vh.couponField2Vw.setTextColor(black);
+            vh.couponField1Vw.setTextColor(blackTextColor);
+            vh.couponField2Vw.setTextColor(blackTextColor);
+            vh.couponAddButton.setVisibility(View.VISIBLE);
+            vh.couponRemoveButton.setVisibility(View.GONE);
         }
 
-        vh.couponAddDeleteButton.setTag(position);
+        vh.couponAddButton.setTag(position);
+        vh.couponRemoveButton.setTag(position);
 
         // set widget listeners
-        vh.couponAddDeleteButton.setOnClickListener(rewardAddDeleteButtonListener);
+        vh.couponAddButton.setOnClickListener(rewardButtonListener);
+        vh.couponRemoveButton.setOnClickListener(rewardButtonListener);
+    }
 
-        return(convertView);
+    // Return the size of your dataset (invoked by the layout manager)
+    @Override
+    public int getItemCount() {
+        return rewards.size();
+    }
+
+
+    public List<Reward> getRewards() {
+        return rewards;
+    }
+
+    public void setRewards(List<Reward> rewards) {
+        this.rewards = rewards;
     }
 
 
@@ -117,9 +108,20 @@ public class RewardAdapter extends ArrayAdapter<Reward> {
 
     /************* view holder ************/
 
-    static class ViewHolder {
+//    static class ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView couponField1Vw;
         private TextView couponField2Vw;
-        private Button couponAddDeleteButton;
+        private Button couponAddButton;
+        private Button couponRemoveButton;
+
+        /** constructor */
+        public ViewHolder (View itemView) {
+            super(itemView);
+            couponField1Vw = (TextView) itemView.findViewById(R.id.coupon_item_field1);
+            couponField2Vw = (TextView) itemView.findViewById(R.id.coupon_item_field2);
+            couponAddButton = (Button) itemView.findViewById(R.id.reward_add_button);
+            couponRemoveButton = (Button) itemView.findViewById(R.id.reward_remove_button);
+        }
     }
 }

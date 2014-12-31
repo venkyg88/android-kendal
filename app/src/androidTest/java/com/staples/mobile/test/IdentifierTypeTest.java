@@ -47,7 +47,7 @@ public class IdentifierTypeTest {
 
     @Test
     public void testDetect() {
-        for(Example example : examples ) {
+        for(Example example : examples) {
             IdentifierType type = IdentifierType.detect(example.string);
             if (type!=example.type)
                 Assert.fail("\"" + example.string + "\" should have parsed to " + example.type + " but it parsed to " + type);

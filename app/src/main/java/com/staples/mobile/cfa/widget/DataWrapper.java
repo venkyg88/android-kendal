@@ -77,25 +77,25 @@ public class DataWrapper extends LinearLayout {
 
     public void setState(State state) {
         View list = getChildAt(0);
+        if (list!=null) list.setVisibility(state.list);
         View progress = getChildAt(1);
+        if (progress!=null) progress.setVisibility(state.progress);
         View empty = getChildAt(2);
-
-        list.setVisibility(state.list);
-        progress.setVisibility(state.progress);
-        empty.setVisibility(state.empty);
+        if (empty!=null) empty.setVisibility(state.empty);
     }
 
     @Override
     public void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
 
-        // Special handling for RecyclerView
+        // Special handling for RecyclerView...
         View list = getChildAt(0);
         if (list instanceof RecyclerView) {
             RecyclerView recycle = (RecyclerView) list;
+
+            // When it has a GridLayout
             RecyclerView.LayoutManager manager = recycle.getLayoutManager();
             if (manager instanceof GridLayoutManager) {
-
                 int viewWidth = View.MeasureSpec.getSize(widthSpec);
                 int colWidth = getResources().getDimensionPixelSize(R.dimen.min_grid_width);
                 int n = viewWidth/colWidth;
