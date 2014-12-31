@@ -104,7 +104,13 @@ public class LoginHelper {
     private void loadProfileAndOpenProfileFragment() {
         new ProfileDetails().refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
             @Override public void onProfileRefresh(Member member) {
-                activity.selectProfileFragment();
+                if(member != null) {
+                    activity.selectProfileFragment();
+                }
+                else {
+                    userSignOut();
+                    Toast.makeText(activity, "Unable to load profile", Toast.LENGTH_SHORT).show();
+                }
                 activity.hideProgressIndicator();
             }
         });
