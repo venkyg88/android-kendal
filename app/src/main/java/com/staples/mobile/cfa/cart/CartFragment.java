@@ -7,7 +7,6 @@ package com.staples.mobile.cfa.cart;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.res.Resources;
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +18,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,7 +66,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private View cartShippingLayout;
     private View cartSubtotalLayout;
     private CartAdapter cartAdapter;
-    private ListView cartListVw;
+    private RecyclerView cartListVw;
+    private LinearLayoutManager cartListLayoutMgr;
     private View couponsRewardsLayout;
     private View linkRewardsAcctLayout;
     private Button rewardsLinkAcctButton;
@@ -144,43 +143,33 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
         // Initialize coupon listview
         couponListVw = (RecyclerView) view.findViewById(R.id.coupon_list);
-        couponAdapter = new CouponAdapter(activity, this, this);
+        couponAdapter = new CouponAdapter(this, this);
         couponListVw.setAdapter(couponAdapter);
         couponListVw.setLayoutManager(new LinearLayoutManager(activity));
 
 
         // Initialize cart listview
         cartAdapter = new CartAdapter(activity, R.layout.cart_item_group, qtyChangeListener, qtyDeleteButtonListener);
-        cartAdapter.registerDataSetObserver(new DataSetObserver() {
+        cartAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
                 super.onChanged();
                 updateCartFields();
             }
         });
-        cartListVw = (ListView) view.findViewById(R.id.cart_list);
+        cartListVw = (RecyclerView) view.findViewById(R.id.cart_list);
+        cartListLayoutMgr = new LinearLayoutManager(activity);
+        cartListVw.setLayoutManager(cartListLayoutMgr);
         cartListVw.setAdapter(cartAdapter);
-        cartListVw.setOnScrollListener(new AbsListView.OnScrollListener() {
-            int oldFirstVisibleItem = 0;
-            int oldTop = 0;
-            @Override public void onScrollStateChanged(AbsListView absListView, int scrollState) { }
-            @Override public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                int top = getTopOfFirstVisibleView(absListView);
-                if (firstVisibleItem == 0 && top == 0) {
-                    onScrollUp();
-                } else if (firstVisibleItem == oldFirstVisibleItem) {
-                    if (oldTop - top > 5) {
-                        onScrollDown();
-                    } else if (top - oldTop > 5 && firstVisibleItem + visibleItemCount < totalItemCount) { // accounting for scroll bounce at the bottom
-                        onScrollUp();
-                    }
-                } else if (firstVisibleItem > oldFirstVisibleItem) {
+        cartListVw.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 5) {
                     onScrollDown();
-                } else if (firstVisibleItem < oldFirstVisibleItem) {
+                } else if (dy < -5 || (dy < 0 && isTopOfFirstItemVisible(recyclerView))) {
                     onScrollUp();
                 }
-                oldFirstVisibleItem = firstVisibleItem;
-                oldTop = top;
             }
 
             private void onScrollUp() {
@@ -377,7 +366,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 cartSubtotalLayout.setVisibility(View.GONE);
                 cartProceedToCheckout.setVisibility(View.GONE);
             } else {
-                if (cartListVw.getFirstVisiblePosition() == 0 && getTopOfFirstVisibleView(cartListVw) == 0) {
+
+                if (isTopOfFirstItemVisible(cartListVw)) {
                     couponsRewardsLayout.setVisibility(View.VISIBLE);
                     cartShippingLayout.setVisibility(View.VISIBLE);
                 }
@@ -395,11 +385,14 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     }
 
     /** returns true if list view is scrolled to the very top */
-    private int getTopOfFirstVisibleView(AbsListView listView) {
-        View view = listView.getChildAt(0);
-        return (view == null) ? 0 : view.getTop();
+    private boolean isTopOfFirstItemVisible(RecyclerView listView) {
+        if (cartListLayoutMgr.findFirstVisibleItemPosition() == 0) {
+//            View view = listView.getChildAt(0); // might not get first child
+            View view = cartListLayoutMgr.findViewByPosition(0); // lesser performance
+            return view != null && view.getTop() >= 0;
+        }
+        return false;
     }
-
 
     @Override
     public void onClick(View view) {
@@ -518,15 +511,10 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private synchronized void setAdapterListItems() {
         // if fragment is attached to activity, then update the fragment's views
         if (cartAdapter != null) {
-            cartAdapter.clear();
-            if (cartListItems != null && cartListItems.size() > 0) {
-                cartAdapter.addAll(cartItemGroups);
-            }
-            cartAdapter.notifyDataSetChanged();
+            cartAdapter.setItems(cartItemGroups);
         } else {
             if (activity != null) {
-                Cart cart = CartApiManager.getCart();
-                activity.updateCartIcon(cart == null ? 0 : cart.getTotalItems());
+                activity.updateCartIcon(CartApiManager.getCartTotalItems());
             }
         }
     }

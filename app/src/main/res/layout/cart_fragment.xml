@@ -32,18 +32,16 @@
         android:visibility="gone"
         />
 
-    <!--cart listview (using cards and no divider, smoothScrollbar="false" because items vary in height)-->
-    <!--todo: experiment with setting scrollingCache and animationCache to false for performance-->
-    <!--todo: experiment with smoothScrollbar on device-->
-    <ListView
+    <!--cart list (using cards and no divider)-->
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/cart_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:choiceMode="singleChoice"
-        android:smoothScrollbar="false"
-        android:divider="#ffffffff"
-        android:background="@color/background_white"/>
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="2dp"
+        android:scrollbars="vertical"
+        />
 
     <!--coupon & rewards heading -->
     <RelativeLayout

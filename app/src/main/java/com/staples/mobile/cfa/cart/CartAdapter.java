@@ -4,14 +4,12 @@
 
 package com.staples.mobile.cfa.cart;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,60 +18,75 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.PriceSticker;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public class CartAdapter extends ArrayAdapter<CartItemGroup> {
+
+public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     private static final String TAG = CartAdapter.class.getSimpleName();
 
-    private Activity activity;
-    private LayoutInflater inflater;
+    private List<CartItemGroup> cartItemGroups = new ArrayList<CartItemGroup>();
+
     private int cartItemGroupLayoutResId;
 
+    private Context context;
+    private LayoutInflater inflater;
+    ViewGroup parentViewGroup;
+
     private Drawable noPhoto;
+    String shippingEstimateLabel;
+
 
     // widget listeners
     private View.OnClickListener qtyDeleteButtonListener;
     private QuantityEditor.OnQtyChangeListener qtyChangeListener;
 
 
-    public CartAdapter(Activity activity, int cartItemGroupLayoutResId,
+    /** constructor */
+    public CartAdapter(Context context,
+                       int cartItemGroupLayoutResId,
                        QuantityEditor.OnQtyChangeListener qtyChangeListener,
                        View.OnClickListener qtyDeleteButtonListener) {
-        super(activity, cartItemGroupLayoutResId);
-        this.activity = activity;
         this.cartItemGroupLayoutResId = cartItemGroupLayoutResId;
         this.qtyChangeListener = qtyChangeListener;
         this.qtyDeleteButtonListener = qtyDeleteButtonListener;
-        noPhoto = activity.getResources().getDrawable(R.drawable.no_photo);
-        inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.noPhoto = context.getResources().getDrawable(R.drawable.no_photo);
+        this.context = context;
+        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.shippingEstimateLabel = context.getResources().getString(R.string.expected_delivery);
+
     }
 
-
+    public void setItems(List<CartItemGroup> items) {
+        cartItemGroups = items;
+        notifyDataSetChanged();
+    }
 
 /* Views */
 
-
+    // Create new views (invoked by the layout manager)
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
+    public CartAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        parentViewGroup = parent;
+        // create a new view
+        View v = LayoutInflater.from(parent.getContext()).inflate(cartItemGroupLayoutResId, parent, false);
+        ViewHolder vh = new ViewHolder(v);
+        return vh;
+    }
 
-        // use view holder pattern to improve listview performance
-        ViewHolder vh = null;
-
-        // Get a new or recycled view of the right type
-        if (view == null) {
-            view = inflater.inflate(cartItemGroupLayoutResId, parent, false);
-            vh = new ViewHolder(view); // get various widgets and place in view holder
-            view.setTag(vh);
-        } else {
-            vh = (ViewHolder) view.getTag();
-        }
+    // Replace the contents of a view (invoked by the layout manager)
+    @Override
+    public void onBindViewHolder(ViewHolder vh, int position) {
+        // - get element from your dataset at this position
+        // - replace the contents of the view with that element
 
         CartItemGroup cartItemGroup = getItem(position);
 
+
         // set shipping estimate
-        String shippingEstimateLabel = activity.getResources().getString(R.string.expected_delivery);
         vh.shipEstimateTextView.setText(shippingEstimateLabel + " " + cartItemGroup.getExpectedDelivery());
-        vh.shipEstimateItemQtyTextView.setText(activity.getResources().getQuantityString(R.plurals.cart_qty,
+        vh.shipEstimateItemQtyTextView.setText(context.getResources().getQuantityString(R.plurals.cart_qty,
                 cartItemGroup.getExpectedDeliveryItemQty(), cartItemGroup.getExpectedDeliveryItemQty()));
 
         // adjust the number of child views in cart item list
@@ -83,7 +96,7 @@ public class CartAdapter extends ArrayAdapter<CartItemGroup> {
             vh.cartItemListLayout.removeViews(groupSize, listLayoutChildCount - groupSize);
         } else {
             for (int i = listLayoutChildCount; i < groupSize; i++) {
-                View v = inflater.inflate(R.layout.cart_item, parent, false);
+                View v = inflater.inflate(R.layout.cart_item, parentViewGroup, false);
                 v.setTag(new CartItemViewHolder(v));
                 vh.cartItemListLayout.addView(v);
             }
@@ -100,7 +113,7 @@ public class CartAdapter extends ArrayAdapter<CartItemGroup> {
             if (imageUrl == null) {
                 ciVh.imageView.setImageDrawable(noPhoto);
             } else {
-                Picasso.with(activity).load(imageUrl).error(noPhoto).into(ciVh.imageView);
+                Picasso.with(context).load(imageUrl).error(noPhoto).into(ciVh.imageView);
             }
 
             // Set title
@@ -134,9 +147,18 @@ public class CartAdapter extends ArrayAdapter<CartItemGroup> {
             // set visibility of horizontal rule
             ciVh.horizontalRule.setVisibility((i < groupSize-1)? View.VISIBLE : View.GONE);
         }
-
-        return(view);
     }
+
+    // Return the size of your dataset (invoked by the layout manager)
+    @Override
+    public int getItemCount() {
+        return cartItemGroups.size();
+    }
+
+    public CartItemGroup getItem(int position) {
+        return cartItemGroups.get(position);
+    }
+
 
     //---------------------------------------//
     //------------ inner classes ------------//
@@ -154,17 +176,18 @@ public class CartAdapter extends ArrayAdapter<CartItemGroup> {
         }
     }
 
-    static class ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         ViewGroup shipEstimateLayout;
         TextView shipEstimateTextView;
         TextView shipEstimateItemQtyTextView;
         ViewGroup cartItemListLayout;
 
-        ViewHolder(View convertView) {
-            shipEstimateLayout = (ViewGroup) convertView.findViewById(R.id.cartitem_shipping_estimate_layout);
-            shipEstimateTextView = (TextView) convertView.findViewById(R.id.cartitem_shipping_estimate);
-            shipEstimateItemQtyTextView = (TextView) convertView.findViewById(R.id.cartitem_shipping_estimate_itemqty);
-            cartItemListLayout = (ViewGroup) convertView.findViewById(R.id.cart_item_list);
+        ViewHolder(View itemView) {
+            super(itemView);
+            shipEstimateLayout = (ViewGroup) itemView.findViewById(R.id.cartitem_shipping_estimate_layout);
+            shipEstimateTextView = (TextView) itemView.findViewById(R.id.cartitem_shipping_estimate);
+            shipEstimateItemQtyTextView = (TextView) itemView.findViewById(R.id.cartitem_shipping_estimate_itemqty);
+            cartItemListLayout = (ViewGroup) itemView.findViewById(R.id.cart_item_list);
         }
     }
 
