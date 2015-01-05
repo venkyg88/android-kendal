@@ -101,8 +101,8 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
         String msg = ApiError.getErrorMessage(retrofitError);
         Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
-        wrapper.setState(DataWrapper.State.EMPTY);
         Log.d(TAG, msg);
+        wrapper.setState(DataWrapper.State.EMPTY);
     }
 
     private int processBrowse(Browse browse) {

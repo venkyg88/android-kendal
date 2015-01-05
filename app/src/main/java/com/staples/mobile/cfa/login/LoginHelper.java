@@ -24,6 +24,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class LoginHelper {
+    private static final String TAG = "LoginHelper";
 
     public interface OnLoginCompleteListener {
         public void onLoginComplete(boolean guestLevel);
@@ -93,9 +94,9 @@ public class LoginHelper {
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
-                        Toast.makeText(activity, "Failed to Login As Guest: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_LONG).show();
-                        Log.i("Fail Message For Guest User", " " + retrofitError.getMessage());
-                        Log.i("Post URL address For Guest User", " " + retrofitError.getUrl());
+                        String msg = ApiError.getErrorMessage(retrofitError);
+                        Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+                        Log.d(TAG, msg);
                     }
                 }
         );
