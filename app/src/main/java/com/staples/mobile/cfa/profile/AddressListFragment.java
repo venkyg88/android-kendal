@@ -24,7 +24,7 @@ import java.util.List;
 public class AddressListFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "Address List Fragment";
     ListView listview;
-    ImageButton addBtn;
+    ImageButton addButton;
     List<Address> addressList;
     Activity activity;
 
@@ -35,7 +35,7 @@ public class AddressListFragment extends Fragment implements View.OnClickListene
 
         View view = inflater.inflate(R.layout.profile_list_fragment, container, false);
         listview = (ListView) view.findViewById(R.id.profileListView);
-        ImageButton addButton =(ImageButton) view.findViewById(R.id.listAddButton);
+        addButton =(ImageButton) view.findViewById(R.id.listAddButton);
         addButton.setOnClickListener(this);
         addressList = ProfileDetails.getMember().getAddress();
 
