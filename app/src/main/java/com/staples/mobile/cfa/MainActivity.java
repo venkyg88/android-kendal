@@ -36,6 +36,7 @@ import com.staples.mobile.cfa.rewards.RewardsLinkingFragment;
 import com.staples.mobile.cfa.search.SearchBarView;
 import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
+import com.staples.mobile.cfa.skuset.SkuSetFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.config.AppConfigurator;
@@ -69,8 +70,9 @@ public class MainActivity extends Activity
     private AppConfigurator appConfigurator;
 
     public enum Transition {
-        NONE  (0, 0, 0, 0, 0),
-        SLIDE (0, R.animator.push_enter, R.animator.push_exit, R.animator.pop_enter, R.animator.pop_exit),
+        NONE (0, 0, 0, 0, 0),
+        RIGHT(0, R.animator.right_push_enter, R.animator.right_push_exit, R.animator.right_pop_enter, R.animator.right_pop_exit),
+        UP   (0, R.animator.up_push_enter, R.animator.up_push_exit, R.animator.up_pop_enter, R.animator.up_pop_exit),
         FADE (0, R.animator.fade_in, R.animator.fade_out, 0, 0);
 
         private int standard;
@@ -403,29 +405,35 @@ public class MainActivity extends Activity
     }
 
     public boolean selectRewardsFragment() {
-        return selectFragment(new RewardsFragment(), Transition.SLIDE, true);
+        return selectFragment(new RewardsFragment(), Transition.RIGHT, true);
     }
 
     public boolean selectRewardsLinkingFragment() {
-        return selectFragment(new RewardsLinkingFragment(), Transition.SLIDE, true);
+        return selectFragment(new RewardsLinkingFragment(), Transition.RIGHT, true);
     }
 
     public boolean selectBundle(String title, String identifier) {
         BundleFragment fragment = new BundleFragment();
         fragment.setArguments(title, identifier);
-        return(selectFragment(fragment, Transition.SLIDE, true));
+        return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
     public boolean selectSearch(String keyword) {
         SearchFragment fragment = new SearchFragment();
         fragment.setArguments(keyword);
-        return(selectFragment(fragment, Transition.SLIDE, true));
+        return(selectFragment(fragment, Transition.RIGHT, true));
+    }
+
+    public boolean selectSkuSet(String title, String identifier, String imageUrl) {
+        SkuSetFragment fragment = new SkuSetFragment();
+        fragment.setArguments(title, identifier, imageUrl);
+        return(selectFragment(fragment, Transition.UP, true));
     }
 
     public boolean selectSkuItem(String identifier) {
         SkuFragment fragment = new SkuFragment();
         fragment.setArguments(identifier);
-        return(selectFragment(fragment, Transition.SLIDE, true));
+        return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
     public boolean selectProfileFragment() {
@@ -524,7 +532,7 @@ public class MainActivity extends Activity
             case R.id.account_button:
                 if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
                     loginHelper.userSignOut();
-                    selectDrawerItem(homeDrawerItem, Transition.SLIDE, true);
+                    selectDrawerItem(homeDrawerItem, Transition.RIGHT, true);
                 } else {
                     selectLoginFragment();
                 }
@@ -550,11 +558,11 @@ public class MainActivity extends Activity
                             selectRewardsFragment();
                         }
                     } else {
-                        selectDrawerItem(item, Transition.SLIDE, true);
+                        selectDrawerItem(item, Transition.RIGHT, true);
                     }
                     break;
                 case ACCOUNT:
-                    selectDrawerItem(item, Transition.SLIDE, true);
+                    selectDrawerItem(item, Transition.RIGHT, true);
                     break;
                 case PROFILE:
                     if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
