@@ -37,6 +37,7 @@ public class OrderFragment extends Fragment {
     String orderNumber;
     ListView listview;
     OrderArrayAdapter adapter;
+    TextView orderTV;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -84,6 +85,9 @@ public class OrderFragment extends Fragment {
 
             @Override
             public void failure(RetrofitError error) {
+                orderTV = (TextView)getView().findViewById(R.id.orderTV);
+                orderTV.setVisibility(View.VISIBLE);
+                orderTV.setText("No Orders Found");
                 ((MainActivity)activity).hideProgressIndicator();
                 Toast.makeText(getActivity(), "Failed to get orders associated with the account", Toast.LENGTH_LONG).show();
                 Log.i("Fail Response Order History", error.getUrl() + error.getMessage());
