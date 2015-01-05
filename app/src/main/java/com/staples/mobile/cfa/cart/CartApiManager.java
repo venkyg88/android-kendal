@@ -201,8 +201,6 @@ public class CartApiManager {
         }
     }
 
-
-
     //set orderItemId to null when adding new items
     private static TypedJsonString createCartRequestBody(String orderItemId, String sku, int qty) {
         OrderItem orderItem = new OrderItem(orderItemId, sku, qty);
@@ -218,16 +216,16 @@ public class CartApiManager {
         StringBuffer sb= new StringBuffer("{ \"orderItem\":[\n");
         int index=0;
         for(OrderItem orderItem : orderItemList){
+            if (index>0) sb.append(",\n");
             sb.append("{");
-            if (!TextUtils.isEmpty(orderItem.getOrderItemId())) {
-                sb.append("\"orderItemId_" + index + "\":\"" + orderItem.getOrderItemId() + "\", ");
+            String id = orderItem.getOrderItemId();
+            if (id!=null && !id.isEmpty()) {
+                sb.append("\"orderItemId_" + index + "\":\"" + id + "\", ");
             }
             sb.append("\"partNumber_" + index + "\":\"" + orderItem.getPartNumber() + "\", ");
-            sb.append("\"quantity_"+index+"\":\""+orderItem.getQuantity()+"\" },");
-            sb.append("\n");
+            sb.append("\"quantity_"+index+"\":\""+orderItem.getQuantity()+"\" }");
             index++;
         }
-        sb.deleteCharAt(sb.length()-2); //to delete the last comma added
         sb.append("] }");
         return sb.toString();
     }

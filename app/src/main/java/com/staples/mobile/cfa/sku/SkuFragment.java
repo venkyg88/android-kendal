@@ -28,12 +28,10 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.feed.PersistentSizedArrayList;
 import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
-import com.staples.mobile.cfa.feed.SeenProductsRowItem;
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.DataWrapper;
-import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.PagerStripe;
 import com.staples.mobile.cfa.widget.PriceSticker;
+import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -190,8 +188,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         // Initiate API calls
         EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
-        api.getSkuDetails(identifier,
-                  null, MAXFETCH, new SkuDetailsCallback());
+        api.getSkuDetails(identifier, null, MAXFETCH, new SkuDetailsCallback());
         api.getReviews(identifier, new ReviewSetCallback());
 
         return (wrapper);
@@ -467,11 +464,11 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     private class SkuDetailsCallback implements Callback<SkuDetails> {
         @Override
-        public void success(SkuDetails sku, Response response) {
+        public void success(SkuDetails details, Response response) {
             Activity activity = getActivity();
             if (activity==null) return;
 
-            processSkuDetails(sku);
+            processSkuDetails(details);
             wrapper.setState(DataWrapper.State.DONE);
         }
 
@@ -480,6 +477,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             Activity activity = getActivity();
             if (activity==null) return;
 
+            wrapper.setState(DataWrapper.State.EMPTY);
             String msg = ApiError.getErrorMessage(retrofitError);
             Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
             Log.d(TAG, msg);
