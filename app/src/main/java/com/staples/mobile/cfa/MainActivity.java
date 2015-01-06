@@ -212,6 +212,7 @@ public class MainActivity extends Activity
                 cartIconAction.setVisibility(View.GONE);
                 checkoutSigninButton.setVisibility(View.GONE);
                 cartQtyView.setVisibility(View.GONE);
+                closeButton.setVisibility(View.GONE); // even though the wireframe shows a close button, it's not clear what it should do
                 break;
             default:
                 // Show standard entities
