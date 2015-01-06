@@ -43,6 +43,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     EditText expirationYearVw;
     EditText cidVw;
     EditText emailAddrVw;
+    EditText shippingZipCodeVw;
+    EditText billingZipCodeVw;
 
     private boolean shippingAddrNeedsApplying = true;
     private boolean billingAddrNeedsApplying = true;
@@ -92,8 +94,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
         // on any change to addresses, apply addresses to cart and do precheckout
         // TODO: replace triggers on zip code with a real trigger on any change to addresses
-        EditText shippingZipCodeVw = (EditText)shippingAddrLayoutVw.findViewById(R.id.zipCode);
-        EditText billingZipCodeVw = (EditText)billingAddrLayoutVw.findViewById(R.id.zipCode);
+        shippingZipCodeVw = (EditText)shippingAddrLayoutVw.findViewById(R.id.zipCode);
+        billingZipCodeVw = (EditText)billingAddrLayoutVw.findViewById(R.id.zipCode);
         shippingZipCodeVw.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
@@ -157,8 +159,11 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         // if checked and shipping addr successfully applied, then apply billing and proceed to precheckout
         if (isChecked && !shippingAddrNeedsApplying) {
             applyAddressesAndPrecheckout();
+        // else if unchecked and previously filled in address, then apply addresses and do precheckout
+        } else if (!isChecked && !TextUtils.isEmpty(billingZipCodeVw.getText())) {
+                applyAddressesAndPrecheckout();
         } else {
-            // otherwise just reset shipping/tax info and wait for use to fill out necessary info
+            // otherwise just reset shipping/tax info and wait for user to fill out necessary info
             resetShippingAndTax();
         }
     }
