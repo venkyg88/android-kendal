@@ -154,7 +154,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
             showProgressIndicator();
             CheckoutApiManager.applyShippingAddress(new ShippingAddress(profileAddress), new CheckoutApiManager.ApplyAddressCallback() {
                     @Override
-                    public void onApplyAddressComplete(String shippingAddrId, String errMsg, String infoMsg) {
+                    public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
                         hideProgressIndicator();
 
                         // if success
@@ -163,7 +163,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                             // applying the shipping address actually modifies the id on the server, so need to fix everything up
                             Bundle checkoutBundle = RegisteredCheckoutFragment.this.getArguments();
                             String oldId = shippingAddressId;
-                            String newId = shippingAddrId;
+                            String newId = addressId;
                             profileAddress.setAddressId(newId); // fix id in the profile
                             shippingAddressId = newId; // fix our local id
                             checkoutBundle.putString(BUNDLE_PARAM_SHIPPING_ADDR_ID, newId); // fix id in bundle
@@ -175,6 +175,9 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                             startPrecheckout();
 
                         } else {
+                            // if shipping and tax already showing, need to hide them
+                            resetShippingAndTax();
+
                             Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
                             Log.d(TAG, errMsg);
                         }
@@ -205,7 +208,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         showProgressIndicator();
         CheckoutApiManager.applyBillingAddress(new BillingAddress(billingAddress), new CheckoutApiManager.ApplyAddressCallback() {
             @Override
-            public void onApplyAddressComplete(String shippingAddrId, String errMsg, String infoMsg) {
+            public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
                 hideProgressIndicator();
 
                 // if success

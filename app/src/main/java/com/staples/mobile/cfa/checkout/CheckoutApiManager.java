@@ -38,7 +38,7 @@ import retrofit.client.Response;
 public class CheckoutApiManager {
 
     public interface ApplyAddressCallback {
-        public void onApplyAddressComplete(String shippingAddrId, String errMsg, String infoMsg);
+        public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg);
     }
 
     public interface ApplyPaymentMethodCallback {

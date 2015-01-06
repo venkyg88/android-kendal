@@ -175,6 +175,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                     setShippingAndTax(shippingCharge, tax);
 
                 } else {
+                    // if shipping and tax already showing, need to hide them
+                    resetShippingAndTax();
+
                     Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
                     Log.d(TAG, errMsg);
                 }
@@ -227,6 +230,20 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         taxLayout.setVisibility(View.VISIBLE);
         shippingChargeLayout.setVisibility(View.VISIBLE);
         submissionLayout.setVisibility(View.VISIBLE);
+    }
+
+    /** updates the shipping charge and tax values (may be result of api response or a call from the subclass) */
+    protected void resetShippingAndTax() {
+        if (submissionLayout.getVisibility() == View.VISIBLE) {
+            Bundle checkoutBundle = this.getArguments();
+            checkoutBundle.putString(BUNDLE_PARAM_SHIPPING_CHARGE, null);
+            checkoutBundle.putFloat(BUNDLE_PARAM_TAX, -1);
+            this.shippingCharge = null;
+            this.tax = null;
+            taxLayout.setVisibility(View.GONE);
+            shippingChargeLayout.setVisibility(View.GONE);
+            submissionLayout.setVisibility(View.GONE);
+        }
     }
 
     /** returns tax value if available */
