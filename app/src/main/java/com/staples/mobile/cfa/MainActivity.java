@@ -210,6 +210,7 @@ public class MainActivity extends Activity
                 cartQtyView.setVisibility(View.VISIBLE);
                 // hide unwanted entities
                 cartIconAction.setVisibility(View.GONE);
+                checkoutSigninButton.setVisibility(View.GONE);
                 cartQtyView.setVisibility(View.GONE);
                 break;
             default:
