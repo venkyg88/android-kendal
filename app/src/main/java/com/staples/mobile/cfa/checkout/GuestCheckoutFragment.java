@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.profile.CardType;
 import com.staples.mobile.cfa.profile.ProfileDetails;
+import com.staples.mobile.cfa.profile.UsState;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -186,6 +187,18 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         return true;
     }
 
+    private boolean validateUsState(TextView textView, String requiredMsg, String badUsStateMsg) {
+        if (textView.getText().length()==0) {
+            textView.setError(requiredMsg);
+            return(false);
+        }
+        if (UsState.findByAbbr(textView.getText().toString())==null) {
+            textView.setError(badUsStateMsg);
+            return(false);
+        }
+        return(true);
+    }
+
     /** gets shipping address from user's entries */
     private ShippingAddress getShippingAddress(View layoutView, boolean includeEmail) {
         Resources resources = getResources();
@@ -201,12 +214,14 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
         // validate required fields
         String requiredMsg = resources.getString(R.string.required);
+        String badUsStateMsg = resources.getString(R.string.bad_us_state);
+
         if (!validateRequiredField(firstNameVw, requiredMsg)) { errors = true; }
         if (!validateRequiredField(firstNameVw, requiredMsg)) { errors = true; }
         if (!validateRequiredField(lastNameVw, requiredMsg)) { errors = true; }
         if (!validateRequiredField(addressVw, requiredMsg)) { errors = true; }
         if (!validateRequiredField(cityVw, requiredMsg)) { errors = true; }
-        if (!validateRequiredField(stateVw, requiredMsg)) { errors = true; }
+        if (!validateUsState(stateVw, requiredMsg, badUsStateMsg)) { errors = true; }
         if (!validateRequiredField(phoneNumberVw, requiredMsg)) { errors = true; }
         if (!validateRequiredField(zipCodeVw, requiredMsg)) { errors = true; }
 
@@ -226,7 +241,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         }
         return errors? null:shippingAddress;
     }
-
 
     /** gets shipping address from user's entries */
     private ShippingAddress getShippingAddress() {

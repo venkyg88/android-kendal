@@ -62,7 +62,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         }
 
         wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
-        RecyclerView list = (RecyclerView) view.findViewById(R.id.products);
+        RecyclerView list = (RecyclerView) wrapper.findViewById(R.id.products);
         adapter = new BundleAdapter(getActivity());
         list.setAdapter(adapter);
         list.setLayoutManager(new GridLayoutManager(getActivity(), 1));
@@ -101,8 +101,8 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
         String msg = ApiError.getErrorMessage(retrofitError);
         Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
-        wrapper.setState(DataWrapper.State.EMPTY);
         Log.d(TAG, msg);
+        wrapper.setState(DataWrapper.State.EMPTY);
     }
 
     private int processBrowse(Browse browse) {
@@ -144,8 +144,8 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
             case R.id.bundle_item:
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
-                    String identifier = ((BundleItem) tag).identifier;
-                    ((MainActivity) getActivity()).selectSkuItem(identifier);
+                    BundleItem item = (BundleItem) tag;
+                    ((MainActivity) getActivity()).selectSkuItem(item.identifier);
                 }
                 break;
             case R.id.bundle_action:
@@ -153,7 +153,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
                     if (item.type==IdentifierType.SKUSET) {
-                        ((MainActivity) getActivity()).selectSkuItem(item.identifier);
+                        ((MainActivity) getActivity()).selectSkuSet(item.title, item.identifier, item.imageUrl);
                     } else {
                         final MainActivity activity = (MainActivity) getActivity();
                         activity.showProgressIndicator();
