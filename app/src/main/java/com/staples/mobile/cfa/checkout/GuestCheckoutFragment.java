@@ -22,26 +22,10 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.profile.CardType;
-import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.profile.UsState;
-import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.config.StaplesAppContext;
-import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
-import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
-import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethodResponse;
+import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethodResponse;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
-import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
-import com.staples.mobile.common.access.easyopen.model.member.AddCreditCardPOW;
-import com.staples.mobile.common.access.easyopen.model.member.POWResponse;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 
 public class GuestCheckoutFragment extends CheckoutFragment implements CompoundButton.OnCheckedChangeListener {
