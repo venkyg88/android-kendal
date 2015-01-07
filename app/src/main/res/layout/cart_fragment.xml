@@ -153,12 +153,12 @@
         <!--checkout button-->
         <TextView
             android:id="@+id/action_checkout"
-            android:layout_height="40dp"
+            android:layout_height="36dp"
             android:layout_width="match_parent"
             android:layout_below="@id/cart_subtotal"
             android:gravity="center"
             android:text="@string/proceed_to_checkout"
-            android:textSize="20sp"
+            android:textSize="14sp"
             android:textColor="@color/text_white"
             android:background="@color/background_red_submission"/>
 

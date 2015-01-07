@@ -86,7 +86,7 @@
     <string name="rewards_ink_limit">Limit of %d per month</string>
     <string name="rewards_earned">Earned</string>
     <string name="tax">Tax</string>
-    <string name="submit_order">Submit Order</string>
+    <string name="submit_order">SUBMIT ORDER</string>
     <string name="order_confirmation_msg">Thank you for your order!</string>
     <string name="continue_shopping">Continue Shopping</string>
 
