@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -73,7 +72,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private Button rewardsLinkAcctButton;
     private int greenBackground;
     private int blueBackground;
-    private int redText;
+    private int greenText;
     private int blackText;
 
 
@@ -133,7 +132,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         Resources r = getResources();
         greenBackground = r.getColor(R.color.background_green);
         blueBackground = r.getColor(R.color.background_blue);
-        redText = r.getColor(R.color.text_red);
+        greenText = r.getColor(R.color.text_green);
         blackText = r.getColor(R.color.text_nearly_black);
 
         // create widget listeners
@@ -316,7 +315,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             // set text of coupons, shipping, and subtotal
             couponsRewardsValue.setText(currencyFormat.format(couponsRewardsAmount));
             cartShipping.setText(CheckoutFragment.formatShippingCharge(shipping, currencyFormat));
-            cartShipping.setTextColor("Free".equals(shipping) ? redText : blackText);
+            cartShipping.setTextColor("Free".equals(shipping) ? greenText : blackText);
             cartSubtotal.setText(currencyFormat.format(preTaxSubtotal));
 
             // update coupon list
