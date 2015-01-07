@@ -38,10 +38,6 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
     private static final String TAG = RegisteredCheckoutFragment.class.getSimpleName();
 
 
-
-
-    private static final int MAXFETCH = 50;
-
     // additional bundle param keys
     public static final String BUNDLE_PARAM_SHIPPING_ADDR_ID = "shippingAddrId";
     public static final String BUNDLE_PARAM_BILLING_ADDR_ID = "billingAddrId";
@@ -53,7 +49,6 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
     private ImageView paymentMethodImage;
     private TextView billingAddrVw;
 
-//    ProfileSelections profileSelections;
     // profile selections
     String shippingAddressId;
     String paymentMethodId;
@@ -140,9 +135,6 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
             billingAddrVw.setText(formatAddress(billingAddress));
         }
 
-        // get api object
-        secureApi = Access.getInstance().getEasyOpenApi(true);
-
         // initiate precheckout if necessary, otherwise update screen with shipping and tax
         if (shippingAddress != null) {
             if (getTax() == null || getShippingCharge() == null) {
@@ -157,18 +149,22 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
 
     /** applies shipping address to cart and initiates precheckout */
     private void applyShippingAddressAndPrecheckout() {
-        final com.staples.mobile.common.access.easyopen.model.member.Address shippingAddress = ProfileDetails.getAddress(shippingAddressId);
-        if (shippingAddress != null) {
+        final com.staples.mobile.common.access.easyopen.model.member.Address profileAddress = ProfileDetails.getAddress(shippingAddressId);
+        if (profileAddress != null) {
             showProgressIndicator();
-            secureApi.addShippingAddressToCart(new ShippingAddress(shippingAddress),
-                        new Callback<AddressValidationAlert>() {
-                        @Override
-                        public void success(AddressValidationAlert addressValidationAlert, Response response) {
+            CheckoutApiManager.applyShippingAddress(new ShippingAddress(profileAddress), new CheckoutApiManager.ApplyAddressCallback() {
+                    @Override
+                    public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
+                        hideProgressIndicator();
+
+                        // if success
+                        if (errMsg == null) {
+
                             // applying the shipping address actually modifies the id on the server, so need to fix everything up
                             Bundle checkoutBundle = RegisteredCheckoutFragment.this.getArguments();
                             String oldId = shippingAddressId;
-                            String newId = addressValidationAlert.getShippingAddressId();
-                            shippingAddress.setAddressId(newId); // fix id in the profile
+                            String newId = addressId;
+                            profileAddress.setAddressId(newId); // fix id in the profile
                             shippingAddressId = newId; // fix our local id
                             checkoutBundle.putString(BUNDLE_PARAM_SHIPPING_ADDR_ID, newId); // fix id in bundle
                             if (oldId.equals(billingAddressId)) {
@@ -177,20 +173,16 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                             }
 
                             startPrecheckout();
-                        }
 
-                        @Override
-                        public void failure(RetrofitError retrofitError) {
-                            hideProgressIndicator();
-                            String msg = "Address error: " + ApiError.getErrorMessage(retrofitError);
-                            Log.d(TAG, msg);
-                            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
-                            // if timeout, adding address may have triggered a change to the profile,
-                            // therefore refresh cached profile so at least if user leaves page and
-                            // re-enters they have a chance of succeeding
-                            new ProfileDetails().refreshProfile(null);
+                        } else {
+                            // if shipping and tax already showing, need to hide them
+                            resetShippingAndTax();
+
+                            Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                            Log.d(TAG, errMsg);
                         }
-                    });
+                    }
+            });
         }
     }
 
@@ -213,39 +205,35 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         }
 
         // first add billing address to the cart, then add payment method, then submit
-        secureApi.addBillingAddressToCart(new BillingAddress(billingAddress),
-                    new Callback<AddressValidationAlert>() {
-                    @Override
-                    public void success(AddressValidationAlert precheckoutResponse, Response response) {
+        showProgressIndicator();
+        CheckoutApiManager.applyBillingAddress(new BillingAddress(billingAddress), new CheckoutApiManager.ApplyAddressCallback() {
+            @Override
+            public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
+                hideProgressIndicator();
 
-                        // next add payment method to cart
-                        showProgressIndicator();
-                        PaymentMethod cartPaymentMethod = new PaymentMethod(profilePaymentMethod);
-                        secureApi.addPaymentMethodToCart(cartPaymentMethod,
-                                new Callback<PaymentMethodResponse>() {
-                                    @Override
-                                    public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
-                                        // finally, upon payment method success, submit the order
-                                        submitOrder(null);
-                                    }
-
-                                    @Override
-                                    public void failure(RetrofitError retrofitError) {
-                                        hideProgressIndicator();
-                                        Toast.makeText(activity, "Payment Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                        );
-                    }
-
-                    @Override
-                    public void failure(RetrofitError retrofitError) {
-                        String msg = "Address error: " + ApiError.getErrorMessage(retrofitError);
-                        Log.d(TAG, msg);
-                        Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
-                        hideProgressIndicator();
-                    }
-                });
+                // if success
+                if (errMsg == null) {
+                    showProgressIndicator();
+                    CheckoutApiManager.applyPaymentMethod(new PaymentMethod(profilePaymentMethod), new CheckoutApiManager.ApplyPaymentMethodCallback() {
+                        @Override
+                        public void onApplyPaymentMethodComplete(String paymentMethodId, String authorized, String errMsg) {
+                            hideProgressIndicator();
+                            // if success
+                            if (errMsg == null) {
+                                // finally, upon payment method success, submit the order
+                                submitOrder(null);
+                            } else {
+                                Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                                Log.d(TAG, errMsg);
+                            }
+                        }
+                    });
+                } else {
+                    Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                    Log.d(TAG, errMsg);
+                }
+            }
+        });
     }
 
 
