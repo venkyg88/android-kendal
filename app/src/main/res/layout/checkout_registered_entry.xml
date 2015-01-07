@@ -7,13 +7,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="6dp">
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    >
+
     <!-- Shipping address -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        >
+        android:paddingBottom="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp" >
         <TextView
             android:id="@+id/checkout_shipping_addr_label"
             android:layout_alignParentTop="true"
@@ -22,6 +27,8 @@
             android:text="@string/shipping_addr"/>
         <TextView
             android:id="@+id/checkout_shipping_addr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/checkout_shipping_addr_label"
             style="@style/CheckoutText"/>
@@ -32,14 +39,23 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
-            android:padding="4dp"
             android:src="@drawable/more_arrow"/>
     </RelativeLayout>
+
+    <!--horizontal rule-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/hr_extra_light_gray" />
+
     <!-- Payment Method -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         >
         <TextView
             android:id="@+id/checkout_payment_method_label"
@@ -53,11 +69,16 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/checkout_payment_method_label"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_marginRight="6dp" />
         <TextView
             android:id="@+id/checkout_payment_method"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_toRightOf="@id/card_image"
             android:layout_below="@id/checkout_payment_method_label"
+            android:layout_marginTop="8dp"
             style="@style/CheckoutText"/>
         <ImageView
             android:id="@+id/payment_methods"
@@ -66,14 +87,23 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
-            android:padding="4dp"
             android:src="@drawable/more_arrow"/>
     </RelativeLayout>
+
+    <!--horizontal rule-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/hr_extra_light_gray" />
+
     <!-- Billing address -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         >
         <TextView
             android:id="@+id/checkout_billing_addr_label"
@@ -83,6 +113,8 @@
             android:text="@string/billing_addr"/>
         <TextView
             android:id="@+id/checkout_billing_addr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/checkout_billing_addr_label"
             style="@style/CheckoutText"/>
@@ -93,8 +125,8 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
-            android:padding="4dp"
             android:src="@drawable/more_arrow"/>
     </RelativeLayout>
+
 </LinearLayout>
 

@@ -16,22 +16,9 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.login.LoginHelper;
-import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.cart.Cart;
-import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
-import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
-import com.staples.mobile.common.access.easyopen.model.checkout.SubmitOrderRequest;
-import com.staples.mobile.common.access.easyopen.model.checkout.SubmitOrderResponse;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 
 public abstract class CheckoutFragment extends Fragment implements View.OnClickListener {
@@ -50,8 +37,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     // fragment, but api call may still be returning
     protected MainActivity activity;
 
-//    private View shippingChargeLayout;
-//    private View taxLayout;
     private View submissionLayout;
     private ViewGroup checkoutEntryLayout;
     private TextView itemSubtotalVw;
@@ -238,9 +223,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         shippingChargeVw.setTextColor("Free".equals(shippingCharge) ? greenText : blackText);
         taxVw.setText(currencyFormat.format(tax));
         checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax)); // coupons/rewards are already factored into pretaxSubtotal
-//        taxLayout.setVisibility(View.VISIBLE);
-//        shippingChargeLayout.setVisibility(View.VISIBLE);
-//        submissionLayout.setVisibility(View.VISIBLE);
         setShipTaxSubmitVisibility(true);
     }
 
@@ -252,9 +234,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
             checkoutBundle.putFloat(BUNDLE_PARAM_TAX, -1);
             this.shippingCharge = null;
             this.tax = null;
-//            taxLayout.setVisibility(View.GONE);
-//            shippingChargeLayout.setVisibility(View.GONE);
-//            submissionLayout.setVisibility(View.GONE);
             setShipTaxSubmitVisibility(false);
         }
     }

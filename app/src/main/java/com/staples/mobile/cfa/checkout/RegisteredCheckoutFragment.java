@@ -314,7 +314,6 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                 if (!TextUtils.isEmpty(address.getZipcode())) {
                     b.append(" ").append(address.getZipcode());
                 }
-                b.append("\n");
             }
         }
         return b.toString();
