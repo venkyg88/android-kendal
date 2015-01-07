@@ -9,95 +9,92 @@
     android:orientation="vertical"
     android:padding="6dp">
     <!-- Shipping address -->
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:paddingTop="8dp"
         >
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-            <TextView
-                style="@style/GraySubheading"
-                android:text="@string/shipping_addr"/>
-            <TextView
-                android:id="@+id/checkout_shipping_addr"
-                style="@style/CheckoutText"/>
-        </LinearLayout>
+        <TextView
+            android:id="@+id/checkout_shipping_label"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            style="@style/GraySubheading"
+            android:text="@string/shipping_addr"/>
+        <TextView
+            android:id="@+id/checkout_shipping_addr"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/checkout_shipping_label"
+            style="@style/CheckoutText"/>
         <ImageView
             android:id="@+id/shipping_addresses"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="4dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
+            android:padding="4dp"
             android:src="@drawable/more_arrow"/>
-    </LinearLayout>
+    </RelativeLayout>
     <!-- Payment Method -->
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="16dp"
+        android:layout_marginTop="16dp"
         >
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/checkout_payment_method_label"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            style="@style/GraySubheading"
+            android:text="@string/payment_method"/>
+        <ImageView
+            android:id="@+id/card_image"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-            <TextView
-                style="@style/GraySubheading"
-                android:text="@string/payment_method"/>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="6dp"
-                    android:id="@+id/card_image"/>
-                <TextView
-                    android:id="@+id/checkout_payment_method"
-                    style="@style/CheckoutText"/>
-            </LinearLayout>
-        </LinearLayout>
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/checkout_payment_method_label"
+            android:layout_marginRight="6dp" />
+        <TextView
+            android:id="@+id/checkout_payment_method"
+            android:layout_toRightOf="@id/card_image"
+            android:layout_below="@id/checkout_payment_method_label"
+            style="@style/CheckoutText"/>
         <ImageView
             android:id="@+id/payment_methods"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="4dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
+            android:padding="4dp"
             android:src="@drawable/more_arrow"/>
-    </LinearLayout>
+    </RelativeLayout>
     <!-- Billing address -->
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:paddingTop="16dp"
         >
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-            <TextView
-                style="@style/GraySubheading"
-                android:text="@string/billing_addr"/>
-            <TextView
-                android:id="@+id/checkout_billing_addr"
-                style="@style/CheckoutText"/>
-        </LinearLayout>
+        <TextView
+            android:id="@+id/checkout_billing_addr_label"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            style="@style/GraySubheading"
+            android:text="@string/billing_addr"/>
+        <TextView
+            android:id="@+id/checkout_billing_addr"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/checkout_billing_addr_label"
+            style="@style/CheckoutText"/>
         <ImageView
             android:id="@+id/billing_addresses"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="4dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
+            android:padding="4dp"
             android:src="@drawable/more_arrow"/>
-    </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>
 
