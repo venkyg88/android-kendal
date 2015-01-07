@@ -65,6 +65,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     private TextView taxVw;
     private TextView checkoutTotalVw;
 
+    private int greenText;
+    private int blackText;
+
 
     // api objects
     protected EasyOpenApi secureApi;
@@ -111,6 +114,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         shippingChargeVw = (TextView) view.findViewById(R.id.checkout_shipping);
         taxVw = (TextView) view.findViewById(R.id.checkout_tax);
         checkoutTotalVw = (TextView) view.findViewById(R.id.checkout_order_total);
+
+        greenText = r.getColor(R.color.text_green);
+        blackText = r.getColor(R.color.text_nearly_black);
 
         // Set click listeners
         submissionLayout.setOnClickListener(this);
@@ -224,6 +230,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         this.shippingCharge = shippingCharge;
         this.tax = tax;
         shippingChargeVw.setText(formatShippingCharge(shippingCharge, currencyFormat));
+        shippingChargeVw.setTextColor("Free".equals(shippingCharge) ? greenText : blackText);
         taxVw.setText(currencyFormat.format(tax));
         checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax)); // coupons/rewards are already factored into pretaxSubtotal
         taxLayout.setVisibility(View.VISIBLE);

@@ -134,7 +134,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         greenBackground = r.getColor(R.color.background_green);
         blueBackground = r.getColor(R.color.background_blue);
         redText = r.getColor(R.color.text_red);
-        blackText = r.getColor(R.color.text_black);
+        blackText = r.getColor(R.color.text_nearly_black);
 
         // create widget listeners
         qtyChangeListener = new QtyChangeListener();
