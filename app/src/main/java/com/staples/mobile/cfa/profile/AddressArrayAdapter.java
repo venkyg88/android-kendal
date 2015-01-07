@@ -85,6 +85,8 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
         nameText.setTypeface(null, Typeface.BOLD);
         nameText.setTag(position);
         nameText.setOnClickListener(this);
+        addressText.setTag(position);
+        addressText.setOnClickListener(this);
 
         return rowView;
     }
@@ -92,6 +94,7 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
     @Override
     public void onClick(View view) {
         switch(view.getId()){
+            case R.id.secondItemText:
             case R.id.rowItemText:
                 final int position=(Integer)view.getTag();
                 String addressId = values.get(position).getAddressId();
