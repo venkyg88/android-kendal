@@ -58,7 +58,7 @@
                 android:paddingRight="4dp"
                 android:lines="1"
                 android:ellipsize="end"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textColor="@android:color/white"/>
             <!-- Spacer -->
             <View

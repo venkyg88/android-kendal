@@ -352,8 +352,11 @@ public class MainActivity extends Activity
     }
 
     // Navigation
-
     public boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
+        return selectFragment(fragment, transition, push, null);
+    }
+
+    public boolean selectFragment(Fragment fragment, Transition transition, boolean push, String tag) {
         // Make sure all drawers are closed
         drawerLayout.closeDrawers();
 
@@ -361,7 +364,7 @@ public class MainActivity extends Activity
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         if (transition!=null) transition.setAnimation(transaction);
-        transaction.replace(R.id.content, fragment);
+        transaction.replace(R.id.content, fragment, tag);
         if (push)
             transaction.addToBackStack(null);
         transaction.commit();
@@ -405,7 +408,7 @@ public class MainActivity extends Activity
         CartApiManager.loadCart(null);
         // open order confirmation fragment
         Fragment fragment = ConfirmationFragment.newInstance(orderId, orderNumber);
-        return selectFragment(fragment, Transition.NONE, true);
+        return selectFragment(fragment, Transition.NONE, true, ConfirmationFragment.TAG);
     }
 
     public boolean selectRewardsFragment() {
@@ -499,6 +502,19 @@ public class MainActivity extends Activity
 
     public boolean navigateToFragment(Fragment fragment) {
         return (selectFragment(fragment, Transition.NONE, true));
+    }
+
+
+    @Override
+    public void onBackPressed () {
+        // if on order confirmation fragment, don't go back to check out pages, go to Home page
+        FragmentManager manager = getFragmentManager();
+        Fragment confirmationFragment = manager.findFragmentByTag(ConfirmationFragment.TAG);
+        if (confirmationFragment != null && confirmationFragment.isVisible()) {
+            selectDrawerItem(homeDrawerItem, Transition.NONE, true);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     // Action bar & button clicks

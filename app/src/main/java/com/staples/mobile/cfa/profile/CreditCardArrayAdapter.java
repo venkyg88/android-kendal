@@ -79,6 +79,9 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
         expText.setText(expDate);
         ccText.setTag(position);
         ccText.setOnClickListener(this);
+        expText.setTag(position);
+        expText.setOnClickListener(this);
+
 
         cardTypeImg = (ImageView)rowView.findViewById(R.id.cardTypeImg);
         cardTypeImg.setImageResource(CardType.matchOnApiName(creditCard.getCardType()).getImageResource());
@@ -99,6 +102,7 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.secondItemText:
             case R.id.rowItemText:
                 final int position = (Integer) view.getTag();
                 String paymentMethodId = values.get(position).getCreditCardId();
