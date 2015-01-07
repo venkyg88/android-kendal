@@ -213,6 +213,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         }
 
         // first add billing address to the cart, then add payment method, then submit
+        showProgressIndicator();
         secureApi.addBillingAddressToCart(new BillingAddress(billingAddress),
                     new Callback<AddressValidationAlert>() {
                     @Override
