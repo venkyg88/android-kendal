@@ -15,7 +15,7 @@
         android:paddingTop="8dp"
         >
         <TextView
-            android:id="@+id/checkout_shipping_label"
+            android:id="@+id/checkout_shipping_addr_label"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             style="@style/GraySubheading"
@@ -23,7 +23,7 @@
         <TextView
             android:id="@+id/checkout_shipping_addr"
             android:layout_alignParentLeft="true"
-            android:layout_below="@id/checkout_shipping_label"
+            android:layout_below="@id/checkout_shipping_addr_label"
             style="@style/CheckoutText"/>
         <ImageView
             android:id="@+id/shipping_addresses"
