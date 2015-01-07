@@ -166,7 +166,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                         });
 //                        ((MainActivity) getActivity()).addItemToCart(item.identifier, 1);
                         // TODO: use above callback to trun off flasher
-                        ((ImageView) view).setImageDrawable(view.getResources().getDrawable(R.drawable.ic_launcher));
+                        ((ImageView) view).setImageDrawable(view.getResources().getDrawable(R.drawable.ic_android));
                         view.postDelayed(new Flasher((ImageView) view), 2000);
                     }
                 }

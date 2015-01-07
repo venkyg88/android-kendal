@@ -15,7 +15,7 @@ public enum CardType {
     VISA            ("^4[0-9]{12}(?:[0-9]{3})?$",     "Visa",       R.drawable.visa),
     MASTERCARD      ("^5[1-5][0-9]{14}$",             "Mastercard", R.drawable.mastercard),
     DISCOVER        ("^6(?:011|5[0-9]{2})[0-9]{12}$", "Discover",   R.drawable.discover),
-    STAPLES         ("^7972[0-9]{12}$",               "Staples",    R.drawable.ic_launcher);
+    STAPLES         ("^7972[0-9]{12}$",               "Staples",    R.drawable.ic_android);
 
     private Pattern pattern;
     private String cardTypeName;
