@@ -165,7 +165,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (dy > 5) {
+                if (dy > 5 && !isTopOfFirstItemVisible(recyclerView)) {
                     onScrollDown();
                 } else if (dy < -5 || (dy < 0 && isTopOfFirstItemVisible(recyclerView))) {
                     onScrollUp();
@@ -389,7 +389,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         if (cartListLayoutMgr.findFirstVisibleItemPosition() == 0) {
 //            View view = listView.getChildAt(0); // might not get first child
             View view = cartListLayoutMgr.findViewByPosition(0); // lesser performance
-            return view != null && view.getTop() >= 0;
+            return view != null && view.getTop() >= -200; // giving it some margin since i've seen as low as -110 when top still visible after a scroll (e.g. when just enough content to allow scrolling)
         }
         return false;
     }
