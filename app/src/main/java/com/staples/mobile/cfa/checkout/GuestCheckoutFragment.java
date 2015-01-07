@@ -22,32 +22,14 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.profile.CardType;
-import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.profile.UsState;
-import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.config.StaplesAppContext;
-import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
-import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
-import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethodResponse;
+import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethodResponse;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
-import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
-import com.staples.mobile.common.access.easyopen.model.member.AddCreditCardPOW;
-import com.staples.mobile.common.access.easyopen.model.member.POWResponse;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 
 public class GuestCheckoutFragment extends CheckoutFragment implements CompoundButton.OnCheckedChangeListener {
     private static final String TAG = GuestCheckoutFragment.class.getSimpleName();
-
-    private static final int MAXFETCH = 50;
 
     private View guestEntryView;
     Switch useShipAddrAsBillingAddrSwitch;
@@ -61,6 +43,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     EditText expirationYearVw;
     EditText cidVw;
     EditText emailAddrVw;
+    EditText shippingZipCodeVw;
+    EditText billingZipCodeVw;
 
     private boolean shippingAddrNeedsApplying = true;
     private boolean billingAddrNeedsApplying = true;
@@ -108,25 +92,30 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         paymentMethodLayoutVw.findViewById(R.id.addCCBtn).setVisibility(View.GONE);
 
 
-        // TODO: replace with real trigger - TEMPORARY: when user completes CID, trigger off that to submit addresses if billing addr set to same as shipping addr
-        cidVw.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        // on any change to addresses, apply addresses to cart and do precheckout
+        // TODO: replace triggers on zip code with a real trigger on any change to addresses
+        shippingZipCodeVw = (EditText)shippingAddrLayoutVw.findViewById(R.id.zipCode);
+        billingZipCodeVw = (EditText)billingAddrLayoutVw.findViewById(R.id.zipCode);
+        shippingZipCodeVw.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                shippingAddrNeedsApplying = true;
                 if (useShipAddrAsBillingAddrSwitch.isChecked()) {
-                    applyAddresses();
+                    billingAddrNeedsApplying = true;
                 }
+                applyAddressesAndPrecheckout();
                 return false;
             }
         });
-        // TODO: replace with real trigger - TEMPORARY: when user completes billing addr zip code, trigger off that to submit addresses
-        EditText zipCodeVw = (EditText)billingAddrLayoutVw.findViewById(R.id.zipCode);
-        zipCodeVw.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        billingZipCodeVw.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                applyAddresses();
+                billingAddrNeedsApplying = true;
+                applyAddressesAndPrecheckout();
                 return false;
             }
         });
+
 
         cardNumberVw.setOnEditorActionListener(
                 new EditText.OnEditorActionListener() {
@@ -165,8 +154,18 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
     /** implements CompoundButton.OnCheckedChangeListener */
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//        Toast.makeText(activity, "Checked: " + isChecked, Toast.LENGTH_SHORT).show();
         billingAddrContainer.setVisibility(isChecked? View.GONE: View.VISIBLE);
+        billingAddrNeedsApplying = true;
+        // if checked and shipping addr successfully applied, then apply billing and proceed to precheckout
+        if (isChecked && !shippingAddrNeedsApplying) {
+            applyAddressesAndPrecheckout();
+        // else if unchecked and previously filled in address, then apply addresses and do precheckout
+        } else if (!isChecked && !TextUtils.isEmpty(billingZipCodeVw.getText())) {
+                applyAddressesAndPrecheckout();
+        } else {
+            // otherwise just reset shipping/tax info and wait for user to fill out necessary info
+            resetShippingAndTax();
+        }
     }
 
     private boolean validateRequiredField(TextView textView, String msg) {
@@ -271,78 +270,83 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         return null;
     }
 
-    private void applyAddresses() {
-        shippingAddrNeedsApplying = true;
-        billingAddrNeedsApplying = true;
-        applyShippingAddress();
-    }
+    private void applyAddressesAndPrecheckout() {
 
-    private void applyShippingAddress() {
-        ShippingAddress shippingAddress = getShippingAddress();
+        // add shipping address to cart if necessary, then billing address and precheckout
+        if (shippingAddrNeedsApplying) {
+            ShippingAddress shippingAddress = getShippingAddress();
+            if (shippingAddress != null) {
+                showProgressIndicator();
+                CheckoutApiManager.applyShippingAddress(shippingAddress, new CheckoutApiManager.ApplyAddressCallback() {
+                    @Override
+                    public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
+                        hideProgressIndicator();
 
-        // add shipping address to cart
-        if (shippingAddress != null) {
-            showProgressIndicator();
-            secureApi.addShippingAddressToCart(shippingAddress,
-                    new Callback<AddressValidationAlert>() {
+                        // if success
+                        if (errMsg == null) {
+                            shippingAddrNeedsApplying = false;
 
-                        @Override
-                        public void success(AddressValidationAlert precheckoutResponse, Response response) {
-                            String validationAlert = precheckoutResponse.getAddressValidationAlert();
-
-                            if (validationAlert != null) {
-                                Toast.makeText(activity, "Shipping address alert: " + validationAlert, Toast.LENGTH_SHORT).show();
-                            } else {
-                                shippingAddrNeedsApplying = false;
-                                new ProfileDetails().refreshProfile(null); // refresh cached profile
+                            if (infoMsg != null) {
+                                Toast.makeText(activity, "Shipping address alert: " + infoMsg, Toast.LENGTH_LONG).show();
                             }
-                            applyBillingAddress();
+
+                            // now apply billing address
+                            applyBillingAddressIfNeededAndPrecheckout();
+
+                        } else {
+                            // if shipping and tax already showing, need to hide them
+                            resetShippingAndTax();
+
+                            Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                            Log.d(TAG, errMsg);
                         }
-
-                        @Override
-                        public void failure(RetrofitError retrofitError) {
-                            String msg = "Shipping address error: " + ApiError.getErrorMessage(retrofitError);
-                            Log.d(TAG, msg);
-                            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
-                            hideProgressIndicator();
-                        }
-                    });
-        }
-    }
-
-    private void applyBillingAddress() {
-        BillingAddress billingAddress = getBillingAddress();
-
-        // add shipping address to cart
-        if (billingAddress != null) {
-            showProgressIndicator();
-            secureApi.addBillingAddressToCart(billingAddress,
-                    new Callback<AddressValidationAlert>() {
-
-                        @Override
-                        public void success(AddressValidationAlert precheckoutResponse, Response response) {
-                            String validationAlert = precheckoutResponse.getAddressValidationAlert();
-
-                            if (validationAlert != null) {
-                                Toast.makeText(activity, "Billing address alert: " + validationAlert, Toast.LENGTH_SHORT).show();
-                            } else {
-                                billingAddrNeedsApplying = false;
-                            }
-                            startPrecheckoutIfReady();
-                        }
-
-                        @Override
-                        public void failure(RetrofitError retrofitError) {
-                            String msg = "Billing address error: " + ApiError.getErrorMessage(retrofitError);
-                            Log.d(TAG, msg);
-                            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
-                            hideProgressIndicator();
-                        }
-                    });
+                    }
+                });
+            }
         } else {
-            hideProgressIndicator();
+            applyBillingAddressIfNeededAndPrecheckout();
         }
     }
+
+    private void applyBillingAddressIfNeededAndPrecheckout() {
+
+        // apply billing address to cart if necessary
+        if (billingAddrNeedsApplying) {
+            BillingAddress billingAddress = getBillingAddress();
+            if (billingAddress != null) {
+                showProgressIndicator();
+                CheckoutApiManager.applyBillingAddress(billingAddress, new CheckoutApiManager.ApplyAddressCallback() {
+                    @Override
+                    public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
+                        hideProgressIndicator();
+
+                        // if success
+                        if (errMsg == null) {
+                            billingAddrNeedsApplying = false;
+
+                            if (infoMsg != null) {
+                                Toast.makeText(activity, "Billing address alert: " + infoMsg, Toast.LENGTH_LONG).show();
+                            }
+
+                            // do precheckout
+                            startPrecheckoutIfReady();
+
+                        } else {
+                            // if shipping and tax already showing, need to hide them
+                            resetShippingAndTax();
+
+                            Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                            Log.d(TAG, errMsg);
+                        }
+                    }
+                });
+            }
+        } else {
+            // do precheckout
+            startPrecheckoutIfReady();
+        }
+    }
+
 
     private void startPrecheckoutIfReady() {
         if (!shippingAddrNeedsApplying && !billingAddrNeedsApplying) {
@@ -353,81 +357,36 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     /** handles order submission */
     @Override
     protected void onSubmit() {
-        submitPaymentMethod();
+        submitPaymentMethodAndOrder();
     }
 
-    private void submitPaymentMethod() {
+    private void submitPaymentMethodAndOrder() {
 
-        PaymentMethod paymentMethod = getPaymentMethod();
+        final PaymentMethod paymentMethod = getPaymentMethod();
         if (paymentMethod==null) {
-            Toast.makeText(activity, R.string.payment_method_required, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, R.string.payment_method_required, Toast.LENGTH_LONG).show();
             return;
         }
 
-        // first add selected payment method to cart
         showProgressIndicator();
-        // encrypt payment method
-        String powCardType = paymentMethod.getCardType();
-        AddCreditCardPOW creditCard = new AddCreditCardPOW(paymentMethod.getCardNumber(), powCardType);
-        List<AddCreditCardPOW> ccList = new ArrayList<AddCreditCardPOW>();
-        ccList.add(creditCard);
-
-        // TODO find a better way to determine current environment
-        if (StaplesAppContext.getInstance().getEasyOpenApiUrl().equals("api.staples.com"))
-        {
-            EasyOpenApi powApi = Access.getInstance().getPOWApi(true);
-            powApi.addCreditPOWCall(ccList, new PowListener(paymentMethod));
-        } else {
-            secureApi.addCreditPOWCallQA(ccList, new PowListener(paymentMethod));
-        }
-    }
-
-    class PowListener implements Callback<List<POWResponse>> {
-
-        PaymentMethod paymentMethod;
-
-        PowListener(PaymentMethod paymentMethod) {
-            this.paymentMethod = paymentMethod;
-        }
-
-        @Override
-        public void success(List<POWResponse> powList, Response response) {
-            Log.d(TAG, powList.size()+" Packet: "+powList.get(0).getPacket());
-            if ("0".equals(powList.get(0).getStatus()) && !TextUtils.isEmpty(powList.get(0).getPacket())) {
-                paymentMethod.setCardNumber(powList.get(0).getPacket());
-
-                // add payment method to cart
-                secureApi.addPaymentMethodToCart(paymentMethod,
-                        new retrofit.Callback<PaymentMethodResponse>() {
-                            @Override
-                            public void success(PaymentMethodResponse paymentMethodResponse, Response response) {
-                                // upon payment method success, submit the order
-                                submitOrder(paymentMethod.getCardVerificationCode());
-                                new ProfileDetails().refreshProfile(null); // refresh cached profile
-                            }
-
-                            @Override
-                            public void failure(RetrofitError retrofitError) {
-                                String msg = "Payment Error #1: " + ApiError.getErrorMessage(retrofitError);
-                                Log.d(TAG, msg);
-                                Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
-                                hideProgressIndicator();
-                            }
-                        }
-                );
-            } else {
-                String msg = "Payment Error #2: Status="+powList.get(0).getStatus();
-                Log.d(TAG, msg);
-                Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+        // encrypt and apply payment method
+        CheckoutApiManager.encryptAndApplyPaymentMethod(paymentMethod, new CheckoutApiManager.ApplyPaymentMethodCallback() {
+            @Override
+            public void onApplyPaymentMethodComplete(String paymentMethodId, String authorized, String errMsg) {
                 hideProgressIndicator();
+
+                // if success
+                if (errMsg == null) {
+
+                    // submit the order
+                    submitOrder(paymentMethod.getCardVerificationCode());
+
+                } else {
+                    Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                    Log.d(TAG, errMsg);
+                }
             }
-        }
+        });
 
-        @Override
-        public void failure(RetrofitError retrofitError) {
-            hideProgressIndicator();
-            Toast.makeText(activity, "Payment Error #3: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
-        }
     }
-
 }

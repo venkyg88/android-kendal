@@ -37,11 +37,6 @@ import retrofit.client.Response;
 public abstract class CheckoutFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = CheckoutFragment.class.getSimpleName();
 
-
-
-
-    private static final int MAXFETCH = 50;
-
     // bundle param keys
     public static final String BUNDLE_PARAM_COUPONSREWARDS = "couponsRewards";
     public static final String BUNDLE_PARAM_ITEMSUBTOTAL = "itemSubtotal";
@@ -68,10 +63,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     private int greenText;
     private int blackText;
 
-
-    // api objects
-    protected EasyOpenApi secureApi;
-
     // data returned from api
     private Float tax;
     private String shippingCharge;
@@ -82,9 +73,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     private Float itemSubtotal;
     private Float pretaxSubtotal;
 
-
-    // api listeners
-    PrecheckoutListener precheckoutListener;
 
     protected CheckoutFragment() {
         // set up currency format to use minus sign for negative amounts (needed for coupons)
@@ -138,12 +126,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         // set the item subtotal
         itemSubtotalVw.setText(currencyFormat.format(itemSubtotal));
 
-        // get api objects
-        secureApi = Access.getInstance().getEasyOpenApi(true);
-
-        // create api listeners
-        precheckoutListener = new PrecheckoutListener();
-
         // allow sub-classes to do there initialization
         initEntryArea(view);
 
@@ -182,33 +164,52 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
     protected void startPrecheckout() {
         showProgressIndicator();
-        secureApi.precheckout(precheckoutListener);
+        CheckoutApiManager.precheckout(new CheckoutApiManager.PrecheckoutCallback() {
+            @Override
+            public void onPrecheckoutComplete(String shippingCharge, Float tax, String errMsg, String infoMsg) {
+                hideProgressIndicator();
+
+                // if success
+                if (errMsg == null) {
+
+                    // if address alert, display it
+                    if (infoMsg != null) {
+                        Toast.makeText(activity, infoMsg, Toast.LENGTH_LONG).show();
+                    }
+
+                    // utilize shipping and tax info
+                    setShippingAndTax(shippingCharge, tax);
+
+                } else {
+                    // if shipping and tax already showing, need to hide them
+                    resetShippingAndTax();
+
+                    Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                    Log.d(TAG, errMsg);
+                }
+            }
+        });
     }
 
+
     protected void submitOrder(String cid) {
-        // upon payment method success, submit the order
-        SubmitOrderRequest submitOrderRequest = new SubmitOrderRequest();
-        submitOrderRequest.setCardVerificationCode(cid);
-        secureApi.submitOrder(submitOrderRequest,
-                new Callback<SubmitOrderResponse>() {
+        showProgressIndicator();
+        CheckoutApiManager.submitOrder(cid, new CheckoutApiManager.OrderSubmissionCallback() {
+            @Override
+            public void onOrderSubmissionComplete(String orderId, String orderNumber, String errMsg) {
+                hideProgressIndicator();
 
-                    @Override
-                    public void success(SubmitOrderResponse submitOrderResponse, Response response) {
-                        hideProgressIndicator();
+                // if success
+                if (errMsg == null) {
 
-                        // show confirmation page and refresh cart
-                        ((MainActivity)activity).selectOrderConfirmation(
-                                submitOrderResponse.getOrderId(),
-                                submitOrderResponse.getStaplesOrderNumber());
-                    }
-
-                    @Override
-                    public void failure(RetrofitError retrofitError) {
-                        hideProgressIndicator();
-                        Toast.makeText(activity, "Submission Error: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_SHORT).show();
-                    }
+                    // show confirmation page and refresh cart
+                    ((MainActivity) activity).selectOrderConfirmation(orderId, orderNumber);
+                } else {
+                    Toast.makeText(activity, "Submission Error: " + errMsg, Toast.LENGTH_LONG).show();
+                    Log.d(TAG, errMsg);
                 }
-        );
+            }
+        });
     }
 
 
@@ -236,6 +237,20 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         taxLayout.setVisibility(View.VISIBLE);
         shippingChargeLayout.setVisibility(View.VISIBLE);
         submissionLayout.setVisibility(View.VISIBLE);
+    }
+
+    /** updates the shipping charge and tax values (may be result of api response or a call from the subclass) */
+    protected void resetShippingAndTax() {
+        if (submissionLayout.getVisibility() == View.VISIBLE) {
+            Bundle checkoutBundle = this.getArguments();
+            checkoutBundle.putString(BUNDLE_PARAM_SHIPPING_CHARGE, null);
+            checkoutBundle.putFloat(BUNDLE_PARAM_TAX, -1);
+            this.shippingCharge = null;
+            this.tax = null;
+            taxLayout.setVisibility(View.GONE);
+            shippingChargeLayout.setVisibility(View.GONE);
+            submissionLayout.setVisibility(View.GONE);
+        }
     }
 
     /** returns tax value if available */
@@ -266,78 +281,4 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         } catch(NumberFormatException e) { /* normal to fail (e.g. if equal to "Free") */}
         return shippingCharge;
     }
-
-
-
-    /************* api listeners ************/
-
-
-    /** listens for completion of precheckout */
-    class PrecheckoutListener implements Callback<AddressValidationAlert> {
-
-        String shippingCharge;
-
-        @Override
-        public void success(AddressValidationAlert precheckoutResponse, Response response) {
-
-            // check for alerts
-            if (precheckoutResponse.getAddressValidationAlert() != null) {
-                Toast.makeText(activity, precheckoutResponse.getAddressValidationAlert(), Toast.LENGTH_LONG).show();
-            } else if (precheckoutResponse.getInventoryCheckAlert() != null) {
-                Toast.makeText(activity, precheckoutResponse.getInventoryCheckAlert(), Toast.LENGTH_LONG).show();
-            }
-
-            // get shipping charge, then get tax
-            secureApi.getShippingCharge(new Callback<CartContents>() {
-                @Override
-                public void success(CartContents cartContents, Response response) {
-
-                    Cart cart = getCartFromResponse(cartContents);
-                    if (cart != null) {
-                        shippingCharge = cart.getShippingCharge();
-                        secureApi.getTax(new Callback<CartContents>() {
-                            @Override
-                            public void success(CartContents cartContents, Response response) {
-                                Cart cart = getCartFromResponse(cartContents);
-                                hideProgressIndicator();
-                                setShippingAndTax(shippingCharge, cart.getTotalTax());
-                            }
-
-                            @Override
-                            public void failure(RetrofitError retrofitError) {
-                                handleFailure("Error retrieving tax: " + ApiError.getErrorMessage(retrofitError));
-                            }
-                        });
-
-                    } else {
-                        handleFailure("Error retrieving shipping charge");
-                    }
-                }
-
-                @Override
-                public void failure(RetrofitError retrofitError) {
-                    handleFailure("Error retrieving shipping charge: " + ApiError.getErrorMessage(retrofitError));
-                }
-
-                private Cart getCartFromResponse(CartContents cartContents) {
-                    if (cartContents != null && cartContents.getCart() != null && cartContents.getCart().size() > 0) {
-                        return cartContents.getCart().get(0);
-                    }
-                    return null;
-                }
-            });
-        }
-
-        @Override
-        public void failure(RetrofitError retrofitError) {
-            handleFailure("Precheckout error: " + ApiError.getErrorMessage(retrofitError));
-        }
-
-        private void handleFailure(String msg) {
-            Log.d(TAG, msg);
-            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
-            hideProgressIndicator();
-        }
-    }
-
 }
