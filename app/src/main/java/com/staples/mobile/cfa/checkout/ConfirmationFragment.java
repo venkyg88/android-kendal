@@ -25,7 +25,7 @@ import java.text.NumberFormat;
 
 
 public class ConfirmationFragment extends Fragment implements View.OnClickListener {
-    private static final String TAG = ConfirmationFragment.class.getSimpleName();
+    public static final String TAG = ConfirmationFragment.class.getSimpleName();
 
 
 
