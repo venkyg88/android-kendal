@@ -207,8 +207,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         super.onResume();
 
         MainActivity mainActivity = (MainActivity) getActivity();
-        if(productName.length() > 25) {
-            mainActivity.showActionBar(productName.substring(0, Math.min(productName.length(), 25))
+        if(productName.length() > 23) {
+            mainActivity.showActionBar(productName.substring(0, Math.min(productName.length(), 23))
                     + "...", R.drawable.ic_search_white, null);
         }
         else{
@@ -223,11 +223,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     public void onPause() {
         super.onPause();
 
-        // change back the color of action bar to red
         MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.setActionBarColor(R.color.staples_light);
-
-        // change back the alpha/size/padding of action bar and contain frame
+        // change back the color/alpha/size/padding of action bar and contain frame
         mainActivity.restoreDefaultActionBar();
 
         // change back the left drawer position
@@ -267,8 +264,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         @Override
         public void setAnimatedActionBarOnScroll (float scrollY) {
             MainActivity mainActivity = (MainActivity) getActivity();
-            if(productName.length() > 25) {
-                mainActivity.setActionBarTitle(productName.substring(0, Math.min(productName.length(), 25))+"...");
+            if(productName.length() > 23) {
+                mainActivity.setActionBarTitle(productName.substring(0, Math.min(productName.length(), 23))+"...");
             }
             else{
                 mainActivity.setActionBarTitle(productName);
@@ -778,8 +775,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.setActionBarAlpha(255);
         mainActivity.setActionBarTitleAlpha(255);
-        if(productName.length() > 25) {
-            mainActivity.setActionBarTitle(productName.substring(0, Math.min(productName.length(), 25))+"...");
+        if(productName.length() > 23) {
+            mainActivity.setActionBarTitle(productName.substring(0, Math.min(productName.length(), 23))+"...");
         }
         else{
             mainActivity.setActionBarTitle(productName);

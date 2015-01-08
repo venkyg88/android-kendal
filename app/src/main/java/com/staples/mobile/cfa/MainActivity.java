@@ -577,9 +577,10 @@ public class MainActivity extends Activity
 
     public void restoreDefaultActionBar(){
         // restore action bar offset and title format
-        titleView.setPadding(20, 0, 20, 0);
-        titleView.setTextSize(24f);
-        titleView.setTextColor(titleView.getTextColors().withAlpha(255));
+        //titleView.setPadding(20, 0, 20, 0);
+        titleView.setTextSize(20f);
+        setActionBarTitleAlpha(255);
+        setActionBarAlpha(255);
 
         // restore contain frame offset
         containFrame.setPadding(0, Math.round(convertDpToPixel(56f, this)), 0, 0);
