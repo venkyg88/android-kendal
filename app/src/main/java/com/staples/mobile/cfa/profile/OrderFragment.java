@@ -52,19 +52,19 @@ public class OrderFragment extends Fragment {
         listview = (ListView) view.findViewById(R.id.orderListView);
         adapter = new OrderArrayAdapter(activity);
         listview.setAdapter(adapter);
-//        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            public void onItemClick(AdapterView<?> parent, View view,
-//                                    int position, long id) {
-//                if(adapter != null) {
-//                    Fragment orderDetailsFragment = Fragment.instantiate(activity, OrderDetailsFragment.class.getName());
-//                    Bundle bundle = new Bundle();
-//                    bundle.putSerializable("orderData", adapter.getItem(position));
-//                    orderDetailsFragment.setArguments(bundle);
-//                    activity.navigateToFragment(orderDetailsFragment);
-//                }
-//
-//            }
-//        });
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                if(adapter != null) {
+                    Fragment orderDetailsFragment = Fragment.instantiate(activity, OrderDetailsFragment.class.getName());
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("orderData", adapter.getItem(position));
+                    orderDetailsFragment.setArguments(bundle);
+                    activity.navigateToFragment(orderDetailsFragment);
+                }
+
+            }
+        });
         fill();
         return (view);
     }
@@ -86,6 +86,7 @@ public class OrderFragment extends Fragment {
                         @Override
                         public void success(OrderStatusDetail orderStatusDetail, Response response) {
                             for(Shipment shipment: orderStatusDetail.getOrderStatus().get(0).getShipment()){
+                                shipment.setOrderNumber(orderStatusDetail.getOrderStatus().get(0).getOrderNumber());
                                 shipment.setOrderDate(orderStatusDetail.getOrderStatus().get(0).getOrderDate());
                                 adapter.add(shipment);
                             }
