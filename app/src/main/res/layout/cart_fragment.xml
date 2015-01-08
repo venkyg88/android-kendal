@@ -45,18 +45,20 @@
         />
 
     <!--coupon & rewards heading -->
-    <RelativeLayout
+    <android.support.v7.widget.CardView
         android:id="@+id/coupons_rewards_layout"
         android:layout_height="40dp"
         android:layout_width="match_parent"
         android:gravity="center_vertical"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:background="@color/background_extra_light_gray_2">
+        card_view:contentPaddingLeft="16dp"
+        card_view:contentPaddingRight="16dp"
+        card_view:cardCornerRadius="0dp"
+        card_view:cardElevation="1dp"
+        card_view:cardBackgroundColor="@color/background_extra_light_gray_2">
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:layout_gravity="left|center_vertical"
             android:text="@string/coupons_rewards"
             android:textSize="14sp"
             android:textColor="@color/text_blue"
@@ -65,11 +67,11 @@
             android:id="@+id/coupons_rewards_value"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_gravity="right|center_vertical"
             android:textSize="14sp"
             android:textColor="@color/text_blue"
             />
-    </RelativeLayout>
+    </android.support.v7.widget.CardView>
     <!-- RecyclerView for coupons -->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/coupon_list"
@@ -78,7 +80,6 @@
         android:layout_weight="1"
         android:padding="16dp"
         android:scrollbars="vertical"
-        android:background="@color/background_white"
         android:visibility="gone"/>
 
     <!--link rewards account -->
