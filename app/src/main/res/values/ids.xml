@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="close_button"/>
+    <item type="id" name="action_left_drawer"/>
+    <item type="id" name="action_logo"/>
+    <item type="id" name="action_title"/>
+    <item type="id" name="search_text"/>
+    <item type="id" name="option_icon"/>
+    <item type="id" name="action_show_cart"/>
+    <item type="id" name="co_signin_button"/>
+    <item type="id" name="cart_item_qty"/>
+</resources>

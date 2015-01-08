@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -39,6 +40,7 @@ import com.staples.mobile.cfa.search.SearchBarView;
 import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.skuset.SkuSetFragment;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.BadgeImageView;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.config.AppConfigurator;
@@ -244,30 +246,26 @@ public class MainActivity extends Activity
         // Inflate
         setContentView(R.layout.main);
 
-        // Find 9 action bar entities
-        View actionBar = findViewById(R.id.action_bar);
-        closeButton = actionBar.findViewById(R.id.close_button);
-        leftDrawerAction = actionBar.findViewById(R.id.action_left_drawer);
-        logoView = (ImageView) actionBar.findViewById(R.id.action_logo);
-        titleView = (TextView) actionBar.findViewById(R.id.title);
-        searchBar = (SearchBarView) actionBar.findViewById(R.id.search_text);
-        optionIcon = (ImageView) actionBar.findViewById(R.id.option_icon);
-        cartQtyView = (TextView) actionBar.findViewById(R.id.cart_item_qty);
-        cartIconAction = (BadgeImageView) actionBar.findViewById(R.id.action_show_cart);
-        checkoutSigninButton = (Button) actionBar.findViewById(R.id.co_signin_button);
+        // Add 9 action bar entities
+        ActionBar actionBar = (ActionBar) findViewById(R.id.action_bar);
+
+        closeButton = actionBar.addIcon(R.id.close_button, R.drawable.ic_close_white, Gravity.LEFT, null);
+        leftDrawerAction = actionBar.addIcon(R.id.action_left_drawer, R.drawable.ic_menu_white, Gravity.LEFT, this);
+
+        cartIconAction = actionBar.addBadge(R.id.action_show_cart, Gravity.RIGHT, this);
+        checkoutSigninButton = actionBar.addButton(R.id.co_signin_button, R.string.signin_title, Gravity.RIGHT, this);
+        cartQtyView = actionBar.addText(R.id.cart_item_qty, Gravity.RIGHT, this);
+        optionIcon = actionBar.addIcon(R.id.option_icon,  R.drawable.ic_search_white, Gravity.RIGHT, this);
+        searchBar = actionBar.addSearchBar(R.id.search_text, Gravity.RIGHT, null);
+
+        logoView = actionBar.addIcon(R.id.action_logo, R.drawable.ic_staples, Gravity.LEFT, null);
+        titleView = actionBar.addText(R.id.action_title, Gravity.LEFT, null);
 
         // Find top-level entities
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawer = (ListView) findViewById(R.id.left_drawer);
         mainLayout = (LinearLayoutWithProgressOverlay)findViewById(R.id.main);
         mainLayout.setCartProgressOverlay(findViewById(R.id.progress_overlay));
-
-        // Set action bar listeners
-        leftDrawerAction.setOnClickListener(this);
-        optionIcon.setOnClickListener(this);
-        cartIconAction.setOnClickListener(this);
-        checkoutSigninButton.setOnClickListener(this);
-        closeButton.setOnClickListener(this);
 
         // initialize action bar
         showActionBar(R.string.staples, R.drawable.ic_search_white, searchBar);
@@ -495,7 +493,6 @@ public class MainActivity extends Activity
     public void setActionBarCartQty(String qtyText) {
         cartQtyView.setText(qtyText); // (e.g. "4 items")
     }
-
 
     public boolean navigateToFragment(Fragment fragment) {
         return (selectFragment(fragment, Transition.NONE, true));
