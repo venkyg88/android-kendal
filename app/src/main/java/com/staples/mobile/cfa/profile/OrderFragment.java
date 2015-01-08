@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -22,6 +23,8 @@ import com.staples.mobile.common.access.easyopen.model.member.OrderDetail;
 import com.staples.mobile.common.access.easyopen.model.member.OrderHistory;
 import com.staples.mobile.common.access.easyopen.model.member.OrderStatus;
 import com.staples.mobile.common.access.easyopen.model.member.OrderStatusDetail;
+import com.staples.mobile.common.access.easyopen.model.member.Shipment;
+import com.staples.mobile.common.access.easyopen.model.member.ShipmentSKU;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +52,19 @@ public class OrderFragment extends Fragment {
         listview = (ListView) view.findViewById(R.id.orderListView);
         adapter = new OrderArrayAdapter(activity);
         listview.setAdapter(adapter);
+//        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            public void onItemClick(AdapterView<?> parent, View view,
+//                                    int position, long id) {
+//                if(adapter != null) {
+//                    Fragment orderDetailsFragment = Fragment.instantiate(activity, OrderDetailsFragment.class.getName());
+//                    Bundle bundle = new Bundle();
+//                    bundle.putSerializable("orderData", adapter.getItem(position));
+//                    orderDetailsFragment.setArguments(bundle);
+//                    activity.navigateToFragment(orderDetailsFragment);
+//                }
+//
+//            }
+//        });
         fill();
         return (view);
     }
@@ -60,7 +76,7 @@ public class OrderFragment extends Fragment {
     }
 
     public void fill(){
-        ((MainActivity)activity).showProgressIndicator();
+        activity.showProgressIndicator();
         easyOpenApi.getMemberOrderDetails(new Callback<OrderDetail>() {
             @Override
             public void success(OrderDetail orderDetail, Response response) {
@@ -69,14 +85,17 @@ public class OrderFragment extends Fragment {
                     easyOpenApi.getMemberOrderStatus(orderNumber,new Callback<OrderStatusDetail>() {
                         @Override
                         public void success(OrderStatusDetail orderStatusDetail, Response response) {
-                            adapter.add(orderStatusDetail.getOrderStatus().get(0));
-                            ((MainActivity)activity).hideProgressIndicator();
+                            for(Shipment shipment: orderStatusDetail.getOrderStatus().get(0).getShipment()){
+                                shipment.setOrderDate(orderStatusDetail.getOrderStatus().get(0).getOrderDate());
+                                adapter.add(shipment);
+                            }
+                            activity.hideProgressIndicator();
                         }
 
                         @Override
                         public void failure(RetrofitError error) {
-                            ((MainActivity)activity).hideProgressIndicator();
-                            Toast.makeText(getActivity(), "Failed to fetch order status", Toast.LENGTH_LONG).show();
+                            activity.hideProgressIndicator();
+                            Toast.makeText(activity, "Failed to fetch order status", Toast.LENGTH_LONG).show();
                             Log.i("Fail Response Order Status", error.getUrl() + error.getMessage());
                         }
                     });
@@ -88,8 +107,8 @@ public class OrderFragment extends Fragment {
                 orderTV = (TextView)getView().findViewById(R.id.orderTV);
                 orderTV.setVisibility(View.VISIBLE);
                 orderTV.setText("No Orders Found");
-                ((MainActivity)activity).hideProgressIndicator();
-                Toast.makeText(getActivity(), "Failed to get orders associated with the account", Toast.LENGTH_LONG).show();
+                activity.hideProgressIndicator();
+                Toast.makeText(activity, "Failed to get orders associated with the account", Toast.LENGTH_LONG).show();
                 Log.i("Fail Response Order History", error.getUrl() + error.getMessage());
             }
         });
