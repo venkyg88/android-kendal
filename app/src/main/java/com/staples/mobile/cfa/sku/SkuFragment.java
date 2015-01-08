@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.feed.PersistentSizedArrayList;
 import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
+import com.staples.mobile.cfa.widget.AnimatedBarScrollView;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PagerStripe;
 import com.staples.mobile.cfa.widget.PriceSticker;
@@ -100,7 +102,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private String identifier;
 
     private DataWrapper wrapper;
-    private ViewGroup summary;
+    private AnimatedBarScrollView summary;
 
     // Image ViewPager
     private ViewPager imagePager;
@@ -118,7 +120,9 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     // Spec Table Container
     private TableLayout specContainer;
 
-    private boolean shifted;
+    private boolean isShiftedTab;
+
+    public static String productName = "";
 
     public void setArguments(String identifier) {
         Bundle args = new Bundle();
@@ -136,7 +140,11 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         }
 
         wrapper = (DataWrapper) inflater.inflate(R.layout.sku_summary, container, false);
-        summary = (ViewGroup) wrapper.findViewById(R.id.summary);
+        summary = (AnimatedBarScrollView) wrapper.findViewById(R.id.summary);
+
+        // Init animated scroll bar callback
+        summary.setAnimatedScrollCallback(new AnimatedBarScrollViewListener()) ;
+
         Resources res = getActivity().getResources();
 
         // Init image pager
@@ -197,7 +205,33 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) getActivity()).showActionBar(R.string.staples, R.drawable.ic_search_white, null);
+
+        MainActivity mainActivity = (MainActivity) getActivity();
+        if(productName.length() > 25) {
+            mainActivity.showActionBar(productName.substring(0, Math.min(productName.length(), 25))
+                    + "...", R.drawable.ic_search_white, null);
+        }
+        else{
+            mainActivity.showActionBar(productName, R.drawable.ic_search_white, null);
+        }
+
+        // set the left drawer position
+        mainActivity.setLeftDrawerOffset();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        // change back the color of action bar to red
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.setActionBarColor(R.color.staples_light);
+
+        // change back the alpha/size/padding of action bar and contain frame
+        mainActivity.restoreDefaultActionBar();
+
+        // change back the left drawer position
+        mainActivity.restoreDefaultLeftDrawer();
     }
 
     @Override
@@ -205,6 +239,60 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         super.onDestroy();
         FragmentManager manager = getFragmentManager();
         manager.removeOnBackStackChangedListener(this);
+    }
+
+    private class AnimatedBarScrollViewListener implements AnimatedBarScrollView.OnAnimatedScrollListener{
+
+        @Override
+        public void initAnimatedActionBar(){
+            MainActivity mainActivity = (MainActivity) getActivity();
+            mainActivity.setContainFrameOffset();
+
+            // set action bar title size and format
+            mainActivity.setActionBarTitleFormat();
+
+            // hide action bar title at first
+            if(AnimatedBarScrollView.isFirstLoad) {
+                mainActivity.setActionBarAlpha(0);
+                mainActivity.setActionBarTitleAlpha(0);
+            }
+            else{
+                mainActivity.setActionBarAlpha(AnimatedBarScrollView.currentAlpha);
+                mainActivity.setActionBarTitleAlpha(AnimatedBarScrollView.currentAlpha);
+            }
+
+            AnimatedBarScrollView.isFirstLoad = false;
+        }
+
+        @Override
+        public void setAnimatedActionBarOnScroll (float scrollY) {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if(productName.length() > 25) {
+                mainActivity.setActionBarTitle(productName.substring(0, Math.min(productName.length(), 25))+"...");
+            }
+            else{
+                mainActivity.setActionBarTitle(productName);
+            }
+
+            mainActivity.setActionBarColor(R.color.staples_light);
+
+            Float screenHeightDp = convertPixelsToDp(mainActivity.getScreenHeight(), mainActivity);
+            Float currentPositionDp = convertPixelsToDp(scrollY, mainActivity);
+            Float scrollThreshold = screenHeightDp / 4;
+
+            if(currentPositionDp <= scrollThreshold){
+                AnimatedBarScrollView.currentAlpha = (int) Math.ceil(currentPositionDp * AnimatedBarScrollView.MAX_ALPHA / scrollThreshold);
+                mainActivity.setActionBarTitleAlpha(AnimatedBarScrollView.currentAlpha);
+                mainActivity.setActionBarAlpha(AnimatedBarScrollView.currentAlpha);
+            };
+        }
+
+        private float convertPixelsToDp(float px, Context context){
+            Resources resources = context.getResources();
+            DisplayMetrics metrics = resources.getDisplayMetrics();
+            float dp = px / (metrics.densityDpi / 160f);
+            return dp;
+        }
     }
 
     public static class DummyFactory implements TabHost.TabContentFactory {
@@ -551,8 +639,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             }
 
             // Add info
-            String name = Html.fromHtml(product.getProductName()).toString();
-            ((TextView) summary.findViewById(R.id.title)).setText(name);
+            productName = Html.fromHtml(product.getProductName()).toString();
+            ((TextView) summary.findViewById(R.id.title)).setText(productName);
             ((TextView) summary.findViewById(R.id.numbers)).setText(formatNumbers(product));
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
 
@@ -674,10 +762,10 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     // Detail and add-to-cart clicks
 
     private void shiftToDetail(int position) {
-        if (shifted) return;
+        if (isShiftedTab) return;
         wrapper.setState(DataWrapper.State.GONE);
         details.setVisibility(View.VISIBLE);
-        shifted = true;
+        isShiftedTab = true;
         tabPager.setCurrentItem(position);
 
         FragmentManager manager = getFragmentManager();
@@ -685,19 +773,60 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         transaction.addToBackStack("SkuDetail");
         transaction.commit();
         manager.addOnBackStackChangedListener(this);
+
+        // set sku action bar on spec page
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.setActionBarAlpha(255);
+        mainActivity.setActionBarTitleAlpha(255);
+        if(productName.length() > 25) {
+            mainActivity.setActionBarTitle(productName.substring(0, Math.min(productName.length(), 25))+"...");
+        }
+        else{
+            mainActivity.setActionBarTitle(productName);
+        }
+
+        mainActivity.restoreDefaultLeftDrawer();
+
+        // restore contain offset
+        mainActivity.restoreContainFrame();
     }
 
     @Override
     public void onBackStackChanged() {
         FragmentManager manager = getFragmentManager();
-        int n = manager.getBackStackEntryCount();
-        if (n < 1) return;
-        String name = manager.getBackStackEntryAt(n - 1).getName();
-        if (name != null && name.equals("SkuDetail")) return;
+        for(int entry = 0; entry < manager.getBackStackEntryCount(); entry++){
+            Log.d(TAG, "Found fragments: " + manager.getBackStackEntryAt(entry).getName());
+
+        }
+
+        int fragmentEntryCount = manager.getBackStackEntryCount();
+        if(fragmentEntryCount < 1) {
+            return;
+        }
+
+        MainActivity mainActivity = (MainActivity) getActivity();
+
+        String currentFragmentName = manager.getBackStackEntryAt(fragmentEntryCount - 1).getName();
+        if(currentFragmentName != null &&
+                currentFragmentName.equals("com.staples.mobile.cfa.sku.SkuFragment")){
+            // restore last seen state for sku action bar after sku spec
+            mainActivity.setActionBarAlpha(AnimatedBarScrollView.currentAlpha);
+            mainActivity.setActionBarTitleAlpha(AnimatedBarScrollView.currentAlpha);
+            mainActivity.setLeftDrawerOffset();
+        }
+        else{
+            if(currentFragmentName != null && !currentFragmentName.equals("SkuDetail")) {
+                isShiftedTab = false;
+            }
+            // restore original contain offset
+            mainActivity.restoreContainFrame();
+            return;
+        }
+
         manager.removeOnBackStackChangedListener(this);
         wrapper.setState(DataWrapper.State.DONE);
         details.setVisibility(View.GONE);
-        shifted = false;
+        isShiftedTab = false;
     }
 
     @Override
