@@ -393,10 +393,10 @@ public class MainActivity extends Activity
             // if logged in and have at least an address or a payment method, then use registered flow, otherwise use guest flow
             if (!loginHelper.isGuestLogin() && (ProfileDetails.hasAddress() || ProfileDetails.hasPaymentMethod())) {
                 fragment = RegisteredCheckoutFragment.newInstance(couponsRewardsAmount,
-                        CartApiManager.getCart().getSubTotal(), CartApiManager.getCart().getPreTaxTotal());
+                        CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal());
             } else {
                 fragment = GuestCheckoutFragment.newInstance(couponsRewardsAmount,
-                        CartApiManager.getCart().getSubTotal(), CartApiManager.getCart().getPreTaxTotal());
+                        CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal());
             }
             return selectFragment(fragment, Transition.NONE, true);
         }
