@@ -4,9 +4,11 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cart_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_off_white"
     android:orientation="vertical">
 
     <!--free shipping message-->
@@ -38,37 +40,38 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="2dp"
         android:scrollbars="vertical"
+        android:background="@color/background_off_white"
         />
 
     <!--coupon & rewards heading -->
-    <RelativeLayout
+    <android.support.v7.widget.CardView
         android:id="@+id/coupons_rewards_layout"
-        android:layout_height="48dp"
+        android:layout_height="40dp"
         android:layout_width="match_parent"
         android:gravity="center_vertical"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:background="@color/background_extra_light_gray">
+        card_view:contentPaddingLeft="16dp"
+        card_view:contentPaddingRight="16dp"
+        card_view:cardCornerRadius="0dp"
+        card_view:cardElevation="1dp"
+        card_view:cardBackgroundColor="@color/background_extra_light_gray_2">
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:layout_gravity="left|center_vertical"
             android:text="@string/coupons_rewards"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:textColor="@color/text_blue"
             />
         <TextView
             android:id="@+id/coupons_rewards_value"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_alignParentRight="true"
-            android:textSize="18sp"
+            android:layout_gravity="right|center_vertical"
+            android:textSize="14sp"
             android:textColor="@color/text_blue"
             />
-    </RelativeLayout>
+    </android.support.v7.widget.CardView>
     <!-- RecyclerView for coupons -->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/coupon_list"
@@ -77,7 +80,6 @@
         android:layout_weight="1"
         android:padding="16dp"
         android:scrollbars="vertical"
-        android:background="@color/background_white"
         android:visibility="gone"/>
 
     <!--link rewards account -->
@@ -92,18 +94,17 @@
         android:id="@+id/cart_shipping_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
+        android:paddingTop="7dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:background="@color/background_light_gray">
+        android:background="@color/background_off_white">
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_alignParentLeft="true"
             android:text="@string/shipping"
-            android:paddingTop="2dp"
             android:paddingBottom="0dp"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:textColor="@color/text_nearly_black"
         />
         <TextView
@@ -111,9 +112,8 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_alignParentRight="true"
-            android:paddingTop="2dp"
             android:paddingBottom="0dp"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:textColor="@color/text_nearly_black"
             />
     </RelativeLayout>
@@ -125,41 +125,57 @@
         android:layout_height="wrap_content"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingBottom="8dp"
-        android:background="@color/background_light_gray">
+        android:paddingBottom="12dp"
+        android:background="@color/background_off_white">
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:paddingTop="0dp"
-            android:paddingBottom="8dp"
-            android:textSize="18sp"
+            android:paddingBottom="0dp"
+            android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@color/text_black"
             android:text="@string/pretax_subtotal" />
         <TextView
-            android:layout_height="wrap_content"
             android:id="@+id/cart_subtotal"
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:paddingTop="0dp"
-            android:paddingBottom="8dp"
-            android:textSize="18sp"
+            android:paddingBottom="0dp"
+            android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@color/text_black"
             />
 
         <!--checkout button-->
-        <TextView
+        <android.support.v7.widget.CardView
             android:id="@+id/action_checkout"
-            android:layout_height="40dp"
             android:layout_width="match_parent"
+            android:layout_height="36dp"
             android:layout_below="@id/cart_subtotal"
-            android:gravity="center"
-            android:text="@string/proceed_to_checkout"
-            android:textSize="20sp"
-            android:textColor="@color/text_white"
-            android:background="@color/background_red_submission"/>
+            android:layout_margin="0dp"
+            android:padding="0dp"
+            card_view:cardCornerRadius="1dp"
+            card_view:cardElevation="0dp"
+            card_view:cardBackgroundColor="@color/background_red_submission" >
+
+            <TextView
+                android:id="@+id/action_checkout_text"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_below="@id/cart_subtotal"
+                android:gravity="center"
+                android:text="@string/proceed_to_checkout"
+                android:textSize="14sp"
+                android:textColor="@color/text_white"
+            />
+
+        </android.support.v7.widget.CardView>
+
 
     </RelativeLayout>
 

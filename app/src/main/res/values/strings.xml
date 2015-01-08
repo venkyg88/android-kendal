@@ -52,7 +52,7 @@
     <string name="empty_cart_msg">Your cart is empty</string>
     <string name="shipping">Shipping</string>
     <string name="expected_delivery">Expected Delivery:</string>
-    <string name="pretax_subtotal">Pre-tax Subtotal</string>
+    <string name="pretax_subtotal">Pre-tax subtotal</string>
     <string name="proceed_to_checkout">SECURE CHECKOUT</string>
     <string name="no_reviews">no reviews</string>
     <string name="shipping_addr">Shipping Address</string>
@@ -86,7 +86,7 @@
     <string name="rewards_ink_limit">Limit of %d per month</string>
     <string name="rewards_earned">Earned</string>
     <string name="tax">Tax</string>
-    <string name="submit_order">Submit Order</string>
+    <string name="submit_order">SUBMIT ORDER</string>
     <string name="order_confirmation_msg">Thank you for your order!</string>
     <string name="continue_shopping">Continue Shopping</string>
 

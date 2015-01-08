@@ -44,9 +44,11 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
     public static final String BUNDLE_PARAM_PAYMENT_METHOD_ID = "paymentMethodId";
 
 
+    private TextView shippingNameVw;
     private TextView shippingAddrVw;
     private TextView paymentMethodVw;
     private ImageView paymentMethodImage;
+    private TextView billingNameVw;
     private TextView billingAddrVw;
 
     // profile selections
@@ -79,9 +81,11 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
     protected void initEntryArea(View view) {
 
         // init views
+        shippingNameVw = (TextView) view.findViewById(R.id.checkout_shipping_name);
         shippingAddrVw = (TextView) view.findViewById(R.id.checkout_shipping_addr);
         paymentMethodVw = (TextView) view.findViewById(R.id.checkout_payment_method);
         paymentMethodImage = (ImageView) view.findViewById(R.id.card_image);
+        billingNameVw = (TextView) view.findViewById(R.id.checkout_billing_name);
         billingAddrVw = (TextView) view.findViewById(R.id.checkout_billing_addr);
 
         // Set click listeners
@@ -125,6 +129,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         com.staples.mobile.common.access.easyopen.model.member.Address billingAddress = ProfileDetails.getAddress(billingAddressId);
         CCDetails paymentMethod = ProfileDetails.getPaymentMethod(paymentMethodId);
         if (shippingAddress != null) {
+            shippingNameVw.setText(formatAddressName(shippingAddress));
             shippingAddrVw.setText(formatAddress(shippingAddress));
         }
         if (paymentMethod != null) {
@@ -132,6 +137,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
             paymentMethodImage.setImageResource(CardType.matchOnApiName(paymentMethod.getCardType()).getImageResource());
         }
         if (billingAddress != null) {
+            billingNameVw.setText(formatAddressName(billingAddress));
             billingAddrVw.setText(formatAddress(billingAddress));
         }
 
@@ -289,7 +295,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
     }
 
     /** formats address for display in widget */
-    private String formatAddress(com.staples.mobile.common.access.easyopen.model.member.Address address) {
+    private String formatAddressName(com.staples.mobile.common.access.easyopen.model.member.Address address) {
         StringBuilder b = new StringBuilder();
         if (address != null) {
             if (!TextUtils.isEmpty(address.getFirstname())) {
@@ -297,8 +303,15 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                 if (!TextUtils.isEmpty(address.getLastname())) {
                     b.append(" ").append(address.getLastname());
                 }
-                b.append("\n");
             }
+        }
+        return b.toString();
+    }
+
+    /** formats address for display in widget */
+    private String formatAddress(com.staples.mobile.common.access.easyopen.model.member.Address address) {
+        StringBuilder b = new StringBuilder();
+        if (address != null) {
             if (!TextUtils.isEmpty(address.getOrganizationName())) {
                 b.append(address.getOrganizationName()).append("\n");
             }
@@ -314,7 +327,6 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                 if (!TextUtils.isEmpty(address.getZipcode())) {
                     b.append(" ").append(address.getZipcode());
                 }
-                b.append("\n");
             }
         }
         return b.toString();

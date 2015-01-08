@@ -3,6 +3,7 @@
   ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/checkout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,16 +16,22 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="16dp"
         android:background="#ffffff">
         <!--dynamically add content here-->
     </ScrollView>
 
+
+    <!-- math story and Submit button -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="#cccccc">
+
     <!--&lt;!&ndash; delivery range &ndash;&gt;-->
-    <!--<RelativeLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="#e6e6e6" >-->
         <!--<TextView-->
             <!--style="@style/CheckoutFooter"-->
             <!--android:layout_width="wrap_content"-->
@@ -37,50 +44,32 @@
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_alignParentRight="true"-->
             <!--/>-->
-    <!--</RelativeLayout>-->
 
-    <!-- coupons & rewards -->
-    <RelativeLayout
-        android:id="@+id/co_coupons_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:background="#cccccc"
-        >
+        <!-- coupons & rewards -->
         <TextView
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
+            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
+            android:padding="0dp"
             android:text="@string/coupons_rewards"
-            android:textColor="@color/text_nearly_black"
-            />
+            android:textColor="@color/text_nearly_black" />
         <TextView
             android:id="@+id/checkout_coupons_rewards"
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
+            android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
-            android:textColor="@color/text_nearly_black"
-            />
-    </RelativeLayout>
+            android:padding="0dp"
+            android:textColor="@color/text_nearly_black" />
 
-    <!-- item subtotal -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:background="#cccccc" >
+        <!-- item subtotal -->
         <TextView
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
+            android:layout_below="@id/checkout_coupons_rewards"
             android:layout_alignParentLeft="true"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
+            android:padding="0dp"
             android:text="@string/item_subtotal"
             android:textColor="@color/text_nearly_black"
             />
@@ -88,99 +77,114 @@
             android:id="@+id/checkout_item_subtotal"
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
+            android:layout_below="@id/checkout_coupons_rewards"
             android:layout_alignParentRight="true"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
+            android:padding="0dp"
             android:textColor="@color/text_nearly_black"
             />
-    </RelativeLayout>
 
-    <!-- shipping charge -->
-    <RelativeLayout
-        android:id="@+id/co_shipping_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:visibility="gone"
-        android:background="#cccccc">
+
+        <!-- shipping charge -->
         <TextView
+            android:id="@+id/checkout_shipping_label"
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
+            android:layout_below="@id/checkout_item_subtotal"
             android:layout_alignParentLeft="true"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
+            android:padding="0dp"
+            android:visibility="gone"
             android:text="@string/shipping"
-            android:textColor="@color/text_nearly_black"
-            />
+            android:textColor="@color/text_nearly_black" />
         <TextView
             android:id="@+id/checkout_shipping"
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
+            android:layout_below="@id/checkout_item_subtotal"
             android:layout_alignParentRight="true"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
-            android:textColor="@color/text_nearly_black"
-            />
-    </RelativeLayout>
+            android:padding="0dp"
+            android:visibility="gone"
+            android:textColor="@color/text_nearly_black" />
 
-    <!-- sales tax -->
-    <RelativeLayout
-        android:id="@+id/co_tax_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:visibility="gone"
-        android:background="#cccccc">
+        <!--tax-->
         <TextView
+            android:id="@+id/checkout_tax_label"
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
             android:layout_alignParentLeft="true"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
+            android:layout_below="@id/checkout_shipping"
+            android:padding="0dp"
+            android:visibility="gone"
             android:text="@string/tax"
-            android:textColor="@color/text_nearly_black"
-            />
+            android:textColor="@color/text_nearly_black" />
         <TextView
             android:id="@+id/checkout_tax"
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
             android:layout_alignParentRight="true"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
-            android:textColor="@color/text_nearly_black"
-            />
+            android:layout_below="@id/checkout_shipping"
+            android:visibility="gone"
+            android:padding="0dp"
+            android:textColor="@color/text_nearly_black"  />
 
-
-        <!-- submit order -->
-        <RelativeLayout
+        <!-- submission button -->
+        <android.support.v7.widget.CardView
             android:id="@+id/co_submission_layout"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="36dp"
             android:layout_below="@id/checkout_tax"
-            android:gravity="center"
+            android:layout_marginTop="8dp"
             android:visibility="gone"
-            android:background="@color/background_red_submission">
+            card_view:cardCornerRadius="1dp"
+            card_view:cardElevation="0dp"
+            card_view:cardBackgroundColor="@color/background_red_submission" >
+
             <TextView
                 style="@style/CheckoutFooter"
                 android:layout_width="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
+                android:layout_gravity="left|center_vertical"
                 android:text="@string/submit_order"
-                android:textSize="20sp"
+                android:textSize="14sp"
                 android:textColor="@color/text_white"
                 />
             <TextView
                 android:id="@+id/checkout_order_total"
                 style="@style/CheckoutFooter"
                 android:layout_width="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:textSize="20sp"
+                android:layout_gravity="right|center_vertical"
+                android:textSize="14sp"
                 android:textColor="@color/text_white"
                 />
-        </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <!--<RelativeLayout-->
+            <!--android:id="@+id/co_submission_layout"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="36dp"-->
+            <!--android:layout_below="@id/checkout_tax"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:gravity="center"-->
+            <!--android:visibility="gone"-->
+            <!--android:background="@color/background_red_submission">-->
+            <!--<TextView-->
+                <!--style="@style/CheckoutFooter"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_alignParentLeft="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:text="@string/submit_order"-->
+                <!--android:textSize="14sp"-->
+                <!--android:textColor="@color/text_white"-->
+                <!--/>-->
+            <!--<TextView-->
+                <!--android:id="@+id/checkout_order_total"-->
+                <!--style="@style/CheckoutFooter"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:textSize="14sp"-->
+                <!--android:textColor="@color/text_white"-->
+                <!--/>-->
+        <!--</RelativeLayout>-->
 
     </RelativeLayout>
 
