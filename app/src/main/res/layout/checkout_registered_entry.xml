@@ -26,11 +26,19 @@
             style="@style/GraySubheading"
             android:text="@string/shipping_addr"/>
         <TextView
-            android:id="@+id/checkout_shipping_addr"
+            android:id="@+id/checkout_shipping_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/checkout_shipping_addr_label"
+            android:textStyle="bold"
+            style="@style/CheckoutText"/>
+        <TextView
+            android:id="@+id/checkout_shipping_addr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/checkout_shipping_name"
             style="@style/CheckoutText"/>
         <ImageView
             android:id="@+id/shipping_addresses"
@@ -112,11 +120,19 @@
             style="@style/GraySubheading"
             android:text="@string/billing_addr"/>
         <TextView
-            android:id="@+id/checkout_billing_addr"
+            android:id="@+id/checkout_billing_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/checkout_billing_addr_label"
+            android:textStyle="bold"
+            style="@style/CheckoutText"/>
+        <TextView
+            android:id="@+id/checkout_billing_addr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/checkout_billing_name"
             style="@style/CheckoutText"/>
         <ImageView
             android:id="@+id/billing_addresses"
