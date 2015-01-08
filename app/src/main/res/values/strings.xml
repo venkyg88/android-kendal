@@ -52,7 +52,7 @@
     <string name="empty_cart_msg">Your cart is empty</string>
     <string name="shipping">Shipping</string>
     <string name="expected_delivery">Expected Delivery:</string>
-    <string name="pretax_subtotal">Pre-tax Subtotal</string>
+    <string name="pretax_subtotal">Pre-tax subtotal</string>
     <string name="proceed_to_checkout">SECURE CHECKOUT</string>
     <string name="no_reviews">no reviews</string>
     <string name="shipping_addr">Shipping Address</string>
