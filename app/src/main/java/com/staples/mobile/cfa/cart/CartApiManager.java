@@ -42,6 +42,12 @@ public class CartApiManager {
     public static int getCartTotalItems() {
         return cart == null? 0: cart.getTotalItems();
     }
+    public static float getSubTotal() {
+        return cart == null? 0f: cart.getSubTotal();
+    }
+    public static float getPreTaxTotal() {
+        return cart == null? 0f: cart.getPreTaxTotal();
+    }
 
 
     /** gets cart  */

@@ -10,11 +10,12 @@
     android:layout_centerHorizontal="true"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
-    android:layout_marginTop="2dp"
-    android:layout_marginBottom="6dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="0dp"
     card_view:contentPadding="0dp"
-    card_view:cardCornerRadius="8dp"
-    card_view:cardElevation="4dp">
+    card_view:cardBackgroundColor="@color/background_white"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardElevation="2dp">
 
     <RelativeLayout
         android:id="@+id/cartitem_shipping_estimate_layout"

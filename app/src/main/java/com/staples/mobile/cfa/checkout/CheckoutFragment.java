@@ -16,22 +16,9 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.login.LoginHelper;
-import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.cart.Cart;
-import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
-import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
-import com.staples.mobile.common.access.easyopen.model.checkout.SubmitOrderRequest;
-import com.staples.mobile.common.access.easyopen.model.checkout.SubmitOrderResponse;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 
 public abstract class CheckoutFragment extends Fragment implements View.OnClickListener {
@@ -50,13 +37,13 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     // fragment, but api call may still be returning
     protected MainActivity activity;
 
-    private View shippingChargeLayout;
-    private View taxLayout;
     private View submissionLayout;
     private ViewGroup checkoutEntryLayout;
     private TextView itemSubtotalVw;
     private TextView couponsRewardsVw;
     private TextView shippingChargeVw;
+    private TextView shippingChargeLabelVw;
+    private TextView taxLabelVw;
     private TextView taxVw;
     private TextView checkoutTotalVw;
 
@@ -94,13 +81,15 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         View view = inflater.inflate(R.layout.checkout_fragment, container, false);
         checkoutEntryLayout = (ViewGroup)view.findViewById(R.id.checkout_entry_layout);
         inflater.inflate(getEntryLayoutId(), checkoutEntryLayout); // dynamically inflate variable entry area
-        shippingChargeLayout = view.findViewById(R.id.co_shipping_layout);
+//        shippingChargeLayout = view.findViewById(R.id.co_shipping_layout);
         submissionLayout = view.findViewById(R.id.co_submission_layout);
-        taxLayout = view.findViewById(R.id.co_tax_layout);
+//        taxLayout = view.findViewById(R.id.co_tax_layout);
         itemSubtotalVw = (TextView) view.findViewById(R.id.checkout_item_subtotal);
         couponsRewardsVw = (TextView) view.findViewById(R.id.checkout_coupons_rewards);
         shippingChargeVw = (TextView) view.findViewById(R.id.checkout_shipping);
+        shippingChargeLabelVw = (TextView) view.findViewById(R.id.checkout_shipping_label);
         taxVw = (TextView) view.findViewById(R.id.checkout_tax);
+        taxLabelVw = (TextView) view.findViewById(R.id.checkout_tax_label);
         checkoutTotalVw = (TextView) view.findViewById(R.id.checkout_order_total);
 
         greenText = r.getColor(R.color.text_green);
@@ -234,9 +223,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         shippingChargeVw.setTextColor("Free".equals(shippingCharge) ? greenText : blackText);
         taxVw.setText(currencyFormat.format(tax));
         checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax)); // coupons/rewards are already factored into pretaxSubtotal
-        taxLayout.setVisibility(View.VISIBLE);
-        shippingChargeLayout.setVisibility(View.VISIBLE);
-        submissionLayout.setVisibility(View.VISIBLE);
+        setShipTaxSubmitVisibility(true);
     }
 
     /** updates the shipping charge and tax values (may be result of api response or a call from the subclass) */
@@ -247,10 +234,16 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
             checkoutBundle.putFloat(BUNDLE_PARAM_TAX, -1);
             this.shippingCharge = null;
             this.tax = null;
-            taxLayout.setVisibility(View.GONE);
-            shippingChargeLayout.setVisibility(View.GONE);
-            submissionLayout.setVisibility(View.GONE);
+            setShipTaxSubmitVisibility(false);
         }
+    }
+
+    private void setShipTaxSubmitVisibility(boolean visible) {
+        shippingChargeVw.setVisibility(visible? View.VISIBLE : View.GONE);
+        shippingChargeLabelVw.setVisibility(visible? View.VISIBLE : View.GONE);
+        taxVw.setVisibility(visible? View.VISIBLE : View.GONE);
+        taxLabelVw.setVisibility(visible? View.VISIBLE : View.GONE);
+        submissionLayout.setVisibility(visible? View.VISIBLE : View.GONE);
     }
 
     /** returns tax value if available */
