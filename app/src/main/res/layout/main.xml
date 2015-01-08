@@ -18,7 +18,44 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="invisible">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
+        <!-- Fragment Contain -->
+        <FrameLayout
+            android:id="@+id/contain_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="56dp">
+            <android.support.v4.widget.DrawerLayout
+                android:id="@+id/drawer_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <!-- Main content -->
+                <FrameLayout
+                    android:id="@+id/content"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+                <!-- Left drawer (menu) -->
+                <ListView
+                    android:id="@+id/left_drawer"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start"
+                    android:orientation="vertical"
+                    android:background="#ffffff"
+                    android:choiceMode="singleChoice"/>
+            </android.support.v4.widget.DrawerLayout>
+        </FrameLayout>
+
         <!-- ActionBar -->
+        <FrameLayout
+            android:id="@+id/action_bar_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
         <LinearLayout
             android:id="@+id/action_bar"
             android:layout_width="match_parent"
@@ -122,26 +159,8 @@
                 android:textColor="@color/text_black"
                 android:src="@drawable/ic_shopping_cart_white"/>
         </LinearLayout>
-        <android.support.v4.widget.DrawerLayout
-            android:id="@+id/drawer_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <!-- Main content -->
-            <FrameLayout
-                android:id="@+id/content"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
-            <!-- Left drawer (menu) -->
-            <ListView
-                android:id="@+id/left_drawer"
-                android:layout_width="200dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="start"
-                android:orientation="vertical"
-                android:background="#ffffff"
-                android:choiceMode="singleChoice"/>
-        </android.support.v4.widget.DrawerLayout>
+        </FrameLayout>
+        </RelativeLayout>
     </com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay>
 
     <RelativeLayout

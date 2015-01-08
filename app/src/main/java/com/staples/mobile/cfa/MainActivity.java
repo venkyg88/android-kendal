@@ -4,15 +4,23 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -40,6 +48,7 @@ import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.skuset.SkuSetFragment;
 import com.staples.mobile.cfa.widget.BadgeImageView;
+import com.staples.mobile.cfa.widget.AnimatedBarScrollView;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.configurator.model.Configurator;
@@ -66,6 +75,9 @@ public class MainActivity extends Activity
     private Button checkoutSigninButton;
     private View closeButton;
     private DrawerItem homeDrawerItem;
+    private LinearLayout actionBar;
+    private int screenHeight;
+    private FrameLayout containFrame;
 
     private LoginHelper loginHelper;
 
@@ -245,7 +257,8 @@ public class MainActivity extends Activity
         setContentView(R.layout.main);
 
         // Find 9 action bar entities
-        View actionBar = findViewById(R.id.action_bar);
+        containFrame = (FrameLayout) findViewById(R.id.contain_frame);
+        actionBar = (LinearLayout) findViewById(R.id.action_bar);
         closeButton = actionBar.findViewById(R.id.close_button);
         leftDrawerAction = actionBar.findViewById(R.id.action_left_drawer);
         logoView = (ImageView) actionBar.findViewById(R.id.action_logo);
@@ -366,7 +379,7 @@ public class MainActivity extends Activity
         if (transition!=null) transition.setAnimation(transaction);
         transaction.replace(R.id.content, fragment, tag);
         if (push)
-            transaction.addToBackStack(null);
+            transaction.addToBackStack(fragment.getClass().getName());
         transaction.commit();
         return(true);
     }
@@ -440,6 +453,10 @@ public class MainActivity extends Activity
     public boolean selectSkuItem(String identifier) {
         SkuFragment fragment = new SkuFragment();
         fragment.setArguments(identifier);
+
+        // set animated bar in sku page
+        initAnimatedBar();
+
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
@@ -499,11 +516,90 @@ public class MainActivity extends Activity
         cartQtyView.setText(qtyText); // (e.g. "4 items")
     }
 
-
     public boolean navigateToFragment(Fragment fragment) {
         return (selectFragment(fragment, Transition.NONE, true));
     }
 
+    ////////////////////////////////////////////////////////////
+    // Methods for animated action bar
+    private void initAnimatedBar() {
+        // hide action bar at first (it will be shown while being scrolled down)
+        AnimatedBarScrollView.isFirstLoad = true;
+        AnimatedBarScrollView.currentAlpha = 0;
+        setContainFrameOffset();
+    }
+
+    public int getScreenHeight(){
+        // get height for sku scrollview animation effect
+        calculateScreenHeight();
+
+        return screenHeight;
+    }
+
+    private void calculateScreenHeight(){
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        screenHeight = size.y;
+    }
+
+    public void setContainFrameOffset(){
+        containFrame.setPadding(0, 0, 0, 0);
+    }
+
+    public void restoreContainFrame(){
+        containFrame.setPadding(0, Math.round(convertDpToPixel(56f, this)), 0, 0);
+    }
+
+    public void setActionBarAlpha(int alpha){
+        actionBar.getBackground().setAlpha(alpha);
+    }
+
+    public void setActionBarColor(int id){
+        actionBar.setBackgroundColor(getResources().getColor(id));
+    }
+
+    public void setActionBarTitleAlpha(int alpha){
+        titleView.setTextColor(titleView.getTextColors().withAlpha(alpha));
+    }
+
+    public void setActionBarTitle(String title){
+        titleView.setText(title);
+    }
+
+    public void setActionBarTitleFormat(){
+        titleView.setSingleLine(true);
+        titleView.setLines(1);
+        titleView.setPadding(0, 0, 0, 0);
+        titleView.setTextSize(18f);
+        titleView.setEllipsize(TextUtils.TruncateAt.END);
+    }
+
+    public void restoreDefaultActionBar(){
+        // restore action bar offset and title format
+        titleView.setPadding(20, 0, 20, 0);
+        titleView.setTextSize(24f);
+        titleView.setTextColor(titleView.getTextColors().withAlpha(255));
+
+        // restore contain frame offset
+        containFrame.setPadding(0, Math.round(convertDpToPixel(56f, this)), 0, 0);
+    }
+
+    public void setLeftDrawerOffset(){
+        leftDrawer.setPadding(0, (int) convertDpToPixel((float) 56, this), 0, 0);
+    }
+
+    public void restoreDefaultLeftDrawer(){
+        leftDrawer.setPadding(0, 0, 0, 0);
+    }
+
+    private float convertDpToPixel(float dp, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * (metrics.densityDpi / 160f);
+        return px;
+    }
+    ////////////////////////////////////////////////////////////
 
     @Override
     public void onBackPressed () {
