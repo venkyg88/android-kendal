@@ -19,6 +19,7 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.member.OrderDetail;
 import com.staples.mobile.common.access.easyopen.model.member.OrderHistory;
 import com.staples.mobile.common.access.easyopen.model.member.OrderStatus;
@@ -96,7 +97,7 @@ public class OrderFragment extends Fragment {
                         @Override
                         public void failure(RetrofitError error) {
                             activity.hideProgressIndicator();
-                            Toast.makeText(activity, "Failed to fetch order status", Toast.LENGTH_LONG).show();
+                            Toast.makeText(activity, ApiError.getErrorMessage(error), Toast.LENGTH_LONG).show();
                             Log.i("Fail Response Order Status", error.getUrl() + error.getMessage());
                         }
                     });
@@ -109,7 +110,7 @@ public class OrderFragment extends Fragment {
                 orderTV.setVisibility(View.VISIBLE);
                 orderTV.setText("No Orders Found");
                 activity.hideProgressIndicator();
-                Toast.makeText(activity, "Failed to get orders associated with the account", Toast.LENGTH_LONG).show();
+                Toast.makeText(activity, ApiError.getErrorMessage(error), Toast.LENGTH_LONG).show();
                 Log.i("Fail Response Order History", error.getUrl() + error.getMessage());
             }
         });
