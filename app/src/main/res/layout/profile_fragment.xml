@@ -10,34 +10,71 @@
         android:layout_width="match_parent"
         android:text="@string/email_title"
         android:id="@+id/emailLabel"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         style="@style/GraySubheading"
+        android:paddingTop="10dp"
         android:layout_height="wrap_content" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/emailProfile"
+        android:paddingTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         style="@style/DrawerStyle"/>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:paddingTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:background="@android:color/black"/>
 
     <TextView
         android:layout_width="match_parent"
         android:text="@string/username_title"
         style="@style/GraySubheading"
         android:id="@+id/userNameLabel"
+        android:paddingTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         android:layout_height="wrap_content" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/userNameProfile"
+        android:layout_marginRight="10dp"
+        android:paddingTop="10dp"
+        android:layout_marginLeft="10dp"
         style="@style/DrawerStyle"/>
 
-    <TextView
-        android:layout_width="match_parent"
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:paddingTop="10dp"
+        android:background="@android:color/black"/>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Shipping/Billing"
-        android:textSize="16dp"
-        android:background="@color/background_extra_light_gray"/>
+        android:paddingTop="10dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp"
+            android:paddingBottom="10dp"
+            android:text="Shipping/Billing"
+            android:textSize="16dp"
+            android:background="@color/background_extra_light_gray"/>
+    </LinearLayout>
+
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -45,6 +82,9 @@
         android:orientation="horizontal">
         <TextView
             android:id="@+id/addressET"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:paddingTop="10dp"
             android:layout_width="wrap_content"
             android:layout_alignParentLeft="true"
             style="@style/DrawerStyle"/>
@@ -54,7 +94,10 @@
             android:id="@+id/addShippingBtn"
             android:layout_alignParentRight="true"/>
     </RelativeLayout>
-
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -69,5 +112,8 @@
             android:id="@+id/addCCBtn"
             android:layout_alignParentRight="true"/>
     </RelativeLayout>
-
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
 </LinearLayout>
