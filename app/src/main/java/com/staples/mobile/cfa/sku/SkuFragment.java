@@ -207,13 +207,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         super.onResume();
 
         MainActivity mainActivity = (MainActivity) getActivity();
-        if(productName.length() > 23) {
-            mainActivity.showActionBar(productName.substring(0, Math.min(productName.length(), 23))
-                    + "...", R.drawable.ic_search_white, null);
-        }
-        else{
-            mainActivity.showActionBar(productName, R.drawable.ic_search_white, null);
-        }
+        mainActivity.setActionBarTitle(productName);
 
         // set the left drawer position
         mainActivity.setLeftDrawerOffset();
@@ -264,13 +258,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         @Override
         public void setAnimatedActionBarOnScroll (float scrollY) {
             MainActivity mainActivity = (MainActivity) getActivity();
-            if(productName.length() > 23) {
-                mainActivity.setActionBarTitle(productName.substring(0, Math.min(productName.length(), 23))+"...");
-            }
-            else{
-                mainActivity.setActionBarTitle(productName);
-            }
-
+            mainActivity.setActionBarTitle(productName);
             mainActivity.setActionBarColor(R.color.staples_light);
 
             Float screenHeightDp = convertPixelsToDp(mainActivity.getScreenHeight(), mainActivity);
@@ -775,12 +763,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.setActionBarAlpha(255);
         mainActivity.setActionBarTitleAlpha(255);
-        if(productName.length() > 23) {
-            mainActivity.setActionBarTitle(productName.substring(0, Math.min(productName.length(), 23))+"...");
-        }
-        else{
-            mainActivity.setActionBarTitle(productName);
-        }
+        mainActivity.setActionBarTitle(productName);
 
         mainActivity.restoreDefaultLeftDrawer();
 
