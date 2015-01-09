@@ -571,14 +571,11 @@ public class MainActivity extends Activity
         titleView.setSingleLine(true);
         titleView.setLines(1);
         titleView.setPadding(0, 0, 0, 0);
-        titleView.setTextSize(18f);
         titleView.setEllipsize(TextUtils.TruncateAt.END);
     }
 
     public void restoreDefaultActionBar(){
         // restore action bar offset and title format
-        //titleView.setPadding(20, 0, 20, 0);
-        titleView.setTextSize(20f);
         setActionBarTitleAlpha(255);
         setActionBarAlpha(255);
 
