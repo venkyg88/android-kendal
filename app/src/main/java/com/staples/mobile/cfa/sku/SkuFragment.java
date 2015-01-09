@@ -208,6 +208,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.setActionBarTitle(productName);
+        mainActivity.showActionBar(productName, R.drawable.ic_search_white, null);
 
         // set the left drawer position
         mainActivity.setLeftDrawerOffset();

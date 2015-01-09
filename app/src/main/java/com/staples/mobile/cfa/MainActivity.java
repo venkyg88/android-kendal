@@ -568,14 +568,12 @@ public class MainActivity extends Activity
     }
 
     public void setActionBarTitleFormat(){
-        titleView.setSingleLine(true);
-        titleView.setLines(1);
         titleView.setPadding(0, 0, 0, 0);
-        titleView.setEllipsize(TextUtils.TruncateAt.END);
     }
 
     public void restoreDefaultActionBar(){
-        // restore action bar offset and title format
+        // restore action bar offset and title offset
+        titleView.setPadding((int) convertDpToPixel(4f, this), 0, (int) convertDpToPixel(4f, this), 0);
         setActionBarTitleAlpha(255);
         setActionBarAlpha(255);
 
