@@ -240,9 +240,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             MainActivity mainActivity = (MainActivity) getActivity();
             mainActivity.setContainFrameOffset();
 
-            // set action bar title size and format
-            mainActivity.setActionBarTitleFormat();
-
             // hide action bar title at first
             if(AnimatedBarScrollView.isFirstLoad) {
                 mainActivity.setActionBarAlpha(0);

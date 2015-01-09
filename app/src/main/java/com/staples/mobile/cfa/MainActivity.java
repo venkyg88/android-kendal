@@ -567,13 +567,8 @@ public class MainActivity extends Activity
         titleView.setText(title);
     }
 
-    public void setActionBarTitleFormat(){
-        titleView.setPadding(0, 0, 0, 0);
-    }
-
     public void restoreDefaultActionBar(){
         // restore action bar offset and title offset
-        titleView.setPadding((int) convertDpToPixel(4f, this), 0, (int) convertDpToPixel(4f, this), 0);
         setActionBarTitleAlpha(255);
         setActionBarAlpha(255);
 
