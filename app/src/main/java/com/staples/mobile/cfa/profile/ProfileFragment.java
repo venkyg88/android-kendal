@@ -78,10 +78,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                     shippingBtn.setText("+ Add");
                 }
             }
-            else {
-                addressTV.setText("Shipping Addresses");
-                shippingBtn.setText("+ Add");
-            }
+        }else {
+            addressTV.setText("Shipping Addresses");
+            shippingBtn.setText("+ Add");
         }
 
         List<CCDetails> creditCards = member.getCreditCard();
@@ -104,10 +103,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                     creditCardTv.setText(tmpCreditCard);
                     ccBtn.setText("+ Add");
                 }
-              }else {
-                addressTV.setText("Credit Cards");
-                shippingBtn.setText("+ Add");
-            }
+              }
+        }else {
+            creditCardTv.setText("Credit Cards");
+            ccBtn.setText("+ Add");
         }
     }
 
