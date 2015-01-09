@@ -14,7 +14,8 @@
         android:layout_height="@dimen/image_square_size"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         android:layout_marginRight="12dp"/>
     <RelativeLayout
         android:id="@+id/cartitem_desc_layout"
@@ -22,7 +23,7 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_toRightOf="@id/cartitem_image"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="15dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true">
         <TextView
