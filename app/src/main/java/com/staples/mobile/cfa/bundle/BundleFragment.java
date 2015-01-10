@@ -124,18 +124,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         return(count);
     }
 
-    private class Flasher implements Runnable {
-        private ImageView view;
-
-        private Flasher(ImageView view) {
-            this.view = view;
-        }
-
-        @Override
-        public void run() {
-            view.setImageDrawable(view.getResources().getDrawable(R.drawable.added_to_cart));
-        }
-    }
 
     @Override
     public void onClick(View view) {
@@ -156,18 +144,23 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                         ((MainActivity) getActivity()).selectSkuSet(item.title, item.identifier, item.imageUrl);
                     } else {
                         final MainActivity activity = (MainActivity) getActivity();
+                        final ImageView buttonVw = (ImageView)view;
                         activity.showProgressIndicator();
+                        buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.ic_android));
                         CartApiManager.addItemToCart(item.identifier, 1, new CartApiManager.CartRefreshCallback() {
                             @Override
                             public void onCartRefreshComplete(String errMsg) {
                                 activity.hideProgressIndicator();
                                 activity.updateCartIcon(CartApiManager.getCartTotalItems());
+                                // if success
+                                if (errMsg == null) {
+                                    buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.added_to_cart));
+                                } else {
+                                    buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.add_to_cart));
+                                    Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                                }
                             }
                         });
-//                        ((MainActivity) getActivity()).addItemToCart(item.identifier, 1);
-                        // TODO: use above callback to trun off flasher
-                        ((ImageView) view).setImageDrawable(view.getResources().getDrawable(R.drawable.ic_android));
-                        view.postDelayed(new Flasher((ImageView) view), 2000);
                     }
                 }
                 break;

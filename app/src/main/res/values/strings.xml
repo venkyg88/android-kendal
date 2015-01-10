@@ -43,10 +43,10 @@
     <string name="feed_daily_deal_title">Cart Items On Daily Deal</string>
     <string name="feed_seen_products_title">Your Recently Viewed Items</string>
 
->>>>>>> 66e0fd670d284a9f1cbd59c3610530745e2ba2a6
     <string name="add">ADD</string>
     <string name="cartitem_qty_label">Qty</string>
-    <string name="add_to_cart">Add to cart</string>
+    <string name="add_to_cart">ADD TO CART</string>
+    <string name="add_another">Add Another</string>
     <string name="update_button">Update</string>
     <string name="free_shipping_msg1">Free shipping when you spend %1$s - only %2$s to go!</string>
     <string name="free_shipping_msg2">You qualify for FREE SHIPPING!</string>
@@ -110,12 +110,12 @@
     <string name="remove">REMOVE</string>
 
     <!-- Availability -->
-    <string name="avail_nothing">Nothing found</string>
+    <string name="avail_nothing">Product not found</string>
     <string name="avail_skuset">Varies</string>
-    <string name="avail_retailonly">Retail only</string>
+    <string name="avail_retailonly">Available in store only</string>
     <string name="avail_specialorder">Retail only (special order)</string>
     <string name="avail_instock">In stock</string>
-    <string name="avail_outofstock">Out of stock</string>
+    <string name="avail_outofstock">Sorry, this item is out of stock</string>
 
     <!-- Store locator -->
     <string name="store_search_hint">Search Zip, City or Street</string>
