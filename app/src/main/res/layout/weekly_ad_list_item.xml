@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_white">
+    <ImageView
+        android:id="@+id/weekly_ad_list_item_image"
+        android:layout_width="@dimen/weekly_ad_list_item_image_width"
+        android:layout_height="@dimen/weekly_ad_list_item_image_height"
+
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"/>
+
+    <TextView
+        android:id="@+id/weekly_ad_list_item_title_text"
+        android:textColor="@android:color/black"
+        android:maxLines="2"
+
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:ellipsize="end"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/weekly_ad_list_item_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/weekly_ad_list_item_price_text"
+        android:textColor="@android:color/holo_red_dark"
+
+        android:paddingLeft="20dp"
+        android:paddingBottom="20dp"
+        android:ellipsize="end"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/weekly_ad_list_item_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>

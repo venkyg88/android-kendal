@@ -11,4 +11,8 @@
     <dimen name="elevation_high">4dp</dimen>
     <dimen name="add_button_margin">16dp</dimen>
     <dimen name="round_button_diameter">60dp</dimen>
+    <dimen name="weekly_ad_list_item_image_width">60dp</dimen>
+    <dimen name="weekly_ad_list_item_image_height">100dp</dimen>
+    <dimen name="weekly_ad_category_item_image_width">60dp</dimen>
+    <dimen name="weekly_ad_category_item_image_height">100dp</dimen>
 </resources>
