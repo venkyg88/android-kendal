@@ -88,8 +88,9 @@
                 android:src="@drawable/staples"/>
             <TextView
                 android:id="@+id/title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="10"
                 android:gravity="center_vertical|left"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
@@ -106,7 +107,7 @@
                 android:id="@+id/search_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="10"
                 android:maxWidth="200dp"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
@@ -129,9 +130,8 @@
             <!--cart item qty (only visible when cart displayed)-->
             <TextView
                 android:id="@+id/cart_item_qty"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
                 android:gravity="center_vertical|right"
