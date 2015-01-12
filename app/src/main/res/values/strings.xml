@@ -113,7 +113,7 @@
     <string name="avail_nothing">Product not found</string>
     <string name="avail_skuset">Varies</string>
     <string name="avail_retailonly">Available in store only</string>
-    <string name="avail_specialorder">Retail only (special order)</string>
+    <string name="avail_specialorder">In store Special Order</string>
     <string name="avail_instock">In stock</string>
     <string name="avail_outofstock">Sorry, this item is out of stock</string>
 
