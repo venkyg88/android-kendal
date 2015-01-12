@@ -7,7 +7,6 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -51,7 +50,6 @@ public class MainActivity extends Activity
     private static final int SURRENDER_TIMEOUT = 5000;
 
     private DrawerLayout drawerLayout;
-    private View leftDrawerAction;
     private ListView leftDrawer;
     private DrawerAdapter leftDrawerAdapter;
     private View logoView;
@@ -64,7 +62,6 @@ public class MainActivity extends Activity
     private CartFragment cartFragment;
     private TextView cartQtyView;
     private Button checkoutSigninButton;
-    private View closeButton;
     private DrawerItem homeDrawerItem;
 
     private LoginHelper loginHelper;
@@ -135,151 +132,17 @@ public class MainActivity extends Activity
         findViewById(R.id.main).setVisibility(View.VISIBLE);
     }
 
-    // Action bar
-
-    public void showActionBar(String title, int iconId, View.OnClickListener listener) {
-        if (title==null) {
-            logoView.setVisibility(View.VISIBLE);
-            titleView.setVisibility(View.GONE);
-        }
-        else
-        {
-            logoView.setVisibility(View.GONE);
-            titleView.setVisibility(View.VISIBLE);
-            titleView.setText(title);
-        }
-        showActionBarInternal(0, iconId, listener);
-    }
-
-    public void showActionBar(int titleId, int iconId, View.OnClickListener listener) {
-        if (titleId==0) {
-            logoView.setVisibility(View.GONE);
-            titleView.setVisibility(View.GONE);
-        }
-        else if (titleId==R.string.staples) {
-            logoView.setVisibility(View.VISIBLE);
-            titleView.setVisibility(View.GONE);
-        }
-        else {
-            logoView.setVisibility(View.GONE);
-            titleView.setVisibility(View.VISIBLE);
-            titleView.setText(titleId);
-        }
-        showActionBarInternal(titleId, iconId, listener);
-    }
-
-    private void showActionBarInternal(int titleId, int iconId, View.OnClickListener listener) {
-        if (iconId==0) {
-            optionIcon.setVisibility(View.GONE);
-            optionListener = null;
-        } else {
-            optionIcon.setVisibility(View.VISIBLE);
-            optionIcon.setImageResource(iconId);
-            optionListener = listener;
-        }
-
-        // TODO Interim hacked fixes
-        switch(titleId) {
-            case R.string.cart_title:
-                // show cart-specific entities
-                leftDrawerAction.setVisibility(View.VISIBLE);
-                cartQtyView.setVisibility(View.VISIBLE);
-                // hide unwanted entities
-                cartIconAction.setVisibility(View.GONE);
-                checkoutSigninButton.setVisibility(View.GONE);
-                closeButton.setVisibility(View.GONE);
-                break;
-            case R.string.guest_checkout_title:
-            case R.string.checkout_title:
-                // show checkout-specific entities
-                closeButton.setVisibility(View.VISIBLE);
-                LoginHelper loginHelper = new LoginHelper(this);
-                if (loginHelper.isLoggedIn() && loginHelper.isGuestLogin()) {
-                    checkoutSigninButton.setVisibility(View.VISIBLE);
-                } else {
-                    checkoutSigninButton.setVisibility(View.GONE);
-                }
-                // hide unwanted entities
-                leftDrawerAction.setVisibility(View.GONE);
-                cartIconAction.setVisibility(View.GONE);
-                cartQtyView.setVisibility(View.GONE);
-                break;
-            case R.string.order_confirmation_title:
-                // show cart-specific entities
-                leftDrawerAction.setVisibility(View.VISIBLE);
-                cartQtyView.setVisibility(View.VISIBLE);
-                // hide unwanted entities
-                cartIconAction.setVisibility(View.GONE);
-                checkoutSigninButton.setVisibility(View.GONE);
-                cartQtyView.setVisibility(View.GONE);
-                closeButton.setVisibility(View.GONE); // even though the wireframe shows a close button, it's not clear what it should do
-                break;
-            default:
-                // Show standard entities
-                leftDrawerAction.setVisibility(View.VISIBLE);
-                cartIconAction.setVisibility(View.VISIBLE);
-
-                // hide non-standard entities
-                cartQtyView.setVisibility(View.GONE);
-                checkoutSigninButton.setVisibility(View.GONE);
-                closeButton.setVisibility(View.GONE);
-        }
-
-        // TODO Interim hacked fixes
-        switch(iconId) {
-            case R.drawable.ic_search_white:
-                searchView.setVisibility(View.GONE);
-//                optionListener = searchView;
-                break;
-            case R.drawable.ic_close_white:
-                searchView.setVisibility(View.VISIBLE);
-//                optionListener = searchView;
-                break;
-            default:
-                searchView.setVisibility(View.GONE);
-        }
-
-        searchView.setVisibility(View.VISIBLE); // TODO HACKED!
-    }
-
     public void prepareMainScreen(boolean freshStart) {
         // Inflate
         setContentView(R.layout.main);
 
-ActionBar.getInstance().findElements();
-        // Find 9 action bar entities
-        ActionBar actionBar = (ActionBar) findViewById(R.id.action_bar);
-        closeButton = actionBar.findViewById(R.id.close_button);
-        leftDrawerAction = actionBar.findViewById(R.id.action_left_drawer);
-        cartIconAction = (BadgeImageView) actionBar.findViewById(R.id.action_show_cart);
-        checkoutSigninButton = (Button) actionBar.findViewById(R.id.co_signin_button);
-        cartQtyView = (TextView) actionBar.findViewById(R.id.cart_item_qty);
-        optionIcon = (ImageView) actionBar.findViewById(R.id.option_icon);
-        searchView = (SearchView) actionBar.findViewById(R.id.search_text);
-        logoView = actionBar.findViewById(R.id.action_logo);
-        titleView = (TextView) actionBar.findViewById(R.id.action_title);
-
-        ActionBar.styleSearchView(searchView);
-
-        // Set listeners
-        closeButton.setOnClickListener(this);
-        leftDrawerAction.setOnClickListener(this);
-        cartIconAction.setOnClickListener(this);
-        checkoutSigninButton.setOnClickListener(this);
-        optionIcon.setOnClickListener(this);
+        ActionBar.getInstance().init(this);
 
         // Find top-level entities
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawer = (ListView) findViewById(R.id.left_drawer);
         mainLayout = (LinearLayoutWithProgressOverlay)findViewById(R.id.main);
         mainLayout.setCartProgressOverlay(findViewById(R.id.progress_overlay));
-
-        // initialize action bar
-//        showActionBar(R.string.staples, R.drawable.ic_search_white, searchView);
-        showActionBar(R.string.staples, R.drawable.ic_search_white, null);
-
-        // Init search bar
-//        searchView.initSearchBar();
 
         // Initialize left drawer listview
         leftDrawerAdapter = new DrawerAdapter(this);
@@ -292,7 +155,7 @@ ActionBar.getInstance().findElements();
 
         // Cart
         cartFragment = new CartFragment();
-        updateCartIcon(0); // initialize cart item count to 0 until we're able to fill the cart
+        ActionBar.getInstance().setCartCount(0);
 
         // Fresh start?
         if (freshStart) {
@@ -328,7 +191,7 @@ ActionBar.getInstance().findElements();
         if (!guestLevel || (guestLevel && CartApiManager.getCart() != null && CartApiManager.getCartTotalItems() > 0)) {
             CartApiManager.loadCart(new CartApiManager.CartRefreshCallback() {
                 @Override public void onCartRefreshComplete(String errMsg) {
-                    updateCartIcon(CartApiManager.getCartTotalItems());
+                    ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
                 }
             });
         }
@@ -490,16 +353,6 @@ ActionBar.getInstance().findElements();
             fragment = Fragment.instantiate(this, CreditCardFragment.class.getName());
         }
         return(selectFragment(fragment, Transition.NONE, true));
-    }
-
-    /** Sets item count indicator on cart icon */
-    public void updateCartIcon(int totalItemCount) {
-        cartIconAction.setText(totalItemCount == 0 ? null : Integer.toString(totalItemCount));
-    }
-
-    /** sets action bar cart quantity (text visible when cart is open) */
-    public void setActionBarCartQty(String qtyText) {
-        cartQtyView.setText(qtyText); // (e.g. "4 items")
     }
 
     public boolean navigateToFragment(Fragment fragment) {

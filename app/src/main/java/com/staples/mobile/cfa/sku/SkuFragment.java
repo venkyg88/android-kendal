@@ -28,6 +28,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.feed.PersistentSizedArrayList;
 import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PagerStripe;
 import com.staples.mobile.cfa.widget.PriceSticker;
@@ -197,7 +198,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) getActivity()).showActionBar(R.string.staples, R.drawable.ic_search_white, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.SKU);
     }
 
     @Override
@@ -721,7 +722,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                     @Override
                     public void onCartRefreshComplete(String errMsg) {
                         activity.hideProgressIndicator();
-                        activity.updateCartIcon(CartApiManager.getCartTotalItems());
+                        ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
                     }
                 });
                 break;

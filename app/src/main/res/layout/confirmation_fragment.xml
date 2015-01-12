@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         style="@style/CartHeader"
         android:textSize="24sp"
-        android:text="@string/order_confirmation_title"/>
+        android:text="@string/order_confirm_title"/>
 
     <!-- scrollable contents -->
     <ScrollView

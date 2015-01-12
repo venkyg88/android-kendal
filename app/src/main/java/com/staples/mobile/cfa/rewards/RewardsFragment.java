@@ -22,6 +22,7 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.profile.ProfileDetails;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.easyopen.model.member.InkRecyclingDetail;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
@@ -177,10 +178,8 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
     @Override
     public void onResume() {
         super.onResume();
-        activity.showActionBar(R.string.rewards_title, 0, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.REWARDS);
     }
-
-
 
     @Override
     public void onClick(View view) {

@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -126,14 +127,10 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         return view;
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
-
-        // update action bar
-        int titleId = this instanceof GuestCheckoutFragment ? R.string.guest_checkout_title : R.string.checkout_title;
-        activity.showActionBar(titleId, 0, null);
+        ActionBar.getInstance().setConfig(this instanceof GuestCheckoutFragment ? ActionBar.Config.COGUEST : ActionBar.Config.COREG);
     }
 
     /** override this to handle other clicks, but call this super method */

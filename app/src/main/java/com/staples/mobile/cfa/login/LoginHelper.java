@@ -1,6 +1,5 @@
 package com.staples.mobile.cfa.login;
 
-import android.app.Activity;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
@@ -192,7 +191,7 @@ public class LoginHelper {
                 getGuestTokens(); // re-establish a guest login since user may try to add to cart after signing out
                 ProfileDetails.resetMember();
                 Button signInText = (Button)activity.findViewById(R.id.account_button);
-                signInText.setText(R.string.signin_title);
+                signInText.setText(R.string.login_title);
                 Log.i("Code for signout", " " + response.getStatus());
             }
 

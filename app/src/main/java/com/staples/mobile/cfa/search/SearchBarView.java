@@ -50,7 +50,7 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
     }
 
     public void initSearchBar(){
-        activity.showActionBar(0, R.drawable.ic_search_white, this);
+//        activity.showActionBar(0, R.drawable.ic_search_white, this);
 
         // Set listeners
         addTextChangedListener(this);
@@ -71,7 +71,7 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
 
     private void openSearchBar() {
         setVisibility(View.VISIBLE);
-        activity.showActionBar(0, R.drawable.ic_close_white, this);
+//        activity.showActionBar(0, R.drawable.ic_close_white, this);
 
         setText(null);
         requestFocus();
@@ -85,7 +85,7 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
 
     private void closeSearchBar() {
         setVisibility(View.GONE);
-        activity.showActionBar(R.string.staples, R.drawable.ic_search_white, this);
+//        activity.showActionBar(R.string.staples, R.drawable.ic_search_white, this);
 
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getWindowToken(), 0);
