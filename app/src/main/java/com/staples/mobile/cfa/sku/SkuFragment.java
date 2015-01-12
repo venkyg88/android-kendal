@@ -182,10 +182,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         wrapper.setState(DataWrapper.State.LOADING);
         details.setVisibility(View.GONE);
 
-        // Disable add-to-cart
-        wrapper.findViewById(R.id.quantity).setEnabled(false);
-        wrapper.findViewById(R.id.add_to_cart).setEnabled(false);
-
         // Set listeners
         details.setOnTabChangedListener(this);
         tabPager.setOnPageChangeListener(this);
@@ -207,13 +203,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         super.onResume();
 
         MainActivity mainActivity = (MainActivity) getActivity();
-        if(productName.length() > 25) {
-            mainActivity.showActionBar(productName.substring(0, Math.min(productName.length(), 25))
-                    + "...", R.drawable.ic_search_white, null);
-        }
-        else{
-            mainActivity.showActionBar(productName, R.drawable.ic_search_white, null);
-        }
+        mainActivity.setActionBarTitle(productName);
+        mainActivity.showActionBar(productName, R.drawable.ic_search_white, null);
 
         // set the left drawer position
         mainActivity.setLeftDrawerOffset();
@@ -223,11 +214,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     public void onPause() {
         super.onPause();
 
-        // change back the color of action bar to red
         MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.setActionBarColor(R.color.staples_light);
-
-        // change back the alpha/size/padding of action bar and contain frame
+        // change back the color/alpha/size/padding of action bar and contain frame
         mainActivity.restoreDefaultActionBar();
 
         // change back the left drawer position
@@ -248,9 +236,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             MainActivity mainActivity = (MainActivity) getActivity();
             mainActivity.setContainFrameOffset();
 
-            // set action bar title size and format
-            mainActivity.setActionBarTitleFormat();
-
             // hide action bar title at first
             if(AnimatedBarScrollView.isFirstLoad) {
                 mainActivity.setActionBarAlpha(0);
@@ -267,13 +252,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         @Override
         public void setAnimatedActionBarOnScroll (float scrollY) {
             MainActivity mainActivity = (MainActivity) getActivity();
-            if(productName.length() > 25) {
-                mainActivity.setActionBarTitle(productName.substring(0, Math.min(productName.length(), 25))+"...");
-            }
-            else{
-                mainActivity.setActionBarTitle(productName);
-            }
-
+            mainActivity.setActionBarTitle(productName);
             mainActivity.setActionBarColor(R.color.staples_light);
 
             Float screenHeightDp = convertPixelsToDp(mainActivity.getScreenHeight(), mainActivity);
@@ -600,8 +579,9 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             tabAdapter.setProduct(product);
 
             // Handle availability
-            QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
-            Button button = (Button) wrapper.findViewById(R.id.add_to_cart);
+            QuantityEditor qtyEditor = (QuantityEditor) wrapper.findViewById(R.id.quantity);
+            Button addToCartButton = (Button) wrapper.findViewById(R.id.add_to_cart);
+            TextView footerMsg = (TextView)wrapper.findViewById(R.id.footer_msg);
             Availability availability = Availability.getProductAvailability(product);
             switch (availability) {
                 case NOTHING:
@@ -609,14 +589,14 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 case RETAILONLY:
                 case SPECIALORDER:
                 case OUTOFSTOCK:
-                    edit.setEnabled(false);
-                    button.setText(availability.getTextResId());
-                    button.setEnabled(false);
+                    // for all of the above cases, hide qty editor and ADD button, and show message
+                    footerMsg.setVisibility(View.VISIBLE);
+                    footerMsg.setText(availability.getTextResId());
                     break;
                 case INSTOCK:
-                    edit.setEnabled(true);
-                    button.setText(R.string.add_to_cart);
-                    button.setEnabled(true);
+                    // show add-to-cart widgets
+                    qtyEditor.setVisibility(View.VISIBLE);
+                    addToCartButton.setVisibility(View.VISIBLE);
                     break;
             }
 
@@ -778,12 +758,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.setActionBarAlpha(255);
         mainActivity.setActionBarTitleAlpha(255);
-        if(productName.length() > 25) {
-            mainActivity.setActionBarTitle(productName.substring(0, Math.min(productName.length(), 25))+"...");
-        }
-        else{
-            mainActivity.setActionBarTitle(productName);
-        }
+        mainActivity.setActionBarTitle(productName);
 
         mainActivity.restoreDefaultLeftDrawer();
 
@@ -851,6 +826,11 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                     public void onCartRefreshComplete(String errMsg) {
                         activity.hideProgressIndicator();
                         activity.updateCartIcon(CartApiManager.getCartTotalItems());
+                        if (errMsg == null) {
+                            ((Button) wrapper.findViewById(R.id.add_to_cart)).setText(R.string.add_another);
+                        } else {
+                            Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
                 break;
