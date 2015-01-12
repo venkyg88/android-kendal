@@ -2,18 +2,17 @@ package com.staples.mobile.cfa.profile;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.graphics.Outline;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 
 import java.util.List;
@@ -50,7 +49,7 @@ public class AddressListFragment extends Fragment implements View.OnClickListene
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) activity).showActionBar(R.string.address_title, 0, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.ADDRESS);
     }
 
     @Override

@@ -14,24 +14,14 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 
 import java.text.NumberFormat;
 
-//import com.staples.mobile.common.access.easyopen.model.cart.OrderStatus;
-//import com.staples.mobile.common.access.easyopen.model.cart.OrderStatusContents;
-
-
 public class ConfirmationFragment extends Fragment implements View.OnClickListener {
     public static final String TAG = ConfirmationFragment.class.getSimpleName();
-
-
-
-
-    private static final int MAXFETCH = 50;
-
 
     public static final String BUNDLE_PARAM_ORDERID = "orderId";
     public static final String BUNDLE_PARAM_ORDERNUMBER = "orderNumber";
@@ -59,8 +49,6 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
 
     // data returned from api
 
-
-
     // data initialized from cart drawer
     String orderId;
     String orderNumber;
@@ -68,7 +56,6 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
 
     // api listeners
 //    OrderStatusListener orderStatusListener;
-
 
     /**
      * Create a new instance of ConfirmationFragment that will be initialized
@@ -135,16 +122,13 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
     @Override
     public void onResume() {
         super.onResume();
-
-        // update action bar
-        activity.showActionBar(R.string.order_confirmation_title, 0, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.CONFIRM);
     }
 
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.continue_shopping_btn:
-
                 break;
         }
     }

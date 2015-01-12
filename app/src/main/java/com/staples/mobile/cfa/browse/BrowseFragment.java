@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -67,8 +68,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
     @Override
     public void onResume() {
         super.onResume();
-        MainActivity activity = (MainActivity) getActivity();
-        if (activity!=null) activity.showActionBar(R.string.staples, R.drawable.ic_search_white, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.BROWSE);
     }
 
     void fill(String identifier) {
