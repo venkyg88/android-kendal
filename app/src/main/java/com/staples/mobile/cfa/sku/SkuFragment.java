@@ -207,13 +207,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         super.onResume();
 
         MainActivity mainActivity = (MainActivity) getActivity();
-        if(productName.length() > 25) {
-            mainActivity.showActionBar(productName.substring(0, Math.min(productName.length(), 25))
-                    + "...", R.drawable.ic_search_white, null);
-        }
-        else{
-            mainActivity.showActionBar(productName, R.drawable.ic_search_white, null);
-        }
+        mainActivity.setActionBarTitle(productName);
+        mainActivity.showActionBar(productName, R.drawable.ic_search_white, null);
 
         // set the left drawer position
         mainActivity.setLeftDrawerOffset();
@@ -223,11 +218,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     public void onPause() {
         super.onPause();
 
-        // change back the color of action bar to red
         MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.setActionBarColor(R.color.staples_light);
-
-        // change back the alpha/size/padding of action bar and contain frame
+        // change back the color/alpha/size/padding of action bar and contain frame
         mainActivity.restoreDefaultActionBar();
 
         // change back the left drawer position
@@ -248,9 +240,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             MainActivity mainActivity = (MainActivity) getActivity();
             mainActivity.setContainFrameOffset();
 
-            // set action bar title size and format
-            mainActivity.setActionBarTitleFormat();
-
             // hide action bar title at first
             if(AnimatedBarScrollView.isFirstLoad) {
                 mainActivity.setActionBarAlpha(0);
@@ -267,13 +256,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         @Override
         public void setAnimatedActionBarOnScroll (float scrollY) {
             MainActivity mainActivity = (MainActivity) getActivity();
-            if(productName.length() > 25) {
-                mainActivity.setActionBarTitle(productName.substring(0, Math.min(productName.length(), 25))+"...");
-            }
-            else{
-                mainActivity.setActionBarTitle(productName);
-            }
-
+            mainActivity.setActionBarTitle(productName);
             mainActivity.setActionBarColor(R.color.staples_light);
 
             Float screenHeightDp = convertPixelsToDp(mainActivity.getScreenHeight(), mainActivity);
@@ -778,12 +761,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.setActionBarAlpha(255);
         mainActivity.setActionBarTitleAlpha(255);
-        if(productName.length() > 25) {
-            mainActivity.setActionBarTitle(productName.substring(0, Math.min(productName.length(), 25))+"...");
-        }
-        else{
-            mainActivity.setActionBarTitle(productName);
-        }
+        mainActivity.setActionBarTitle(productName);
 
         mainActivity.restoreDefaultLeftDrawer();
 

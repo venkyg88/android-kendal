@@ -567,19 +567,10 @@ public class MainActivity extends Activity
         titleView.setText(title);
     }
 
-    public void setActionBarTitleFormat(){
-        titleView.setSingleLine(true);
-        titleView.setLines(1);
-        titleView.setPadding(0, 0, 0, 0);
-        titleView.setTextSize(18f);
-        titleView.setEllipsize(TextUtils.TruncateAt.END);
-    }
-
     public void restoreDefaultActionBar(){
-        // restore action bar offset and title format
-        titleView.setPadding(20, 0, 20, 0);
-        titleView.setTextSize(24f);
-        titleView.setTextColor(titleView.getTextColors().withAlpha(255));
+        // restore action bar offset and title offset
+        setActionBarTitleAlpha(255);
+        setActionBarAlpha(255);
 
         // restore contain frame offset
         containFrame.setPadding(0, Math.round(convertDpToPixel(56f, this)), 0, 0);

@@ -92,8 +92,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="10"
                 android:gravity="center_vertical|left"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
                 android:lines="1"
                 android:ellipsize="end"
                 android:textSize="20sp"
