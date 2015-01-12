@@ -7,14 +7,13 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.bundle.BundleFragment;
@@ -36,7 +35,6 @@ import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.rewards.RewardsFragment;
 import com.staples.mobile.cfa.rewards.RewardsLinkingFragment;
-import com.staples.mobile.cfa.search.SearchBarView;
 import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.skuset.SkuSetFragment;
@@ -56,9 +54,9 @@ public class MainActivity extends Activity
     private View leftDrawerAction;
     private ListView leftDrawer;
     private DrawerAdapter leftDrawerAdapter;
-    private ImageView logoView;
+    private View logoView;
     private TextView titleView;
-    private SearchBarView searchBar;
+    private SearchView searchView;
     private ImageView optionIcon;
     private View.OnClickListener optionListener;
     private BadgeImageView cartIconAction;
@@ -123,7 +121,7 @@ public class MainActivity extends Activity
     protected void onPause() {
         super.onPause();
         LocationFinder.getInstance(this).saveRecentLocation();
-        searchBar.saveSearchHistory();
+//        searchView.saveSearchHistory();
     }
 
     @Override
@@ -230,36 +228,45 @@ public class MainActivity extends Activity
         // TODO Interim hacked fixes
         switch(iconId) {
             case R.drawable.ic_search_white:
-                searchBar.setVisibility(View.GONE);
-                optionListener = searchBar;
+                searchView.setVisibility(View.GONE);
+//                optionListener = searchView;
                 break;
             case R.drawable.ic_close_white:
-                searchBar.setVisibility(View.VISIBLE);
-                optionListener = searchBar;
+                searchView.setVisibility(View.VISIBLE);
+//                optionListener = searchView;
                 break;
             default:
-                searchBar.setVisibility(View.GONE);
+                searchView.setVisibility(View.GONE);
         }
+
+        searchView.setVisibility(View.VISIBLE); // TODO HACKED!
     }
 
     public void prepareMainScreen(boolean freshStart) {
         // Inflate
         setContentView(R.layout.main);
 
-        // Add 9 action bar entities
+ActionBar.getInstance().findElements();
+        // Find 9 action bar entities
         ActionBar actionBar = (ActionBar) findViewById(R.id.action_bar);
+        closeButton = actionBar.findViewById(R.id.close_button);
+        leftDrawerAction = actionBar.findViewById(R.id.action_left_drawer);
+        cartIconAction = (BadgeImageView) actionBar.findViewById(R.id.action_show_cart);
+        checkoutSigninButton = (Button) actionBar.findViewById(R.id.co_signin_button);
+        cartQtyView = (TextView) actionBar.findViewById(R.id.cart_item_qty);
+        optionIcon = (ImageView) actionBar.findViewById(R.id.option_icon);
+        searchView = (SearchView) actionBar.findViewById(R.id.search_text);
+        logoView = actionBar.findViewById(R.id.action_logo);
+        titleView = (TextView) actionBar.findViewById(R.id.action_title);
 
-        closeButton = actionBar.addIcon(R.id.close_button, R.drawable.ic_close_white, Gravity.LEFT, null);
-        leftDrawerAction = actionBar.addIcon(R.id.action_left_drawer, R.drawable.ic_menu_white, Gravity.LEFT, this);
+        ActionBar.styleSearchView(searchView);
 
-        cartIconAction = actionBar.addBadge(R.id.action_show_cart, Gravity.RIGHT, this);
-        checkoutSigninButton = actionBar.addButton(R.id.co_signin_button, R.string.signin_title, Gravity.RIGHT, this);
-        cartQtyView = actionBar.addText(R.id.cart_item_qty, Gravity.RIGHT, this);
-        optionIcon = actionBar.addIcon(R.id.option_icon,  R.drawable.ic_search_white, Gravity.RIGHT, this);
-        searchBar = actionBar.addSearchBar(R.id.search_text, Gravity.RIGHT, null);
-
-        logoView = actionBar.addIcon(R.id.action_logo, R.drawable.ic_staples, Gravity.LEFT, null);
-        titleView = actionBar.addText(R.id.action_title, Gravity.LEFT, null);
+        // Set listeners
+        closeButton.setOnClickListener(this);
+        leftDrawerAction.setOnClickListener(this);
+        cartIconAction.setOnClickListener(this);
+        checkoutSigninButton.setOnClickListener(this);
+        optionIcon.setOnClickListener(this);
 
         // Find top-level entities
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -268,10 +275,11 @@ public class MainActivity extends Activity
         mainLayout.setCartProgressOverlay(findViewById(R.id.progress_overlay));
 
         // initialize action bar
-        showActionBar(R.string.staples, R.drawable.ic_search_white, searchBar);
+//        showActionBar(R.string.staples, R.drawable.ic_search_white, searchView);
+        showActionBar(R.string.staples, R.drawable.ic_search_white, null);
 
         // Init search bar
-        searchBar.initSearchBar();
+//        searchView.initSearchBar();
 
         // Initialize left drawer listview
         leftDrawerAdapter = new DrawerAdapter(this);

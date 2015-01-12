@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -8,13 +9,55 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.search.SearchBarView;
 
 public class ActionBar extends LinearLayout {
     private static final String TAG = "ActionBar";
+
+    public enum Config {
+        //       close, drawer, logo,  title,                        search, quantity, option,                        cart,  signin
+        DEFAULT (false, true,   true,  0,                            true,   false,    0,                             true,  false),
+        MAPVIEW (false, true,   true,  R.string.store_locator_title, false,  false,    R.drawable.ic_map_white,       true,  false),
+        MAPLIST (false, true,   true,  R.string.store_locator_title, false,  false,    R.drawable.ic_view_list_white, true,  false);
+
+        private boolean close;
+        private boolean drawer;
+        private boolean logo;
+        private int title;
+        private boolean search;
+        private boolean quantity;
+        private int option;
+        private boolean cart;
+        private boolean signin;
+
+        private Config(boolean close, boolean drawer, boolean logo,  int title, boolean search,
+                       boolean quantity, int option, boolean cart, boolean signin) {
+            this.close = close;
+            this.drawer = drawer;
+            this.logo = logo;
+            this.title = title;
+            this.search = search;
+            this.quantity = quantity;
+            this.option = option;
+            this.cart = cart;
+            this.signin = signin;
+        }
+    }
+
+    private static ActionBar instance;
+
+    private ImageView closeButton;
+    private ImageView leftDrawerAction;
+    private BadgeImageView cartIconAction;
+    private Button checkoutSigninButton;
+    private TextView cartQtyView;
+    private ImageView optionIcon;
+    private SearchView searchView;
+    private ImageView logoView;
+    private TextView titleView;
 
     public ActionBar(Context context) {
         this(context, null, 0);
@@ -26,52 +69,100 @@ public class ActionBar extends LinearLayout {
 
     public ActionBar(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        instance = this;
     }
 
-    // Generic ActionBar item
+    public static ActionBar getInstance() {
+        return(instance);
+    }
 
-    public View addItem(View view, int childId, int gravity, OnClickListener listener) {
-        view.setId(childId);
-        LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        params.gravity = gravity|Gravity.CENTER_VERTICAL;
-        view.setLayoutParams(params);
-        view.setOnClickListener(listener);
-        addView(view);
+    public void findElements() {
+        closeButton = (ImageView) findViewById(R.id.close_button);
+        leftDrawerAction = (ImageView) findViewById(R.id.action_left_drawer);
+        cartIconAction = (BadgeImageView) findViewById(R.id.action_show_cart);
+        checkoutSigninButton = (Button) findViewById(R.id.co_signin_button);
+        cartQtyView = (TextView) findViewById(R.id.cart_item_qty);
+        optionIcon = (ImageView) findViewById(R.id.option_icon);
+        searchView = (SearchView) findViewById(R.id.search_text);
+        logoView = (ImageView) findViewById(R.id.action_logo);
+        titleView = (TextView) findViewById(R.id.action_title);
+    }
+
+    public void setConfig(Config config) {
+        setConfig(config, null, null);
+    }
+
+    public void setConfig(Config config, OnClickListener listener) {
+        setConfig(config, listener, null);
+    }
+
+    public void setConfig(Config config, OnClickListener listener, String title) {
+        if (config==null) return;
+        closeButton.setVisibility(config.close ? VISIBLE : GONE);
+        leftDrawerAction.setVisibility(config.drawer ? VISIBLE : GONE);
+        cartIconAction.setVisibility(config.cart ? VISIBLE : GONE);
+        checkoutSigninButton.setVisibility(config.signin ? VISIBLE : GONE);
+        cartQtyView.setVisibility(config.quantity ? VISIBLE : GONE);
+        if (config.option==0) {
+            optionIcon.setVisibility(GONE);
+            optionIcon.setOnClickListener(null);
+        }
+        else {
+            optionIcon.setVisibility(VISIBLE);
+            optionIcon.setImageResource(config.option);
+            optionIcon.setOnClickListener(listener);
+        }
+        searchView.setVisibility(config.search ? VISIBLE : GONE);
+        logoView.setVisibility(config.logo ? VISIBLE : GONE);
+        if (title!=null) {
+            titleView.setVisibility(VISIBLE);
+            titleView.setText(title);
+        }
+        else if (config.title==0) {
+            titleView.setVisibility(GONE);
+        }
+        else {
+            titleView.setVisibility(VISIBLE);
+            titleView.setText(config.title);
+        }
+    }
+
+    // SearchView styling
+
+    private static View findSearchViewElement(Resources res, SearchView searchView, String name) {
+        int id = searchView.getResources().getIdentifier(name, null, null);
+        if (id==0) return(null);
+        View view = searchView.findViewById(id);
         return(view);
     }
 
-    // Specific type ActionBar items
+    public static void styleSearchView(SearchView searchView) {
+        View view;
+        Resources res = searchView.getResources();
 
-    public TextView addText(int childId, int gravity, OnClickListener listener) {
-        TextView view = new TextView(getContext(), null, R.attr.actionBarTextStyle);
-        addItem(view, childId, gravity, listener);
-        return(view);
-    }
+        view = findSearchViewElement(res, searchView, "android:id/search_button");
+        if (view instanceof ImageView) {
+            ((ImageView) view).setImageResource(R.drawable.ic_search_white);
+        }
 
-    public ImageView addIcon(int childId, int resId, int gravity, OnClickListener listener) {
-        ImageView view = new ImageView(getContext(), null, R.attr.actionBarIconStyle);
-        if (resId!=0) view.setImageDrawable(getResources().getDrawable(resId));
-        addItem(view, childId, gravity, listener);
-        return(view);
-    }
+        view = findSearchViewElement(res, searchView, "android:id/search_close_btn");
+        if (view instanceof ImageView) {
+            ((ImageView) view).setImageResource(R.drawable.ic_close_white_18dp);
+        }
 
-    public SearchBarView addSearchBar(int childId, int gravity, OnClickListener listener) {
-        SearchBarView view = new SearchBarView(getContext(), null, R.attr.actionBarSearchStyle);
-        addItem(view, childId, gravity, listener);
-        return(view);
-    }
+//        view = findSearchViewElement(res, searchView, "android:id/search_mag_icon");
+//        if (view instanceof ImageView) {
+//            ((ImageView) view).setImageResource(R.drawable.ic_android);
+//        }
 
-    public Button addButton(int childId, int resId, int gravity, OnClickListener listener) {
-        Button view = new Button(getContext(), null, R.attr.actionBarButtonStyle);
-        if (resId!=0) view.setText(getResources().getString(resId));
-        addItem(view, childId, gravity, listener);
-        return(view);
-    }
+//        view = findSearchViewElement(res, searchView, "android:id/search_plate");
+//        if (view instanceof LinearLayout) {
+//        }
 
-    public BadgeImageView addBadge(int childId, int gravity, OnClickListener listener) {
-        BadgeImageView view = new BadgeImageView(getContext(), null, R.attr.actionBarBadgeStyle);
-        addItem(view, childId, gravity, listener);
-        return(view);
+        view = findSearchViewElement(res, searchView, "android:id/search_src_text");
+        if (view instanceof TextView) {
+            ((TextView) view).setTextColor(0xffffffff);
+        }
     }
 
     // Measurement & layout
