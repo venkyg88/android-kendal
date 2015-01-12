@@ -89,6 +89,11 @@
     <string name="tax">Tax</string>
     <string name="submit_order">SUBMIT ORDER</string>
     <string name="order_confirmation_msg">Thank you for your order!</string>
+    <string name="order_confirmation_msg2">An email with complete details has</string>
+    <string name="order_confirmation_msg3">been sent to %s.</string>
+    <string name="order_number_label">Order Number</string>
+    <string name="delivery_range_label">Delivery Range for Shipped Items</string>
+    <string name="order_total_label">Total</string>
     <string name="continue_shopping">Continue Shopping</string>
 
     <plurals name="business_days">

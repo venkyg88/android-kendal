@@ -111,7 +111,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
         Bundle confirmationBundle = this.getArguments();
         orderId = confirmationBundle.getString(BUNDLE_PARAM_ORDERID);
         orderNumber = confirmationBundle.getString(BUNDLE_PARAM_ORDERNUMBER);
-        orderNumberVw.setText("#"+orderNumber);
+        orderNumberVw.setText(orderNumber);
 
 
         // get api objects
