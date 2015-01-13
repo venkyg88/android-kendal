@@ -11,9 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.login.LoginHelper;
 
 
 public class ConfirmationFragment extends Fragment implements View.OnClickListener {
@@ -74,6 +76,13 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
         deliveryRangeVw.setText(deliveryRange);
         checkoutTotalVw.setText(total);
 
+        // if guest login, allow user to create an account
+        LoginHelper loginHelper = new LoginHelper(activity);
+        if (loginHelper.isGuestLogin()) {
+            view.findViewById(R.id.create_account_layout).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.create_account_action).setOnClickListener(this);
+        }
+
         return view;
     }
 
@@ -89,10 +98,11 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.continue_shopping_btn:
-
+            case R.id.create_account_action:
+                Toast.makeText(activity, "TBD", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
+
 
 }

@@ -105,6 +105,56 @@
                 android:textColor="@color/text_nearly_black"
                 />
 
+
+            <!--guest check out only - creating an account-->
+            <RelativeLayout
+                android:id="@+id/create_account_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background_white"
+                android:visibility="gone">
+
+                <!--horizontal rule-->
+                <View
+                    android:id="@+id/create_account_hr"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/background_light_gray"/>
+
+                <TextView
+                    android:id="@+id/create_account_msg1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@id/create_account_hr"
+                    android:layout_marginTop="16dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_nearly_black"
+                    android:text="@string/create_acccount_msg1"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@id/create_account_msg1"
+                    android:layout_gravity="left"
+                    android:textSize="10sp"
+                    android:textColor="@color/text_nearly_black"
+                    android:text="@string/create_acccount_msg2"
+                    />
+                <ImageView
+                    android:id="@+id/create_account_action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/create_account_hr"
+                    android:layout_marginTop="16dp"
+                    android:src="@android:drawable/ic_input_add"
+                    />
+            </RelativeLayout>
+
         </LinearLayout>
     </ScrollView>
 

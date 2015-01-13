@@ -94,6 +94,8 @@
     <string name="order_number_label">Order Number</string>
     <string name="delivery_range_label">Delivery Range for Shipped Items</string>
     <string name="order_total_label">Total</string>
+    <string name="create_acccount_msg1">What to check out faster next time?</string>
+    <string name="create_acccount_msg2">Create a Staples account! We just need a password.</string>
     <string name="continue_shopping">Continue Shopping</string>
 
     <plurals name="business_days">
