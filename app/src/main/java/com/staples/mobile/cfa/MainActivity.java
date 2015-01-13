@@ -419,6 +419,7 @@ public class MainActivity extends Activity
     public boolean selectOrderConfirmation(String orderNumber, String emailAddress,
                                            String deliveryRange, String total) {
         // refresh cart since should now be empty
+        updateCartIcon(0);
         CartApiManager.loadCart(null);
         // open order confirmation fragment
         Fragment fragment = ConfirmationFragment.newInstance(orderNumber, emailAddress, deliveryRange, total);
