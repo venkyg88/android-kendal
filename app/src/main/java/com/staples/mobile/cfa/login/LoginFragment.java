@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
@@ -48,7 +49,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     public String getEmaiId() {
         return emaiId;
     }
-
 
     public void setEmaiId(String emaiId) {
         this.emaiId = emaiId;
@@ -104,7 +104,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        activity.showActionBar(R.string.signin_title, 0, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.LOGIN);
     }
 
     public void hideKeyboard(View view)
@@ -112,7 +112,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         InputMethodManager keyboard = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
-
 
     @Override
     public void onClick(View view) {

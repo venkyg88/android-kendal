@@ -25,6 +25,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.rewards.RewardsLinkingFragment;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.configurator.model.Configurator;
@@ -90,9 +91,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private QtyChangeListener qtyChangeListener;
     //private QtyUpdateButtonListener qtyUpdateButtonListener;
 
-
     private DecimalFormat currencyFormat;
-
 
     /** default constructor - note that fragment instance will be retained whereas view will come and go as attached to activity */
     public CartFragment() {
@@ -112,7 +111,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         // inflate and get child views
         View view = inflater.inflate(R.layout.cart_fragment, container, false);
 
-        // temporary try-catch
+        // TODO temporary try-catch
         try {
 
         emptyCartMsg = view.findViewById(R.id.empty_cart_msg);
@@ -203,14 +202,13 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
     @Override
     public void onResume() {
-        // temporary try-catch
+        // TODO temporary try-catch
         try {
 
         super.onResume();
 
         // update action bar
-        activity.showActionBar(R.string.cart_title, 0, null);
-
+        ActionBar.getInstance().setConfig(ActionBar.Config.CART);
         //initialize cart based on what's been returned from api so far
         convertCart(CartApiManager.getCart());
 
@@ -271,19 +269,13 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         }
 
         // set text of cart icon badge
-        activity.updateCartIcon(totalItemCount);
+        ActionBar.getInstance().setCartCount(totalItemCount);
 
         // if fragment is attached to activity, then update the fragment's views
         if (cartAdapter != null) {
 
             // Set text of cart item qty
-            if (totalItemCount == 0) {
-                activity.setActionBarCartQty("");
-                emptyCartMsg.setVisibility(View.VISIBLE);
-            } else {
-                activity.setActionBarCartQty(r.getQuantityString(R.plurals.cart_qty, totalItemCount, totalItemCount));
-                emptyCartMsg.setVisibility(View.GONE);
-            }
+            ActionBar.getInstance().setCartCount(totalItemCount);
 
             // set text of free shipping msg
             if (totalItemCount > 0) {
@@ -490,8 +482,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         return null;
     }
 
-
-
     /** updates item quantity */
     private void updateItemQty(CartItem cartItem) {
         if (cartItem.isProposedQtyDifferent()) {
@@ -503,7 +493,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             }
         }
     }
-
 
     private void notifyDataSetChanged() {
         // if fragment is attached to activity, then update the fragment's views
@@ -519,9 +508,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         if (cartAdapter != null) {
             cartAdapter.setItems(cartItemGroups);
         } else {
-            if (activity != null) {
-                activity.updateCartIcon(CartApiManager.getCartTotalItems());
-            }
+            ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
         }
     }
 
@@ -531,8 +518,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         }
     }
 
-
-
     public void onCartRefreshComplete(String errMsg) {
         hideProgressIndicator();
         if (errMsg != null) {
@@ -540,8 +525,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         }
         convertCart(CartApiManager.getCart());
     }
-
-
 
     private void convertCart(Cart cart) {
 
