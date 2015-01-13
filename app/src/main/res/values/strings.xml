@@ -97,8 +97,8 @@
     <string name="continue_shopping">Continue Shopping</string>
 
     <plurals name="business_days">
-        <item quantity="one">1 business day</item>
-        <item quantity="other">%s business days</item>
+        <item quantity="one">business day</item>
+        <item quantity="other">business days</item>
     </plurals>
 
     <string name="email">Email</string>
