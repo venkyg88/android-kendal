@@ -49,17 +49,15 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     private boolean shippingAddrNeedsApplying = true;
     private boolean billingAddrNeedsApplying = true;
 
+    private String emailAddress;
+
     /**
      * Create a new instance of GuestCheckoutFragment that will be initialized
      * with the given arguments.
      */
-    public static CheckoutFragment newInstance(float couponsRewardsAmount, float itemSubtotal, float preTaxSubtotal) {
+    public static CheckoutFragment newInstance(float couponsRewardsAmount, float itemSubtotal, float preTaxSubtotal, String deliveryRange) {
         CheckoutFragment f = new GuestCheckoutFragment();
-        Bundle args = new Bundle();
-        args.putFloat(CheckoutFragment.BUNDLE_PARAM_COUPONSREWARDS, couponsRewardsAmount);
-        args.putFloat(CheckoutFragment.BUNDLE_PARAM_ITEMSUBTOTAL, itemSubtotal);
-        args.putFloat(CheckoutFragment.BUNDLE_PARAM_PRETAXSUBTOTAL, preTaxSubtotal);
-        f.setArguments(args);
+        f.setArguments(createInitialBundle(couponsRewardsAmount, itemSubtotal, preTaxSubtotal, deliveryRange));
         return f;
     }
 
@@ -224,8 +222,9 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         shippingAddress.setDeliveryZipCode(zipCodeVw.getText().toString());
 
         if (includeEmail) {
-            shippingAddress.setEmailAddress(emailAddrVw.getText().toString());
-            shippingAddress.setReenterEmailAddress(emailAddrVw.getText().toString()); // Kavitha says don't make the user re-enter address, just copy same addr here
+            emailAddress = emailAddrVw.getText().toString(); // set member variable since we'll need it later in order confirmation
+            shippingAddress.setEmailAddress(emailAddress);
+            shippingAddress.setReenterEmailAddress(emailAddress); // Kavitha says don't make the user re-enter address, just copy same addr here
             if (!validateRequiredField(emailAddrVw, requiredMsg)) { errors = true; }
         }
         return errors? null:shippingAddress;
@@ -379,7 +378,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                 if (errMsg == null) {
 
                     // submit the order
-                    submitOrder(paymentMethod.getCardVerificationCode());
+                    submitOrder(paymentMethod.getCardVerificationCode(), emailAddress);
 
                 } else {
                     Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();

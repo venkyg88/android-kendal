@@ -398,7 +398,7 @@ public class MainActivity extends Activity
         return selectFragment(cartFragment, Transition.NONE, true);
     }
 
-    public boolean selectOrderCheckout() {
+    public boolean selectOrderCheckout(String deliveryRange) {
         LoginHelper loginHelper = new LoginHelper(this);
         if (loginHelper.isLoggedIn()) {
             CheckoutFragment fragment;
@@ -406,21 +406,23 @@ public class MainActivity extends Activity
             // if logged in and have at least an address or a payment method, then use registered flow, otherwise use guest flow
             if (!loginHelper.isGuestLogin() && (ProfileDetails.hasAddress() || ProfileDetails.hasPaymentMethod())) {
                 fragment = RegisteredCheckoutFragment.newInstance(couponsRewardsAmount,
-                        CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal());
+                        CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal(), deliveryRange);
             } else {
                 fragment = GuestCheckoutFragment.newInstance(couponsRewardsAmount,
-                        CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal());
+                        CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal(), deliveryRange);
             }
             return selectFragment(fragment, Transition.NONE, true);
         }
         return false;
     }
 
-    public boolean selectOrderConfirmation(String orderId, String orderNumber) {
+    public boolean selectOrderConfirmation(String orderNumber, String emailAddress,
+                                           String deliveryRange, String total) {
         // refresh cart since should now be empty
+        updateCartIcon(0);
         CartApiManager.loadCart(null);
         // open order confirmation fragment
-        Fragment fragment = ConfirmationFragment.newInstance(orderId, orderNumber);
+        Fragment fragment = ConfirmationFragment.newInstance(orderNumber, emailAddress, deliveryRange, total);
         return selectFragment(fragment, Transition.NONE, true, ConfirmationFragment.TAG);
     }
 
