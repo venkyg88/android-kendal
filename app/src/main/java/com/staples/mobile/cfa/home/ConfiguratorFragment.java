@@ -18,6 +18,7 @@ import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Area;
 import com.staples.mobile.common.access.configurator.model.Configurator;
@@ -154,16 +155,8 @@ public class ConfiguratorFragment
 
     @Override
     public void onResume() {
-
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:onResume():"
-                        + " this[" + this + "]"
-        );
-
         super.onResume();
-
-        MainActivity activity = (MainActivity) getActivity();
-
-        if (activity != null) activity.showActionBar(R.string.staples, R.drawable.ic_search_white, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
     }
 
     public void onGetConfiguratorResult(Configurator configurator, boolean success) {

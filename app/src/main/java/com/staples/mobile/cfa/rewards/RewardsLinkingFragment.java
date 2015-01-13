@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.profile.ProfileDetails;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -82,7 +83,7 @@ public class RewardsLinkingFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) getActivity()).showActionBar(R.string.link_rewards_title, 0, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.LINK);
     }
 
     public static void linkRewardsAccount(String rewardsNumber, String phoneNumber, final LinkRewardsCallback linkRewardsCallback) {

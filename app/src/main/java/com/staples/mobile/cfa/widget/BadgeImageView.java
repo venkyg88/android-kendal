@@ -27,35 +27,17 @@ public class BadgeImageView extends ImageView {
 //    private int textLeftOffset;
 //    private int textBottomOffset;
 
-    /**
-     * Constructor.  This version is only needed if you will be instantiating
-     * the object manually (not from a layout XML file).
-     * @param context
-     */
     public BadgeImageView(Context context) {
-        super(context);
-        initView(context, null);
+        this(context, null, 0);
     }
 
-    /**
-     * Construct object, initializing with any attributes we understand from a
-     * layout file. These attributes are defined in
-     * SDK/assets/res/any/classes.xml.
-     *
-     * @see android.view.View#View(android.content.Context, android.util.AttributeSet)
-     */
     public BadgeImageView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        initView(context, attrs);
+        this(context, attrs, 0);
     }
 
     public BadgeImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        initView(context, attrs);
-    }
 
-
-    private void initView(Context context, AttributeSet attrs) {
         text = "";
         textPaint = new Paint();
         textPaint.setAntiAlias(true);
@@ -64,31 +46,27 @@ public class BadgeImageView extends ImageView {
         textPaint.setTextSize(16);
         textPaint.setColor(Color.YELLOW);
 
-        if (attrs != null) {
+        // get params specified in layout
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BadgeImageView);
 
-            // get params specified in layout
-            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BadgeImageView);
-
-            // retrieve initial text and apply it
-            CharSequence s = a.getString(R.styleable.BadgeImageView_android_text);
-            if (s != null) {
-                text = s.toString();
-            }
-
-            // retrieve text color and apply it
-            textPaint.setColor(a.getColor(R.styleable.BadgeImageView_android_textColor,
-                    textPaint.getColor()));
-
-            // retrieve text size and apply it
-            int textSize = a.getDimensionPixelOffset(R.styleable.BadgeImageView_android_textSize, 0);
-            if (textSize > 0) {
-                textPaint.setTextSize(textSize);
-            }
-
-            a.recycle();
+        // retrieve initial text and apply it
+        String s = a.getString(R.styleable.BadgeImageView_android_text);
+        if (s != null) {
+            text = s;
         }
-    }
 
+        // retrieve text color and apply it
+        textPaint.setColor(a.getColor(R.styleable.BadgeImageView_android_textColor,
+                textPaint.getColor()));
+
+        // retrieve text size and apply it
+        int textSize = a.getDimensionPixelOffset(R.styleable.BadgeImageView_android_textSize, 0);
+        if (textSize > 0) {
+            textPaint.setTextSize(textSize);
+        }
+
+        a.recycle();
+    }
 
     /**
      * Renders the image with badge text

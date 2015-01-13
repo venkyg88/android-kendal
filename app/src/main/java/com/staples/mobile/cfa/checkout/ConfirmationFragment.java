@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.login.LoginHelper;
-
+import com.staples.mobile.cfa.widget.ActionBar;
 
 public class ConfirmationFragment extends Fragment implements View.OnClickListener {
     public static final String TAG = ConfirmationFragment.class.getSimpleName();
@@ -26,11 +26,9 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
     public static final String BUNDLE_PARAM_DELIVERY = "deliveryRange";
     public static final String BUNDLE_PARAM_TOTAL = "orderTotal";
 
-
     // saving around Activity object since getActivity() returns null after user navigates away from
     // fragment, but api call may still be returning
     private MainActivity activity;
-
 
     /**
      * Create a new instance of ConfirmationFragment that will be initialized
@@ -86,13 +84,10 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
         return view;
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
-
-        // update action bar
-        activity.showActionBar(R.string.order_confirmation_title, 0, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.CONFIRM);
     }
 
     @Override
@@ -103,6 +98,4 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
                 break;
         }
     }
-
-
 }

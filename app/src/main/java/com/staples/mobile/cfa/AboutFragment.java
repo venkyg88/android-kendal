@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.staples.mobile.cfa.location.LocationFinder;
+import com.staples.mobile.cfa.widget.ActionBar;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -54,8 +55,7 @@ public class AboutFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        MainActivity activity = (MainActivity) getActivity();
-        if (activity!=null) activity.showActionBar(R.string.about_title, R.drawable.ic_search_white, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.ABOUT);
     }
 
     private void addDisplayRows(LayoutInflater inflater, TableLayout table) {

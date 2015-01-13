@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.staples.mobile.cfa.widget.ActionBar;
+
 public class ToBeDoneFragment extends Fragment {
     private static final String TAG = "ToBeDoneFragment";
     private static String token1;
@@ -38,6 +40,6 @@ public class ToBeDoneFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) getActivity()).showActionBar(R.string.staples, 0, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
     }
 }

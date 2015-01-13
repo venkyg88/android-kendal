@@ -24,6 +24,7 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.cart.CartItem;
 import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.RatingStars;
@@ -272,7 +273,7 @@ public class PersonalFeedFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) getActivity()).showActionBar(R.string.personal_feed_title, 0, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.FEED);
     }
 
     private void setSeenProductsAdapter(){
