@@ -120,7 +120,6 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
                 accountDialog.findViewById(R.id.show_password).setOnClickListener(this);
 
                 accountDialog.show();
-//                window.setLayout(popupWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
                 break;
             case R.id.cancel:
                 if (accountDialog != null) {
