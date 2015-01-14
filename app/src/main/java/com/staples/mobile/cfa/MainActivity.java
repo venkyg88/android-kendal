@@ -4,12 +4,19 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartApiManager;
@@ -34,12 +41,17 @@ import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.skuset.SkuSetFragment;
 import com.staples.mobile.cfa.widget.ActionBar;
+import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 
+import org.w3c.dom.Text;
+
 public class MainActivity extends Activity
-                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback {
+                          implements View.OnClickListener, AdapterView.OnItemClickListener,
+                          LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback,
+                          FragmentManager.OnBackStackChangedListener{
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int SURRENDER_TIMEOUT = 5000;
@@ -51,6 +63,11 @@ public class MainActivity extends Activity
     private CartFragment cartFragment;
     private DrawerItem homeDrawerItem;
     private int screenHeight;
+    private LinearLayout messageLayout;
+    private FrameLayout contentLayout;
+    private TextView signInTextView;
+    private TextView signUpTextView;
+    private TextView storeNameTextView;
 
     private LoginHelper loginHelper;
 
@@ -100,6 +117,11 @@ public class MainActivity extends Activity
 
         appConfigurator = AppConfigurator.getInstance();
         appConfigurator.getConfigurator(this); // AppConfiguratorCallback
+
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.addOnBackStackChangedListener(this);
+
+        showMessageBar();
     }
 
     @Override
@@ -130,6 +152,11 @@ public class MainActivity extends Activity
         leftDrawer = (ListView) findViewById(R.id.left_drawer);
         mainLayout = (LinearLayoutWithProgressOverlay)findViewById(R.id.main);
         mainLayout.setCartProgressOverlay(findViewById(R.id.progress_overlay));
+        messageLayout = (LinearLayout) findViewById(R.id.message_layout);
+        contentLayout = (FrameLayout) findViewById(R.id.content);
+        signInTextView = (TextView) findViewById(R.id.login_sign_in);
+        signUpTextView = (TextView) findViewById(R.id.login_sign_up);
+        storeNameTextView = (TextView) findViewById(R.id.store_name);
 
         // Initialize left drawer listview
         leftDrawerAdapter = new DrawerAdapter(this);
@@ -151,6 +178,7 @@ public class MainActivity extends Activity
                 showMainScreen();}};
             new Handler().postDelayed(runs, SURRENDER_TIMEOUT);
         } else {
+            showMessageBar();
             showMainScreen();
         }
     }
@@ -439,7 +467,6 @@ public class MainActivity extends Activity
     }
 
     // Action bar & button clicks
-
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
@@ -477,11 +504,8 @@ public class MainActivity extends Activity
     }
 
     // Left drawer listview clicks
-
     @Override
     public void onItemClick(AdapterView parent, View view, int position, long id) {
-        DrawerAdapter adapter;
-
         DrawerItem item = (DrawerItem) parent.getItemAtPosition(position);
         if (item.enabled) {
             switch (item.type) {
@@ -509,4 +533,73 @@ public class MainActivity extends Activity
             }
         }
     }
+
+    //////////////////////////////////////////////////////////////////////////////
+    // Personalized Message Bar Methods created by Yongnan Zhou:
+    private void showMessageBar(){
+        messageLayout.setVisibility(View.VISIBLE);
+        contentLayout.setPadding(0, (int) convertDpToPixel(50, getApplicationContext()), 0, 0);
+        setMessageListeners();
+    }
+
+    private void hideMessageBar(){
+        messageLayout.setVisibility(View.GONE);
+        contentLayout.setPadding(0, 0, 0, 0);
+    }
+
+    private float convertDpToPixel(float dp, Context context) {
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * (metrics.densityDpi / 160f);
+        return px;
+    }
+
+    private void setMessageListeners(){
+        signInTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectLoginFragment();
+            }
+        });
+
+        signUpTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectLoginFragment();
+            }
+        });
+
+        storeNameTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        FragmentManager manager = getFragmentManager();
+        int fragmentEntryCount = manager.getBackStackEntryCount();
+        String currentFragmentName = manager.getBackStackEntryAt(fragmentEntryCount - 1).getName();
+
+        for(int entry = 0; entry < fragmentEntryCount; entry++){
+            Log.d(TAG, "Found fragment " + entry + ": " + manager.getBackStackEntryAt(entry).getName());
+
+        }
+
+        // homepage
+        if(fragmentEntryCount == 0) {
+            showMessageBar();
+        }
+        else if(currentFragmentName.equals("com.staples.mobile.cfa.home.ConfiguratorFragment")){
+            showMessageBar();
+        }
+        // fragment page
+        else{
+            hideMessageBar();
+        }
+    }
+    // End of Personalized Message Bar Methods
+    //////////////////////////////////////////////////////////////////////////////
 }
