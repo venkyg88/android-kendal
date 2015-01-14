@@ -6,6 +6,7 @@ package com.staples.mobile.cfa.checkout;
 
 import android.app.Dialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.InputType;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +24,10 @@ import android.widget.Toast;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.ActionBar;
+import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.easyopen.model.member.Member;
 
 public class ConfirmationFragment extends Fragment implements View.OnClickListener {
     public static final String TAG = ConfirmationFragment.class.getSimpleName();
@@ -124,48 +129,52 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
 
                 accountDialog.show();
                 break;
-            case R.id.cancel:
-                if (accountDialog != null) {
-                    accountDialog.dismiss();
-                    accountDialog = null;
+            case R.id.show_password:
+                TextView showPasswordButton = (TextView) accountDialog.findViewById(R.id.show_password);
+                EditText passwordVw = (EditText) accountDialog.findViewById(R.id.password);
+                Resources r = getResources();
+                String hideText = r.getString(R.string.hide);
+                String showText = r.getString(R.string.show);
+                if (showPasswordButton.getText().toString().equals(hideText)) {
+                    showPasswordButton.setText(showText);
+                    passwordVw.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                } else {
+                    showPasswordButton.setText(hideText);
+                    passwordVw.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
                 }
                 break;
-            case R.id.show_password:
-                if (accountDialog != null) {
-                    TextView showPasswordButton = (TextView) accountDialog.findViewById(R.id.show_password);
-                    EditText passwordEditVw = (EditText) accountDialog.findViewById(R.id.password);
-                    Resources r = getResources();
-                    String hideText = r.getString(R.string.hide);
-                    String showText = r.getString(R.string.show);
-                    if (showPasswordButton.getText().toString().equals(hideText)) {
-                        showPasswordButton.setText(showText);
-                        passwordEditVw.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    } else {
-                        showPasswordButton.setText(hideText);
-                        passwordEditVw.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                    }
-                }
+            case R.id.cancel:
+                hideSoftKeyboard(view);
+                accountDialog.dismiss();
+                accountDialog = null;
                 break;
             case R.id.create_account_button:
-                if (accountDialog != null) {
-                    String requiredMsg = getResources().getString(R.string.required);
-                    EditText emailAddressEditVw = (EditText) accountDialog.findViewById(R.id.emailAddr);
-                    EditText passwordEditVw = (EditText) accountDialog.findViewById(R.id.password);
-                    if (!validateRequiredField(emailAddressEditVw, requiredMsg)) { break; }
-                    if (!validateRequiredField(passwordEditVw, requiredMsg)) { break; }
+                hideSoftKeyboard(view);
+                String requiredMsg = getResources().getString(R.string.required);
+                EditText emailAddressEditVw = (EditText) accountDialog.findViewById(R.id.emailAddr);
+                EditText passwordEditVw = (EditText) accountDialog.findViewById(R.id.password);
+                if (!validateRequiredField(emailAddressEditVw, requiredMsg)) { break; }
+                if (!validateRequiredField(passwordEditVw, requiredMsg)) { break; }
+                String emailAddress = emailAddressEditVw.getText().toString();
+                String password = passwordEditVw.getText().toString();
 
-
-                    // TODO submit api call
-                    Toast.makeText(activity, "TBD", Toast.LENGTH_SHORT).show();
-
-                    // after successful API call
-                    if (accountDialog != null && accountDialog.isShowing()) {
-                        accountDialog.dismiss();
-                        accountDialog = null;
-                        accountSuggestionLayout.setVisibility(View.GONE);
-                        accountConfirmationLayout.setVisibility(View.VISIBLE);
+                // submit api call
+                activity.showProgressIndicator();
+                new LoginHelper(activity).registerUser(emailAddress, emailAddress, password, new ProfileDetails.ProfileRefreshCallback() {
+                    @Override
+                    public void onProfileRefresh(Member member) {
+                        activity.hideProgressIndicator();
+                        if (member != null) {
+                            // after successful API call
+                            if (accountDialog != null && accountDialog.isShowing()) {
+                                accountDialog.dismiss();
+                                accountDialog = null;
+                                accountSuggestionLayout.setVisibility(View.GONE);
+                                accountConfirmationLayout.setVisibility(View.VISIBLE);
+                            }
+                        }
                     }
-                }
+                });
                 break;
         }
     }
@@ -176,5 +185,10 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
             return false;
         }
         return true;
+    }
+
+    public void hideSoftKeyboard(View view) {
+        InputMethodManager keyboard = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

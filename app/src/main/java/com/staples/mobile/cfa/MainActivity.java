@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.staples.mobile.cfa.bundle.BundleFragment;
@@ -129,7 +130,7 @@ public class MainActivity extends Activity
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawer = (ListView) findViewById(R.id.left_drawer);
         mainLayout = (LinearLayoutWithProgressOverlay)findViewById(R.id.main);
-        mainLayout.setCartProgressOverlay(findViewById(R.id.progress_overlay));
+        mainLayout.setProgressOverlay(findViewById(R.id.progress_overlay));
 
         // Initialize left drawer listview
         leftDrawerAdapter = new DrawerAdapter(this);
@@ -192,6 +193,11 @@ public class MainActivity extends Activity
             }
         }
 
+        // update sign-in button text
+        Button signInButton = (Button)findViewById(R.id.account_button);
+        signInButton.setText(guestLevel? R.string.login_title : R.string.signout_title);
+
+
         // for faster debugging with registered user (automatic login), uncomment this and use your
         // own credentials, but re-comment out before checking code in
 //        if (guestLevel) {
@@ -200,11 +206,11 @@ public class MainActivity extends Activity
     }
 
     public void showProgressIndicator() {
-        mainLayout.getProgressIndicator().showProgressIndicator();
+        mainLayout.showProgressIndicator(true);
     }
 
     public void hideProgressIndicator() {
-        mainLayout.getProgressIndicator().hideProgressIndicator();
+        mainLayout.showProgressIndicator(false);
     }
 
     // Navigation
