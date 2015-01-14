@@ -15,8 +15,10 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.easyopen.model.member.Member;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "LoginFragment";
@@ -128,7 +130,16 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
             if(!getUserName().isEmpty() && !getPassword().isEmpty())
             {
-                loginHelper.getUserTokens(getUserName(), getPassword());
+                activity.showProgressIndicator();
+                loginHelper.getUserTokens(getUserName(), getPassword(), new ProfileDetails.ProfileRefreshCallback() {
+                    @Override
+                    public void onProfileRefresh(Member member) {
+                        activity.hideProgressIndicator();
+                        if (member != null) {
+                            activity.selectProfileFragment();
+                        }
+                    }
+                });
             }
             else{
                 Toast.makeText(getActivity(), "Username or Password cannot be null", Toast.LENGTH_LONG).show();
@@ -147,7 +158,16 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 if (!loginHelper.isGuestLogin()) {
                     Access.getInstance().setTokens(null, null, false);
                 }
-                loginHelper.registerUser(getEmaiId(), getRegisterUsername(), getRegisterPassword());
+                activity.showProgressIndicator();
+                loginHelper.registerUser(getEmaiId(), getRegisterUsername(), getRegisterPassword(), new ProfileDetails.ProfileRefreshCallback() {
+                    @Override
+                    public void onProfileRefresh(Member member) {
+                        activity.hideProgressIndicator();
+                        if (member != null) {
+                            activity.selectProfileFragment();
+                        }
+                    }
+                });
             }
             else{
                 Toast.makeText(getActivity(), "Username or Password cannot be null", Toast.LENGTH_LONG).show();
