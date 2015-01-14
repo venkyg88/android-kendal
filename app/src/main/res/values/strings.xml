@@ -101,6 +101,7 @@
     <string name="hide">HIDE</string>
     <string name="cancel">CANCEL</string>
     <string name="create_account">CREATE ACCOUNT</string>
+    <string name="account_confirmation_msg">Thanks for creating an account!</string>
 
     <string name="continue_shopping">Continue Shopping</string>
 
