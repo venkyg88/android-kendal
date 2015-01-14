@@ -33,12 +33,88 @@
                 android:id="@+id/drawer_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+                <!-- Personalized message bar -->
+                <LinearLayout
+                    android:id="@+id/message_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="horizontal"
+                    android:background="@color/background_extra_light_gray">
+                    <LinearLayout
+                        android:id="@+id/login_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:orientation="vertical"
+                        android:animateLayoutChanges="true"
+                        android:padding="5dp">
+                        <TextView
+                            android:id="@+id/login_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:lines="1"
+                            android:ellipsize="end"
+                            android:textSize="14sp"
+                            android:textColor="@android:color/black"
+                            android:text="Welcome"/>
+                        <TextView
+                            android:id="@+id/login_info"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:lines="1"
+                            android:ellipsize="end"
+                            android:textSize="14sp"
+                            android:textColor="@android:color/black"
+                            android:text="Hyemi.kim@staples.com"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="30dp"
+                        android:background="@color/background_light_gray"
+                        android:layout_gravity="top"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/store_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:orientation="vertical"
+                        android:padding="5dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:lines="1"
+                            android:ellipsize="end"
+                            android:textSize="14sp"
+                            android:textColor="@android:color/black"
+                            android:text="Store nearby you"/>
+                        <TextView
+                            android:id="@+id/store_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:lines="1"
+                            android:ellipsize="end"
+                            android:textSize="14sp"
+                            android:textColor="@android:color/black"
+                            android:text="Cambridge, MA"/>
+                    </LinearLayout>
+                </LinearLayout>
+
                 <!-- Main content -->
                 <FrameLayout
                     android:id="@+id/content"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:paddingTop="50dp"/>
+
                 <!-- Left drawer (menu) -->
                 <ListView
                     android:id="@+id/left_drawer"
