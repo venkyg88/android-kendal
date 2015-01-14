@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
@@ -42,20 +43,65 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
     private boolean connected;
     private Location location;
     private String postalCode;
+    private long startTime;
 
     private LocationFinder(Activity activity) {
         this.activity = activity;
         loadRecentLocation();
-        GoogleApiClient.Builder builder = new GoogleApiClient.Builder(activity, this, this);
-        builder.addApi(LocationServices.API);
-        client = builder.build();
+
         geocoder = new Geocoder(activity);
-        client.connect();
+
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(activity);
+        switch(status) {
+            case ConnectionResult.SUCCESS:
+                GoogleApiClient.Builder builder = new GoogleApiClient.Builder(activity);
+                builder.addApi(LocationServices.API);
+                builder.addConnectionCallbacks(this);
+                builder.addOnConnectionFailedListener(this);
+                client = builder.build();
+                startTime = System.currentTimeMillis();
+                client.connect();
+                break;
+            default:
+                String msg = "Google Play Services: "+GooglePlayServicesUtil.getErrorString(status);
+                Log.d(TAG, msg);
+                break;
+        }
     }
 
+    private class Resolver extends Thread {
+        @Override
+        public void run() {
+            if (location == null) return;
+
+            try {
+                startTime = System.currentTimeMillis();
+                List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                if (addresses != null && addresses.size() > 0) {
+                    String msg = "Geocoder completed in "+Long.toString(System.currentTimeMillis()-startTime)+"ms";
+                    Log.d(TAG, msg);
+                    Address address = addresses.get(0);
+                    postalCode = address.getPostalCode();
+                }
+            } catch(Exception e) {
+                Log.d(TAG, "Error by Geocoder: "+e.toString());
+            }
+        }
+    }
+
+    // Getters
+
     public Location getLocation() {
-        Location latest = LocationServices.FusedLocationApi.getLastLocation(client);
-        if (latest!=null) location = latest;
+        // Try update
+        if (client!=null) {
+            Location latest = LocationServices.FusedLocationApi.getLastLocation(client);
+            if (latest != null && latest != location) {
+                location = latest;
+                if (geocoder != null) {
+                    new Resolver().start();
+                }
+            }
+        }
         return(location);
     }
 
@@ -63,36 +109,33 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
         return(postalCode);
     }
 
+    // Callbacks
+
     @Override
-    public void onConnected (Bundle connectionHint) {
-        Log.d(TAG, "GoogleApiClient connected");
+    public void onConnected(Bundle connectionHint) {
+        String msg = "GoogleApiClient connected in "+Long.toString(System.currentTimeMillis()-startTime)+"ms";
+        Log.d(TAG, msg);
         connected = true;
 
-        Location latest =  LocationServices.FusedLocationApi.getLastLocation(client);
-        if (latest==null) return;
-        location = latest;
-
-        try {
-            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-            if (addresses!=null && addresses.size()>0) {
-                Address address = addresses.get(0);
-                postalCode = address.getPostalCode();
+        Location latest = LocationServices.FusedLocationApi.getLastLocation(client);
+        if (latest!=null && latest!=location) {
+            location = latest;
+            if (geocoder!=null) {
+                new Resolver().start();
             }
-        } catch (Exception e) {
-            Log.d(TAG, "Error by Geocoder: "+e.toString());
         }
     }
 
     @Override
     public void onConnectionSuspended(int cause) {
-        connected = false;
         Log.d(TAG, "GoogleApiClient suspended");
+        connected = false;
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult result) {
-        connected = false;
         Log.d(TAG, "GoogleApiClient connect failed: "+result.toString());
+        connected = false;
         if (result.hasResolution()) {
             try {
                 Log.d(TAG, "Trying resolution");
