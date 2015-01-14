@@ -101,25 +101,24 @@ public class LoginHelper {
         );
     }
 
-    private void loadProfileAndOpenProfileFragment() {
+    private void loadProfile(final ProfileDetails.ProfileRefreshCallback callback) {
         new ProfileDetails().refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
             @Override public void onProfileRefresh(Member member) {
-                if(member != null) {
-                    activity.selectProfileFragment();
-                }
-                else {
+                if(member == null) {
                     userSignOut();
                     Toast.makeText(activity, "Unable to load profile", Toast.LENGTH_SHORT).show();
                 }
-                activity.hideProgressIndicator();
+
+                if (callback != null) {
+                    callback.onProfileRefresh(member);
+                }
             }
         });
     }
 
     //cloned method to take entered username and password..not to break if any one using the above method
-    public void getUserTokens(String username, String password)
+    public void getUserTokens(String username, String password, final ProfileDetails.ProfileRefreshCallback callback)
     {
-        activity.showProgressIndicator();
         RegisteredUserLogin user = new RegisteredUserLogin(username,password);
         easyOpenApi.registeredUserLogin(user, new Callback<TokenObject>() {
 
@@ -128,10 +127,8 @@ public class LoginHelper {
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
                         notifyListeners(false);
-                        Button signInText = (Button) activity.findViewById(R.id.account_button);
-                        signInText.setText(R.string.signout_title);
 
-                        loadProfileAndOpenProfileFragment();
+                        loadProfile(callback);
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
@@ -140,18 +137,19 @@ public class LoginHelper {
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
-                        activity.hideProgressIndicator();
                         Toast.makeText(activity, "Failed Login: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_LONG).show();
                         Log.i("Fail Message For Registered User", " " + retrofitError.getMessage());
                         Log.i("Post URL address For Registered User", " " + retrofitError.getUrl());
+                        if (callback != null) {
+                            callback.onProfileRefresh(null);
+                        }
                     }
                 }
         );
     }
 
-    public void registerUser(String emailAddress, String username, String password)
+    public void registerUser(String emailAddress, String username, String password, final ProfileDetails.ProfileRefreshCallback callback)
     {
-        activity.showProgressIndicator();
         CreateUserLogin user = new CreateUserLogin(emailAddress, username, password);
         Log.i("Register User object", " " + user);
         easyOpenApi.registerUser(user, new Callback<TokenObject>() {
@@ -161,10 +159,8 @@ public class LoginHelper {
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
                         notifyListeners(false);
-                        Button signInText = (Button) activity.findViewById(R.id.account_button);
-                        signInText.setText(R.string.signout_title);
 
-                        loadProfileAndOpenProfileFragment();
+                        loadProfile(callback);
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
@@ -173,10 +169,12 @@ public class LoginHelper {
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
-                        activity.hideProgressIndicator();
                         Toast.makeText(activity, "Failed to Register User" + "\n" + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_LONG).show();
                         Log.i("Fail Message to Register User", " " + retrofitError.getMessage());
                         Log.i("Post URL address For Register User", " " + retrofitError.getUrl());
+                        if (callback != null) {
+                            callback.onProfileRefresh(null);
+                        }
                     }
                 }
         );
@@ -190,8 +188,6 @@ public class LoginHelper {
                 Access.getInstance().setTokens(null, null, true); //set these to null since they're definitely unusable now
                 getGuestTokens(); // re-establish a guest login since user may try to add to cart after signing out
                 ProfileDetails.resetMember();
-                Button signInText = (Button)activity.findViewById(R.id.account_button);
-                signInText.setText(R.string.login_title);
                 Log.i("Code for signout", " " + response.getStatus());
             }
 
