@@ -26,6 +26,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.ActionBar;
+import com.staples.mobile.cfa.widget.RelativeLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 
@@ -45,6 +46,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
     View accountConfirmationLayout;
 
     Dialog accountDialog;
+    RelativeLayoutWithProgressOverlay accountDialogLayout;
 
     String emailAddress;
 
@@ -120,6 +122,9 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
                 Window window = accountDialog.getWindow();
                 window.requestFeature(Window.FEATURE_NO_TITLE);
                 accountDialog.setContentView(R.layout.confirmation_create_account);
+                accountDialogLayout = (RelativeLayoutWithProgressOverlay)accountDialog.findViewById(R.id.dialog_layout);
+                accountDialogLayout.setProgressOverlay(accountDialog.findViewById(R.id.dialog_progress_overlay));
+
                 ((EditText) accountDialog.findViewById(R.id.emailAddr)).setText(emailAddress);
 
                 // set up button listeners
@@ -159,11 +164,11 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
                 String password = passwordEditVw.getText().toString();
 
                 // submit api call
-                activity.showProgressIndicator();
+                accountDialogLayout.showProgressIndicator(true);
                 new LoginHelper(activity).registerUser(emailAddress, emailAddress, password, new ProfileDetails.ProfileRefreshCallback() {
                     @Override
                     public void onProfileRefresh(Member member) {
-                        activity.hideProgressIndicator();
+                        accountDialogLayout.showProgressIndicator(false);
                         if (member != null) {
                             // after successful API call
                             if (accountDialog != null && accountDialog.isShowing()) {
