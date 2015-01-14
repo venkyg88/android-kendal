@@ -26,12 +26,15 @@
 
             <!--green checkmark image-->
             <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="32dp"
                 android:layout_marginBottom="16dp"
-                android:src="@drawable/bullet"
+                android:padding="8dp"
+                android:tint="@android:color/white"
+                android:background="@drawable/green_oval"
+                android:src="@drawable/ic_check_white_24dp"
                 />
 
             <!--confirmation message text -->
@@ -108,7 +111,7 @@
 
             <!--guest check out only - creating an account-->
             <RelativeLayout
-                android:id="@+id/create_account_layout"
+                android:id="@+id/account_suggestion_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/background_white"
@@ -145,14 +148,58 @@
                     android:text="@string/create_acccount_msg2"
                     />
                 <ImageView
-                    android:id="@+id/create_account_action"
+                    android:id="@+id/open_account_dlg_action"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_below="@id/create_account_hr"
                     android:layout_marginTop="16dp"
+                    android:tint="@android:color/white"
+                    android:background="@drawable/oval"
                     android:src="@android:drawable/ic_input_add"
                     />
+            </RelativeLayout>
+
+            <!--guest check out only - confirmation after creating an account-->
+            <RelativeLayout
+                android:id="@+id/account_confirmation_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background_white"
+                android:visibility="gone">
+
+                <!--horizontal rule-->
+                <View
+                    android:id="@+id/account_confirmation_hr"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/background_light_gray"/>
+
+                <TextView
+                    android:id="@+id/account_confirmation_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@id/account_confirmation_hr"
+                    android:layout_marginTop="16dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_nearly_black"
+                    android:text="@string/account_confirmation_msg"
+                    />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/account_confirmation_hr"
+                    android:layout_marginTop="16dp"
+                    android:padding="4dp"
+                    android:tint="@android:color/white"
+                    android:background="@drawable/blue_oval"
+                    android:src="@drawable/ic_check_white_18dp"
+                    />
+                <!--btn_check_buttonless_on-->
             </RelativeLayout>
 
         </LinearLayout>
@@ -160,9 +207,7 @@
 
 
     <!-- continue shopping button -->
-    <!--checkout button-->
     <android.support.v7.widget.CardView
-        android:id="@+id/action_checkout"
         android:layout_width="match_parent"
         android:layout_height="36dp"
         android:layout_marginTop="8dp"

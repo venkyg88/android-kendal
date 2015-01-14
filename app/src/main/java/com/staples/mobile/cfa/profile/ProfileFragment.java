@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
@@ -49,7 +50,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onResume() {
         super.onResume();
-        activity.showActionBar(R.string.profile_title, 0, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.PROFILE);
     }
 
     private void loadProfile(Member member, View view) {

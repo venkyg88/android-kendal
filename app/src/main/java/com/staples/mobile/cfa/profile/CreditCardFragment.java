@@ -6,24 +6,19 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.AddCreditCard;
@@ -111,7 +106,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) activity).showActionBar(R.string.add_credit_card_title, 0, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.ADDCARD);
     }
 
     @Override
