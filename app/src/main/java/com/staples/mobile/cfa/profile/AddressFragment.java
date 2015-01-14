@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.AddAddress;
@@ -95,7 +96,7 @@ public class AddressFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity)activity).showActionBar(R.string.add_address_title, 0, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.ADDRESS);
     }
 
     public void hideKeyboard(View view)
