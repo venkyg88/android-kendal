@@ -108,7 +108,7 @@
 
             <!--guest check out only - creating an account-->
             <RelativeLayout
-                android:id="@+id/create_account_layout"
+                android:id="@+id/account_suggestion_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/background_white"
@@ -145,7 +145,7 @@
                     android:text="@string/create_acccount_msg2"
                     />
                 <ImageView
-                    android:id="@+id/create_account_action"
+                    android:id="@+id/open_account_dlg_action"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -160,9 +160,7 @@
 
 
     <!-- continue shopping button -->
-    <!--checkout button-->
     <android.support.v7.widget.CardView
-        android:id="@+id/action_checkout"
         android:layout_width="match_parent"
         android:layout_height="36dp"
         android:layout_marginTop="8dp"
