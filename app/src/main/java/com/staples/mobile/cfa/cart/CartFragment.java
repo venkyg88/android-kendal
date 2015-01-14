@@ -25,6 +25,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.rewards.RewardsLinkingFragment;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.configurator.model.Configurator;
@@ -81,8 +82,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private static List<CartItemGroup> cartItemGroups;
 
 
-//    int minExpectedBusinessDays;
-//    int maxExpectedBusinessDays;
+    private int minExpectedBusinessDays;
+    private int maxExpectedBusinessDays;
 
 
     // widget listeners
@@ -90,9 +91,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private QtyChangeListener qtyChangeListener;
     //private QtyUpdateButtonListener qtyUpdateButtonListener;
 
-
     private DecimalFormat currencyFormat;
-
 
     /** default constructor - note that fragment instance will be retained whereas view will come and go as attached to activity */
     public CartFragment() {
@@ -112,7 +111,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         // inflate and get child views
         View view = inflater.inflate(R.layout.cart_fragment, container, false);
 
-        // temporary try-catch
+        // TODO temporary try-catch
         try {
 
         emptyCartMsg = view.findViewById(R.id.empty_cart_msg);
@@ -203,14 +202,13 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
     @Override
     public void onResume() {
-        // temporary try-catch
+        // TODO temporary try-catch
         try {
 
         super.onResume();
 
         // update action bar
-        activity.showActionBar(R.string.cart_title, 0, null);
-
+        ActionBar.getInstance().setConfig(ActionBar.Config.CART);
         //initialize cart based on what's been returned from api so far
         convertCart(CartApiManager.getCart());
 
@@ -271,19 +269,13 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         }
 
         // set text of cart icon badge
-        activity.updateCartIcon(totalItemCount);
+        ActionBar.getInstance().setCartCount(totalItemCount);
 
         // if fragment is attached to activity, then update the fragment's views
         if (cartAdapter != null) {
 
             // Set text of cart item qty
-            if (totalItemCount == 0) {
-                activity.setActionBarCartQty("");
-                emptyCartMsg.setVisibility(View.VISIBLE);
-            } else {
-                activity.setActionBarCartQty(r.getQuantityString(R.plurals.cart_qty, totalItemCount, totalItemCount));
-                emptyCartMsg.setVisibility(View.GONE);
-            }
+            ActionBar.getInstance().setCartCount(totalItemCount);
 
             // set text of free shipping msg
             if (totalItemCount > 0) {
@@ -425,7 +417,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 CartApiManager.deleteCoupon(couponAdapter.getItem((Integer) view.getTag()).getCoupon().getCode(), this);
                 break;
             case R.id.action_checkout:
-                activity.selectOrderCheckout();
+                activity.selectOrderCheckout(getExpectedDeliveryRange());
                 break;
             case R.id.rewards_link_acct_button:
                 String rewardsNumber = ((EditText)getView().findViewById(R.id.rewards_card_number)).getText().toString();
@@ -467,23 +459,28 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
 
 
-//    public int getMinExpectedBusinessDays() {
-//        return minExpectedBusinessDays;
-//    }
-//
-//    public int getMaxExpectedBusinessDays() {
-//        return maxExpectedBusinessDays;
-//    }
-//
-//    public String getExpectedDeliveryRange() {
-//        if (maxExpectedBusinessDays > minExpectedBusinessDays) {
-//            return minExpectedBusinessDays + " - " + maxExpectedBusinessDays;
-//        } else {
-//            return ""+minExpectedBusinessDays;
-//        }
-//    }
+    public int getMinExpectedBusinessDays() {
+        return minExpectedBusinessDays;
+    }
 
+    public int getMaxExpectedBusinessDays() {
+        return maxExpectedBusinessDays;
+    }
 
+    public String getExpectedDeliveryRange() {
+        if (minExpectedBusinessDays > -1) {
+            StringBuilder deliveryRange = new StringBuilder();
+            if (maxExpectedBusinessDays > minExpectedBusinessDays) {
+                deliveryRange.append(minExpectedBusinessDays).append(" - ").append(maxExpectedBusinessDays);
+            } else {
+                deliveryRange.append(minExpectedBusinessDays);
+            }
+            deliveryRange.append(" ").append(getResources().getQuantityText(R.plurals.business_days,
+                    Math.max(minExpectedBusinessDays, maxExpectedBusinessDays)));
+            return deliveryRange.toString();
+        }
+        return null;
+    }
 
     /** updates item quantity */
     private void updateItemQty(CartItem cartItem) {
@@ -496,7 +493,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             }
         }
     }
-
 
     private void notifyDataSetChanged() {
         // if fragment is attached to activity, then update the fragment's views
@@ -512,9 +508,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         if (cartAdapter != null) {
             cartAdapter.setItems(cartItemGroups);
         } else {
-            if (activity != null) {
-                activity.updateCartIcon(CartApiManager.getCartTotalItems());
-            }
+            ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
         }
     }
 
@@ -524,8 +518,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         }
     }
 
-
-
     public void onCartRefreshComplete(String errMsg) {
         hideProgressIndicator();
         if (errMsg != null) {
@@ -533,8 +525,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         }
         convertCart(CartApiManager.getCart());
     }
-
-
 
     private void convertCart(Cart cart) {
 
@@ -571,8 +561,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 // calculate expected delivery times
                 String leadTimeDescription = null;
                 CartItemGroup itemGroup = null;
-//                    minExpectedBusinessDays = -1;
-//                    maxExpectedBusinessDays = -1;
+                    minExpectedBusinessDays = -1;
+                    maxExpectedBusinessDays = -1;
                 for (int i = 0; i < cartItems.size(); i++) {
                     CartItem cartItem = cartItems.get(i);
                     // if lead time different from previous item's lead time, set expected delivery info
@@ -588,14 +578,14 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                     }
                     itemGroup.addItem(cartItem);
 
-//                        if (minExpectedBusinessDays == -1 ||
-//                                cartItem.getMinExpectedBusinessDays() < minExpectedBusinessDays) {
-//                            minExpectedBusinessDays = cartItem.getMinExpectedBusinessDays();
-//                        }
-//                        if (maxExpectedBusinessDays == -1 ||
-//                                cartItem.getMaxExpectedBusinessDays() > maxExpectedBusinessDays) {
-//                            maxExpectedBusinessDays = cartItem.getMaxExpectedBusinessDays();
-//                        }
+                    if (minExpectedBusinessDays == -1 ||
+                            cartItem.getMinExpectedBusinessDays() < minExpectedBusinessDays) {
+                        minExpectedBusinessDays = cartItem.getMinExpectedBusinessDays();
+                    }
+                    if (maxExpectedBusinessDays == -1 ||
+                            cartItem.getMaxExpectedBusinessDays() > maxExpectedBusinessDays) {
+                        maxExpectedBusinessDays = cartItem.getMaxExpectedBusinessDays();
+                    }
                 }
             }
         }

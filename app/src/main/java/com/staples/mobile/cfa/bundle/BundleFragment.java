@@ -16,6 +16,7 @@ import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartApiManager;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
 import com.staples.mobile.common.access.Access;
@@ -79,8 +80,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     @Override
     public void onResume() {
         super.onResume();
-        MainActivity activity = (MainActivity) getActivity();
-        if (activity!=null) activity.showActionBar(title, R.drawable.ic_search_white, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.BUNDLE, title);
     }
 
     @Override
@@ -151,7 +151,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                             @Override
                             public void onCartRefreshComplete(String errMsg) {
                                 activity.hideProgressIndicator();
-                                activity.updateCartIcon(CartApiManager.getCartTotalItems());
+                                ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
                                 // if success
                                 if (errMsg == null) {
                                     buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.added_to_cart));

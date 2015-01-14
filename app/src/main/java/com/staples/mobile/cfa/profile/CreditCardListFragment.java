@@ -13,6 +13,7 @@ import android.widget.ListView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 
 import java.util.List;
@@ -50,7 +51,7 @@ public class CreditCardListFragment extends Fragment implements View.OnClickList
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) activity).showActionBar(R.string.credit_card_title, 0, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.VIEWCARD);
     }
 
     @Override

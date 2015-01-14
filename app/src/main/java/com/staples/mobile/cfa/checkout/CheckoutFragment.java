@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.widget.ActionBar;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -28,6 +29,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     public static final String BUNDLE_PARAM_COUPONSREWARDS = "couponsRewards";
     public static final String BUNDLE_PARAM_ITEMSUBTOTAL = "itemSubtotal";
     public static final String BUNDLE_PARAM_PRETAXSUBTOTAL = "preTaxSubtotal";
+    public static final String BUNDLE_PARAM_DELIVERY_RANGE = "deliveryRange";
     public static final String BUNDLE_PARAM_SHIPPING_CHARGE = "shippingCharge";
     public static final String BUNDLE_PARAM_TAX = "tax";
 
@@ -59,14 +61,28 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     private Float couponsRewardsAmount;
     private Float itemSubtotal;
     private Float pretaxSubtotal;
+    private String deliveryRange;
 
 
     protected CheckoutFragment() {
         // set up currency format to use minus sign for negative amounts (needed for coupons)
         currencyFormat = (DecimalFormat)NumberFormat.getCurrencyInstance();
         String symbol = currencyFormat.getCurrency().getSymbol();
-        currencyFormat.setNegativePrefix("-"+symbol);
+        currencyFormat.setNegativePrefix("-" + symbol);
         currencyFormat.setNegativeSuffix("");
+    }
+
+    /**
+     * Create a new instance of RegisteredCheckoutFragment that will be initialized
+     * with the given arguments. Used when opening a fresh checkout session from the cart.
+     */
+    public static Bundle createInitialBundle(float couponsRewardsAmount, float itemSubtotal, float preTaxSubtotal, String deliveryRange) {
+        Bundle args = new Bundle();
+        args.putFloat(CheckoutFragment.BUNDLE_PARAM_COUPONSREWARDS, couponsRewardsAmount);
+        args.putFloat(CheckoutFragment.BUNDLE_PARAM_ITEMSUBTOTAL, itemSubtotal);
+        args.putFloat(CheckoutFragment.BUNDLE_PARAM_PRETAXSUBTOTAL, preTaxSubtotal);
+        args.putString(CheckoutFragment.BUNDLE_PARAM_DELIVERY_RANGE, deliveryRange);
+        return args;
     }
 
     @Override
@@ -104,6 +120,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         itemSubtotal = checkoutBundle.getFloat(BUNDLE_PARAM_ITEMSUBTOTAL);
         pretaxSubtotal = checkoutBundle.getFloat(BUNDLE_PARAM_PRETAXSUBTOTAL);
         shippingCharge = checkoutBundle.getString(BUNDLE_PARAM_SHIPPING_CHARGE);
+        deliveryRange = checkoutBundle.getString(BUNDLE_PARAM_DELIVERY_RANGE);
         tax = checkoutBundle.getFloat(BUNDLE_PARAM_TAX, -1);
         if (tax == -1) {
             tax = null;
@@ -121,14 +138,10 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         return view;
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
-
-        // update action bar
-        int titleId = this instanceof GuestCheckoutFragment ? R.string.guest_checkout_title : R.string.checkout_title;
-        activity.showActionBar(titleId, 0, null);
+        ActionBar.getInstance().setConfig(this instanceof GuestCheckoutFragment ? ActionBar.Config.COGUEST : ActionBar.Config.COREG);
     }
 
     /** override this to handle other clicks, but call this super method */
@@ -181,7 +194,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     }
 
 
-    protected void submitOrder(String cid) {
+    protected void submitOrder(String cid, final String emailAddress) {
         showProgressIndicator();
         CheckoutApiManager.submitOrder(cid, new CheckoutApiManager.OrderSubmissionCallback() {
             @Override
@@ -192,7 +205,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                 if (errMsg == null) {
 
                     // show confirmation page and refresh cart
-                    ((MainActivity) activity).selectOrderConfirmation(orderId, orderNumber);
+                    ((MainActivity) activity).selectOrderConfirmation(orderNumber, emailAddress,
+                            deliveryRange, currencyFormat.format(getCheckoutTotal()));
+
                 } else {
                     Toast.makeText(activity, "Submission Error: " + errMsg, Toast.LENGTH_LONG).show();
                     Log.d(TAG, errMsg);
@@ -222,7 +237,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         shippingChargeVw.setText(formatShippingCharge(shippingCharge, currencyFormat));
         shippingChargeVw.setTextColor("Free".equals(shippingCharge) ? greenText : blackText);
         taxVw.setText(currencyFormat.format(tax));
-        checkoutTotalVw.setText(currencyFormat.format(pretaxSubtotal + tax)); // coupons/rewards are already factored into pretaxSubtotal
+        checkoutTotalVw.setText(currencyFormat.format(getCheckoutTotal()));
         setShipTaxSubmitVisibility(true);
     }
 
@@ -244,6 +259,10 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         taxVw.setVisibility(visible? View.VISIBLE : View.GONE);
         taxLabelVw.setVisibility(visible? View.VISIBLE : View.GONE);
         submissionLayout.setVisibility(visible? View.VISIBLE : View.GONE);
+    }
+
+    private Float getCheckoutTotal() {
+        return pretaxSubtotal + tax; // coupons/rewards are already factored into pretaxSubtotal
     }
 
     /** returns tax value if available */

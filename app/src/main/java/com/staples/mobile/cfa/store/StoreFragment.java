@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.location.LocationFinder;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.channel.model.store.Obj;
 import com.staples.mobile.common.access.channel.model.store.StoreAddress;
@@ -138,7 +139,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         if (mapView!=null) mapView.onResume();
         if (adapter.isSingleMode()) iconId = R.drawable.ic_view_list_white;
         else iconId = R.drawable.ic_map_white;
-        ((MainActivity) getActivity()).showActionBar(R.string.store_locator_title, iconId, this);
+        ActionBar.getInstance().setConfig(ActionBar.Config.MAPLIST, this);
     }
 
     @Override
@@ -386,7 +387,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
 
         // Map with single store
         else if (adapter.isSingleMode()) {
-            ((MainActivity) getActivity()).showActionBar(R.string.store_locator_title, R.drawable.ic_map_white, this);
+            ActionBar.getInstance().setConfig(ActionBar.Config.MAPVIEW, this);
             mapView.setVisibility(View.GONE);
             ViewGroup.LayoutParams params = list.getLayoutParams();
             singleHeight = params.height;
@@ -399,7 +400,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
 
         // List of stores with map available
         else {
-            ((MainActivity) getActivity()).showActionBar(R.string.store_locator_title, R.drawable.ic_view_list_white, this);
+            ActionBar.getInstance().setConfig(ActionBar.Config.MAPLIST, this);
             mapView.setVisibility(View.VISIBLE);
             ViewGroup.LayoutParams params = list.getLayoutParams();
             params.height = singleHeight;
