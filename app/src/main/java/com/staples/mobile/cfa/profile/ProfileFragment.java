@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.profile;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,7 +21,7 @@ import com.staples.mobile.common.access.easyopen.model.member.Member;
 import java.util.List;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener{
-    private static final String TAG = "ProfileFragment";
+    public static final String TAG = "ProfileFragment";
 
     private EasyOpenApi easyOpenApi;
     Button shippingBtn;
@@ -34,6 +35,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         Log.d(TAG, "onCreateView()");
         activity = (MainActivity)getActivity();
+
         View view = inflater.inflate(R.layout.profile_fragment, container, false);
 
         shippingBtn = (Button) view.findViewById(R.id.addShippingBtn);
@@ -120,20 +122,20 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 shippingBtn = (Button) view;
                 if (shippingBtn.getText().equals("Add")) {
                     Fragment addressFragment = Fragment.instantiate(activity, AddressFragment.class.getName());
-                    ((MainActivity) activity).navigateToFragment(addressFragment);
+                    activity.navigateToFragment(addressFragment);
                     break;
                 } else {
-                    ((MainActivity) activity).selectProfileAddressesFragment();
+                    activity.selectProfileAddressesFragment();
                     break;
                 }
             case R.id.addCCBtn:
                 ccBtn = (Button)view;
                 if(ccBtn.getText().equals("Add")){
                     Fragment creditFragment = Fragment.instantiate(activity, CreditCardFragment.class.getName());
-                    ((MainActivity)activity).navigateToFragment(creditFragment);
+                    activity.navigateToFragment(creditFragment);
                     break;
                 } else {
-                    ((MainActivity) activity).selectProfileCreditCardsFragment();
+                    activity.selectProfileCreditCardsFragment();
                     break;
                 }
         }
