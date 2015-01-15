@@ -594,7 +594,6 @@ public class MainActivity extends Activity
     public void onBackStackChanged() {
         FragmentManager manager = getFragmentManager();
         int fragmentEntryCount = manager.getBackStackEntryCount();
-        String currentFragmentName = manager.getBackStackEntryAt(fragmentEntryCount - 1).getName();
 
         for(int entry = 0; entry < fragmentEntryCount; entry++){
             Log.d(TAG, "Found fragment " + entry + ": " + manager.getBackStackEntryAt(entry).getName());
@@ -604,7 +603,8 @@ public class MainActivity extends Activity
         if(fragmentEntryCount == 0) {
             showMessageBar();
         }
-        else if(currentFragmentName.equals("com.staples.mobile.cfa.home.ConfiguratorFragment")){
+        else if(manager.getBackStackEntryAt(fragmentEntryCount - 1).getName()
+                .equals("com.staples.mobile.cfa.home.ConfiguratorFragment")){
             showMessageBar();
         }
         // fragment page
