@@ -277,6 +277,9 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             // Set text of cart item qty
             ActionBar.getInstance().setCartCount(totalItemCount);
 
+            emptyCartMsg.setVisibility(totalItemCount == 0? View.VISIBLE : View.GONE);
+
+
             // set text of free shipping msg
             if (totalItemCount > 0) {
                 if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !ProfileDetails.isRewardsMember()) {
