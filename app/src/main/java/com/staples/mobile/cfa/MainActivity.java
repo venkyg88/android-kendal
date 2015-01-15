@@ -178,7 +178,8 @@ public class MainActivity extends Activity
         // if registered user, update menu state and load cart info
         if (!guestLevel) {
             CartApiManager.loadCart(new CartApiManager.CartRefreshCallback() {
-                @Override public void onCartRefreshComplete(String errMsg) {
+                @Override
+                public void onCartRefreshComplete(String errMsg) {
                     ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
                 }
             });
@@ -212,7 +213,9 @@ public class MainActivity extends Activity
 
         // update sign-in button text
         Button signInButton = (Button)findViewById(R.id.account_button);
-        signInButton.setText(registeredUser? R.string.signout_title : R.string.login_title);
+        if (signInButton != null) { // is null in roboelectric tests
+            signInButton.setText(registeredUser ? R.string.signout_title : R.string.login_title);
+        }
     }
 
     public void showProgressIndicator() {
