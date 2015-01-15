@@ -138,7 +138,6 @@ public class CheckoutApiManager {
         List<AddCreditCardPOW> ccList = new ArrayList<AddCreditCardPOW>();
         ccList.add(creditCard);
 
-        final EasyOpenApi secureApi = Access.getInstance().getEasyOpenApi(true);
         Callback<List<POWResponse>> apiCallback = new Callback<List<POWResponse>>() {
 
             @Override
@@ -165,14 +164,7 @@ public class CheckoutApiManager {
             }
         };
 
-        // TODO find a better way to determine current environment
-//        if (StaplesAppContext.getInstance().getEasyOpenApiUrl().equals("api.staples.com"))
-//        {
-//            EasyOpenApi powApi = Access.getInstance().getPOWApi(true);
-//            powApi.addCreditPOWCall(ccList, apiCallback);
-//        } else {
-//            secureApi.addCreditPOWCallQA(ccList, apiCallback);
-//        }
+        // encrypt CC number and then proceed in callback
         EasyOpenApi powApi = Access.getInstance().getPOWApi(true);
         powApi.addCreditPOWCall(ccList, apiCallback);
     }
