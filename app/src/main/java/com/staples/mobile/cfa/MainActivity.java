@@ -73,7 +73,7 @@ public class MainActivity extends Activity
     private FrameLayout contentLayout;
     private TextView storeNameTextView;
     private TextView usernameTextView;
-    private String userName = "Hyemi.kim@staples.com";
+    private String userName;
 
     private LoginHelper loginHelper;
 
@@ -574,8 +574,9 @@ public class MainActivity extends Activity
         // Logged In
         if(access.isLoggedIn() && !access.isGuestLogin()){
         //if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin() ){
-            login_message.setText("Welcome");
+            login_message.setText(R.string.welcome);
             usernameTextView.setVisibility(View.VISIBLE);
+            userName = "Hyemi.kim@staples.com";
             usernameTextView.setText(userName);
             login_info_layout.setVisibility(View.GONE);
 
@@ -584,7 +585,7 @@ public class MainActivity extends Activity
         }
         // Not Logged In
         else{
-            login_message.setText("Hello");
+            login_message.setText(R.string.hello);
             usernameTextView.setVisibility(View.GONE);
             login_info_layout.setVisibility(View.VISIBLE);
         }

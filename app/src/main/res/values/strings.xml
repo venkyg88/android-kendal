@@ -44,6 +44,8 @@
     <string name="feed_seen_products_title">Your Recently Viewed Items</string>
 
     <!-- Personalized Message -->
+    <string name="welcome">Welcome</string>
+    <string name="hello">Hello</string>
     <string name="signup_title">Sign Up</string>
     <string name="or">\u0020Or\u0020</string>
     <string name="question_mark">\?</string>
