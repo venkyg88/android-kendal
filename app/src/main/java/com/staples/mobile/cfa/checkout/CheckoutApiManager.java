@@ -166,13 +166,15 @@ public class CheckoutApiManager {
         };
 
         // TODO find a better way to determine current environment
-        if (StaplesAppContext.getInstance().getEasyOpenApiUrl().equals("api.staples.com"))
-        {
-            EasyOpenApi powApi = Access.getInstance().getPOWApi(true);
-            powApi.addCreditPOWCall(ccList, apiCallback);
-        } else {
-            secureApi.addCreditPOWCallQA(ccList, apiCallback);
-        }
+//        if (StaplesAppContext.getInstance().getEasyOpenApiUrl().equals("api.staples.com"))
+//        {
+//            EasyOpenApi powApi = Access.getInstance().getPOWApi(true);
+//            powApi.addCreditPOWCall(ccList, apiCallback);
+//        } else {
+//            secureApi.addCreditPOWCallQA(ccList, apiCallback);
+//        }
+        EasyOpenApi powApi = Access.getInstance().getPOWApi(true);
+        powApi.addCreditPOWCall(ccList, apiCallback);
     }
 
     /** does precheckout and queries for tax and shipping */

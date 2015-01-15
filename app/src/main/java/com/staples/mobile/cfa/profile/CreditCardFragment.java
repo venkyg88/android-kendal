@@ -141,7 +141,10 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
             ccList.add(creditCard);
             Log.i("Card", creditCardNumber);
             Log.i("CCN",cardType);
-            easyOpenApi.addCreditPOWCallQA(ccList, new Callback<List<POWResponse>>() {
+
+//            easyOpenApi.addCreditPOWCallQA(ccList, new Callback<List<POWResponse>>() {
+            EasyOpenApi powApi = Access.getInstance().getPOWApi(true);
+            powApi.addCreditPOWCall(ccList, new Callback<List<POWResponse>>() {
 
                 @Override
                 public void success(List<POWResponse> powList, Response response) {
@@ -151,7 +154,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
 
                     if(encryptedPacket.isEmpty()) {
                         ((MainActivity)activity).hideProgressIndicator();
-                        Toast.makeText(getActivity(), "Credit card encryption failed" , Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, "Credit card encryption failed" , Toast.LENGTH_LONG).show();
                         Log.i("Success", response.getUrl());
                     }
                     else if(creditCardId != null) {
