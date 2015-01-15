@@ -122,14 +122,14 @@
                             android:textSize="14sp"
                             android:textColor="@android:color/black"
                             android:textStyle="bold"
-                            android:text="Sign In"/>
+                            android:text="@string/login_title"/>
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:textSize="14sp"
                             android:textColor="@android:color/black"
-                            android:text=" or "/>
+                            android:text="@string/or"/>
                         <TextView
                             android:id="@+id/login_sign_up"
                             android:layout_width="match_parent"
@@ -138,14 +138,14 @@
                             android:textSize="14sp"
                             android:textColor="@android:color/black"
                             android:textStyle="bold"
-                            android:text="Sign Up"/>
+                            android:text="@string/signup_title"/>
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:textSize="14sp"
                             android:textColor="@android:color/black"
-                            android:text="\?"/>
+                            android:text="@string/question_mark"/>
                     </LinearLayout>
                 </LinearLayout>
                 <View

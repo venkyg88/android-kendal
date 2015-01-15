@@ -43,6 +43,11 @@
     <string name="feed_daily_deal_title">Cart Items On Daily Deal</string>
     <string name="feed_seen_products_title">Your Recently Viewed Items</string>
 
+    <!-- Personalized Message -->
+    <string name="signup_title">Sign Up</string>
+    <string name="or">\u0020Or\u0020</string>
+    <string name="question_mark">\?</string>
+
     <string name="add">ADD</string>
     <string name="cartitem_qty_label">Qty</string>
     <string name="add_to_cart">ADD TO CART</string>

@@ -73,6 +73,7 @@ public class MainActivity extends Activity
     private FrameLayout contentLayout;
     private TextView storeNameTextView;
     private TextView usernameTextView;
+    private String userName = "Hyemi.kim@staples.com";
 
     private LoginHelper loginHelper;
 
@@ -233,6 +234,8 @@ public class MainActivity extends Activity
 
         // disable menu items as appropriate
         refreshMenuItemState(false);
+
+        showMessageBar();
     }
 
     private void refreshMenuItemState(boolean registeredUser) {
@@ -570,12 +573,14 @@ public class MainActivity extends Activity
         Access access = Access.getInstance();
         // Logged In
         if(access.isLoggedIn() && !access.isGuestLogin()){
+        //if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin() ){
             login_message.setText("Welcome");
             usernameTextView.setVisibility(View.VISIBLE);
-            usernameTextView.setText("Hyemi.kim@staples.com");
+            usernameTextView.setText(userName);
             login_info_layout.setVisibility(View.GONE);
 
             //float couponsRewardsAmount = cartFragment.getCouponsRewardsAdjustedAmount();
+            //Log.d(TAG, "Reward: " + couponsRewardsAmount);
         }
         // Not Logged In
         else{
@@ -586,8 +591,10 @@ public class MainActivity extends Activity
 
         LocationFinder locationFinder = LocationFinder.getInstance(this);
         String postalCode = locationFinder.getPostalCode();
-        Access.getInstance().getChannelApi(false).storeLocations(postalCode, new StoreFragment());
-
+        Log.d(TAG, "postalCode: " + postalCode);
+        //if(postalCode != null) {
+            //access.getChannelApi(false).storeLocations(postalCode, new StoreFragment());
+        //}
 
     }
 
@@ -631,9 +638,9 @@ public class MainActivity extends Activity
         FragmentManager manager = getFragmentManager();
         int fragmentEntryCount = manager.getBackStackEntryCount();
 
-        for(int entry = 0; entry < fragmentEntryCount; entry++){
-            Log.d(TAG, "Found fragment " + entry + ": " + manager.getBackStackEntryAt(entry).getName());
-        }
+//        for(int entry = 0; entry < fragmentEntryCount; entry++){
+//            Log.d(TAG, "Found fragment " + entry + ": " + manager.getBackStackEntryAt(entry).getName());
+//        }
 
         //Log.d(TAG, "Location: " + String.valueOf(LocationFinder.getInstance(this).getLocation()));
 
