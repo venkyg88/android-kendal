@@ -142,7 +142,6 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
             Log.i("Card", creditCardNumber);
             Log.i("CCN",cardType);
 
-//            easyOpenApi.addCreditPOWCallQA(ccList, new Callback<List<POWResponse>>() {
             EasyOpenApi powApi = Access.getInstance().getPOWApi(true);
             powApi.addCreditPOWCall(ccList, new Callback<List<POWResponse>>() {
 
