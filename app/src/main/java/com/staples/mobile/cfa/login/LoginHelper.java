@@ -25,6 +25,7 @@ public class LoginHelper {
 
     public interface OnLoginCompleteListener {
         public void onLoginComplete(boolean guestLevel);
+        public void onLogoutComplete();
     }
 
     private MainActivity activity;
@@ -54,10 +55,14 @@ public class LoginHelper {
         }
     }
 
-    private void notifyListeners(boolean guestLogin) {
+    private void notifyListeners(boolean guestLogin, boolean signingIn) {
         if (loginCompleteListeners != null) {
             for (OnLoginCompleteListener listener : loginCompleteListeners) {
-                listener.onLoginComplete(guestLogin);
+                if (signingIn) {
+                    listener.onLoginComplete(guestLogin);
+                } else {
+                    listener.onLogoutComplete();
+                }
             }
         }
     }
@@ -81,7 +86,7 @@ public class LoginHelper {
                     public void success(TokenObject tokenObjectReturned, Response response) {
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), true);
-                        notifyListeners(true);
+                        notifyListeners(true, true); // guest login, signing in
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
@@ -123,7 +128,7 @@ public class LoginHelper {
                     public void success(TokenObject tokenObjectReturned, Response response) {
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
-                        notifyListeners(false);
+                        notifyListeners(false, true); // NOT guest login, signing in
 
                         loadProfile(callback);
 
@@ -155,7 +160,7 @@ public class LoginHelper {
                     public void success(TokenObject tokenObjectReturned, Response response) {
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
-                        notifyListeners(false);
+                        notifyListeners(false, true); // NOT guest login, signing in
 
                         loadProfile(callback);
 
@@ -182,15 +187,24 @@ public class LoginHelper {
         easyOpenApi.registeredUserSignOut(new Callback<Response>() {
             @Override
             public void success(Response empty, Response response) {
-                Access.getInstance().setTokens(null, null, true); //set these to null since they're definitely unusable now
-                getGuestTokens(); // re-establish a guest login since user may try to add to cart after signing out
-                ProfileDetails.resetMember();
                 Log.i("Code for signout", " " + response.getStatus());
+                handleSigningOut();
             }
 
             @Override
             public void failure(RetrofitError error) {
-                Log.i("Url for signout", " " + error.getUrl());
+                Log.i("Failed signout, URL: ", " " + error.getUrl());
+                // Even if sign out appears to fail, the app needs to act as though signed out because
+                // there probably is not a legitimate session. For example, maybe signing out failed because
+                // the last valid session had timed out.
+                handleSigningOut();
+            }
+
+            private void handleSigningOut() {
+                Access.getInstance().setTokens(null, null, true); //set these to null since they're definitely unusable now
+                ProfileDetails.resetMember();
+                notifyListeners(false, false); // signing OUT
+                getGuestTokens(); // re-establish a guest login since user may try to add to cart after signing out
             }
         });
     }

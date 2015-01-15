@@ -175,34 +175,47 @@ public class MainActivity extends Activity
 
     @Override
     public void onLoginComplete(boolean guestLevel) {
-        // load cart info after successful login (if registered login or if guest login following a signout where cart was non-empty)
-        if (!guestLevel || (guestLevel && CartApiManager.getCart() != null && CartApiManager.getCartTotalItems() > 0)) {
+        // if registered user, update menu state and load cart info
+        if (!guestLevel) {
             CartApiManager.loadCart(new CartApiManager.CartRefreshCallback() {
-                @Override public void onCartRefreshComplete(String errMsg) {
+                @Override
+                public void onCartRefreshComplete(String errMsg) {
                     ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
                 }
             });
         }
         // enable/disable left drawer menu items that depend upon login
+        refreshMenuItemState(!guestLevel);
+    }
+
+    @Override
+    public void onLogoutComplete() {
+        // if cart not empty, reset it
+        if (CartApiManager.getCart() != null && CartApiManager.getCartTotalItems() > 0) {
+            CartApiManager.resetCart();
+            ActionBar.getInstance().setCartCount(0);
+        }
+
+        // disable menu items as appropriate
+        refreshMenuItemState(false);
+    }
+
+    private void refreshMenuItemState(boolean registeredUser) {
+        // enable/disable left drawer menu items that depend upon login
         int itemCount = leftDrawerAdapter.getCount();
         for (int position = 0; position < itemCount; position++) {
             DrawerItem item = leftDrawerAdapter.getItem(position);
             if (item.fragmentClass == RewardsFragment.class || item.fragmentClass == OrderFragment.class) {
-                item.enabled = !guestLevel;
+                item.enabled = registeredUser;
                 leftDrawerAdapter.notifyDataSetChanged();
             }
         }
 
         // update sign-in button text
         Button signInButton = (Button)findViewById(R.id.account_button);
-        signInButton.setText(guestLevel? R.string.login_title : R.string.signout_title);
-
-
-        // for faster debugging with registered user (automatic login), uncomment this and use your
-        // own credentials, but re-comment out before checking code in
-//        if (guestLevel) {
-//            new LoginHelper(this).getUserTokens("testuser2", "password");
-//        }
+        if (signInButton != null) { // is null in roboelectric tests
+            signInButton.setText(registeredUser ? R.string.signout_title : R.string.login_title);
+        }
     }
 
     public void showProgressIndicator() {

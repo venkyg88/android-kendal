@@ -80,6 +80,9 @@ public class CartApiManager {
                 });
     }
 
+    public static void resetCart() {
+        cart = null;
+    }
 
     /** adds item to cart */
     public static void addItemToCart(String sku, int qty, final CartRefreshCallback cartRefreshCallback) {
