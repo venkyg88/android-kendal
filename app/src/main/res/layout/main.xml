@@ -96,11 +96,18 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
+                        android:textSize="14sp"
+                        android:textColor="@android:color/black"/>
+                    <TextView
+                        android:id="@+id/login_username"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:lines="1"
                         android:ellipsize="end"
                         android:textSize="14sp"
-                        android:textColor="@android:color/black"
-                        android:text="Hello"/>
+                        android:visibility="gone"
+                        android:textColor="@android:color/black"/>
                     <LinearLayout
                         android:id="@+id/login_info_layout"
                         android:layout_width="wrap_content"

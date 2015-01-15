@@ -41,8 +41,10 @@ import com.staples.mobile.cfa.rewards.RewardsLinkingFragment;
 import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.skuset.SkuSetFragment;
+import com.staples.mobile.cfa.store.StoreFragment;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
+import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 
@@ -61,11 +63,16 @@ public class MainActivity extends Activity
     private CartFragment cartFragment;
     private DrawerItem homeDrawerItem;
     private int screenHeight;
+
+    // Personalized Message Bar UI Elements
     private LinearLayout messageLayout;
-    private FrameLayout contentLayout;
+    private LinearLayout login_info_layout;
+    private TextView login_message;
     private TextView signInTextView;
     private TextView signUpTextView;
+    private FrameLayout contentLayout;
     private TextView storeNameTextView;
+    private TextView usernameTextView;
 
     private LoginHelper loginHelper;
 
@@ -151,9 +158,12 @@ public class MainActivity extends Activity
         mainLayout = (LinearLayoutWithProgressOverlay)findViewById(R.id.main);
         mainLayout.setProgressOverlay(findViewById(R.id.progress_overlay));
         messageLayout = (LinearLayout) findViewById(R.id.message_layout);
-        contentLayout = (FrameLayout) findViewById(R.id.content);
+        login_info_layout = (LinearLayout) findViewById(R.id.login_info_layout);
+        login_message = (TextView) findViewById(R.id.login_message);
         signInTextView = (TextView) findViewById(R.id.login_sign_in);
         signUpTextView = (TextView) findViewById(R.id.login_sign_up);
+        usernameTextView = (TextView) findViewById(R.id.login_username);
+        contentLayout = (FrameLayout) findViewById(R.id.content);
         storeNameTextView = (TextView) findViewById(R.id.store_name);
 
         // Initialize left drawer listview
@@ -553,6 +563,29 @@ public class MainActivity extends Activity
         messageLayout.setVisibility(View.VISIBLE);
         contentLayout.setPadding(0, (int) convertDpToPixel(50, getApplicationContext()), 0, 0);
         setMessageListeners();
+
+        Access access = Access.getInstance();
+        // Logged In
+        if(access.isLoggedIn() && !access.isGuestLogin()){
+            login_message.setText("Welcome");
+            usernameTextView.setVisibility(View.VISIBLE);
+            usernameTextView.setText("Hyemi.kim@staples.com");
+            login_info_layout.setVisibility(View.GONE);
+
+            //float couponsRewardsAmount = cartFragment.getCouponsRewardsAdjustedAmount();
+        }
+        // Not Logged In
+        else{
+            login_message.setText("Hello");
+            usernameTextView.setVisibility(View.GONE);
+            login_info_layout.setVisibility(View.VISIBLE);
+        }
+
+        LocationFinder locationFinder = LocationFinder.getInstance(this);
+        String postalCode = locationFinder.getPostalCode();
+        Access.getInstance().getChannelApi(false).storeLocations(postalCode, new StoreFragment());
+
+
     }
 
     private void hideMessageBar(){
@@ -585,7 +618,7 @@ public class MainActivity extends Activity
         storeNameTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                selectFragment(new StoreFragment(), Transition.NONE, true);
             }
         });
     }
@@ -598,6 +631,8 @@ public class MainActivity extends Activity
         for(int entry = 0; entry < fragmentEntryCount; entry++){
             Log.d(TAG, "Found fragment " + entry + ": " + manager.getBackStackEntryAt(entry).getName());
         }
+
+        //Log.d(TAG, "Location: " + String.valueOf(LocationFinder.getInstance(this).getLocation()));
 
         // homepage
         if(fragmentEntryCount == 0) {
