@@ -1,0 +1,23 @@
+#!/bin/sh
+
+INKSCAPE='/Applications/Inkscape.app/Contents/Resources/bin/inkscape'
+SOURCE='../svg'
+TEMPFILE='../../temp.svg'
+RES='../../app/src/main/res/drawable-'
+SIZES='mdpi:2 hdpi:3 xhdpi:4 xxhdpi:6 xxxhdpi:8'
+
+while read p
+do
+  q=($p)
+  for s in ${SIZES}
+  do
+    t=(${s//:/ })
+    if [ "${q[3]}" == '-' ]
+    then
+      cp ${SOURCE}/${q[4]} ${TEMPFILE}
+    else
+      sed "s/<path /<path fill=\"${q[3]}\" /g" ${SOURCE}/${q[4]} > ${TEMPFILE}
+    fi
+    ${INKSCAPE} -f ${TEMPFILE} -w $((${t[1]}*${q[1]}/2)) -h $((${t[1]}*${q[2]}/2)) -e ${RES}${t[0]}/${q[0]}.png
+  done
+done < icons.txt
