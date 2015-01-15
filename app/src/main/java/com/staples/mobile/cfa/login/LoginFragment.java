@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.profile.AddressFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
@@ -36,6 +37,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     EditText signInPassword;
     TextView showPassword;
     TextView passwordTxt;
+    TextView forgotPassword;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -80,7 +82,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 @Override
                 public void onClick(View v) {
                     String password = ((TextView)v).getText().toString();
-                    if(password.equals(R.string.show)){
+                    if(password.equals("SHOW")){
                         ((TextView)v).setText(R.string.hide);
                         registerPasswordET.setTransformationMethod(null);
                     }
@@ -88,6 +90,15 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                         ((TextView)v).setText(R.string.show);
                         registerPasswordET.setTransformationMethod(new PasswordTransformationMethod());
                     }
+                }
+            });
+
+            forgotPassword = (TextView)view.findViewById(R.id.forgotPwdTV);
+            forgotPassword.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Fragment passwordFragment = Fragment.instantiate(activity, ResetPasswordFragment.class.getName());
+                    activity.navigateToFragment(passwordFragment);
                 }
             });
 
