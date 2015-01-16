@@ -1,5 +1,7 @@
 package com.staples.mobile.cfa.profile;
 
+import android.util.Log;
+
 import com.staples.mobile.cfa.R;
 
 import java.util.regex.Pattern;
@@ -50,6 +52,26 @@ public enum CardType {
             }
         }
         return UNKNOWN;
+    }
+
+    public static boolean isChecksumValid(String cardNumber) {
+        // Safety check
+        if (cardNumber==null) return(false);
+        cardNumber = cardNumber.trim();
+        int n = cardNumber.length();
+        if (n<12) return(false);
+
+        // Use Luhn algorithm
+        int sum = 0;
+        for(int i=0;i<n;i++) {
+            char c = cardNumber.charAt(i);
+            if (c<'0' || c>'9') return(false);
+            if (((n-i)&1)==0) {
+                sum += 2*(c-'0');
+                if (c>='5') sum++;
+            } else sum += (c-'0');
+        }
+        return((sum%10)==0);
     }
 
     public String getCardTypeName() {
