@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.widget.ActionBar;
 
 import java.text.DecimalFormat;
@@ -203,14 +204,35 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
                 // if success
                 if (errMsg == null) {
+                    // reset cart since empty after successful order submission
+                    CartApiManager.resetCart(); // reset cart since empty after successful order submission
+                    ActionBar.getInstance().setCartCount(0);
 
-                    // show confirmation page and refresh cart
-                    ((MainActivity) activity).selectOrderConfirmation(orderNumber, emailAddress,
+                    // show confirmation page
+                    activity.selectOrderConfirmation(orderNumber, emailAddress,
                             deliveryRange, currencyFormat.format(getCheckoutTotal()));
 
                 } else {
                     Toast.makeText(activity, "Submission Error: " + errMsg, Toast.LENGTH_LONG).show();
                     Log.d(TAG, errMsg);
+
+                    // sometimes there's a failure such as timeout but the order actually goes thru.
+                    // therefore, refresh the cart to make sure we have the right cart status.
+                    // (note that even this safeguard sometimes fails because order submission is still
+                    // in process following the timeout and this reloading of the cart is too
+                    // soon (items still returned)
+                    CartApiManager.loadCart(new CartApiManager.CartRefreshCallback() {
+                        @Override public void onCartRefreshComplete(String errMsg) {
+                            if (CartApiManager.getCartTotalItems() == 0) {
+                                Toast.makeText(activity, R.string.order_confirmation_with_error, Toast.LENGTH_LONG).show();
+                                ActionBar.getInstance().setCartCount(0);
+                                // show confirmation page
+                                activity.selectOrderConfirmation("(see email)", emailAddress,
+                                        deliveryRange, currencyFormat.format(getCheckoutTotal()));
+                            }
+                        }
+                    });
+
                 }
             }
         });
