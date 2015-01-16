@@ -39,4 +39,28 @@ public class CardTypeTest {
                 Assert.fail("\"" + example.string + "\" should have parsed to " + example.type + " but it parsed to " + type);
         }
     }
+
+    @Test
+    public void testGoodChecksum() {
+        for(Example example : examples) {
+            boolean valid = CardType.isChecksumValid(example.string);
+            Assert.assertTrue("\""+ example.string + "\" should have validated ok", valid);
+        }
+    }
+
+    @Test
+    public void testBadChecksum() {
+        for(Example example : examples) {
+            int n = example.string.length();
+            for(int i=0;i<n;i++) {
+                for(int j=1;j<10;j++) {
+                    byte[] seq = example.string.getBytes();
+                    seq[i] = (byte) ((seq[i]-'0'+j)%10+'0');
+                    String string = new String(seq);
+                    boolean valid = CardType.isChecksumValid(string);
+                    Assert.assertFalse("\"" + string + "\" should not have validated ok", valid);
+                }
+            }
+        }
+    }
 }
