@@ -7,7 +7,6 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -21,6 +20,7 @@ import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.checkout.ConfirmationFragment;
 import com.staples.mobile.cfa.checkout.GuestCheckoutFragment;
 import com.staples.mobile.cfa.checkout.RegisteredCheckoutFragment;
+import com.staples.mobile.cfa.home.ConfiguratorFragment;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
@@ -42,7 +42,8 @@ import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 
 public class MainActivity extends Activity
-                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback {
+                          implements View.OnClickListener, AdapterView.OnItemClickListener,
+        LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback{
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int SURRENDER_TIMEOUT = 5000;
@@ -200,6 +201,8 @@ public class MainActivity extends Activity
 
         // disable menu items as appropriate
         refreshMenuItemState(false);
+
+        selectFragment(new ConfiguratorFragment(), Transition.NONE, true);
     }
 
     private void refreshMenuItemState(boolean registeredUser) {
@@ -373,77 +376,6 @@ public class MainActivity extends Activity
         return (selectFragment(fragment, Transition.NONE, true));
     }
 
-    ////////////////////////////////////////////////////////////
-    // Methods for animated action bar
-//    private void initAnimatedBar() {
-//        // hide action bar at first (it will be shown while being scrolled down)
-//        AnimatedBarScrollView.isFirstLoad = true;
-//        AnimatedBarScrollView.currentAlpha = 0;
-//        setContainFrameOffset();
-//    }
-//
-//    public int getScreenHeight(){
-//        // get height for sku scrollview animation effect
-//        calculateScreenHeight();
-//
-//        return screenHeight;
-//    }
-//
-//    private void calculateScreenHeight(){
-//        Display display = getWindowManager().getDefaultDisplay();
-//        Point size = new Point();
-//        display.getSize(size);
-//        screenHeight = size.y;
-//    }
-//
-//    public void setContainFrameOffset(){
-//        containFrame.setPadding(0, 0, 0, 0);
-//    }
-//
-//    public void restoreContainFrame(){
-//        containFrame.setPadding(0, Math.round(convertDpToPixel(56f, this)), 0, 0);
-//    }
-//
-//    public void setActionBarAlpha(int alpha){
-//        actionBar.getBackground().setAlpha(alpha);
-//    }
-//
-//    public void setActionBarColor(int id){
-//        actionBar.setBackgroundColor(getResources().getColor(id));
-//    }
-//
-//    public void setActionBarTitleAlpha(int alpha){
-//        titleView.setTextColor(titleView.getTextColors().withAlpha(alpha));
-//    }
-//
-//    public void setActionBarTitle(String title){
-//        titleView.setText(title);
-//    }
-//
-//    public void restoreDefaultActionBar(){
-//        // restore action bar offset and title offset
-//        setActionBarTitleAlpha(255);
-//        setActionBarAlpha(255);
-//
-//        // restore contain frame offset
-//        containFrame.setPadding(0, Math.round(convertDpToPixel(56f, this)), 0, 0);
-//    }
-//
-//    public void setLeftDrawerOffset(){
-//        leftDrawer.setPadding(0, (int) convertDpToPixel((float) 56, this), 0, 0);
-//    }
-//
-//    public void restoreDefaultLeftDrawer(){
-//        leftDrawer.setPadding(0, 0, 0, 0);
-//    }
-//
-//    private float convertDpToPixel(float dp, Context context){
-//        Resources resources = context.getResources();
-//        DisplayMetrics metrics = resources.getDisplayMetrics();
-//        float px = dp * (metrics.densityDpi / 160f);
-//        return px;
-//    }
-
     @Override
     public void onBackPressed () {
         // if on order confirmation fragment, don't go back to any of the checkout related pages, go to Home page
@@ -459,7 +391,6 @@ public class MainActivity extends Activity
     }
 
     // Action bar & button clicks
-
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
@@ -504,11 +435,8 @@ public class MainActivity extends Activity
     }
 
     // Left drawer listview clicks
-
     @Override
     public void onItemClick(AdapterView parent, View view, int position, long id) {
-        DrawerAdapter adapter;
-
         DrawerItem item = (DrawerItem) parent.getItemAtPosition(position);
         if (item.enabled) {
             switch (item.type) {
