@@ -102,6 +102,7 @@
     <string name="cancel">CANCEL</string>
     <string name="create_account">CREATE ACCOUNT</string>
     <string name="account_confirmation_msg">Thanks for creating an account!</string>
+    <string name="order_confirmation_with_error">An error occurred, but your order appears to have gone through."</string>
 
     <string name="continue_shopping">Continue Shopping</string>
 
