@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.bundle.BundleFragment;
@@ -352,9 +353,9 @@ public class MainActivity extends Activity
         return(selectFragment(fragment, Transition.UP, true));
     }
 
-    public boolean selectSkuItem(String identifier) {
+    public boolean selectSkuItem(String title, String identifier) {
         SkuFragment fragment = new SkuFragment();
-        fragment.setArguments(identifier);
+        fragment.setArguments(title, identifier);
 
         // set animated bar in sku page
 //        initAnimatedBar();
@@ -369,7 +370,7 @@ public class MainActivity extends Activity
 
     public boolean selectLoginFragment() {
         Fragment fragment = new LoginFragment();
-        return(selectFragment(fragment, Transition.NONE, true));
+        return(selectFragment(fragment, Transition.UP, true));
     }
 
     /** opens the profile addresses fragment */
@@ -488,11 +489,13 @@ public class MainActivity extends Activity
         // if on order confirmation fragment, don't go back to check out pages, go to Home page
         FragmentManager manager = getFragmentManager();
         Fragment confirmationFragment = manager.findFragmentByTag(ConfirmationFragment.TAG);
+
         if (confirmationFragment != null && confirmationFragment.isVisible()) {
             selectDrawerItem(homeDrawerItem, Transition.NONE, true);
         } else {
             super.onBackPressed();
         }
+
     }
 
     // Action bar & button clicks
@@ -527,6 +530,13 @@ public class MainActivity extends Activity
                     selectDrawerItem(homeDrawerItem, Transition.RIGHT, true);
                 } else {
                     selectLoginFragment();
+                }
+                break;
+
+            case R.id.search_view:
+                String query = ((SearchView) view).getQuery().toString().trim();
+                if (!query.isEmpty()) {
+                    selectSearch(query);
                 }
                 break;
         }
@@ -573,7 +583,7 @@ public class MainActivity extends Activity
         Access access = Access.getInstance();
         // Logged In
         if(access.isLoggedIn() && !access.isGuestLogin()){
-        //if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin() ){
+            //if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin() ){
             login_message.setText(R.string.welcome);
             usernameTextView.setVisibility(View.VISIBLE);
             userName = "Hyemi.kim@staples.com";
@@ -594,7 +604,7 @@ public class MainActivity extends Activity
         String postalCode = locationFinder.getPostalCode();
         Log.d(TAG, "postalCode: " + postalCode);
         //if(postalCode != null) {
-            //access.getChannelApi(false).storeLocations(postalCode, new StoreFragment());
+        //access.getChannelApi(false).storeLocations(postalCode, new StoreFragment());
         //}
 
     }
