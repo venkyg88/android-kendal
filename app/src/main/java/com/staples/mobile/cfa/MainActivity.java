@@ -4,21 +4,14 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartApiManager;
@@ -27,6 +20,7 @@ import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.checkout.ConfirmationFragment;
 import com.staples.mobile.cfa.checkout.GuestCheckoutFragment;
 import com.staples.mobile.cfa.checkout.RegisteredCheckoutFragment;
+import com.staples.mobile.cfa.home.ConfiguratorFragment;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
@@ -42,17 +36,14 @@ import com.staples.mobile.cfa.rewards.RewardsLinkingFragment;
 import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.skuset.SkuSetFragment;
-import com.staples.mobile.cfa.store.StoreFragment;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
-import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener,
-        LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback,
-        FragmentManager.OnBackStackChangedListener{
+        LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback{
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int SURRENDER_TIMEOUT = 5000;
@@ -64,17 +55,6 @@ public class MainActivity extends Activity
     private CartFragment cartFragment;
     private DrawerItem homeDrawerItem;
     private int screenHeight;
-
-    // Personalized Message Bar UI Elements
-    private LinearLayout messageLayout;
-    private LinearLayout login_info_layout;
-    private TextView login_message;
-    private TextView signInTextView;
-    private TextView signUpTextView;
-    private FrameLayout contentLayout;
-    private TextView storeNameTextView;
-    private TextView usernameTextView;
-    private String userName;
 
     private LoginHelper loginHelper;
 
@@ -124,11 +104,6 @@ public class MainActivity extends Activity
 
         appConfigurator = AppConfigurator.getInstance();
         appConfigurator.getConfigurator(this); // AppConfiguratorCallback
-
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.addOnBackStackChangedListener(this);
-
-        showMessageBar();
     }
 
     @Override
@@ -159,14 +134,6 @@ public class MainActivity extends Activity
         leftDrawer = (ListView) findViewById(R.id.left_drawer);
         mainLayout = (LinearLayoutWithProgressOverlay)findViewById(R.id.main);
         mainLayout.setProgressOverlay(findViewById(R.id.progress_overlay));
-        messageLayout = (LinearLayout) findViewById(R.id.message_layout);
-        login_info_layout = (LinearLayout) findViewById(R.id.login_info_layout);
-        login_message = (TextView) findViewById(R.id.login_message);
-        signInTextView = (TextView) findViewById(R.id.login_sign_in);
-        signUpTextView = (TextView) findViewById(R.id.login_sign_up);
-        usernameTextView = (TextView) findViewById(R.id.login_username);
-        contentLayout = (FrameLayout) findViewById(R.id.content);
-        storeNameTextView = (TextView) findViewById(R.id.store_name);
 
         // Initialize left drawer listview
         leftDrawerAdapter = new DrawerAdapter(this);
@@ -188,7 +155,6 @@ public class MainActivity extends Activity
                 showMainScreen();}};
             new Handler().postDelayed(runs, SURRENDER_TIMEOUT);
         } else {
-            showMessageBar();
             showMainScreen();
         }
     }
@@ -236,7 +202,7 @@ public class MainActivity extends Activity
         // disable menu items as appropriate
         refreshMenuItemState(false);
 
-        showMessageBar();
+        selectFragment(new ConfiguratorFragment(), Transition.NONE, true);
     }
 
     private void refreshMenuItemState(boolean registeredUser) {
@@ -410,77 +376,6 @@ public class MainActivity extends Activity
         return (selectFragment(fragment, Transition.NONE, true));
     }
 
-    ////////////////////////////////////////////////////////////
-    // Methods for animated action bar
-//    private void initAnimatedBar() {
-//        // hide action bar at first (it will be shown while being scrolled down)
-//        AnimatedBarScrollView.isFirstLoad = true;
-//        AnimatedBarScrollView.currentAlpha = 0;
-//        setContainFrameOffset();
-//    }
-//
-//    public int getScreenHeight(){
-//        // get height for sku scrollview animation effect
-//        calculateScreenHeight();
-//
-//        return screenHeight;
-//    }
-//
-//    private void calculateScreenHeight(){
-//        Display display = getWindowManager().getDefaultDisplay();
-//        Point size = new Point();
-//        display.getSize(size);
-//        screenHeight = size.y;
-//    }
-//
-//    public void setContainFrameOffset(){
-//        containFrame.setPadding(0, 0, 0, 0);
-//    }
-//
-//    public void restoreContainFrame(){
-//        containFrame.setPadding(0, Math.round(convertDpToPixel(56f, this)), 0, 0);
-//    }
-//
-//    public void setActionBarAlpha(int alpha){
-//        actionBar.getBackground().setAlpha(alpha);
-//    }
-//
-//    public void setActionBarColor(int id){
-//        actionBar.setBackgroundColor(getResources().getColor(id));
-//    }
-//
-//    public void setActionBarTitleAlpha(int alpha){
-//        titleView.setTextColor(titleView.getTextColors().withAlpha(alpha));
-//    }
-//
-//    public void setActionBarTitle(String title){
-//        titleView.setText(title);
-//    }
-//
-//    public void restoreDefaultActionBar(){
-//        // restore action bar offset and title offset
-//        setActionBarTitleAlpha(255);
-//        setActionBarAlpha(255);
-//
-//        // restore contain frame offset
-//        containFrame.setPadding(0, Math.round(convertDpToPixel(56f, this)), 0, 0);
-//    }
-//
-//    public void setLeftDrawerOffset(){
-//        leftDrawer.setPadding(0, (int) convertDpToPixel((float) 56, this), 0, 0);
-//    }
-//
-//    public void restoreDefaultLeftDrawer(){
-//        leftDrawer.setPadding(0, 0, 0, 0);
-//    }
-//
-//    private float convertDpToPixel(float dp, Context context){
-//        Resources resources = context.getResources();
-//        DisplayMetrics metrics = resources.getDisplayMetrics();
-//        float px = dp * (metrics.densityDpi / 160f);
-//        return px;
-//    }
-
     @Override
     public void onBackPressed () {
         // if on order confirmation fragment, don't go back to any of the checkout related pages, go to Home page
@@ -569,102 +464,4 @@ public class MainActivity extends Activity
             }
         }
     }
-
-    //////////////////////////////////////////////////////////////////////////////
-    // Personalized Message Bar Methods created by Yongnan Zhou:
-    private void showMessageBar(){
-        messageLayout.setVisibility(View.VISIBLE);
-        contentLayout.setPadding(0, (int) convertDpToPixel(50, getApplicationContext()), 0, 0);
-        setMessageListeners();
-
-        Access access = Access.getInstance();
-        // Logged In
-        if(access.isLoggedIn() && !access.isGuestLogin()){
-            //if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin() ){
-            login_message.setText(R.string.welcome);
-            usernameTextView.setVisibility(View.VISIBLE);
-            userName = "Hyemi.kim@staples.com";
-            usernameTextView.setText(userName);
-            login_info_layout.setVisibility(View.GONE);
-
-            //float couponsRewardsAmount = cartFragment.getCouponsRewardsAdjustedAmount();
-            //Log.d(TAG, "Reward: " + couponsRewardsAmount);
-        }
-        // Not Logged In
-        else{
-            login_message.setText(R.string.hello);
-            usernameTextView.setVisibility(View.GONE);
-            login_info_layout.setVisibility(View.VISIBLE);
-        }
-
-        LocationFinder locationFinder = LocationFinder.getInstance(this);
-        String postalCode = locationFinder.getPostalCode();
-        Log.d(TAG, "postalCode: " + postalCode);
-        //if(postalCode != null) {
-        //access.getChannelApi(false).storeLocations(postalCode, new StoreFragment());
-        //}
-
-    }
-
-    private void hideMessageBar(){
-        messageLayout.setVisibility(View.GONE);
-        contentLayout.setPadding(0, 0, 0, 0);
-    }
-
-    private float convertDpToPixel(float dp, Context context) {
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        float px = dp * (metrics.densityDpi / 160f);
-        return px;
-    }
-
-    private void setMessageListeners(){
-        signInTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectLoginFragment();
-            }
-        });
-
-        signUpTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectLoginFragment();
-            }
-        });
-
-        storeNameTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectFragment(new StoreFragment(), Transition.NONE, true);
-            }
-        });
-    }
-
-    @Override
-    public void onBackStackChanged() {
-        FragmentManager manager = getFragmentManager();
-        int fragmentEntryCount = manager.getBackStackEntryCount();
-
-//        for(int entry = 0; entry < fragmentEntryCount; entry++){
-//            Log.d(TAG, "Found fragment " + entry + ": " + manager.getBackStackEntryAt(entry).getName());
-//        }
-
-        //Log.d(TAG, "Location: " + String.valueOf(LocationFinder.getInstance(this).getLocation()));
-
-        // homepage
-        if(fragmentEntryCount == 0) {
-            showMessageBar();
-        }
-        else if(manager.getBackStackEntryAt(fragmentEntryCount - 1).getName()
-                .equals("com.staples.mobile.cfa.home.ConfiguratorFragment")){
-            showMessageBar();
-        }
-        // fragment page
-        else{
-            hideMessageBar();
-        }
-    }
-    // End of Personalized Message Bar Methods
-    //////////////////////////////////////////////////////////////////////////////
 }

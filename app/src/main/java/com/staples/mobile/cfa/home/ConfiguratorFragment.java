@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.home;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -10,15 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.cfa.MainApplication;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.location.LocationFinder;
+import com.staples.mobile.cfa.store.StoreFragment;
 import com.staples.mobile.cfa.widget.ActionBar;
+import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Area;
 import com.staples.mobile.common.access.configurator.model.Configurator;
@@ -32,7 +37,7 @@ import java.util.List;
 
 public class ConfiguratorFragment
         extends Fragment
-        implements AppConfigurator.AppConfiguratorCallback {
+        implements AppConfigurator.AppConfiguratorCallback, FragmentManager.OnBackStackChangedListener {
 
     private static final String TAG = "ConfiguratorFragment";
 
@@ -87,6 +92,17 @@ public class ConfiguratorFragment
     private View.OnClickListener itemOnClickListener;
 
     private boolean retryGetConfig = true;
+
+    // Personalized Message Bar UI Elements
+    private LinearLayout messageLayout;
+    private LinearLayout login_info_layout;
+    private TextView login_message;
+    private TextView signInTextView;
+    private TextView signUpTextView;
+    private FrameLayout contentLayout;
+    private TextView storeNameTextView;
+    private TextView usernameTextView;
+    private String userName;
 
     @Override
     public void onAttach(Activity activity) {
@@ -149,6 +165,12 @@ public class ConfiguratorFragment
         };
 
         appConfigurator.getConfigurator(this); // AppConfiguratorCallback
+
+        // initiate personalized message bar
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.addOnBackStackChangedListener(this);
+        findMessageBarViews();
+        updateMessageBar();
 
         return (configFrameView);
     }
@@ -969,4 +991,95 @@ public class ConfiguratorFragment
         }
 
     } // fillWithDLand()
+
+    //////////////////////////////////////////////////////////////////////////////
+    // Personalized Message Bar Methods created by Yongnan Zhou:
+    private void findMessageBarViews(){
+        messageLayout = (LinearLayout) configFrameView.findViewById(R.id.message_layout);
+        login_info_layout = (LinearLayout) configFrameView.findViewById(R.id.login_info_layout);
+        login_message = (TextView) configFrameView.findViewById(R.id.login_message);
+        signInTextView = (TextView) configFrameView.findViewById(R.id.login_sign_in);
+        signUpTextView = (TextView) configFrameView.findViewById(R.id.login_sign_up);
+        usernameTextView = (TextView) configFrameView.findViewById(R.id.login_username);
+        contentLayout = (FrameLayout) configFrameView.findViewById(R.id.content);
+        storeNameTextView = (TextView) configFrameView.findViewById(R.id.store_name);
+    }
+
+    private void updateMessageBar(){
+        setMessageListeners();
+
+        Access access = Access.getInstance();
+        // Logged In
+        if(access.isLoggedIn() && !access.isGuestLogin()){
+            //if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin() ){
+            login_message.setText(R.string.welcome);
+            usernameTextView.setVisibility(View.VISIBLE);
+            userName = "Hyemi.kim@staples.com";
+            usernameTextView.setText(userName);
+            login_info_layout.setVisibility(View.GONE);
+
+            //float couponsRewardsAmount = cartFragment.getCouponsRewardsAdjustedAmount();
+            //Log.d(TAG, "Reward: " + couponsRewardsAmount);
+        }
+        // Not Logged In
+        else{
+            login_message.setText(R.string.hello);
+            usernameTextView.setVisibility(View.GONE);
+            login_info_layout.setVisibility(View.VISIBLE);
+        }
+
+        LocationFinder locationFinder = LocationFinder.getInstance(getActivity());
+        String postalCode = locationFinder.getPostalCode();
+        Log.d(TAG, "postalCode: " + postalCode);
+
+        //if(postalCode != null) {
+        //access.getChannelApi(false).storeLocations(postalCode, new StoreFragment());
+        //}
+
+    }
+
+    private void setMessageListeners(){
+        signInTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.selectLoginFragment();
+            }
+        });
+
+        signUpTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.selectLoginFragment();
+            }
+        });
+
+        storeNameTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.selectFragment(new StoreFragment(), MainActivity.Transition.NONE, true);
+            }
+        });
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        FragmentManager manager = getFragmentManager();
+        int fragmentEntryCount = manager.getBackStackEntryCount();
+
+//        for(int entry = 0; entry < fragmentEntryCount; entry++){
+//            Log.d(TAG, "Found fragment " + entry + ": " + manager.getBackStackEntryAt(entry).getName());
+//        }
+
+        //Log.d(TAG, "Location: " + String.valueOf(LocationFinder.getInstance(this).getLocation()));
+
+        if(manager.getBackStackEntryAt(fragmentEntryCount - 1).getName()
+                .equals("com.staples.mobile.cfa.home.ConfiguratorFragment")){
+            updateMessageBar();
+        }
+    }
+    // End of Personalized Message Bar Methods
+    //////////////////////////////////////////////////////////////////////////////
 }
