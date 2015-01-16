@@ -37,7 +37,7 @@ import java.util.List;
 
 public class ConfiguratorFragment
         extends Fragment
-        implements AppConfigurator.AppConfiguratorCallback, FragmentManager.OnBackStackChangedListener {
+        implements AppConfigurator.AppConfiguratorCallback{
 
     private static final String TAG = "ConfiguratorFragment";
 
@@ -94,12 +94,10 @@ public class ConfiguratorFragment
     private boolean retryGetConfig = true;
 
     // Personalized Message Bar UI Elements
-    private LinearLayout messageLayout;
     private LinearLayout login_info_layout;
     private TextView login_message;
     private TextView signInTextView;
     private TextView signUpTextView;
-    private FrameLayout contentLayout;
     private TextView storeNameTextView;
     private TextView usernameTextView;
     private String userName;
@@ -167,8 +165,6 @@ public class ConfiguratorFragment
         appConfigurator.getConfigurator(this); // AppConfiguratorCallback
 
         // initiate personalized message bar
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.addOnBackStackChangedListener(this);
         findMessageBarViews();
         updateMessageBar();
 
@@ -995,13 +991,11 @@ public class ConfiguratorFragment
     //////////////////////////////////////////////////////////////////////////////
     // Personalized Message Bar Methods created by Yongnan Zhou:
     private void findMessageBarViews(){
-        messageLayout = (LinearLayout) configFrameView.findViewById(R.id.message_layout);
         login_info_layout = (LinearLayout) configFrameView.findViewById(R.id.login_info_layout);
         login_message = (TextView) configFrameView.findViewById(R.id.login_message);
         signInTextView = (TextView) configFrameView.findViewById(R.id.login_sign_in);
         signUpTextView = (TextView) configFrameView.findViewById(R.id.login_sign_up);
         usernameTextView = (TextView) configFrameView.findViewById(R.id.login_username);
-        contentLayout = (FrameLayout) configFrameView.findViewById(R.id.content);
         storeNameTextView = (TextView) configFrameView.findViewById(R.id.store_name);
     }
 
@@ -1064,22 +1058,22 @@ public class ConfiguratorFragment
         });
     }
 
-    @Override
-    public void onBackStackChanged() {
-        FragmentManager manager = getFragmentManager();
-        int fragmentEntryCount = manager.getBackStackEntryCount();
-
-//        for(int entry = 0; entry < fragmentEntryCount; entry++){
-//            Log.d(TAG, "Found fragment " + entry + ": " + manager.getBackStackEntryAt(entry).getName());
+//    @Override
+//    public void onBackStackChanged() {
+//        FragmentManager manager = getFragmentManager();
+//        int fragmentEntryCount = manager.getBackStackEntryCount();
+//
+////        for(int entry = 0; entry < fragmentEntryCount; entry++){
+////            Log.d(TAG, "Found fragment " + entry + ": " + manager.getBackStackEntryAt(entry).getName());
+////        }
+//
+//        //Log.d(TAG, "Location: " + String.valueOf(LocationFinder.getInstance(this).getLocation()));
+//
+//        if(manager.getBackStackEntryAt(fragmentEntryCount - 1).getName()
+//                .equals("com.staples.mobile.cfa.home.ConfiguratorFragment")){
+//            updateMessageBar();
 //        }
-
-        //Log.d(TAG, "Location: " + String.valueOf(LocationFinder.getInstance(this).getLocation()));
-
-        if(manager.getBackStackEntryAt(fragmentEntryCount - 1).getName()
-                .equals("com.staples.mobile.cfa.home.ConfiguratorFragment")){
-            updateMessageBar();
-        }
-    }
+//    }
     // End of Personalized Message Bar Methods
     //////////////////////////////////////////////////////////////////////////////
 }
