@@ -7,10 +7,12 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartApiManager;
@@ -314,9 +316,9 @@ public class MainActivity extends Activity
         return(selectFragment(fragment, Transition.UP, true));
     }
 
-    public boolean selectSkuItem(String identifier) {
+    public boolean selectSkuItem(String title, String identifier) {
         SkuFragment fragment = new SkuFragment();
-        fragment.setArguments(identifier);
+        fragment.setArguments(title, identifier);
 
         // set animated bar in sku page
 //        initAnimatedBar();
@@ -492,6 +494,13 @@ public class MainActivity extends Activity
                     selectDrawerItem(homeDrawerItem, Transition.RIGHT, true);
                 } else {
                     selectLoginFragment();
+                }
+                break;
+
+            case R.id.search_view:
+                String query = ((SearchView) view).getQuery().toString().trim();
+                if (!query.isEmpty()) {
+                    selectSearch(query);
                 }
                 break;
         }
