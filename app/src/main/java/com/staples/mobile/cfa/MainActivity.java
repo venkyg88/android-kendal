@@ -282,9 +282,6 @@ public class MainActivity extends Activity
 
     public boolean selectOrderConfirmation(String orderNumber, String emailAddress,
                                            String deliveryRange, String total) {
-        // refresh cart since should now be empty
-        ActionBar.getInstance().setCartCount(0);
-        CartApiManager.loadCart(null);
         // open order confirmation fragment
         Fragment fragment = ConfirmationFragment.newInstance(orderNumber, emailAddress, deliveryRange, total);
         return selectFragment(fragment, Transition.NONE, true, ConfirmationFragment.TAG);
@@ -449,7 +446,7 @@ public class MainActivity extends Activity
 
     @Override
     public void onBackPressed () {
-        // if on order confirmation fragment, don't go back to check out pages, go to Home page
+        // if on order confirmation fragment, don't go back to any of the checkout related pages, go to Home page
         FragmentManager manager = getFragmentManager();
         Fragment confirmationFragment = manager.findFragmentByTag(ConfirmationFragment.TAG);
 
