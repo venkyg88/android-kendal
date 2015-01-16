@@ -165,7 +165,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
 
                 // submit api call
                 accountDialogLayout.showProgressIndicator(true);
-                new LoginHelper(activity).registerUser(emailAddress, emailAddress, password, new ProfileDetails.ProfileRefreshCallback() {
+                new LoginHelper(activity).registerUser(emailAddress, password, new ProfileDetails.ProfileRefreshCallback() {
                     @Override
                     public void onProfileRefresh(Member member) {
                         accountDialogLayout.showProgressIndicator(false);

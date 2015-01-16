@@ -328,7 +328,7 @@ public class MainActivity extends Activity
 
     public boolean selectLoginFragment() {
         Fragment fragment = new LoginFragment();
-        return(selectFragment(fragment, Transition.NONE, true));
+        return(selectFragment(fragment, Transition.UP, true));
     }
 
     /** opens the profile addresses fragment */
@@ -447,11 +447,13 @@ public class MainActivity extends Activity
         // if on order confirmation fragment, don't go back to any of the checkout related pages, go to Home page
         FragmentManager manager = getFragmentManager();
         Fragment confirmationFragment = manager.findFragmentByTag(ConfirmationFragment.TAG);
+
         if (confirmationFragment != null && confirmationFragment.isVisible()) {
             selectDrawerItem(homeDrawerItem, Transition.NONE, true);
         } else {
             super.onBackPressed();
         }
+
     }
 
     // Action bar & button clicks
