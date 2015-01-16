@@ -104,14 +104,14 @@ public class PersonalFeedFragment extends Fragment {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity) getActivity()).selectSkuItem(skuId);
+                    ((MainActivity) getActivity()).selectSkuItem(null, skuId);
                 }
             });
 
             title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity) getActivity()).selectSkuItem(skuId);
+                    ((MainActivity) getActivity()).selectSkuItem(null, skuId);
                 }
             });
 
@@ -327,14 +327,14 @@ public class PersonalFeedFragment extends Fragment {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).selectSkuItem(sku);
+                ((MainActivity) getActivity()).selectSkuItem(null, sku);
             }
         });
 
         title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).selectSkuItem(sku);
+                ((MainActivity) getActivity()).selectSkuItem(null, sku);
             }
         });
     }

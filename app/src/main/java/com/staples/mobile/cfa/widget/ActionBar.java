@@ -3,6 +3,7 @@ package com.staples.mobile.cfa.widget;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -34,13 +35,13 @@ public class ActionBar extends LinearLayout {
         MAPVIEW  (false, true,   false, false,  false,    true,  false,  R.string.store_locator_title,  R.drawable.ic_map_white),
         MAPLIST  (false, true,   false, false,  false,    true,  false,  R.string.store_locator_title,  R.drawable.ic_view_list_white),
         ORDER    (false, true,   false, true,   false,    true,  false,  R.string.order_title,          0),
+        PASSWORD (false, true,   false, true,   false,    true,  false,  R.string.password_reset,       0),
         PROFILE  (false, true,   false, true,   false,    true,  false,  R.string.profile_title,        0),
         REWARDS  (false, true,   false, true,   false,    true,  false,  R.string.rewards_title,        0),
         SEARCH   (false, true,   true,  true,   false,    true,  false,  0,                             0),
-        SKU      (false, true,   true,  true,   false,    true,  false,  0,                             0),
-        SKUSET   (false, true,   true,  true,   false,    true,  false,  0,                             0),
-        VIEWCARD (false, true,   false, true,   false,    true,  false,  R.string.credit_card_title,    0),
-        PASSWORD (false, true,   false, true,   false,    true,  false,  R.string.password_reset,    0);
+        SKU      (false, true,   false, true,   false,    true,  false,  0,                             0),
+        SKUSET   (false, true,   false, true,   false,    true,  false,  0,                             0),
+        VIEWCARD (false, true,   false, true,   false,    true,  false,  R.string.credit_card_title,    0);
 
         private boolean close;
         private boolean drawer;
@@ -103,11 +104,11 @@ public class ActionBar extends LinearLayout {
         checkoutSigninButton = (Button) findViewById(R.id.co_signin_button);
         cartQtyView = (TextView) findViewById(R.id.cart_item_qty);
         optionIcon = (ImageView) findViewById(R.id.option_icon);
-        searchView = (SearchView) findViewById(R.id.search_text);
+        searchView = (SearchView) findViewById(R.id.search_view);
         logoView = (ImageView) findViewById(R.id.action_logo);
         titleView = (TextView) findViewById(R.id.action_title);
 
-        // Set listeners
+        // Set icon listeners
         closeButton.setOnClickListener(listener);
         leftDrawerAction.setOnClickListener(listener);
         cartIconAction.setOnClickListener(listener);
@@ -115,6 +116,8 @@ public class ActionBar extends LinearLayout {
 
         // Style SearchView
         styleSearchView(searchView);
+
+        searchView.setOnSearchClickListener(listener);
     }
 
     // Configuration setters
@@ -149,6 +152,7 @@ public class ActionBar extends LinearLayout {
             optionIcon.setOnClickListener(listener);
         }
         searchView.setVisibility(config.search ? VISIBLE : GONE);
+        searchView.setIconified(true);
         logoView.setVisibility(config.logo ? VISIBLE : GONE);
         if (title!=null) {
             titleView.setVisibility(VISIBLE);

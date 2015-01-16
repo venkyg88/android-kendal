@@ -61,6 +61,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         View.OnClickListener, FragmentManager.OnBackStackChangedListener {
     private static final String TAG = "SkuFragment";
 
+    private static final String TITLE = "title";
     private static final String IDENTIFIER = "identifier";
 
     private static final String DESCRIPTION = " Description";
@@ -99,6 +100,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         }
     }
 
+    private String title;
     private String identifier;
 
     private DataWrapper wrapper;
@@ -122,10 +124,9 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     private boolean isShiftedTab;
 
-    public static String productName = "";
-
-    public void setArguments(String identifier) {
+    public void setArguments(String title, String identifier) {
         Bundle args = new Bundle();
+        args.putString(TITLE, title);
         args.putString(IDENTIFIER, identifier);
         setArguments(args);
     }
@@ -134,6 +135,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Bundle args = getArguments();
         if (args != null) {
+            title = args.getString(TITLE);
             identifier = args.getString(IDENTIFIER);
         }
 
@@ -199,7 +201,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     @Override
     public void onResume() {
         super.onResume();
-        ActionBar.getInstance().setConfig(ActionBar.Config.SKU, productName);
+        ActionBar.getInstance().setConfig(ActionBar.Config.SKU, title);
 
         // set the left drawer position
 //        MainActivity mainActivity = (MainActivity) getActivity();
@@ -411,7 +413,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             accessoryImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity) getActivity()).selectSkuItem(sku);
+                    ((MainActivity) getActivity()).selectSkuItem(null, sku);
                 }
             });
 
@@ -423,7 +425,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             accessoryTitleTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity) getActivity()).selectSkuItem(sku);
+                    ((MainActivity) getActivity()).selectSkuItem(null, sku);
                 }
             });
 
@@ -612,7 +614,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             }
 
             // Add info
-            productName = Html.fromHtml(product.getProductName()).toString();
+            String productName = Html.fromHtml(product.getProductName()).toString();
             ((TextView) summary.findViewById(R.id.title)).setText(productName);
             ((TextView) summary.findViewById(R.id.numbers)).setText(formatNumbers(product));
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());

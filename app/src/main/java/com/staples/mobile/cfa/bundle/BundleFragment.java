@@ -133,7 +133,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
-                    ((MainActivity) getActivity()).selectSkuItem(item.identifier);
+                    ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier);
                 }
                 break;
             case R.id.bundle_action:
