@@ -118,15 +118,15 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
             case R.id.bundle_item:
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
-                    String identifier = ((BundleItem) tag).identifier;
-                    ((MainActivity) getActivity()).selectSkuItem(identifier);
+                    BundleItem item = (BundleItem) tag;
+                    ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier);
                 }
                 break;
             case R.id.bundle_action:
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
-                    String title = ((BundleItem) tag).title;
-                    Toast.makeText(getActivity(), "Clicked on " + title, Toast.LENGTH_LONG).show();
+                    BundleItem item = (BundleItem) tag;
+                    Toast.makeText(getActivity(), "Clicked on " + item.title, Toast.LENGTH_LONG).show();
                 }
                 break;
         }
