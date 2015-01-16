@@ -1,10 +1,8 @@
 package com.staples.mobile.cfa.login;
 
 import android.util.Log;
-import android.widget.Button;
 import android.widget.Toast;
 
-import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.Access;
@@ -88,7 +86,6 @@ public class LoginHelper {
                     public void success(TokenObject tokenObjectReturned, Response response) {
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), true);
-                        // Toast.makeText(activity, tokenObjectReturned.getWCToken(), Toast.LENGTH_SHORT).show();
                         notifyListeners(true, true); // guest login, signing in
 
                         Log.i("Status Code", " " + code);
@@ -153,9 +150,9 @@ public class LoginHelper {
         );
     }
 
-    public void registerUser(String emailAddress, String username, String password, final ProfileDetails.ProfileRefreshCallback callback)
+    public void registerUser(String emailAddress, String password, final ProfileDetails.ProfileRefreshCallback callback)
     {
-        CreateUserLogin user = new CreateUserLogin(emailAddress, username, password);
+        CreateUserLogin user = new CreateUserLogin(emailAddress, password);
         Log.i("Register User object", " " + user);
         easyOpenApi.registerUser(user, new Callback<TokenObject>() {
 

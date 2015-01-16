@@ -36,6 +36,7 @@
     <string name="search_title">Search</string>
     <string name="search_hint">Search</string>
     <string name="empty">Nothing Found</string>
+    <string name="password_forgot">Forgot your password?</string>
 
     <!-- Personal Feed -->
     <string name="loading">Loading...</string>
@@ -109,6 +110,7 @@
     <string name="cancel">CANCEL</string>
     <string name="create_account">CREATE ACCOUNT</string>
     <string name="account_confirmation_msg">Thanks for creating an account!</string>
+    <string name="password_reset">Reset Password</string>
 
     <string name="continue_shopping">Continue Shopping</string>
 

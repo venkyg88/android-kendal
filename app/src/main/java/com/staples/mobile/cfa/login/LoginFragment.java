@@ -3,6 +3,9 @@ package com.staples.mobile.cfa.login;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +14,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.profile.AddressFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
@@ -25,82 +30,98 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     Button signInBtn;
     Button registerBtn;
     LoginHelper loginHelper;
-    private String userName;
-    private String password;
-    private String emaiId;
-    private String registerUsername;
-    private String registerPassword;
     MainActivity activity;
-
-    public String getRegisterPassword() {
-        return registerPassword;
-    }
-
-    public void setRegisterPassword(String registerPassword) {
-        this.registerPassword = registerPassword;
-    }
-
-    public String getRegisterUsername() {
-        return registerUsername;
-    }
-
-    public void setRegisterUsername(String registerUsername) {
-        this.registerUsername = registerUsername;
-    }
-
-    public String getEmaiId() {
-        return emaiId;
-    }
-
-    public void setEmaiId(String emaiId) {
-        this.emaiId = emaiId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+    EditText registerEmailET;
+    EditText registerPasswordET;
+    EditText signInEmail;
+    EditText signInPassword;
+    TextView showPassword;
+    TextView passwordTxt;
+    TextView forgotPassword;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
         activity = (MainActivity)getActivity();
         loginHelper = new LoginHelper((MainActivity)getActivity());
-        View view = inflater.inflate(R.layout.login_fragment, container, false);
 
-        TabHost tabHost = (TabHost) view.findViewById(R.id.tabHost);
-        tabHost.setup();
+        if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
+            getFragmentManager().popBackStack();
+            return null;
+        }else {
+            View view = inflater.inflate(R.layout.login_fragment, container, false);
 
-        TabHost.TabSpec tab1 = tabHost.newTabSpec("First Tab");
-        TabHost.TabSpec tab2 = tabHost.newTabSpec("Second Tab");
+            TabHost tabHost = (TabHost) view.findViewById(R.id.tabHost);
+            tabHost.setup();
 
-        tab1.setIndicator("Sign In");
-        tab1.setContent(R.id.tab1);
+            TabHost.TabSpec tab1 = tabHost.newTabSpec("First Tab");
+            TabHost.TabSpec tab2 = tabHost.newTabSpec("Second Tab");
 
-        tab2.setIndicator("Create Account");
-        tab2.setContent(R.id.tab2);
+            tab1.setIndicator("Sign In");
+            tab1.setContent(R.id.tab1);
 
-        tabHost.addTab(tab1);
-        tabHost.addTab(tab2);
+            tab2.setIndicator("Create Account");
+            tab2.setContent(R.id.tab2);
 
-        signInBtn = (Button) view.findViewById(R.id.submit_button);
-        signInBtn.setOnClickListener(this);
+            tabHost.addTab(tab1);
+            tabHost.addTab(tab2);
 
-        registerBtn = (Button) view.findViewById(R.id.register_button);
-        registerBtn.setOnClickListener(this);
+            signInBtn = (Button) view.findViewById(R.id.submit_button);
+            signInBtn.setOnClickListener(this);
 
-        return view;
+            registerBtn = (Button) view.findViewById(R.id.register_button);
+            registerBtn.setOnClickListener(this);
+
+            registerEmailET = (EditText)view.findViewById(R.id.emailIdRegister);
+            registerPasswordET = (EditText)view.findViewById(R.id.passwordRegister);
+            signInEmail = (EditText) view.findViewById(R.id.username);
+            signInPassword = (EditText)view.findViewById(R.id.password);
+            passwordTxt = (TextView)view.findViewById(R.id.passwordTxt);
+            showPassword = (TextView)view.findViewById(R.id.passwordLbl);
+            showPassword.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String password = ((TextView)v).getText().toString();
+                    if(password.equals("SHOW")){
+                        ((TextView)v).setText(R.string.hide);
+                        registerPasswordET.setTransformationMethod(null);
+                    }
+                    else{
+                        ((TextView)v).setText(R.string.show);
+                        registerPasswordET.setTransformationMethod(new PasswordTransformationMethod());
+                    }
+                }
+            });
+
+            forgotPassword = (TextView)view.findViewById(R.id.forgotPwdTV);
+            forgotPassword.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Fragment passwordFragment = Fragment.instantiate(activity, ResetPasswordFragment.class.getName());
+                    activity.navigateToFragment(passwordFragment);
+                }
+            });
+
+            registerPasswordET.addTextChangedListener(new TextWatcher() {
+
+                public void afterTextChanged(Editable s) {
+                }
+
+                public void beforeTextChanged(CharSequence s, int start,
+                                              int count, int after) {
+                }
+
+                public void onTextChanged(CharSequence s, int start,
+                                          int before, int count) {
+                    if (s.length() != 0) {
+                        showPassword.setVisibility(View.VISIBLE);
+                        passwordTxt.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+
+            return view;
+        }
     }
 
     @Override
@@ -118,20 +139,16 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
-        if(view == signInBtn)
-        {
-            String userName = ((EditText) getView().findViewById(R.id.username)).getText().toString();
-            String password = ((EditText)getView().findViewById(R.id.password)).getText().toString();
-
-            setUserName(userName);
-            setPassword(password);
+        if(view == signInBtn){
+            String email = signInEmail.getText().toString();
+            String password = signInPassword.getText().toString();
 
             hideKeyboard(view);
 
-            if(!getUserName().isEmpty() && !getPassword().isEmpty())
+            if(!email.isEmpty() && !password.isEmpty())
             {
                 activity.showProgressIndicator();
-                loginHelper.getUserTokens(getUserName(), getPassword(), new ProfileDetails.ProfileRefreshCallback() {
+                loginHelper.getUserTokens(email, password, new ProfileDetails.ProfileRefreshCallback() {
                     @Override
                     public void onProfileRefresh(Member member) {
                         activity.hideProgressIndicator();
@@ -145,21 +162,19 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(getActivity(), "Username or Password cannot be null", Toast.LENGTH_LONG).show();
             }
         }
-        if(view == registerBtn)
-        {
-            setEmaiId(((EditText) getView().findViewById(R.id.emailIdRegister)).getText().toString());
-            setRegisterUsername(((EditText) getView().findViewById(R.id.userNameRegister)).getText().toString());
-            setRegisterPassword(((EditText) getView().findViewById(R.id.passwordRegister)).getText().toString());
+        if(view == registerBtn){
+            String email = registerEmailET.getText().toString();
+            String password = registerPasswordET.getText().toString();
 
             hideKeyboard(view);
 
-            if(!getRegisterUsername().isEmpty() && !getRegisterPassword().isEmpty())
+            if(!email.isEmpty() && !password.isEmpty())
             {
                 if (!loginHelper.isGuestLogin()) {
                     Access.getInstance().setTokens(null, null, false);
                 }
                 activity.showProgressIndicator();
-                loginHelper.registerUser(getEmaiId(), getRegisterUsername(), getRegisterPassword(), new ProfileDetails.ProfileRefreshCallback() {
+                loginHelper.registerUser(email, password, new ProfileDetails.ProfileRefreshCallback() {
                     @Override
                     public void onProfileRefresh(Member member) {
                         activity.hideProgressIndicator();

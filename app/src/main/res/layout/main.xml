@@ -57,7 +57,7 @@
                 android:layout_gravity="center_vertical|right"
                 android:src="@drawable/ic_search_white"/>
             <SearchView
-                android:id="@+id/search_text"
+                android:id="@+id/search_view"
                 style="@style/ActionBarSearchStyle"
                 android:layout_gravity="center_vertical|right"
                 android:src="@drawable/ic_search_white"/>
