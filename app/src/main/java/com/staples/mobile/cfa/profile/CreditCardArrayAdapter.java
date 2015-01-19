@@ -84,7 +84,7 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
 
 
         cardTypeImg = (ImageView)rowView.findViewById(R.id.cardTypeImg);
-        cardTypeImg.setImageResource(CardType.matchOnApiName(creditCard.getCardType()).getImageResource());
+        cardTypeImg.setImageResource(CreditCard.Type.matchOnApiName(creditCard.getCardType()).getImageResource());
         optionButton = (ImageButton) rowView.findViewById(R.id.listOptions);
         optionButton.setTag(position);
         optionButton.setOnClickListener(this);
