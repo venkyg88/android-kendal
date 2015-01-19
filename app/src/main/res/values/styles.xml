@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppTheme" parent="android:Theme.Holo.Light.NoActionBar">
-        <item name="android:textAppearanceMedium">@drawable/ic_android</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
     <!-- ActionBar styles -->

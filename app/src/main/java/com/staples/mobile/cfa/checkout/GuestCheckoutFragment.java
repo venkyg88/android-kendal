@@ -21,7 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.profile.CardType;
+import com.staples.mobile.cfa.profile.CreditCard;
 import com.staples.mobile.cfa.profile.UsState;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethodResponse;
@@ -121,8 +121,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                     @Override
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                         if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                            CardType ccType = CardType.detect(cardNumberVw.getText().toString());
-                            if (ccType != CardType.UNKNOWN) {
+                            CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString());
+                            if (ccType != CreditCard.Type.UNKNOWN) {
                                 cardImage.setImageResource(ccType.getImageResource());
                             }
                             expirationMonthVw.requestFocus();
@@ -252,15 +252,15 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         if (!validateRequiredField(cardNumberVw, requiredMsg)) { errors = true; }
         if (!validateRequiredField(expirationMonthVw, requiredMsg)) { errors = true; }
         if (!validateRequiredField(expirationYearVw, requiredMsg)) { errors = true; }
-        CardType ccType = CardType.detect(cardNumberVw.getText().toString());
-        if (ccType!=CardType.STAPLES)
+        CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString());
+        if (ccType!=CreditCard.Type.STAPLES)
             if (!validateRequiredField(cidVw, requiredMsg)) { errors = true; }
 
         if (!errors) {
             PaymentMethod paymentMethod = new PaymentMethod();
             paymentMethod.setSaveCardIndicator("Y");
             paymentMethod.setCardNumber(cardNumberVw.getText().toString());
-            paymentMethod.setCardType(ccType.getCardTypeName());
+            paymentMethod.setCardType(ccType.getName());
             paymentMethod.setCardExpirationMonth(expirationMonthVw.getText().toString());
             paymentMethod.setCardExpirationYear(expirationYearVw.getText().toString());
             paymentMethod.setCardVerificationCode(cidVw.getText().toString());
