@@ -53,7 +53,6 @@ android:paddingRight="10dp">
         android:layout_weight="5"
         android:text="Track shipment"
         android:id="@+id/trackShipmentBtn"
-        android:textAllCaps="false"
         android:layout_gravity="center_vertical|center_horizontal"
         android:layout_below="@id/orderDeliveryTV"/>
     <Button
@@ -61,7 +60,6 @@ android:paddingRight="10dp">
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:text="View receipt"
-        android:textAllCaps="false"
         android:id="@+id/receiptBtn" />
     </LinearLayout>
 </RelativeLayout>
