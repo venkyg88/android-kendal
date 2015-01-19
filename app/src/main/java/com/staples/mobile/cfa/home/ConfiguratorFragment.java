@@ -102,7 +102,7 @@ public class ConfiguratorFragment
     private TextView signUpTextView;
     private TextView storeNameTextView;
     private TextView usernameTextView;
-    private String userName;
+    public static String userName;
 
     @Override
     public void onAttach(Activity activity) {
@@ -1011,7 +1011,7 @@ public class ConfiguratorFragment
             //if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin() ){
             login_message.setText(R.string.welcome);
             usernameTextView.setVisibility(View.VISIBLE);
-            userName = "Hyemi.kim@staples.com";
+            //userName = "Hyemi.kim@staples.com";
             usernameTextView.setText(userName);
             login_info_layout.setVisibility(View.GONE);
 
