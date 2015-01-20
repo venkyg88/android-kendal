@@ -156,6 +156,8 @@
         <item quantity="other">%d items</item>
     </plurals>
 
+    <string name="save_btn">Save</string>
+    <string name="cancel_btn">Cancel</string>
     <string name="original_hint">Search</string>
     <string name="searching">Searching…</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
