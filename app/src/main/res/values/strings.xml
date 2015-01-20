@@ -150,6 +150,10 @@
     <string name="would_you">Would you recommend this to a friend?</string>
     <string name="item">Item</string>
     <string name="model">Model</string>
+    <string name="phone">Phone</string>
+    <string name="store_hours">Store Hours</string>
+    <string name="store_features">Store Features</string>
+
 
     <plurals name="cart_qty">
         <item quantity="one">1 item</item>

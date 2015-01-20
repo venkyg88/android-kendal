@@ -10,7 +10,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +44,7 @@ import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.channel.model.store.Obj;
 import com.staples.mobile.common.access.channel.model.store.StoreAddress;
 import com.staples.mobile.common.access.channel.model.store.StoreData;
+import com.staples.mobile.common.access.channel.model.store.StoreFeature;
 import com.staples.mobile.common.access.channel.model.store.StoreHours;
 import com.staples.mobile.common.access.channel.model.store.StoreQuery;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -53,7 +56,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class StoreFragment extends Fragment implements Callback<StoreQuery>, GoogleMap.OnMarkerClickListener,
-                           View.OnClickListener, EditText.OnEditorActionListener {
+            GoogleMap.OnMapClickListener, View.OnClickListener, EditText.OnEditorActionListener {
     private static final String TAG = "StoreFragment";
 
     private static int FITSTORES = 5; // Number of stores to fit in initial view
@@ -89,6 +92,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
             googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             googleMap.setMyLocationEnabled(true);
             googleMap.setOnMarkerClickListener(this);
+            googleMap.setOnMapClickListener(this);
 
             MapsInitializer.initialize(getActivity());
 
@@ -108,6 +112,8 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         list.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         adapter.setOnClickListener(this);
         adapter.setSingleMode(mapView!=null);
+        adapter.setFullStoreDetail(false); // initially only summary store info is displayed
+
 
         search = (EditText) view.findViewById(R.id.store_search);
         search.setOnEditorActionListener(this);
@@ -175,6 +181,18 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         String storeNumber = obj.getStoreNumber();
         StoreItem item = new StoreItem(storeNumber, lat, lng);
         item.distance = storeData.getDis();
+
+        // store features
+        StringBuilder featuresBuf = new StringBuilder();
+        for (StoreFeature feature : obj.getStoreFeatures()) {
+            if (!TextUtils.isEmpty(feature.getName())) {
+                if (featuresBuf.length() > 0) {
+                    featuresBuf.append("\n");
+                }
+                featuresBuf.append(feature.getName());
+            }
+        }
+        item.storeFeatures = featuresBuf.toString();
 
         // Get store address
         StoreAddress storeAddress = obj.getStoreAddress();
@@ -381,18 +399,37 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         return(false);
     }
 
-    private void toggleView() {
-        if (mapView==null) {
+    @Override
+    public void onMapClick(LatLng latLng) {
+        // if in store detail mode, exit detail mode and restore map
+        if (adapter.isFullStoreDetail()) {
+
+            if (mapView != null) {
+                // resize map
+                mapView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
+                float newListHeightPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
+                list.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                        Math.round(newListHeightPx)));
+            }
+
+            adapter.setFullStoreDetail(false);
+            adapter.notifyDataSetChanged();
         }
+    }
+
+    private void toggleView() {
 
         // Map with single store
-        else if (adapter.isSingleMode()) {
+        if (adapter.isSingleMode()) {
             ActionBar.getInstance().setConfig(ActionBar.Config.MAPVIEW, this);
-            mapView.setVisibility(View.GONE);
+            if (mapView != null) {
+                mapView.setVisibility(View.GONE);
+            }
             ViewGroup.LayoutParams params = list.getLayoutParams();
             singleHeight = params.height;
             params.height = ViewGroup.LayoutParams.MATCH_PARENT;
             adapter.setSingleMode(false);
+            adapter.setFullStoreDetail(false);
             adapter.notifyDataSetChanged();
             list.scrollToPosition(adapter.getSingleIndex());
             list.requestLayout();
@@ -401,7 +438,9 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         // List of stores with map available
         else {
             ActionBar.getInstance().setConfig(ActionBar.Config.MAPLIST, this);
-            mapView.setVisibility(View.VISIBLE);
+            if (mapView != null) {
+                mapView.setVisibility(View.VISIBLE);
+            }
             ViewGroup.LayoutParams params = list.getLayoutParams();
             params.height = singleHeight;
             adapter.setSingleMode(true);
@@ -430,9 +469,33 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
                 toggleView();
                 break;
             case R.id.store_item:
-                Toast.makeText(getActivity(), "Whole store", Toast.LENGTH_SHORT).show();
+                if (!adapter.isFullStoreDetail()) {
+                    adapter.setFullStoreDetail(true);
+
+                    // if not in single mode already, switch to it
+                    if (!adapter.isSingleMode()) {
+                        toggleView();
+                    }
+
+                    if (mapView != null) {
+                        // resize map
+                        list.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
+                        float newMapHeightPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 144, getResources().getDisplayMetrics());
+                        mapView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                                Math.round(newMapHeightPx)));
+
+                        // fake a marker click to get the right store and to refresh view taking into account full store detail flag
+                        obj = view.getTag();
+                        if (obj instanceof StoreItem) {
+                            Marker marker = ((StoreItem) obj).marker;
+                            onMarkerClick(marker);
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                        }
+                    }
+                }
                 break;
             case R.id.call_store:
+            case R.id.call_store2:
                 obj = view.getTag();
                 if (obj instanceof StoreItem) {
                     String phone = ((StoreItem) obj).phoneNumber;

@@ -19,8 +19,12 @@ public class TimeSpan {
 
     private int start;
     private int end;
+    private String dayName;
+    private String hoursText;
 
-    public TimeSpan(long start, long end) {
+    public TimeSpan(long start, long end, String dayName, String hoursText) {
+        this.dayName = dayName;
+        this.hoursText = hoursText;
         this.start = (int) (start%ONEWEEK);
         this.end = (int) (end%ONEWEEK);
         if (this.end<=this.start) this.end += ONEWEEK;
@@ -56,7 +60,7 @@ public class TimeSpan {
         if (end<start) end+= ONEDAY;
 
         // Make TimeSpan
-        TimeSpan span = new TimeSpan(start, end);
+        TimeSpan span = new TimeSpan(start, end, dayName, hours);
         return(span);
     }
 
@@ -66,6 +70,14 @@ public class TimeSpan {
 
     public int getEnd() {
         return end;
+    }
+
+    public String getDayName() {
+        return dayName;
+    }
+
+    public String getHoursText() {
+        return hoursText;
     }
 
     public int untilOutsideSpan(long when) {
@@ -87,6 +99,10 @@ public class TimeSpan {
         if (x<a) x += ONEWEEK;
         if (x<b) return(b-x);
         return(0);
+    }
+
+    public boolean isWeekday() {
+        return !"Saturday".equals(dayName) && !"Sunday".equals(dayName);
     }
 
     public String toString(int dateStyle, DateFormat timeFormat) {
