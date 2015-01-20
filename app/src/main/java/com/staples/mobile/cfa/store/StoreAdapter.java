@@ -219,4 +219,15 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         }
         return(-1);
     }
+
+
+    public int findPositionByItem(StoreItem storeItem) {
+        int n = array.size();
+        for(int i=0;i<n;i++) {
+            StoreItem item = array.get(i);
+            if (item == storeItem)
+                return (i);
+        }
+        return(-1);
+    }
 }

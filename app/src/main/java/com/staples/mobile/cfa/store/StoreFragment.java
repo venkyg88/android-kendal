@@ -419,7 +419,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
 
     private void toggleView() {
 
-        // Map with single store
+        // if showing single store (with map if available), toggle to list view
         if (adapter.isSingleMode()) {
             ActionBar.getInstance().setConfig(ActionBar.Config.MAPVIEW, this);
             if (mapView != null) {
@@ -435,11 +435,13 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
             list.requestLayout();
         }
 
-        // List of stores with map available
+        // else if showing list of stores, then toggle to single mode
         else {
             ActionBar.getInstance().setConfig(ActionBar.Config.MAPLIST, this);
             if (mapView != null) {
                 mapView.setVisibility(View.VISIBLE);
+            } else {
+                adapter.setFullStoreDetail(true);
             }
             ViewGroup.LayoutParams params = list.getLayoutParams();
             params.height = singleHeight;
@@ -477,19 +479,27 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
                         toggleView();
                     }
 
-                    if (mapView != null) {
-                        // resize map
-                        list.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
-                        float newMapHeightPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 144, getResources().getDisplayMetrics());
-                        mapView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                                Math.round(newMapHeightPx)));
+                    obj = view.getTag();
+                    if (obj instanceof StoreItem) {
+                        StoreItem storeItem = (StoreItem) obj;
 
-                        // fake a marker click to get the right store and to refresh view taking into account full store detail flag
-                        obj = view.getTag();
-                        if (obj instanceof StoreItem) {
-                            Marker marker = ((StoreItem) obj).marker;
+                        if (mapView != null) {
+                            // resize map
+                            list.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
+                            float newMapHeightPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 144, getResources().getDisplayMetrics());
+                            mapView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                                    Math.round(newMapHeightPx)));
+
+                            // fake a marker click to get the right store and to refresh view taking into account full store detail flag
+                            Marker marker = storeItem.marker;
                             onMarkerClick(marker);
                             googleMap.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                        } else {
+                            int index = adapter.findPositionByItem(storeItem);
+                            if (index >= 0) {
+                                adapter.setSingleIndex(index);
+                                adapter.notifyDataSetChanged();
+                            }
                         }
                     }
                 }
