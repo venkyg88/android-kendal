@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.login.LoginHelper;
-import com.staples.mobile.cfa.profile.CardType;
+import com.staples.mobile.cfa.profile.CreditCard;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -131,7 +131,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         }
         if (paymentMethod != null) {
             paymentMethodVw.setText(formatPaymentMethod(paymentMethod));
-            paymentMethodImage.setImageResource(CardType.matchOnApiName(paymentMethod.getCardType()).getImageResource());
+            paymentMethodImage.setImageResource(CreditCard.Type.matchOnApiName(paymentMethod.getCardType()).getImageResource());
         }
         if (billingAddress != null) {
             billingNameVw.setText(formatAddressName(billingAddress));

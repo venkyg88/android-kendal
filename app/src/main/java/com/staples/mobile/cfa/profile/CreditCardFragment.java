@@ -77,7 +77,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
             if(creditCard != null) {
                 cardNumberET.setText("Card ending in: " + creditCard.getCardNumber());
                 cardType = creditCard.getCardType();
-                cardImage.setImageResource(CardType.matchOnApiName(cardType).getImageResource());
+                cardImage.setImageResource(CreditCard.Type.matchOnApiName(cardType).getImageResource());
                 expMonthET.setText(creditCard.getExpirationMonth());
                 expYearET.setText(creditCard.getExpirationYear());
                 creditCardId = creditCard.getCreditCardId();
@@ -112,10 +112,10 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if(expMonthET.requestFocus()) {
-            CardType ccType = CardType.detect(cardNumberET.getText().toString());
-            if (ccType != CardType.UNKNOWN) {
+            CreditCard.Type ccType = CreditCard.Type.detect(cardNumberET.getText().toString());
+            if (ccType != CreditCard.Type.UNKNOWN) {
                 cardImage.setImageResource(ccType.getImageResource());
-                cardType = ccType.getCardTypeName();
+                cardType = ccType.getName();
             }
         }
     }
@@ -133,7 +133,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         creditCardNumber = cardNumberET.getText().toString();
         expirationMonth = expMonthET.getText().toString();
         expirationYear = expYearET.getText().toString();
-        cardType = CardType.detect(creditCardNumber).getCardTypeName();
+        cardType = CreditCard.Type.detect(creditCardNumber).getName();
 
         if(!creditCardNumber.isEmpty() && !cardType.isEmpty()){
             final AddCreditCardPOW creditCard = new AddCreditCardPOW(creditCardNumber, cardType.toUpperCase());
