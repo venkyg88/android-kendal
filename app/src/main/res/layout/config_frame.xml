@@ -113,7 +113,7 @@
                             android:layout_height="20dp"
                             android:layout_gravity="center"
                             android:scaleType="fitCenter"
-                            android:src="@drawable/ic_locator"/>
+                            android:src="@drawable/ic_place_black"/>
                         <TextView
                             android:id="@+id/store_status"
                             android:layout_width="30dp"
