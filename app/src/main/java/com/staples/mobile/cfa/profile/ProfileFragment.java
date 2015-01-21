@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.checkout.ConfirmationFragment;
+import com.staples.mobile.cfa.home.ConfiguratorFragment;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
@@ -60,6 +62,17 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         String email = member.getEmailAddress();
         String userName = member.getUserName();
+
+        // set personalized message bar
+        ConfiguratorFragment.userName = email;
+
+        if(member.getRewardsNumber() != null && member.getRewardDetails() != null) {
+            System.out.println("member.getAmountRewards():" + member.getRewardDetails().get(0).getAmountRewards());
+            ConfiguratorFragment.rewards = String.valueOf(member.getRewardDetails().get(0).getAmountRewards());
+        }
+        else{
+            ConfiguratorFragment.rewards = "";
+        }
 
         if (email!=null)
             ((TextView) view.findViewById(R.id.emailProfile)).setText(email);
