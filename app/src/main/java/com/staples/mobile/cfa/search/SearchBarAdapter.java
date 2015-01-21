@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,7 @@ class SearchBarAdapter extends BaseAdapter implements Filterable {
     public SearchBarAdapter(Activity activity, SearchBarView searchBar) {
         super();
         this.activity = activity;
-        this.searchBar =searchBar;
+        this.searchBar = searchBar;
 
         original = new ArrayList<String>();
         history = new ArrayList<String>();
@@ -110,13 +111,12 @@ class SearchBarAdapter extends BaseAdapter implements Filterable {
             }
 
             String span = constraint.toString();
-
             ArrayList<String> array = new ArrayList<String>();
             if (original!=null) {
                 int n = original.size();
-                for(int i = 0; i < n; i++) {
+                for(int i=0;i<n;i++) {
                     String item = original.get(i);
-                    if (item != null && item.indexOf(span) >= 0)
+                    if (item!=null && item.indexOf(span)>=0)
                         array.add(item);
                 }
             }
