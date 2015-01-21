@@ -3,54 +3,159 @@
     android:id="@+id/store_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="6dp">
+    android:orientation="vertical">
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1"
-        android:paddingRight="6dp">
-        <TextView
-            android:id="@+id/city"
-            style="@style/StoreItem"/>
-        <TextView
-            android:id="@+id/street"
-            style="@style/StoreItem"/>
-        <TextView
-            android:id="@+id/phone"
-            style="@style/StoreItem"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/distance"
-            style="@style/StoreItem"
-            android:layout_gravity="right"/>
-        <TextView
-            android:id="@+id/open_time"
-            style="@style/StoreItem"
-            android:layout_gravity="right"/>
+        android:orientation="horizontal"
+        android:padding="6dp">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:paddingRight="6dp">
+            <TextView
+                android:id="@+id/city"
+                style="@style/StoreItem"/>
+            <TextView
+                android:id="@+id/street"
+                style="@style/StoreItem"/>
+            <TextView
+                android:id="@+id/phone"
+                style="@style/StoreItem"/>
+            <TextView
+                android:id="@+id/store_number"
+                style="@style/StoreItem"/>
+        </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="right">
-            <ImageView
-                android:id="@+id/call_store"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/distance"
+                style="@style/StoreItem"
+                android:layout_gravity="right"/>
+            <TextView
+                android:id="@+id/open_time"
+                style="@style/StoreItem"
+                android:layout_gravity="right"/>
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_phone_black"/>
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="wrap_content"/>
-            <ImageView
-                android:id="@+id/directions"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_directions_black"/>
+                android:orientation="horizontal"
+                android:layout_gravity="right">
+                <ImageView
+                    android:id="@+id/call_store"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_phone_black"/>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"/>
+                <ImageView
+                    android:id="@+id/directions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_directions_black"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/store_detail_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!--horizontal rule 1 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/background_light_gray"/>
+
+        <!--phone number-->
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            >
+            <TextView
+                android:id="@+id/phone2_label"
+                android:layout_gravity="left"
+                style="@style/GraySubheading"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:text="@string/phone"/>
+            <TextView
+                android:id="@+id/phone2"
+                android:layout_below="@id/phone2_label"
+                android:layout_alignParentLeft="true"
+                style="@style/StoreItem"/>
+            <ImageView
+                android:id="@+id/call_store2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="6dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_phone_black"/>
+        </RelativeLayout>
+
+
+        <!--horizontal rule 2 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/background_light_gray"/>
+
+        <!--store hours-->
+        <TextView
+            android:layout_gravity="left"
+            style="@style/GraySubheading"
+            android:paddingLeft="6dp"
+            android:text="@string/store_hours"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/store_days"
+                android:layout_alignParentLeft="true"
+                style="@style/StoreItem"
+                android:paddingLeft="6dp"
+                android:layout_marginRight="16dp"/>
+            <TextView
+                android:id="@+id/store_hours"
+                android:layout_alignParentLeft="true"
+                style="@style/StoreItem"/>
+        </LinearLayout>
+
+        <!--horizontal rule 3-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/background_light_gray"/>
+
+        <!--store features-->
+        <TextView
+            android:layout_gravity="left"
+            style="@style/GraySubheading"
+            android:paddingLeft="6dp"
+            android:text="@string/store_features"/>
+        <TextView
+            android:id="@+id/store_features"
+            android:layout_alignParentLeft="true"
+            style="@style/StoreItem"
+            android:paddingLeft="6dp"
+            android:layout_marginBottom="16dp"
+            />
+
+    </LinearLayout>
+
 </LinearLayout>
