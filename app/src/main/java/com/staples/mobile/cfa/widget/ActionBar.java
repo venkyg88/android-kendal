@@ -41,7 +41,8 @@ public class ActionBar extends LinearLayout {
         SEARCH   (false, true,   true,  true,   false,    true,  false,  0,                             0),
         SKU      (false, true,   false, true,   false,    true,  false,  0,                             0),
         SKUSET   (false, true,   false, true,   false,    true,  false,  0,                             0),
-        VIEWCARD (false, true,   false, true,   false,    true,  false,  R.string.credit_card_title,    0);
+        VIEWCARD (false, true,   false, true,   false,    true,  false,  R.string.credit_card_title,    0),
+        UPDATECARD  (false, true,   false, true,   false,    true,  false,  R.string.edit_credit_card_title,       0);
 
         private boolean close;
         private boolean drawer;
