@@ -24,17 +24,31 @@
             android:layout_toEndOf="@+id/card_image"
             android:layout_toRightOf="@+id/card_image" />
         </LinearLayout>
-    <EditText
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/expirationDate"
-        android:inputType="number"
-        android:maxLength="5"
-        android:hint="MM/YY"
-        android:imeOptions="actionNext"
-        android:layout_below="@+id/cardNumber"
-        android:visibility="gone"/>
-
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/expirationDate"
+            android:inputType="number"
+            android:maxLength="5"
+            android:hint="MM/YY"
+            android:visibility="gone"
+            android:imeOptions="actionNext"/>
+        <EditText
+            android:id="@+id/cid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLength="4"
+            android:hint="@string/cid"
+            android:visibility="gone"
+            android:layout_toRightOf="@+id/expirationDate"
+            android:imeOptions="actionDone"
+            android:singleLine="true"/>
+        </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
