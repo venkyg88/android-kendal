@@ -2,7 +2,6 @@ package com.staples.mobile.cfa.home;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -95,12 +93,16 @@ public class ConfiguratorFragment
 
     // Personalized Message Bar UI Elements
     private LinearLayout login_info_layout;
-    private TextView login_message;
+    private LinearLayout login_layout;
+    private LinearLayout reward_layout;
+    private TextView rewardTextView;
+    private TextView loginMessageTextView;
     private TextView signInTextView;
     private TextView signUpTextView;
     private TextView storeNameTextView;
     private TextView usernameTextView;
     public static String userName;
+    public static String rewards;
 
     @Override
     public void onAttach(Activity activity) {
@@ -991,8 +993,11 @@ public class ConfiguratorFragment
     //////////////////////////////////////////////////////////////////////////////
     // Personalized Message Bar Methods created by Yongnan Zhou:
     private void findMessageBarViews(){
+        login_layout = (LinearLayout) configFrameView.findViewById(R.id.login_layout);
         login_info_layout = (LinearLayout) configFrameView.findViewById(R.id.login_info_layout);
-        login_message = (TextView) configFrameView.findViewById(R.id.login_message);
+        reward_layout = (LinearLayout) configFrameView.findViewById(R.id.reward_layout);
+        rewardTextView = (TextView) configFrameView.findViewById(R.id.reward);
+        loginMessageTextView = (TextView) configFrameView.findViewById(R.id.login_message);
         signInTextView = (TextView) configFrameView.findViewById(R.id.login_sign_in);
         signUpTextView = (TextView) configFrameView.findViewById(R.id.login_sign_up);
         usernameTextView = (TextView) configFrameView.findViewById(R.id.login_username);
@@ -1006,20 +1011,29 @@ public class ConfiguratorFragment
         // Logged In
         if(access.isLoggedIn() && !access.isGuestLogin()){
             //if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin() ){
-            login_message.setText(R.string.welcome);
-            usernameTextView.setVisibility(View.VISIBLE);
-            //userName = "Hyemi.kim@staples.com";
-            usernameTextView.setText(userName);
-            login_info_layout.setVisibility(View.GONE);
+            Log.d(TAG, "Rewards: " + rewards);
 
-            //float couponsRewardsAmount = cartFragment.getCouponsRewardsAdjustedAmount();
-            //Log.d(TAG, "Reward: " + couponsRewardsAmount);
+            if(!rewards.equals("")) {
+                login_layout.setVisibility(View.GONE);
+                reward_layout.setVisibility(View.VISIBLE);
+                rewardTextView.setText("$" + rewards);
+            }
+            else{
+                loginMessageTextView.setText(R.string.welcome);
+                usernameTextView.setVisibility(View.VISIBLE);
+                usernameTextView.setText(userName);
+                login_info_layout.setVisibility(View.GONE);
+
+                login_layout.setVisibility(View.VISIBLE);
+                reward_layout.setVisibility(View.GONE);
+            }
         }
         // Not Logged In
         else{
-            login_message.setText(R.string.hello);
+            loginMessageTextView.setText(R.string.hello);
             usernameTextView.setVisibility(View.GONE);
             login_info_layout.setVisibility(View.VISIBLE);
+            reward_layout.setVisibility(View.GONE);
         }
 
         LocationFinder locationFinder = LocationFinder.getInstance(getActivity());
@@ -1027,7 +1041,7 @@ public class ConfiguratorFragment
         Log.d(TAG, "postalCode: " + postalCode);
 
         //if(postalCode != null) {
-        //access.getChannelApi(false).storeLocations(postalCode, new StoreFragment());
+            //access.getChannelApi(false).storeLocations(postalCode, new StoreFragment());
         //}
 
     }

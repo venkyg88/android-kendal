@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.home.ConfiguratorFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
@@ -142,8 +141,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         if(view == signInBtn){
             String email = signInEmail.getText().toString();
             String password = signInPassword.getText().toString();
-
-            ConfiguratorFragment.userName = email;
 
             hideKeyboard(view);
 
