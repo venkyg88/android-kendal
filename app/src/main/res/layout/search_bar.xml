@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+    <view class="com.staples.mobile.cfa.search.SearchBarView$SearchText"
+        android:id="@+id/search_text"
+        android:layout_width="500dp"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:singleLine="true"
+        android:imeOptions="actionSearch|flagNoExtractUi"
+        android:textColor="@android:color/white"
+        android:textColorHint="#80ffffff"/>
+    <ImageView
+        android:id="@+id/search_option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"/>
+</LinearLayout>

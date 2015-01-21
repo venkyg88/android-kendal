@@ -54,7 +54,6 @@ public class MainActivity extends Activity
     private LinearLayoutWithProgressOverlay mainLayout;
     private CartFragment cartFragment;
     private DrawerItem homeDrawerItem;
-    private int screenHeight;
 
     private LoginHelper loginHelper;
 
@@ -110,7 +109,7 @@ public class MainActivity extends Activity
     protected void onPause() {
         super.onPause();
         LocationFinder.getInstance(this).saveRecentLocation();
-//        searchView.saveSearchHistory();
+        ActionBar.getInstance().saveSearchHistory();
     }
 
     @Override
