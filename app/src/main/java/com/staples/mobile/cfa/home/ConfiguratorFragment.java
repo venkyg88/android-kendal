@@ -35,6 +35,8 @@ import com.staples.mobile.common.device.DeviceInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit.RetrofitError;
+
 public class ConfiguratorFragment
         extends Fragment
         implements AppConfigurator.AppConfiguratorCallback{
@@ -115,6 +117,7 @@ public class ConfiguratorFragment
         this.activity = (MainActivity) activity;
 
         resources = activity.getResources();
+
         appConfigurator = AppConfigurator.getInstance();
 
         configItems = new ArrayList<ConfigItem>();
@@ -177,7 +180,7 @@ public class ConfiguratorFragment
         ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
     }
 
-    public void onGetConfiguratorResult(Configurator configurator, boolean success) {
+    public void onGetConfiguratorResult(Configurator configurator, boolean success, RetrofitError retrofitError) {
 
         if (LOGGING) Log.v(TAG, "ConfiguratorFragment:AppConfigurator.onGetConfiguratorResult():"
                         + " success[" + success + "]"
