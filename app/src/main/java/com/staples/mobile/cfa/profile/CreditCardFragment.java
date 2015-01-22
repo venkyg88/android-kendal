@@ -6,24 +6,19 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.AddCreditCard;
@@ -82,7 +77,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
             if(creditCard != null) {
                 cardNumberET.setText("Card ending in: " + creditCard.getCardNumber());
                 cardType = creditCard.getCardType();
-                cardImage.setImageResource(CardType.matchOnApiName(cardType).getImageResource());
+                cardImage.setImageResource(CreditCard.Type.matchOnApiName(cardType).getImageResource());
                 expMonthET.setText(creditCard.getExpirationMonth());
                 expYearET.setText(creditCard.getExpirationYear());
                 creditCardId = creditCard.getCreditCardId();
@@ -111,16 +106,16 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) activity).showActionBar(R.string.add_credit_card_title, 0, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.ADDCARD);
     }
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if(expMonthET.requestFocus()) {
-            CardType ccType = CardType.detect(cardNumberET.getText().toString());
-            if (ccType != CardType.UNKNOWN) {
+            CreditCard.Type ccType = CreditCard.Type.detect(cardNumberET.getText().toString());
+            if (ccType != CreditCard.Type.UNKNOWN) {
                 cardImage.setImageResource(ccType.getImageResource());
-                cardType = ccType.getCardTypeName();
+                cardType = ccType.getName();
             }
         }
     }
@@ -138,7 +133,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         creditCardNumber = cardNumberET.getText().toString();
         expirationMonth = expMonthET.getText().toString();
         expirationYear = expYearET.getText().toString();
-        cardType = CardType.detect(creditCardNumber).getCardTypeName();
+        cardType = CreditCard.Type.detect(creditCardNumber).getName();
 
         if(!creditCardNumber.isEmpty() && !cardType.isEmpty()){
             final AddCreditCardPOW creditCard = new AddCreditCardPOW(creditCardNumber, cardType.toUpperCase());
@@ -146,7 +141,9 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
             ccList.add(creditCard);
             Log.i("Card", creditCardNumber);
             Log.i("CCN",cardType);
-            easyOpenApi.addCreditPOWCallQA(ccList, new Callback<List<POWResponse>>() {
+
+            EasyOpenApi powApi = Access.getInstance().getPOWApi(true);
+            powApi.addCreditPOWCall(ccList, new Callback<List<POWResponse>>() {
 
                 @Override
                 public void success(List<POWResponse> powList, Response response) {
@@ -156,7 +153,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
 
                     if(encryptedPacket.isEmpty()) {
                         ((MainActivity)activity).hideProgressIndicator();
-                        Toast.makeText(getActivity(), "Credit card encryption failed" , Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, "Credit card encryption failed" , Toast.LENGTH_LONG).show();
                         Log.i("Success", response.getUrl());
                     }
                     else if(creditCardId != null) {

@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.profile;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
@@ -19,7 +21,7 @@ import com.staples.mobile.common.access.easyopen.model.member.Member;
 import java.util.List;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener{
-    private static final String TAG = "ProfileFragment";
+    public static final String TAG = "ProfileFragment";
 
     private EasyOpenApi easyOpenApi;
     Button shippingBtn;
@@ -33,6 +35,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         Log.d(TAG, "onCreateView()");
         activity = (MainActivity)getActivity();
+
         View view = inflater.inflate(R.layout.profile_fragment, container, false);
 
         shippingBtn = (Button) view.findViewById(R.id.addShippingBtn);
@@ -49,7 +52,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onResume() {
         super.onResume();
-        activity.showActionBar(R.string.profile_title, 0, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.PROFILE);
     }
 
     private void loadProfile(Member member, View view) {
@@ -119,20 +122,20 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 shippingBtn = (Button) view;
                 if (shippingBtn.getText().equals("Add")) {
                     Fragment addressFragment = Fragment.instantiate(activity, AddressFragment.class.getName());
-                    ((MainActivity) activity).navigateToFragment(addressFragment);
+                    activity.navigateToFragment(addressFragment);
                     break;
                 } else {
-                    ((MainActivity) activity).selectProfileAddressesFragment();
+                    activity.selectProfileAddressesFragment();
                     break;
                 }
             case R.id.addCCBtn:
                 ccBtn = (Button)view;
                 if(ccBtn.getText().equals("Add")){
                     Fragment creditFragment = Fragment.instantiate(activity, CreditCardFragment.class.getName());
-                    ((MainActivity)activity).navigateToFragment(creditFragment);
+                    activity.navigateToFragment(creditFragment);
                     break;
                 } else {
-                    ((MainActivity) activity).selectProfileCreditCardsFragment();
+                    activity.selectProfileCreditCardsFragment();
                     break;
                 }
         }

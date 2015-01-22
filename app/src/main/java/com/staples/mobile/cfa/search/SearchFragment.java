@@ -15,6 +15,7 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.bundle.BundleAdapter;
 import com.staples.mobile.cfa.bundle.BundleItem;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
 import com.staples.mobile.common.access.Access;
@@ -75,8 +76,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
     @Override
     public void onResume() {
         super.onResume();
-        MainActivity activity = (MainActivity) getActivity();
-        if (activity!=null) activity.showActionBar(R.string.staples, R.drawable.ic_search_white, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.SEARCH);
     }
 
     @Override
@@ -118,15 +118,15 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
             case R.id.bundle_item:
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
-                    String identifier = ((BundleItem) tag).identifier;
-                    ((MainActivity) getActivity()).selectSkuItem(identifier);
+                    BundleItem item = (BundleItem) tag;
+                    ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier);
                 }
                 break;
             case R.id.bundle_action:
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
-                    String title = ((BundleItem) tag).title;
-                    Toast.makeText(getActivity(), "Clicked on " + title, Toast.LENGTH_LONG).show();
+                    BundleItem item = (BundleItem) tag;
+                    Toast.makeText(getActivity(), "Clicked on " + item.title, Toast.LENGTH_LONG).show();
                 }
                 break;
         }

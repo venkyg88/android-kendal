@@ -4,25 +4,14 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
-import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Display;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.SearchView;
 
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartApiManager;
@@ -31,6 +20,7 @@ import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.checkout.ConfirmationFragment;
 import com.staples.mobile.cfa.checkout.GuestCheckoutFragment;
 import com.staples.mobile.cfa.checkout.RegisteredCheckoutFragment;
+import com.staples.mobile.cfa.home.ConfiguratorFragment;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
@@ -43,41 +33,27 @@ import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.rewards.RewardsFragment;
 import com.staples.mobile.cfa.rewards.RewardsLinkingFragment;
-import com.staples.mobile.cfa.search.SearchBarView;
 import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.skuset.SkuSetFragment;
-import com.staples.mobile.cfa.widget.BadgeImageView;
-import com.staples.mobile.cfa.widget.AnimatedBarScrollView;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 
 public class MainActivity extends Activity
-                          implements View.OnClickListener, AdapterView.OnItemClickListener, LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback {
+                          implements View.OnClickListener, AdapterView.OnItemClickListener,
+        LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback{
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int SURRENDER_TIMEOUT = 5000;
 
     private DrawerLayout drawerLayout;
-    private View leftDrawerAction;
     private ListView leftDrawer;
     private DrawerAdapter leftDrawerAdapter;
-    private ImageView logoView;
-    private TextView titleView;
-    private SearchBarView searchBar;
-    private ImageView optionIcon;
-    private View.OnClickListener optionListener;
-    private BadgeImageView cartIconAction;
     private LinearLayoutWithProgressOverlay mainLayout;
     private CartFragment cartFragment;
-    private TextView cartQtyView;
-    private Button checkoutSigninButton;
-    private View closeButton;
     private DrawerItem homeDrawerItem;
-    private LinearLayout actionBar;
-    private int screenHeight;
-    private FrameLayout containFrame;
 
     private LoginHelper loginHelper;
 
@@ -133,7 +109,7 @@ public class MainActivity extends Activity
     protected void onPause() {
         super.onPause();
         LocationFinder.getInstance(this).saveRecentLocation();
-        searchBar.saveSearchHistory();
+        ActionBar.getInstance().saveSearchHistory();
     }
 
     @Override
@@ -147,146 +123,16 @@ public class MainActivity extends Activity
         findViewById(R.id.main).setVisibility(View.VISIBLE);
     }
 
-    // Action bar
-
-    public void showActionBar(String title, int iconId, View.OnClickListener listener) {
-        if (title==null) {
-            logoView.setVisibility(View.VISIBLE);
-            titleView.setVisibility(View.GONE);
-        }
-        else
-        {
-            logoView.setVisibility(View.GONE);
-            titleView.setVisibility(View.VISIBLE);
-            titleView.setText(title);
-        }
-        showActionBarInternal(0, iconId, listener);
-    }
-
-    public void showActionBar(int titleId, int iconId, View.OnClickListener listener) {
-        if (titleId==0) {
-            logoView.setVisibility(View.GONE);
-            titleView.setVisibility(View.GONE);
-        }
-        else if (titleId==R.string.staples) {
-            logoView.setVisibility(View.VISIBLE);
-            titleView.setVisibility(View.GONE);
-        }
-        else {
-            logoView.setVisibility(View.GONE);
-            titleView.setVisibility(View.VISIBLE);
-            titleView.setText(titleId);
-        }
-        showActionBarInternal(titleId, iconId, listener);
-    }
-
-    private void showActionBarInternal(int titleId, int iconId, View.OnClickListener listener) {
-        if (iconId==0) {
-            optionIcon.setVisibility(View.GONE);
-            optionListener = null;
-        } else {
-            optionIcon.setVisibility(View.VISIBLE);
-            optionIcon.setImageResource(iconId);
-            optionListener = listener;
-        }
-
-        // TODO Interim hacked fixes
-        switch(titleId) {
-            case R.string.cart_title:
-                // show cart-specific entities
-                leftDrawerAction.setVisibility(View.VISIBLE);
-                cartQtyView.setVisibility(View.VISIBLE);
-                // hide unwanted entities
-                cartIconAction.setVisibility(View.GONE);
-                checkoutSigninButton.setVisibility(View.GONE);
-                closeButton.setVisibility(View.GONE);
-                break;
-            case R.string.guest_checkout_title:
-            case R.string.checkout_title:
-                // show checkout-specific entities
-                closeButton.setVisibility(View.VISIBLE);
-                LoginHelper loginHelper = new LoginHelper(this);
-                if (loginHelper.isLoggedIn() && loginHelper.isGuestLogin()) {
-                    checkoutSigninButton.setVisibility(View.VISIBLE);
-                } else {
-                    checkoutSigninButton.setVisibility(View.GONE);
-                }
-                // hide unwanted entities
-                leftDrawerAction.setVisibility(View.GONE);
-                cartIconAction.setVisibility(View.GONE);
-                cartQtyView.setVisibility(View.GONE);
-                break;
-            case R.string.order_confirmation_title:
-                // show cart-specific entities
-                leftDrawerAction.setVisibility(View.VISIBLE);
-                cartQtyView.setVisibility(View.VISIBLE);
-                // hide unwanted entities
-                cartIconAction.setVisibility(View.GONE);
-                checkoutSigninButton.setVisibility(View.GONE);
-                cartQtyView.setVisibility(View.GONE);
-                closeButton.setVisibility(View.GONE); // even though the wireframe shows a close button, it's not clear what it should do
-                break;
-            default:
-                // Show standard entities
-                leftDrawerAction.setVisibility(View.VISIBLE);
-                cartIconAction.setVisibility(View.VISIBLE);
-
-                // hide non-standard entities
-                cartQtyView.setVisibility(View.GONE);
-                checkoutSigninButton.setVisibility(View.GONE);
-                closeButton.setVisibility(View.GONE);
-        }
-
-        // TODO Interim hacked fixes
-        switch(iconId) {
-            case R.drawable.ic_search_white:
-                searchBar.setVisibility(View.GONE);
-                optionListener = searchBar;
-                break;
-            case R.drawable.ic_close_white:
-                searchBar.setVisibility(View.VISIBLE);
-                optionListener = searchBar;
-                break;
-            default:
-                searchBar.setVisibility(View.GONE);
-        }
-    }
-
     public void prepareMainScreen(boolean freshStart) {
         // Inflate
         setContentView(R.layout.main);
-
-        // Find 9 action bar entities
-        containFrame = (FrameLayout) findViewById(R.id.contain_frame);
-        actionBar = (LinearLayout) findViewById(R.id.action_bar);
-        closeButton = actionBar.findViewById(R.id.close_button);
-        leftDrawerAction = actionBar.findViewById(R.id.action_left_drawer);
-        logoView = (ImageView) actionBar.findViewById(R.id.action_logo);
-        titleView = (TextView) actionBar.findViewById(R.id.title);
-        searchBar = (SearchBarView) actionBar.findViewById(R.id.search_text);
-        optionIcon = (ImageView) actionBar.findViewById(R.id.option_icon);
-        cartQtyView = (TextView) actionBar.findViewById(R.id.cart_item_qty);
-        cartIconAction = (BadgeImageView) actionBar.findViewById(R.id.action_show_cart);
-        checkoutSigninButton = (Button) actionBar.findViewById(R.id.co_signin_button);
+        ActionBar.getInstance().init(this);
 
         // Find top-level entities
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawer = (ListView) findViewById(R.id.left_drawer);
         mainLayout = (LinearLayoutWithProgressOverlay)findViewById(R.id.main);
-        mainLayout.setCartProgressOverlay(findViewById(R.id.progress_overlay));
-
-        // Set action bar listeners
-        leftDrawerAction.setOnClickListener(this);
-        optionIcon.setOnClickListener(this);
-        cartIconAction.setOnClickListener(this);
-        checkoutSigninButton.setOnClickListener(this);
-        closeButton.setOnClickListener(this);
-
-        // initialize action bar
-        showActionBar(R.string.staples, R.drawable.ic_search_white, searchBar);
-
-        // Init search bar
-        searchBar.initSearchBar();
+        mainLayout.setProgressOverlay(findViewById(R.id.progress_overlay));
 
         // Initialize left drawer listview
         leftDrawerAdapter = new DrawerAdapter(this);
@@ -299,7 +145,7 @@ public class MainActivity extends Activity
 
         // Cart
         cartFragment = new CartFragment();
-        updateCartIcon(0); // initialize cart item count to 0 until we're able to fill the cart
+        ActionBar.getInstance().setCartCount(0);
 
         // Fresh start?
         if (freshStart) {
@@ -331,37 +177,57 @@ public class MainActivity extends Activity
 
     @Override
     public void onLoginComplete(boolean guestLevel) {
-        // load cart info after successful login (if registered login or if guest login following a signout where cart was non-empty)
-        if (!guestLevel || (guestLevel && CartApiManager.getCart() != null && CartApiManager.getCartTotalItems() > 0)) {
+        // if registered user, update menu state and load cart info
+        if (!guestLevel) {
             CartApiManager.loadCart(new CartApiManager.CartRefreshCallback() {
-                @Override public void onCartRefreshComplete(String errMsg) {
-                    updateCartIcon(CartApiManager.getCartTotalItems());
+                @Override
+                public void onCartRefreshComplete(String errMsg) {
+                    ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
                 }
             });
         }
+        // enable/disable left drawer menu items that depend upon login
+        refreshMenuItemState(!guestLevel);
+    }
+
+    @Override
+    public void onLogoutComplete() {
+        // if cart not empty, reset it
+        if (CartApiManager.getCart() != null && CartApiManager.getCartTotalItems() > 0) {
+            CartApiManager.resetCart();
+            ActionBar.getInstance().setCartCount(0);
+        }
+
+        // disable menu items as appropriate
+        refreshMenuItemState(false);
+
+        selectFragment(new ConfiguratorFragment(), Transition.NONE, true);
+    }
+
+    private void refreshMenuItemState(boolean registeredUser) {
         // enable/disable left drawer menu items that depend upon login
         int itemCount = leftDrawerAdapter.getCount();
         for (int position = 0; position < itemCount; position++) {
             DrawerItem item = leftDrawerAdapter.getItem(position);
             if (item.fragmentClass == RewardsFragment.class || item.fragmentClass == OrderFragment.class) {
-                item.enabled = !guestLevel;
+                item.enabled = registeredUser;
                 leftDrawerAdapter.notifyDataSetChanged();
             }
         }
 
-        // for faster debugging with registered user (automatic login), uncomment this and use your
-        // own credentials, but re-comment out before checking code in
-//        if (guestLevel) {
-//            new LoginHelper(this).getUserTokens("testuser2", "password");
-//        }
+        // update sign-in button text
+        Button signInButton = (Button)findViewById(R.id.account_button);
+        if (signInButton != null) { // is null in roboelectric tests
+            signInButton.setText(registeredUser ? R.string.signout_title : R.string.login_title);
+        }
     }
 
     public void showProgressIndicator() {
-        mainLayout.getProgressIndicator().showProgressIndicator();
+        mainLayout.showProgressIndicator(true);
     }
 
     public void hideProgressIndicator() {
-        mainLayout.getProgressIndicator().hideProgressIndicator();
+        mainLayout.showProgressIndicator(false);
     }
 
     // Navigation
@@ -398,7 +264,7 @@ public class MainActivity extends Activity
         return selectFragment(cartFragment, Transition.NONE, true);
     }
 
-    public boolean selectOrderCheckout() {
+    public boolean selectOrderCheckout(String deliveryRange) {
         LoginHelper loginHelper = new LoginHelper(this);
         if (loginHelper.isLoggedIn()) {
             CheckoutFragment fragment;
@@ -406,21 +272,20 @@ public class MainActivity extends Activity
             // if logged in and have at least an address or a payment method, then use registered flow, otherwise use guest flow
             if (!loginHelper.isGuestLogin() && (ProfileDetails.hasAddress() || ProfileDetails.hasPaymentMethod())) {
                 fragment = RegisteredCheckoutFragment.newInstance(couponsRewardsAmount,
-                        CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal());
+                        CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal(), deliveryRange);
             } else {
                 fragment = GuestCheckoutFragment.newInstance(couponsRewardsAmount,
-                        CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal());
+                        CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal(), deliveryRange);
             }
             return selectFragment(fragment, Transition.NONE, true);
         }
         return false;
     }
 
-    public boolean selectOrderConfirmation(String orderId, String orderNumber) {
-        // refresh cart since should now be empty
-        CartApiManager.loadCart(null);
+    public boolean selectOrderConfirmation(String orderNumber, String emailAddress,
+                                           String deliveryRange, String total) {
         // open order confirmation fragment
-        Fragment fragment = ConfirmationFragment.newInstance(orderId, orderNumber);
+        Fragment fragment = ConfirmationFragment.newInstance(orderNumber, emailAddress, deliveryRange, total);
         return selectFragment(fragment, Transition.NONE, true, ConfirmationFragment.TAG);
     }
 
@@ -450,12 +315,12 @@ public class MainActivity extends Activity
         return(selectFragment(fragment, Transition.UP, true));
     }
 
-    public boolean selectSkuItem(String identifier) {
+    public boolean selectSkuItem(String title, String identifier) {
         SkuFragment fragment = new SkuFragment();
-        fragment.setArguments(identifier);
+        fragment.setArguments(title, identifier);
 
         // set animated bar in sku page
-        initAnimatedBar();
+//        initAnimatedBar();
 
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
@@ -467,7 +332,7 @@ public class MainActivity extends Activity
 
     public boolean selectLoginFragment() {
         Fragment fragment = new LoginFragment();
-        return(selectFragment(fragment, Transition.NONE, true));
+        return(selectFragment(fragment, Transition.UP, true));
     }
 
     /** opens the profile addresses fragment */
@@ -506,115 +371,25 @@ public class MainActivity extends Activity
         return(selectFragment(fragment, Transition.NONE, true));
     }
 
-    /** Sets item count indicator on cart icon */
-    public void updateCartIcon(int totalItemCount) {
-        cartIconAction.setText(totalItemCount == 0 ? null : Integer.toString(totalItemCount));
-    }
-
-    /** sets action bar cart quantity (text visible when cart is open) */
-    public void setActionBarCartQty(String qtyText) {
-        cartQtyView.setText(qtyText); // (e.g. "4 items")
-    }
-
     public boolean navigateToFragment(Fragment fragment) {
         return (selectFragment(fragment, Transition.NONE, true));
     }
 
-    ////////////////////////////////////////////////////////////
-    // Methods for animated action bar
-    private void initAnimatedBar() {
-        // hide action bar at first (it will be shown while being scrolled down)
-        AnimatedBarScrollView.isFirstLoad = true;
-        AnimatedBarScrollView.currentAlpha = 0;
-        setContainFrameOffset();
-    }
-
-    public int getScreenHeight(){
-        // get height for sku scrollview animation effect
-        calculateScreenHeight();
-
-        return screenHeight;
-    }
-
-    private void calculateScreenHeight(){
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        screenHeight = size.y;
-    }
-
-    public void setContainFrameOffset(){
-        containFrame.setPadding(0, 0, 0, 0);
-    }
-
-    public void restoreContainFrame(){
-        containFrame.setPadding(0, Math.round(convertDpToPixel(56f, this)), 0, 0);
-    }
-
-    public void setActionBarAlpha(int alpha){
-        actionBar.getBackground().setAlpha(alpha);
-    }
-
-    public void setActionBarColor(int id){
-        actionBar.setBackgroundColor(getResources().getColor(id));
-    }
-
-    public void setActionBarTitleAlpha(int alpha){
-        titleView.setTextColor(titleView.getTextColors().withAlpha(alpha));
-    }
-
-    public void setActionBarTitle(String title){
-        titleView.setText(title);
-    }
-
-    public void setActionBarTitleFormat(){
-        titleView.setSingleLine(true);
-        titleView.setLines(1);
-        titleView.setPadding(0, 0, 0, 0);
-        titleView.setTextSize(18f);
-        titleView.setEllipsize(TextUtils.TruncateAt.END);
-    }
-
-    public void restoreDefaultActionBar(){
-        // restore action bar offset and title format
-        titleView.setPadding(20, 0, 20, 0);
-        titleView.setTextSize(24f);
-        titleView.setTextColor(titleView.getTextColors().withAlpha(255));
-
-        // restore contain frame offset
-        containFrame.setPadding(0, Math.round(convertDpToPixel(56f, this)), 0, 0);
-    }
-
-    public void setLeftDrawerOffset(){
-        leftDrawer.setPadding(0, (int) convertDpToPixel((float) 56, this), 0, 0);
-    }
-
-    public void restoreDefaultLeftDrawer(){
-        leftDrawer.setPadding(0, 0, 0, 0);
-    }
-
-    private float convertDpToPixel(float dp, Context context){
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        float px = dp * (metrics.densityDpi / 160f);
-        return px;
-    }
-    ////////////////////////////////////////////////////////////
-
     @Override
     public void onBackPressed () {
-        // if on order confirmation fragment, don't go back to check out pages, go to Home page
+        // if on order confirmation fragment, don't go back to any of the checkout related pages, go to Home page
         FragmentManager manager = getFragmentManager();
         Fragment confirmationFragment = manager.findFragmentByTag(ConfirmationFragment.TAG);
+
         if (confirmationFragment != null && confirmationFragment.isVisible()) {
             selectDrawerItem(homeDrawerItem, Transition.NONE, true);
         } else {
             super.onBackPressed();
         }
+
     }
 
     // Action bar & button clicks
-
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
@@ -626,11 +401,6 @@ public class MainActivity extends Activity
 
             case R.id.continue_shopping_btn:
                 selectDrawerItem(homeDrawerItem, Transition.NONE, true);
-                break;
-
-            case R.id.option_icon:
-                if (optionListener!=null)
-                    optionListener.onClick(view);
                 break;
 
             case R.id.action_show_cart:
@@ -653,15 +423,19 @@ public class MainActivity extends Activity
                     selectLoginFragment();
                 }
                 break;
+
+            case R.id.search_view:
+                String query = ((SearchView) view).getQuery().toString().trim();
+                if (!query.isEmpty()) {
+                    selectSearch(query);
+                }
+                break;
         }
     }
 
     // Left drawer listview clicks
-
     @Override
     public void onItemClick(AdapterView parent, View view, int position, long id) {
-        DrawerAdapter adapter;
-
         DrawerItem item = (DrawerItem) parent.getItemAtPosition(position);
         if (item.enabled) {
             switch (item.type) {

@@ -10,7 +10,7 @@
     <string name="store_locator_title">Store Locator</string>
     <string name="weekly_ad_title">Weekly Ad</string>
     <string name="account_title">Account</string>
-    <string name="signin_title">Sign In</string>
+    <string name="login_title">Sign In</string>
     <string name="signout_title">Sign Out</string>
     <string name="rewards_title">Staples Rewards</string>
     <string name="link_rewards_title">Link Rewards Account</string>
@@ -19,7 +19,7 @@
     <string name="profile_title">Profile</string>
     <string name="about_title">About</string>
     <string name="credit_card_title">Credit Cards</string>
-    <string name="add_credit_card_title">Add Credit Cards</string>
+    <string name="add_card_title">Add Credit Cards</string>
     <string name="address_title">Addresses</string>
     <string name="add_address_title">New Address</string>
     <string name="edit_address_title">Update Address</string>
@@ -29,13 +29,14 @@
     <string name="cart_title">Cart</string>
     <string name="checkout_title">Checkout</string>
     <string name="guest_checkout_title">Guest Checkout</string>
-    <string name="order_confirmation_title">Order Confirmation</string>
+    <string name="order_confirm_title">Order Confirmation</string>
     <string name="backtotop_title">Back to Menu</string>
     <string name="store_info_title">Store Info</string>
     <string name="tobedone_title">(To be done)</string>
     <string name="search_title">Search</string>
-    <string name="search_hint">Search</string>
+    <string name="search_hint">Search a product</string>
     <string name="empty">Nothing Found</string>
+    <string name="password_forgot">Forgot your password?</string>
 
     <!-- Personal Feed -->
     <string name="loading">Loading...</string>
@@ -43,10 +44,17 @@
     <string name="feed_daily_deal_title">Cart Items On Daily Deal</string>
     <string name="feed_seen_products_title">Your Recently Viewed Items</string>
 
->>>>>>> 66e0fd670d284a9f1cbd59c3610530745e2ba2a6
+    <!-- Personalized Message -->
+    <string name="welcome">Welcome</string>
+    <string name="hello">Hello</string>
+    <string name="signup_title">Sign Up</string>
+    <string name="or">\u0020Or\u0020</string>
+    <string name="question_mark">\?</string>
+
     <string name="add">ADD</string>
     <string name="cartitem_qty_label">Qty</string>
-    <string name="add_to_cart">Add to cart</string>
+    <string name="add_to_cart">ADD TO CART</string>
+    <string name="add_another">Add Another</string>
     <string name="update_button">Update</string>
     <string name="free_shipping_msg1">Free shipping when you spend %1$s - only %2$s to go!</string>
     <string name="free_shipping_msg2">You qualify for FREE SHIPPING!</string>
@@ -89,13 +97,30 @@
     <string name="tax">Tax</string>
     <string name="submit_order">SUBMIT ORDER</string>
     <string name="order_confirmation_msg">Thank you for your order!</string>
+    <string name="order_confirmation_msg2">An email with complete details has</string>
+    <string name="order_confirmation_msg3">been sent to %s.</string>
+    <string name="order_number_label">Order Number</string>
+    <string name="delivery_range_label">Delivery Range for Shipped Items</string>
+    <string name="order_total_label">Total</string>
+    <string name="create_acccount_msg1">What to check out faster next time?</string>
+    <string name="create_acccount_msg2">Create a Staples account! We just need a password.</string>
+    <string name="create_acccount_pw_rules">Case sensitive, 6-12 characters long, cannot contain spaces.</string>
+    <string name="show">SHOW</string>
+    <string name="hide">HIDE</string>
+    <string name="cancel">CANCEL</string>
+    <string name="create_account">CREATE ACCOUNT</string>
+    <string name="account_confirmation_msg">Thanks for creating an account!</string>
+    <string name="order_confirmation_with_error">An error occurred, but your order appears to have gone through."</string>
+    <string name="password_reset">Reset Password</string>
+
     <string name="continue_shopping">Continue Shopping</string>
 
     <plurals name="business_days">
-        <item quantity="one">1 business day</item>
-        <item quantity="other">%s business days</item>
+        <item quantity="one">business day</item>
+        <item quantity="other">business days</item>
     </plurals>
 
+    <string name="password">Password</string>
     <string name="email">Email</string>
     <string name="reenter_email">Re-enter Email</string>
     <string name="email_mismatch">Email address must match</string>
@@ -110,12 +135,12 @@
     <string name="remove">REMOVE</string>
 
     <!-- Availability -->
-    <string name="avail_nothing">Nothing found</string>
+    <string name="avail_nothing">Product not found</string>
     <string name="avail_skuset">Varies</string>
-    <string name="avail_retailonly">Retail only</string>
-    <string name="avail_specialorder">Retail only (special order)</string>
+    <string name="avail_retailonly">Available in store only</string>
+    <string name="avail_specialorder">In store Special Order</string>
     <string name="avail_instock">In stock</string>
-    <string name="avail_outofstock">Out of stock</string>
+    <string name="avail_outofstock">Sorry, this item is out of stock</string>
 
     <!-- Store locator -->
     <string name="store_search_hint">Search Zip, City or Street</string>
@@ -125,14 +150,16 @@
     <string name="would_you">Would you recommend this to a friend?</string>
     <string name="item">Item</string>
     <string name="model">Model</string>
+    <string name="phone">Phone</string>
+    <string name="store_hours">Store Hours</string>
+    <string name="store_features">Store Features</string>
+
 
     <plurals name="cart_qty">
         <item quantity="one">1 item</item>
         <item quantity="other">%d items</item>
     </plurals>
 
-    <string name="original_hint">Search</string>
     <string name="searching">Searching…</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

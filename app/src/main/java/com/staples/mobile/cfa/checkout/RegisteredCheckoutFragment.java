@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.login.LoginHelper;
-import com.staples.mobile.cfa.profile.CardType;
+import com.staples.mobile.cfa.profile.CreditCard;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -60,13 +60,10 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
      * Create a new instance of RegisteredCheckoutFragment that will be initialized
      * with the given arguments. Used when opening a fresh checkout session from the cart.
      */
-    public static CheckoutFragment newInstance(float couponsRewardsAmount, float itemSubtotal, float preTaxSubtotal) {
+    public static CheckoutFragment newInstance(float couponsRewardsAmount, float itemSubtotal, float preTaxSubtotal, String deliveryRange) {
         CheckoutFragment f = new RegisteredCheckoutFragment();
-        Bundle args = new Bundle();
-        args.putFloat(CheckoutFragment.BUNDLE_PARAM_COUPONSREWARDS, couponsRewardsAmount);
-        args.putFloat(CheckoutFragment.BUNDLE_PARAM_ITEMSUBTOTAL, itemSubtotal);
-        args.putFloat(CheckoutFragment.BUNDLE_PARAM_PRETAXSUBTOTAL, preTaxSubtotal);
-        f.setArguments(args);
+        createInitialBundle(couponsRewardsAmount, itemSubtotal, preTaxSubtotal, deliveryRange);
+        f.setArguments(createInitialBundle(couponsRewardsAmount, itemSubtotal, preTaxSubtotal, deliveryRange));
         return f;
     }
 
@@ -134,7 +131,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         }
         if (paymentMethod != null) {
             paymentMethodVw.setText(formatPaymentMethod(paymentMethod));
-            paymentMethodImage.setImageResource(CardType.matchOnApiName(paymentMethod.getCardType()).getImageResource());
+            paymentMethodImage.setImageResource(CreditCard.Type.matchOnApiName(paymentMethod.getCardType()).getImageResource());
         }
         if (billingAddress != null) {
             billingNameVw.setText(formatAddressName(billingAddress));
@@ -227,7 +224,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                             // if success
                             if (errMsg == null) {
                                 // finally, upon payment method success, submit the order
-                                submitOrder(null);
+                                submitOrder(null, ProfileDetails.getMember().getEmailAddress());
                             } else {
                                 Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
                                 Log.d(TAG, errMsg);

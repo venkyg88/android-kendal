@@ -13,14 +13,26 @@ public class TimeSpan {
     public static final int ONEDAY = 24*60*60*1000;
     private static final int QUANTA = 5*60*1000;
 
+    private static final String DAYNAME_MON = "Monday";
+    private static final String DAYNAME_TUES = "Tuesday";
+    private static final String DAYNAME_WEDS = "Wednesday";
+    private static final String DAYNAME_THURS = "Thursday";
+    private static final String DAYNAME_FRI = "Friday";
+    private static final String DAYNAME_SAT = "Saturday";
+    private static final String DAYNAME_SUN = "Sunday";
+
     // January 1, 1970 was a Thursday
-    private static final String[] DAYNAMES = {"Thursday", "Friday", "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday"};
+    private static final String[] DAYNAMES = {DAYNAME_THURS, DAYNAME_FRI, DAYNAME_SAT, DAYNAME_SUN, DAYNAME_MON, DAYNAME_TUES, DAYNAME_WEDS};
     private static final SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mma");
 
     private int start;
     private int end;
+    private String dayName;
+    private String hoursText;
 
-    public TimeSpan(long start, long end) {
+    public TimeSpan(long start, long end, String dayName, String hoursText) {
+        this.dayName = dayName;
+        this.hoursText = hoursText;
         this.start = (int) (start%ONEWEEK);
         this.end = (int) (end%ONEWEEK);
         if (this.end<=this.start) this.end += ONEWEEK;
@@ -56,7 +68,7 @@ public class TimeSpan {
         if (end<start) end+= ONEDAY;
 
         // Make TimeSpan
-        TimeSpan span = new TimeSpan(start, end);
+        TimeSpan span = new TimeSpan(start, end, dayName, hours);
         return(span);
     }
 
@@ -66,6 +78,14 @@ public class TimeSpan {
 
     public int getEnd() {
         return end;
+    }
+
+    public String getDayName() {
+        return dayName;
+    }
+
+    public String getHoursText() {
+        return hoursText;
     }
 
     public int untilOutsideSpan(long when) {
@@ -87,6 +107,10 @@ public class TimeSpan {
         if (x<a) x += ONEWEEK;
         if (x<b) return(b-x);
         return(0);
+    }
+
+    public boolean isWeekday() {
+        return !DAYNAME_SAT.equals(dayName) && !DAYNAME_SUN.equals(dayName);
     }
 
     public String toString(int dateStyle, DateFormat timeFormat) {

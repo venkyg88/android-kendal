@@ -8,7 +8,7 @@
     android:focusableInTouchMode="true">
 
     <!-- Summary page contents -->
-    <com.staples.mobile.cfa.widget.AnimatedBarScrollView
+    <ScrollView
         android:id="@+id/summary"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -144,7 +144,7 @@
             </LinearLayout>
 
         </LinearLayout>
-    </com.staples.mobile.cfa.widget.AnimatedBarScrollView>
+    </ScrollView>
 
     <!-- Summary page progress whirly -->
     <LinearLayout
@@ -193,7 +193,7 @@
     <!-- Add to cart footer -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:orientation="horizontal"
         android:gravity="center_horizontal">
         <com.staples.mobile.cfa.widget.QuantityEditor
@@ -202,16 +202,27 @@
             android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:visibility="gone"
             android:hint="1"
             android:maxLength="4"
             app:maxQuantity="10"
             app:popupWidth="120dp"/>
         <Button
             android:id="@+id/add_to_cart"
-            android:layout_width="160dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:visibility="gone"
             android:textSize="20sp"
             android:text="@string/add_to_cart"/>
+        <TextView
+            android:id="@+id/footer_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/text_nearly_black"
+            android:textSize="16sp"
+            android:visibility="gone"
+        />
     </LinearLayout>
 </com.staples.mobile.cfa.widget.DataWrapper>

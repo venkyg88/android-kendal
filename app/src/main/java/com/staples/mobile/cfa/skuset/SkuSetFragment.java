@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -89,8 +90,9 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) getActivity()).showActionBar(title, R.drawable.ic_search_white, null);
+        ActionBar.getInstance().setConfig(ActionBar.Config.SKUSET);
     }
+
     @Override
     public void success(SkuDetails details, Response response) {
         Activity activity = getActivity();
@@ -126,7 +128,7 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
         Object tag = view.getTag();
         if (tag instanceof SkuSetAdapter.Item) {
             SkuSetAdapter.Item item = (SkuSetAdapter.Item) tag;
-            ((MainActivity) getActivity()).selectSkuItem(item.identifier);
+            ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier);
         }
     }
 }

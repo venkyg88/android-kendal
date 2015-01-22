@@ -1,91 +1,155 @@
 package com.staples.mobile.cfa.search;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
+import android.text.style.ImageSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.widget.ActionBar;
+import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.suggest.api.SuggestApi;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionException;
 
-public class SearchBarView extends AutoCompleteTextView implements View.OnClickListener, TextWatcher, TextView.OnEditorActionListener, AdapterView.OnItemClickListener {
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
+public class SearchBarView extends FrameLayout implements View.OnClickListener, TextWatcher, TextView.OnEditorActionListener, AdapterView.OnItemClickListener, Callback<ArrayList<String>> {
     private static final String TAG = "SearchBarView";
 
     private static final int KEYDELAY = 250; // milliseconds
 
     private MainActivity activity;
+    private ImageView searchOption;
+    private SearchText searchText;
+
     private StartSuggest startSuggest;
-    private SuggestTask suggestTask;
-    private Future<?> suggestPending;
-    private FinishSuggest finishSuggest;
     private SearchBarAdapter adapter;
+
     private String keyword;
     private boolean open;
+    private boolean filled;
+
+    public static class SearchText extends AutoCompleteTextView {
+        public SearchText(Context context) {
+            this(context, null, 0);
+        }
+
+        public SearchText(Context context, AttributeSet attrs) {
+            this(context, attrs, android.R.attr.autoCompleteTextViewStyle);
+        }
+
+        public SearchText(Context context, AttributeSet attrs, int defStyle) {
+            super(context, attrs, defStyle);
+        }
+
+        @Override
+        public boolean enoughToFilter() {
+            return(true);
+        }
+
+        public void update(String keyword) {
+            performFiltering(keyword, 0);
+        }
+    }
 
     public SearchBarView(Context context) {
         this(context, null, 0);
     }
 
     public SearchBarView(Context context, AttributeSet attrs) {
-        this(context, attrs, android.R.attr.autoCompleteTextViewStyle);
+        this(context, attrs, 0);
     }
 
     public SearchBarView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        this.activity = (MainActivity) context;
-    }
+        activity = (MainActivity) context;
 
-    public void initSearchBar(){
-        activity.showActionBar(0, R.drawable.ic_search_white, this);
+        LayoutInflater inflater = activity.getLayoutInflater();
+        inflater.inflate(R.layout.search_bar, this, true);
+        searchOption = (ImageView) findViewById(R.id.search_option);
+        searchText = (SearchText) findViewById(R.id.search_text);
+
+        searchOption.setImageResource(R.drawable.ic_search_white);
+        searchOption.setOnClickListener(this);
+        searchText.setVisibility(GONE);
+        searchText.setHint(getHint());
+
+        // Add adapter
+        adapter = new SearchBarAdapter(activity, this);
+        searchText.setAdapter(adapter);
+        adapter.loadSearchHistory();
 
         // Set listeners
-        addTextChangedListener(this);
-        setOnEditorActionListener(this);
-        setOnItemClickListener(this);
-
-        adapter = new SearchBarAdapter(activity, this);
-        setAdapter(adapter);
-        adapter.loadSearchHistory();
+        searchText.addTextChangedListener(this);
+        searchText.setOnEditorActionListener(this);
+        searchText.setOnItemClickListener(this);
 
         // Tasks
         startSuggest = new StartSuggest();
-        suggestTask = new SuggestTask(this);
-        finishSuggest = new FinishSuggest();
+    }
 
-        performFiltering(keyword, 0);
+    private CharSequence getHint() {
+        Resources res = getContext().getResources();
+        SpannableStringBuilder sb = new SpannableStringBuilder("   ");
+        sb.append(res.getString(R.string.search_hint));
+        Drawable icon = res.getDrawable(R.drawable.ic_search_white);
+        int size = (int) (searchText.getTextSize()*1.25);
+        icon.setBounds(0, 0, size, size);
+        sb.setSpan(new ImageSpan(icon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return (sb);
     }
 
     private void openSearchBar() {
-        setVisibility(View.VISIBLE);
-        activity.showActionBar(0, R.drawable.ic_close_white, this);
-
-        setText(null);
-        requestFocus();
-        showDropDown();
+        ActionBar.getInstance().setConfig(ActionBar.Config.QUERY);
+        searchOption.setVisibility(INVISIBLE);
+        searchText.setVisibility(VISIBLE);
+        searchText.setText(null);
+        searchText.requestFocus();
 
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
         open = true;
+        filled = false;
+    }
+
+    private void filledSearchBar(boolean filled) {
+        if (filled==this.filled) return;
+        this.filled = filled;
+        if (filled) {
+            searchOption.setImageResource(R.drawable.ic_close_white);
+            searchOption.setVisibility(VISIBLE);
+        } else {
+            searchOption.setVisibility(INVISIBLE);
+        }
     }
 
     private void closeSearchBar() {
-        setVisibility(View.GONE);
-        activity.showActionBar(R.string.staples, R.drawable.ic_search_white, this);
+        ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT); // TODO needs correct restore
+        searchOption.setImageResource(R.drawable.ic_search_white);
+        searchOption.setVisibility(VISIBLE);
+        searchText.setVisibility(GONE);
 
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getWindowToken(), 0);
@@ -97,21 +161,18 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
         return(keyword);
     }
 
-    @Override
-    public boolean enoughToFilter() {
-        return(true);
-    }
-
     // Listeners
 
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.option_icon:
+            case R.id.search_option:
                 if (open) {
-                    if (getText().length()==0) closeSearchBar();
-                    else  setText(null);
-                } else openSearchBar();
+                    searchText.setText(null);
+                    filledSearchBar(false);
+                } else {
+                    openSearchBar();
+                }
                 break;
         }
     }
@@ -122,6 +183,7 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
+        filledSearchBar(s.length()>0);
         keyword = s.toString().trim();
 
         removeCallbacks(startSuggest);
@@ -146,59 +208,60 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
         doSearch(keyword);
     }
 
+    public static String cleanKeyword(String keyword) {
+        // trim, truncate & lowercase
+        if (keyword==null) return(null);
+        keyword = keyword.trim();
+        int n = keyword.length();
+        if (n==0) return(null);
+        if (n>3) {
+            keyword = keyword.substring(0, 3);
+            n = 3;
+        }
+        keyword = keyword.toLowerCase();
+
+        // check charset
+        for(int i=0;i<n;i++) {
+            char c = keyword.charAt(i);
+            if (c<'0' || (c>'9' && c<'a') || c>'z') return(null);
+        }
+        return(keyword);
+    }
+
     private class StartSuggest implements Runnable {
         private String lastKey;
 
         @Override
         public void run() {
             // If key didn't change just return
-            String key = SuggestTask.cleanKeyword(keyword);
+            String key = cleanKeyword(keyword);
             if ((lastKey==null && key==null) ||
                     (lastKey!=null && key!=null && lastKey.equals(key))) {
-                performFiltering(keyword, 0);
                 return;
             }
             lastKey = key;
+            if (key==null) return;
 
-            // Cancel previous suggestion
-            if (suggestPending!=null) {
-                suggestPending.cancel(true);
-                suggestPending = null;
-            }
-
-            // No suggestion possible
-            if (key==null) {
-                performFiltering(keyword, 0);
-                return;
-            }
-
-            // Run query
-            suggestTask.setKey(key);
-            ExecutorService thread = Executors.newSingleThreadExecutor();
-            try {
-                suggestPending = thread.submit(suggestTask);
-            } catch(RejectedExecutionException e) {}
+            SuggestApi suggestApi = Access.getInstance().getSuggestApi();
+            suggestApi.getSuggestions(key, SearchBarView.this);
         }
     }
 
-    private class FinishSuggest implements Runnable {
-        private ArrayList<String> suggestions;
+    @Override
+    public void success(ArrayList<String> array, Response response) {
+        adapter.setOriginal(array);
+        searchText.update(keyword);
+    }
 
-        public void setSuggestions(ArrayList<String> suggestions) {
-            this.suggestions = suggestions;
-        }
-
-        @Override
-        public void run() {
-            adapter.setOriginal(suggestions);
-            adapter.notifyDataSetChanged();
-            performFiltering(keyword, 0);
-        }
+    @Override
+    public void failure(RetrofitError retrofitError) {
+        adapter.setOriginal(null);
+        searchText.update(keyword);
     }
 
     private void doSearch(String keyword) {
         if (keyword==null) {
-            keyword = getText().toString().trim();
+            keyword = searchText.getText().toString().trim();
         }
         if (keyword.isEmpty()) return;
 
@@ -206,11 +269,6 @@ public class SearchBarView extends AutoCompleteTextView implements View.OnClickL
         Toast.makeText(activity, "Searching " + keyword + "...", Toast.LENGTH_SHORT).show();
         adapter.pushRecentKeyword(keyword);
         activity.selectSearch(keyword);
-    }
-
-    public void callback(ArrayList<String> suggestions) {
-        finishSuggest.setSuggestions(suggestions);
-        post(finishSuggest);
     }
 
     public void saveSearchHistory() {
