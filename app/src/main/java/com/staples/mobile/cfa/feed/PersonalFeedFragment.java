@@ -95,7 +95,15 @@ public class PersonalFeedFragment extends Fragment {
                     seenProduct.getPricing().get(0).getUnitOfMeasure());
 
             ImageView imageView = (ImageView) seenSavedProductRow.findViewById(R.id.image);
-            Picasso.with(getActivity()).load(seenProduct.getImage().get(0).getUrl()).error(R.drawable.no_photo).into(imageView);
+
+            // API safety check
+            if(seenProduct.getImage() != null){
+                Picasso.with(getActivity()).load(seenProduct.getImage().get(0).getUrl()).error(R.drawable.no_photo).into(imageView);
+            }
+            else{
+                Log.d(TAG, "API returned empty image url!");
+                imageView.setImageResource(R.drawable.no_photo);
+            }
 
             seenProductsContainer.addView(seenSavedProductRow);
 

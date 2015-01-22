@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.profile.AddressFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
@@ -85,10 +84,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                     if(password.equals("SHOW")){
                         ((TextView)v).setText(R.string.hide);
                         registerPasswordET.setTransformationMethod(null);
+                        registerPasswordET.setSelection(registerPasswordET.getText().length());
                     }
                     else{
                         ((TextView)v).setText(R.string.show);
                         registerPasswordET.setTransformationMethod(new PasswordTransformationMethod());
+                        registerPasswordET.setSelection(registerPasswordET.getText().length());
                     }
                 }
             });
