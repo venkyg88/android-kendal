@@ -60,14 +60,14 @@ public class WeeklyAdByCategoryFragment extends Fragment {
     private void getWeeklyAdData(){
         activity.showProgressIndicator();
         final EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.getWeeklyAdbyCategories(storeId, new Callback<WeeklyAdCategories>() {
+        easyOpenApi.getWeeklyAdByCategories(storeId, new Callback<WeeklyAdCategories>() {
             @Override
             public void success(WeeklyAdCategories weeklyAdCategories, Response response) {
 
                 activity.hideProgressIndicator();
 
                 List<Data> data = weeklyAdCategories.getContent().getCollection().getData();
-                if (data == null){
+                if (data == null) {
                     //TODO: Display error
                 } else {
                     adapter.addAll(data);

@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.access.easyopen.WeeklyAdImageUrlHelper;
+import com.staples.mobile.common.access.easyopen.util.WeeklyAdImageUrlHelper;
 import com.staples.mobile.common.access.easyopen.model.weeklyad.Data;
 
 public class WeeklyAdListAdapter extends ArrayAdapter<Data> {
