@@ -20,6 +20,7 @@ public class ActionBar extends LinearLayout {
     private static final String TAG = "ActionBar";
 
     public enum Config {
+<<<<<<< HEAD
         //        close, back,  draw,  logo,  srch,  qty,   cart,  login, title,                         option
         ABOUT    (false, false, true,  true,  false, false, true,  false, R.string.about_title,          0),
         ADDCARD  (false, false, true,  false, true,  false, true,  false, R.string.add_card_title,       0),
@@ -45,6 +46,33 @@ public class ActionBar extends LinearLayout {
         SKU      (false, false, true,  false, true,  false, true,  false, 0,                             0),
         SKUSET   (false, false, true,  false, true,  false, true,  false, 0,                             0),
         VIEWCARD (false, false, true,  false, true,  false, true,  false, R.string.credit_card_title,    0);
+=======
+        //        close, drawer, logo,  search, quantity, cart,  signin, title,                         option
+        ABOUT    (false, true,   true,  false,  false,    true,  false,  R.string.about_title,          0),
+        ADDCARD  (false, true,   false, true,   false,    true,  false,  R.string.add_card_title,       0),
+        ADDRESS  (false, true,   false, true,   false,    true,  false,  R.string.address_title,        0),
+        BROWSE   (false, true,   true,  true,   false,    true,  false,  0,                             0),
+        BUNDLE   (false, true,   false, true,   false,    true,  false,  0,                             0),
+        CART     (false, true,   false, false,  true,     false, false,  R.string.cart_title,           0),
+        COGUEST  (true,  false,  false, false,  false,    false, true,   R.string.guest_checkout_title, 0),
+        CONFIRM  (false, true,   false, false,  false,    true,  false,  R.string.order_confirm_title,  0),
+        COREG    (true,  false,  false, false,  false,    false, false,  R.string.checkout_title,       0),
+        DEFAULT  (false, true,   true,  true,   false,    true,  false,  0,                             0),
+        FEED     (false, true,   false, true,   false,    true,  false,  R.string.personal_feed_title,  0),
+        LINK     (false, true,   false, true,   false,    true,  false,  R.string.link_rewards_title,   0),
+        LOGIN    (false, true,   false, true,   false,    true,  false,  R.string.login_title,          0),
+        MAPVIEW  (false, true,   false, false,  false,    true,  false,  R.string.store_locator_title,  R.drawable.ic_map_white),
+        MAPLIST  (false, true,   false, false,  false,    true,  false,  R.string.store_locator_title,  R.drawable.ic_view_list_white),
+        ORDER    (false, true,   false, true,   false,    true,  false,  R.string.order_title,          0),
+        PASSWORD (false, true,   false, true,   false,    true,  false,  R.string.password_reset,       0),
+        PROFILE  (false, true,   false, true,   false,    true,  false,  R.string.profile_title,        0),
+        REWARDS  (false, true,   false, true,   false,    true,  false,  R.string.rewards_title,        0),
+        SEARCH   (false, true,   true,  true,   false,    true,  false,  0,                             0),
+        SKU      (false, true,   false, true,   false,    true,  false,  0,                             0),
+        SKUSET   (false, true,   false, true,   false,    true,  false,  0,                             0),
+        VIEWCARD (false, true,   false, true,   false,    true,  false,  R.string.credit_card_title,    0),
+        UPDATECARD  (false, true,   false, true,   false,    true,  false,  R.string.edit_credit_card_title,       0);
+>>>>>>> credit card ui simplification
 
         private boolean close;
         private boolean back;
