@@ -18,6 +18,7 @@
         android:background="@drawable/oval"
         android:elevation="@dimen/elevation_low"
         android:src="@android:drawable/ic_input_add"
+        android:layout_marginRight="10dip"
         android:stateListAnimator="@animator/button_elevation" />
 
 </FrameLayout>
