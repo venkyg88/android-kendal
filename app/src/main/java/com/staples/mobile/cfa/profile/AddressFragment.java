@@ -10,8 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -35,11 +33,9 @@ import retrofit.client.Response;
 /**
  * Created by Avinash Raja Dodda.
  */
-public class AddressFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener, PlacesArrayAdapter.PlaceDataCallback {
+public class AddressFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "Add Shipping Fragment";
-
-    private static final boolean LOGGING = true;
 
     Button addShippingBtn;
     public String firstName;
@@ -55,15 +51,11 @@ public class AddressFragment extends Fragment implements View.OnClickListener, A
 
     EditText firstNameET;
     EditText lastNameET;
-    AutoCompleteTextView addressLineACTV;
+    EditText addressLineET;
     EditText cityET;
     EditText stateET;
     EditText phoneNumberET;
     EditText zipCodeET;
-
-    private PlacesArrayAdapter.PlaceData placeData;
-
-    private PlacesArrayAdapter placesArrayAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -72,16 +64,9 @@ public class AddressFragment extends Fragment implements View.OnClickListener, A
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
         View view = inflater.inflate(R.layout.add_address_fragment, container, false);
 
-        placesArrayAdapter = new PlacesArrayAdapter(activity, R.layout.places_list_item);
-        addressLineACTV.setAdapter(placesArrayAdapter);
-        addressLineACTV.setOnItemClickListener(this);
-        addressLineACTV.setFocusable(true);
-        addressLineACTV.setFocusableInTouchMode(true);
-        addressLineACTV.requestFocus();
-
         firstNameET = (EditText) view.findViewById(R.id.firstName);
         lastNameET = (EditText) view.findViewById(R.id.lastName);
-        addressLineACTV = (AutoCompleteTextView) view.findViewById(R.id.address);
+        addressLineET = (EditText) view.findViewById(R.id.address);
         cityET = (EditText) view.findViewById(R.id.city);
         stateET = (EditText) view.findViewById(R.id.state);
         phoneNumberET = (EditText) view.findViewById(R.id.phoneNumber);
@@ -93,7 +78,7 @@ public class AddressFragment extends Fragment implements View.OnClickListener, A
             if(address != null) {
                 firstNameET.setText(address.getFirstname());
                 lastNameET.setText(address.getLastname());
-                addressLineACTV.setText(address.getAddress1());
+                addressLineET.setText(address.getAddress1());
                 cityET.setText(address.getCity());
                 stateET.setText(address.getState());
                 phoneNumberET.setText(address.getPhone1());
@@ -126,7 +111,7 @@ public class AddressFragment extends Fragment implements View.OnClickListener, A
         ((MainActivity)activity).showProgressIndicator();
         firstName = firstNameET.getText().toString();
         lastName = lastNameET.getText().toString();
-        addressLine1 = addressLineACTV.getText().toString();
+        addressLine1 = addressLineET.getText().toString();
         city = cityET.getText().toString();
         state = stateET.getText().toString();
         phoneNumber = phoneNumberET.getText().toString();
@@ -190,54 +175,5 @@ public class AddressFragment extends Fragment implements View.OnClickListener, A
             ((MainActivity)activity).hideProgressIndicator();
             Toast.makeText(getActivity(), "All the fields are required. Please fill and try again", Toast.LENGTH_LONG).show();
         }
-    }
-
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-
-        if (LOGGING) Log.v(TAG, "PlacesFragment:onItemClick():"
-                        + " position[" + position + "]"
-                        + " id[" + id + "]"
-                        + " this[" + this + "]"
-        );
-
-        hideKeyboard(addressLineACTV);
-
-        placesArrayAdapter.getPlaceDetails(position, this);
-    }
-
-    public void onPlaceDataResult(PlacesArrayAdapter.PlaceData placeData) {
-
-        // <<<<< Runs on the UI thread. >>>>>
-
-        if (LOGGING) Log.v(TAG, "PlacesFragment:onPlaceDataResult():"
-                        + " placeData[" + placeData + "]"
-                        + " this[" + this + "]"
-        );
-
-        this.placeData = placeData;
-
-        String autoCompleteText = addressLineACTV.getText().toString();
-
-        boolean textchanged = false;
-
-        if (placeData.zipCode.length() > 0) {
-
-            autoCompleteText += " " + placeData.zipCode;
-            textchanged = true;
-
-            if (placeData.zipCodeSuffix.length() > 0) {
-
-                autoCompleteText += "-" + placeData.zipCodeSuffix;
-            }
-        }
-
-        if (textchanged == true) {
-
-            addressLineACTV.setText(autoCompleteText);
-        }
-
-        /* @@@ STUBBED
-        acceptTextView.setVisibility(View.VISIBLE);
-        @@@ STUBBED */
     }
 }
