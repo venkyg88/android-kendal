@@ -164,6 +164,10 @@
 
     <string name="save_btn">Save</string>
     <string name="cancel_btn">Cancel</string>
+<<<<<<< HEAD
+=======
+    <string name="original_hint">Search</string>
+>>>>>>> UI change and functionality added
     <string name="searching">Searching…</string>
 
 </resources>

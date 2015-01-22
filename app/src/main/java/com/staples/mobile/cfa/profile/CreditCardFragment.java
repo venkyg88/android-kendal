@@ -73,7 +73,10 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         cardNumberET = (EditText) view.findViewById(R.id.cardNumber);
         expDateET = (EditText) view.findViewById(R.id.expirationDate);
         cardImage = (ImageView) view.findViewById(R.id.card_image);
+<<<<<<< HEAD
 
+=======
+>>>>>>> UI change and functionality added
 
         Bundle args = getArguments();
         if(args != null) {
@@ -82,8 +85,12 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                 cardNumberET.setHint("Card ending in: " + creditCard.getCardNumber());
                 cardType = creditCard.getCardType();
                 cardImage.setImageResource(CreditCard.Type.matchOnApiName(cardType).getImageResource());
+<<<<<<< HEAD
                 expDateET.setVisibility(View.VISIBLE);
                 expDateET.setText(creditCard.getExpirationMonth() + "/" +creditCard.getExpirationYear().substring(2,4));
+=======
+                expDateET.setText(creditCard.getExpirationMonth());
+>>>>>>> UI change and functionality added
                 creditCardId = creditCard.getCreditCardId();
             }
         }
@@ -145,6 +152,21 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         ActionBar.getInstance().setConfig(ActionBar.Config.ADDCARD);
     }
 
+<<<<<<< HEAD
+=======
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if(expDateET.requestFocus()) {
+            expDateET.setVisibility(View.VISIBLE);
+            CreditCard.Type ccType = CreditCard.Type.detect(cardNumberET.getText().toString());
+            if (ccType != CreditCard.Type.UNKNOWN) {
+                cardImage.setImageResource(ccType.getImageResource());
+                cardType = ccType.getName();
+            }
+        }
+    }
+
+>>>>>>> UI change and functionality added
     public void hideKeyboard(View view)
     {
         InputMethodManager keyboard = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -156,6 +178,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         hideKeyboard(view);
         activity.showProgressIndicator();
         creditCardNumber = cardNumberET.getText().toString();
+<<<<<<< HEAD
         String expirationDate = expDateET.getText().toString();
         if(expirationDate.length() != 5) {
             Toast.makeText(getActivity(), "Check expiration date", Toast.LENGTH_LONG).show();
@@ -166,6 +189,9 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
             expirationYear = "20" + expirationDate.substring(3,5);
         }
 
+=======
+        expirationMonth = expDateET.getText().toString();
+>>>>>>> UI change and functionality added
         cardType = CreditCard.Type.detect(creditCardNumber).getName();
 
         if(!creditCardNumber.isEmpty() && !cardType.isEmpty()){

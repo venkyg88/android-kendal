@@ -5,7 +5,10 @@
 package com.staples.mobile.cfa.checkout;
 
 import android.content.res.Resources;
+<<<<<<< HEAD
 import android.text.Editable;
+=======
+>>>>>>> UI change and functionality added
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -77,9 +80,16 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         billingAddrContainer = (ViewGroup)view.findViewById(R.id.billing_addr_container);
         paymentMethodLayoutVw = view.findViewById(R.id.payment_method_layout);
         cardNumberVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cardNumber);
+<<<<<<< HEAD
         cardImage = (ImageView) paymentMethodLayoutVw.findViewById(R.id.card_image);
         expirationDateVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationDate);
         cidVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cid);
+=======
+        cardImage = (ImageView) view.findViewById(R.id.card_image);
+        expirationMonthVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationDate);
+//        expirationYearVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationYear);
+        cidVw = (EditText)guestEntryView.findViewById(R.id.cid);
+>>>>>>> UI change and functionality added
         emailAddrVw = (EditText)guestEntryView.findViewById(R.id.emailAddr);
 
 
