@@ -58,11 +58,42 @@ public class AboutFragment extends Fragment {
         ActionBar.getInstance().setConfig(ActionBar.Config.ABOUT);
     }
 
+    private void addRow(LayoutInflater inflater, TableLayout table, String key, String value) {
+        TableRow row = (TableRow) inflater.inflate(R.layout.about_item, table, false);
+        table.addView(row);
+        ((TextView) row.findViewById(R.id.about_key)).setText(key);
+        ((TextView) row.findViewById(R.id.about_value)).setText(value);
+    }
+
+    private String formatDensity(int density) {
+        switch(density) {
+            case DisplayMetrics.DENSITY_LOW:
+                return("ldpi");
+            case DisplayMetrics.DENSITY_MEDIUM:
+                return("mdpi");
+            case DisplayMetrics.DENSITY_HIGH:
+                return("hdpi");
+            case DisplayMetrics.DENSITY_XHIGH:
+                return("xhdpi");
+            case DisplayMetrics.DENSITY_XXHIGH:
+                return("xxhdpi");
+            case DisplayMetrics.DENSITY_XXXHIGH:
+                return ("xxxhdpi");
+            case DisplayMetrics.DENSITY_TV:
+                return ("tvdpi");
+            default:
+                return(null);
+        }
+    }
+
     private void addDisplayRows(LayoutInflater inflater, TableLayout table) {
         DisplayMetrics metrics = getActivity().getResources().getDisplayMetrics();
         addRow(inflater, table, "Display width", Integer.toString(metrics.widthPixels));
         addRow(inflater, table, "Display height", Integer.toString(metrics.heightPixels));
-        addRow(inflater, table, "Pixels per inch", Integer.toString(Math.round(metrics.densityDpi)));
+        String density = formatDensity(metrics.densityDpi);
+        if (density!=null) density = Integer.toString(metrics.densityDpi)+" ("+density+")";
+        else density = Integer.toString(metrics.densityDpi);
+        addRow(inflater, table, "Pixels per inch", density);
     }
 
     private void addPackageRows(LayoutInflater inflater, TableLayout table) {
@@ -176,12 +207,5 @@ public class AboutFragment extends Fragment {
         String postalCode = finder.getPostalCode();
         if (postalCode==null) postalCode = "Not available";
         addRow(inflater, table, "Postal code", postalCode);
-    }
-
-    private void addRow(LayoutInflater inflater, TableLayout table, String key, String value) {
-        TableRow row = (TableRow) inflater.inflate(R.layout.about_item, table, false);
-        table.addView(row);
-        ((TextView) row.findViewById(R.id.about_key)).setText(key);
-        ((TextView) row.findViewById(R.id.about_value)).setText(value);
     }
 }
