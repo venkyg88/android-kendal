@@ -5,7 +5,6 @@
 package com.staples.mobile.cfa.checkout;
 
 import android.content.res.Resources;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -24,7 +23,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.profile.CreditCard;
 import com.staples.mobile.cfa.profile.UsState;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
-import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethodResponse;
+import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 
 
@@ -78,8 +77,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         paymentMethodLayoutVw = view.findViewById(R.id.payment_method_layout);
         cardNumberVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cardNumber);
         cardImage = (ImageView) view.findViewById(R.id.card_image);
-        expirationMonthVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationMonth);
-        expirationYearVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationYear);
+        expirationMonthVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationDate);
+//        expirationYearVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationYear);
         cidVw = (EditText)guestEntryView.findViewById(R.id.cid);
         emailAddrVw = (EditText)guestEntryView.findViewById(R.id.emailAddr);
 

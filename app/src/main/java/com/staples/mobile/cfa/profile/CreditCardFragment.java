@@ -5,15 +5,19 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
@@ -50,9 +54,9 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
     String expirationYear;
     String encryptedPacket;
     EditText cardNumberET;
-    EditText expMonthET;
-    EditText expYearET;
+    EditText expDateET;
     ImageView cardImage;
+    Button cancelCCBtn;
 
     CCDetails creditCard;
     EasyOpenApi easyOpenApi;
@@ -66,10 +70,8 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
 
         View view = inflater.inflate(R.layout.add_creditcard_fragment, container, false);
         cardNumberET = (EditText) view.findViewById(R.id.cardNumber);
-        expMonthET = (EditText) view.findViewById(R.id.expirationMonth);
-        expYearET = (EditText) view.findViewById(R.id.expirationYear);
+        expDateET = (EditText) view.findViewById(R.id.expirationDate);
         cardImage = (ImageView) view.findViewById(R.id.card_image);
-        expMonthET.setOnFocusChangeListener(this);
 
         Bundle args = getArguments();
         if(args != null) {
@@ -78,25 +80,56 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                 cardNumberET.setText("Card ending in: " + creditCard.getCardNumber());
                 cardType = creditCard.getCardType();
                 cardImage.setImageResource(CreditCard.Type.matchOnApiName(cardType).getImageResource());
-                expMonthET.setText(creditCard.getExpirationMonth());
-                expYearET.setText(creditCard.getExpirationYear());
+                expDateET.setText(creditCard.getExpirationMonth());
                 creditCardId = creditCard.getCreditCardId();
             }
         }
+        cardNumberET.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    expDateET.setVisibility(View.VISIBLE);
+                    expDateET.requestFocus();
+                    CreditCard.Type ccType = CreditCard.Type.detect(cardNumberET.getText().toString());
+                    if (ccType != CreditCard.Type.UNKNOWN) {
+                        cardImage.setImageResource(ccType.getImageResource());
+                        cardType = ccType.getName();
+                    }
+                    handled = true;
+                }
+                return handled;
+            }
+        });
+
+        expDateET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(start == 1 && before < start) {
+                    expDateET.setText(s+"/");
+                    expDateET.setSelection(expDateET.getText().length());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }});
+
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
 
         addCCBtn = (Button) view.findViewById(R.id.addCCBtn);
         addCCBtn.setOnClickListener(this);
-
-        cardNumberET.setOnTouchListener(new View.OnTouchListener() {
+        cancelCCBtn = (Button) view.findViewById(R.id.cancelCCBtn);
+        cancelCCBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (MotionEvent.ACTION_UP == event.getAction()) {
-                    cardNumberET.getText().clear();
-                    cardImage.setImageResource(0);
-                    expMonthET.clearFocus();
-                }
-                return false; // return is important...
+            public void onClick(View v) {
+                getFragmentManager().popBackStack();
             }
         });
 
@@ -111,7 +144,8 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        if(expMonthET.requestFocus()) {
+        if(expDateET.requestFocus()) {
+            expDateET.setVisibility(View.VISIBLE);
             CreditCard.Type ccType = CreditCard.Type.detect(cardNumberET.getText().toString());
             if (ccType != CreditCard.Type.UNKNOWN) {
                 cardImage.setImageResource(ccType.getImageResource());
@@ -131,8 +165,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         hideKeyboard(view);
         ((MainActivity)activity).showProgressIndicator();
         creditCardNumber = cardNumberET.getText().toString();
-        expirationMonth = expMonthET.getText().toString();
-        expirationYear = expYearET.getText().toString();
+        expirationMonth = expDateET.getText().toString();
         cardType = CreditCard.Type.detect(creditCardNumber).getName();
 
         if(!creditCardNumber.isEmpty() && !cardType.isEmpty()){
