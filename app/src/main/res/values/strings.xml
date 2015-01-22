@@ -164,4 +164,9 @@
     <string name="searching">Searching…</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <!--errors-->
+    <string name="error_network_connectivity">Network connectivity is required. Please enable and try again.</string>
+    <string name="error_server_connection">Unable to contact server at this time. Please try again later.</string>
+    <string name="error_redirect">Please sign in to guest network and then try again.</string>
+
 </resources>

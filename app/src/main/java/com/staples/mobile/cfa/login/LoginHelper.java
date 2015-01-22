@@ -23,6 +23,9 @@ import retrofit.client.Response;
 public class LoginHelper {
     private static final String TAG = "LoginHelper";
 
+    private static String cachedUsername;
+    private static String cachedPassword;
+
     public interface OnLoginCompleteListener {
         public void onLoginComplete(boolean guestLevel);
         public void onLogoutComplete();
@@ -77,8 +80,23 @@ public class LoginHelper {
         return Access.getInstance().isGuestLogin();
     }
 
+    public void refreshSession() {
+        if (isLoggedIn()) {
+            if (isGuestLogin()) {
+                getGuestTokens(true); // use refreshOnly=true
+            } else {
+                if (cachedUsername != null && cachedPassword != null) {
+                    getUserTokens(cachedUsername, cachedPassword, null, true); // use refreshOnly=true
+                }
+            }
+        }
+    }
 
-    public void getGuestTokens()
+    public void getGuestTokens() {
+        getGuestTokens(false);
+    }
+
+    private void getGuestTokens(final boolean refreshOnly)
     {
         easyOpenApi.guestLogin(new Callback<TokenObject>() {
 
@@ -86,7 +104,9 @@ public class LoginHelper {
                     public void success(TokenObject tokenObjectReturned, Response response) {
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), true);
-                        notifyListeners(true, true); // guest login, signing in
+                        if (!refreshOnly) {
+                            notifyListeners(true, true); // guest login, signing in
+                        }
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
@@ -118,8 +138,13 @@ public class LoginHelper {
         });
     }
 
-    //cloned method to take entered username and password..not to break if any one using the above method
-    public void getUserTokens(String username, String password, final ProfileDetails.ProfileRefreshCallback callback)
+    //method to take entered username and password
+    public void getUserTokens(String username, String password, final ProfileDetails.ProfileRefreshCallback callback) {
+        getUserTokens(username, password, callback, false);
+    }
+
+    //method to take entered username and password
+    private void getUserTokens(String username, String password, final ProfileDetails.ProfileRefreshCallback callback, final boolean refreshOnly)
     {
         RegisteredUserLogin user = new RegisteredUserLogin(username,password);
         easyOpenApi.registeredUserLogin(user, new Callback<TokenObject>() {
@@ -128,10 +153,10 @@ public class LoginHelper {
                     public void success(TokenObject tokenObjectReturned, Response response) {
                         int code = response.getStatus();
                         Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
-                        notifyListeners(false, true); // NOT guest login, signing in
-
-                        loadProfile(callback);
-
+                        if (!refreshOnly) {
+                            notifyListeners(false, true); // NOT guest login, signing in
+                            loadProfile(callback);
+                        }
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
                         Log.i("wctrustedToken", tokenObjectReturned.getWCTrustedToken());

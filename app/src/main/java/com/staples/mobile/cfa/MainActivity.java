@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
@@ -12,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartApiManager;
@@ -38,8 +42,18 @@ import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.skuset.SkuSetFragment;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
+import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.configurator.model.Configurator;
+import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+
+import java.util.Date;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener,
@@ -47,6 +61,7 @@ public class MainActivity extends Activity
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int SURRENDER_TIMEOUT = 5000;
+    private static final int CONNECTIVITY_CHECK_INTERVAL = 300000; // in milliseconds (e.g. 300000=5min)
 
     private DrawerLayout drawerLayout;
     private ListView leftDrawer;
@@ -55,6 +70,7 @@ public class MainActivity extends Activity
     private CartFragment cartFragment;
     private DrawerItem homeDrawerItem;
     private int screenHeight;
+    private long timeOfLastSessionCheck;
 
     private LoginHelper loginHelper;
 
@@ -102,8 +118,18 @@ public class MainActivity extends Activity
 
         LocationFinder.getInstance(this);
 
-        appConfigurator = AppConfigurator.getInstance();
-        appConfigurator.getConfigurator(this); // AppConfiguratorCallback
+        if (isNetworkAvailable()) {
+            appConfigurator = AppConfigurator.getInstance();
+            appConfigurator.getConfigurator(this); // AppConfiguratorCallback
+        } else {
+            notifyUserAndAbort(R.string.error_network_connectivity);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ensureActiveSession();
     }
 
     @Override
@@ -117,6 +143,71 @@ public class MainActivity extends Activity
     protected void onDestroy() {
         super.onDestroy();
         new LoginHelper(this).unregisterLoginCompleteListener(this);
+    }
+
+    private boolean isNetworkAvailable() {
+        // first check for network connectivity
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
+    }
+
+
+    private void ensureActiveSession() {
+        // if interval has passed since last check
+        final long currentTime = new Date().getTime();
+        if (currentTime > timeOfLastSessionCheck + CONNECTIVITY_CHECK_INTERVAL) {
+            timeOfLastSessionCheck = currentTime;
+
+            // first check for network connectivity
+            if (isNetworkAvailable()) {
+
+                // if configurator available
+                if (AppConfigurator.getInstance().getConfigurator() != null) {
+
+                    // if app thinks we are logged in, attempt a small easyopen api call to ensure session is active
+                    final LoginHelper loginHelper = new LoginHelper(this);
+                    if (loginHelper.isLoggedIn()) {
+                        // make call requiring secure api which will fail if expired tokens.
+                        // If the session is expired, this test will give us the desired
+                        // "_ERR_INVALID_COOKIE" failure regardless of guest or user session.
+                        // If the session is okay, it will fail for guest session but with a
+                        // different error code, so the following logic is okay.
+                        EasyOpenApi api = Access.getInstance().getEasyOpenApi(true);
+                        api.getMemberProfile(new Callback<MemberDetail>() {
+                            @Override public void success(MemberDetail memberDetail, Response response) {
+                                // success! so update time of last check
+                                timeOfLastSessionCheck = currentTime;
+                            }
+
+                            @Override public void failure(RetrofitError error) {
+                                ApiError apiError = ApiError.getApiError(error);
+                                if ("_ERR_INVALID_COOKIE".equals(apiError.getErrorKey())) {
+                                    // reestablish session
+                                    loginHelper.refreshSession();
+                                } else if (apiError.getHttpStatusCode() >= 300 && apiError.getHttpStatusCode() <= 399) {
+                                    // else if a redirection error
+                                    notifyUserAndAbort(R.string.error_redirect);
+                                }
+                            }
+                        });
+                    }
+
+                    // check for redirect
+
+                }
+            } else {
+                notifyUserAndAbort(R.string.error_network_connectivity);
+            }
+        }
+    }
+
+    public void notifyUserAndAbort(int msgId) {
+        notifyUserAndAbort(getResources().getString(msgId));
+    }
+    public void notifyUserAndAbort(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+        this.finish();
     }
 
     public void showMainScreen() {
@@ -150,7 +241,6 @@ public class MainActivity extends Activity
 
         // Fresh start?
         if (freshStart) {
-            selectDrawerItem(homeDrawerItem, Transition.NONE, false);
             Runnable runs = new Runnable() {public void run() {
                 showMainScreen();}};
             new Handler().postDelayed(runs, SURRENDER_TIMEOUT);
@@ -161,6 +251,22 @@ public class MainActivity extends Activity
 
     public void onGetConfiguratorResult(Configurator configurator, boolean success) {
 
+        // todo: when error retrofitError is callback parameter, delete the following variable
+        RetrofitError retrofitError = null;
+
+        // note that retrofitError may be non-null even if success==true, since config may have been
+        // successfully drawn from a persisted location following a failed network attempt.
+        // Regardless of success, if retrofitError not null, check for the redirect error condition
+        if (retrofitError != null) {
+            ApiError apiError = ApiError.getApiError(retrofitError);
+            int status = apiError.getHttpStatusCode();
+            if (status >= 300 && status <= 399) {
+                notifyUserAndAbort(R.string.error_redirect);
+                return;
+            }
+        }
+
+        // if configurator successfully retrieved (from network OR persisted file)
         if (success) {
 
             loginHelper = new LoginHelper(this);
@@ -173,6 +279,12 @@ public class MainActivity extends Activity
                 // otherwise, do login as guest
                 loginHelper.getGuestTokens();
             }
+
+            // open the home page (should be okay even if network connectivity is a problem)
+            selectDrawerItem(homeDrawerItem, Transition.NONE, false);
+
+        } else { // can't get configurator from network or from persisted file
+            notifyUserAndAbort(R.string.error_server_connection);
         }
     }
 
