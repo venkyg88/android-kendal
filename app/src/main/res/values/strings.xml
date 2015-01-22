@@ -34,7 +34,7 @@
     <string name="store_info_title">Store Info</string>
     <string name="tobedone_title">(To be done)</string>
     <string name="search_title">Search</string>
-    <string name="search_hint">Search a product</string>
+    <string name="search_hint">Search</string>
     <string name="empty">Nothing Found</string>
     <string name="password_forgot">Forgot your password?</string>
 
@@ -50,8 +50,6 @@
     <string name="signup_title">Sign Up</string>
     <string name="or">\u0020Or\u0020</string>
     <string name="question_mark">\?</string>
-    <string name="redeem">Your redeemable</string>
-    <string name="reward">Reward!</string>
 
     <string name="add">ADD</string>
     <string name="cartitem_qty_label">Qty</string>
@@ -152,10 +150,6 @@
     <string name="would_you">Would you recommend this to a friend?</string>
     <string name="item">Item</string>
     <string name="model">Model</string>
-    <string name="phone">Phone</string>
-    <string name="store_hours">Store Hours</string>
-    <string name="store_features">Store Features</string>
-
 
     <plurals name="cart_qty">
         <item quantity="one">1 item</item>
@@ -164,10 +158,8 @@
 
     <string name="save_btn">Save</string>
     <string name="cancel_btn">Cancel</string>
-<<<<<<< HEAD
-=======
     <string name="original_hint">Search</string>
->>>>>>> UI change and functionality added
     <string name="searching">Searching…</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

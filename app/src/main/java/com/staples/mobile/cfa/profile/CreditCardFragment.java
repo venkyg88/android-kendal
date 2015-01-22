@@ -25,7 +25,6 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.member.AddCreditCard;
 import com.staples.mobile.common.access.easyopen.model.member.AddCreditCardPOW;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
@@ -44,7 +43,7 @@ import retrofit.client.Response;
 /**
  * Created by Avinash Dodda.
  */
-public class CreditCardFragment extends Fragment implements View.OnClickListener{
+public class CreditCardFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener{
 
     private static final String TAG = "CreditCardFragment";
 
@@ -61,42 +60,27 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
 
     CCDetails creditCard;
     EasyOpenApi easyOpenApi;
-    MainActivity activity;
+    Activity activity;
     String creditCardId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
-        activity = (MainActivity)getActivity();
+        activity = getActivity();
 
         View view = inflater.inflate(R.layout.add_creditcard_fragment, container, false);
         cardNumberET = (EditText) view.findViewById(R.id.cardNumber);
         expDateET = (EditText) view.findViewById(R.id.expirationDate);
         cardImage = (ImageView) view.findViewById(R.id.card_image);
-<<<<<<< HEAD
-
-=======
->>>>>>> UI change and functionality added
-
 
         Bundle args = getArguments();
         if(args != null) {
              creditCard = (CCDetails)args.getSerializable("creditCardData");
             if(creditCard != null) {
-                cardNumberET.setHint("Card ending in: " + creditCard.getCardNumber());
+                cardNumberET.setText("Card ending in: " + creditCard.getCardNumber());
                 cardType = creditCard.getCardType();
                 cardImage.setImageResource(CreditCard.Type.matchOnApiName(cardType).getImageResource());
-<<<<<<< HEAD
-<<<<<<< HEAD
-                expDateET.setVisibility(View.VISIBLE);
-                expDateET.setText(creditCard.getExpirationMonth() + "/" +creditCard.getExpirationYear().substring(2,4));
-=======
                 expDateET.setText(creditCard.getExpirationMonth());
->>>>>>> UI change and functionality added
-=======
-                expDateET.setVisibility(View.VISIBLE);
-                expDateET.setText(creditCard.getExpirationMonth() + "/" +creditCard.getExpirationYear().substring(2,4));
->>>>>>> credit card ui simplification
                 creditCardId = creditCard.getCreditCardId();
             }
         }
@@ -158,9 +142,6 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         ActionBar.getInstance().setConfig(ActionBar.Config.ADDCARD);
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if(expDateET.requestFocus()) {
@@ -173,9 +154,6 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         }
     }
 
->>>>>>> UI change and functionality added
-=======
->>>>>>> credit card ui simplification
     public void hideKeyboard(View view)
     {
         InputMethodManager keyboard = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -185,28 +163,9 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
         hideKeyboard(view);
-        activity.showProgressIndicator();
+        ((MainActivity)activity).showProgressIndicator();
         creditCardNumber = cardNumberET.getText().toString();
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> credit card ui simplification
-        String expirationDate = expDateET.getText().toString();
-        if(expirationDate.length() != 5) {
-            Toast.makeText(getActivity(), "Check expiration date", Toast.LENGTH_LONG).show();
-            return;
-        }
-        else {
-            expirationMonth = expirationDate.substring(0,2);
-            expirationYear = "20" + expirationDate.substring(3,5);
-        }
-
-<<<<<<< HEAD
-=======
         expirationMonth = expDateET.getText().toString();
->>>>>>> UI change and functionality added
-=======
->>>>>>> credit card ui simplification
         cardType = CreditCard.Type.detect(creditCardNumber).getName();
 
         if(!creditCardNumber.isEmpty() && !cardType.isEmpty()){
@@ -226,7 +185,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                     encryptedPacket = powList.get(0).getPacket();
 
                     if(encryptedPacket.isEmpty()) {
-                        activity.hideProgressIndicator();
+                        ((MainActivity)activity).hideProgressIndicator();
                         Toast.makeText(activity, "Credit card encryption failed" , Toast.LENGTH_LONG).show();
                         Log.i("Success", response.getUrl());
                     }
@@ -237,8 +196,8 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                             public void success(Response response, Response response2) {
                                 (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
                                     @Override public void onProfileRefresh(Member member) {
-                                        activity.hideProgressIndicator();
-                                        Toast.makeText(activity, "Card Updated", Toast.LENGTH_LONG).show();
+                                        ((MainActivity)activity).hideProgressIndicator();
+                                        Toast.makeText(getActivity(), "Card Updated", Toast.LENGTH_LONG).show();
                                         FragmentManager fm = getFragmentManager();
                                         if (fm != null) {
                                             fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
@@ -249,8 +208,8 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
 
                             @Override
                             public void failure(RetrofitError error) {
-                                activity.hideProgressIndicator();
-                                Toast.makeText(activity, ApiError.getErrorMessage(error), Toast.LENGTH_LONG).show();
+                                ((MainActivity)activity).hideProgressIndicator();
+                                Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_LONG).show();
                             }
                         });
                     }
@@ -260,8 +219,8 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                             @Override
                             public void success(CreditCardId creditCardID, Response response) {
                                 Log.i("Success", creditCardID.getCreditCardId());
-                                activity.hideProgressIndicator();
-                                Toast.makeText(activity, "Credit Card Id: "+ creditCardID.getCreditCardId(), Toast.LENGTH_LONG).show();
+                                ((MainActivity)activity).hideProgressIndicator();
+                                Toast.makeText(getActivity(), "Credit Card Id: "+ creditCardID.getCreditCardId(), Toast.LENGTH_LONG).show();
                                 (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
                                     @Override public void onProfileRefresh(Member member) {
                                         FragmentManager fm = getFragmentManager();
@@ -274,8 +233,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
 
                             @Override
                             public void failure(RetrofitError error) {
-                                activity.hideProgressIndicator();
-                                Toast.makeText(activity, ApiError.getErrorMessage(error), Toast.LENGTH_LONG).show();
+                                ((MainActivity)activity).hideProgressIndicator();
                                 Log.i("Add CC Fail Message", error.getMessage());
                                 Log.i("url", error.getUrl());
                             }
