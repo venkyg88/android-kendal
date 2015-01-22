@@ -5,8 +5,9 @@
 package com.staples.mobile.cfa.checkout;
 
 import android.content.res.Resources;
-import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -24,7 +25,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.profile.CreditCard;
 import com.staples.mobile.cfa.profile.UsState;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
-import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethodResponse;
+import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 
 
@@ -39,8 +40,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     View paymentMethodLayoutVw;
     ImageView cardImage;
     EditText cardNumberVw;
-    EditText expirationMonthVw;
-    EditText expirationYearVw;
+    EditText expirationDateVw;
     EditText cidVw;
     EditText emailAddrVw;
     EditText shippingZipCodeVw;
@@ -77,10 +77,9 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         billingAddrContainer = (ViewGroup)view.findViewById(R.id.billing_addr_container);
         paymentMethodLayoutVw = view.findViewById(R.id.payment_method_layout);
         cardNumberVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cardNumber);
-        cardImage = (ImageView) view.findViewById(R.id.card_image);
-        expirationMonthVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationMonth);
-        expirationYearVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationYear);
-        cidVw = (EditText)guestEntryView.findViewById(R.id.cid);
+        cardImage = (ImageView) paymentMethodLayoutVw.findViewById(R.id.card_image);
+        expirationDateVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationDate);
+        cidVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cid);
         emailAddrVw = (EditText)guestEntryView.findViewById(R.id.emailAddr);
 
 
@@ -88,6 +87,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         shippingAddrLayoutVw.findViewById(R.id.addressSaveBtn).setVisibility(View.GONE);
         billingAddrLayoutVw.findViewById(R.id.addressSaveBtn).setVisibility(View.GONE);
         paymentMethodLayoutVw.findViewById(R.id.addCCBtn).setVisibility(View.GONE);
+        paymentMethodLayoutVw.findViewById(R.id.cancelCCBtn).setVisibility(View.GONE);
 
 
         // on any change to addresses, apply addresses to cart and do precheckout
@@ -114,6 +114,24 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
             }
         });
 
+        expirationDateVw.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(start == 1 && before < start) {
+                    expirationDateVw.setText(s+"/");
+                    expirationDateVw.setSelection(expirationDateVw.getText().length());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }});
 
         cardNumberVw.setOnEditorActionListener(
                 new EditText.OnEditorActionListener() {
@@ -125,7 +143,9 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                             if (ccType != CreditCard.Type.UNKNOWN) {
                                 cardImage.setImageResource(ccType.getImageResource());
                             }
-                            expirationMonthVw.requestFocus();
+                            expirationDateVw.setVisibility(View.VISIBLE);
+                            cidVw.setVisibility(View.VISIBLE);
+                            expirationDateVw.requestFocus();
                             return true; // consume.
                         }
                         return false; // pass on to other listeners.
@@ -250,8 +270,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         // validate required fields
         String requiredMsg = resources.getString(R.string.required);
         if (!validateRequiredField(cardNumberVw, requiredMsg)) { errors = true; }
-        if (!validateRequiredField(expirationMonthVw, requiredMsg)) { errors = true; }
-        if (!validateRequiredField(expirationYearVw, requiredMsg)) { errors = true; }
+        if (!validateRequiredField(expirationDateVw, requiredMsg)) { errors = true; }
         CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString());
         if (ccType!=CreditCard.Type.STAPLES)
             if (!validateRequiredField(cidVw, requiredMsg)) { errors = true; }
@@ -261,8 +280,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
             paymentMethod.setSaveCardIndicator("Y");
             paymentMethod.setCardNumber(cardNumberVw.getText().toString());
             paymentMethod.setCardType(ccType.getName());
-            paymentMethod.setCardExpirationMonth(expirationMonthVw.getText().toString());
-            paymentMethod.setCardExpirationYear(expirationYearVw.getText().toString());
+            paymentMethod.setCardExpirationMonth(expirationDateVw.getText().toString().substring(0,2));
+          paymentMethod.setCardExpirationYear("20" +expirationDateVw.getText().toString().substring(3,5));
             paymentMethod.setCardVerificationCode(cidVw.getText().toString());
             return paymentMethod;
         }

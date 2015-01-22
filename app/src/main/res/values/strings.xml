@@ -160,6 +160,8 @@
         <item quantity="other">%d items</item>
     </plurals>
 
+    <string name="save_btn">Save</string>
+    <string name="cancel_btn">Cancel</string>
     <string name="searching">Searching…</string>
 
 </resources>
