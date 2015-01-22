@@ -34,7 +34,7 @@
     <string name="store_info_title">Store Info</string>
     <string name="tobedone_title">(To be done)</string>
     <string name="search_title">Search</string>
-    <string name="search_hint">Search</string>
+    <string name="search_hint">Search a product</string>
     <string name="empty">Nothing Found</string>
     <string name="password_forgot">Forgot your password?</string>
 
@@ -160,9 +160,7 @@
         <item quantity="other">%d items</item>
     </plurals>
 
-    <string name="original_hint">Search</string>
     <string name="searching">Searching…</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!--errors-->
     <string name="error_network_connectivity">Network connectivity is required. Please enable and try again.</string>
