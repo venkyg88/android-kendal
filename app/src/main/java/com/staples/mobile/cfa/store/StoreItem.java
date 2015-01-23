@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-class StoreItem {
+public class StoreItem {
     public String storeNumber;
     public LatLng position;
     public double distance;
@@ -24,7 +24,7 @@ class StoreItem {
     public Marker marker;
     private ArrayList<TimeSpan> spans;
 
-    StoreItem(String storeNumber, double latitude, double longitude) {
+    public StoreItem(String storeNumber, double latitude, double longitude) {
         this.storeNumber = storeNumber;
         position = new LatLng(latitude, longitude);
         spans = new ArrayList<TimeSpan>(7);
