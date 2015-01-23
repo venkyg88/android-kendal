@@ -32,8 +32,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         private TextView phone2;
         private View callStore2;
         private TextView storeNumber;
-        private TextView storeDays;
-        private TextView storeHours;
+        private TextView storeSchedule;
         private TextView storeFeatures;
 
         private ViewHolder(View view) {
@@ -50,8 +49,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
             storeNumber = (TextView) view.findViewById(R.id.store_number);
             phone2 = (TextView) view.findViewById(R.id.phone2);
             callStore2 = view.findViewById(R.id.call_store2);
-            storeDays = (TextView) view.findViewById(R.id.store_days);
-            storeHours = (TextView) view.findViewById(R.id.store_hours);
+            storeSchedule = (TextView) view.findViewById(R.id.store_schedule);
             storeFeatures = (TextView) view.findViewById(R.id.store_features);
         }
     }
@@ -65,13 +63,11 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
     private boolean singleMode;
     private int singleIndex;
     private DecimalFormat mileFormat;
-    private SimpleDateFormat dateFormat;
 
     public StoreAdapter(Context context) {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         array = new ArrayList<StoreItem>();
         mileFormat = new DecimalFormat("0.0 mi");
-        dateFormat = new SimpleDateFormat("EEE h:mma");
     }
 
     public void setOnClickListener(View.OnClickListener listener) {
@@ -164,16 +160,13 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         vh.street.setText(item.streetAddress1);
         vh.phone.setText(item.phoneNumber);
         vh.distance.setText(mileFormat.format(item.distance));
-        String openTime = item.formatHours(System.currentTimeMillis(), dateFormat);
-        vh.openTime.setText(openTime);
+        vh.openTime.setText(TimeSpan.formatStatus(item.getSpans(), System.currentTimeMillis()));
 
         // Set detail content
         if (isFullStoreDetail()) {
             vh.phone2.setText(item.phoneNumber);
             vh.storeNumber.setText("Store # " + item.storeNumber);
-            boolean condensedHours = item.areWeekdayHoursIdentical();
-            vh.storeDays.setText(item.getStoreDaysText(condensedHours));
-            vh.storeHours.setText(item.getStoreHoursText(condensedHours));
+            vh.storeSchedule.setText(TimeSpan.formatSchedule(item.getSpans()));
             vh.storeFeatures.setText(item.storeFeatures);
         }
     }
@@ -219,7 +212,6 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         }
         return(-1);
     }
-
 
     public int findPositionByItem(StoreItem storeItem) {
         int n = array.size();
