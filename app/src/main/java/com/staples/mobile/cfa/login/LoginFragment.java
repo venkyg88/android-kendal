@@ -84,10 +84,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                     if(password.equals("SHOW")){
                         ((TextView)v).setText(R.string.hide);
                         registerPasswordET.setTransformationMethod(null);
+                        registerPasswordET.setSelection(registerPasswordET.getText().length());
                     }
                     else{
                         ((TextView)v).setText(R.string.show);
                         registerPasswordET.setTransformationMethod(new PasswordTransformationMethod());
+                        registerPasswordET.setSelection(registerPasswordET.getText().length());
                     }
                 }
             });

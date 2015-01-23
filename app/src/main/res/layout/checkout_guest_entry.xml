@@ -35,15 +35,15 @@
 
     <include layout="@layout/add_creditcard_fragment" android:id="@+id/payment_method_layout" />
 
-    <EditText
-        android:id="@+id/cid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:maxLength="4"
-        android:hint="@string/cid"
-        android:imeOptions="actionDone"
-        android:singleLine="true"/>
+    <!--included this in add credit card layout to be more consistent-->
+        <!--android:id="@+id/cid"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:inputType="number"-->
+        <!--android:maxLength="4"-->
+        <!--android:hint="@string/cid"-->
+        <!--android:imeOptions="actionDone"-->
+        <!--android:singleLine="true"/>-->
 
     <!--for now, hard code payment method-->
     <!--<TextView-->
