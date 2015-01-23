@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -215,7 +214,8 @@ public class ConfiguratorFragment
         ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
     }
 
-    public void onGetConfiguratorResult(Configurator configurator, boolean success) {
+    @Override
+    public void onGetConfiguratorResult(Configurator configurator, boolean success, RetrofitError retrofitError) {
 
         if (LOGGING) Log.v(TAG, "ConfiguratorFragment:AppConfigurator.onGetConfiguratorResult():"
                         + " success[" + success + "]"
