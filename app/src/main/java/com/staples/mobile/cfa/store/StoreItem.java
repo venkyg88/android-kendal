@@ -23,7 +23,7 @@ class StoreItem {
     public Marker marker;
     private ArrayList<TimeSpan> spans;
 
-    public StoreItem(String storeNumber, double latitude, double longitude) {
+    StoreItem(String storeNumber, double latitude, double longitude) {
         this.storeNumber = storeNumber;
         position = new LatLng(latitude, longitude);
         spans = new ArrayList<TimeSpan>(7);
