@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
@@ -28,12 +29,19 @@ import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.configurator.model.Item;
 import com.staples.mobile.common.access.configurator.model.Screen;
 import com.staples.mobile.common.access.config.AppConfigurator;
+import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
 import com.staples.mobile.common.device.DeviceInfo;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import retrofit.Callback;
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class ConfiguratorFragment
         extends Fragment
@@ -102,6 +110,7 @@ public class ConfiguratorFragment
     private TextView signInTextView;
     private TextView signUpTextView;
     private TextView storeNameTextView;
+    private TextView storeStatusTextView;
     private TextView usernameTextView;
     public static String userName;
     public static String rewards;
@@ -119,7 +128,6 @@ public class ConfiguratorFragment
         this.activity = (MainActivity) activity;
 
         resources = activity.getResources();
-
         appConfigurator = AppConfigurator.getInstance();
 
         configItems = new ArrayList<ConfigItem>();
@@ -182,6 +190,7 @@ public class ConfiguratorFragment
         ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
     }
 
+    @Override
     public void onGetConfiguratorResult(Configurator configurator, boolean success, RetrofitError retrofitError) {
 
         if (LOGGING) Log.v(TAG, "ConfiguratorFragment:AppConfigurator.onGetConfiguratorResult():"
@@ -268,6 +277,10 @@ public class ConfiguratorFragment
             } else {
                 doLandscape();
             }
+
+            // call store api and get info
+            EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
+            api.getStoreInventory("513096", "100", 1, 1, new StoreInfoCallback());
 
             break; // while (true)
 
@@ -995,6 +1008,115 @@ public class ConfiguratorFragment
 
     //////////////////////////////////////////////////////////////////////////////
     // Personalized Message Bar Methods created by Yongnan Zhou:
+    private class StoreInfoCallback implements Callback<StoreInventory> {
+        @Override
+        public void success(StoreInventory storeInfo, Response response) {
+            // Get store address
+            String storeCity = storeInfo.getStore().get(0).getCity();
+            String storeState = storeInfo.getStore().get(0).getState();
+            storeNameTextView.setText(storeCity + ", " + storeState);
+
+            System.out.println(TAG + " - Store:" + storeCity + ", " + storeState);
+
+            // Get store office hour
+            String storeOfficeHour = storeInfo.getStore().get(0).getStoreHours();
+            System.out.println(TAG + " - Office Hour:" + storeOfficeHour);
+            // "Monday - Friday: 0800-2100 Saturday: 0900-2100 Sunday: 1000-1800"
+
+            int weekDayStartHour;
+            int weekDayEndHour;
+            int satStartHour;
+            int satEndHour;
+            int sunStartHour;
+            int sunEndHour;
+
+            try {
+                weekDayStartHour = Integer.parseInt(storeOfficeHour.substring(17, 21));
+                weekDayEndHour = Integer.parseInt(storeOfficeHour.substring(22, 26));
+                //System.out.println(TAG + weekDayStartHour + "-" + weekDayEndHour);
+
+                satStartHour = Integer.parseInt(storeOfficeHour.substring(37, 41));
+                satEndHour = Integer.parseInt(storeOfficeHour.substring(42, 46));
+                //System.out.println(TAG + satStartHour + "-" + satEndHour);
+
+                sunStartHour = Integer.parseInt(storeOfficeHour.substring(55, 59));
+                sunEndHour = Integer.parseInt(storeOfficeHour.substring(60, 64));
+                //System.out.println(TAG + sunStartHour + "-" + sunEndHour);
+            }
+            catch(ArrayIndexOutOfBoundsException e){
+                // set default office time in case of api error
+                weekDayStartHour = 800;
+                weekDayEndHour = 2100;
+
+                satStartHour = 900;
+                satEndHour = 2100;
+
+                sunStartHour = 1000;
+                sunEndHour = 1800;
+            }
+
+            Calendar cal = Calendar.getInstance();
+            int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+            cal.getTime();
+            SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
+            int currentTime = Integer.parseInt(sdf.format(cal.getTime()));
+            System.out.println(TAG + " - Day of week:" + dayOfWeek);
+            System.out.println(TAG + " - Time:" + currentTime);
+
+            storeStatusTextView.setText(R.string.store_open);
+
+            switch (dayOfWeek) {
+                case 1:
+                    if(currentTime >= sunStartHour && currentTime <= sunEndHour){
+                        storeStatusTextView.setText(R.string.store_open);
+                    }
+                    else{
+                        storeStatusTextView.setText(R.string.store_close);
+                    }
+                    break;
+
+                case 2 : case 3 : case 4 : case 5 : case 6:
+                    if(currentTime >= weekDayStartHour && currentTime <= weekDayEndHour){
+                        storeStatusTextView.setText(R.string.store_open);
+                    }
+                    else{
+                        storeStatusTextView.setText(R.string.store_close);
+                    }
+                    break;
+
+                case 7:
+                    if(currentTime >= satStartHour && currentTime <= satEndHour){
+                        storeStatusTextView.setText(R.string.store_open);
+                    }
+                    else{
+                        storeStatusTextView.setText(R.string.store_close);
+                    }
+                    break;
+            }
+
+            LocationFinder locationFinder = LocationFinder.getInstance(getActivity());
+            String postalCode = locationFinder.getPostalCode();
+            Log.d(TAG, "postalCode: " + postalCode);
+
+            //if(postalCode != null) {
+            //access.getChannelApi(false).storeLocations(postalCode, new StoreFragment());
+            //}
+
+        }
+
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            Activity activity = getActivity();
+            if (activity == null) {
+                return;
+            }
+
+            String message = ApiError.getErrorMessage(retrofitError);
+            Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
+            Log.d(TAG, message);
+        }
+    }
+
     private void findMessageBarViews(){
         login_layout = (LinearLayout) configFrameView.findViewById(R.id.login_layout);
         login_info_layout = (LinearLayout) configFrameView.findViewById(R.id.login_info_layout);
@@ -1005,6 +1127,7 @@ public class ConfiguratorFragment
         signUpTextView = (TextView) configFrameView.findViewById(R.id.login_sign_up);
         usernameTextView = (TextView) configFrameView.findViewById(R.id.login_username);
         storeNameTextView = (TextView) configFrameView.findViewById(R.id.store_name);
+        storeStatusTextView = (TextView) configFrameView.findViewById(R.id.store_status);
     }
 
     private void updateMessageBar(){
@@ -1038,15 +1161,6 @@ public class ConfiguratorFragment
             login_info_layout.setVisibility(View.VISIBLE);
             reward_layout.setVisibility(View.GONE);
         }
-
-        LocationFinder locationFinder = LocationFinder.getInstance(getActivity());
-        String postalCode = locationFinder.getPostalCode();
-        Log.d(TAG, "postalCode: " + postalCode);
-
-        //if(postalCode != null) {
-            //access.getChannelApi(false).storeLocations(postalCode, new StoreFragment());
-        //}
-
     }
 
     private void setMessageListeners(){
