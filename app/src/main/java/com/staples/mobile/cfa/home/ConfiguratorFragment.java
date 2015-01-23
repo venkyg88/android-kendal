@@ -1019,8 +1019,41 @@ public class ConfiguratorFragment
             System.out.println(TAG + " - Store:" + storeCity + ", " + storeState);
 
             // Get store office hour
-            System.out.println(TAG + " - Office Hour:" + storeInfo.getStore().get(0).getStoreHours());
+            String storeOfficeHour = storeInfo.getStore().get(0).getStoreHours();
+            System.out.println(TAG + " - Office Hour:" + storeOfficeHour);
             // "Monday - Friday: 0800-2100 Saturday: 0900-2100 Sunday: 1000-1800"
+
+            int weekDayStartHour;
+            int weekDayEndHour;
+            int satStartHour;
+            int satEndHour;
+            int sunStartHour;
+            int sunEndHour;
+
+            try {
+                weekDayStartHour = Integer.parseInt(storeOfficeHour.substring(17, 21));
+                weekDayEndHour = Integer.parseInt(storeOfficeHour.substring(22, 26));
+                //System.out.println(TAG + weekDayStartHour + "-" + weekDayEndHour);
+
+                satStartHour = Integer.parseInt(storeOfficeHour.substring(37, 41));
+                satEndHour = Integer.parseInt(storeOfficeHour.substring(42, 46));
+                //System.out.println(TAG + satStartHour + "-" + satEndHour);
+
+                sunStartHour = Integer.parseInt(storeOfficeHour.substring(55, 59));
+                sunEndHour = Integer.parseInt(storeOfficeHour.substring(60, 64));
+                //System.out.println(TAG + sunStartHour + "-" + sunEndHour);
+            }
+            catch(ArrayIndexOutOfBoundsException e){
+                // set default office time in case of api error
+                weekDayStartHour = 800;
+                weekDayEndHour = 2100;
+
+                satStartHour = 900;
+                satEndHour = 2100;
+
+                sunStartHour = 1000;
+                sunEndHour = 1800;
+            }
 
             Calendar cal = Calendar.getInstance();
             int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
@@ -1034,7 +1067,7 @@ public class ConfiguratorFragment
 
             switch (dayOfWeek) {
                 case 1:
-                    if(currentTime >= 1000 && currentTime <= 1800){
+                    if(currentTime >= sunStartHour && currentTime <= sunEndHour){
                         storeStatusTextView.setText(R.string.store_open);
                     }
                     else{
@@ -1043,7 +1076,7 @@ public class ConfiguratorFragment
                     break;
 
                 case 2 : case 3 : case 4 : case 5 : case 6:
-                    if(currentTime >= 800 && currentTime <= 2100){
+                    if(currentTime >= weekDayStartHour && currentTime <= weekDayEndHour){
                         storeStatusTextView.setText(R.string.store_open);
                     }
                     else{
@@ -1052,7 +1085,7 @@ public class ConfiguratorFragment
                     break;
 
                 case 7:
-                    if(currentTime >= 900 && currentTime <= 2100){
+                    if(currentTime >= satStartHour && currentTime <= satEndHour){
                         storeStatusTextView.setText(R.string.store_open);
                     }
                     else{
