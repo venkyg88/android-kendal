@@ -1,60 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <EditText
-        android:layout_width="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="10dip"
+    android:paddingRight="10dip"
+    android:paddingLeft="10dip">
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/cardNumber"
-        android:hint="Card Number"
-        android:inputType="number"
-        android:imeOptions="actionNext"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/card_image"
-        android:layout_toRightOf="@+id/card_image" />
-
-    <EditText
-        android:layout_width="wrap_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/card_image" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/cardNumber"
+            android:hint="Card Number"
+            android:inputType="number"
+            android:imeOptions="actionNext"
+            android:layout_toEndOf="@+id/card_image"
+            android:layout_toRightOf="@+id/card_image" />
+        </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/expirationMonth"
-        android:inputType="number"
-        android:maxLength="2"
-        android:hint="EXP MM"
-        android:imeOptions="actionNext"
-        android:layout_below="@+id/cardNumber"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <EditText
-        android:layout_width="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/expirationDate"
+            android:inputType="number"
+            android:maxLength="5"
+            android:hint="MM/YY"
+            android:visibility="gone"
+            android:imeOptions="actionNext"/>
+        <EditText
+            android:id="@+id/cid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLength="4"
+            android:hint="@string/cid"
+            android:visibility="gone"
+            android:layout_toRightOf="@+id/expirationDate"
+            android:imeOptions="actionDone"
+            android:singleLine="true"/>
+        </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/expirationYear"
-        android:inputType="number"
-        android:maxLength="4"
-        android:hint="EXP YYYY"
-        android:imeOptions="actionDone"
-        android:layout_alignTop="@+id/expirationMonth"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save"
-        android:id="@+id/addCCBtn"
-        android:layout_marginTop="54dp"
-        android:layout_below="@+id/expirationYear"
-        android:layout_alignLeft="@+id/expirationYear"
-        android:layout_alignStart="@+id/expirationYear" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/card_image"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-</RelativeLayout>
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save_btn"
+            android:id="@+id/addCCBtn"
+            android:imeOptions="actionDone"
+            android:textColor="@color/text_white"
+            android:layout_alignParentRight="true"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel_btn"
+            android:id="@+id/cancelCCBtn"
+            android:imeOptions="actionDone"
+            android:textColor="@color/text_white"
+            android:layout_toLeftOf="@+id/addCCBtn"/>
+        </RelativeLayout>
+</LinearLayout>

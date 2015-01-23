@@ -41,6 +41,8 @@ import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 
+import retrofit.RetrofitError;
+
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener,
         LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback{
@@ -158,7 +160,7 @@ public class MainActivity extends Activity
         }
     }
 
-    public void onGetConfiguratorResult(Configurator configurator, boolean success) {
+    public void onGetConfiguratorResult(Configurator configurator, boolean success, RetrofitError retrofitError) {
 
         if (success) {
 
