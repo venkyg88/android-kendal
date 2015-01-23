@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-public class StoreItem {
+class StoreItem {
     public String storeNumber;
     public LatLng position;
     public double distance;

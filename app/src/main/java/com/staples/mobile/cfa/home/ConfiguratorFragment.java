@@ -19,22 +19,10 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.store.StoreFragment;
-import com.staples.mobile.cfa.store.StoreItem;
-import com.staples.mobile.cfa.store.TimeSpan;
 import com.staples.mobile.cfa.widget.ActionBar;
-import com.staples.mobile.cfa.widget.DataWrapper;
-import com.staples.mobile.cfa.widget.PriceSticker;
-import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.channel.model.store.Obj;
-import com.staples.mobile.common.access.channel.model.store.StoreAddress;
-import com.staples.mobile.common.access.channel.model.store.StoreData;
-import com.staples.mobile.common.access.channel.model.store.StoreFeature;
-import com.staples.mobile.common.access.channel.model.store.StoreHours;
-import com.staples.mobile.common.access.channel.model.store.StoreQuery;
 import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Area;
 import com.staples.mobile.common.access.configurator.model.Configurator;
@@ -43,22 +31,17 @@ import com.staples.mobile.common.access.configurator.model.Screen;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.browse.Product;
-import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
-import com.staples.mobile.common.access.easyopen.model.inventory.Store;
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
 import com.staples.mobile.common.device.DeviceInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import retrofit.http.Query;
 
 public class ConfiguratorFragment
         extends Fragment
@@ -198,13 +181,6 @@ public class ConfiguratorFragment
         findMessageBarViews();
         updateMessageBar();
 
-        //api.getStoreInventory("513096", "100", 1, 1, new StoreInfoCallback());
-        //Access access = Access.getInstance();
-        //access.getChannelApi(false).storeLocations("02115", new StoreInfoCallback());
-
-        //EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
-        //api.getStoreInventory("513096", "100", 1, 1, new StoreInfoCallback());
-
         return (configFrameView);
     }
 
@@ -301,6 +277,10 @@ public class ConfiguratorFragment
             } else {
                 doLandscape();
             }
+
+            // call store api and get info
+            EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
+            api.getStoreInventory("513096", "100", 1, 1, new StoreInfoCallback());
 
             break; // while (true)
 
@@ -1034,24 +1014,61 @@ public class ConfiguratorFragment
             // Get store address
             String storeCity = storeInfo.getStore().get(0).getCity();
             String storeState = storeInfo.getStore().get(0).getState();
-            storeNameTextView.setText(storeCity + "," + storeState);
+            storeNameTextView.setText(storeCity + ", " + storeState);
 
-            System.out.println(TAG + "Store:" + storeCity + "," + storeState);
+            System.out.println(TAG + " - Store:" + storeCity + ", " + storeState);
 
             // Get store office hour
-            System.out.println(TAG + " Office Hour:" + storeInfo.getStore().get(0).getStoreHours());
+            System.out.println(TAG + " - Office Hour:" + storeInfo.getStore().get(0).getStoreHours());
             // "Monday - Friday: 0800-2100 Saturday: 0900-2100 Sunday: 1000-1800"
 
-            Calendar c = Calendar.getInstance();
-            int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-            System.out.println(TAG + " Day of week:" + dayOfWeek);
-
             Calendar cal = Calendar.getInstance();
+            int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
             cal.getTime();
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            System.out.println("Time:" + sdf.format(cal.getTime()));
+            SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
+            int currentTime = Integer.parseInt(sdf.format(cal.getTime()));
+            System.out.println(TAG + " - Day of week:" + dayOfWeek);
+            System.out.println(TAG + " - Time:" + currentTime);
 
-            storeStatusTextView.setText("");
+            storeStatusTextView.setText(R.string.store_open);
+
+            switch (dayOfWeek) {
+                case 1:
+                    if(currentTime >= 1000 && currentTime <= 1800){
+                        storeStatusTextView.setText(R.string.store_open);
+                    }
+                    else{
+                        storeStatusTextView.setText(R.string.store_close);
+                    }
+                    break;
+
+                case 2 : case 3 : case 4 : case 5 : case 6:
+                    if(currentTime >= 800 && currentTime <= 2100){
+                        storeStatusTextView.setText(R.string.store_open);
+                    }
+                    else{
+                        storeStatusTextView.setText(R.string.store_close);
+                    }
+                    break;
+
+                case 7:
+                    if(currentTime >= 900 && currentTime <= 2100){
+                        storeStatusTextView.setText(R.string.store_open);
+                    }
+                    else{
+                        storeStatusTextView.setText(R.string.store_close);
+                    }
+                    break;
+            }
+
+            LocationFinder locationFinder = LocationFinder.getInstance(getActivity());
+            String postalCode = locationFinder.getPostalCode();
+            Log.d(TAG, "postalCode: " + postalCode);
+
+            //if(postalCode != null) {
+            //access.getChannelApi(false).storeLocations(postalCode, new StoreFragment());
+            //}
+
         }
 
         @Override
@@ -1133,19 +1150,8 @@ public class ConfiguratorFragment
         storeNameTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //MainActivity mainActivity = (MainActivity) getActivity();
-                //mainActivity.selectFragment(new StoreFragment(), MainActivity.Transition.NONE, true);
-
-                LocationFinder locationFinder = LocationFinder.getInstance(getActivity());
-                String postalCode = locationFinder.getPostalCode();
-                Log.d(TAG, "postalCode: " + postalCode);
-
-                //if(postalCode != null) {
-                //access.getChannelApi(false).storeLocations(postalCode, new StoreFragment());
-                //}
-
-                EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
-                api.getStoreInventory("513096", "100", 1, 1, new StoreInfoCallback());
+                MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.selectFragment(new StoreFragment(), MainActivity.Transition.NONE, true);
             }
         });
     }
