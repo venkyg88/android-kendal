@@ -153,7 +153,7 @@ public class MainActivity extends Activity
     }
 
 
-    private void ensureActiveSession() {
+    public void ensureActiveSession() {
         // if interval has passed since last check
         final long currentTime = new Date().getTime();
         if (currentTime > timeOfLastSessionCheck + CONNECTIVITY_CHECK_INTERVAL) {
@@ -276,8 +276,13 @@ public class MainActivity extends Activity
             if (loginHelper.isLoggedIn()) {
                 onLoginComplete(loginHelper.isGuestLogin());
             } else {
-                // otherwise, do login as guest
-                loginHelper.getGuestTokens();
+                // if login info cached, log in as registered user
+                if (loginHelper.loadCachedLoginInfo()) {
+                    loginHelper.doCachedLogin();
+                } else {
+                    // otherwise, log in as guest
+                    loginHelper.getGuestTokens();
+                }
             }
 
             // open the home page (should be okay even if network connectivity is a problem)

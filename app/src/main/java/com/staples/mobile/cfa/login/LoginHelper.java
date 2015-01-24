@@ -1,5 +1,8 @@
 package com.staples.mobile.cfa.login;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -12,6 +15,7 @@ import com.staples.mobile.common.access.easyopen.model.login.CreateUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin;
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
+import com.staples.mobile.common.device.DeviceInfo;
 
 import java.util.List;
 import java.util.Vector;
@@ -21,7 +25,9 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class LoginHelper {
-    private static final String TAG = "LoginHelper";
+    private static final String TAG = LoginHelper.class.getSimpleName();
+    private static final String PREFS_USERNAME = "username";
+    private static final String PREFS_ENCRYPTEDPASSWORD = "encryptedPassword";
 
     private static String cachedUsername;
     private static String cachedPassword;
@@ -100,33 +106,34 @@ public class LoginHelper {
     {
         easyOpenApi.guestLogin(new Callback<TokenObject>() {
 
-                    @Override
-                    public void success(TokenObject tokenObjectReturned, Response response) {
-                        int code = response.getStatus();
-                        Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), true);
-                        if (!refreshOnly) {
-                            notifyListeners(true, true); // guest login, signing in
-                        }
+                                   @Override
+                                   public void success(TokenObject tokenObjectReturned, Response response) {
+                                       int code = response.getStatus();
+                                       Access.getInstance().setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), true);
+                                       if (!refreshOnly) {
+                                           notifyListeners(true, true); // guest login, signing in
+                                       }
 
-                        Log.i("Status Code", " " + code);
-                        Log.i("wcToken", tokenObjectReturned.getWCToken());
-                        Log.i("wctrustedToken", tokenObjectReturned.getWCTrustedToken());
-                    }
+                                       Log.i("Status Code", " " + code);
+                                       Log.i("wcToken", tokenObjectReturned.getWCToken());
+                                       Log.i("wctrustedToken", tokenObjectReturned.getWCTrustedToken());
+                                   }
 
-                    @Override
-                    public void failure(RetrofitError retrofitError) {
-                        String msg = ApiError.getErrorMessage(retrofitError);
-                        Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
-                        Log.d(TAG, msg);
-                    }
-                }
+                                   @Override
+                                   public void failure(RetrofitError retrofitError) {
+                                       String msg = ApiError.getErrorMessage(retrofitError);
+                                       Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+                                       Log.d(TAG, msg);
+                                   }
+                               }
         );
     }
 
     private void loadProfile(final ProfileDetails.ProfileRefreshCallback callback) {
         new ProfileDetails().refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
-            @Override public void onProfileRefresh(Member member) {
-                if(member == null) {
+            @Override
+            public void onProfileRefresh(Member member) {
+                if (member == null) {
                     userSignOut();
                     Toast.makeText(activity, "Unable to load profile", Toast.LENGTH_SHORT).show();
                 }
@@ -139,6 +146,13 @@ public class LoginHelper {
     }
 
     //method to take entered username and password
+    public void doCachedLogin() {
+        if (isCachedLoginInfoAvailable()) {
+            getUserTokens(cachedUsername, cachedPassword, null, false);
+        }
+    }
+
+    //method to take entered username and password
     public void getUserTokens(String username, String password, final ProfileDetails.ProfileRefreshCallback callback) {
         getUserTokens(username, password, callback, false);
     }
@@ -146,6 +160,8 @@ public class LoginHelper {
     //method to take entered username and password
     private void getUserTokens(String username, String password, final ProfileDetails.ProfileRefreshCallback callback, final boolean refreshOnly)
     {
+        cachedUsername = username;
+        cachedPassword = password;
         RegisteredUserLogin user = new RegisteredUserLogin(username,password);
         easyOpenApi.registeredUserLogin(user, new Callback<TokenObject>() {
 
@@ -156,6 +172,7 @@ public class LoginHelper {
                         if (!refreshOnly) {
                             notifyListeners(false, true); // NOT guest login, signing in
                             loadProfile(callback);
+                            persistLoginInfo();
                         }
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
@@ -177,6 +194,8 @@ public class LoginHelper {
 
     public void registerUser(String emailAddress, String password, final ProfileDetails.ProfileRefreshCallback callback)
     {
+        cachedUsername = emailAddress;
+        cachedPassword = password;
         CreateUserLogin user = new CreateUserLogin(emailAddress, password);
         Log.i("Register User object", " " + user);
         easyOpenApi.registerUser(user, new Callback<TokenObject>() {
@@ -188,6 +207,7 @@ public class LoginHelper {
                         notifyListeners(false, true); // NOT guest login, signing in
 
                         loadProfile(callback);
+                        persistLoginInfo();
 
                         Log.i("Status Code", " " + code);
                         Log.i("wcToken", tokenObjectReturned.getWCToken());
@@ -209,6 +229,7 @@ public class LoginHelper {
 
     public void userSignOut ()
     {
+        resetCachedLoginInfo();
         easyOpenApi.registeredUserSignOut(new Callback<Response>() {
             @Override
             public void success(Response empty, Response response) {
@@ -232,5 +253,58 @@ public class LoginHelper {
                 getGuestTokens(); // re-establish a guest login since user may try to add to cart after signing out
             }
         });
+    }
+
+    /** persists cached username and encrypted password */
+    private void resetCachedLoginInfo() {
+        if (!TextUtils.isEmpty(cachedUsername) || !TextUtils.isEmpty(cachedPassword)) {
+            cachedUsername = null;
+            cachedPassword = null;
+            SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.remove(PREFS_USERNAME);
+            editor.remove(PREFS_ENCRYPTEDPASSWORD);
+            editor.apply();
+        }
+    }
+
+    /** persists cached username and encrypted password */
+    private void persistLoginInfo() {
+        if (!TextUtils.isEmpty(cachedUsername) && !TextUtils.isEmpty(cachedPassword)) {
+            SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString(PREFS_USERNAME, cachedUsername);
+            editor.putString(PREFS_ENCRYPTEDPASSWORD, AesCryptoHelper.encrypt(cachedPassword, getEncryptionKey()));
+            editor.apply();
+        }
+    }
+
+    /** persists cached username and encrypted password */
+    public boolean loadCachedLoginInfo() {
+        if (TextUtils.isEmpty(cachedUsername) || TextUtils.isEmpty(cachedPassword)) {
+            SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
+            cachedUsername = prefs.getString(PREFS_USERNAME, cachedUsername);
+            String encryptedPassword = prefs.getString(PREFS_ENCRYPTEDPASSWORD, null);
+            if (cachedUsername !=  null && encryptedPassword != null) {
+                cachedUsername = cachedUsername.trim();
+                cachedPassword = AesCryptoHelper.decrypt(encryptedPassword.trim(), getEncryptionKey());
+            }
+        }
+        return isCachedLoginInfoAvailable();
+    }
+
+    public boolean isCachedLoginInfoAvailable() {
+        return (!TextUtils.isEmpty(cachedUsername) && !TextUtils.isEmpty(cachedPassword));
+    }
+
+    private String getEncryptionKey() {
+        DeviceInfo deviceInfo = new DeviceInfo(activity.getResources());
+        StringBuilder b = new StringBuilder();
+        b.append(deviceInfo.getBrand())
+            .append(deviceInfo.getDevice())
+            .append(deviceInfo.getModel())
+            .append(deviceInfo.getSerialNumber())
+            .append(activity.getApplication().getPackageName());
+        return b.toString();
     }
 }
