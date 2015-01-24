@@ -55,6 +55,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+import retrofit.RetrofitError;
+
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener,
         LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback{
@@ -249,7 +251,7 @@ public class MainActivity extends Activity
         }
     }
 
-    public void onGetConfiguratorResult(Configurator configurator, boolean success) {
+    public void onGetConfiguratorResult(Configurator configurator, boolean success, RetrofitError retrofitError) {
 
         // todo: when error retrofitError is callback parameter, delete the following variable
         RetrofitError retrofitError = null;

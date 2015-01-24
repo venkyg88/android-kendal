@@ -274,7 +274,7 @@ public class LoginHelper {
             SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString(PREFS_USERNAME, cachedUsername);
-            editor.putString(PREFS_ENCRYPTEDPASSWORD, AesCryptoHelper.encrypt(cachedPassword, getEncryptionKey()));
+            editor.putString(PREFS_ENCRYPTEDPASSWORD, AesCrypto.encrypt(cachedPassword, getEncryptionKey()));
             editor.apply();
         }
     }
@@ -287,7 +287,7 @@ public class LoginHelper {
             String encryptedPassword = prefs.getString(PREFS_ENCRYPTEDPASSWORD, null);
             if (cachedUsername !=  null && encryptedPassword != null) {
                 cachedUsername = cachedUsername.trim();
-                cachedPassword = AesCryptoHelper.decrypt(encryptedPassword.trim(), getEncryptionKey());
+                cachedPassword = AesCrypto.decrypt(encryptedPassword.trim(), getEncryptionKey());
             }
         }
         return isCachedLoginInfoAvailable();

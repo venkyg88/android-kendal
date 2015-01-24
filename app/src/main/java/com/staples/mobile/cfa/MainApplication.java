@@ -16,6 +16,8 @@ import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 
+import retrofit.RetrofitError;
+
 public class MainApplication
         extends Application
         implements AppConfigurator.AppConfiguratorCallback,
@@ -76,7 +78,7 @@ public class MainApplication
         return;
     }
 
-    public void onGetConfiguratorResult(Configurator configurator, boolean success) {
+    public void onGetConfiguratorResult(Configurator configurator, boolean success, RetrofitError retrofitError) {
 
         if (LOGGING) Log.v(TAG, "MainApplication:AppConfigurator.onGetConfiguratorResult():"
                         + " success[" + success + "]"

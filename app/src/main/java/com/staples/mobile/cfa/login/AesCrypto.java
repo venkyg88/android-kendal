@@ -22,9 +22,9 @@ import javax.crypto.spec.SecretKeySpec;
  *   http://stackoverflow.com/questions/3451670/java-aes-and-using-my-own-key
  *   and from Stephen Dow
  */
-public class AesCryptoHelper {
+public class AesCrypto {
 
-    private static final String TAG = AesCryptoHelper.class.getSimpleName();
+    private static final String TAG = AesCrypto.class.getSimpleName();
 
     /**
      * encrypt a string using AES
