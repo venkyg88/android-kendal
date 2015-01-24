@@ -253,9 +253,6 @@ public class MainActivity extends Activity
 
     public void onGetConfiguratorResult(Configurator configurator, boolean success, RetrofitError retrofitError) {
 
-        // todo: when error retrofitError is callback parameter, delete the following variable
-        RetrofitError retrofitError = null;
-
         // note that retrofitError may be non-null even if success==true, since config may have been
         // successfully drawn from a persisted location following a failed network attempt.
         // Regardless of success, if retrofitError not null, check for the redirect error condition
