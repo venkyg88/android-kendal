@@ -47,6 +47,7 @@ import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
 
 import java.util.Date;
@@ -277,15 +278,19 @@ public class MainActivity extends Activity
             } else {
                 // if login info cached, log in as registered user
                 if (loginHelper.loadCachedLoginInfo()) {
-                    loginHelper.doCachedLogin();
+                    loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
+                        @Override public void onProfileRefresh(Member member) {
+                            // open home page
+                            selectDrawerItem(homeDrawerItem, Transition.NONE, false);
+                        }
+                    });
                 } else {
                     // otherwise, log in as guest
                     loginHelper.getGuestTokens();
+                    // open home page
+                    selectDrawerItem(homeDrawerItem, Transition.NONE, false);
                 }
             }
-
-            // open the home page (should be okay even if network connectivity is a problem)
-            selectDrawerItem(homeDrawerItem, Transition.NONE, false);
 
         } else { // can't get configurator from network or from persisted file
             notifyUserAndAbort(R.string.error_server_connection);

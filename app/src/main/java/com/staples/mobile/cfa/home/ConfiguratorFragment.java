@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -1131,7 +1132,7 @@ public class ConfiguratorFragment extends Fragment {
             //if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin() ){
             Log.d(TAG, "Rewards: " + rewards);
 
-            if(!rewards.equals("")) {
+            if(!TextUtils.isEmpty(rewards)) {
                 login_layout.setVisibility(View.GONE);
                 reward_layout.setVisibility(View.VISIBLE);
                 rewardTextView.setText("$" + rewards);

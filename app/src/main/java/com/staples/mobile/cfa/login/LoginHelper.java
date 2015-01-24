@@ -146,9 +146,9 @@ public class LoginHelper {
     }
 
     //method to take entered username and password
-    public void doCachedLogin() {
+    public void doCachedLogin(final ProfileDetails.ProfileRefreshCallback callback) {
         if (isCachedLoginInfoAvailable()) {
-            getUserTokens(cachedUsername, cachedPassword, null, false);
+            getUserTokens(cachedUsername, cachedPassword, callback, false);
         }
     }
 
