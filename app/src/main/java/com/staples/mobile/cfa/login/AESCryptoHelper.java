@@ -7,31 +7,36 @@ package com.staples.mobile.cfa.login;
 import android.util.Base64;
 import android.util.Log;
 
-import java.security.SecureRandom;
+import java.security.Key;
+import java.security.MessageDigest;
+import java.util.Arrays;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 
 /**
  * Created by sutdi001 on 1/22/15.
- * Code borrowed from https://www.owasp.org/index.php/Using_the_Java_Cryptographic_Extensions
- * Code also borrowed from Stephen Dow
+ * Code borrowed from:
+ *   https://www.owasp.org/index.php/Using_the_Java_Cryptographic_Extensions
+ *   http://stackoverflow.com/questions/3451670/java-aes-and-using-my-own-key
+ *   and from Stephen Dow
  */
-public class AESCryptoHelper {
+public class AesCryptoHelper {
 
-    private static final String TAG = AESCryptoHelper.class.getSimpleName();
+    private static final String TAG = AesCryptoHelper.class.getSimpleName();
 
     /**
      * encrypt a string using AES
+     * @param textToEncrypt
+     * @param key must be a complex string for adequate security
      */
-    public static String encrypt(String strDataToEncrypt) {
+    public static String encrypt(String textToEncrypt, String key) {
         try {
-            Cipher cipher = createCipher(Cipher.ENCRYPT_MODE);
-            byte[] encryptedBytes = cipher.doFinal(strDataToEncrypt.getBytes());
-            return Base64.encodeToString(encryptedBytes, Base64.DEFAULT);
+            Cipher cipher = createCipher(Cipher.ENCRYPT_MODE, key);
+            byte[] encryptedBytes = cipher.doFinal(textToEncrypt.getBytes("UTF-8"));
+            String encryptedText = Base64.encodeToString(encryptedBytes, Base64.NO_WRAP);
+            return encryptedText;
         } catch(Exception e) {
             Log.d(TAG, e.getMessage());
         }
@@ -40,12 +45,33 @@ public class AESCryptoHelper {
 
     /**
      * decrypt an encrypted string using AES
+     * @param encryptedText
+     * @param key must be a complex string for adequate security
      */
-    public static String decrypt(String encryptedText) {
+    public static String decrypt(String encryptedText, String key) {
         try {
-            Cipher cipher = createCipher(Cipher.DECRYPT_MODE);
-            byte[] byteDecryptedText = cipher.doFinal(Base64.decode(encryptedText, Base64.DEFAULT));
-            return new String(byteDecryptedText);
+            Cipher cipher = createCipher(Cipher.DECRYPT_MODE, key);
+            byte[] encryptedBytes = Base64.decode(encryptedText, Base64.NO_WRAP);
+            byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+            return new String(decryptedBytes);
+        } catch(Exception e) {
+            Log.d(TAG, e.getMessage());
+        }
+        return null;
+    }
+
+
+    /**
+     * create and initialize a cipher
+     * @param mode Cipher.ENCRYPT_MODE or Cipher.DECRYPT_MODE
+     * @param key must be a complex string for adequate security
+     * @return
+     */
+    private static Cipher createCipher(int mode, String key) {
+        try {
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            cipher.init(mode, generateKey(key));
+            return cipher;
         } catch(Exception e) {
             Log.d(TAG, e.getMessage());
         }
@@ -53,57 +79,46 @@ public class AESCryptoHelper {
     }
 
     /**
-     * create and initialize a cipher
-     * @param mode Cipher.ENCRYPT_MODE or Cipher.DECRYPT_MODE
+     * generates key for creating cipher
+     * code borrowed from http://stackoverflow.com/questions/3451670/java-aes-and-using-my-own-key
+     * @param seed must be a complex string for adequate security
      * @return
      */
-    private static Cipher createCipher(int mode) {
+    private static Key generateKey(String seed) {
         try {
-            /**
-             * Step 1. Generate an AES key using KeyGenerator Initialize the
-             * keysize to 128 bits (16 bytes)
-             *
-             */
-            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-            keyGen.init(128);
-            SecretKey secretKey = keyGen.generateKey();
-
-
-            /**
-             * Step 2. Generate an Initialization Vector (IV)
-             * 		a. Use SecureRandom to generate random bits
-             * 		   The size of the IV matches the blocksize of the cipher (128 bits for AES)
-             * 		b. Construct the appropriate IvParameterSpec object for the data to pass to Cipher's init() method
-             */
-            final int AES_KEYLENGTH = 128;	// change this as desired for the security level you want
-            byte[] iv = new byte[AES_KEYLENGTH / 8];	// Save the IV bytes or send it in plaintext with the encrypted data so you can decrypt the data later
-            SecureRandom prng = new SecureRandom();
-            prng.nextBytes(iv);
-
-
-            /**
-             * Step 3. Create a Cipher by specifying the following parameters
-             * 		a. Algorithm name - here it is AES
-             * 		b. Mode - here it is CBC mode
-             * 		c. Padding - e.g. PKCS7 or PKCS5
-             */
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7PADDING"); // Must specify the mode explicitly as most JCE providers default to ECB mode!!
-
-
-            /**
-             * Step 4. Initialize the Cipher for Encryption
-             */
-            cipher.init(mode, generateSecretKeySpec());
-
-            return cipher;
+            byte[] keyBytes = ("3xtraS@lt" + seed).getBytes("UTF-8");
+            MessageDigest sha = MessageDigest.getInstance("SHA-1");
+            keyBytes = sha.digest(keyBytes);
+            keyBytes = Arrays.copyOf(keyBytes, 16); // use only first 128 bit (16x8=128)
+            return new SecretKeySpec(keyBytes, "AES");
         } catch(Exception e) {
             Log.d(TAG, e.getMessage());
         }
-
         return null;
     }
 
-    private static SecretKeySpec generateSecretKeySpec() {
-        return new SecretKeySpec(new byte[]{1}, "");
-    }
+
+    // The android version of the javadocs for SecureRandom recommends not using this.
+//    /**
+//     * generates key for creating cipher
+//     * code borrowed from Stephen Dow
+//     * @param seed
+//     * @return
+//     */
+//    private static Key generateKey(String seed) {
+//        try {
+//            SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG", "Crypto"); // see http://stackoverflow.com/questions/13383006/encryption-error-on-android-4-2
+//            secureRandom.setSeed(seed.getBytes("UTF-8"));
+//
+//            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+//            keyGenerator.init(128, secureRandom);
+//
+//            SecretKey secretKey = keyGenerator.generateKey();
+//            return new SecretKeySpec(secretKey.getEncoded(), "AES");
+//        } catch(Exception e) {
+//            Log.d(TAG, e.getMessage());
+//        }
+//        return null;
+//    }
+
 }
