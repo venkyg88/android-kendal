@@ -158,7 +158,10 @@
     <string name="phone">Phone</string>
     <string name="store_hours">Store Hours</string>
     <string name="store_features">Store Features</string>
-
+    <string name="store_closed">Closed</string>
+    <string name="store_24hours">24 hours</string>
+    <string name="store_open_at">Open at</string>
+    <string name="store_open_until">Open until</string>
 
     <plurals name="cart_qty">
         <item quantity="one">1 item</item>

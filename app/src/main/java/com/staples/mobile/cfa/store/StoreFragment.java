@@ -97,7 +97,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
 
             // Create icons
             hotIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-            coldIcon = BitmapDescriptorFactory.fromResource(R.drawable.store);
+            coldIcon = BitmapDescriptorFactory.fromResource(R.drawable.ic_store_cold);
         }
 
         // No Google Play Services
