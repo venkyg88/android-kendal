@@ -119,6 +119,7 @@ public class MainActivity extends Activity
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
+        // Note: error handling for no network availability will happen in ensureActiveSession() called from onResume()
         if (isNetworkAvailable()) {
 
             boolean freshStart = (bundle == null);
@@ -129,7 +130,6 @@ public class MainActivity extends Activity
             appConfigurator = AppConfigurator.getInstance();
             appConfigurator.getConfigurator(this); // AppConfiguratorCallback
         }
-        // Note: error handling for no network availability will happen in ensureActiveSession() called from onResume()
     }
 
     @Override
