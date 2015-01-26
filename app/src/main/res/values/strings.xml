@@ -162,6 +162,8 @@
     <string name="store_24hours">24 hours</string>
     <string name="store_open_at">Open at</string>
     <string name="store_open_until">Open until</string>
+    <string name="store_no_phone">Sorry, this device has no phone application.</string>
+    <string name="store_no_maps">Sorry, this device has no map application.</string>
 
     <plurals name="cart_qty">
         <item quantity="one">1 item</item>
