@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,7 +85,7 @@ public class PersonalFeedFragment extends Fragment {
             View seenSavedProductRow = inflater.inflate(R.layout.personal_feed_product_item, null);
 
             TextView title = (TextView) seenSavedProductRow.findViewById(R.id.title);
-            title.setText(seenProduct.getProductName());
+            title.setText(Html.fromHtml(seenProduct.getProductName()).toString());
 
             RatingStars ratingStars = (RatingStars) seenSavedProductRow.findViewById(R.id.rating);
             ratingStars.setRating(seenProduct.getCustomerReviewRating(),
@@ -305,7 +306,7 @@ public class PersonalFeedFragment extends Fragment {
     }
 
     private void fillContainer(CartItem cartItem, LinearLayout container){
-        String productName = cartItem.getProduct().getProductName();
+        String productName = Html.fromHtml(cartItem.getProduct().getProductName()).toString();
         String currentPrice = String.valueOf(cartItem.getProduct().getPricing().get(0).getFinalPrice());
         String reviewCount = String.valueOf(cartItem.getProduct().getCustomerReviewCount());
         String rating = String.valueOf(cartItem.getProduct().getCustomerReviewRating());
