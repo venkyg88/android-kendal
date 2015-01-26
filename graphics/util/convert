@@ -14,9 +14,9 @@ do
     t=(${s//:/ })
     if [ "${q[3]}" == '-' ]
     then
-      cp ${SOURCE}/${q[4]} ${TEMPFILE}
+      cp ${SOURCE}/${q[4]}.svg ${TEMPFILE}
     else
-      sed "s/<path /<path fill=\"${q[3]}\" /g" ${SOURCE}/${q[4]} > ${TEMPFILE}
+      sed "s/<path /<path fill=\"${q[3]}\" /g" ${SOURCE}/${q[4]}.svg > ${TEMPFILE}
     fi
     ${INKSCAPE} -f ${TEMPFILE} -w $((${t[1]}*${q[1]}/2)) -h $((${t[1]}*${q[2]}/2)) -e ${RES}${t[0]}/${q[0]}.png
   done

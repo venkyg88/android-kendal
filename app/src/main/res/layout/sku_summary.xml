@@ -66,7 +66,7 @@
                     android:layout_height="wrap_content"
                     android:padding="4dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/more_arrow"/>
+                    android:src="@drawable/ic_chevron_right_black"/>
             </LinearLayout>
 
             <!-- Specifications -->
@@ -90,7 +90,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/more_arrow"
+                    android:src="@drawable/ic_chevron_right_black"
                     android:paddingLeft="4dp"
                     android:paddingRight="4dp"
                     android:paddingTop="34dp"/>
@@ -118,7 +118,7 @@
                     android:layout_height="wrap_content"
                     android:padding="4dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/more_arrow"/>
+                    android:src="@drawable/ic_chevron_right_black"/>
             </LinearLayout>
 
             <!-- Accessory List -->

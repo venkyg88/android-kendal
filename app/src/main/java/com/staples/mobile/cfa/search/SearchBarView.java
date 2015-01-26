@@ -117,7 +117,7 @@ public class SearchBarView extends FrameLayout implements View.OnClickListener, 
         int size = (int) (searchText.getTextSize()*1.25);
         icon.setBounds(0, 0, size, size);
         sb.setSpan(new ImageSpan(icon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return (sb);
+        return(sb);
     }
 
     private void openSearchBar() {
