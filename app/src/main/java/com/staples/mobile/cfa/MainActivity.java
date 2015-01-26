@@ -325,7 +325,11 @@ public class MainActivity extends Activity
                 if (loginHelper.loadCachedLoginInfo()) {
                     loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
                         @Override public void onProfileRefresh(Member member) {
-                            // open home page after profile loaded since home page now needs it
+                            if (member == null) {
+                                // if cached login failed, initiate guest log in
+                                loginHelper.getGuestTokens();
+                            }
+                            // open home page after profile loaded (if available) since home page now needs it
                             showMainScreen();
                         }
                     });
