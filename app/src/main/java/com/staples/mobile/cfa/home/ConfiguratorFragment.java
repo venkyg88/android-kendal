@@ -23,6 +23,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.store.StoreFragment;
 import com.staples.mobile.cfa.widget.ActionBar;
+import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Area;
@@ -111,6 +112,7 @@ public class ConfiguratorFragment extends Fragment {
     private TextView storeNameTextView;
     private TextView storeStatusTextView;
     private TextView usernameTextView;
+    private DataWrapper storeWrapper;
     public static String userName;
     public static String rewards;
 
@@ -272,6 +274,8 @@ public class ConfiguratorFragment extends Fragment {
             }
 
             // call store api and get info
+            storeWrapper = (DataWrapper) configFrameView.findViewById(R.id.store_wrapper);
+            storeWrapper.setState(DataWrapper.State.LOADING);
             EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
             api.getStoreInventory("513096", "100", 1, 1, new StoreInfoCallback());
 
@@ -1034,7 +1038,7 @@ public class ConfiguratorFragment extends Fragment {
                 sunEndHour = Integer.parseInt(storeOfficeHour.substring(60, 64));
                 //System.out.println(TAG + sunStartHour + "-" + sunEndHour);
             }
-            catch(ArrayIndexOutOfBoundsException e){
+            catch(NumberFormatException | ArrayIndexOutOfBoundsException e){
                 // set default office time in case of api error
                 weekDayStartHour = 800;
                 weekDayEndHour = 2100;
@@ -1085,14 +1089,11 @@ public class ConfiguratorFragment extends Fragment {
                     break;
             }
 
-            LocationFinder locationFinder = LocationFinder.getInstance(getActivity());
-            String postalCode = locationFinder.getPostalCode();
-            Log.d(TAG, "postalCode: " + postalCode);
-
-            //if(postalCode != null) {
-            //access.getChannelApi(false).storeLocations(postalCode, new StoreFragment());
-            //}
-
+            if (storeCity == null) {
+                storeWrapper.setState(DataWrapper.State.EMPTY);
+            } else {
+                storeWrapper.setState(DataWrapper.State.DONE);
+            }
         }
 
         @Override
@@ -1105,6 +1106,9 @@ public class ConfiguratorFragment extends Fragment {
             String message = ApiError.getErrorMessage(retrofitError);
             Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
             Log.d(TAG, message);
+
+            storeWrapper.setVisibility(View.GONE);
+            storeWrapper.setState(DataWrapper.State.EMPTY);
         }
     }
 
@@ -1127,7 +1131,6 @@ public class ConfiguratorFragment extends Fragment {
         Access access = Access.getInstance();
         // Logged In
         if(access.isLoggedIn() && !access.isGuestLogin()){
-            //if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin() ){
             Log.d(TAG, "Rewards: " + rewards);
 
             if(!TextUtils.isEmpty(rewards)) {

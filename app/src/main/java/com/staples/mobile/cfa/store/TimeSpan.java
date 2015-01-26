@@ -1,6 +1,9 @@
 package com.staples.mobile.cfa.store;
 
+import android.content.Context;
 import android.text.SpannableStringBuilder;
+
+import com.staples.mobile.cfa.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -118,7 +121,11 @@ public class TimeSpan implements Comparable<TimeSpan> {
         return(s);
     }
 
-    // Single TimeSpan formatting
+    // Basic predicates
+
+    public boolean isClosed() {
+        return(start==end);
+    }
 
     public boolean is24Hour() {
         // Does it start at midnight?
@@ -133,26 +140,35 @@ public class TimeSpan implements Comparable<TimeSpan> {
         return(true);
     }
 
-    private String formatDays() {
+    // Single TimeSpan formatting
+
+    public String format(Context context, String divider) {
+        StringBuilder sb = new StringBuilder();
+
+        // Format day(s)
         if (repeat==0) {
-            return(longDowFormat.format(start));
+            sb.append(longDowFormat.format(start));
         } else {
-            return(shortDowFormat.format(start)+ "-" +
-                   shortDowFormat.format(start+repeat*ONEDAY));
+            sb.append(shortDowFormat.format(start));
+            sb.append("-");
+            sb.append(shortDowFormat.format(start+repeat*ONEDAY));
         }
-    }
 
-    private String formatHours() {
-        if (is24Hour()) {
-            return("24 hour");
+        sb.append(divider);
+
+        // Format hours
+        if (isClosed()) {
+            sb.append(context.getResources().getString(R.string.store_closed));
+        }
+        else if (is24Hour()) {
+            sb.append(context.getResources().getString(R.string.store_24hours));
         } else {
-            return(viewTimeFormat.format(start) + "-" +
-                   viewTimeFormat.format(end));
+            sb.append(viewTimeFormat.format(start));
+            sb.append("-");
+            sb.append(viewTimeFormat.format(end));
         }
-    }
 
-    public String toString() {
-        return(formatDays()+" "+formatHours());
+        return(sb.toString());
     }
 
     // Static methods for formatting current status of store
@@ -166,7 +182,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
         }
     }
 
-    public static String formatStatus(ArrayList<TimeSpan> spans, long now) {
+    public static String formatStatus(Context context, ArrayList<TimeSpan> spans, long now) {
         int base = (int) (now%ONEWEEK);
 
         // Loop for contiguous spans
@@ -188,7 +204,8 @@ public class TimeSpan implements Comparable<TimeSpan> {
 
         // Close extended at least once
         if (close>base) {
-            return ("Open until " + formatStatusTime(close, base));
+            return(context.getResources().getString(R.string.store_open_until) + " " +
+                   formatStatusTime(close, base));
         }
 
         // Loop for span with shortest time until open
@@ -200,10 +217,11 @@ public class TimeSpan implements Comparable<TimeSpan> {
 
         // Open in less than one week
         if (until<ONEWEEK) {
-            return ("Open at " + formatStatusTime(base+until, base));
+            return(context.getResources().getString(R.string.store_open_at) + " " +
+                   formatStatusTime(base+until, base));
         }
 
-        return("Closed");
+        return(context.getResources().getString(R.string.store_closed));
     }
 
     // Static methods for formatting of store schedule
@@ -246,7 +264,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
         return(spans);
     }
 
-    public static String formatSchedule(ArrayList<TimeSpan> spans) {
+    public static String formatSchedule(Context context, ArrayList<TimeSpan> spans) {
         if (spans == null) return (null);
 
         spans = mergeTimeSpans(spans);
@@ -254,9 +272,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
         StringBuilder sb = new StringBuilder();
         for(TimeSpan span : spans) {
             if (sb.length()>0) sb.append("\n");
-            sb.append(span.formatDays());
-            sb.append(" ");
-            sb.append(span.formatHours());
+            sb.append(span.format(context, "\t"));
         }
         return (sb.toString());
     }
