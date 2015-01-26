@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -177,7 +176,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
                     // if address alert, display it
                     if (infoMsg != null) {
-                        Toast.makeText(activity, infoMsg, Toast.LENGTH_LONG).show();
+                        showErrorDialog(infoMsg);
                     }
 
                     // utilize shipping and tax info
@@ -187,7 +186,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                     // if shipping and tax already showing, need to hide them
                     resetShippingAndTax();
 
-                    Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                    showErrorDialog(errMsg);
                     Log.d(TAG, errMsg);
                 }
             }
@@ -213,7 +212,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                             deliveryRange, currencyFormat.format(getCheckoutTotal()));
 
                 } else {
-                    Toast.makeText(activity, "Submission Error: " + errMsg, Toast.LENGTH_LONG).show();
+                    showErrorDialog("Submission Error: " + errMsg);
                     Log.d(TAG, errMsg);
 
                     // sometimes there's a failure such as timeout but the order actually goes thru.
@@ -224,7 +223,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                     CartApiManager.loadCart(new CartApiManager.CartRefreshCallback() {
                         @Override public void onCartRefreshComplete(String errMsg) {
                             if (CartApiManager.getCartTotalItems() == 0) {
-                                Toast.makeText(activity, R.string.order_confirmation_with_error, Toast.LENGTH_LONG).show();
+                                showErrorDialog(R.string.order_confirmation_with_error);
                                 ActionBar.getInstance().setCartCount(0);
                                 // show confirmation page
                                 activity.selectOrderConfirmation("(see email)", emailAddress,
@@ -238,7 +237,17 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         });
     }
 
+    protected void showErrorDialog(int msgId) {
+        if (activity != null) {
+            activity.showErrorDialog(msgId, false);
+        }
+    }
 
+    protected void showErrorDialog(String msg) {
+        if (activity != null && msg != null) {
+            activity.showErrorDialog(msg, false);
+        }
+    }
 
     protected void showProgressIndicator() {
         activity.showProgressIndicator();

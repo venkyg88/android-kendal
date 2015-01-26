@@ -92,6 +92,8 @@ public class LoginHelper {
                 getGuestTokens(true); // use refreshOnly=true
             } else {
                 if (cachedUsername != null && cachedPassword != null) {
+                    //set tokens to null first, otherwise api will think we're attempting to convert a guest login to a user login
+                    Access.getInstance().setTokens(null, null, true);
                     getUserTokens(cachedUsername, cachedPassword, null, true); // use refreshOnly=true
                 }
             }

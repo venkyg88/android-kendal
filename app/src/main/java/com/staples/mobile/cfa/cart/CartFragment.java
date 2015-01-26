@@ -18,7 +18,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -434,7 +433,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                     public void onLinkRewardsComplete(String errMsg) {
                         hideProgressIndicator();
                         if (errMsg != null) {
-                            makeToast(errMsg);
+                            showErrorDialog(errMsg);
                         } else {
                             linkRewardsAcctLayout.setVisibility(View.GONE);
                             updateCartFields();
@@ -518,16 +517,16 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         }
     }
 
-    private void makeToast(String msg) {
+    private void showErrorDialog(String msg) {
         if (activity != null && msg != null) {
-            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+            activity.showErrorDialog(msg, false);
         }
     }
 
     public void onCartRefreshComplete(String errMsg) {
         hideProgressIndicator();
         if (errMsg != null) {
-            makeToast(errMsg);
+            showErrorDialog(errMsg);
         }
         convertCart(CartApiManager.getCart());
     }
@@ -549,7 +548,9 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
                 // iterate thru products to create list of cart items
                 for (Product product : products) {
-                    cartItems.add(new CartItem(product));
+                    if (product.getQuantity() > 0) { // I actually saw a zero quantity once returned from sapi
+                        cartItems.add(new CartItem(product));
+                    }
                 }
 
                 // sort by expected delivery date

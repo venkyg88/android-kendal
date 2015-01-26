@@ -215,7 +215,7 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
         ProfileDetails.updateRewardsFromCart(CartApiManager.getCart());
         fillRewardAdapter(); // note that error may occur on cart refresh rather than on coupon add/delete, so need to update rewards regardless
         if (errMsg != null) {
-            Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+            activity.showErrorDialog(errMsg, false);
         } else {
             Toast.makeText(activity, confirmationMsg, Toast.LENGTH_LONG).show();
         }

@@ -167,7 +167,10 @@
 
     <string name="save_btn">Save</string>
     <string name="cancel_btn">Cancel</string>
+    <string name="okay_btn">OK</string>
     <string name="searching">Searching…</string>
+
+    <string name="network_settings">NETWORK SETTINGS</string>
 
     <!--errors-->
     <string name="error_network_connectivity">Network connectivity is required. Please enable and try again.</string>

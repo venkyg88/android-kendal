@@ -1,21 +1,24 @@
 package com.staples.mobile.cfa;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartApiManager;
@@ -116,17 +119,17 @@ public class MainActivity extends Activity
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
-        boolean freshStart = (bundle == null);
-        prepareMainScreen(freshStart);
-
-        LocationFinder.getInstance(this);
-
         if (isNetworkAvailable()) {
+
+            boolean freshStart = (bundle == null);
+            prepareMainScreen(freshStart);
+
+            LocationFinder.getInstance(this);
+
             appConfigurator = AppConfigurator.getInstance();
             appConfigurator.getConfigurator(this); // AppConfiguratorCallback
-        } else {
-            notifyUserAndAbort(R.string.error_network_connectivity);
         }
+        // Note: error handling for no network availability will happen in ensureActiveSession() called from onResume()
     }
 
     @Override
@@ -138,14 +141,24 @@ public class MainActivity extends Activity
     @Override
     protected void onPause() {
         super.onPause();
-        LocationFinder.getInstance(this).saveRecentLocation();
-        ActionBar.getInstance().saveSearchHistory();
+        LocationFinder locationFinder = LocationFinder.getInstance(this);
+        if (locationFinder != null) {
+            locationFinder.saveRecentLocation();
+        }
+        ActionBar actionBar = ActionBar.getInstance();
+        if (actionBar != null) {
+            actionBar.saveSearchHistory();
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        new LoginHelper(this).unregisterLoginCompleteListener(this);
+        // if we got past configurator initialization (otherwise LoginHelper constructor throws NPE)
+        if (AppConfigurator.getInstance().getConfigurator() != null) {
+            // unregister loginCompleteListener
+            new LoginHelper(this).unregisterLoginCompleteListener(this);
+        }
     }
 
     private boolean isNetworkAvailable() {
@@ -155,11 +168,30 @@ public class MainActivity extends Activity
         return (networkInfo != null && networkInfo.isConnected());
     }
 
+    private void showNetworkSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.error_network_connectivity);
+        builder.setPositiveButton(R.string.network_settings, new DialogInterface.OnClickListener() {
+            @Override public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+                MainActivity.this.finish();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override public void onClick(DialogInterface dialog, int which) {
+                MainActivity.this.finish();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
     public void ensureActiveSession() {
         // if interval has passed since last check
         final long currentTime = new Date().getTime();
         if (currentTime > timeOfLastSessionCheck + CONNECTIVITY_CHECK_INTERVAL) {
+            // update time of last check even though the check may not succeed. in reality, onResume
+            // can get called repeatedly in succession and we don't want to ensure active session repeatedly.
             timeOfLastSessionCheck = currentTime;
 
             // first check for network connectivity
@@ -178,44 +210,53 @@ public class MainActivity extends Activity
                         // different error code, so the following logic is okay.
                         EasyOpenApi api = Access.getInstance().getEasyOpenApi(true);
                         api.getMemberProfile(new Callback<MemberDetail>() {
-                            @Override public void success(MemberDetail memberDetail, Response response) {
-                                // success! so update time of last check
-                                timeOfLastSessionCheck = currentTime;
-                            }
-
+                            @Override public void success(MemberDetail memberDetail, Response response) {}
                             @Override public void failure(RetrofitError error) {
                                 ApiError apiError = ApiError.getApiError(error);
-                                if ("_ERR_INVALID_COOKIE".equals(apiError.getErrorKey())) {
+                                // An example of response code of 401 (unauthorized) is:
+                                // errorKey: "_ERR_INVALID_COOKIE", errorMessage: "CMN1039E: An invalid cookie was received for the user, your logonId may be in use by another user."
+                                // But there's also response code of 400 with the following:
+                                // errorCode: "1012", errorMessage: "Activity token "41741260" has been terminated."
+                                if (apiError.getHttpStatusCode() == 401 || // test for 401 (unauthorized)
+                                    "1012".equals(apiError.getErrorCode()) // test for terminated activity token (http response 400)
+                                    ) {
                                     // reestablish session
                                     loginHelper.refreshSession();
                                 } else if (apiError.getHttpStatusCode() >= 300 && apiError.getHttpStatusCode() <= 399) {
                                     // else if a redirection error
-                                    notifyUserAndAbort(R.string.error_redirect);
+                                    showErrorDialog(R.string.error_redirect, true);
                                 }
                             }
                         });
                     }
-
-                    // check for redirect
-
                 }
             } else {
-                notifyUserAndAbort(R.string.error_network_connectivity);
+                showNetworkSettingsDialog();
             }
         }
     }
 
-    public void notifyUserAndAbort(int msgId) {
-        notifyUserAndAbort(getResources().getString(msgId));
+    public void showErrorDialog(int msgId, boolean fatal) {
+        showErrorDialog(getResources().getString(msgId), fatal);
     }
-    public void notifyUserAndAbort(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-        this.finish();
+    public void showErrorDialog(String msg, final boolean fatal) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(msg);
+        builder.setPositiveButton(R.string.okay_btn, new DialogInterface.OnClickListener() {
+            @Override public void onClick(DialogInterface dialog, int which) {
+                if (fatal) {
+                    MainActivity.this.finish();
+                }
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
-    public void showMainScreen() {
+    private void showMainScreen() {
         findViewById(R.id.splash).setVisibility(View.GONE);
         findViewById(R.id.main).setVisibility(View.VISIBLE);
+        selectDrawerItem(homeDrawerItem, Transition.NONE, false);
     }
 
     public void prepareMainScreen(boolean freshStart) {
@@ -242,14 +283,17 @@ public class MainActivity extends Activity
         cartFragment = new CartFragment();
         ActionBar.getInstance().setCartCount(0);
 
+        // DLS: show main screen when configurator available. Configurator fragment now needs profile
+        // info to be loaded before it can be displayed.
+
         // Fresh start?
-        if (freshStart) {
-            Runnable runs = new Runnable() {public void run() {
-                showMainScreen();}};
-            new Handler().postDelayed(runs, SURRENDER_TIMEOUT);
-        } else {
-            showMainScreen();
-        }
+//        if (freshStart) {
+//            Runnable runs = new Runnable() {public void run() {
+//                showMainScreen();}};
+//            new Handler().postDelayed(runs, SURRENDER_TIMEOUT);
+//        } else {
+//            showMainScreen();
+//        }
     }
 
     public void onGetConfiguratorResult(Configurator configurator, boolean success, RetrofitError retrofitError) {
@@ -261,7 +305,7 @@ public class MainActivity extends Activity
             ApiError apiError = ApiError.getApiError(retrofitError);
             int status = apiError.getHttpStatusCode();
             if (status >= 300 && status <= 399) {
-                notifyUserAndAbort(R.string.error_redirect);
+                showErrorDialog(R.string.error_redirect, true);
                 return;
             }
         }
@@ -275,25 +319,26 @@ public class MainActivity extends Activity
             // that login is complete so that cart can be refilled
             if (loginHelper.isLoggedIn()) {
                 onLoginComplete(loginHelper.isGuestLogin());
+                showMainScreen();
             } else {
                 // if login info cached, log in as registered user
                 if (loginHelper.loadCachedLoginInfo()) {
                     loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
                         @Override public void onProfileRefresh(Member member) {
-                            // open home page
-                            selectDrawerItem(homeDrawerItem, Transition.NONE, false);
+                            // open home page after profile loaded since home page now needs it
+                            showMainScreen();
                         }
                     });
                 } else {
                     // otherwise, log in as guest
                     loginHelper.getGuestTokens();
                     // open home page
-                    selectDrawerItem(homeDrawerItem, Transition.NONE, false);
+                    showMainScreen();
                 }
             }
 
         } else { // can't get configurator from network or from persisted file
-            notifyUserAndAbort(R.string.error_server_connection);
+            showErrorDialog(R.string.error_server_connection, true);
         }
     }
 

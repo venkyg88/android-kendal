@@ -278,8 +278,6 @@ public class ConfiguratorFragment extends Fragment {
             break; // while (true)
 
         } // while (true)
-
-        activity.showMainScreen();
     }
 
     private void doPortrait() {
