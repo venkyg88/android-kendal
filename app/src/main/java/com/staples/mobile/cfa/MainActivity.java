@@ -15,10 +15,13 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartApiManager;
@@ -76,6 +79,8 @@ public class MainActivity extends Activity
     private CartFragment cartFragment;
     private DrawerItem homeDrawerItem;
     private long timeOfLastSessionCheck;
+    private TextView notificationBanner;
+    Animation notificationBannerAnimation;
 
 
     private LoginHelper loginHelper;
@@ -253,6 +258,15 @@ public class MainActivity extends Activity
         dialog.show();
     }
 
+    public void showNotificationBanner(int msgId) {
+        showNotificationBanner(getResources().getString(msgId));
+
+    }
+    public void showNotificationBanner(String msg) {
+        notificationBanner.setText(msg);
+        notificationBanner.startAnimation(notificationBannerAnimation);
+    }
+
     private void showMainScreen() {
         findViewById(R.id.splash).setVisibility(View.GONE);
         findViewById(R.id.main).setVisibility(View.VISIBLE);
@@ -282,6 +296,19 @@ public class MainActivity extends Activity
         // Cart
         cartFragment = new CartFragment();
         ActionBar.getInstance().setCartCount(0);
+
+        // get notification banner and set up animation
+        notificationBanner = (TextView) findViewById(R.id.notification_banner);
+        notificationBannerAnimation = AnimationUtils.loadAnimation(this, R.anim.notification_slide_from_bottom);
+        notificationBannerAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) {
+                notificationBanner.setVisibility(View.VISIBLE);
+            }
+            @Override public void onAnimationEnd(Animation animation) {
+                notificationBanner.setVisibility(View.INVISIBLE);
+            }
+            @Override public void onAnimationRepeat(Animation animation) { }
+        });
 
         // DLS: show main screen when configurator available. Configurator fragment now needs profile
         // info to be loaded before it can be displayed.

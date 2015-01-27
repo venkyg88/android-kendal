@@ -98,6 +98,7 @@
         </android.support.v4.widget.DrawerLayout>
     </com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay>
 
+    <!--progress indicator overlay-->
     <RelativeLayout
         android:id="@+id/progress_overlay"
         android:layout_width="match_parent"
@@ -110,4 +111,19 @@
             android:layout_height="wrap_content"
             android:indeterminateOnly="true" />
     </RelativeLayout>
+
+    <!--notification banner-->
+    <TextView
+        android:id="@+id/notification_banner"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom"
+        android:paddingLeft="16dp"
+        android:visibility="invisible"
+        android:gravity="left|center_vertical"
+        android:textSize="16sp"
+        android:textColor="@color/text_white"
+        android:background="@color/background_dark_gray" >
+    </TextView>
+
 </FrameLayout>
