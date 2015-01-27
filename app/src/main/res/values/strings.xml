@@ -54,7 +54,7 @@
     <string name="reward">Reward!</string>
     <string name="store_open">Open</string>
     <string name="store_close">Close</string>
-
+    <string name="no_store">No Nearby Store</string>
 
     <string name="add">ADD</string>
     <string name="cartitem_qty_label">Qty</string>
@@ -181,5 +181,5 @@
     <string name="error_network_connectivity">Network connectivity is required. Please enable and try again.</string>
     <string name="error_server_connection">Unable to contact server at this time. Please try again later.</string>
     <string name="error_redirect">Please sign in to guest network and then try again.</string>
-
+    <string name="error_no_location_service">Can\'t find nearby stores because location service is not available.</string>
 </resources>

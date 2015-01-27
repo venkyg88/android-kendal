@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -273,11 +274,8 @@ public class ConfiguratorFragment extends Fragment {
                 doLandscape();
             }
 
-            // call store api and get info
-            storeWrapper = (DataWrapper) configFrameView.findViewById(R.id.store_wrapper);
-            storeWrapper.setState(DataWrapper.State.LOADING);
-            EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
-            api.getStoreInventory("513096", "100", 1, 1, new StoreInfoCallback());
+            // call store api and get store info
+            getStoreInfo();
 
             break; // while (true)
 
@@ -1003,6 +1001,25 @@ public class ConfiguratorFragment extends Fragment {
 
     //////////////////////////////////////////////////////////////////////////////
     // Personalized Message Bar Methods created by Yongnan Zhou:
+    private void getStoreInfo(){
+        storeWrapper = (DataWrapper) configFrameView.findViewById(R.id.store_wrapper);
+        storeWrapper.setState(DataWrapper.State.LOADING);
+
+        // Get current postal code
+        LocationFinder finder = LocationFinder.getInstance(getActivity());
+        String postalCode = finder.getPostalCode();
+        if (postalCode == null) {
+            storeWrapper.setState(DataWrapper.State.EMPTY);
+            String errorMessage = (String) getResources().getText(R.string.error_no_location_service);
+            Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
+            //activity.showErrorDialog(errorMessage, false);
+        }
+        else{
+            EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
+            api.getStoreInfo("513096", "100", 1, 1, postalCode, new StoreInfoCallback());
+        }
+    }
+
     private class StoreInfoCallback implements Callback<StoreInventory> {
         @Override
         public void success(StoreInventory storeInfo, Response response) {
@@ -1011,11 +1028,11 @@ public class ConfiguratorFragment extends Fragment {
             String storeState = storeInfo.getStore().get(0).getState();
             storeNameTextView.setText(storeCity + ", " + storeState);
 
-            System.out.println(TAG + " - Store:" + storeCity + ", " + storeState);
+            System.out.println(TAG + " - Store Location:" + storeCity + ", " + storeState);
 
             // Get store office hour
             String storeOfficeHour = storeInfo.getStore().get(0).getStoreHours();
-            System.out.println(TAG + " - Office Hour:" + storeOfficeHour);
+            System.out.println(TAG + " - Store Office Hour:" + storeOfficeHour);
             // "Monday - Friday: 0800-2100 Saturday: 0900-2100 Sunday: 1000-1800"
 
             int weekDayStartHour;
@@ -1055,8 +1072,8 @@ public class ConfiguratorFragment extends Fragment {
             cal.getTime();
             SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
             int currentTime = Integer.parseInt(sdf.format(cal.getTime()));
-            System.out.println(TAG + " - Day of week:" + dayOfWeek);
-            System.out.println(TAG + " - Time:" + currentTime);
+            System.out.println(TAG + " - Current day of week:" + dayOfWeek);
+            System.out.println(TAG + " - Current time:" + currentTime);
 
             storeStatusTextView.setText(R.string.store_open);
 
@@ -1107,7 +1124,6 @@ public class ConfiguratorFragment extends Fragment {
             Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
             Log.d(TAG, message);
 
-            storeWrapper.setVisibility(View.GONE);
             storeWrapper.setState(DataWrapper.State.EMPTY);
         }
     }
