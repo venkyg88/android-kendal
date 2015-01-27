@@ -1031,16 +1031,17 @@ public class ConfiguratorFragment extends Fragment {
         @Override
         public void success(StoreQuery storeQuery, Response response) {
             List<StoreData> storeData = storeQuery.getStoreData();
-            Obj obj = storeData.get(0).getObj();
+            Obj storeObj = storeData.get(0).getObj();
 
-            StoreAddress storeAddress = obj.getStoreAddress();
+            // Get store location
+            StoreAddress storeAddress = storeObj.getStoreAddress();
             String storeCity = storeAddress.getCity();
             String storeState = storeAddress.getState();
             storeNameTextView.setText(storeCity + "," + storeState);
-            System.out.println(TAG + " - store location:" + storeCity + "," + storeState);
+            Log.d(TAG, " - store location:" + storeCity + "," + storeState);
 
             // Get store office hours
-            List<StoreHours> storeHourList = obj.getStoreHours();
+            List<StoreHours> storeHourList = storeObj.getStoreHours();
             ArrayList<Integer> storeStartHourList = new ArrayList<Integer>();
             ArrayList<Integer> storeEndHourList = new ArrayList<Integer>();
             for(StoreHours hours : storeHourList) {
@@ -1049,9 +1050,8 @@ public class ConfiguratorFragment extends Fragment {
                 int storeEndTime = parseTimeSpan(timeChunk[1]);
                 storeStartHourList.add(storeStartTime);
                 storeEndHourList.add(storeEndTime);
-
-                System.out.println(TAG + " - day:" + hours.getDayName() + ", hour:" + hours.getHours()
-                        + ", storeStartTime: " + storeStartTime + ", storeEndTime: " + storeEndTime);
+                //System.out.println(TAG + " - day:" + hours.getDayName() + ", hour:" + hours.getHours()
+                //        + ", storeStartTime: " + storeStartTime + ", storeEndTime: " + storeEndTime);
             }
 
             Calendar cal = Calendar.getInstance();
@@ -1059,8 +1059,8 @@ public class ConfiguratorFragment extends Fragment {
             cal.getTime();
             SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
             int currentTime = Integer.parseInt(sdf.format(cal.getTime()));
-            System.out.println(TAG + " - Current day of week:" + dayOfWeek);
-            System.out.println(TAG + " - Current time:" + currentTime);
+            Log.d(TAG, " - Current day of week:" + dayOfWeek);
+            Log.d(TAG, " - Current time:" + currentTime);
 
             switch (dayOfWeek) {
                 case 1:
