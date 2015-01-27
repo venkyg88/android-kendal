@@ -45,9 +45,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ConfiguratorFragment
-        extends Fragment
-        implements AppConfigurator.AppConfiguratorCallback{
+public class ConfiguratorFragment extends Fragment {
 
     private static final String TAG = "ConfiguratorFragment";
 
@@ -178,7 +176,11 @@ public class ConfiguratorFragment
             }
         };
 
-        appConfigurator.getConfigurator(this); // AppConfiguratorCallback
+        // checking for configurator just to be sure, but MainActivity should not allow this
+        // fragment to be loaded if no configurator
+        if (appConfigurator != null && appConfigurator.getConfigurator() != null) {
+            initFromConfiguratorResult(appConfigurator.getConfigurator());
+        }
 
         // initiate personalized message bar
         findMessageBarViews();
@@ -193,24 +195,14 @@ public class ConfiguratorFragment
         ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
     }
 
-    @Override
-    public void onGetConfiguratorResult(Configurator configurator, boolean success, RetrofitError retrofitError) {
+    public void initFromConfiguratorResult(Configurator configurator) {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:AppConfigurator.onGetConfiguratorResult():"
-                        + " success[" + success + "]"
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:initFromConfiguratorResult():"
                         + " configurator[" + configurator + "]"
                         + " this[" + this + "]"
         );
 
         while (true) {
-
-            if ( ! success) {
-
-                if (retryGetConfig) appConfigurator.getConfigurator(this); // AppConfiguratorCallback
-                retryGetConfig = false;
-
-                break; // while (true)
-            }
 
             deviceInfo = new DeviceInfo(resources);
 
@@ -218,7 +210,7 @@ public class ConfiguratorFragment
 
             screens = staplesAppContext.getScreen();
 
-            if (LOGGING) Log.v(TAG, "ConfiguratorFragment:AppConfigurator.onGetConfiguratorResult():"
+            if (LOGGING) Log.v(TAG, "ConfiguratorFragment:initFromConfiguratorResult():"
                             + " screens[" + screens + "]"
                             + " this[" + this + "]"
             );
@@ -238,7 +230,7 @@ public class ConfiguratorFragment
             configItemsC.clear();
             configItemsD.clear();
 
-            if (LOGGING) Log.v(TAG, "ConfiguratorFragment:AppConfigurator.onGetConfiguratorResult():"
+            if (LOGGING) Log.v(TAG, "ConfiguratorFragment:initFromConfiguratorResult():"
                             + " items[" + items + "]"
                             + " this[" + this + "]"
             );
@@ -290,8 +282,6 @@ public class ConfiguratorFragment
             break; // while (true)
 
         } // while (true)
-
-        activity.showMainScreen();
     }
 
     private void doPortrait() {

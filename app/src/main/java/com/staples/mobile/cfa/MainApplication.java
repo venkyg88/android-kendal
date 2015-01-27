@@ -2,7 +2,10 @@ package com.staples.mobile.cfa;
 
 import android.app.Application;
 
+import android.content.Context;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.StrictMode.ThreadPolicy;
 import android.os.StrictMode.VmPolicy;
 import android.os.StrictMode;
@@ -45,7 +48,17 @@ public class MainApplication
 
         String configServerUrl = resources.getString(R.string.configuration_destination);
         appConfigurator = AppConfigurator.getInstance(this, configServerUrl);
-        appConfigurator.getConfigurator(this);
+        if (isNetworkAvailable()) {
+            appConfigurator.getConfigurator(this);
+        } else {
+            // todo: Steve, I added this to match what's in the callback which won't get called in
+            // todo:    this case, but is it necessary? Can you refactor so this is cleaner? Thanks!
+            if (staplesAppContext == null) {
+                // This will cause StaplesAppContext to obtain a reference to the
+                // newly acquired Configurator class,
+                staplesAppContext = StaplesAppContext.getInstance();
+            }
+        }
 
         /* @@@ STUBBED
         setStrictMode();
@@ -109,4 +122,12 @@ public class MainApplication
         return;
 
     } // setStrictMode()
+
+    /** returns true if network available */
+    private boolean isNetworkAvailable() {
+        // first check for network connectivity
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
+    }
 }
