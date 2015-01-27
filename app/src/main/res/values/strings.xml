@@ -156,6 +156,7 @@
     <string name="item">Item</string>
     <string name="model">Model</string>
     <string name="phone">Phone</string>
+    <string name="store_nearby">Store nearby you</string>
     <string name="store_hours">Store Hours</string>
     <string name="store_features">Store Features</string>
     <string name="store_closed">Closed</string>

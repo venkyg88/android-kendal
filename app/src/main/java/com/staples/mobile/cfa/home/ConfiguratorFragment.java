@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,9 +22,15 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.store.StoreFragment;
+import com.staples.mobile.cfa.store.TimeSpan;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.channel.model.store.Obj;
+import com.staples.mobile.common.access.channel.model.store.StoreAddress;
+import com.staples.mobile.common.access.channel.model.store.StoreData;
+import com.staples.mobile.common.access.channel.model.store.StoreHours;
+import com.staples.mobile.common.access.channel.model.store.StoreQuery;
 import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Area;
 import com.staples.mobile.common.access.configurator.model.Configurator;
@@ -1008,63 +1013,45 @@ public class ConfiguratorFragment extends Fragment {
         // Get current postal code
         LocationFinder finder = LocationFinder.getInstance(getActivity());
         String postalCode = finder.getPostalCode();
-        if (postalCode == null) {
+        if (TextUtils.isEmpty(postalCode)) {
             storeWrapper.setState(DataWrapper.State.EMPTY);
             String errorMessage = (String) getResources().getText(R.string.error_no_location_service);
             Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
             //activity.showErrorDialog(errorMessage, false);
         }
         else{
-            EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
-            api.getStoreInfo("513096", "100", 1, 1, postalCode, new StoreInfoCallback());
+            //EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
+            //api.getStoreInfo("513096", "100", 1, 1, postalCode, new StoreInfoCallback());
+
+            Access.getInstance().getChannelApi(false).storeLocations(postalCode, new StoreInfoCallback());
         }
     }
 
-    private class StoreInfoCallback implements Callback<StoreInventory> {
+    private class StoreInfoCallback implements Callback<StoreQuery> {
         @Override
-        public void success(StoreInventory storeInfo, Response response) {
-            // Get store address
-            String storeCity = storeInfo.getStore().get(0).getCity();
-            String storeState = storeInfo.getStore().get(0).getState();
-            storeNameTextView.setText(storeCity + ", " + storeState);
+        public void success(StoreQuery storeQuery, Response response) {
+            List<StoreData> storeData = storeQuery.getStoreData();
+            Obj obj = storeData.get(0).getObj();
 
-            System.out.println(TAG + " - Store Location:" + storeCity + ", " + storeState);
+            StoreAddress storeAddress = obj.getStoreAddress();
+            String storeCity = storeAddress.getCity();
+            String storeState = storeAddress.getState();
+            storeNameTextView.setText(storeCity + "," + storeState);
+            System.out.println(TAG + " - store location:" + storeCity + "," + storeState);
 
-            // Get store office hour
-            String storeOfficeHour = storeInfo.getStore().get(0).getStoreHours();
-            System.out.println(TAG + " - Store Office Hour:" + storeOfficeHour);
-            // "Monday - Friday: 0800-2100 Saturday: 0900-2100 Sunday: 1000-1800"
+            // Get store office hours
+            List<StoreHours> storeHourList = obj.getStoreHours();
+            ArrayList<Integer> storeStartHourList = new ArrayList<Integer>();
+            ArrayList<Integer> storeEndHourList = new ArrayList<Integer>();
+            for(StoreHours hours : storeHourList) {
+                String[] timeChunk = hours.getHours().split("-");
+                int storeStartTime = parseTimeSpan(timeChunk[0]);
+                int storeEndTime = parseTimeSpan(timeChunk[1]);
+                storeStartHourList.add(storeStartTime);
+                storeEndHourList.add(storeEndTime);
 
-            int weekDayStartHour;
-            int weekDayEndHour;
-            int satStartHour;
-            int satEndHour;
-            int sunStartHour;
-            int sunEndHour;
-
-            try {
-                weekDayStartHour = Integer.parseInt(storeOfficeHour.substring(17, 21));
-                weekDayEndHour = Integer.parseInt(storeOfficeHour.substring(22, 26));
-                //System.out.println(TAG + weekDayStartHour + "-" + weekDayEndHour);
-
-                satStartHour = Integer.parseInt(storeOfficeHour.substring(37, 41));
-                satEndHour = Integer.parseInt(storeOfficeHour.substring(42, 46));
-                //System.out.println(TAG + satStartHour + "-" + satEndHour);
-
-                sunStartHour = Integer.parseInt(storeOfficeHour.substring(55, 59));
-                sunEndHour = Integer.parseInt(storeOfficeHour.substring(60, 64));
-                //System.out.println(TAG + sunStartHour + "-" + sunEndHour);
-            }
-            catch(NumberFormatException | ArrayIndexOutOfBoundsException e){
-                // set default office time in case of api error
-                weekDayStartHour = 800;
-                weekDayEndHour = 2100;
-
-                satStartHour = 900;
-                satEndHour = 2100;
-
-                sunStartHour = 1000;
-                sunEndHour = 1800;
+                System.out.println(TAG + " - day:" + hours.getDayName() + ", hour:" + hours.getHours()
+                        + ", storeStartTime: " + storeStartTime + ", storeEndTime: " + storeEndTime);
             }
 
             Calendar cal = Calendar.getInstance();
@@ -1075,11 +1062,9 @@ public class ConfiguratorFragment extends Fragment {
             System.out.println(TAG + " - Current day of week:" + dayOfWeek);
             System.out.println(TAG + " - Current time:" + currentTime);
 
-            storeStatusTextView.setText(R.string.store_open);
-
             switch (dayOfWeek) {
                 case 1:
-                    if(currentTime >= sunStartHour && currentTime <= sunEndHour){
+                    if(currentTime >= storeStartHourList.get(0) && currentTime <= storeEndHourList.get(0)){
                         storeStatusTextView.setText(R.string.store_open);
                     }
                     else{
@@ -1088,7 +1073,7 @@ public class ConfiguratorFragment extends Fragment {
                     break;
 
                 case 2 : case 3 : case 4 : case 5 : case 6:
-                    if(currentTime >= weekDayStartHour && currentTime <= weekDayEndHour){
+                    if(currentTime >= storeStartHourList.get(1) && currentTime <= storeEndHourList.get(1)){
                         storeStatusTextView.setText(R.string.store_open);
                     }
                     else{
@@ -1097,7 +1082,7 @@ public class ConfiguratorFragment extends Fragment {
                     break;
 
                 case 7:
-                    if(currentTime >= satStartHour && currentTime <= satEndHour){
+                    if(currentTime >= storeStartHourList.get(6) && currentTime <= storeEndHourList.get(6)){
                         storeStatusTextView.setText(R.string.store_open);
                     }
                     else{
@@ -1126,6 +1111,24 @@ public class ConfiguratorFragment extends Fragment {
 
             storeWrapper.setState(DataWrapper.State.EMPTY);
         }
+    }
+
+    // "10:00AM" -> 1000 ; "6:00PM" -> 1800
+    private int parseTimeSpan(String time){
+        int formatTime = 0;
+
+        String[] tmp = time.trim().split(":");
+        String leftPart = tmp[0];
+        String rightPart = tmp[1].substring(0,2);
+        formatTime = Integer.parseInt(leftPart + rightPart);
+
+        if(tmp[1].contains("P")){
+            formatTime = formatTime + 1200;
+        }
+
+        //System.out.println(TAG + " - formatTime:" + formatTime);
+
+        return formatTime;
     }
 
     private void findMessageBarViews(){
