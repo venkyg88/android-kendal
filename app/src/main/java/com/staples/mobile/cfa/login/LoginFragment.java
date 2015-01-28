@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -160,7 +159,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 });
             }
             else{
-                Toast.makeText(getActivity(), "Username or Password cannot be null", Toast.LENGTH_LONG).show();
+                activity.showErrorDialog(R.string.username_password_required);
             }
         }
         if(view == registerBtn){
@@ -186,7 +185,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 });
             }
             else{
-                Toast.makeText(getActivity(), "Username or Password cannot be null", Toast.LENGTH_LONG).show();
+                activity.showErrorDialog(R.string.username_password_required);
             }
         }
     }

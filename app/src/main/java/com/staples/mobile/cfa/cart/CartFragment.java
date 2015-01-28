@@ -433,7 +433,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                     public void onLinkRewardsComplete(String errMsg) {
                         hideProgressIndicator();
                         if (errMsg != null) {
-                            showErrorDialog(errMsg);
+                            activity.showErrorDialog(errMsg);
                         } else {
                             linkRewardsAcctLayout.setVisibility(View.GONE);
                             updateCartFields();
@@ -517,16 +517,11 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         }
     }
 
-    private void showErrorDialog(String msg) {
-        if (activity != null && msg != null) {
-            activity.showErrorDialog(msg, false);
-        }
-    }
 
     public void onCartRefreshComplete(String errMsg) {
         hideProgressIndicator();
         if (errMsg != null) {
-            showErrorDialog(errMsg);
+            activity.showErrorDialog(errMsg);
         } else {
             activity.showNotificationBanner(R.string.cart_updated_msg);
         }

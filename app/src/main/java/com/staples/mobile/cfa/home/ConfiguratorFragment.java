@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
@@ -1104,7 +1103,7 @@ public class ConfiguratorFragment extends Fragment {
             }
 
             String message = ApiError.getErrorMessage(retrofitError);
-            Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
+            ((MainActivity)activity).showErrorDialog(message);
             Log.d(TAG, message);
 
             storeWrapper.setVisibility(View.GONE);

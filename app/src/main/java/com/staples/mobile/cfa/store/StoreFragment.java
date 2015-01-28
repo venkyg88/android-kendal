@@ -36,6 +36,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -462,8 +463,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
             startActivity(intent);
             return(true);
         } catch(ActivityNotFoundException e) {
-            String msg = getResources().getString(R.string.store_no_phone);
-            Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+            ((MainActivity) getActivity()).showErrorDialog(R.string.store_no_phone);
             return(false);
         }
     }
@@ -486,8 +486,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
                 startActivity(intent);
                 return(true);
             } catch(ActivityNotFoundException e2) {
-                String msg = getResources().getString(R.string.store_no_maps);
-                Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+                ((MainActivity) getActivity()).showErrorDialog(R.string.store_no_maps);
                 return (false);
             }
         }

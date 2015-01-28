@@ -241,6 +241,12 @@ public class MainActivity extends Activity
         }
     }
 
+    public void showErrorDialog(int msgId) {
+        showErrorDialog(msgId, false);
+    }
+    public void showErrorDialog(String msg) {
+        showErrorDialog(msg, false);
+    }
     public void showErrorDialog(int msgId, boolean fatal) {
         showErrorDialog(getResources().getString(msgId), fatal);
     }
