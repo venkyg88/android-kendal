@@ -183,11 +183,13 @@ public class LoginHelper {
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
-                        Toast.makeText(activity, "Failed Login: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_LONG).show();
                         Log.i("Fail Message For Registered User", " " + retrofitError.getMessage());
                         Log.i("Post URL address For Registered User", " " + retrofitError.getUrl());
-                        if (callback != null) {
-                            callback.onProfileRefresh(null);
+                        if (!refreshOnly) {
+                            Toast.makeText(activity, "Failed Login: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_LONG).show();
+                            if (callback != null) {
+                                callback.onProfileRefresh(null);
+                            }
                         }
                     }
                 }
@@ -259,39 +261,49 @@ public class LoginHelper {
 
     /** persists cached username and encrypted password */
     private void resetCachedLoginInfo() {
-        if (!TextUtils.isEmpty(cachedUsername) || !TextUtils.isEmpty(cachedPassword)) {
-            cachedUsername = null;
-            cachedPassword = null;
-            SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.remove(PREFS_USERNAME);
-            editor.remove(PREFS_ENCRYPTEDPASSWORD);
-            editor.apply();
-        }
+        try {
+            if (!TextUtils.isEmpty(cachedUsername) || !TextUtils.isEmpty(cachedPassword)) {
+                cachedUsername = null;
+                cachedPassword = null;
+                SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.remove(PREFS_USERNAME);
+                editor.remove(PREFS_ENCRYPTEDPASSWORD);
+                editor.apply();
+            }
+        } catch(Exception e) { /* eat any exceptions */ }
     }
 
     /** persists cached username and encrypted password */
     private void persistLoginInfo() {
-        if (!TextUtils.isEmpty(cachedUsername) && !TextUtils.isEmpty(cachedPassword)) {
-            SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putString(PREFS_USERNAME, cachedUsername);
-            editor.putString(PREFS_ENCRYPTEDPASSWORD, AesCrypto.encrypt(cachedPassword, getEncryptionKey()));
-            editor.apply();
-        }
+        try {
+            if (!TextUtils.isEmpty(cachedUsername) && !TextUtils.isEmpty(cachedPassword)) {
+                SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString(PREFS_USERNAME, cachedUsername);
+                editor.putString(PREFS_ENCRYPTEDPASSWORD, AesCrypto.encrypt(cachedPassword, getEncryptionKey()));
+                editor.apply();
+            }
+        } catch(Exception e) { /* eat any exceptions */ }
     }
 
-    /** persists cached username and encrypted password */
+    /**
+     * persists cached username and encrypted password
+     * @return true if successful
+     */
     public boolean loadCachedLoginInfo() {
-        if (TextUtils.isEmpty(cachedUsername) || TextUtils.isEmpty(cachedPassword)) {
-            SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
-            cachedUsername = prefs.getString(PREFS_USERNAME, cachedUsername);
-            String encryptedPassword = prefs.getString(PREFS_ENCRYPTEDPASSWORD, null);
-            if (cachedUsername !=  null && encryptedPassword != null) {
-                cachedUsername = cachedUsername.trim();
-                cachedPassword = AesCrypto.decrypt(encryptedPassword.trim(), getEncryptionKey());
+        try {
+            if (TextUtils.isEmpty(cachedUsername) || TextUtils.isEmpty(cachedPassword)) {
+                SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
+                cachedUsername = prefs.getString(PREFS_USERNAME, cachedUsername);
+                String encryptedPassword = prefs.getString(PREFS_ENCRYPTEDPASSWORD, null);
+                if (cachedUsername !=  null && encryptedPassword != null) {
+                    cachedUsername = cachedUsername.trim();
+                    cachedPassword = AesCrypto.decrypt(encryptedPassword.trim(), getEncryptionKey());
+                }
             }
-        }
+        } catch(Exception e) { /* eat any exceptions */ }
+
         return isCachedLoginInfoAvailable();
     }
 
