@@ -6,11 +6,9 @@ package com.staples.mobile.cfa.checkout;
 
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;

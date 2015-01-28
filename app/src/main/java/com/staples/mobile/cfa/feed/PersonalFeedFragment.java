@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.R;
@@ -147,7 +146,7 @@ public class PersonalFeedFragment extends Fragment {
             }
 
             String message = ApiError.getErrorMessage(retrofitError);
-            Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
+            ((MainActivity)activity).showErrorDialog(message);
             Log.d(TAG, message);
         }
     }

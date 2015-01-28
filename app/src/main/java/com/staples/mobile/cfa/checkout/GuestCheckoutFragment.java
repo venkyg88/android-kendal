@@ -304,7 +304,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                             shippingAddrNeedsApplying = false;
 
                             if (infoMsg != null) {
-                                showErrorDialog("Shipping address alert: " + infoMsg);
+                                activity.showErrorDialog("Shipping address alert: " + infoMsg);
                             }
 
                             // now apply billing address
@@ -314,7 +314,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                             // if shipping and tax already showing, need to hide them
                             resetShippingAndTax();
 
-                            showErrorDialog(errMsg);
+                            activity.showErrorDialog(errMsg);
                             Log.d(TAG, errMsg);
                         }
                     }
@@ -342,7 +342,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                             billingAddrNeedsApplying = false;
 
                             if (infoMsg != null) {
-                                showErrorDialog("Billing address alert: " + infoMsg);
+                                activity.showErrorDialog("Billing address alert: " + infoMsg);
                             }
 
                             // do precheckout
@@ -352,7 +352,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                             // if shipping and tax already showing, need to hide them
                             resetShippingAndTax();
 
-                            showErrorDialog(errMsg);
+                            activity.showErrorDialog(errMsg);
                             Log.d(TAG, errMsg);
                         }
                     }
@@ -381,7 +381,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
         final PaymentMethod paymentMethod = getPaymentMethod();
         if (paymentMethod==null) {
-            showErrorDialog(R.string.payment_method_required);
+            activity.showErrorDialog(R.string.payment_method_required);
             return;
         }
 
@@ -399,7 +399,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                     submitOrder(paymentMethod.getCardVerificationCode(), emailAddress);
 
                 } else {
-                    showErrorDialog(errMsg);
+                    activity.showErrorDialog(errMsg);
                     Log.d(TAG, errMsg);
                 }
             }

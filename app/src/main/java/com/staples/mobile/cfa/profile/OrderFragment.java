@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -98,7 +97,7 @@ public class OrderFragment extends Fragment {
                         @Override
                         public void failure(RetrofitError error) {
                             activity.hideProgressIndicator();
-                            Toast.makeText(activity, ApiError.getErrorMessage(error), Toast.LENGTH_LONG).show();
+                            activity.showErrorDialog(ApiError.getErrorMessage(error));
                             Log.i("Fail Response Order Status", error.getUrl() + error.getMessage());
                         }
                     });
@@ -111,7 +110,7 @@ public class OrderFragment extends Fragment {
                 orderTV.setVisibility(View.VISIBLE);
                 orderTV.setText("No Orders Found");
                 activity.hideProgressIndicator();
-                Toast.makeText(activity, ApiError.getErrorMessage(error), Toast.LENGTH_LONG).show();
+                activity.showErrorDialog(ApiError.getErrorMessage(error));
                 Log.i("Fail Response Order History", error.getUrl() + error.getMessage());
             }
         });

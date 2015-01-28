@@ -171,7 +171,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                             // if shipping and tax already showing, need to hide them
                             resetShippingAndTax();
 
-                            showErrorDialog(errMsg);
+                            activity.showErrorDialog(errMsg);
                             Log.d(TAG, errMsg);
                         }
                     }
@@ -189,11 +189,11 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
 
         // make sure necessary selections have been made
         if (profilePaymentMethod == null) {
-            showErrorDialog(R.string.payment_method_required);
+            activity.showErrorDialog(R.string.payment_method_required);
             return;
         }
         if (billingAddress == null) {
-            showErrorDialog(R.string.billing_address_required);
+            activity.showErrorDialog(R.string.billing_address_required);
             return;
         }
 
@@ -216,13 +216,13 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                                 // finally, upon payment method success, submit the order
                                 submitOrder(null, ProfileDetails.getMember().getEmailAddress());
                             } else {
-                                showErrorDialog(errMsg);
+                                activity.showErrorDialog(errMsg);
                                 Log.d(TAG, errMsg);
                             }
                         }
                     });
                 } else {
-                    showErrorDialog(errMsg);
+                    activity.showErrorDialog(errMsg);
                     Log.d(TAG, errMsg);
                 }
             }

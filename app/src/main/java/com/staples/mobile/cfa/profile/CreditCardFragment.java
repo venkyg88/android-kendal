@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -158,7 +157,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         creditCardNumber = cardNumberET.getText().toString();
         String expirationDate = expDateET.getText().toString();
         if(expirationDate.length() != 5) {
-            Toast.makeText(getActivity(), "Check expiration date", Toast.LENGTH_LONG).show();
+            activity.showErrorDialog(R.string.check_exp_date);
             return;
         }
         else {
@@ -186,7 +185,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
 
                     if(encryptedPacket.isEmpty()) {
                         activity.hideProgressIndicator();
-                        Toast.makeText(activity, "Credit card encryption failed" , Toast.LENGTH_LONG).show();
+                        activity.showErrorDialog(R.string.cc_encryption_failure);
                         Log.i("Success", response.getUrl());
                     }
                     else if(creditCardId != null) {
@@ -197,7 +196,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                                 (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
                                     @Override public void onProfileRefresh(Member member) {
                                         activity.hideProgressIndicator();
-                                        Toast.makeText(activity, "Card Updated", Toast.LENGTH_LONG).show();
+                                        activity.showNotificationBanner(R.string.cc_updated);
                                         FragmentManager fm = getFragmentManager();
                                         if (fm != null) {
                                             fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
@@ -209,7 +208,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                             @Override
                             public void failure(RetrofitError error) {
                                 activity.hideProgressIndicator();
-                                Toast.makeText(activity, ApiError.getErrorMessage(error), Toast.LENGTH_LONG).show();
+                                activity.showErrorDialog(ApiError.getErrorMessage(error));
                             }
                         });
                     }
@@ -220,7 +219,6 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                             public void success(CreditCardId creditCardID, Response response) {
                                 Log.i("Success", creditCardID.getCreditCardId());
                                 activity.hideProgressIndicator();
-                                Toast.makeText(activity, "Credit Card Id: "+ creditCardID.getCreditCardId(), Toast.LENGTH_LONG).show();
                                 (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
                                     @Override public void onProfileRefresh(Member member) {
                                         FragmentManager fm = getFragmentManager();
@@ -234,7 +232,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                             @Override
                             public void failure(RetrofitError error) {
                                 activity.hideProgressIndicator();
-                                Toast.makeText(activity, ApiError.getErrorMessage(error), Toast.LENGTH_LONG).show();
+                                activity.showErrorDialog(ApiError.getErrorMessage(error));
                                 Log.i("Add CC Fail Message", error.getMessage());
                                 Log.i("url", error.getUrl());
                             }
@@ -245,12 +243,13 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                 @Override
                 public void failure(RetrofitError error) {
                     ((MainActivity)activity).hideProgressIndicator();
+                    activity.showErrorDialog(ApiError.getErrorMessage(error));
                     Log.i("Fail Response POW", error.getUrl() + error.getMessage());
                 }
             });
         } else {
-            Toast.makeText(getActivity(), "All Fields are required", Toast.LENGTH_LONG).show();
-            ((MainActivity)activity).hideProgressIndicator();
+            activity.hideProgressIndicator();
+            activity.showErrorDialog(R.string.all_fields_required);
         }
     }
 

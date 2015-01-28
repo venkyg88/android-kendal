@@ -16,7 +16,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -68,7 +67,7 @@ public class RewardsLinkingFragment extends Fragment {
                     public void onLinkRewardsComplete(String errMsg) {
                         hideProgressIndicator();
                         if (errMsg != null) {
-                            makeToast(errMsg);
+                            activity.showErrorDialog(errMsg, false);
                         } else {
                             activity.selectRewardsFragment();
                         }
@@ -133,16 +132,6 @@ public class RewardsLinkingFragment extends Fragment {
         }
     }
 
-    private void makeToast(String msg) {
-        if (activity != null) {
-            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
-        }
-    }
-    private void makeToast(int msgId) {
-        if (activity != null) {
-            Toast.makeText(activity, msgId, Toast.LENGTH_LONG).show();
-        }
-    }
 
     public void hideSoftKeyboard(View view) {
         InputMethodManager keyboard = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);

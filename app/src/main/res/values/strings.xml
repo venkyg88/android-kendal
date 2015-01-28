@@ -126,6 +126,7 @@
         <item quantity="other">business days</item>
     </plurals>
 
+    <!--profile-->
     <string name="password">Password</string>
     <string name="email">Email</string>
     <string name="reenter_email">Re-enter Email</string>
@@ -133,6 +134,15 @@
     <string name="required">Required</string>
     <string name="bad_us_state">Not a US state</string>
     <string name="cid">CID</string>
+    <string name="username_password_required">Username and Password are required</string>
+    <string name="address_deleted">Address deleted</string>
+    <string name="address_updated">Address updated</string>
+    <string name="cc_updated">Credit card updated</string>
+    <string name="cc_deleted">Credit card deleted</string>
+    <string name="check_exp_date">"Check expiration date</string>
+    <string name="cc_encryption_failure">Credit card encryption failed</string>
+    <string name="all_fields_required">All fields are required. Please fill and try again</string>
+
     <string name="description">Description</string>
     <string name="specifications">Specifications</string>
     <string name="specs">Specs</string>
