@@ -97,12 +97,12 @@ public class RewardsLinkingFragment extends Fragment {
                 @Override
                 public void success(UpdateProfileResponse updateProfileResponse, Response response) {
                     new ProfileDetails().refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
-                        @Override public void onProfileRefresh(Member member) {
+                        @Override public void onProfileRefresh(Member member, String errMsg) {
                             if (linkRewardsCallback != null) {
                                 if (ProfileDetails.isRewardsMember()) {
                                     linkRewardsCallback.onLinkRewardsComplete(null);
                                 } else {
-                                    linkRewardsCallback.onLinkRewardsComplete("Unknown error");
+                                    linkRewardsCallback.onLinkRewardsComplete((errMsg != null)? errMsg : "Unknown Error");
                                 }
                             }
                         }

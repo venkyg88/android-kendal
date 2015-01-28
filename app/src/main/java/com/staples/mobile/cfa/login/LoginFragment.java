@@ -150,10 +150,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 activity.showProgressIndicator();
                 loginHelper.getUserTokens(email, password, new ProfileDetails.ProfileRefreshCallback() {
                     @Override
-                    public void onProfileRefresh(Member member) {
+                    public void onProfileRefresh(Member member, String errMsg) {
                         activity.hideProgressIndicator();
                         if (member != null) {
                             activity.selectProfileFragment();
+                        } else if (errMsg != null) {
+                            activity.showErrorDialog(errMsg);
                         }
                     }
                 });
@@ -176,10 +178,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 activity.showProgressIndicator();
                 loginHelper.registerUser(email, password, new ProfileDetails.ProfileRefreshCallback() {
                     @Override
-                    public void onProfileRefresh(Member member) {
+                    public void onProfileRefresh(Member member, String errMsg) {
                         activity.hideProgressIndicator();
                         if (member != null) {
                             activity.selectProfileFragment();
+                        } else if (errMsg != null) {
+                            activity.showErrorDialog(errMsg);
                         }
                     }
                 });

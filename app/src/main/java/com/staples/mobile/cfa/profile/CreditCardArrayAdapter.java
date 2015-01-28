@@ -155,7 +155,7 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
             public void success(Response response, Response response2) {
                 (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
                     @Override
-                    public void onProfileRefresh(Member member) {
+                    public void onProfileRefresh(Member member, String errMsg) {
                         ((MainActivity) context).hideProgressIndicator();
                         values.remove(position);
                         notifyDataSetChanged();

@@ -147,7 +147,7 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
             @Override
             public void success(Response response, Response response2) {
                 (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
-                    @Override public void onProfileRefresh(Member member) {
+                    @Override public void onProfileRefresh(Member member, String errMsg) {
                         ((MainActivity)context).hideProgressIndicator();
                         values.remove(position);
                         notifyDataSetChanged();

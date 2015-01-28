@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.profile.ProfileDetails;
@@ -124,7 +123,6 @@ public class LoginHelper {
                                    @Override
                                    public void failure(RetrofitError retrofitError) {
                                        String msg = ApiError.getErrorMessage(retrofitError);
-                                       Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
                                        Log.d(TAG, msg);
                                    }
                                }
@@ -134,14 +132,13 @@ public class LoginHelper {
     private void loadProfile(final ProfileDetails.ProfileRefreshCallback callback) {
         new ProfileDetails().refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
             @Override
-            public void onProfileRefresh(Member member) {
+            public void onProfileRefresh(Member member, String errMsg) {
                 if (member == null) {
                     userSignOut();
-                    Toast.makeText(activity, "Unable to load profile", Toast.LENGTH_SHORT).show();
                 }
 
                 if (callback != null) {
-                    callback.onProfileRefresh(member);
+                    callback.onProfileRefresh(member, errMsg);
                 }
             }
         });
@@ -186,9 +183,8 @@ public class LoginHelper {
                         Log.i("Fail Message For Registered User", " " + retrofitError.getMessage());
                         Log.i("Post URL address For Registered User", " " + retrofitError.getUrl());
                         if (!refreshOnly) {
-                            Toast.makeText(activity, "Failed Login: " + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_LONG).show();
                             if (callback != null) {
-                                callback.onProfileRefresh(null);
+                                callback.onProfileRefresh(null, ApiError.getErrorMessage(retrofitError));
                             }
                         }
                     }
@@ -220,11 +216,10 @@ public class LoginHelper {
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
-                        Toast.makeText(activity, "Failed to Register User" + "\n" + ApiError.getErrorMessage(retrofitError), Toast.LENGTH_LONG).show();
                         Log.i("Fail Message to Register User", " " + retrofitError.getMessage());
                         Log.i("Post URL address For Register User", " " + retrofitError.getUrl());
                         if (callback != null) {
-                            callback.onProfileRefresh(null);
+                            callback.onProfileRefresh(null, ApiError.getErrorMessage(retrofitError));
                         }
                     }
                 }

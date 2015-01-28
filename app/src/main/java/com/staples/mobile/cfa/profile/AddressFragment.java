@@ -125,7 +125,7 @@ public class AddressFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void success(Response response, Response response2) {
                         (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
-                            @Override public void onProfileRefresh(Member member) {
+                            @Override public void onProfileRefresh(Member member, String errMsg) {
                                 ((MainActivity)activity).hideProgressIndicator();
                                 ((MainActivity)activity).showNotificationBanner(R.string.address_updated);
                                 FragmentManager fm = getFragmentManager();
@@ -150,7 +150,7 @@ public class AddressFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void success(AddressId addressId, Response response) {
                         (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
-                            @Override public void onProfileRefresh(Member member) {
+                            @Override public void onProfileRefresh(Member member, String errMsg) {
                                 ((MainActivity)activity).hideProgressIndicator();
 
                                 FragmentManager fm = getFragmentManager();
