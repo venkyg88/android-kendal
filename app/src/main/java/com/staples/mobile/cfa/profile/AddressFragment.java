@@ -20,6 +20,7 @@ import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.member.AddAddress;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.AddressId;
@@ -166,7 +167,7 @@ public class AddressFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void failure(RetrofitError error) {
                         ((MainActivity)activity).hideProgressIndicator();
-                        Toast.makeText(getActivity(), "Error Message " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        ((MainActivity)activity).showErrorDialog(ApiError.getErrorMessage(error), false);
                     }
                 });
             }
