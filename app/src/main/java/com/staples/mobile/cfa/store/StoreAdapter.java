@@ -3,6 +3,10 @@ package com.staples.mobile.cfa.store;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.TabStopSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +17,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.staples.mobile.cfa.R;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> {
@@ -32,8 +35,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         private TextView phone2;
         private View callStore2;
         private TextView storeNumber;
-        private TextView storeDays;
-        private TextView storeHours;
+        private TextView storeSchedule;
         private TextView storeFeatures;
 
         private ViewHolder(View view) {
@@ -50,8 +52,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
             storeNumber = (TextView) view.findViewById(R.id.store_number);
             phone2 = (TextView) view.findViewById(R.id.phone2);
             callStore2 = view.findViewById(R.id.call_store2);
-            storeDays = (TextView) view.findViewById(R.id.store_days);
-            storeHours = (TextView) view.findViewById(R.id.store_hours);
+            storeSchedule = (TextView) view.findViewById(R.id.store_schedule);
             storeFeatures = (TextView) view.findViewById(R.id.store_features);
         }
     }
@@ -65,13 +66,11 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
     private boolean singleMode;
     private int singleIndex;
     private DecimalFormat mileFormat;
-    private SimpleDateFormat dateFormat;
 
     public StoreAdapter(Context context) {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         array = new ArrayList<StoreItem>();
         mileFormat = new DecimalFormat("0.0 mi");
-        dateFormat = new SimpleDateFormat("EEE h:mma");
     }
 
     public void setOnClickListener(View.OnClickListener listener) {
@@ -164,16 +163,18 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         vh.street.setText(item.streetAddress1);
         vh.phone.setText(item.phoneNumber);
         vh.distance.setText(mileFormat.format(item.distance));
-        String openTime = item.formatHours(System.currentTimeMillis(), dateFormat);
-        vh.openTime.setText(openTime);
+        vh.openTime.setText(TimeSpan.formatStatus(vh.itemView.getContext(), item.getSpans(), System.currentTimeMillis()));
 
         // Set detail content
         if (isFullStoreDetail()) {
             vh.phone2.setText(item.phoneNumber);
             vh.storeNumber.setText("Store # " + item.storeNumber);
-            boolean condensedHours = item.areWeekdayHoursIdentical();
-            vh.storeDays.setText(item.getStoreDaysText(condensedHours));
-            vh.storeHours.setText(item.getStoreHoursText(condensedHours));
+            Context context = vh.itemView.getContext();
+            String schedule = TimeSpan.formatSchedule(context, item.getSpans());
+            SpannableString span = new SpannableString(schedule);
+            int x = context.getResources().getDimensionPixelOffset(R.dimen.store_schedule_tabstop);
+            span.setSpan(new TabStopSpan.Standard(x), 0, span.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            vh.storeSchedule.setText(span);
             vh.storeFeatures.setText(item.storeFeatures);
         }
     }
@@ -219,7 +220,6 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         }
         return(-1);
     }
-
 
     public int findPositionByItem(StoreItem storeItem) {
         int n = array.size();

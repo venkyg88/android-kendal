@@ -10,28 +10,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.CreditCard;
 import com.staples.mobile.cfa.profile.ProfileDetails;
-import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
-import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethodResponse;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
-import com.staples.mobile.common.access.easyopen.model.checkout.AddressValidationAlert;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 
 import java.util.List;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 
 public class RegisteredCheckoutFragment extends CheckoutFragment implements View.OnClickListener {
@@ -181,7 +171,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                             // if shipping and tax already showing, need to hide them
                             resetShippingAndTax();
 
-                            Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                            showErrorDialog(errMsg);
                             Log.d(TAG, errMsg);
                         }
                     }
@@ -199,11 +189,11 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
 
         // make sure necessary selections have been made
         if (profilePaymentMethod == null) {
-            Toast.makeText(activity, R.string.payment_method_required, Toast.LENGTH_LONG).show();
+            showErrorDialog(R.string.payment_method_required);
             return;
         }
         if (billingAddress == null) {
-            Toast.makeText(activity, R.string.billing_address_required, Toast.LENGTH_LONG).show();
+            showErrorDialog(R.string.billing_address_required);
             return;
         }
 
@@ -226,13 +216,13 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                                 // finally, upon payment method success, submit the order
                                 submitOrder(null, ProfileDetails.getMember().getEmailAddress());
                             } else {
-                                Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                                showErrorDialog(errMsg);
                                 Log.d(TAG, errMsg);
                             }
                         }
                     });
                 } else {
-                    Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                    showErrorDialog(errMsg);
                     Log.d(TAG, errMsg);
                 }
             }

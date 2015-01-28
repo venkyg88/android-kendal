@@ -19,7 +19,6 @@ import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -27,7 +26,6 @@ import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.RelativeLayoutWithProgressOverlay;
-import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 
 public class ConfirmationFragment extends Fragment implements View.OnClickListener {

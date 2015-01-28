@@ -143,60 +143,92 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"/>
 
-                <LinearLayout
-                    android:id="@+id/store_layout"
+                <com.staples.mobile.cfa.widget.DataWrapper
+                    android:id="@+id/store_wrapper"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:orientation="horizontal"
                     android:padding="5dp"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
                     <LinearLayout
+                        android:id="@+id/store_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="center"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/ic_place_black"/>
-                        <TextView
-                            android:id="@+id/store_status"
-                            android:layout_width="30dp"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:textSize="12sp"
-                            android:textColor="@android:color/black"
-                            android:text="Open"/>
+                            android:orientation="vertical">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_place_black"/>
+                            <TextView
+                                android:id="@+id/store_status"
+                                android:layout_width="30dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:textSize="12sp"
+                                android:textColor="@android:color/black"
+                                android:text="Open"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingLeft="5dp">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:textSize="13sp"
+                                android:textColor="@android:color/black"
+                                android:text="Store nearby you"/>
+                            <TextView
+                                android:id="@+id/store_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:lines="1"
+                                android:ellipsize="end"
+                                android:maxEms="4"
+                                android:textSize="14sp"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold"
+                                android:text="Cambridge, MA"/>
+                        </LinearLayout>
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingLeft="5dp">
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:textSize="13sp"
-                            android:textColor="@android:color/black"
-                            android:text="Store nearby you"/>
-                        <TextView
-                            android:id="@+id/store_name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:lines="1"
-                            android:ellipsize="end"
-                            android:maxEms="4"
                             android:textSize="14sp"
-                            android:textColor="@android:color/black"
-                            android:textStyle="bold"
-                            android:text="Cambridge, MA"/>
+                            android:text="@string/loading"/>
+                        <ProgressBar
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
                     </LinearLayout>
-                </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textSize="20sp"
+                        android:text="@string/empty"
+                        android:padding="5dp"/>
+                </com.staples.mobile.cfa.widget.DataWrapper>
+
             </LinearLayout>
 		</LinearLayout>
 	</ScrollView>

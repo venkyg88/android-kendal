@@ -48,6 +48,6 @@
         android:layout_centerVertical="true"
         android:adjustViewBounds="true"
         android:paddingRight="5dp"
-        android:src="@drawable/more_arrow"/>
+        android:src="@drawable/ic_chevron_right_black"/>
 </RelativeLayout>
 

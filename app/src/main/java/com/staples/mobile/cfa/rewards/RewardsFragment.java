@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -215,9 +214,9 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
         ProfileDetails.updateRewardsFromCart(CartApiManager.getCart());
         fillRewardAdapter(); // note that error may occur on cart refresh rather than on coupon add/delete, so need to update rewards regardless
         if (errMsg != null) {
-            Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+            activity.showErrorDialog(errMsg, false);
         } else {
-            Toast.makeText(activity, confirmationMsg, Toast.LENGTH_LONG).show();
+            activity.showNotificationBanner(confirmationMsg);
         }
     }
 

@@ -81,6 +81,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
                 easyOpenApi.topCategories(null, null, MAXFETCH, this);
                 break;
             case TOPCATEGORY:
+            case SKU: // Not really a SKU, a numeric identifier;
                 easyOpenApi.topCategories(identifier, null, MAXFETCH, this);
                 break;
             default:

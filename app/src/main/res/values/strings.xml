@@ -52,6 +52,9 @@
     <string name="question_mark">\?</string>
     <string name="redeem">Your redeemable</string>
     <string name="reward">Reward!</string>
+    <string name="store_open">Open</string>
+    <string name="store_close">Close</string>
+
 
     <string name="add">ADD</string>
     <string name="cartitem_qty_label">Qty</string>
@@ -61,6 +64,7 @@
     <string name="free_shipping_msg1">Free shipping when you spend %1$s - only %2$s to go!</string>
     <string name="free_shipping_msg2">You qualify for FREE SHIPPING!</string>
     <string name="empty_cart_msg">Your cart is empty</string>
+    <string name="cart_updated_msg">Cart is updated</string>
     <string name="shipping">Shipping</string>
     <string name="expected_delivery">Expected Delivery:</string>
     <string name="pretax_subtotal">Pre-tax subtotal</string>
@@ -155,7 +159,12 @@
     <string name="phone">Phone</string>
     <string name="store_hours">Store Hours</string>
     <string name="store_features">Store Features</string>
-
+    <string name="store_closed">Closed</string>
+    <string name="store_24hours">24 hours</string>
+    <string name="store_open_at">Open at</string>
+    <string name="store_open_until">Open until</string>
+    <string name="store_no_phone">Sorry, this device has no phone application.</string>
+    <string name="store_no_maps">Sorry, this device has no map application.</string>
 
     <plurals name="cart_qty">
         <item quantity="one">1 item</item>
@@ -164,6 +173,14 @@
 
     <string name="save_btn">Save</string>
     <string name="cancel_btn">Cancel</string>
+    <string name="okay_btn">OK</string>
     <string name="searching">Searching…</string>
+
+    <string name="network_settings">NETWORK SETTINGS</string>
+
+    <!--errors-->
+    <string name="error_network_connectivity">Network connectivity is required. Please enable and try again.</string>
+    <string name="error_server_connection">Unable to contact server at this time. Please try again later.</string>
+    <string name="error_redirect">Please sign in to guest network and then try again.</string>
 
 </resources>

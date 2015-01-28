@@ -19,7 +19,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.profile.CreditCard;
@@ -305,7 +304,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                             shippingAddrNeedsApplying = false;
 
                             if (infoMsg != null) {
-                                Toast.makeText(activity, "Shipping address alert: " + infoMsg, Toast.LENGTH_LONG).show();
+                                showErrorDialog("Shipping address alert: " + infoMsg);
                             }
 
                             // now apply billing address
@@ -315,7 +314,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                             // if shipping and tax already showing, need to hide them
                             resetShippingAndTax();
 
-                            Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                            showErrorDialog(errMsg);
                             Log.d(TAG, errMsg);
                         }
                     }
@@ -343,7 +342,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                             billingAddrNeedsApplying = false;
 
                             if (infoMsg != null) {
-                                Toast.makeText(activity, "Billing address alert: " + infoMsg, Toast.LENGTH_LONG).show();
+                                showErrorDialog("Billing address alert: " + infoMsg);
                             }
 
                             // do precheckout
@@ -353,7 +352,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                             // if shipping and tax already showing, need to hide them
                             resetShippingAndTax();
 
-                            Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                            showErrorDialog(errMsg);
                             Log.d(TAG, errMsg);
                         }
                     }
@@ -382,7 +381,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
         final PaymentMethod paymentMethod = getPaymentMethod();
         if (paymentMethod==null) {
-            Toast.makeText(activity, R.string.payment_method_required, Toast.LENGTH_LONG).show();
+            showErrorDialog(R.string.payment_method_required);
             return;
         }
 
@@ -400,7 +399,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                     submitOrder(paymentMethod.getCardVerificationCode(), emailAddress);
 
                 } else {
-                    Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                    showErrorDialog(errMsg);
                     Log.d(TAG, errMsg);
                 }
             }

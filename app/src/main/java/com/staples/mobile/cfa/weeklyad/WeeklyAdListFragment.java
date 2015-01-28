@@ -94,7 +94,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
     public void onResume() {
         super.onResume();
         if (activity!=null) {
-            activity.showActionBar(R.string.weekly_ad_title, 0, null);
+//            activity.showActionBar(R.string.weekly_ad_title, 0, null);
         }
     }
 

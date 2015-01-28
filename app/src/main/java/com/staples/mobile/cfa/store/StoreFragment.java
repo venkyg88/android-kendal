@@ -36,7 +36,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -50,6 +49,7 @@ import com.staples.mobile.common.access.channel.model.store.StoreQuery;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 
 import java.util.List;
+import java.util.Locale;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -98,7 +98,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
 
             // Create icons
             hotIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-            coldIcon = BitmapDescriptorFactory.fromResource(R.drawable.store);
+            coldIcon = BitmapDescriptorFactory.fromResource(R.drawable.ic_store_cold);
         }
 
         // No Google Play Services
@@ -451,15 +451,45 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         }
     }
 
-    private boolean dialPhoneNumber(String phone) {
+    // Intent actions
+
+    private boolean dialStorePhone(StoreItem item) {
+        if (item==null) return(false);
+        String phone = item.phoneNumber;
         if (phone==null || phone.isEmpty()) return(false);
         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone));
         try {
             startActivity(intent);
             return(true);
         } catch(ActivityNotFoundException e) {
-            Toast.makeText(getActivity(), "There is no phone application on this device.", Toast.LENGTH_LONG).show();
+            String msg = getResources().getString(R.string.store_no_phone);
+            Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
             return(false);
+        }
+    }
+
+    private boolean getStoreDirections(StoreItem item) {
+        if (item==null) return(false);
+        LatLng position = item.position;
+        if (position==null) return(false);
+        String query = String.format(Locale.ENGLISH, "http://maps.google.com/maps?&daddr=%f,%f(Staples%%20%%23%s)",
+                                     position.latitude, position.longitude, item.storeNumber);
+        Uri uri = Uri.parse(query);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+        try {
+            startActivity(intent);
+            return(true);
+        } catch(ActivityNotFoundException e1) {
+            intent = new Intent(Intent.ACTION_VIEW, uri);
+            try {
+                startActivity(intent);
+                return(true);
+            } catch(ActivityNotFoundException e2) {
+                String msg = getResources().getString(R.string.store_no_maps);
+                Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+                return (false);
+            }
         }
     }
 
@@ -508,12 +538,14 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
             case R.id.call_store2:
                 obj = view.getTag();
                 if (obj instanceof StoreItem) {
-                    String phone = ((StoreItem) obj).phoneNumber;
-                    dialPhoneNumber(phone);
+                    dialStorePhone((StoreItem) obj);
                 }
                 break;
             case R.id.directions:
-                Toast.makeText(getActivity(), "Directions", Toast.LENGTH_SHORT).show();
+                obj = view.getTag();
+                if (obj instanceof StoreItem) {
+                    getStoreDirections((StoreItem) obj);
+                }
                 break;
         }
     }
