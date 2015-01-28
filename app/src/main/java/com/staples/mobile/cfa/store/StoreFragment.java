@@ -140,12 +140,12 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
 
     @Override
     public void onResume() {
-        int iconId;
+        int icon;
         super.onResume();
         if (mapView!=null) mapView.onResume();
-        if (adapter.isSingleMode()) iconId = R.drawable.ic_view_list_white;
-        else iconId = R.drawable.ic_map_white;
-        ActionBar.getInstance().setConfig(ActionBar.Config.MAPLIST, this);
+        if (adapter.isSingleMode()) icon = R.drawable.ic_view_list_white;
+        else icon = R.drawable.ic_map_white;
+        ActionBar.getInstance().setConfig(ActionBar.Config.STORE, icon, this);
     }
 
     @Override
@@ -421,7 +421,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
 
         // if showing single store (with map if available), toggle to list view
         if (adapter.isSingleMode()) {
-            ActionBar.getInstance().setConfig(ActionBar.Config.MAPVIEW, this);
+            ActionBar.getInstance().setConfig(ActionBar.Config.STORE, R.drawable.ic_map_white, this);
             if (mapView != null) {
                 mapView.setVisibility(View.GONE);
             }
@@ -437,7 +437,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
 
         // else if showing list of stores, then toggle to single mode
         else {
-            ActionBar.getInstance().setConfig(ActionBar.Config.MAPLIST, this);
+            ActionBar.getInstance().setConfig(ActionBar.Config.STORE, R.drawable.ic_view_list_white, this);
             if (mapView != null) {
                 mapView.setVisibility(View.VISIBLE);
             } else {
