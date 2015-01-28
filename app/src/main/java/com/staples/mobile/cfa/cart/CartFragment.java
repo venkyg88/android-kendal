@@ -527,6 +527,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         hideProgressIndicator();
         if (errMsg != null) {
             showErrorDialog(errMsg);
+        } else {
+            activity.showNotificationBanner(R.string.cart_updated_msg);
         }
         convertCart(CartApiManager.getCart());
     }

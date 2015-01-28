@@ -66,7 +66,7 @@ public class TimeSpanTest {
     }
 
     public static final String response = "Mon-Wed\t9:00AM-5:00PM\n"+
-                                          "Thu\t24 hour\n"+
+                                          "Thu\t24 hours\n"+
                                           "Fri\t9:00AM-5:00PM\n"+
                                           "Sat-Sun\t9:00AM-2:00PM";
 

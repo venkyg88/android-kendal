@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -217,7 +216,7 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
         if (errMsg != null) {
             activity.showErrorDialog(errMsg, false);
         } else {
-            Toast.makeText(activity, confirmationMsg, Toast.LENGTH_LONG).show();
+            activity.showNotificationBanner(confirmationMsg);
         }
     }
 
