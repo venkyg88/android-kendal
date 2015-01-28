@@ -194,7 +194,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                             @Override
                             public void success(Response response, Response response2) {
                                 (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
-                                    @Override public void onProfileRefresh(Member member) {
+                                    @Override public void onProfileRefresh(Member member, String errMsg) {
                                         activity.hideProgressIndicator();
                                         activity.showNotificationBanner(R.string.cc_updated);
                                         FragmentManager fm = getFragmentManager();
@@ -220,7 +220,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                                 Log.i("Success", creditCardID.getCreditCardId());
                                 activity.hideProgressIndicator();
                                 (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
-                                    @Override public void onProfileRefresh(Member member) {
+                                    @Override public void onProfileRefresh(Member member, String errMsg) {
                                         FragmentManager fm = getFragmentManager();
                                         if (fm != null) {
                                             fm.popBackStack(); // this will take us back to one of the many places that could have opened this page

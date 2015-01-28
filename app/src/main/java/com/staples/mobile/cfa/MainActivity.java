@@ -357,7 +357,7 @@ public class MainActivity extends Activity
                 // if login info cached, log in as registered user
                 if (loginHelper.loadCachedLoginInfo()) {
                     loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
-                        @Override public void onProfileRefresh(Member member) {
+                        @Override public void onProfileRefresh(Member member, String errMsg) {
                             if (member == null) {
                                 // if cached login failed, initiate guest log in
                                 loginHelper.getGuestTokens();
