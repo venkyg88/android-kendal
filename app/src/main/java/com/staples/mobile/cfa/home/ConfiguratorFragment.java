@@ -22,7 +22,6 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.store.StoreFragment;
-import com.staples.mobile.cfa.store.TimeSpan;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
@@ -37,9 +36,7 @@ import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.configurator.model.Item;
 import com.staples.mobile.common.access.configurator.model.Screen;
 import com.staples.mobile.common.access.config.AppConfigurator;
-import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
 import com.staples.mobile.common.device.DeviceInfo;
 
 import java.text.SimpleDateFormat;
@@ -1050,6 +1047,7 @@ public class ConfiguratorFragment extends Fragment {
                 int storeEndTime = parseTimeSpan(timeChunk[1]);
                 storeStartHourList.add(storeStartTime);
                 storeEndHourList.add(storeEndTime);
+                System.out.println(TAG + " - day:" + hours.getDayName() + ", hour:" + hours.getHours());
                 //System.out.println(TAG + " - day:" + hours.getDayName() + ", hour:" + hours.getHours()
                 //        + ", storeStartTime: " + storeStartTime + ", storeEndTime: " + storeEndTime);
             }
