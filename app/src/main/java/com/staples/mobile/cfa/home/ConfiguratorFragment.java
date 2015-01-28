@@ -1047,7 +1047,6 @@ public class ConfiguratorFragment extends Fragment {
                 int storeEndTime = parseTimeSpan(timeChunk[1]);
                 storeStartHourList.add(storeStartTime);
                 storeEndHourList.add(storeEndTime);
-                System.out.println(TAG + " - day:" + hours.getDayName() + ", hour:" + hours.getHours());
                 //System.out.println(TAG + " - day:" + hours.getDayName() + ", hour:" + hours.getHours()
                 //        + ", storeStartTime: " + storeStartTime + ", storeEndTime: " + storeEndTime);
             }
