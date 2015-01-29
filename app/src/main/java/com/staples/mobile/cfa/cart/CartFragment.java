@@ -110,9 +110,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         // inflate and get child views
         View view = inflater.inflate(R.layout.cart_fragment, container, false);
 
-        // TODO temporary try-catch
-        try {
-
         emptyCartMsg = view.findViewById(R.id.empty_cart_msg);
         cartFreeShippingMsg = (TextView) view.findViewById(R.id.free_shipping_msg);
         couponsRewardsLayout = view.findViewById(R.id.coupons_rewards_layout);
@@ -192,34 +189,18 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         // since cart/checkout calls require active session, this is a good time to refresh it if stale
         activity.ensureActiveSession();
 
-        // temporary
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.d(TAG, e.getMessage());
-        }
-
         return view;
     }
 
 
     @Override
     public void onResume() {
-        // TODO temporary try-catch
-        try {
-
         super.onResume();
 
         // update action bar
         ActionBar.getInstance().setConfig(ActionBar.Config.CART);
         //initialize cart based on what's been returned from api so far
         convertCart(CartApiManager.getCart());
-
-            // temporary
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.d(TAG, e.getMessage());
-        }
-
     }
 
     @Override
@@ -245,9 +226,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
     /** Sets item count indicator on cart icon and cart drawer title */
     private void updateCartFields() {
-        // temporary try-catch
-        try {
-
         Resources r = getResources();
 
         int totalItemCount = 0;
@@ -370,13 +348,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 cartSubtotalLayout.setVisibility(View.VISIBLE);
                 cartProceedToCheckout.setVisibility(View.VISIBLE);
             }
-        }
-
-
-        // temporary
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.d(TAG, e.getMessage());
         }
     }
 
