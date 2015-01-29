@@ -2,17 +2,25 @@ package com.staples.mobile.cfa.home;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -108,6 +116,7 @@ public class ConfiguratorFragment extends Fragment {
     private LinearLayout login_info_layout;
     private LinearLayout login_layout;
     private LinearLayout reward_layout;
+    private FrameLayout message_layout;
     private TextView rewardTextView;
     private TextView loginMessageTextView;
     private TextView signInTextView;
@@ -116,8 +125,12 @@ public class ConfiguratorFragment extends Fragment {
     private TextView storeStatusTextView;
     private TextView usernameTextView;
     private DataWrapper storeWrapper;
+    private ImageView showArrowImageView;
+    private View hideBannerView;
+    private View verticalLineView;
     public static String userName;
     public static String rewards;
+    private boolean isMessageBarShow = true;
 
     @Override
     public void onAttach(Activity activity) {
@@ -196,6 +209,7 @@ public class ConfiguratorFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
+        isMessageBarShow = true;
     }
 
     public void initFromConfiguratorResult(Configurator configurator) {
@@ -1049,6 +1063,7 @@ public class ConfiguratorFragment extends Fragment {
                 storeEndHourList.add(storeEndTime);
                 //System.out.println(TAG + " - day:" + hours.getDayName() + ", hour:" + hours.getHours()
                 //        + ", storeStartTime: " + storeStartTime + ", storeEndTime: " + storeEndTime);
+                //TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
             }
 
             Calendar cal = Calendar.getInstance();
@@ -1132,6 +1147,7 @@ public class ConfiguratorFragment extends Fragment {
         login_layout = (LinearLayout) configFrameView.findViewById(R.id.login_layout);
         login_info_layout = (LinearLayout) configFrameView.findViewById(R.id.login_info_layout);
         reward_layout = (LinearLayout) configFrameView.findViewById(R.id.reward_layout);
+        message_layout = (FrameLayout) configFrameView.findViewById(R.id.message_layout);
         rewardTextView = (TextView) configFrameView.findViewById(R.id.reward);
         loginMessageTextView = (TextView) configFrameView.findViewById(R.id.login_message);
         signInTextView = (TextView) configFrameView.findViewById(R.id.login_sign_in);
@@ -1139,6 +1155,8 @@ public class ConfiguratorFragment extends Fragment {
         usernameTextView = (TextView) configFrameView.findViewById(R.id.login_username);
         storeNameTextView = (TextView) configFrameView.findViewById(R.id.store_name);
         storeStatusTextView = (TextView) configFrameView.findViewById(R.id.store_status);
+        hideBannerView = (View) configFrameView.findViewById(R.id.hide_banner);
+        showArrowImageView = (ImageView) configFrameView.findViewById(R.id.show_arrow);
     }
 
     private void updateMessageBar(){
@@ -1197,6 +1215,86 @@ public class ConfiguratorFragment extends Fragment {
                 mainActivity.selectFragment(new StoreFragment(), MainActivity.Transition.NONE, true);
             }
         });
+
+//        message_layout.setOnTouchListener(new View.OnTouchListener() {
+//            public boolean onTouch(View v, MotionEvent event) {
+//                // TODO Auto-generated method stub
+//                switch(event.getAction())
+//                {
+//                    case MotionEvent.ACTION_MOVE:
+//                    {
+//                        Log.d(TAG, "ACTION_MOVE");
+//                        break;
+//                    }
+//                    case MotionEvent.ACTION_UP:
+//                    {
+//                        showMessageBar();
+//                        Log.d(TAG, "ACTION_UP");
+//                        break;
+//                    }
+//                    case MotionEvent.ACTION_DOWN:
+//                    {
+//                        hideMessageBar();
+//                        Log.d(TAG, "ACTION_DOWN");
+//                        break;
+//                    }
+//                }
+//                return false;
+//            }
+//        });
+
+//        message_layout.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent arg1) {
+//                // TODO Auto-generated method stub
+//                ClipData data = ClipData.newPlainText("", "");
+//                View.DragShadowBuilder shadow = new View.DragShadowBuilder(message_layout);
+//                v.startDrag(data, shadow, null, 0);
+//                return false;
+//            }
+//        });
+
+        hideBannerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent arg1) {
+                hideMessageBar();
+                return true;
+            }
+        });
+
+        showArrowImageView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent arg1) {
+                showMessageBar();
+                return true;
+            }
+        });
+    }
+
+    private void showMessageBar(){
+        Animation fade_in = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
+        message_layout.startAnimation(fade_in);
+        hideBannerView.startAnimation(fade_in);
+
+        message_layout.setVisibility(View.VISIBLE);
+        showArrowImageView.setVisibility(View.GONE);
+        hideBannerView.setVisibility(View.VISIBLE);
+    }
+
+    private void hideMessageBar(){
+        Animation fade_out = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
+        message_layout.startAnimation(fade_out);
+        hideBannerView.startAnimation(fade_out);
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                message_layout.setVisibility(View.GONE);
+                showArrowImageView.setVisibility(View.VISIBLE);
+                hideBannerView.setVisibility(View.GONE);
+            }
+        }, 500);
     }
 
 //    @Override
