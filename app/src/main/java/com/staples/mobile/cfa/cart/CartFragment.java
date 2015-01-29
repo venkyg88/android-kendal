@@ -60,7 +60,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private RecyclerView couponListVw;
     private CouponAdapter couponAdapter;
     private View couponList;
-    private View emptyCartMsg;
+    private View emptyCartLayout;
     private View cartProceedToCheckout;
     private View cartShippingLayout;
     private View cartSubtotalLayout;
@@ -110,7 +110,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         // inflate and get child views
         View view = inflater.inflate(R.layout.cart_fragment, container, false);
 
-        emptyCartMsg = view.findViewById(R.id.empty_cart_msg);
+        emptyCartLayout = view.findViewById(R.id.empty_cart_layout);
         cartFreeShippingMsg = (TextView) view.findViewById(R.id.free_shipping_msg);
         couponsRewardsLayout = view.findViewById(R.id.coupons_rewards_layout);
         couponsRewardsValue = (TextView) view.findViewById(R.id.coupons_rewards_value);
@@ -257,7 +257,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             // Set text of cart item qty
             ActionBar.getInstance().setCartCount(totalItemCount);
 
-            emptyCartMsg.setVisibility(totalItemCount == 0? View.VISIBLE : View.GONE);
+            emptyCartLayout.setVisibility(totalItemCount == 0? View.VISIBLE : View.GONE);
 
 
             // set text of free shipping msg

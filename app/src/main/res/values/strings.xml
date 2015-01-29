@@ -64,7 +64,6 @@
     <string name="update_button">Update</string>
     <string name="free_shipping_msg1">Free shipping when you spend %1$s - only %2$s to go!</string>
     <string name="free_shipping_msg2">You qualify for FREE SHIPPING!</string>
-    <string name="empty_cart_msg">Your cart is empty</string>
     <string name="cart_updated_msg">Cart is updated</string>
     <string name="shipping">Shipping</string>
     <string name="expected_delivery">Expected Delivery:</string>
@@ -93,6 +92,16 @@
         <item quantity="one">1 item</item>
         <item quantity="other">%d items</item>
     </plurals>
+
+    <!--empty cart messages -->
+    <string name="empty_cart_msg">Your cart is empty</string>
+    <string name="shopping_with_us">Shopping with us!</string>
+    <string name="price_match_guarantee">Price Match Guarantee</string>
+    <string name="price_match_guarantee_conditions">We\'ll match any competitor with\nan online and retail store\n- plus Amazon.</string>
+    <string name="free_delivery">Free next-day shipping</string>
+    <string name="free_delivery_conditions">Available on thousands of products.</string>
+    <string name="easy_returns">Easy Returns</string>
+    <string name="easy_returns_conditions">Online. In Store. Always free.</string>
 
     <!--rewards-->
     <string name="rewards_card_number">Rewards Card Number</string>
