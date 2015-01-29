@@ -7,11 +7,13 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.view.VelocityTrackerCompat;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -117,6 +119,7 @@ public class ConfiguratorFragment extends Fragment {
     private LinearLayout login_layout;
     private LinearLayout reward_layout;
     private FrameLayout message_layout;
+    private FrameLayout messageFrameLayout;
     private TextView rewardTextView;
     private TextView loginMessageTextView;
     private TextView signInTextView;
@@ -131,6 +134,7 @@ public class ConfiguratorFragment extends Fragment {
     public static String userName;
     public static String rewards;
     private boolean isMessageBarShow = true;
+    private VelocityTracker mVelocityTracker = null;
 
     @Override
     public void onAttach(Activity activity) {
@@ -1148,6 +1152,7 @@ public class ConfiguratorFragment extends Fragment {
         login_info_layout = (LinearLayout) configFrameView.findViewById(R.id.login_info_layout);
         reward_layout = (LinearLayout) configFrameView.findViewById(R.id.reward_layout);
         message_layout = (FrameLayout) configFrameView.findViewById(R.id.message_layout);
+        messageFrameLayout = (FrameLayout) configFrameView.findViewById(R.id.message_frame);
         rewardTextView = (TextView) configFrameView.findViewById(R.id.reward);
         loginMessageTextView = (TextView) configFrameView.findViewById(R.id.login_message);
         signInTextView = (TextView) configFrameView.findViewById(R.id.login_sign_in);
@@ -1216,32 +1221,33 @@ public class ConfiguratorFragment extends Fragment {
             }
         });
 
-//        message_layout.setOnTouchListener(new View.OnTouchListener() {
-//            public boolean onTouch(View v, MotionEvent event) {
-//                // TODO Auto-generated method stub
-//                switch(event.getAction())
-//                {
-//                    case MotionEvent.ACTION_MOVE:
-//                    {
-//                        Log.d(TAG, "ACTION_MOVE");
-//                        break;
-//                    }
-//                    case MotionEvent.ACTION_UP:
-//                    {
-//                        showMessageBar();
-//                        Log.d(TAG, "ACTION_UP");
-//                        break;
-//                    }
-//                    case MotionEvent.ACTION_DOWN:
-//                    {
-//                        hideMessageBar();
-//                        Log.d(TAG, "ACTION_DOWN");
-//                        break;
-//                    }
-//                }
-//                return false;
-//            }
-//        });
+        messageFrameLayout.setOnTouchListener(new View.OnTouchListener() {
+            float first_y = 0;
+
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        // finger touches the screen
+                        first_y = event.getY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        // finger moves on the screen
+                        float current_y = event.getY();
+                        if(current_y - first_y < 0 && isMessageBarShow){
+                            hideMessageBar();
+                        }
+
+                        if(current_y - first_y > 0 && !isMessageBarShow){
+                            showMessageBar();
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        // finger leaves the screen
+                        break;
+                }
+                return true;
+            }
+        });
 
 //        message_layout.setOnTouchListener(new View.OnTouchListener() {
 //            @Override
