@@ -56,6 +56,7 @@
     <string name="store_close">Close</string>
     <string name="no_store">No Nearby Store</string>
 
+    <!--cart, coupon/reward, checkout -->
     <string name="add">ADD</string>
     <string name="cartitem_qty_label">Qty</string>
     <string name="add_to_cart">ADD TO CART</string>
@@ -63,11 +64,11 @@
     <string name="update_button">Update</string>
     <string name="free_shipping_msg1">Free shipping when you spend %1$s - only %2$s to go!</string>
     <string name="free_shipping_msg2">You qualify for FREE SHIPPING!</string>
-    <string name="empty_cart_msg">Your cart is empty</string>
     <string name="cart_updated_msg">Cart is updated</string>
     <string name="shipping">Shipping</string>
     <string name="expected_delivery">Expected Delivery:</string>
     <string name="pretax_subtotal">Pre-tax subtotal</string>
+    <string name="tax">Tax</string>
     <string name="proceed_to_checkout">SECURE CHECKOUT</string>
     <string name="no_reviews">no reviews</string>
     <string name="shipping_addr">Shipping Address</string>
@@ -83,6 +84,26 @@
     <string name="no_redeemable_rewards">No Redeemable Rewards</string>
     <string name="link_rewards_account">Link Your Rewards Account</string>
     <string name="link_account">Link Account</string>
+    <plurals name="business_days">
+        <item quantity="one">business day</item>
+        <item quantity="other">business days</item>
+    </plurals>
+    <plurals name="cart_qty">
+        <item quantity="one">1 item</item>
+        <item quantity="other">%d items</item>
+    </plurals>
+
+    <!--empty cart messages -->
+    <string name="empty_cart_msg">Your cart is empty</string>
+    <string name="shopping_with_us">Shopping with us!</string>
+    <string name="price_match_guarantee">Price Match Guarantee</string>
+    <string name="price_match_guarantee_conditions">We\'ll match any competitor with\nan online and retail store\n- plus Amazon.</string>
+    <string name="free_delivery">Free next-day shipping</string>
+    <string name="free_delivery_conditions">Available on thousands of products.</string>
+    <string name="easy_returns">Easy Returns</string>
+    <string name="easy_returns_conditions">Online. In Store. Always free.</string>
+
+    <!--rewards-->
     <string name="rewards_card_number">Rewards Card Number</string>
     <string name="rewards_phone_number">Your Rewards Account Phone Number</string>
     <string name="rewards_list_tabtitle">REWARDS</string>
@@ -92,15 +113,14 @@
     <string name="rewards_removefromcart_confirmation">Your reward removed from the cart</string>
     <string name="rewards_ytd_savings">Year-to-Date Savings</string>
     <string name="rewards_ytd_spend">Year-to-Date Spend</string>
-
     <plurals name="rewards_ink_recycled">
         <item quantity="one">Ink cartridge recycled</item>
         <item quantity="other">Ink cartridges recycled</item>
     </plurals>
-
     <string name="rewards_ink_limit">Limit of %d per month</string>
     <string name="rewards_earned">Earned</string>
-    <string name="tax">Tax</string>
+
+    <!--order confirmation-->
     <string name="submit_order">SUBMIT ORDER</string>
     <string name="order_confirmation_msg">Thank you for your order!</string>
     <string name="order_confirmation_msg2">An email with complete details has</string>
@@ -111,20 +131,12 @@
     <string name="create_acccount_msg1">What to check out faster next time?</string>
     <string name="create_acccount_msg2">Create a Staples account! We just need a password.</string>
     <string name="create_acccount_pw_rules">Case sensitive, 6-12 characters long, cannot contain spaces.</string>
-    <string name="show">SHOW</string>
-    <string name="hide">HIDE</string>
-    <string name="cancel">CANCEL</string>
     <string name="create_account">CREATE ACCOUNT</string>
     <string name="account_confirmation_msg">Thanks for creating an account!</string>
     <string name="order_confirmation_with_error">An error occurred, but your order appears to have gone through."</string>
     <string name="password_reset">Reset Password</string>
-
     <string name="continue_shopping">Continue Shopping</string>
 
-    <plurals name="business_days">
-        <item quantity="one">business day</item>
-        <item quantity="other">business days</item>
-    </plurals>
 
     <!--profile-->
     <string name="password">Password</string>
@@ -177,10 +189,9 @@
     <string name="store_no_phone">Sorry, this device has no phone application.</string>
     <string name="store_no_maps">Sorry, this device has no map application.</string>
 
-    <plurals name="cart_qty">
-        <item quantity="one">1 item</item>
-        <item quantity="other">%d items</item>
-    </plurals>
+    <string name="show">SHOW</string>
+    <string name="hide">HIDE</string>
+    <string name="cancel">CANCEL</string>
 
     <string name="save_btn">Save</string>
     <string name="cancel_btn">Cancel</string>
