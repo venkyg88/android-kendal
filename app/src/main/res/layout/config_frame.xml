@@ -219,8 +219,7 @@
                 android:background="@color/background_light_gray"
                 android:layout_gravity="center"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:src="@drawable/ic_arrow_up"/>
+                android:layout_marginBottom="5dp"/>
         </FrameLayout>
 
         <View
