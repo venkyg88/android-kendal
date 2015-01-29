@@ -1257,7 +1257,9 @@ public class ConfiguratorFragment extends Fragment {
         hideBannerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent arg1) {
-                hideMessageBar();
+                if(isMessageBarShow) {
+                    hideMessageBar();
+                }
                 return true;
             }
         });
@@ -1265,7 +1267,9 @@ public class ConfiguratorFragment extends Fragment {
         showArrowImageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent arg1) {
-                showMessageBar();
+                if(!isMessageBarShow) {
+                    showMessageBar();
+                }
                 return true;
             }
         });
@@ -1279,6 +1283,8 @@ public class ConfiguratorFragment extends Fragment {
         message_layout.setVisibility(View.VISIBLE);
         showArrowImageView.setVisibility(View.GONE);
         hideBannerView.setVisibility(View.VISIBLE);
+
+        isMessageBarShow = true;
     }
 
     private void hideMessageBar(){
@@ -1295,6 +1301,8 @@ public class ConfiguratorFragment extends Fragment {
                 hideBannerView.setVisibility(View.GONE);
             }
         }, 500);
+
+        isMessageBarShow = false;
     }
 
 //    @Override
