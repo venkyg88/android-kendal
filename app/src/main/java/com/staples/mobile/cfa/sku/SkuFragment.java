@@ -21,7 +21,6 @@ import android.widget.TabHost;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
@@ -541,7 +540,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
             wrapper.setState(DataWrapper.State.EMPTY);
             String msg = ApiError.getErrorMessage(retrofitError);
-            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+            ((MainActivity) activity).showErrorDialog(msg);
             Log.d(TAG, msg);
         }
     }
@@ -561,7 +560,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             if (activity==null) return;
 
             String msg = ApiError.getErrorMessage(retrofitError);
-            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+            ((MainActivity) activity).showErrorDialog(msg);
             Log.d(TAG, msg);
         }
     }
@@ -824,7 +823,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                         if (errMsg == null) {
                             ((Button) wrapper.findViewById(R.id.add_to_cart)).setText(R.string.add_another);
                         } else {
-                            Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                            activity.showErrorDialog(errMsg);
                         }
                     }
                 });

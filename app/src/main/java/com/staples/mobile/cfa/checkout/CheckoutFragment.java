@@ -176,7 +176,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
                     // if address alert, display it
                     if (infoMsg != null) {
-                        showErrorDialog(infoMsg);
+                        activity.showErrorDialog(infoMsg);
                     }
 
                     // utilize shipping and tax info
@@ -186,7 +186,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                     // if shipping and tax already showing, need to hide them
                     resetShippingAndTax();
 
-                    showErrorDialog(errMsg);
+                    activity.showErrorDialog(errMsg);
                     Log.d(TAG, errMsg);
                 }
             }
@@ -212,7 +212,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                             deliveryRange, currencyFormat.format(getCheckoutTotal()));
 
                 } else {
-                    showErrorDialog("Submission Error: " + errMsg);
+                    activity.showErrorDialog("Submission Error: " + errMsg);
                     Log.d(TAG, errMsg);
 
                     // sometimes there's a failure such as timeout but the order actually goes thru.
@@ -223,7 +223,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                     CartApiManager.loadCart(new CartApiManager.CartRefreshCallback() {
                         @Override public void onCartRefreshComplete(String errMsg) {
                             if (CartApiManager.getCartTotalItems() == 0) {
-                                showErrorDialog(R.string.order_confirmation_with_error);
+                                activity.showErrorDialog(R.string.order_confirmation_with_error);
                                 ActionBar.getInstance().setCartCount(0);
                                 // show confirmation page
                                 activity.selectOrderConfirmation("(see email)", emailAddress,
@@ -235,18 +235,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                 }
             }
         });
-    }
-
-    protected void showErrorDialog(int msgId) {
-        if (activity != null) {
-            activity.showErrorDialog(msgId, false);
-        }
-    }
-
-    protected void showErrorDialog(String msg) {
-        if (activity != null && msg != null) {
-            activity.showErrorDialog(msg, false);
-        }
     }
 
     protected void showProgressIndicator() {

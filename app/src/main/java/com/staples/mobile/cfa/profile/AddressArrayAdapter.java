@@ -12,12 +12,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 
@@ -100,8 +100,6 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
                 String addressId = values.get(position).getAddressId();
                 if (ProfileDetails.addressSelectionListener != null) {
                     ProfileDetails.addressSelectionListener.onAddressSelected(addressId);
-                } else {
-                    Toast.makeText(context, addressId, Toast.LENGTH_LONG).show();
                 }
                 break;
 
@@ -149,11 +147,11 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
             @Override
             public void success(Response response, Response response2) {
                 (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
-                    @Override public void onProfileRefresh(Member member) {
+                    @Override public void onProfileRefresh(Member member, String errMsg) {
                         ((MainActivity)context).hideProgressIndicator();
                         values.remove(position);
                         notifyDataSetChanged();
-                        Toast.makeText(context, "Address deleted", Toast.LENGTH_SHORT).show();
+                        ((MainActivity)context).showNotificationBanner(R.string.address_deleted);
                     }
                 });
             }
@@ -161,7 +159,7 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
             @Override
             public void failure(RetrofitError error) {
                 ((MainActivity)context).hideProgressIndicator();
-                Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                ((MainActivity)context).showErrorDialog(ApiError.getErrorMessage(error));
             }
         });
     }

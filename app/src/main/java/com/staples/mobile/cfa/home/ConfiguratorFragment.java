@@ -1118,7 +1118,7 @@ public class ConfiguratorFragment extends Fragment {
             }
 
             String message = ApiError.getErrorMessage(retrofitError);
-            Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
+            ((MainActivity)activity).showErrorDialog(message);
             Log.d(TAG, message);
 
             storeWrapper.setState(DataWrapper.State.EMPTY);

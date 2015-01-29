@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
@@ -100,7 +99,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         if (activity==null) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
-        Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+        ((MainActivity)activity).showErrorDialog(msg);
         Log.d(TAG, msg);
         wrapper.setState(DataWrapper.State.EMPTY);
     }
@@ -157,7 +156,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                                     buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.added_to_cart));
                                 } else {
                                     buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.add_to_cart));
-                                    Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                                    activity.showErrorDialog(errMsg);
                                 }
                             }
                         });

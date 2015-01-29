@@ -21,17 +21,84 @@
         android:textSize="14sp"
         />
 
-    <!--empty cart message-->
-    <TextView
-        android:id="@+id/empty_cart_msg"
+    <!--empty cart messages-->
+    <LinearLayout
+        android:id="@+id/empty_cart_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:paddingTop="40dp"
-        android:textSize="20dp"
-        android:text="@string/empty_cart_msg"
+        android:padding="16dp"
         android:visibility="gone"
-        />
+        android:orientation="vertical"
+        >
+        <!--your cart is empty-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="40dp"
+            android:textColor="@color/text_nearly_black"
+            android:textSize="20sp"
+            android:text="@string/empty_cart_msg"
+            />
+        <!--shopping with us-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="60dp"
+            android:textColor="@color/text_gray"
+            android:textSize="18sp"
+            android:text="@string/shopping_with_us"
+            />
+        <!--price match guarantee-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="24dp"
+            android:textColor="@color/text_gray"
+            android:textSize="18sp"
+            android:text="@string/price_match_guarantee"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textColor="@color/text_gray"
+            android:textSize="12sp"
+            android:text="@string/price_match_guarantee_conditions"
+            />
+        <!--free delivery-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:textColor="@color/text_gray"
+            android:textSize="18sp"
+            android:text="@string/free_delivery"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_gray"
+            android:textSize="12sp"
+            android:text="@string/free_delivery_conditions"
+            />
+        <!--easy returns-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:textColor="@color/text_gray"
+            android:textSize="18sp"
+            android:text="@string/easy_returns"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_gray"
+            android:textSize="12sp"
+            android:text="@string/easy_returns_conditions"
+            />
+    </LinearLayout>
 
     <!--cart list (using cards and no divider)-->
     <android.support.v7.widget.RecyclerView

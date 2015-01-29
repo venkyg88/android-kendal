@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
@@ -106,7 +105,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
         if (activity == null) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
-        Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+        ((MainActivity)activity).showErrorDialog(msg);
         wrapper.setState(DataWrapper.State.EMPTY);
         Log.d(TAG, msg);
     }

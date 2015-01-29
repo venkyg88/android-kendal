@@ -241,6 +241,12 @@ public class MainActivity extends Activity
         }
     }
 
+    public void showErrorDialog(int msgId) {
+        showErrorDialog(msgId, false);
+    }
+    public void showErrorDialog(String msg) {
+        showErrorDialog(msg, false);
+    }
     public void showErrorDialog(int msgId, boolean fatal) {
         showErrorDialog(getResources().getString(msgId), fatal);
     }
@@ -351,7 +357,7 @@ public class MainActivity extends Activity
                 // if login info cached, log in as registered user
                 if (loginHelper.loadCachedLoginInfo()) {
                     loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
-                        @Override public void onProfileRefresh(Member member) {
+                        @Override public void onProfileRefresh(Member member, String errMsg) {
                             if (member == null) {
                                 // if cached login failed, initiate guest log in
                                 loginHelper.getGuestTokens();

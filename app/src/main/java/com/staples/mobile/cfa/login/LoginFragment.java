@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -151,16 +150,18 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 activity.showProgressIndicator();
                 loginHelper.getUserTokens(email, password, new ProfileDetails.ProfileRefreshCallback() {
                     @Override
-                    public void onProfileRefresh(Member member) {
+                    public void onProfileRefresh(Member member, String errMsg) {
                         activity.hideProgressIndicator();
                         if (member != null) {
                             activity.selectProfileFragment();
+                        } else if (errMsg != null) {
+                            activity.showErrorDialog(errMsg);
                         }
                     }
                 });
             }
             else{
-                Toast.makeText(getActivity(), "Username or Password cannot be null", Toast.LENGTH_LONG).show();
+                activity.showErrorDialog(R.string.username_password_required);
             }
         }
         if(view == registerBtn){
@@ -177,16 +178,18 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 activity.showProgressIndicator();
                 loginHelper.registerUser(email, password, new ProfileDetails.ProfileRefreshCallback() {
                     @Override
-                    public void onProfileRefresh(Member member) {
+                    public void onProfileRefresh(Member member, String errMsg) {
                         activity.hideProgressIndicator();
                         if (member != null) {
                             activity.selectProfileFragment();
+                        } else if (errMsg != null) {
+                            activity.showErrorDialog(errMsg);
                         }
                     }
                 });
             }
             else{
-                Toast.makeText(getActivity(), "Username or Password cannot be null", Toast.LENGTH_LONG).show();
+                activity.showErrorDialog(R.string.username_password_required);
             }
         }
     }

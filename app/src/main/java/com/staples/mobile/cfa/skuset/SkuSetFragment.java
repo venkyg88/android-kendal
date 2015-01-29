@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
@@ -110,7 +109,7 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
         if (activity==null) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
-        Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+        ((MainActivity) activity).showErrorDialog(msg);
         wrapper.setState(DataWrapper.State.EMPTY);
         Log.d(TAG, msg);
     }

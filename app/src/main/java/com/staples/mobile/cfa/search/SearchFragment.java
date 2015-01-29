@@ -96,7 +96,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         if (activity==null) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
-        Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+        ((MainActivity) activity).showErrorDialog(msg);
         wrapper.setState(DataWrapper.State.EMPTY);
         Log.d(TAG, msg);
     }

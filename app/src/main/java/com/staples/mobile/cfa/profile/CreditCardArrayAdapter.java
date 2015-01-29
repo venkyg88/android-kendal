@@ -12,12 +12,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 
@@ -108,8 +108,6 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
                 String paymentMethodId = values.get(position).getCreditCardId();
                 if (ProfileDetails.paymentMethodSelectionListener != null) {
                     ProfileDetails.paymentMethodSelectionListener.onPaymentMethodSelected(paymentMethodId);
-                } else {
-                    Toast.makeText(context, paymentMethodId, Toast.LENGTH_LONG).show();
                 }
                 break;
             case R.id.listOptions:
@@ -157,11 +155,11 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
             public void success(Response response, Response response2) {
                 (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
                     @Override
-                    public void onProfileRefresh(Member member) {
+                    public void onProfileRefresh(Member member, String errMsg) {
                         ((MainActivity) context).hideProgressIndicator();
                         values.remove(position);
                         notifyDataSetChanged();
-                        Toast.makeText(context, "Credit card deleted", Toast.LENGTH_SHORT).show();
+                        ((MainActivity) context).showNotificationBanner(R.string.cc_deleted);
                     }
                 });
             }
@@ -169,7 +167,7 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
             @Override
             public void failure(RetrofitError error) {
                 ((MainActivity)context).hideProgressIndicator();
-                Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                ((MainActivity) context).showErrorDialog(ApiError.getErrorMessage(error));
             }
         });
     }

@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -20,6 +19,7 @@ import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.member.AddAddress;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.AddressId;
@@ -125,9 +125,9 @@ public class AddressFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void success(Response response, Response response2) {
                         (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
-                            @Override public void onProfileRefresh(Member member) {
+                            @Override public void onProfileRefresh(Member member, String errMsg) {
                                 ((MainActivity)activity).hideProgressIndicator();
-                                Toast.makeText(getActivity(), "Address Updated", Toast.LENGTH_LONG).show();
+                                ((MainActivity)activity).showNotificationBanner(R.string.address_updated);
                                 FragmentManager fm = getFragmentManager();
                                 if (fm != null) {
                                     fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
@@ -139,7 +139,7 @@ public class AddressFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void failure(RetrofitError error) {
                         ((MainActivity)activity).hideProgressIndicator();
-                        Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_LONG).show();
+                        ((MainActivity)activity).showErrorDialog(ApiError.getErrorMessage(error));
                     }
                 });
             }
@@ -149,10 +149,8 @@ public class AddressFragment extends Fragment implements View.OnClickListener {
 
                     @Override
                     public void success(AddressId addressId, Response response) {
-                        Toast.makeText(getActivity(), "Address Id " + addressId.getAddressId(), Toast.LENGTH_LONG).show();
-
                         (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
-                            @Override public void onProfileRefresh(Member member) {
+                            @Override public void onProfileRefresh(Member member, String errMsg) {
                                 ((MainActivity)activity).hideProgressIndicator();
 
                                 FragmentManager fm = getFragmentManager();
@@ -166,14 +164,14 @@ public class AddressFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void failure(RetrofitError error) {
                         ((MainActivity)activity).hideProgressIndicator();
-                        Toast.makeText(getActivity(), "Error Message " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        ((MainActivity)activity).showErrorDialog(ApiError.getErrorMessage(error), false);
                     }
                 });
             }
         }
         else {
             ((MainActivity)activity).hideProgressIndicator();
-            Toast.makeText(getActivity(), "All the fields are required. Please fill and try again", Toast.LENGTH_LONG).show();
+            ((MainActivity)activity).showErrorDialog(R.string.all_fields_required);
         }
     }
 }
