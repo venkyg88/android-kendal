@@ -17,8 +17,8 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +34,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SearchBarView extends FrameLayout implements View.OnClickListener, TextWatcher, TextView.OnEditorActionListener, AdapterView.OnItemClickListener, Callback<ArrayList<String>> {
+public class SearchBarView extends LinearLayout implements View.OnClickListener, TextWatcher, TextView.OnEditorActionListener, AdapterView.OnItemClickListener, Callback<ArrayList<String>> {
     private static final String TAG = "SearchBarView";
 
     private static final int KEYDELAY = 250; // milliseconds
@@ -70,6 +70,12 @@ public class SearchBarView extends FrameLayout implements View.OnClickListener, 
 
         public void update(String keyword) {
             performFiltering(keyword, 0);
+        }
+
+        @Override
+        public void onMeasure(int widthSpec, int heightSpec) {
+            super.onMeasure(widthSpec, heightSpec);
+            setMeasuredDimension(MeasureSpec.getSize(widthSpec), getMeasuredHeight());
         }
     }
 
@@ -120,8 +126,8 @@ public class SearchBarView extends FrameLayout implements View.OnClickListener, 
         return(sb);
     }
 
-    private void openSearchBar() {
-        ActionBar.getInstance().setConfig(ActionBar.Config.QUERY);
+    public void open() {
+        if (open) return;
         searchOption.setVisibility(INVISIBLE);
         searchText.setVisibility(VISIBLE);
         searchText.setText(null);
@@ -134,7 +140,7 @@ public class SearchBarView extends FrameLayout implements View.OnClickListener, 
         filled = false;
     }
 
-    private void filledSearchBar(boolean filled) {
+    private void setFilled(boolean filled) {
         if (filled==this.filled) return;
         this.filled = filled;
         if (filled) {
@@ -145,8 +151,8 @@ public class SearchBarView extends FrameLayout implements View.OnClickListener, 
         }
     }
 
-    private void closeSearchBar() {
-        ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT); // TODO needs correct restore
+    public void close() {
+        if (!open) return;
         searchOption.setImageResource(R.drawable.ic_search_white);
         searchOption.setVisibility(VISIBLE);
         searchText.setVisibility(GONE);
@@ -169,9 +175,9 @@ public class SearchBarView extends FrameLayout implements View.OnClickListener, 
             case R.id.search_option:
                 if (open) {
                     searchText.setText(null);
-                    filledSearchBar(false);
+                    setFilled(false);
                 } else {
-                    openSearchBar();
+                    ActionBar.getInstance().openSearch();
                 }
                 break;
         }
@@ -183,7 +189,7 @@ public class SearchBarView extends FrameLayout implements View.OnClickListener, 
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        filledSearchBar(s.length()>0);
+        setFilled(s.length() > 0);
         keyword = s.toString().trim();
 
         removeCallbacks(startSuggest);
@@ -195,11 +201,19 @@ public class SearchBarView extends FrameLayout implements View.OnClickListener, 
     }
 
     @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-            doSearch(null);
+    public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+        switch(actionId) {
+            case EditorInfo.IME_ACTION_SEARCH:
+                doSearch(null);
+                return(true);
+            case EditorInfo.IME_NULL:
+                if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER &&
+                    event.getAction()==KeyEvent.ACTION_DOWN) {
+                    doSearch(null);
+                }
+                return(true);
         }
-        return false;
+        return(false);
     }
 
     @Override
@@ -265,7 +279,7 @@ public class SearchBarView extends FrameLayout implements View.OnClickListener, 
         }
         if (keyword.isEmpty()) return;
 
-        closeSearchBar();
+        close();
         Toast.makeText(activity, "Searching " + keyword + "...", Toast.LENGTH_SHORT).show();
         adapter.pushRecentKeyword(keyword);
         activity.selectSearch(keyword);

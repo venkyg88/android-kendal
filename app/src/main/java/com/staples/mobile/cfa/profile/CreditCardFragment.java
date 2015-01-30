@@ -89,18 +89,18 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         cardNumberET.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    expDateET.setVisibility(View.VISIBLE);
-                    expDateET.requestFocus();
-                    CreditCard.Type ccType = CreditCard.Type.detect(cardNumberET.getText().toString());
-                    if (ccType != CreditCard.Type.UNKNOWN) {
-                        cardImage.setImageResource(ccType.getImageResource());
-                        cardType = ccType.getName();
-                    }
-                    handled = true;
+                switch(actionId) {
+                    case EditorInfo.IME_ACTION_NEXT:
+                        validate();
+                        return(true);
+                    case EditorInfo.IME_NULL:
+                        Log.d(TAG, "Got an enter key");
+                        if (event.getAction()==KeyEvent.ACTION_DOWN) {
+                            validate();
+                        }
+                        return(true);
                 }
-                return handled;
+                return(false);
             }
         });
 
@@ -136,6 +136,18 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         });
 
         return (view);
+    }
+
+    private boolean validate() {
+        expDateET.setVisibility(View.VISIBLE);
+        expDateET.requestFocus();
+        CreditCard.Type ccType = CreditCard.Type.detect(cardNumberET.getText().toString());
+        if (ccType != CreditCard.Type.UNKNOWN) {
+            cardImage.setImageResource(ccType.getImageResource());
+            cardType = ccType.getName();
+            return (true);
+        }
+        return(false);
     }
 
     @Override

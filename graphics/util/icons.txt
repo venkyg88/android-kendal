@@ -13,6 +13,7 @@ ic_menu_white		32	32	white	material/ic_menu_48px
 ic_more_vert_black	32	32	black	material/ic_more_vert_48px
 ic_phone_black		32	32	black	material/ic_phone_48px
 ic_place_black		32	32	black	material/ic_place_48px
+ic_search_black		32	32	black	material/ic_search_48px
 ic_search_white		32	32	white	material/ic_search_48px
 ic_shopping_cart_white	32	32	white	material/ic_shopping_cart_48px
 ic_staples		128	32	white	staples/staples_logo
