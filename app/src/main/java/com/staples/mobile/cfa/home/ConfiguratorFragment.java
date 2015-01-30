@@ -2,18 +2,14 @@ package com.staples.mobile.cfa.home;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.view.VelocityTrackerCompat;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.VelocityTracker;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -22,7 +18,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +26,7 @@ import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.location.LocationFinder;
+import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.store.StoreFragment;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -47,6 +43,7 @@ import com.staples.mobile.common.access.configurator.model.Item;
 import com.staples.mobile.common.access.configurator.model.Screen;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.device.DeviceInfo;
 
 import java.text.SimpleDateFormat;
@@ -130,11 +127,7 @@ public class ConfiguratorFragment extends Fragment {
     private DataWrapper storeWrapper;
     private ImageView showArrowImageView;
     private View hideBannerView;
-    private View verticalLineView;
-    public static String userName;
-    public static String rewards;
     private boolean isMessageBarShow = true;
-    private VelocityTracker mVelocityTracker = null;
 
     @Override
     public void onAttach(Activity activity) {
@@ -1160,7 +1153,7 @@ public class ConfiguratorFragment extends Fragment {
         usernameTextView = (TextView) configFrameView.findViewById(R.id.login_username);
         storeNameTextView = (TextView) configFrameView.findViewById(R.id.store_name);
         storeStatusTextView = (TextView) configFrameView.findViewById(R.id.store_status);
-        hideBannerView = (View) configFrameView.findViewById(R.id.hide_banner);
+        hideBannerView = configFrameView.findViewById(R.id.hide_banner);
         showArrowImageView = (ImageView) configFrameView.findViewById(R.id.show_arrow);
     }
 
@@ -1170,17 +1163,22 @@ public class ConfiguratorFragment extends Fragment {
         Access access = Access.getInstance();
         // Logged In
         if(access.isLoggedIn() && !access.isGuestLogin()){
-            Log.d(TAG, "Rewards: " + rewards);
+            float rewards = 0;
+            Member member = ProfileDetails.getMember();
+            if(member.getRewardsNumber() != null && member.getRewardDetails() != null) {
+                rewards = member.getRewardDetails().get(0).getAmountRewards();
+            }
 
-            if(!TextUtils.isEmpty(rewards)) {
+            if(rewards != 0) {
                 login_layout.setVisibility(View.GONE);
                 reward_layout.setVisibility(View.VISIBLE);
-                rewardTextView.setText("$" + rewards);
+                rewardTextView.setText("$" + (int) rewards);
+                Log.d(TAG, "Rewards: " + rewards);
             }
             else{
                 loginMessageTextView.setText(R.string.welcome);
                 usernameTextView.setVisibility(View.VISIBLE);
-                usernameTextView.setText(userName);
+                usernameTextView.setText(member.getUserName());
                 login_info_layout.setVisibility(View.GONE);
 
                 login_layout.setVisibility(View.VISIBLE);
@@ -1229,14 +1227,15 @@ public class ConfiguratorFragment extends Fragment {
                     case MotionEvent.ACTION_DOWN:
                         // finger touches the screen
                         first_y = event.getY();
+                        //System.out.println("first_y" + first_y);
                         break;
                     case MotionEvent.ACTION_MOVE:
                         // finger moves on the screen
                         float current_y = event.getY();
-                        if(current_y - first_y < 0 && isMessageBarShow){
+                        if(current_y - first_y < -5 && isMessageBarShow){
                             hideMessageBar();
                         }
-
+                        //System.out.println("current_y" + current_y);
                         if(current_y - first_y > 0 && !isMessageBarShow){
                             showMessageBar();
                         }
