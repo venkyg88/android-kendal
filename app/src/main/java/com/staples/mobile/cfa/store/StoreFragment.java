@@ -5,12 +5,17 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -48,6 +53,9 @@ import com.staples.mobile.common.access.channel.model.store.StoreFeature;
 import com.staples.mobile.common.access.channel.model.store.StoreHours;
 import com.staples.mobile.common.access.channel.model.store.StoreQuery;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.google.model.places.AutoComplete;
+import com.staples.mobile.common.access.google.model.places.Details;
+import com.staples.mobile.common.access.google.model.places.Prediction;
 
 import java.util.List;
 import java.util.Locale;
@@ -67,7 +75,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
 
     private MapView mapView;
     private GoogleMap googleMap;
-    private EditText search;
+    private EditText searchText;
     private RecyclerView list;
     private StoreAdapter adapter;
 
@@ -116,8 +124,9 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         adapter.setFullStoreDetail(false); // initially only summary store info is displayed
 
 
-        search = (EditText) view.findViewById(R.id.store_search);
-        search.setOnEditorActionListener(this);
+        searchText = (EditText) view.findViewById(R.id.store_search);
+        searchText.setOnEditorActionListener(this);
+        searchText.setHint(getHint());
 
         // Get location
         LocationFinder finder = LocationFinder.getInstance(getActivity());
@@ -137,6 +146,17 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         // Find nearby stores
         Access.getInstance().getChannelApi(false).storeLocations(postalCode, this);
         return (view);
+    }
+
+    private CharSequence getHint() {
+        Resources res = getActivity().getResources();
+        SpannableStringBuilder sb = new SpannableStringBuilder("   ");
+        sb.append(res.getString(R.string.store_search_hint));
+        Drawable icon = res.getDrawable(R.drawable.ic_search_black);
+        int size = (int) (searchText.getTextSize()*1.25);
+        icon.setBounds(0, 0, size, size);
+        sb.setSpan(new ImageSpan(icon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return(sb);
     }
 
     @Override
@@ -310,11 +330,64 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         int height = mapView.getHeight();
 
         // Zoom to bounds
-        CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, width, height, 0);
-        googleMap.moveCamera(update);
+        if (width>0 && height>0) {
+            CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, width, height, 0);
+            googleMap.moveCamera(update);
+        }
     }
 
     // Retrofit callbacks & processing
+
+    @Override
+    public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+        switch(actionId) {
+            case EditorInfo.IME_ACTION_SEARCH:
+                doSearch();
+                return(true);
+            case EditorInfo.IME_NULL:
+                if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER &&
+                        event.getAction()==KeyEvent.ACTION_DOWN) {
+                    doSearch();
+                }
+                return(true);
+        }
+        return(false);
+    }
+
+    private void doSearch() {
+        String address = searchText.getText().toString().trim();
+        location = null;
+        Access.getInstance().getChannelApi(false).storeLocations(address, this);
+
+        // TODO Start of hacked test stuff ************************************************************************************************************************
+        Access.getInstance().getGoogleApi().getPlaceAutoComplete("address", "country:us", address, new Callback<AutoComplete>() {
+            @Override
+            public void success(AutoComplete autoComplete, Response response) {
+
+                List<Prediction> predictions = autoComplete.getPredictions();
+                Log.d(TAG, "Places API returned " + predictions.size() + " " + autoComplete.getStatus());
+                if (predictions.size()==0) return;
+                for(Prediction prediction : predictions) {
+                    Log.d(TAG, "Prediction: " + prediction.getDescription());
+                }
+                Access.getInstance().getGoogleApi().getPlaceDetails(predictions.get(0).getPlaceId(), new Callback<Details>() {
+                    @Override
+                    public void success(Details details, Response response) {
+                        Log.d(TAG, "2nd return "+details.getResult().getFormattedAddress());
+                    }
+
+                    @Override
+                    public void failure(RetrofitError retrofitError) {
+                    }
+                });
+            }
+
+            @Override
+            public void failure(RetrofitError retrofitError) {
+            }
+        });
+        // TODO End of hacked test stuff ************************************************************************************************************************
+    }
 
     @Override
     public void success(StoreQuery storeQuery, Response response) {
@@ -547,15 +620,5 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
                 }
                 break;
         }
-    }
-
-    @Override
-    public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-        if (actionId== EditorInfo.IME_ACTION_SEARCH) {
-            String address = search.getText().toString().trim();
-            location = null;
-            Access.getInstance().getChannelApi(false).storeLocations(address, this);
-        }
-        return(false);
     }
 }

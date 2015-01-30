@@ -201,11 +201,19 @@ public class SearchBarView extends LinearLayout implements View.OnClickListener,
     }
 
     @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-            doSearch(null);
+    public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+        switch(actionId) {
+            case EditorInfo.IME_ACTION_SEARCH:
+                doSearch(null);
+                return(true);
+            case EditorInfo.IME_NULL:
+                if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER &&
+                    event.getAction()==KeyEvent.ACTION_DOWN) {
+                    doSearch(null);
+                }
+                return(true);
         }
-        return false;
+        return(false);
     }
 
     @Override
