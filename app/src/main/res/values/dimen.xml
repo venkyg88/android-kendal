@@ -12,4 +12,7 @@
     <dimen name="add_button_margin">16dp</dimen>
     <dimen name="round_button_diameter">50dp</dimen>
     <dimen name="store_schedule_tabstop">70sp</dimen>
+    <dimen name="left_margin">6dp</dimen>
+    <dimen name="right_margin">6dp</dimen>
+
 </resources>
