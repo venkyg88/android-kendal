@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.profile;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
@@ -19,11 +20,13 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import com.staples.mobile.cfa.R;
+
 public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterable {
 
     private static final String TAG = "PlacesArrayAdapter";
 
-    private static final boolean LOGGING = true;
+    private static final boolean LOGGING = false;
 
     private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
     private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
@@ -33,14 +36,15 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
     // @@@ TODO Key copied from the manifest?
     private static final String API_KEY = "AIzaSyCGiUC4JbomlAzTDXqgFiFJPf45Ckux-Rs";
 
-    private static final int STREET_ADDRESS = 0;
-    private static final int CITY = 1;
-    private static final int STATE = 2;
+    public enum ERROR_CODE {
+        NONE,
+        EXCEPTION,
+    }
 
     private Activity activity;
+    private Resources resources;
 
     private JSONArray predictionsJsonArray;
-
     private JSONArray addressCompsJsonArray;
 
     private ArrayList<String> resultList;
@@ -48,7 +52,6 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
     private String placeId;
 
     private PlaceData placeData;
-
     private PlaceDataCallback placeDataCallback;
 
     public interface PlaceDataCallback {
@@ -56,13 +59,13 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
         public void onPlaceDataResult(PlacesArrayAdapter.PlaceData placeData);
     }
 
-    private Runnable getZipCodeRunnable = new Runnable() {
+    private Runnable getPlaceDetailsRunnable = new Runnable() {
 
         public void run() {
 
             // <<<<< Runs on a worker thread. >>>>>
 
-            if (LOGGING) Log.v(TAG, "PlacesArrayAdapter:getZipCodeRunnable:Run():"
+            if (LOGGING) Log.v(TAG, "PlacesArrayAdapter:getPlaceDetailsRunnable:Run():"
                             + " placeId[" + placeId + "]"
                             + " this[" + this + "]"
             );
@@ -71,7 +74,6 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
             StringBuilder jsonResults = new StringBuilder();
 
             try {
-
                 StringBuilder stringBuilder = new StringBuilder(PLACES_API_BASE + TYPE_DETAILS + OUT_JSON);
                 stringBuilder.append("?placeid=" + placeId);
                 stringBuilder.append("&key=" + API_KEY);
@@ -85,32 +87,37 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
                 char[] resultsBuffer = new char[1024];
 
                 while ((nbrOfCharactersRead = inputStreamReader.read(resultsBuffer)) != -1) {
-
                     jsonResults.append(resultsBuffer, 0, nbrOfCharactersRead);
                 }
-
             } catch (MalformedURLException malformedURLException) {
 
                 if (LOGGING)
-                    Log.e(TAG, "PlacesArrayAdapter:getZipCodeRunnable:Run(): EXCEPTION[MalformedURLException]: Error processing Places API URL."
+                    Log.e(TAG, "PlacesArrayAdapter:getPlaceDetailsRunnable:Run(): EXCEPTION[MalformedURLException]: Error processing Places API URL."
                                     + " malformedURLException[" + malformedURLException + "]"
                                     + " this[" + this + "]"
                     );
+
+                placeData.errorCode = ERROR_CODE.EXCEPTION;
+                placeData.exception = malformedURLException;
+
                 return;
 
             } catch (IOException ioException) {
 
                 if (LOGGING)
-                    Log.e(TAG, "PlacesArrayAdapter:getZipCodeRunnable:Run(): EXCEPTION[IOException]: Error connecting to Places API."
+                    Log.e(TAG, "PlacesArrayAdapter:getPlaceDetailsRunnable:Run(): EXCEPTION[IOException]: Error connecting to Places API."
                                     + " ioException[" + ioException + "]"
                                     + " this[" + this + "]"
                     );
+
+                placeData.errorCode = ERROR_CODE.EXCEPTION;
+                placeData.exception = ioException;
+
                 return;
 
             } finally {
 
                 if (httpURLConnection != null) {
-
                     httpURLConnection.disconnect();
                 }
             }
@@ -126,13 +133,14 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
             String addrCompTypeString = null;
 
             try {
-
                 // Create a JSON object hierarchy from the results.
                 documentJsonObj = new JSONObject(jsonResults.toString());
 
                 resultJsonObj = documentJsonObj.getJSONObject("result");
                 addressCompsJsonArray = resultJsonObj.getJSONArray("address_components");
                 addressCompsNbrOfItems = addressCompsJsonArray.length();
+
+                placeData.clear();
 
                 for (int addrCompIndex = 0; addrCompIndex < addressCompsNbrOfItems; addrCompIndex++) {
 
@@ -145,23 +153,46 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
                         addrCompTypeString = addressCompTypesJsonArray.getString(addrCompTypeIndex);
 
                         if ("postal_code".equals(addrCompTypeString)) {
-
                             placeData.zipCode = addressCompJsonObj.getString("short_name");
-
                         } else if ("postal_code_suffix".equals(addrCompTypeString)) {
-
                             placeData.zipCodeSuffix = addressCompJsonObj.getString("short_name");
+                        } else if ("street_number".equals(addrCompTypeString)) {
+                            placeData.streetNumber = addressCompJsonObj.getString("short_name");
+                        } else if ("route".equals(addrCompTypeString)) {
+                            placeData.streetName = addressCompJsonObj.getString("short_name");
+                        } else if ("locality".equals(addrCompTypeString)) {
+                            placeData.city = addressCompJsonObj.getString("long_name");
+                        } else if ("sublocality".equals(addrCompTypeString)) {
+                            placeData.city = addressCompJsonObj.getString("long_name");
+                        } else if ("administrative_area_level_1".equals(addrCompTypeString)) {
+                            placeData.state = addressCompJsonObj.getString("short_name");
                         }
                     }
+
+                    String streetAddress = "";
+
+                    if (placeData.streetNumber.length() > 0) {
+                        streetAddress = placeData.streetNumber;
+                    }
+
+                    if (placeData.streetName.length() > 0) {
+                        streetAddress += (" " + placeData.streetName);
+                    }
+
+                    placeData.streetAddress = streetAddress;
                 }
 
             } catch (JSONException jsonException) {
 
                 if (LOGGING)
-                    Log.e(TAG, "PlacesArrayAdapter:getZipCodeRunnable:Run(): EXCEPTION[JSONException]: Cannot process JSON results."
+                    Log.e(TAG, "PlacesArrayAdapter:getPlaceDetailsRunnable:Run(): EXCEPTION[JSONException]: Cannot process JSON results."
                                     + " jsonException[" + jsonException + "]"
                                     + " this[" + this + "]"
                     );
+
+                placeData.errorCode = ERROR_CODE.EXCEPTION;
+                placeData.exception = jsonException;
+
             } finally {
 
                 if (placeDataCallback != null) {
@@ -189,6 +220,9 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
         super(context, textViewResourceId);
 
         activity = (Activity) context;
+        resources = activity.getResources();
+
+        placeData = new PlaceData();
     }
 
     public void getPlaceDetails(int placeIndex, PlaceDataCallback placeDataCallback) {
@@ -203,39 +237,22 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
         JSONArray termsJsonArray = null;
         JSONObject termJsonObject = null;
 
-        placeData = new PlaceData();
-
         try {
-
             placeJsonObject = predictionsJsonArray.getJSONObject(placeIndex);
-
             placeId = placeJsonObject.getString("place_id");
-
-            termsJsonArray = placeJsonObject.getJSONArray("terms");
-
-            for (int termIndex = 0; termIndex <= STATE; termIndex++) {
-
-                termJsonObject = termsJsonArray.getJSONObject(termIndex);
-
-                if (termIndex == STREET_ADDRESS) {
-
-                    placeData.streetAddress = termJsonObject.getString("value");
-
-                } else if (termIndex == CITY) {
-
-                    placeData.city = termJsonObject.getString("value");
-
-                } else if (termIndex == STATE) {
-
-                    placeData.state = termJsonObject.getString("value");
-                }
-            }
 
             runGetZipCode();
 
         } catch (JSONException jsonException) {
-            // @@@ TODO Must handle.
-            placeData = null;
+
+            if (LOGGING)
+                Log.e(TAG, "PlacesArrayAdapter:getPlaceDetails(): EXCEPTION[JSONException]: Cannot process JSON results."
+                                + " jsonException[" + jsonException + "]"
+                                + " this[" + this + "]"
+                );
+
+            placeData.errorCode = ERROR_CODE.EXCEPTION;
+            placeData.exception = jsonException;
         }
     }
 
@@ -283,7 +300,7 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
                 if (constraint != null) {
 
                     // Retrieve the autocomplete results.
-                    resultList = autocomplete(constraint.toString());
+                    resultList = autoComplete(constraint.toString());
 
                     // Assign the data to the FilterResults.
                     filterResults.values = resultList;
@@ -303,11 +320,8 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
                 );
 
                 if (results != null && results.count > 0) {
-
                     notifyDataSetChanged();
-
                 } else {
-
                     notifyDataSetInvalidated();
                 }
             }
@@ -318,17 +332,17 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
 
     private void runGetZipCode() {
 
-        Thread getZipCodeThread = new Thread(getZipCodeRunnable);
+        Thread getZipCodeThread = new Thread(getPlaceDetailsRunnable);
 
         getZipCodeThread.start();
     }
 
-    private ArrayList<String> autocomplete(String input) {
+    private ArrayList<String> autoComplete(String constraint) {
 
         // <<<<< Runs on a worker thread. >>>>>
 
-        if (LOGGING) Log.v(TAG, "PlacesArrayAdapter:autocomplete():"
-                        + " input[" + input + "]"
+        if (LOGGING) Log.v(TAG, "PlacesArrayAdapter:autoComplete():"
+                        + " constraint[" + constraint + "]"
                         + " this[" + this + "]"
         );
 
@@ -343,7 +357,7 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
             stringBuilder.append("?key=" + API_KEY);
             stringBuilder.append("&types=address");
             stringBuilder.append("&components=country:us");
-            stringBuilder.append("&input=" + URLEncoder.encode(input, "utf8"));
+            stringBuilder.append("&input=" + URLEncoder.encode(constraint, "utf8"));
 
             URL url = new URL(stringBuilder.toString());
             httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -354,32 +368,38 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
             char[] resultsBuffer = new char[1024];
 
             while ((nbrOfCharactersRead = inputStreamReader.read(resultsBuffer)) != -1) {
-
                 jsonResults.append(resultsBuffer, 0, nbrOfCharactersRead);
             }
 
         } catch (MalformedURLException malformedURLException) {
 
             if (LOGGING)
-                Log.e(TAG, "PlacesArrayAdapter:autocomplete(): EXCEPTION[MalformedURLException]: Error processing Places API URL."
+                Log.e(TAG, "PlacesArrayAdapter:autoComplete(): EXCEPTION[MalformedURLException]: Error processing Places API URL."
                                 + " malformedURLException[" + malformedURLException + "]"
                                 + " this[" + this + "]"
                 );
+
+            placeData.errorCode = ERROR_CODE.EXCEPTION;
+            placeData.exception = malformedURLException;
+
             return (resultList);
 
         } catch (IOException ioException) {
 
             if (LOGGING)
-                Log.e(TAG, "PlacesArrayAdapter:autocomplete(): EXCEPTION[IOException]: Error connecting to Places API."
+                Log.e(TAG, "PlacesArrayAdapter:autoComplete(): EXCEPTION[IOException]: Error connecting to Places API."
                                 + " ioException[" + ioException + "]"
                                 + " this[" + this + "]"
                 );
+
+            placeData.errorCode = ERROR_CODE.EXCEPTION;
+            placeData.exception = ioException;
+
             return (resultList);
 
         } finally {
 
             if (httpURLConnection != null) {
-
                 httpURLConnection.disconnect();
             }
         }
@@ -394,28 +414,52 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
             resultList = new ArrayList<String>(predictionsJsonArray.length());
 
             for (int predsNdx = 0; predsNdx < predictionsJsonArray.length(); predsNdx++) {
-
                 resultList.add(predictionsJsonArray.getJSONObject(predsNdx).getString("description"));
             }
+
+            // @@@ TODO Add "INPUT MANUALLY" here. (input_manually_allcaps)
 
         } catch (JSONException jsonException) {
 
             if (LOGGING)
-                Log.e(TAG, "PlacesArrayAdapter:autocomplete(): EXCEPTION[JSONException]: Cannot process JSON results."
+                Log.e(TAG, "PlacesArrayAdapter:autoComplete(): EXCEPTION[JSONException]: Cannot process JSON results."
                                 + " jsonException[" + jsonException + "]"
                                 + " this[" + this + "]"
                 );
+
+            placeData.errorCode = ERROR_CODE.EXCEPTION;
+            placeData.exception = jsonException;
         }
+
+        String inputManually = resources.getString(R.string.input_manually_allcaps);
+        resultList.add(inputManually);
 
         return (resultList);
     }
 
-    public class PlaceData {
+    public static class PlaceData {
 
         public String streetAddress = "";
+        public String streetNumber = "";
+        public String streetName = "";
         public String city = "";
         public String state = "";
         public String zipCode = "";
         public String zipCodeSuffix = "";
+        public ERROR_CODE errorCode = ERROR_CODE.NONE;
+        public Exception exception = null;
+
+        public void clear() {
+
+            streetAddress = "";
+            streetNumber = "";
+            streetName = "";
+            city = "";
+            state = "";
+            zipCode = "";
+            zipCodeSuffix = "";
+            errorCode = ERROR_CODE.NONE;
+            exception = null;
+        }
     }
 }

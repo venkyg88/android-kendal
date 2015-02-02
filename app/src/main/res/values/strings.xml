@@ -120,6 +120,16 @@
     <string name="rewards_ink_limit">Limit of %d per month</string>
     <string name="rewards_earned">Earned</string>
 
+	<string name="first_name_label">First Name</string>
+	<string name="last_name_label">Last Name</string>
+	<string name="phone_label">Phone</string>
+	<string name="shipto_address_label">Ship-to Address</string>
+	<string name="appartment_label">Apt/Suite/Bldg Number</string>
+	<string name="city_label">City</string>
+	<string name="state_label">State</string>
+	<string name="zip_code_label">Zip Code</string>
+	<string name="input_manually_allcaps">INPUT MANUALLY</string>
+
     <!--order confirmation-->
     <string name="submit_order">SUBMIT ORDER</string>
     <string name="order_confirmation_msg">Thank you for your order!</string>
@@ -136,7 +146,6 @@
     <string name="order_confirmation_with_error">An error occurred, but your order appears to have gone through."</string>
     <string name="password_reset">Reset Password</string>
     <string name="continue_shopping">Continue Shopping</string>
-
 
     <!--profile-->
     <string name="password">Password</string>
