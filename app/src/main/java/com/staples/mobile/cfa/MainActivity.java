@@ -442,6 +442,7 @@ public class MainActivity extends Activity
     public boolean selectFragment(Fragment fragment, Transition transition, boolean push, String tag) {
         // Make sure all drawers are closed
         drawerLayout.closeDrawers();
+        ActionBar.getInstance().closeSearch();
 
         // Swap Fragments
         FragmentManager manager = getFragmentManager();
@@ -622,19 +623,16 @@ public class MainActivity extends Activity
                 }
                 break;
 
+            case R.id.back_button:
+                ActionBar.getInstance().closeSearch();
+                break;
+
             case R.id.account_button:
                 if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
                     loginHelper.userSignOut();
                     selectDrawerItem(homeDrawerItem, Transition.RIGHT, true);
                 } else {
                     selectLoginFragment();
-                }
-                break;
-
-            case R.id.search_view:
-                String query = ((SearchView) view).getQuery().toString().trim();
-                if (!query.isEmpty()) {
-                    selectSearch(query);
                 }
                 break;
         }

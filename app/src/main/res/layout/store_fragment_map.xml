@@ -10,8 +10,7 @@
         android:padding="6dp"
         android:inputType="textPostalAddress"
         android:imeOptions="actionSearch"
-        android:singleLine="true"
-        android:hint="@string/store_search_hint"/>
+        android:singleLine="true"/>
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"

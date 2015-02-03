@@ -5,12 +5,17 @@ import android.app.Fragment;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,8 +26,8 @@ import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.location.LocationFinder;
+import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.store.StoreFragment;
-import com.staples.mobile.cfa.store.TimeSpan;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
@@ -37,9 +42,8 @@ import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.configurator.model.Item;
 import com.staples.mobile.common.access.configurator.model.Screen;
 import com.staples.mobile.common.access.config.AppConfigurator;
-import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
+import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.device.DeviceInfo;
 
 import java.text.SimpleDateFormat;
@@ -111,6 +115,8 @@ public class ConfiguratorFragment extends Fragment {
     private LinearLayout login_info_layout;
     private LinearLayout login_layout;
     private LinearLayout reward_layout;
+    private FrameLayout message_layout;
+    private FrameLayout messageFrameLayout;
     private TextView rewardTextView;
     private TextView loginMessageTextView;
     private TextView signInTextView;
@@ -119,8 +125,9 @@ public class ConfiguratorFragment extends Fragment {
     private TextView storeStatusTextView;
     private TextView usernameTextView;
     private DataWrapper storeWrapper;
-    public static String userName;
-    public static String rewards;
+    private ImageView showArrowImageView;
+    private View hideBannerView;
+    private boolean isMessageBarShow = true;
 
     @Override
     public void onAttach(Activity activity) {
@@ -199,6 +206,7 @@ public class ConfiguratorFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
+        isMessageBarShow = true;
     }
 
     public void initFromConfiguratorResult(Configurator configurator) {
@@ -1052,6 +1060,7 @@ public class ConfiguratorFragment extends Fragment {
                 storeEndHourList.add(storeEndTime);
                 //System.out.println(TAG + " - day:" + hours.getDayName() + ", hour:" + hours.getHours()
                 //        + ", storeStartTime: " + storeStartTime + ", storeEndTime: " + storeEndTime);
+                //TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
             }
 
             Calendar cal = Calendar.getInstance();
@@ -1135,6 +1144,8 @@ public class ConfiguratorFragment extends Fragment {
         login_layout = (LinearLayout) configFrameView.findViewById(R.id.login_layout);
         login_info_layout = (LinearLayout) configFrameView.findViewById(R.id.login_info_layout);
         reward_layout = (LinearLayout) configFrameView.findViewById(R.id.reward_layout);
+        message_layout = (FrameLayout) configFrameView.findViewById(R.id.message_layout);
+        messageFrameLayout = (FrameLayout) configFrameView.findViewById(R.id.message_frame);
         rewardTextView = (TextView) configFrameView.findViewById(R.id.reward);
         loginMessageTextView = (TextView) configFrameView.findViewById(R.id.login_message);
         signInTextView = (TextView) configFrameView.findViewById(R.id.login_sign_in);
@@ -1142,6 +1153,8 @@ public class ConfiguratorFragment extends Fragment {
         usernameTextView = (TextView) configFrameView.findViewById(R.id.login_username);
         storeNameTextView = (TextView) configFrameView.findViewById(R.id.store_name);
         storeStatusTextView = (TextView) configFrameView.findViewById(R.id.store_status);
+        hideBannerView = configFrameView.findViewById(R.id.hide_banner);
+        showArrowImageView = (ImageView) configFrameView.findViewById(R.id.show_arrow);
     }
 
     private void updateMessageBar(){
@@ -1150,17 +1163,22 @@ public class ConfiguratorFragment extends Fragment {
         Access access = Access.getInstance();
         // Logged In
         if(access.isLoggedIn() && !access.isGuestLogin()){
-            Log.d(TAG, "Rewards: " + rewards);
+            float rewards = 0;
+            Member member = ProfileDetails.getMember();
+            if(member.getRewardsNumber() != null && member.getRewardDetails() != null) {
+                rewards = member.getRewardDetails().get(0).getAmountRewards();
+            }
 
-            if(!TextUtils.isEmpty(rewards)) {
+            if(rewards != 0) {
                 login_layout.setVisibility(View.GONE);
                 reward_layout.setVisibility(View.VISIBLE);
-                rewardTextView.setText("$" + rewards);
+                rewardTextView.setText("$" + (int) rewards);
+                Log.d(TAG, "Rewards: " + rewards);
             }
             else{
                 loginMessageTextView.setText(R.string.welcome);
                 usernameTextView.setVisibility(View.VISIBLE);
-                usernameTextView.setText(userName);
+                usernameTextView.setText(member.getUserName());
                 login_info_layout.setVisibility(View.GONE);
 
                 login_layout.setVisibility(View.VISIBLE);
@@ -1200,6 +1218,96 @@ public class ConfiguratorFragment extends Fragment {
                 mainActivity.selectFragment(new StoreFragment(), MainActivity.Transition.NONE, true);
             }
         });
+
+        messageFrameLayout.setOnTouchListener(new View.OnTouchListener() {
+            float first_y = 0;
+
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        // finger touches the screen
+                        first_y = event.getY();
+                        //System.out.println("first_y" + first_y);
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        // finger moves on the screen
+                        float current_y = event.getY();
+                        if(current_y - first_y < -5 && isMessageBarShow){
+                            hideMessageBar();
+                        }
+                        //System.out.println("current_y" + current_y);
+                        if(current_y - first_y > 0 && !isMessageBarShow){
+                            showMessageBar();
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        // finger leaves the screen
+                        break;
+                }
+                return true;
+            }
+        });
+
+//        message_layout.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent arg1) {
+//                // TODO Auto-generated method stub
+//                ClipData data = ClipData.newPlainText("", "");
+//                View.DragShadowBuilder shadow = new View.DragShadowBuilder(message_layout);
+//                v.startDrag(data, shadow, null, 0);
+//                return false;
+//            }
+//        });
+
+        hideBannerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent arg1) {
+                if(isMessageBarShow) {
+                    hideMessageBar();
+                }
+                return true;
+            }
+        });
+
+        showArrowImageView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent arg1) {
+                if(!isMessageBarShow) {
+                    showMessageBar();
+                }
+                return true;
+            }
+        });
+    }
+
+    private void showMessageBar(){
+        Animation fade_in = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
+        message_layout.startAnimation(fade_in);
+        hideBannerView.startAnimation(fade_in);
+
+        message_layout.setVisibility(View.VISIBLE);
+        showArrowImageView.setVisibility(View.GONE);
+        hideBannerView.setVisibility(View.VISIBLE);
+
+        isMessageBarShow = true;
+    }
+
+    private void hideMessageBar(){
+        Animation fade_out = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
+        message_layout.startAnimation(fade_out);
+        hideBannerView.startAnimation(fade_out);
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                message_layout.setVisibility(View.GONE);
+                showArrowImageView.setVisibility(View.VISIBLE);
+                hideBannerView.setVisibility(View.GONE);
+            }
+        }, 500);
+
+        isMessageBarShow = false;
     }
 
 //    @Override
