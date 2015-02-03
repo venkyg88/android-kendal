@@ -63,15 +63,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         String email = member.getEmailAddress();
         String userName = member.getUserName();
 
-        // set personalized message bar
-        ConfiguratorFragment.userName = email;
-
         if(member.getRewardsNumber() != null && member.getRewardDetails() != null) {
             System.out.println("member.getAmountRewards():" + member.getRewardDetails().get(0).getAmountRewards());
-            ConfiguratorFragment.rewards = String.valueOf(member.getRewardDetails().get(0).getAmountRewards());
-        }
-        else{
-            ConfiguratorFragment.rewards = "";
         }
 
         if (email!=null)
