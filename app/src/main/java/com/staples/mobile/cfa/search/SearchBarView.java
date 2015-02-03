@@ -205,13 +205,13 @@ public class SearchBarView extends LinearLayout implements View.OnClickListener,
         switch(actionId) {
             case EditorInfo.IME_ACTION_SEARCH:
                 doSearch(null);
-                return(true);
+                break;
             case EditorInfo.IME_NULL:
                 if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER &&
                     event.getAction()==KeyEvent.ACTION_DOWN) {
                     doSearch(null);
                 }
-                return(true);
+                break;
         }
         return(false);
     }
@@ -279,7 +279,6 @@ public class SearchBarView extends LinearLayout implements View.OnClickListener,
         }
         if (keyword.isEmpty()) return;
 
-        close();
         Toast.makeText(activity, "Searching " + keyword + "...", Toast.LENGTH_SHORT).show();
         adapter.pushRecentKeyword(keyword);
         activity.selectSearch(keyword);
