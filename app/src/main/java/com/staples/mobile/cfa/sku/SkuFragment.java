@@ -13,14 +13,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
@@ -28,6 +32,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.feed.PersistentSizedArrayList;
 import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
+import com.staples.mobile.cfa.login.ResetPasswordFragment;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PagerStripe;
@@ -57,7 +62,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener,
-        View.OnClickListener, FragmentManager.OnBackStackChangedListener {
+        View.OnClickListener, FragmentManager.OnBackStackChangedListener{
     private static final String TAG = "SkuFragment";
 
     private static final String TITLE = "title";
@@ -569,7 +574,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         List<Product> products = sku.getProduct();
         if (products != null && products.size() > 0) {
             // Use the first product in the list
-            Product product = products.get(0);
+            final Product product = products.get(0);
             tabAdapter.setProduct(product);
 
             // Handle availability
@@ -577,9 +582,23 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             Button addToCartButton = (Button) wrapper.findViewById(R.id.add_to_cart);
             TextView footerMsg = (TextView)wrapper.findViewById(R.id.footer_msg);
             Availability availability = Availability.getProductAvailability(product);
+            TextView skuText = (TextView)wrapper.findViewById(R.id.select_sku);
+
             switch (availability) {
                 case NOTHING:
                 case SKUSET:
+                    qtyEditor.setVisibility(View.VISIBLE);
+                    addToCartButton.setVisibility(View.VISIBLE);
+                    skuText.setVisibility(View.VISIBLE);
+                    addToCartButton.setEnabled(false);
+                    qtyEditor.setEnabled(false);
+                    skuText.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ((MainActivity) getActivity()).selectSkuSet(product.getProductName(), product.getSku(), product.getThumbnailImage().get(0).getUrl());
+                        }
+                    });
+                    break;
                 case RETAILONLY:
                 case SPECIALORDER:
                 case OUTOFSTOCK:
@@ -651,6 +670,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             saveSeenProduct(product);
         }
     }
+
 
     public static String formatTimestamp(String raw) {
         if (raw == null) return (null);

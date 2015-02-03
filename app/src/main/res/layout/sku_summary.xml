@@ -190,39 +190,56 @@
         </LinearLayout>
     </TabHost>
 
-    <!-- Add to cart footer -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:gravity="center_horizontal">
-        <com.staples.mobile.cfa.widget.QuantityEditor
-            android:id="@+id/quantity"
-            style="@style/QtyEditorStyle"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:visibility="gone"
-            android:hint="1"
-            android:maxLength="4"
-            app:maxQuantity="10"
-            app:popupWidth="120dp"/>
-        <Button
-            android:id="@+id/add_to_cart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:visibility="gone"
-            android:textSize="20sp"
-            android:text="@string/add_to_cart"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
         <TextView
-            android:id="@+id/footer_msg"
+            android:id="@+id/select_sku"
+            android:textSize="16dip"
+            android:paddingRight="10dip"
+            android:text="@string/sku_set_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textColor="@color/text_nearly_black"
-            android:textSize="16sp"
+            android:layout_gravity="right"
+            android:onClick="onClick"
+            android:clickable="true"
             android:visibility="gone"
-        />
-    </LinearLayout>
+            />
+        <!-- Add to cart footer -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+            <com.staples.mobile.cfa.widget.QuantityEditor
+                android:id="@+id/quantity"
+                style="@style/QtyEditorStyle"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:visibility="gone"
+                android:hint="1"
+                android:maxLength="4"
+                app:maxQuantity="10"
+                app:popupWidth="120dp"/>
+            <Button
+                android:id="@+id/add_to_cart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:visibility="gone"
+                android:textSize="20sp"
+                android:text="@string/add_to_cart"/>
+            <TextView
+                android:id="@+id/footer_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/text_nearly_black"
+                android:textSize="16sp"
+                android:visibility="gone"
+                />
+        </LinearLayout>
+        </LinearLayout>
 </com.staples.mobile.cfa.widget.DataWrapper>

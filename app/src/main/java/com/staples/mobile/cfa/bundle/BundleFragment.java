@@ -140,7 +140,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
                     if (item.type==IdentifierType.SKUSET) {
-                        ((MainActivity) getActivity()).selectSkuSet(item.title, item.identifier, item.imageUrl);
+                        ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier);
                     } else {
                         final MainActivity activity = (MainActivity) getActivity();
                         final ImageView buttonVw = (ImageView)view;

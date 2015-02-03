@@ -72,11 +72,11 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
         list.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapter.setOnClickListener(this);
 
-        // Set main image
-        ImageView image = (ImageView) frame.findViewById(R.id.image);
-        Drawable noPhoto = getActivity().getResources().getDrawable(R.drawable.no_photo);
-        if (imageUrl == null) image.setImageDrawable(noPhoto);
-        else Picasso.with(getActivity()).load(imageUrl).error(noPhoto).into(image);
+//        // Set main image
+//        ImageView image = (ImageView) frame.findViewById(R.id.image);
+//        Drawable noPhoto = getActivity().getResources().getDrawable(R.drawable.no_photo);
+//        if (imageUrl == null) image.setImageDrawable(noPhoto);
+//        else Picasso.with(getActivity()).load(imageUrl).error(noPhoto).into(image);
 
         // Start item query
         wrapper.setState(DataWrapper.State.LOADING);
