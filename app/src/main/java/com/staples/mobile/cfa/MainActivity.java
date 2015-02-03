@@ -616,7 +616,10 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.close_button:
-                selectShoppingCart();
+                FragmentManager fm = getFragmentManager();
+                if (fm != null) {
+                    fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
+                }
                 break;
 
             case R.id.account_button:

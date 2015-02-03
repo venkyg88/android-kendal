@@ -129,6 +129,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private TableLayout specContainer;
 
     private boolean isShiftedTab;
+    private MainActivity activity;
 
     public void setArguments(String title, String identifier, boolean isSkuSetRedirected) {
         Bundle args = new Bundle();
@@ -140,6 +141,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        activity = (MainActivity)getActivity();
         Bundle args = getArguments();
         if (args != null) {
             title = args.getString(TITLE);
@@ -310,7 +312,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         if (skuNumber != null && modelNumber != null && skuNumber.equals(modelNumber))
             modelNumber = null;
 
-        Resources res = getActivity().getResources();
+        Resources res = activity.getResources();
         StringBuilder sb = new StringBuilder();
 
         if (skuNumber != null) {
@@ -404,7 +406,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private void addAccessory(Product product) {
         List<Product> accessories = product.getAccessory();
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        LayoutInflater inflater = activity.getLayoutInflater();
 
         for (final Product accessory : accessories) {
             String accessoryImageUrl = accessory.getImage().get(0).getUrl();
@@ -415,13 +417,13 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
             // Set accessory image
             ImageView accessoryImageView = (ImageView) skuAccessoryRow.findViewById(R.id.accessory_image);
-            Picasso.with(getActivity()).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
+            Picasso.with(activity).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
 
             // Set listener for accessory image
             accessoryImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity) getActivity()).selectSkuItem(null, sku, false);
+                    activity.selectSkuItem(null, sku, false);
                 }
             });
 
@@ -433,7 +435,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             accessoryTitleTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity) getActivity()).selectSkuItem(null, sku, false);
+                    activity.selectSkuItem(null, sku, false);
                 }
             });
 
@@ -449,16 +451,16 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     }
 
     private void saveSeenProduct(Product product){
-        PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(getActivity());
-        HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(getActivity());
+        PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(activity);
+        HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(activity);
         PersistentSizedArrayList<String> savedSeenProductList
-                = feedSingleton.getSavedSeenProducts(getActivity());
+                = feedSingleton.getSavedSeenProducts(activity);
 
         // Check if the product was saved before
         if(!savedSkuSet.contains(product.getSku())){
             Log.d(TAG, "Saving seen product's sku: " + product.getProductName());
 
-            savedSeenProductList.addSeenProduct(product.getSku(), getActivity());
+            savedSeenProductList.addSeenProduct(product.getSku(), activity);
         }
 
         // Update last seen products list's order keeping the last seen item at the end of the list
@@ -483,7 +485,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                     feedSingleton.setSavedSeenProducts(savedSeenProductList);
 
                     // Update updated seen products list in the phone
-                    savedSeenProductList.updateSeenProductsInPhone(getActivity());
+                    savedSeenProductList.updateSeenProductsInPhone(activity);
 
                     skuString = "";
                     for(String sku : savedSeenProductList){
@@ -518,7 +520,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                     feedSingleton.setSavedSeenProducts(savedSeenProductList);
 
                     // Update updated seen products sized ArrayList in the phone
-                    savedSeenProductList.updateSeenProductsInPhone(getActivity());
+                    savedSeenProductList.updateSeenProductsInPhone(activity);
 
                     skuString = "";
                     for(String sku : savedSeenProductList){
@@ -535,7 +537,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private class SkuDetailsCallback implements Callback<SkuDetails> {
         @Override
         public void success(SkuDetails details, Response response) {
-            Activity activity = getActivity();
             if (activity==null) return;
 
             processSkuDetails(details);
@@ -544,12 +545,11 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            Activity activity = getActivity();
             if (activity==null) return;
 
             wrapper.setState(DataWrapper.State.EMPTY);
             String msg = ApiError.getErrorMessage(retrofitError);
-            ((MainActivity) activity).showErrorDialog(msg);
+            activity.showErrorDialog(msg);
             Log.d(TAG, msg);
         }
     }
@@ -557,7 +557,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private class ReviewSetCallback implements Callback<ReviewSet> {
         @Override
         public void success(ReviewSet reviews, Response response) {
-            Activity activity = getActivity();
             if (activity==null) return;
 
             processReviewSet(reviews);
@@ -565,11 +564,10 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            Activity activity = getActivity();
             if (activity==null) return;
 
             String msg = ApiError.getErrorMessage(retrofitError);
-            ((MainActivity) activity).showErrorDialog(msg);
+            activity.showErrorDialog(msg);
             Log.d(TAG, msg);
         }
     }
@@ -614,7 +612,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                     skuText.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            ((MainActivity) getActivity()).selectSkuSet(product.getProductName(), product.getSku(), product.getThumbnailImage().get(0).getUrl());
+                            activity.selectSkuSet(product.getProductName(), product.getSku(), product.getThumbnailImage().get(0).getUrl());
                         }
                     });
                     break;
@@ -660,7 +658,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             ((PriceSticker) summary.findViewById(R.id.pricing)).setPricing(product.getPricing());
 
             // Add description
-            LayoutInflater inflater = getActivity().getLayoutInflater();
+            LayoutInflater inflater = activity.getLayoutInflater();
             if (!buildDescription(inflater, (ViewGroup) summary.findViewById(R.id.description), product, 3))
                 summary.findViewById(R.id.description_detail).setVisibility(View.GONE);
 
@@ -715,7 +713,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         Data item = datas.get(0);
         if (item != null) {
             // Inflate review block
-            LayoutInflater inflater = getActivity().getLayoutInflater();
+            LayoutInflater inflater = activity.getLayoutInflater();
             ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
             View view = inflater.inflate(R.layout.sku_review_brief_item, parent, false);
             parent.addView(view);
@@ -812,8 +810,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             return;
         }
 
-        MainActivity mainActivity = (MainActivity) getActivity();
-
         String currentFragmentName = manager.getBackStackEntryAt(fragmentEntryCount - 1).getName();
         if(currentFragmentName != null &&
                 currentFragmentName.equals("com.staples.mobile.cfa.sku.SkuFragment")){
@@ -852,7 +848,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             case R.id.add_to_cart:
                 QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
                 int qty = edit.getQuantity();
-                final MainActivity activity = (MainActivity) getActivity();
+
                 activity.showProgressIndicator();
                 CartApiManager.addItemToCart(identifier, qty, new CartApiManager.CartRefreshCallback() {
                     @Override

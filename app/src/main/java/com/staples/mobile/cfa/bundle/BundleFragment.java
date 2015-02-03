@@ -41,6 +41,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     private DataWrapper wrapper;
     private BundleAdapter adapter;
     private String title;
+    private MainActivity activity;
 
     public void setArguments(String title, String identifier) {
         Bundle args = new Bundle();
@@ -52,7 +53,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         String identifier = null;
-
+        activity = (MainActivity)getActivity();
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
 
         Bundle args = getArguments();
@@ -65,8 +66,8 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         RecyclerView list = (RecyclerView) wrapper.findViewById(R.id.products);
         adapter = new BundleAdapter(getActivity());
         list.setAdapter(adapter);
-        list.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-        list.addItemDecoration(new HorizontalDivider(getActivity()));
+        list.setLayoutManager(new GridLayoutManager(activity, 1));
+        list.addItemDecoration(new HorizontalDivider(activity));
         adapter.setOnClickListener(this);
 
         wrapper.setState(DataWrapper.State.LOADING);
@@ -84,7 +85,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
     @Override
     public void success(Browse browse, Response response) {
-        Activity activity = getActivity();
         if (activity==null) return;
 
         int count = processBrowse(browse);
@@ -95,11 +95,10 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
     @Override
     public void failure(RetrofitError retrofitError) {
-        Activity activity = getActivity();
         if (activity==null) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
-        ((MainActivity)activity).showErrorDialog(msg);
+        activity.showErrorDialog(msg);
         Log.d(TAG, msg);
         wrapper.setState(DataWrapper.State.EMPTY);
     }
@@ -132,7 +131,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
-                    ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier, false);
+                    activity.selectSkuItem(item.title, item.identifier, false);
                 }
                 break;
             case R.id.bundle_action:
@@ -140,9 +139,8 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
                     if (item.type==IdentifierType.SKUSET) {
-                        ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier, false);
+                        activity.selectSkuItem(item.title, item.identifier, false);
                     } else {
-                        final MainActivity activity = (MainActivity) getActivity();
                         final ImageView buttonVw = (ImageView)view;
                         activity.showProgressIndicator();
                         buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.ic_android));
