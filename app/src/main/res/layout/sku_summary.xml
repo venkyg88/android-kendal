@@ -204,6 +204,7 @@
             android:layout_gravity="right"
             android:onClick="onClick"
             android:clickable="true"
+            android:textColor="@color/text_blue"
             android:visibility="gone"
             />
         <!-- Add to cart footer -->

@@ -67,6 +67,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     private static final String TITLE = "title";
     private static final String IDENTIFIER = "identifier";
+    private static final String SKUSET = "skuset";
 
     private static final String DESCRIPTION = " Description";
     private static final String SPECIFICATIONS = " Specifications";
@@ -106,6 +107,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     private String title;
     private String identifier;
+    private boolean isSkuSetOriginated;
 
     private DataWrapper wrapper;
     private ScrollView summary;
@@ -128,10 +130,11 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     private boolean isShiftedTab;
 
-    public void setArguments(String title, String identifier) {
+    public void setArguments(String title, String identifier, boolean isSkuSetRedirected) {
         Bundle args = new Bundle();
         args.putString(TITLE, title);
         args.putString(IDENTIFIER, identifier);
+        args.putBoolean(SKUSET, isSkuSetRedirected);
         setArguments(args);
     }
 
@@ -141,6 +144,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         if (args != null) {
             title = args.getString(TITLE);
             identifier = args.getString(IDENTIFIER);
+            isSkuSetOriginated = args.getBoolean(SKUSET);
         }
 
         wrapper = (DataWrapper) inflater.inflate(R.layout.sku_summary, container, false);
@@ -417,7 +421,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             accessoryImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity) getActivity()).selectSkuItem(null, sku);
+                    ((MainActivity) getActivity()).selectSkuItem(null, sku, false);
                 }
             });
 
@@ -429,7 +433,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             accessoryTitleTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity) getActivity()).selectSkuItem(null, sku);
+                    ((MainActivity) getActivity()).selectSkuItem(null, sku, false);
                 }
             });
 
@@ -583,6 +587,21 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             TextView footerMsg = (TextView)wrapper.findViewById(R.id.footer_msg);
             Availability availability = Availability.getProductAvailability(product);
             TextView skuText = (TextView)wrapper.findViewById(R.id.select_sku);
+
+            if(isSkuSetOriginated == true) {
+                skuText.setVisibility(View.VISIBLE);
+                skuText.setText(product.getProductName());
+                skuText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        FragmentManager fm = getFragmentManager();
+                        if (fm != null) {
+                            fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
+                        }
+                    }
+                });
+
+            }
 
             switch (availability) {
                 case NOTHING:

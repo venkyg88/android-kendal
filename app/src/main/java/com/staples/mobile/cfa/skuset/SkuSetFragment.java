@@ -127,7 +127,7 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
         Object tag = view.getTag();
         if (tag instanceof SkuSetAdapter.Item) {
             SkuSetAdapter.Item item = (SkuSetAdapter.Item) tag;
-            ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier);
+            ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier, true);
         }
     }
 }

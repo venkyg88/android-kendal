@@ -136,7 +136,7 @@
     <string name="order_confirmation_with_error">An error occurred, but your order appears to have gone through."</string>
     <string name="password_reset">Reset Password</string>
     <string name="continue_shopping">Continue Shopping</string>
-    <string name="sku_set_message"><u>Select product options</u></string>
+    <string name="sku_set_message">Select product options</string>
     <string name="sku_title">Select items</string>
 
 

@@ -519,9 +519,9 @@ public class MainActivity extends Activity
         return(selectFragment(fragment, Transition.UP, true));
     }
 
-    public boolean selectSkuItem(String title, String identifier) {
+    public boolean selectSkuItem(String title, String identifier, boolean isSkuSetOriginated) {
         SkuFragment fragment = new SkuFragment();
-        fragment.setArguments(title, identifier);
+        fragment.setArguments(title, identifier, isSkuSetOriginated);
 
         // set animated bar in sku page
 //        initAnimatedBar();
