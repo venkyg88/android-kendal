@@ -535,7 +535,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private class SkuDetailsCallback implements Callback<SkuDetails> {
         @Override
         public void success(SkuDetails details, Response response) {
-            MainActivity activity = (MainActivity)getActivity();
+            Activity activity = getActivity();
             if (activity==null) return;
 
             processSkuDetails(details);
@@ -544,12 +544,12 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            MainActivity activity = (MainActivity)getActivity();
+            Activity activity = getActivity();
             if (activity==null) return;
 
             wrapper.setState(DataWrapper.State.EMPTY);
             String msg = ApiError.getErrorMessage(retrofitError);
-            activity.showErrorDialog(msg);
+            ((MainActivity)activity).showErrorDialog(msg);
             Log.d(TAG, msg);
         }
     }
@@ -557,7 +557,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private class ReviewSetCallback implements Callback<ReviewSet> {
         @Override
         public void success(ReviewSet reviews, Response response) {
-            MainActivity activity = (MainActivity)getActivity();
+            Activity activity = getActivity();
             if (activity==null) return;
 
             processReviewSet(reviews);
@@ -565,11 +565,11 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            MainActivity activity = (MainActivity)getActivity();
+            Activity activity = getActivity();
             if (activity==null) return;
 
             String msg = ApiError.getErrorMessage(retrofitError);
-            activity.showErrorDialog(msg);
+            ((MainActivity)activity).showErrorDialog(msg);
             Log.d(TAG, msg);
         }
     }

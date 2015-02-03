@@ -41,7 +41,6 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
     private DataWrapper wrapper;
     private SkuSetAdapter adapter;
     private String title;
-    private MainActivity activity;
 
     public void setArguments(String title, String identifier, String imageUrl) {
         Bundle args = new Bundle();
@@ -53,8 +52,6 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        activity = (MainActivity)getActivity();
-
         String identifier = null;
         String imageUrl = null;
 
@@ -70,9 +67,9 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
         View frame = inflater.inflate(R.layout.skuset_frame, container, false);
         wrapper = (DataWrapper) frame.findViewById(R.id.wrapper);
         RecyclerView list = (RecyclerView) wrapper.findViewById(R.id.list);
-        adapter = new SkuSetAdapter(activity);
+        adapter = new SkuSetAdapter(getActivity());
         list.setAdapter(adapter);
-        list.setLayoutManager(new LinearLayoutManager(activity));
+        list.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapter.setOnClickListener(this);
 
 //        // Set main image
@@ -97,6 +94,7 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
 
     @Override
     public void success(SkuDetails details, Response response) {
+        Activity activity = getActivity();
         if (activity==null) return;
 
         int count = processDetails(details);
@@ -107,10 +105,11 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
 
     @Override
     public void failure(RetrofitError retrofitError) {
+        Activity activity = getActivity();
         if (activity==null) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
-        activity.showErrorDialog(msg);
+        ((MainActivity)activity).showErrorDialog(msg);
         wrapper.setState(DataWrapper.State.EMPTY);
         Log.d(TAG, msg);
     }
@@ -128,7 +127,7 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
         Object tag = view.getTag();
         if (tag instanceof SkuSetAdapter.Item) {
             SkuSetAdapter.Item item = (SkuSetAdapter.Item) tag;
-            (activity).selectSkuItem(item.title, item.identifier, true);
+            ((MainActivity)getActivity()).selectSkuItem(item.title, item.identifier, true);
         }
     }
 }
