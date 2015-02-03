@@ -41,7 +41,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     private DataWrapper wrapper;
     private BundleAdapter adapter;
     private String title;
-    private MainActivity activity;
 
     public void setArguments(String title, String identifier) {
         Bundle args = new Bundle();
@@ -53,7 +52,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         String identifier = null;
-        activity = (MainActivity)getActivity();
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
 
         Bundle args = getArguments();
@@ -66,8 +64,8 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         RecyclerView list = (RecyclerView) wrapper.findViewById(R.id.products);
         adapter = new BundleAdapter(getActivity());
         list.setAdapter(adapter);
-        list.setLayoutManager(new GridLayoutManager(activity, 1));
-        list.addItemDecoration(new HorizontalDivider(activity));
+        list.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+        list.addItemDecoration(new HorizontalDivider(getActivity()));
         adapter.setOnClickListener(this);
 
         wrapper.setState(DataWrapper.State.LOADING);
@@ -85,6 +83,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
     @Override
     public void success(Browse browse, Response response) {
+        MainActivity activity = (MainActivity)getActivity();
         if (activity==null) return;
 
         int count = processBrowse(browse);
@@ -95,6 +94,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
     @Override
     public void failure(RetrofitError retrofitError) {
+        MainActivity activity = (MainActivity)getActivity();
         if (activity==null) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
@@ -131,7 +131,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
-                    activity.selectSkuItem(item.title, item.identifier, false);
+                    ((MainActivity)getActivity()).selectSkuItem(item.title, item.identifier, false);
                 }
                 break;
             case R.id.bundle_action:
@@ -139,22 +139,22 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
                     if (item.type==IdentifierType.SKUSET) {
-                        activity.selectSkuItem(item.title, item.identifier, false);
+                        ((MainActivity)getActivity()).selectSkuItem(item.title, item.identifier, false);
                     } else {
                         final ImageView buttonVw = (ImageView)view;
-                        activity.showProgressIndicator();
+                        ((MainActivity)getActivity()).showProgressIndicator();
                         buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.ic_android));
                         CartApiManager.addItemToCart(item.identifier, 1, new CartApiManager.CartRefreshCallback() {
                             @Override
                             public void onCartRefreshComplete(String errMsg) {
-                                activity.hideProgressIndicator();
+                                ((MainActivity)getActivity()).hideProgressIndicator();
                                 ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
                                 // if success
                                 if (errMsg == null) {
                                     buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.added_to_cart));
                                 } else {
                                     buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.add_to_cart));
-                                    activity.showErrorDialog(errMsg);
+                                    ((MainActivity)getActivity()).showErrorDialog(errMsg);
                                 }
                             }
                         });
