@@ -17,6 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -239,6 +240,11 @@ public class MainActivity extends Activity
                 showNetworkSettingsDialog();
             }
         }
+    }
+
+    public void hideSoftKeyboard(View view) {
+        InputMethodManager keyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     public void showErrorDialog(int msgId) {

@@ -69,7 +69,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "onCreateView()");
 
-        activity = (MainActivity)getActivity();
+        activity = (MainActivity) getActivity();
 
         // inflate and get child views
         View view = inflater.inflate(R.layout.confirmation_fragment, container, false);
@@ -81,7 +81,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
         accountConfirmationLayout = view.findViewById(R.id.account_confirmation_layout);
 
         // Set click listeners
-        view.findViewById(R.id.continue_shopping_btn).setOnClickListener((View.OnClickListener)activity);
+        view.findViewById(R.id.continue_shopping_btn).setOnClickListener((View.OnClickListener) activity);
 
         // get order info from bundle
         Bundle confirmationBundle = this.getArguments();
@@ -120,7 +120,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
                 Window window = accountDialog.getWindow();
                 window.requestFeature(Window.FEATURE_NO_TITLE);
                 accountDialog.setContentView(R.layout.confirmation_create_account);
-                accountDialogLayout = (RelativeLayoutWithProgressOverlay)accountDialog.findViewById(R.id.dialog_layout);
+                accountDialogLayout = (RelativeLayoutWithProgressOverlay) accountDialog.findViewById(R.id.dialog_layout);
                 accountDialogLayout.setProgressOverlay(accountDialog.findViewById(R.id.dialog_progress_overlay));
 
                 ((EditText) accountDialog.findViewById(R.id.emailAddr)).setText(emailAddress);
@@ -147,17 +147,21 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
                 }
                 break;
             case R.id.cancel:
-                hideSoftKeyboard(view);
+                activity.hideSoftKeyboard(view);
                 accountDialog.dismiss();
                 accountDialog = null;
                 break;
             case R.id.create_account_button:
-                hideSoftKeyboard(view);
+                activity.hideSoftKeyboard(view);
                 String requiredMsg = getResources().getString(R.string.required);
                 EditText emailAddressEditVw = (EditText) accountDialog.findViewById(R.id.emailAddr);
                 EditText passwordEditVw = (EditText) accountDialog.findViewById(R.id.password);
-                if (!validateRequiredField(emailAddressEditVw, requiredMsg)) { break; }
-                if (!validateRequiredField(passwordEditVw, requiredMsg)) { break; }
+                if (!validateRequiredField(emailAddressEditVw, requiredMsg)) {
+                    break;
+                }
+                if (!validateRequiredField(passwordEditVw, requiredMsg)) {
+                    break;
+                }
                 String emailAddress = emailAddressEditVw.getText().toString();
                 String password = passwordEditVw.getText().toString();
 
@@ -190,10 +194,5 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
             return false;
         }
         return true;
-    }
-
-    public void hideSoftKeyboard(View view) {
-        InputMethodManager keyboard = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
