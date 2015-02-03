@@ -83,7 +83,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
     @Override
     public void success(Browse browse, Response response) {
-        MainActivity activity = (MainActivity)getActivity();
+        Activity activity = getActivity();
         if (activity==null) return;
 
         int count = processBrowse(browse);
@@ -94,11 +94,11 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
     @Override
     public void failure(RetrofitError retrofitError) {
-        MainActivity activity = (MainActivity)getActivity();
+        Activity activity = getActivity();
         if (activity==null) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
-        activity.showErrorDialog(msg);
+        ((MainActivity)activity).showErrorDialog(msg);
         Log.d(TAG, msg);
         wrapper.setState(DataWrapper.State.EMPTY);
     }
@@ -139,22 +139,24 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
                     if (item.type==IdentifierType.SKUSET) {
-                        ((MainActivity)getActivity()).selectSkuItem(item.title, item.identifier, false);
+                        final MainActivity activity = (MainActivity) getActivity();
+                        activity.selectSkuItem(item.title, item.identifier, false);
                     } else {
+                        final MainActivity activity = (MainActivity) getActivity();
                         final ImageView buttonVw = (ImageView)view;
-                        ((MainActivity)getActivity()).showProgressIndicator();
+                        activity.showProgressIndicator();
                         buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.ic_android));
                         CartApiManager.addItemToCart(item.identifier, 1, new CartApiManager.CartRefreshCallback() {
                             @Override
                             public void onCartRefreshComplete(String errMsg) {
-                                ((MainActivity)getActivity()).hideProgressIndicator();
+                                activity.hideProgressIndicator();
                                 ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
                                 // if success
                                 if (errMsg == null) {
                                     buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.added_to_cart));
                                 } else {
                                     buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.add_to_cart));
-                                    ((MainActivity)getActivity()).showErrorDialog(errMsg);
+                                    activity.showErrorDialog(errMsg);
                                 }
                             }
                         });
