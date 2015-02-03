@@ -850,17 +850,17 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             case R.id.add_to_cart:
                 QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
                 int qty = edit.getQuantity();
-
-                ((MainActivity)getActivity()).showProgressIndicator();
+                final MainActivity activity = (MainActivity) getActivity();
+                activity.showProgressIndicator();
                 CartApiManager.addItemToCart(identifier, qty, new CartApiManager.CartRefreshCallback() {
                     @Override
                     public void onCartRefreshComplete(String errMsg) {
-                        ((MainActivity)getActivity()).hideProgressIndicator();
+                        activity.hideProgressIndicator();
                         ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
                         if (errMsg == null) {
                             ((Button) wrapper.findViewById(R.id.add_to_cart)).setText(R.string.add_another);
                         } else {
-                            ((MainActivity)getActivity()).showErrorDialog(errMsg);
+                            activity.showErrorDialog(errMsg);
                         }
                     }
                 });
