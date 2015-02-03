@@ -50,10 +50,6 @@ public class MainApplication
         appConfigurator = AppConfigurator.getInstance(this, configServerUrl);
         appConfigurator.getConfigurator(this);
 
-        // This will cause StaplesAppContext to obtain a reference to the newly
-        // acquired Configurator class,
-        staplesAppContext = StaplesAppContext.getInstance();
-
         /* @@@ STUBBED
         setStrictMode();
         @@@ STUBBED */
