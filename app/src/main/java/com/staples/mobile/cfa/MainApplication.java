@@ -48,17 +48,11 @@ public class MainApplication
 
         String configServerUrl = resources.getString(R.string.configuration_destination);
         appConfigurator = AppConfigurator.getInstance(this, configServerUrl);
-        if (isNetworkAvailable()) {
-            appConfigurator.getConfigurator(this);
-        } else {
-            // todo: Steve, I added this to match what's in the callback which won't get called in
-            // todo:    this case, but is it necessary? Can you refactor so this is cleaner? Thanks!
-            if (staplesAppContext == null) {
-                // This will cause StaplesAppContext to obtain a reference to the
-                // newly acquired Configurator class,
-                staplesAppContext = StaplesAppContext.getInstance();
-            }
-        }
+        appConfigurator.getConfigurator(this);
+
+        // This will cause StaplesAppContext to obtain a reference to the newly
+        // acquired Configurator class,
+        staplesAppContext = StaplesAppContext.getInstance();
 
         /* @@@ STUBBED
         setStrictMode();
@@ -128,6 +122,15 @@ public class MainApplication
         // first check for network connectivity
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        return (networkInfo != null && networkInfo.isConnected());
+        boolean networkIsAvailable = false;
+        if (networkInfo != null) {
+            networkIsAvailable = networkInfo.isConnected();
+        }
+        if (LOGGING) Log.v(TAG, "MainApplication:isNetworkAvailable():"
+                        + " networkIsAvailable[" + networkIsAvailable + "]"
+                        + " networkInfo[" + networkInfo + "]"
+                        + " this[" + this + "]"
+        );
+        return (networkIsAvailable);
     }
 }
