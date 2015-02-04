@@ -124,7 +124,8 @@
 	<string name="last_name_label">Last Name</string>
 	<string name="phone_label">Phone</string>
 	<string name="shipto_address_label">Ship-to Address</string>
-	<string name="appartment_label">Apt/Suite/Bldg Number</string>
+	<string name="address_label">Address</string>
+	<string name="apartment_label">Apt/Suite/Bldg Number</string>
 	<string name="city_label">City</string>
 	<string name="state_label">State</string>
 	<string name="zip_code_label">Zip Code</string>

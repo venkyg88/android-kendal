@@ -417,8 +417,6 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
                 resultList.add(predictionsJsonArray.getJSONObject(predsNdx).getString("description"));
             }
 
-            // @@@ TODO Add "INPUT MANUALLY" here. (input_manually_allcaps)
-
         } catch (JSONException jsonException) {
 
             if (LOGGING)

@@ -76,7 +76,7 @@ public class AddressFragment extends Fragment
     EditText firstNameET;
     EditText lastNameET;
     EditText addressLineET;
-    EditText appartmentET;
+    EditText apartmentET;
     EditText cityET;
     EditText stateET;
     EditText phoneNumberET;
@@ -86,7 +86,7 @@ public class AddressFragment extends Fragment
     TextView lastNameLabel;
     TextView phoneLabel;
     TextView addressLabel;
-    TextView appartmentLabel;
+    TextView apartmentLabel;
     TextView cityLabel;
     TextView stateLabel;
     TextView zipCodeLabel;
@@ -115,7 +115,7 @@ public class AddressFragment extends Fragment
         lastNameLabel = (TextView) view.findViewById(R.id.lastNameLabel);
         phoneLabel = (TextView) view.findViewById(R.id.phoneLabel);
         addressLabel = (TextView) view.findViewById(R.id.addressLabel);
-        appartmentLabel = (TextView) view.findViewById(R.id.appartmentLabel);
+        apartmentLabel = (TextView) view.findViewById(R.id.apartmentLabel);
         cityLabel = (TextView) view.findViewById(R.id.cityLabel);
         stateLabel = (TextView) view.findViewById(R.id.stateLabel);
         zipCodeLabel = (TextView) view.findViewById(R.id.zipCodeLabel);
@@ -137,9 +137,9 @@ public class AddressFragment extends Fragment
         addressLineET.setTag(addressLabel);
         addressLineET.setOnFocusChangeListener(this);
 
-        appartmentET = (EditText) view.findViewById(R.id.appartment);
-        appartmentET.setTag(appartmentLabel);
-        appartmentET.setOnFocusChangeListener(this);
+        apartmentET = (EditText) view.findViewById(R.id.apartment);
+        apartmentET.setTag(apartmentLabel);
+        apartmentET.setOnFocusChangeListener(this);
 
         cityET = (EditText) view.findViewById(R.id.city);
         cityET.setTag(cityLabel);
@@ -171,7 +171,7 @@ public class AddressFragment extends Fragment
                 firstNameET.setText(address.getFirstname());
                 lastNameET.setText(address.getLastname());
                 addressLineET.setText(address.getAddress1());
-                appartmentET.setText(address.getAddress2());
+                apartmentET.setText(address.getAddress2());
                 cityET.setText(address.getCity());
                 stateET.setText(address.getState());
                 phoneNumberET.setText(address.getPhone1());
@@ -306,7 +306,7 @@ public class AddressFragment extends Fragment
         firstName = firstNameET.getText().toString();
         lastName = lastNameET.getText().toString();
         addressLine1 = addressLineET.getText().toString();
-        addressLine2 = appartmentET.getText().toString();
+        addressLine2 = apartmentET.getText().toString();
         city = cityET.getText().toString();
         state = stateET.getText().toString();
         phoneNumber = phoneNumberET.getText().toString();
@@ -432,8 +432,8 @@ public class AddressFragment extends Fragment
         addressLineACTV.clearListSelection();
         addressLineET.setVisibility(View.GONE);
 
-        appartmentLabel.setVisibility(View.GONE);
-        appartmentET.setVisibility(View.GONE);
+        apartmentLabel.setVisibility(View.GONE);
+        apartmentET.setVisibility(View.GONE);
 
         cityLabel.setVisibility(View.GONE);
         cityET.setVisibility(View.GONE);
@@ -459,8 +459,8 @@ public class AddressFragment extends Fragment
         addressLineACTV.setVisibility(View.GONE);
         addressLineET.setVisibility(View.VISIBLE);
 
-        appartmentLabel.setVisibility(View.INVISIBLE);
-        appartmentET.setVisibility(View.VISIBLE);
+        apartmentLabel.setVisibility(View.INVISIBLE);
+        apartmentET.setVisibility(View.VISIBLE);
 
         cityLabel.setVisibility(View.INVISIBLE);
         cityET.setVisibility(View.VISIBLE);
