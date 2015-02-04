@@ -30,7 +30,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, View.OnClickListener {
-    private static final String TAG = "SkuSetFragment";
+    public static final String TAG = "SkuSetFragment";
 
     private static final String TITLE = "title";
     private static final String IDENTIFIER = "identifier";
@@ -72,11 +72,11 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
         list.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapter.setOnClickListener(this);
 
-        // Set main image
-        ImageView image = (ImageView) frame.findViewById(R.id.image);
-        Drawable noPhoto = getActivity().getResources().getDrawable(R.drawable.no_photo);
-        if (imageUrl == null) image.setImageDrawable(noPhoto);
-        else Picasso.with(getActivity()).load(imageUrl).error(noPhoto).into(image);
+//        // Set main image
+//        ImageView image = (ImageView) frame.findViewById(R.id.image);
+//        Drawable noPhoto = getActivity().getResources().getDrawable(R.drawable.no_photo);
+//        if (imageUrl == null) image.setImageDrawable(noPhoto);
+//        else Picasso.with(getActivity()).load(imageUrl).error(noPhoto).into(image);
 
         // Start item query
         wrapper.setState(DataWrapper.State.LOADING);
@@ -109,7 +109,7 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
         if (activity==null) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
-        ((MainActivity) activity).showErrorDialog(msg);
+        ((MainActivity)activity).showErrorDialog(msg);
         wrapper.setState(DataWrapper.State.EMPTY);
         Log.d(TAG, msg);
     }
@@ -127,7 +127,7 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
         Object tag = view.getTag();
         if (tag instanceof SkuSetAdapter.Item) {
             SkuSetAdapter.Item item = (SkuSetAdapter.Item) tag;
-            ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier);
+            ((MainActivity)getActivity()).selectSkuItem(item.title, item.identifier, true);
         }
     }
 }

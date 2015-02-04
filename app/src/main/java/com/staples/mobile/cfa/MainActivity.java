@@ -482,7 +482,7 @@ public class MainActivity extends Activity
                 fragment = GuestCheckoutFragment.newInstance(couponsRewardsAmount,
                         CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal(), deliveryRange);
             }
-            return selectFragment(fragment, Transition.NONE, true);
+            return selectFragment(fragment, Transition.NONE, true, CheckoutFragment.TAG);
         }
         return false;
     }
@@ -520,9 +520,9 @@ public class MainActivity extends Activity
         return(selectFragment(fragment, Transition.UP, true));
     }
 
-    public boolean selectSkuItem(String title, String identifier) {
+    public boolean selectSkuItem(String title, String identifier, boolean isSkuSetOriginated) {
         SkuFragment fragment = new SkuFragment();
-        fragment.setArguments(title, identifier);
+        fragment.setArguments(title, identifier, isSkuSetOriginated);
 
         // set animated bar in sku page
 //        initAnimatedBar();
@@ -617,7 +617,16 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.close_button:
-                selectShoppingCart();
+                FragmentManager manager = getFragmentManager();
+                Fragment checkOutFragment = manager.findFragmentByTag(CheckoutFragment.TAG);
+
+                if (checkOutFragment != null && checkOutFragment.isVisible()) {
+                    selectShoppingCart();
+                } else {
+                    if (manager != null) {
+                        manager.popBackStack(); // this will take us back to one of the many places that could have opened this page
+                    }
+                }
                 break;
 
             case R.id.back_button:

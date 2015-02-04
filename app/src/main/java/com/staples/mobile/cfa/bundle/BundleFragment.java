@@ -52,7 +52,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         String identifier = null;
-
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
 
         Bundle args = getArguments();
@@ -132,7 +131,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
-                    ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier);
+                    ((MainActivity)getActivity()).selectSkuItem(item.title, item.identifier, false);
                 }
                 break;
             case R.id.bundle_action:
@@ -140,7 +139,8 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
                     if (item.type==IdentifierType.SKUSET) {
-                        ((MainActivity) getActivity()).selectSkuSet(item.title, item.identifier, item.imageUrl);
+                        final MainActivity activity = (MainActivity) getActivity();
+                        activity.selectSkuItem(item.title, item.identifier, false);
                     } else {
                         final MainActivity activity = (MainActivity) getActivity();
                         final ImageView buttonVw = (ImageView)view;
