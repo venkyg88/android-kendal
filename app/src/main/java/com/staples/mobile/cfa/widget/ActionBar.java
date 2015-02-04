@@ -16,6 +16,7 @@ public class ActionBar extends LinearLayout {
     private static final String TAG = "ActionBar";
 
     public enum Config {
+
         //        close  back   drawer logo   search qty    cart   signin title
         ABOUT    (false, false, true,  true,  false, false, true,  false, R.string.about_title),
         ADDCARD  (false, false, true,  false, true,  false, true,  false, R.string.add_card_title),
@@ -37,7 +38,7 @@ public class ActionBar extends LinearLayout {
         REWARDS  (false, false, true,  false, true,  false, true,  false, R.string.rewards_title),
         SEARCH   (false, false, true,  true,  true,  false, true,  false, 0),
         SKU      (false, false, true,  false, true,  false, true,  false, 0),
-        SKUSET   (false, false, true,  false, true,  false, true,  false, 0),
+        SKUSET   (true, false, false,  false, false,  false, false,  false, R.string.sku_title),
         STORE    (false, false, true,  false, false, false, true,  false, R.string.store_locator_title),
         VIEWCARD (false, false, true,  false, true,  false, true,  false, R.string.credit_card_title);
 
@@ -220,6 +221,8 @@ public class ActionBar extends LinearLayout {
             update();
         }
     }
+
+
 
     public void setCartCount(int count) {
         cartIconAction.setText(count==0 ? null : Integer.toString(count));
