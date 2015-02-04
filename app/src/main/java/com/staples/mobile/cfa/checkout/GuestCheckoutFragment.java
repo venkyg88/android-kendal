@@ -14,21 +14,27 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.profile.CreditCard;
+import com.staples.mobile.cfa.profile.PlacesArrayAdapter;
 import com.staples.mobile.cfa.profile.UsState;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 
 
-public class GuestCheckoutFragment extends CheckoutFragment implements CompoundButton.OnCheckedChangeListener {
+public class GuestCheckoutFragment extends CheckoutFragment implements CompoundButton.OnCheckedChangeListener,
+        View.OnFocusChangeListener {
+
     private static final String TAG = GuestCheckoutFragment.class.getSimpleName();
 
     private View guestEntryView;
@@ -49,6 +55,10 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
     private boolean billingAddrNeedsApplying = true;
 
     private String emailAddress;
+
+    // autocomplete data
+    PlacesArrayAdapter.PlaceData shippingPlaceData;
+    PlacesArrayAdapter.PlaceData billingPlaceData;
 
     /**
      * Create a new instance of GuestCheckoutFragment that will be initialized
@@ -87,6 +97,11 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         billingAddrLayoutVw.findViewById(R.id.addressSaveBtn).setVisibility(View.GONE);
         paymentMethodLayoutVw.findViewById(R.id.addCCBtn).setVisibility(View.GONE);
         paymentMethodLayoutVw.findViewById(R.id.cancelCCBtn).setVisibility(View.GONE);
+
+
+        // set up address widgets including auto-complete
+        setupAddressWidgets(true); // shipping
+        setupAddressWidgets(false); // billing
 
 
         // on any change to addresses, apply addresses to cart and do precheckout
@@ -169,6 +184,116 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
     }
 
+    private void setupAddressWidgets(final boolean shipping) {
+        final View layoutView = shipping? shippingAddrLayoutVw : billingAddrLayoutVw;
+        final AutoCompleteTextView addressAutocompleteVw = (AutoCompleteTextView) layoutView.findViewById(R.id.addressACTV);
+        final PlacesArrayAdapter placesArrayAdapter = new PlacesArrayAdapter(activity, R.layout.places_list_item);
+        addressAutocompleteVw.setAdapter(placesArrayAdapter);
+        addressAutocompleteVw.setFocusable(true);
+        addressAutocompleteVw.setFocusableInTouchMode(true);
+
+        setupLabeledEditText(layoutView, R.id.firstName, R.id.firstNameLabel);
+        setupLabeledEditText(layoutView, R.id.lastName, R.id.lastNameLabel);
+        setupLabeledEditText(layoutView, R.id.phoneNumber, R.id.phoneLabel);
+        setupLabeledEditText(layoutView, R.id.addressACTV, R.id.addressLabel);
+        setupLabeledEditText(layoutView, R.id.addressET, R.id.addressLabel);
+        setupLabeledEditText(layoutView, R.id.appartment, R.id.appartmentLabel);
+        setupLabeledEditText(layoutView, R.id.city, R.id.cityLabel);
+        setupLabeledEditText(layoutView, R.id.state, R.id.stateLabel);
+        setupLabeledEditText(layoutView, R.id.zipCode, R.id.zipCodeLabel);
+        if (shipping) {
+            // make email address visible
+            setupLabeledEditText(layoutView, R.id.emailAddr, R.id.emailAddrLabel);
+            layoutView.findViewById(R.id.emailAddr).setVisibility(View.VISIBLE);
+            layoutView.findViewById(R.id.emailAddrLabel).setVisibility(View.INVISIBLE);
+
+            // move address label to below email address
+            View addressLabel = layoutView.findViewById(R.id.addressLabel);
+            RelativeLayout.LayoutParams addressLabelParams = (RelativeLayout.LayoutParams)addressLabel.getLayoutParams();
+            addressLabelParams.addRule(RelativeLayout.BELOW, R.id.emailAddr);
+            addressLabel.setLayoutParams(addressLabelParams); //causes layout update
+        }
+
+        // handle item clicks
+        addressAutocompleteVw.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                activity.hideSoftKeyboard(view);
+                String inputManually = getResources().getString(R.string.input_manually_allcaps);
+                String resultItem = placesArrayAdapter.getItem(position);
+                if (resultItem.equals(inputManually) ) {
+                    addressAutocompleteVw.setVisibility(View.GONE);
+                    showAddressManualInputs(layoutView);
+                } else {
+                    placesArrayAdapter.getPlaceDetails(position, new PlacesArrayAdapter.PlaceDataCallback() {
+                        @Override
+                        public void onPlaceDataResult(PlacesArrayAdapter.PlaceData placeData) {
+                            if (shipping) {
+                                shippingPlaceData = placeData;
+                            } else {
+                                billingPlaceData = placeData;
+                            }
+                            String fullZipCode = placeData.getFullZipCode();
+                            if (!TextUtils.isEmpty(fullZipCode)) {
+                                addressAutocompleteVw.setText(addressAutocompleteVw.getText().toString() + " " + fullZipCode);
+                            }
+                            addressAutocompleteVw.dismissDropDown();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void setupLabeledEditText(View layoutView, int resourceId, int labelResourceId) {
+        View editText = layoutView.findViewById(resourceId);
+        View labelVw = layoutView.findViewById(labelResourceId);
+        editText.setTag(labelVw);
+        editText.setOnFocusChangeListener(this);
+    }
+
+    private void showAddressManualInputs(View layoutView) {
+
+        // change labels from GONE to INVISIBLE so that they take up space
+        // change inputs to VISIBLE
+
+        layoutView.findViewById(R.id.addressET).setVisibility(View.VISIBLE);
+
+        layoutView.findViewById(R.id.appartmentLabel).setVisibility(View.INVISIBLE);
+        layoutView.findViewById(R.id.appartment).setVisibility(View.VISIBLE);
+
+        layoutView.findViewById(R.id.cityLabel).setVisibility(View.INVISIBLE);
+        layoutView.findViewById(R.id.city).setVisibility(View.VISIBLE);
+
+        layoutView.findViewById(R.id.stateLabel).setVisibility(View.INVISIBLE);
+        layoutView.findViewById(R.id.state).setVisibility(View.VISIBLE);
+
+        layoutView.findViewById(R.id.zipCodeLabel).setVisibility(View.INVISIBLE);
+        layoutView.findViewById(R.id.zipCode).setVisibility(View.VISIBLE);
+
+        layoutView.findViewById(R.id.appartmentLabel).setVisibility(View.INVISIBLE);
+        layoutView.findViewById(R.id.appartment).setVisibility(View.VISIBLE);
+
+        layoutView.findViewById(R.id.appartmentLabel).setVisibility(View.INVISIBLE);
+        layoutView.findViewById(R.id.appartment).setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onFocusChange(View view, boolean hasFocus) {
+
+        if (hasFocus) {
+            Object viewTag = view.getTag();
+            if (viewTag != null) {
+                if (view instanceof EditText) {
+                    ((EditText) view).setHint("");
+                }
+                if (viewTag instanceof TextView) {
+                    ((TextView) viewTag).setVisibility(View.VISIBLE);
+                }
+            }
+        }
+    }
+
     /** implements CompoundButton.OnCheckedChangeListener */
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         billingAddrContainer.setVisibility(isChecked? View.GONE: View.VISIBLE);
@@ -178,7 +303,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
             applyAddressesAndPrecheckout();
         // else if unchecked and previously filled in address, then apply addresses and do precheckout
         } else if (!isChecked && !TextUtils.isEmpty(billingZipCodeVw.getText())) {
-                applyAddressesAndPrecheckout();
+            applyAddressesAndPrecheckout();
         } else {
             // otherwise just reset shipping/tax info and wait for user to fill out necessary info
             resetShippingAndTax();
@@ -212,11 +337,14 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
 
         EditText firstNameVw = (EditText)layoutView.findViewById(R.id.firstName);
         EditText lastNameVw = (EditText)layoutView.findViewById(R.id.lastName);
-        EditText addressVw = (EditText)layoutView.findViewById(R.id.address);
+        EditText addressVw = (EditText)layoutView.findViewById(R.id.addressET);
+        EditText apartmentVw = (EditText)layoutView.findViewById(R.id.appartment);
         EditText cityVw = (EditText)layoutView.findViewById(R.id.city);
         EditText stateVw = (EditText)layoutView.findViewById(R.id.state);
         EditText phoneNumberVw = (EditText)layoutView.findViewById(R.id.phoneNumber);
         EditText zipCodeVw = (EditText)layoutView.findViewById(R.id.zipCode);
+
+        AutoCompleteTextView addressLineACTV = (AutoCompleteTextView) layoutView.findViewById(R.id.addressACTV);
 
         // validate required fields
         String requiredMsg = resources.getString(R.string.required);
@@ -235,6 +363,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         shippingAddress.setDeliveryFirstName(firstNameVw.getText().toString());
         shippingAddress.setDeliveryLastName(lastNameVw.getText().toString());
         shippingAddress.setDeliveryAddress1(addressVw.getText().toString());
+        shippingAddress.setDeliveryAddress2(apartmentVw.getText().toString());
         shippingAddress.setDeliveryCity(cityVw.getText().toString());
         shippingAddress.setDeliveryState(stateVw.getText().toString());
         shippingAddress.setDeliveryPhone(phoneNumberVw.getText().toString());

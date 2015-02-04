@@ -9,6 +9,7 @@ import android.content.res.Resources;
 
 import android.os.Bundle;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import android.view.inputmethod.InputMethodManager;
@@ -250,20 +251,9 @@ public class AddressFragment extends Fragment
 
         this.placeData = placeData;
 
-        String autoCompleteText = addressLineACTV.getText().toString();
-
-        boolean textchanged = false;
-
-        if (placeData.zipCode.length() > 0) {
-            autoCompleteText += " " + placeData.zipCode;
-            textchanged = true;
-            if (placeData.zipCodeSuffix.length() > 0) {
-                autoCompleteText += "-" + placeData.zipCodeSuffix;
-            }
-        }
-
-        if (textchanged == true) {
-            addressLineACTV.setText(autoCompleteText);
+        String fullZipCode = placeData.getFullZipCode();
+        if (!TextUtils.isEmpty(fullZipCode)) {
+            addressLineACTV.setText(addressLineACTV.getText().toString() + " " + fullZipCode);
         }
 
         addressLineACTV.dismissDropDown();

@@ -102,6 +102,41 @@
         android:layout_width="wrap_content"
 	/>
 
+
+    <!--email address (only used by guest checkout, otherwise visibility stays GONE)-->
+    <TextView
+        android:id="@+id/emailAddrLabel"
+        android:layout_below="@id/phoneNumber"
+        android:ems="10"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:paddingLeft="4dp"
+        android:text="@string/email"
+        android:textColor="@color/text_blue"
+        android:visibility="gone"
+        />
+
+    <EditText
+        android:id="@+id/emailAddr"
+        android:layout_below="@id/emailAddrLabel"
+        android:ems="10"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress"
+        android:layout_alignEnd="@+id/lastName"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/lastName"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:singleLine="true"
+        android:visibility="gone"
+        />
+
+    <!--by default, set this to below phone number since email address will not be visible except
+        in guest checkout. Guest checkout will take care of adjusting positioning for itself. -->
 	<TextView
 		android:id="@+id/addressLabel"
 		android:layout_below="@id/phoneNumber"
@@ -160,7 +195,7 @@
 		android:paddingLeft="4dp"
 		android:text="@string/appartment_label"
 		android:textColor="@color/text_blue"
-		android:visibility="invisible"
+		android:visibility="gone"
 	/>
 
     <EditText
@@ -175,7 +210,7 @@
         android:layout_alignRight="@+id/lastName"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-		android:visibility="invisible"
+		android:visibility="gone"
 	/>
 
 	<TextView
@@ -190,7 +225,7 @@
 		android:paddingLeft="4dp"
 		android:text="@string/city_label"
 		android:textColor="@color/text_blue"
-		android:visibility="invisible"
+		android:visibility="gone"
 	/>
 
     <EditText
@@ -205,7 +240,7 @@
         android:layout_alignRight="@+id/lastName"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-		android:visibility="invisible"
+		android:visibility="gone"
 	/>
 
 	<TextView
@@ -220,7 +255,7 @@
 		android:paddingLeft="4dp"
 		android:text="@string/state_label"
 		android:textColor="@color/text_blue"
-		android:visibility="invisible"
+		android:visibility="gone"
 	/>
 
     <EditText
@@ -235,7 +270,7 @@
         android:layout_toStartOf="@+id/lastName"
         android:layout_width="wrap_content"
 		android:nextFocusDown="@+id/zipCode"
-		android:visibility="invisible"
+		android:visibility="gone"
 	/>
 
 	<TextView
@@ -248,7 +283,7 @@
 		android:paddingLeft="4dp"
 		android:text="@string/zip_code_label"
 		android:textColor="@color/text_blue"
-		android:visibility="invisible"
+		android:visibility="gone"
 	/>
 
     <EditText
@@ -261,7 +296,7 @@
         android:inputType="number"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-		android:visibility="invisible"
+		android:visibility="gone"
 	/>
 
     <Button
