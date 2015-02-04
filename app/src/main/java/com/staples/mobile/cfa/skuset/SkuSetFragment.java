@@ -30,7 +30,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, View.OnClickListener {
-    private static final String TAG = "SkuSetFragment";
+    public static final String TAG = "SkuSetFragment";
 
     private static final String TITLE = "title";
     private static final String IDENTIFIER = "identifier";

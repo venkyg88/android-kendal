@@ -482,7 +482,7 @@ public class MainActivity extends Activity
                 fragment = GuestCheckoutFragment.newInstance(couponsRewardsAmount,
                         CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal(), deliveryRange);
             }
-            return selectFragment(fragment, Transition.NONE, true);
+            return selectFragment(fragment, Transition.NONE, true, CheckoutFragment.TAG);
         }
         return false;
     }
@@ -617,9 +617,15 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.close_button:
-                FragmentManager fm = getFragmentManager();
-                if (fm != null) {
-                    fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
+                FragmentManager manager = getFragmentManager();
+                Fragment checkOutFragment = manager.findFragmentByTag(CheckoutFragment.TAG);
+
+                if (checkOutFragment != null && checkOutFragment.isVisible()) {
+                    selectShoppingCart();
+                } else {
+                    if (manager != null) {
+                        manager.popBackStack(); // this will take us back to one of the many places that could have opened this page
+                    }
                 }
                 break;
 
