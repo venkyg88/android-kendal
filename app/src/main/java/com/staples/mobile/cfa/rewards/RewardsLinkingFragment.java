@@ -58,7 +58,7 @@ public class RewardsLinkingFragment extends Fragment {
         rewardsLinkAcctButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideSoftKeyboard(v);
+                activity.hideSoftKeyboard(v);
                 String rewardsNumber = rewardsNumberVw.getText().toString();
                 String phoneNumber = phoneNumberVw.getText().toString();
                 showProgressIndicator();
@@ -131,12 +131,5 @@ public class RewardsLinkingFragment extends Fragment {
             activity.hideProgressIndicator();
         }
     }
-
-
-    public void hideSoftKeyboard(View view) {
-        InputMethodManager keyboard = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
 
 }

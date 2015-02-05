@@ -363,7 +363,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
     @Override
     public void onClick(View view) {
-        hideSoftKeyboard(view);
+        activity.hideSoftKeyboard(view);
         switch(view.getId()) {
             case R.id.coupons_rewards_layout:
                 if (couponList.getVisibility() != View.VISIBLE) {
@@ -596,7 +596,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             CartItemGroup cartItemGroup = cartAdapter.getItem(position.groupPosition);
             CartItem cartItem = cartItemGroup.getCartItems().get(position.itemPositionWithinGroup);
 
-            hideSoftKeyboard(view);
+            activity.hideSoftKeyboard(view);
 
             // delete from cart via API
             cartItem.setProposedQty(0);
@@ -606,10 +606,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         }
     }
 
-    public void hideSoftKeyboard(View view) {
-        InputMethodManager keyboard = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
 
 //    /** listener class for quantity update button */
 //    class QtyUpdateButtonListener implements View.OnClickListener {
