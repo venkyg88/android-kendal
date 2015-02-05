@@ -154,11 +154,12 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                         if (actionId == EditorInfo.IME_ACTION_NEXT) {
                             CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString());
-                            if (ccType != CreditCard.Type.UNKNOWN) {
-                                cardImage.setImageResource(ccType.getImageResource());
-                            }
+                            cardImage.setImageResource(ccType.getImageResource());
                             expirationDateVw.setVisibility(View.VISIBLE);
-                            cidVw.setVisibility(View.VISIBLE);
+                            if (ccType.isCidUsed()) {
+                                cidVw.setVisibility(View.VISIBLE);
+                                expirationDateVw.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+                            }
                             expirationDateVw.requestFocus();
                             return true; // consume.
                         }
@@ -244,6 +245,11 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
             }
         });
     }
+
+//    If billing address matches shipping, then when the last credit card field is filled out (CID if present, otherwise expiration)
+//    When the billing autocomplete address is selected
+//    When the billing manual entry zip code field is filled out
+//    When any field has been modified in any way after a previous precheckout has been completed (this could get extremely annoying but not sure what alternative there is)
 
     private void setupLabeledEditText(View layoutView, int resourceId, int labelResourceId) {
         View editText = layoutView.findViewById(resourceId);
@@ -400,8 +406,11 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         if (!validateRequiredField(cardNumberVw, requiredMsg)) { errors = true; }
         if (!validateRequiredField(expirationDateVw, requiredMsg)) { errors = true; }
         CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString());
-        if (ccType!=CreditCard.Type.STAPLES)
-            if (!validateRequiredField(cidVw, requiredMsg)) { errors = true; }
+        if (ccType.isCidUsed()) {
+            if (!validateRequiredField(cidVw, requiredMsg)) {
+                errors = true;
+            }
+        }
 
         if (!errors) {
             PaymentMethod paymentMethod = new PaymentMethod();
@@ -409,8 +418,10 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
             paymentMethod.setCardNumber(cardNumberVw.getText().toString());
             paymentMethod.setCardType(ccType.getName());
             paymentMethod.setCardExpirationMonth(expirationDateVw.getText().toString().substring(0,2));
-          paymentMethod.setCardExpirationYear("20" +expirationDateVw.getText().toString().substring(3,5));
-            paymentMethod.setCardVerificationCode(cidVw.getText().toString());
+            paymentMethod.setCardExpirationYear("20" +expirationDateVw.getText().toString().substring(3,5));
+            if (ccType.isCidUsed()) {
+                paymentMethod.setCardVerificationCode(cidVw.getText().toString());
+            }
             return paymentMethod;
         }
         return null;

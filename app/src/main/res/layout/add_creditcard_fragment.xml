@@ -28,6 +28,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+        <!--DLS: setting imeOptions to actionDone by default for use in profile, guest checkout will
+            modify this to actionNext programatically when CID is displayed -->
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,7 +38,7 @@
             android:maxLength="5"
             android:hint="MM/YY"
             android:visibility="gone"
-            android:imeOptions="actionNext"/>
+            android:imeOptions="actionDone"/>
         <EditText
             android:id="@+id/cid"
             android:layout_width="wrap_content"
