@@ -40,6 +40,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     // widget listeners
     private View.OnClickListener qtyDeleteButtonListener;
+    private View.OnClickListener productImageListener;
     private QuantityEditor.OnQtyChangeListener qtyChangeListener;
 
 
@@ -47,10 +48,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     public CartAdapter(Context context,
                        int cartItemGroupLayoutResId,
                        QuantityEditor.OnQtyChangeListener qtyChangeListener,
-                       View.OnClickListener qtyDeleteButtonListener) {
+                       View.OnClickListener qtyDeleteButtonListener,
+                       View.OnClickListener productImageListener) {
         this.cartItemGroupLayoutResId = cartItemGroupLayoutResId;
         this.qtyChangeListener = qtyChangeListener;
         this.qtyDeleteButtonListener = qtyDeleteButtonListener;
+        this.productImageListener = productImageListener;
         this.noPhoto = context.getResources().getDrawable(R.drawable.no_photo);
         this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -81,7 +84,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        CartItemGroup cartItemGroup = getItem(position);
+        CartItemGroup cartItemGroup = getGroupItem(position);
 
 
         // set shipping estimate
@@ -127,6 +130,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             CartItemPosition pos = new CartItemPosition(position, i);
             ciVh.qtyWidget.setTag(pos);
             ciVh.deleteButton.setTag(pos);
+            ciVh.imageView.setTag(pos);
 //        ciVh.updateButton.setTag(pos);
 
             // associate qty widget with cart item
@@ -135,6 +139,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             // set widget listeners
             ciVh.qtyWidget.setOnQtyChangeListener(qtyChangeListener);
             ciVh.deleteButton.setOnClickListener(qtyDeleteButtonListener);
+            ciVh.imageView.setOnClickListener(productImageListener);
 //        ciVh.updateButton.setOnClickListener(qtyUpdateButtonListener);
 
             // set quantity (AFTER listeners set up above)
@@ -155,10 +160,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         return cartItemGroups.size();
     }
 
-    public CartItemGroup getItem(int position) {
+    public CartItemGroup getGroupItem(int position) {
         return cartItemGroups.get(position);
     }
 
+    public CartItem getCartItem(CartAdapter.CartItemPosition position) {
+        CartItemGroup cartItemGroup = getGroupItem(position.groupPosition);
+        CartItem cartItem = cartItemGroup.getCartItems().get(position.itemPositionWithinGroup);
+        return cartItem;
+    }
 
     //---------------------------------------//
     //------------ inner classes ------------//
