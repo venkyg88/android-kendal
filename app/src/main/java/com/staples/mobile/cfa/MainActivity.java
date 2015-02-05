@@ -11,17 +11,17 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.bundle.BundleFragment;
@@ -62,8 +62,6 @@ import java.util.Date;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-
-import retrofit.RetrofitError;
 
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener,
@@ -286,9 +284,13 @@ public class MainActivity extends Activity
     }
 
     public void prepareMainScreen(boolean freshStart) {
-        // Inflate
+        // Inflate, add ActionBar
         setContentView(R.layout.main);
-        ActionBar.getInstance().init(this);
+        ViewGroup stationary = (ViewGroup) findViewById(R.id.stationary);
+        LayoutInflater inflater = getLayoutInflater();
+        ActionBar actionBar = (ActionBar) inflater.inflate(R.layout.action_bar, stationary, false);
+        stationary.addView(actionBar, 0);
+        actionBar.init(this);
 
         // Find top-level entities
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -307,7 +309,6 @@ public class MainActivity extends Activity
 
         // Cart
         cartFragment = new CartFragment();
-        ActionBar.getInstance().setCartCount(0);
 
         // get notification banner and set up animation
         notificationBanner = (TextView) findViewById(R.id.notification_banner);
@@ -426,7 +427,7 @@ public class MainActivity extends Activity
         }
 
         // update sign-in button text
-        Button signInButton = (Button)findViewById(R.id.account_button);
+        TextView signInButton = (TextView) findViewById(R.id.account_option);
         if (signInButton != null) { // is null in roboelectric tests
             signInButton.setText(registeredUser ? R.string.signout_title : R.string.login_title);
         }
@@ -639,7 +640,7 @@ public class MainActivity extends Activity
                 ActionBar.getInstance().closeSearch();
                 break;
 
-            case R.id.account_button:
+            case R.id.account_option:
                 if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
                     loginHelper.userSignOut();
                     selectDrawerItem(homeDrawerItem, Transition.RIGHT, true);
