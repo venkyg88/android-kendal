@@ -96,7 +96,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         if (activity==null) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
-        Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+        ((MainActivity) activity).showErrorDialog(msg);
         wrapper.setState(DataWrapper.State.EMPTY);
         Log.d(TAG, msg);
     }
@@ -119,7 +119,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
-                    ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier);
+                    ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier, false);
                 }
                 break;
             case R.id.bundle_action:

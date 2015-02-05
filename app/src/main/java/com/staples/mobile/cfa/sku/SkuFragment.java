@@ -13,10 +13,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -29,6 +32,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.feed.PersistentSizedArrayList;
 import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
+import com.staples.mobile.cfa.login.ResetPasswordFragment;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PagerStripe;
@@ -58,11 +62,12 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener,
-        View.OnClickListener, FragmentManager.OnBackStackChangedListener {
+        View.OnClickListener, FragmentManager.OnBackStackChangedListener{
     private static final String TAG = "SkuFragment";
 
     private static final String TITLE = "title";
     private static final String IDENTIFIER = "identifier";
+    private static final String SKUSET = "skuset";
 
     private static final String DESCRIPTION = " Description";
     private static final String SPECIFICATIONS = " Specifications";
@@ -102,6 +107,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     private String title;
     private String identifier;
+    private boolean isSkuSetOriginated;
 
     private DataWrapper wrapper;
     private ScrollView summary;
@@ -124,10 +130,11 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     private boolean isShiftedTab;
 
-    public void setArguments(String title, String identifier) {
+    public void setArguments(String title, String identifier, boolean isSkuSetRedirected) {
         Bundle args = new Bundle();
         args.putString(TITLE, title);
         args.putString(IDENTIFIER, identifier);
+        args.putBoolean(SKUSET, isSkuSetRedirected);
         setArguments(args);
     }
 
@@ -137,6 +144,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         if (args != null) {
             title = args.getString(TITLE);
             identifier = args.getString(IDENTIFIER);
+            isSkuSetOriginated = args.getBoolean(SKUSET);
         }
 
         wrapper = (DataWrapper) inflater.inflate(R.layout.sku_summary, container, false);
@@ -413,7 +421,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             accessoryImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity) getActivity()).selectSkuItem(null, sku);
+                    ((MainActivity)getActivity()).selectSkuItem(null, sku, false);
                 }
             });
 
@@ -425,7 +433,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             accessoryTitleTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity) getActivity()).selectSkuItem(null, sku);
+                    ((MainActivity)getActivity()).selectSkuItem(null, sku, false);
                 }
             });
 
@@ -541,7 +549,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
             wrapper.setState(DataWrapper.State.EMPTY);
             String msg = ApiError.getErrorMessage(retrofitError);
-            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+            ((MainActivity)activity).showErrorDialog(msg);
             Log.d(TAG, msg);
         }
     }
@@ -561,7 +569,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             if (activity==null) return;
 
             String msg = ApiError.getErrorMessage(retrofitError);
-            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+            ((MainActivity)activity).showErrorDialog(msg);
             Log.d(TAG, msg);
         }
     }
@@ -570,7 +578,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         List<Product> products = sku.getProduct();
         if (products != null && products.size() > 0) {
             // Use the first product in the list
-            Product product = products.get(0);
+            final Product product = products.get(0);
             tabAdapter.setProduct(product);
 
             // Handle availability
@@ -578,9 +586,38 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             Button addToCartButton = (Button) wrapper.findViewById(R.id.add_to_cart);
             TextView footerMsg = (TextView)wrapper.findViewById(R.id.footer_msg);
             Availability availability = Availability.getProductAvailability(product);
+            TextView skuText = (TextView)wrapper.findViewById(R.id.select_sku);
+
+            if(isSkuSetOriginated == true) {
+                skuText.setVisibility(View.VISIBLE);
+                skuText.setText(product.getProductName());
+                skuText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        FragmentManager fm = getFragmentManager();
+                        if (fm != null) {
+                            fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
+                        }
+                    }
+                });
+
+            }
+
             switch (availability) {
                 case NOTHING:
                 case SKUSET:
+                    qtyEditor.setVisibility(View.VISIBLE);
+                    addToCartButton.setVisibility(View.VISIBLE);
+                    skuText.setVisibility(View.VISIBLE);
+                    addToCartButton.setEnabled(false);
+                    qtyEditor.setEnabled(false);
+                    skuText.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ((MainActivity)getActivity()).selectSkuSet(product.getProductName(), product.getSku(), product.getThumbnailImage().get(0).getUrl());
+                        }
+                    });
+                    break;
                 case RETAILONLY:
                 case SPECIALORDER:
                 case OUTOFSTOCK:
@@ -652,6 +689,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             saveSeenProduct(product);
         }
     }
+
 
     public static String formatTimestamp(String raw) {
         if (raw == null) return (null);
@@ -774,8 +812,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             return;
         }
 
-        MainActivity mainActivity = (MainActivity) getActivity();
-
         String currentFragmentName = manager.getBackStackEntryAt(fragmentEntryCount - 1).getName();
         if(currentFragmentName != null &&
                 currentFragmentName.equals("com.staples.mobile.cfa.sku.SkuFragment")){
@@ -824,7 +860,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                         if (errMsg == null) {
                             ((Button) wrapper.findViewById(R.id.add_to_cart)).setText(R.string.add_another);
                         } else {
-                            Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                            activity.showErrorDialog(errMsg);
                         }
                     }
                 });

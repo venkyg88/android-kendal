@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
@@ -53,7 +52,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         String identifier = null;
-
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
 
         Bundle args = getArguments();
@@ -100,7 +98,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         if (activity==null) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
-        Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+        ((MainActivity)activity).showErrorDialog(msg);
         Log.d(TAG, msg);
         wrapper.setState(DataWrapper.State.EMPTY);
     }
@@ -133,7 +131,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
-                    ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier);
+                    ((MainActivity)getActivity()).selectSkuItem(item.title, item.identifier, false);
                 }
                 break;
             case R.id.bundle_action:
@@ -141,7 +139,8 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
                     if (item.type==IdentifierType.SKUSET) {
-                        ((MainActivity) getActivity()).selectSkuSet(item.title, item.identifier, item.imageUrl);
+                        final MainActivity activity = (MainActivity) getActivity();
+                        activity.selectSkuItem(item.title, item.identifier, false);
                     } else {
                         final MainActivity activity = (MainActivity) getActivity();
                         final ImageView buttonVw = (ImageView)view;
@@ -157,7 +156,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                                     buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.added_to_cart));
                                 } else {
                                     buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.add_to_cart));
-                                    Toast.makeText(activity, errMsg, Toast.LENGTH_LONG).show();
+                                    activity.showErrorDialog(errMsg);
                                 }
                             }
                         });

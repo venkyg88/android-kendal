@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.weeklyad.Data;
@@ -93,9 +94,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
     @Override
     public void onResume() {
         super.onResume();
-        if (activity!=null) {
-//            activity.showActionBar(R.string.weekly_ad_title, 0, null);
-        }
+        ActionBar.getInstance().setConfig(ActionBar.Config.WEEKLYAD);
     }
 
     @Override

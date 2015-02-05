@@ -1,16 +1,12 @@
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
@@ -20,31 +16,32 @@ public class ActionBar extends LinearLayout {
     private static final String TAG = "ActionBar";
 
     public enum Config {
-        //        close, back,  draw,  logo,  srch,  qty,   cart,  login, title,                         option
-        ABOUT    (false, false, true,  true,  false, false, true,  false, R.string.about_title,          0),
-        ADDCARD  (false, false, true,  false, true,  false, true,  false, R.string.add_card_title,       0),
-        ADDRESS  (false, false, true,  false, true,  false, true,  false, R.string.address_title,        0),
-        BROWSE   (false, false, true,  true,  true,  false, true,  false, 0,                             0),
-        BUNDLE   (false, false, true,  false, true,  false, true,  false, 0,                             0),
-        CART     (false, false, true,  false, false, true,  false, false, R.string.cart_title,           0),
-        COGUEST  (true,  false, false, false, false, false, false, true,  R.string.guest_checkout_title, 0),
-        CONFIRM  (false, false, true,  false, false, false, true,  false, R.string.order_confirm_title,  0),
-        COREG    (true,  false, false, false, false, false, false, false, R.string.checkout_title,       0),
-        DEFAULT  (false, false, true,  true,  true,  false, true,  false, 0,                             0),
-        FEED     (false, false, true,  false, true,  false, true,  false, R.string.personal_feed_title,  0),
-        LINK     (false, false, true,  false, true,  false, true,  false, R.string.link_rewards_title,   0),
-        LOGIN    (false, false, true,  false, true,  false, true,  false, R.string.login_title,          0),
-        MAPVIEW  (false, false, true,  false, false, false, true,  false, R.string.store_locator_title,  R.drawable.ic_map_white),
-        MAPLIST  (false, false, true,  false, false, false, true,  false, R.string.store_locator_title,  R.drawable.ic_view_list_white),
-        ORDER    (false, false, true,  false, true,  false, true,  false, R.string.order_title,          0),
-        PASSWORD (false, false, true,  false, true,  false, true,  false, R.string.password_reset,       0),
-        PROFILE  (false, false, true,  false, true,  false, true,  false, R.string.profile_title,        0),
-        QUERY    (false, true,  false, false, true,  false, false, false, 0,                             0),
-        REWARDS  (false, false, true,  false, true,  false, true,  false, R.string.rewards_title,        0),
-        SEARCH   (false, false, true,  true,  true,  false, true,  false, 0,                             0),
-        SKU      (false, false, true,  false, true,  false, true,  false, 0,                             0),
-        SKUSET   (false, false, true,  false, true,  false, true,  false, 0,                             0),
-        VIEWCARD (false, false, true,  false, true,  false, true,  false, R.string.credit_card_title,    0);
+
+        //        close  back   drawer logo   search qty    cart   signin title
+        ABOUT    (false, false, true,  true,  false, false, true,  false, R.string.about_title),
+        ADDCARD  (false, false, true,  false, true,  false, true,  false, R.string.add_card_title),
+        ADDRESS  (false, false, true,  false, true,  false, true,  false, R.string.address_title),
+        BROWSE   (false, false, true,  true,  true,  false, true,  false, 0),
+        BUNDLE   (false, false, true,  false, true,  false, true,  false, 0),
+        CART     (false, false, true,  false, false, true,  false, false, R.string.cart_title),
+        COGUEST  (true,  false, false, false, false, false, false, true,  R.string.guest_checkout_title),
+        CONFIRM  (false, false, true,  false, false, false, true,  false, R.string.order_confirm_title),
+        COREG    (true,  false, false, false, false, false, false, false, R.string.checkout_title),
+        DEFAULT  (false, false, true,  true,  true,  false, true,  false, 0),
+        FEED     (false, false, true,  false, true,  false, true,  false, R.string.personal_feed_title),
+        LINK     (false, false, true,  false, true,  false, true,  false, R.string.link_rewards_title),
+        LOGIN    (false, false, true,  false, true,  false, true,  false, R.string.login_title),
+        ORDER    (false, false, true,  false, true,  false, true,  false, R.string.order_title),
+        PASSWORD (false, false, true,  false, true,  false, true,  false, R.string.password_reset),
+        PROFILE  (false, false, true,  false, true,  false, true,  false, R.string.profile_title),
+        QUERY    (false, true,  false, false, true,  false, false, false, 0),
+        REWARDS  (false, false, true,  false, true,  false, true,  false, R.string.rewards_title),
+        SEARCH   (false, false, true,  true,  true,  false, true,  false, 0),
+        SKU      (false, false, true,  false, true,  false, true,  false, 0),
+        SKUSET   (true, false, false,  false, false,  false, false,  false, R.string.sku_title),
+        STORE    (false, false, true,  false, false, false, true,  false, R.string.store_locator_title),
+        VIEWCARD (false, false, true,  false, true,  false, true,  false, R.string.credit_card_title),
+        WEEKLYAD (false, false, true,  false, true,  false, true,  false, R.string.weekly_ad_title);
 
         private boolean close;
         private boolean back;
@@ -55,10 +52,9 @@ public class ActionBar extends LinearLayout {
         private boolean cart;
         private boolean signin;
         private int title;
-        private int option;
 
         private Config(boolean close, boolean back, boolean drawer, boolean logo, boolean search,
-                       boolean quantity, boolean cart, boolean signin, int title, int option) {
+                       boolean quantity, boolean cart, boolean signin, int title) {
             this.close = close;
             this.back = back;
             this.drawer = drawer;
@@ -68,11 +64,28 @@ public class ActionBar extends LinearLayout {
             this.cart = cart;
             this.signin = signin;
             this.title = title;
-            this.option = option;
+        }
+    }
+
+    private class State {
+        private Config config;
+        private String title;
+        private int icon;
+        private OnClickListener listener;
+
+        private void copy(State other) {
+            if (other==null) return;
+            config = other.config;
+            title = other.title;
+            icon = other.icon;
+            listener = other.listener;
         }
     }
 
     private static ActionBar instance;
+
+    private State state;
+    private State pushed;
 
     private ImageView closeButton;
     private ImageView backButton;
@@ -100,6 +113,7 @@ public class ActionBar extends LinearLayout {
     public ActionBar(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         instance = this;
+        state = new State();
     }
 
     public void init(OnClickListener listener) {
@@ -126,55 +140,98 @@ public class ActionBar extends LinearLayout {
     // Configuration setters
 
     public void setConfig(Config config) {
-        setConfig(config, null, null);
+        searchBar.close();
+        state.config = config;
+        state.title = null;
+        state.icon = 0;
+        state.listener = null;
+        update();
     }
 
     public void setConfig(Config config, String title) {
-        setConfig(config, null, title);
+        searchBar.close();
+        state.config = config;
+        state.title = title;
+        state.icon = 0;
+        state.listener = null;
+        update();
     }
 
-    public void setConfig(Config config, OnClickListener listener) {
-        setConfig(config, listener, null);
+    public void setConfig(Config config, int icon, OnClickListener listener) {
+        searchBar.close();
+        state.config = config;
+        state.title = null;
+        state.icon = icon;
+        state.listener = listener;
+        update();
     }
 
-    public void setConfig(Config config, OnClickListener listener, String title) {
-        if (config==null) return;
+    private void update() {
+        if (state.config==null) return;
 
-        closeButton.setVisibility(config.close ? VISIBLE : GONE);
-        backButton.setVisibility(config.back ? VISIBLE : GONE);
-        leftDrawerAction.setVisibility(config.drawer ? VISIBLE : GONE);
-        cartIconAction.setVisibility(config.cart ? VISIBLE : GONE);
-        checkoutSigninButton.setVisibility(config.signin ? VISIBLE : GONE);
-        cartQtyView.setVisibility(config.quantity ? VISIBLE : GONE);
-        if (config.option==0) {
+        closeButton.setVisibility(state.config.close ? VISIBLE : GONE);
+        backButton.setVisibility(state.config.back ? VISIBLE : GONE);
+        leftDrawerAction.setVisibility(state.config.drawer ? VISIBLE : GONE);
+        cartIconAction.setVisibility(state.config.cart ? VISIBLE : GONE);
+        checkoutSigninButton.setVisibility(state.config.signin ? VISIBLE : GONE);
+        cartQtyView.setVisibility(state.config.quantity ? VISIBLE : GONE);
+
+        // Set option icon
+        if (state.icon!=0 && state.listener!=null) {
+            optionIcon.setVisibility(VISIBLE);
+            optionIcon.setImageResource(state.icon);
+            optionIcon.setOnClickListener(state.listener);
+        } else {
             optionIcon.setVisibility(GONE);
             optionIcon.setOnClickListener(null);
         }
-        else {
-            optionIcon.setVisibility(VISIBLE);
-            optionIcon.setImageResource(config.option);
-            optionIcon.setOnClickListener(listener);
-        }
-        searchBar.setVisibility(config.search ? VISIBLE : GONE);
-        logoView.setVisibility(config.logo ? VISIBLE : GONE);
-        if (title!=null) {
+
+        searchBar.setVisibility(state.config.search ? VISIBLE : GONE);
+        logoView.setVisibility(state.config.logo ? VISIBLE : GONE);
+
+        // Set title
+        if (state.title!=null) {
             titleView.setVisibility(VISIBLE);
-            titleView.setText(title);
-        }
-        else if (config.title==0) {
+            titleView.setText(state.title);
+        } else if (state.config.title!=0) {
+            titleView.setVisibility(VISIBLE);
+            titleView.setText(state.config.title);
+        } else {
             titleView.setVisibility(GONE);
         }
-        else {
-            titleView.setVisibility(VISIBLE);
-            titleView.setText(config.title);
+    }
+
+    public void openSearch() {
+        if (pushed==null) pushed = new State();
+        pushed.copy(state);
+
+        state.config = Config.QUERY;
+        state.title = null;
+        state.icon = 0;
+        state.listener = null;
+        update();
+
+        searchBar.open();
+    }
+
+    public void closeSearch() {
+        searchBar.close();
+
+        if (pushed!=null) {
+            state.copy(pushed);
+            update();
         }
     }
+
+
 
     public void setCartCount(int count) {
         cartIconAction.setText(count==0 ? null : Integer.toString(count));
         if (count==0) cartQtyView.setText(null);
         else cartQtyView.setText(getResources().getQuantityString(R.plurals.cart_qty, count, count));
     }
+
+
 
     public void saveSearchHistory() {
         searchBar.saveSearchHistory();

@@ -5,12 +5,17 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -30,12 +35,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -47,6 +54,9 @@ import com.staples.mobile.common.access.channel.model.store.StoreFeature;
 import com.staples.mobile.common.access.channel.model.store.StoreHours;
 import com.staples.mobile.common.access.channel.model.store.StoreQuery;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.google.model.places.AutoComplete;
+import com.staples.mobile.common.access.google.model.places.Details;
+import com.staples.mobile.common.access.google.model.places.Prediction;
 
 import java.util.List;
 import java.util.Locale;
@@ -55,8 +65,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class StoreFragment extends Fragment implements Callback<StoreQuery>, GoogleMap.OnMarkerClickListener,
-            GoogleMap.OnMapClickListener, View.OnClickListener, EditText.OnEditorActionListener {
+public class StoreFragment extends Fragment implements Callback<StoreQuery>,
+        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, View.OnClickListener, EditText.OnEditorActionListener {
     private static final String TAG = "StoreFragment";
 
     private static int FITSTORES = 5; // Number of stores to fit in initial view
@@ -66,7 +76,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
 
     private MapView mapView;
     private GoogleMap googleMap;
-    private EditText search;
+    private EditText searchText;
     private RecyclerView list;
     private StoreAdapter adapter;
 
@@ -87,23 +97,13 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
             view = inflater.inflate(R.layout.store_fragment_map, container, false);
             mapView = (MapView) view.findViewById(R.id.map);
             mapView.onCreate(bundle);
-
-            googleMap = mapView.getMap();
-            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-            googleMap.setMyLocationEnabled(true);
-            googleMap.setOnMarkerClickListener(this);
-            googleMap.setOnMapClickListener(this);
-
-            MapsInitializer.initialize(getActivity());
-
-            // Create icons
-            hotIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-            coldIcon = BitmapDescriptorFactory.fromResource(R.drawable.ic_store_cold);
+            mapView.getMapAsync(this);
         }
 
         // No Google Play Services
         else {
             view = inflater.inflate(R.layout.store_fragment_nomap, container, false);
+            gotoHere();
         }
 
         list = (RecyclerView) view.findViewById(R.id.list);
@@ -114,38 +114,73 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         adapter.setSingleMode(mapView!=null);
         adapter.setFullStoreDetail(false); // initially only summary store info is displayed
 
+        searchText = (EditText) view.findViewById(R.id.store_search);
+        searchText.setOnEditorActionListener(this);
+        searchText.setHint(getHint());
 
-        search = (EditText) view.findViewById(R.id.store_search);
-        search.setOnEditorActionListener(this);
+        view.findViewById(R.id.store_here).setOnClickListener(this);
 
+        return (view);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        googleMap.setMyLocationEnabled(true);
+        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+        // Set listeners
+        googleMap.setOnMarkerClickListener(this);
+        googleMap.setOnMapClickListener(this);
+
+        // Create icons
+        MapsInitializer.initialize(getActivity());
+        hotIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+        coldIcon = BitmapDescriptorFactory.fromResource(R.drawable.ic_store_cold);
+
+        gotoHere();
+    }
+
+    private void gotoHere() {
         // Get location
         LocationFinder finder = LocationFinder.getInstance(getActivity());
         location = finder.getLocation();
         if (location==null) {
             Toast.makeText(getActivity(), "LocationFinder.getLocation returned null", Toast.LENGTH_LONG).show();
-            return(view);
+            return;
         }
 
         // Get postal code
         String postalCode = finder.getPostalCode();
         if (postalCode==null) {
             Toast.makeText(getActivity(), "LocationFinder.getPostalCode returned null", Toast.LENGTH_LONG).show();
-            return(view);
+            return;
         }
 
         // Find nearby stores
         Access.getInstance().getChannelApi(false).storeLocations(postalCode, this);
-        return (view);
+    }
+
+    private CharSequence getHint() {
+        Resources res = getActivity().getResources();
+        SpannableStringBuilder sb = new SpannableStringBuilder("   ");
+        sb.append(res.getString(R.string.store_search_hint));
+        Drawable icon = res.getDrawable(R.drawable.ic_search_black);
+        int size = (int) (searchText.getTextSize()*1.25);
+        icon.setBounds(0, 0, size, size);
+        sb.setSpan(new ImageSpan(icon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return(sb);
     }
 
     @Override
     public void onResume() {
-        int iconId;
+        int icon;
         super.onResume();
         if (mapView!=null) mapView.onResume();
-        if (adapter.isSingleMode()) iconId = R.drawable.ic_view_list_white;
-        else iconId = R.drawable.ic_map_white;
-        ActionBar.getInstance().setConfig(ActionBar.Config.MAPLIST, this);
+        if (adapter.isSingleMode()) icon = R.drawable.ic_view_list_white;
+        else icon = R.drawable.ic_map_white;
+        ActionBar.getInstance().setConfig(ActionBar.Config.STORE, icon, this);
     }
 
     @Override
@@ -309,11 +344,64 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         int height = mapView.getHeight();
 
         // Zoom to bounds
-        CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, width, height, 0);
-        googleMap.moveCamera(update);
+        if (width>0 && height>0) {
+            CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, width, height, 0);
+            googleMap.moveCamera(update);
+        }
     }
 
     // Retrofit callbacks & processing
+
+    @Override
+    public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+        switch(actionId) {
+            case EditorInfo.IME_ACTION_SEARCH:
+                doSearch();
+                break;
+            case EditorInfo.IME_NULL:
+                if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER &&
+                    event.getAction()==KeyEvent.ACTION_DOWN) {
+                    doSearch();
+                }
+                break;
+        }
+        return(false);
+    }
+
+    private void doSearch() {
+        String address = searchText.getText().toString().trim();
+        location = null;
+        Access.getInstance().getChannelApi(false).storeLocations(address, this);
+
+        // TODO Start of hacked test stuff ************************************************************************************************************************
+        Access.getInstance().getGoogleApi().getPlaceAutoComplete("address", "country:us", address, new Callback<AutoComplete>() {
+            @Override
+            public void success(AutoComplete autoComplete, Response response) {
+
+                List<Prediction> predictions = autoComplete.getPredictions();
+                Log.d(TAG, "Places API returned " + predictions.size() + " " + autoComplete.getStatus());
+                if (predictions.size()==0) return;
+                for(Prediction prediction : predictions) {
+                    Log.d(TAG, "Prediction: " + prediction.getDescription());
+                }
+                Access.getInstance().getGoogleApi().getPlaceDetails(predictions.get(0).getPlaceId(), new Callback<Details>() {
+                    @Override
+                    public void success(Details details, Response response) {
+                        Log.d(TAG, "2nd return "+details.getResult().getFormattedAddress());
+                    }
+
+                    @Override
+                    public void failure(RetrofitError retrofitError) {
+                    }
+                });
+            }
+
+            @Override
+            public void failure(RetrofitError retrofitError) {
+            }
+        });
+        // TODO End of hacked test stuff ************************************************************************************************************************
+    }
 
     @Override
     public void success(StoreQuery storeQuery, Response response) {
@@ -421,7 +509,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
 
         // if showing single store (with map if available), toggle to list view
         if (adapter.isSingleMode()) {
-            ActionBar.getInstance().setConfig(ActionBar.Config.MAPVIEW, this);
+            ActionBar.getInstance().setConfig(ActionBar.Config.STORE, R.drawable.ic_map_white, this);
             if (mapView != null) {
                 mapView.setVisibility(View.GONE);
             }
@@ -437,7 +525,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
 
         // else if showing list of stores, then toggle to single mode
         else {
-            ActionBar.getInstance().setConfig(ActionBar.Config.MAPLIST, this);
+            ActionBar.getInstance().setConfig(ActionBar.Config.STORE, R.drawable.ic_view_list_white, this);
             if (mapView != null) {
                 mapView.setVisibility(View.VISIBLE);
             } else {
@@ -462,8 +550,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
             startActivity(intent);
             return(true);
         } catch(ActivityNotFoundException e) {
-            String msg = getResources().getString(R.string.store_no_phone);
-            Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+            ((MainActivity) getActivity()).showErrorDialog(R.string.store_no_phone);
             return(false);
         }
     }
@@ -486,8 +573,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
                 startActivity(intent);
                 return(true);
             } catch(ActivityNotFoundException e2) {
-                String msg = getResources().getString(R.string.store_no_maps);
-                Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+                ((MainActivity) getActivity()).showErrorDialog(R.string.store_no_maps);
                 return (false);
             }
         }
@@ -499,6 +585,9 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         switch(view.getId()) {
             case R.id.option_icon:
                 toggleView();
+                break;
+            case R.id.store_here:
+                gotoHere();
                 break;
             case R.id.store_item:
                 if (!adapter.isFullStoreDetail()) {
@@ -548,15 +637,5 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
                 }
                 break;
         }
-    }
-
-    @Override
-    public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-        if (actionId== EditorInfo.IME_ACTION_SEARCH) {
-            String address = search.getText().toString().trim();
-            location = null;
-            Access.getInstance().getChannelApi(false).storeLocations(address, this);
-        }
-        return(false);
     }
 }

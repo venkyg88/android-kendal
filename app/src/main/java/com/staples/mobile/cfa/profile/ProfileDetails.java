@@ -34,7 +34,7 @@ public class ProfileDetails implements Callback<MemberDetail> {
     private static final String TAG = ProfileDetails.class.getSimpleName();
 
     public interface ProfileRefreshCallback {
-        public void onProfileRefresh(Member member);
+        public void onProfileRefresh(Member member, String errMsg);
     }
 
     public interface PaymentMethodSelectionListener {
@@ -76,7 +76,7 @@ public class ProfileDetails implements Callback<MemberDetail> {
         // handle case where not registered user
         if (!access.isLoggedIn() || access.isGuestLogin()) {
             if (callback != null) {
-                callback.onProfileRefresh(null);
+                callback.onProfileRefresh(null, null);
             }
             resetMember();
             return;
@@ -104,10 +104,11 @@ public class ProfileDetails implements Callback<MemberDetail> {
 
             @Override
             public void failure(RetrofitError retrofitError) {
-                Log.i("Fail message when getting member details", " " + ApiError.getErrorMessage(retrofitError));
+                String errMsg = ApiError.getErrorMessage(retrofitError);
+                Log.i("Fail message when getting member details", " " + errMsg);
                 Log.i("URl used to get member details", " " + retrofitError.getUrl());
                 if (ProfileDetails.this.callback != null) {
-                    ProfileDetails.this.callback.onProfileRefresh(null);
+                    ProfileDetails.this.callback.onProfileRefresh(null, errMsg);
                 }
             }
         });
@@ -132,7 +133,7 @@ public class ProfileDetails implements Callback<MemberDetail> {
                     member = memberUnderConstruction;
                 }
                 if (callback != null) {
-                    callback.onProfileRefresh(member);
+                    callback.onProfileRefresh(member, null);
                 }
             }
         }
@@ -171,17 +172,18 @@ public class ProfileDetails implements Callback<MemberDetail> {
         } else {
             Log.w(TAG, "empty MemberDetail returned"); // this can happen, need to determine why
             if (callback != null) {
-                callback.onProfileRefresh(null);
+                callback.onProfileRefresh(null, "Error loading profile");
             }
         }
     }
 
     /** implements Callback<MemberDetail> */
     public void failure(RetrofitError retrofitError) {
-        Log.i("Fail message when getting member details", " " + ApiError.getErrorMessage(retrofitError));
+        String errMsg = ApiError.getErrorMessage(retrofitError);
+        Log.i("Fail message when getting member details", " " + errMsg);
         Log.i("URl used to get member details", " " + retrofitError.getUrl());
         if (callback != null) {
-            callback.onProfileRefresh(null);
+            callback.onProfileRefresh(null, errMsg);
         }
     }
 

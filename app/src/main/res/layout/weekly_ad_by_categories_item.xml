@@ -22,11 +22,11 @@
         android:layout_alignParentTop="true"
         android:lines="2"
         android:ellipsize="end"
-        android:textSize="14sp"
-        android:paddingLeft="20dp"
-        android:paddingTop="25dp"
-        android:textColor="@color/text_nearly_black"
-        android:paddingBottom="0dp"/>
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:paddingLeft="15dip"
+        android:paddingTop="10dip"
+        android:textColor="@color/text_nearly_black"/>
     <TextView
         android:id="@+id/weekly_ad_category_deals_count_text"
         android:layout_width="match_parent"
@@ -35,7 +35,7 @@
         android:lines="2"
         android:ellipsize="end"
         android:textSize="18sp"
-        android:paddingLeft="20dp"
-        android:paddingBottom="10dp"
+        android:paddingLeft="15dip"
+        android:paddingTop="15dip"
         android:textColor="@color/text_red"/>
 </RelativeLayout>

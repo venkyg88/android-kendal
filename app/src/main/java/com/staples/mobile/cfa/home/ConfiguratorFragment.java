@@ -5,12 +5,17 @@ import android.app.Fragment;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,19 +26,24 @@ import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.location.LocationFinder;
+import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.store.StoreFragment;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.channel.model.store.Obj;
+import com.staples.mobile.common.access.channel.model.store.StoreAddress;
+import com.staples.mobile.common.access.channel.model.store.StoreData;
+import com.staples.mobile.common.access.channel.model.store.StoreHours;
+import com.staples.mobile.common.access.channel.model.store.StoreQuery;
 import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Area;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.configurator.model.Item;
 import com.staples.mobile.common.access.configurator.model.Screen;
 import com.staples.mobile.common.access.config.AppConfigurator;
-import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
+import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.device.DeviceInfo;
 
 import java.text.SimpleDateFormat;
@@ -105,6 +115,8 @@ public class ConfiguratorFragment extends Fragment {
     private LinearLayout login_info_layout;
     private LinearLayout login_layout;
     private LinearLayout reward_layout;
+    private FrameLayout message_layout;
+    private FrameLayout messageFrameLayout;
     private TextView rewardTextView;
     private TextView loginMessageTextView;
     private TextView signInTextView;
@@ -113,8 +125,9 @@ public class ConfiguratorFragment extends Fragment {
     private TextView storeStatusTextView;
     private TextView usernameTextView;
     private DataWrapper storeWrapper;
-    public static String userName;
-    public static String rewards;
+    private ImageView showArrowImageView;
+    private View hideBannerView;
+    private boolean isMessageBarShow = true;
 
     @Override
     public void onAttach(Activity activity) {
@@ -193,6 +206,7 @@ public class ConfiguratorFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
+        isMessageBarShow = true;
     }
 
     public void initFromConfiguratorResult(Configurator configurator) {
@@ -273,11 +287,8 @@ public class ConfiguratorFragment extends Fragment {
                 doLandscape();
             }
 
-            // call store api and get info
-            storeWrapper = (DataWrapper) configFrameView.findViewById(R.id.store_wrapper);
-            storeWrapper.setState(DataWrapper.State.LOADING);
-            EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
-            api.getStoreInventory("513096", "100", 1, 1, new StoreInfoCallback());
+            // call store api and get store info
+            getStoreInfo();
 
             break; // while (true)
 
@@ -1003,51 +1014,53 @@ public class ConfiguratorFragment extends Fragment {
 
     //////////////////////////////////////////////////////////////////////////////
     // Personalized Message Bar Methods created by Yongnan Zhou:
-    private class StoreInfoCallback implements Callback<StoreInventory> {
+    private void getStoreInfo(){
+        storeWrapper = (DataWrapper) configFrameView.findViewById(R.id.store_wrapper);
+        storeWrapper.setState(DataWrapper.State.LOADING);
+
+        // Get current postal code
+        LocationFinder finder = LocationFinder.getInstance(getActivity());
+        String postalCode = finder.getPostalCode();
+        if (TextUtils.isEmpty(postalCode)) {
+            storeWrapper.setState(DataWrapper.State.EMPTY);
+            String errorMessage = (String) getResources().getText(R.string.error_no_location_service);
+            Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
+            //activity.showErrorDialog(errorMessage, false);
+        }
+        else{
+            //EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
+            //api.getStoreInfo("513096", "100", 1, 1, postalCode, new StoreInfoCallback());
+
+            Access.getInstance().getChannelApi(false).storeLocations(postalCode, new StoreInfoCallback());
+        }
+    }
+
+    private class StoreInfoCallback implements Callback<StoreQuery> {
         @Override
-        public void success(StoreInventory storeInfo, Response response) {
-            // Get store address
-            String storeCity = storeInfo.getStore().get(0).getCity();
-            String storeState = storeInfo.getStore().get(0).getState();
-            storeNameTextView.setText(storeCity + ", " + storeState);
+        public void success(StoreQuery storeQuery, Response response) {
+            List<StoreData> storeData = storeQuery.getStoreData();
+            Obj storeObj = storeData.get(0).getObj();
 
-            System.out.println(TAG + " - Store:" + storeCity + ", " + storeState);
+            // Get store location
+            StoreAddress storeAddress = storeObj.getStoreAddress();
+            String storeCity = storeAddress.getCity();
+            String storeState = storeAddress.getState();
+            storeNameTextView.setText(storeCity + "," + storeState);
+            Log.d(TAG, " - store location:" + storeCity + "," + storeState);
 
-            // Get store office hour
-            String storeOfficeHour = storeInfo.getStore().get(0).getStoreHours();
-            System.out.println(TAG + " - Office Hour:" + storeOfficeHour);
-            // "Monday - Friday: 0800-2100 Saturday: 0900-2100 Sunday: 1000-1800"
-
-            int weekDayStartHour;
-            int weekDayEndHour;
-            int satStartHour;
-            int satEndHour;
-            int sunStartHour;
-            int sunEndHour;
-
-            try {
-                weekDayStartHour = Integer.parseInt(storeOfficeHour.substring(17, 21));
-                weekDayEndHour = Integer.parseInt(storeOfficeHour.substring(22, 26));
-                //System.out.println(TAG + weekDayStartHour + "-" + weekDayEndHour);
-
-                satStartHour = Integer.parseInt(storeOfficeHour.substring(37, 41));
-                satEndHour = Integer.parseInt(storeOfficeHour.substring(42, 46));
-                //System.out.println(TAG + satStartHour + "-" + satEndHour);
-
-                sunStartHour = Integer.parseInt(storeOfficeHour.substring(55, 59));
-                sunEndHour = Integer.parseInt(storeOfficeHour.substring(60, 64));
-                //System.out.println(TAG + sunStartHour + "-" + sunEndHour);
-            }
-            catch(NumberFormatException | ArrayIndexOutOfBoundsException e){
-                // set default office time in case of api error
-                weekDayStartHour = 800;
-                weekDayEndHour = 2100;
-
-                satStartHour = 900;
-                satEndHour = 2100;
-
-                sunStartHour = 1000;
-                sunEndHour = 1800;
+            // Get store office hours
+            List<StoreHours> storeHourList = storeObj.getStoreHours();
+            ArrayList<Integer> storeStartHourList = new ArrayList<Integer>();
+            ArrayList<Integer> storeEndHourList = new ArrayList<Integer>();
+            for(StoreHours hours : storeHourList) {
+                String[] timeChunk = hours.getHours().split("-");
+                int storeStartTime = parseTimeSpan(timeChunk[0]);
+                int storeEndTime = parseTimeSpan(timeChunk[1]);
+                storeStartHourList.add(storeStartTime);
+                storeEndHourList.add(storeEndTime);
+                //System.out.println(TAG + " - day:" + hours.getDayName() + ", hour:" + hours.getHours()
+                //        + ", storeStartTime: " + storeStartTime + ", storeEndTime: " + storeEndTime);
+                //TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
             }
 
             Calendar cal = Calendar.getInstance();
@@ -1055,14 +1068,12 @@ public class ConfiguratorFragment extends Fragment {
             cal.getTime();
             SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
             int currentTime = Integer.parseInt(sdf.format(cal.getTime()));
-            System.out.println(TAG + " - Day of week:" + dayOfWeek);
-            System.out.println(TAG + " - Time:" + currentTime);
-
-            storeStatusTextView.setText(R.string.store_open);
+            Log.d(TAG, " - Current day of week:" + dayOfWeek);
+            Log.d(TAG, " - Current time:" + currentTime);
 
             switch (dayOfWeek) {
                 case 1:
-                    if(currentTime >= sunStartHour && currentTime <= sunEndHour){
+                    if(currentTime >= storeStartHourList.get(0) && currentTime <= storeEndHourList.get(0)){
                         storeStatusTextView.setText(R.string.store_open);
                     }
                     else{
@@ -1071,7 +1082,7 @@ public class ConfiguratorFragment extends Fragment {
                     break;
 
                 case 2 : case 3 : case 4 : case 5 : case 6:
-                    if(currentTime >= weekDayStartHour && currentTime <= weekDayEndHour){
+                    if(currentTime >= storeStartHourList.get(1) && currentTime <= storeEndHourList.get(1)){
                         storeStatusTextView.setText(R.string.store_open);
                     }
                     else{
@@ -1080,7 +1091,7 @@ public class ConfiguratorFragment extends Fragment {
                     break;
 
                 case 7:
-                    if(currentTime >= satStartHour && currentTime <= satEndHour){
+                    if(currentTime >= storeStartHourList.get(6) && currentTime <= storeEndHourList.get(6)){
                         storeStatusTextView.setText(R.string.store_open);
                     }
                     else{
@@ -1104,18 +1115,37 @@ public class ConfiguratorFragment extends Fragment {
             }
 
             String message = ApiError.getErrorMessage(retrofitError);
-            Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
+            ((MainActivity)activity).showErrorDialog(message);
             Log.d(TAG, message);
 
-            storeWrapper.setVisibility(View.GONE);
             storeWrapper.setState(DataWrapper.State.EMPTY);
         }
+    }
+
+    // "10:00AM" -> 1000 ; "6:00PM" -> 1800
+    private int parseTimeSpan(String time){
+        int formatTime = 0;
+
+        String[] tmp = time.trim().split(":");
+        String leftPart = tmp[0];
+        String rightPart = tmp[1].substring(0,2);
+        formatTime = Integer.parseInt(leftPart + rightPart);
+
+        if(tmp[1].contains("P")){
+            formatTime = formatTime + 1200;
+        }
+
+        //System.out.println(TAG + " - formatTime:" + formatTime);
+
+        return formatTime;
     }
 
     private void findMessageBarViews(){
         login_layout = (LinearLayout) configFrameView.findViewById(R.id.login_layout);
         login_info_layout = (LinearLayout) configFrameView.findViewById(R.id.login_info_layout);
         reward_layout = (LinearLayout) configFrameView.findViewById(R.id.reward_layout);
+        message_layout = (FrameLayout) configFrameView.findViewById(R.id.message_layout);
+        messageFrameLayout = (FrameLayout) configFrameView.findViewById(R.id.message_frame);
         rewardTextView = (TextView) configFrameView.findViewById(R.id.reward);
         loginMessageTextView = (TextView) configFrameView.findViewById(R.id.login_message);
         signInTextView = (TextView) configFrameView.findViewById(R.id.login_sign_in);
@@ -1123,6 +1153,8 @@ public class ConfiguratorFragment extends Fragment {
         usernameTextView = (TextView) configFrameView.findViewById(R.id.login_username);
         storeNameTextView = (TextView) configFrameView.findViewById(R.id.store_name);
         storeStatusTextView = (TextView) configFrameView.findViewById(R.id.store_status);
+        hideBannerView = configFrameView.findViewById(R.id.hide_banner);
+        showArrowImageView = (ImageView) configFrameView.findViewById(R.id.show_arrow);
     }
 
     private void updateMessageBar(){
@@ -1131,17 +1163,22 @@ public class ConfiguratorFragment extends Fragment {
         Access access = Access.getInstance();
         // Logged In
         if(access.isLoggedIn() && !access.isGuestLogin()){
-            Log.d(TAG, "Rewards: " + rewards);
+            float rewards = 0;
+            Member member = ProfileDetails.getMember();
+            if(member.getRewardsNumber() != null && member.getRewardDetails() != null) {
+                rewards = member.getRewardDetails().get(0).getAmountRewards();
+            }
 
-            if(!TextUtils.isEmpty(rewards)) {
+            if(rewards != 0) {
                 login_layout.setVisibility(View.GONE);
                 reward_layout.setVisibility(View.VISIBLE);
-                rewardTextView.setText("$" + rewards);
+                rewardTextView.setText("$" + (int) rewards);
+                Log.d(TAG, "Rewards: " + rewards);
             }
             else{
                 loginMessageTextView.setText(R.string.welcome);
                 usernameTextView.setVisibility(View.VISIBLE);
-                usernameTextView.setText(userName);
+                usernameTextView.setText(member.getUserName());
                 login_info_layout.setVisibility(View.GONE);
 
                 login_layout.setVisibility(View.VISIBLE);
@@ -1181,6 +1218,96 @@ public class ConfiguratorFragment extends Fragment {
                 mainActivity.selectFragment(new StoreFragment(), MainActivity.Transition.NONE, true);
             }
         });
+
+        messageFrameLayout.setOnTouchListener(new View.OnTouchListener() {
+            float first_y = 0;
+
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        // finger touches the screen
+                        first_y = event.getY();
+                        //System.out.println("first_y" + first_y);
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        // finger moves on the screen
+                        float current_y = event.getY();
+                        if(current_y - first_y < -5 && isMessageBarShow){
+                            hideMessageBar();
+                        }
+                        //System.out.println("current_y" + current_y);
+                        if(current_y - first_y > 0 && !isMessageBarShow){
+                            showMessageBar();
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        // finger leaves the screen
+                        break;
+                }
+                return true;
+            }
+        });
+
+//        message_layout.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent arg1) {
+//                // TODO Auto-generated method stub
+//                ClipData data = ClipData.newPlainText("", "");
+//                View.DragShadowBuilder shadow = new View.DragShadowBuilder(message_layout);
+//                v.startDrag(data, shadow, null, 0);
+//                return false;
+//            }
+//        });
+
+        hideBannerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent arg1) {
+                if(isMessageBarShow) {
+                    hideMessageBar();
+                }
+                return true;
+            }
+        });
+
+        showArrowImageView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent arg1) {
+                if(!isMessageBarShow) {
+                    showMessageBar();
+                }
+                return true;
+            }
+        });
+    }
+
+    private void showMessageBar(){
+        Animation fade_in = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
+        message_layout.startAnimation(fade_in);
+        hideBannerView.startAnimation(fade_in);
+
+        message_layout.setVisibility(View.VISIBLE);
+        showArrowImageView.setVisibility(View.GONE);
+        hideBannerView.setVisibility(View.VISIBLE);
+
+        isMessageBarShow = true;
+    }
+
+    private void hideMessageBar(){
+        Animation fade_out = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
+        message_layout.startAnimation(fade_out);
+        hideBannerView.startAnimation(fade_out);
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                message_layout.setVisibility(View.GONE);
+                showArrowImageView.setVisibility(View.VISIBLE);
+                hideBannerView.setVisibility(View.GONE);
+            }
+        }, 500);
+
+        isMessageBarShow = false;
     }
 
 //    @Override

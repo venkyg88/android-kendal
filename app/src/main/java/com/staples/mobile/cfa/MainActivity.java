@@ -241,6 +241,12 @@ public class MainActivity extends Activity
         }
     }
 
+    public void showErrorDialog(int msgId) {
+        showErrorDialog(msgId, false);
+    }
+    public void showErrorDialog(String msg) {
+        showErrorDialog(msg, false);
+    }
     public void showErrorDialog(int msgId, boolean fatal) {
         showErrorDialog(getResources().getString(msgId), fatal);
     }
@@ -351,7 +357,7 @@ public class MainActivity extends Activity
                 // if login info cached, log in as registered user
                 if (loginHelper.loadCachedLoginInfo()) {
                     loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
-                        @Override public void onProfileRefresh(Member member) {
+                        @Override public void onProfileRefresh(Member member, String errMsg) {
                             if (member == null) {
                                 // if cached login failed, initiate guest log in
                                 loginHelper.getGuestTokens();
@@ -436,6 +442,7 @@ public class MainActivity extends Activity
     public boolean selectFragment(Fragment fragment, Transition transition, boolean push, String tag) {
         // Make sure all drawers are closed
         drawerLayout.closeDrawers();
+        ActionBar.getInstance().closeSearch();
 
         // Swap Fragments
         FragmentManager manager = getFragmentManager();
@@ -475,7 +482,7 @@ public class MainActivity extends Activity
                 fragment = GuestCheckoutFragment.newInstance(couponsRewardsAmount,
                         CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal(), deliveryRange);
             }
-            return selectFragment(fragment, Transition.NONE, true);
+            return selectFragment(fragment, Transition.NONE, true, CheckoutFragment.TAG);
         }
         return false;
     }
@@ -513,9 +520,9 @@ public class MainActivity extends Activity
         return(selectFragment(fragment, Transition.UP, true));
     }
 
-    public boolean selectSkuItem(String title, String identifier) {
+    public boolean selectSkuItem(String title, String identifier, boolean isSkuSetOriginated) {
         SkuFragment fragment = new SkuFragment();
-        fragment.setArguments(title, identifier);
+        fragment.setArguments(title, identifier, isSkuSetOriginated);
 
         // set animated bar in sku page
 //        initAnimatedBar();
@@ -610,7 +617,20 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.close_button:
-                selectShoppingCart();
+                FragmentManager manager = getFragmentManager();
+                Fragment checkOutFragment = manager.findFragmentByTag(CheckoutFragment.TAG);
+
+                if (checkOutFragment != null && checkOutFragment.isVisible()) {
+                    selectShoppingCart();
+                } else {
+                    if (manager != null) {
+                        manager.popBackStack(); // this will take us back to one of the many places that could have opened this page
+                    }
+                }
+                break;
+
+            case R.id.back_button:
+                ActionBar.getInstance().closeSearch();
                 break;
 
             case R.id.account_button:
@@ -619,13 +639,6 @@ public class MainActivity extends Activity
                     selectDrawerItem(homeDrawerItem, Transition.RIGHT, true);
                 } else {
                     selectLoginFragment();
-                }
-                break;
-
-            case R.id.search_view:
-                String query = ((SearchView) view).getQuery().toString().trim();
-                if (!query.isEmpty()) {
-                    selectSearch(query);
                 }
                 break;
         }
