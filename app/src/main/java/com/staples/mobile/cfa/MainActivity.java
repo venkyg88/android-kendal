@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -67,6 +68,7 @@ public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener,
         LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback{
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final boolean LOGGING = false;
 
     private static final int SURRENDER_TIMEOUT = 5000;
     private static final int CONNECTIVITY_CHECK_INTERVAL = 300000; // in milliseconds (e.g. 300000=5min)
@@ -122,7 +124,10 @@ public class MainActivity extends Activity
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-
+        if (LOGGING) {
+            Log.v(TAG, "MainActivity:onCreate():"
+                    + " bundle[" + bundle + "]");
+        }
         // Note: error handling for no network availability will happen in ensureActiveSession() called from onResume()
         if (isNetworkAvailable()) {
 
@@ -337,7 +342,12 @@ public class MainActivity extends Activity
     }
 
     public void onGetConfiguratorResult(Configurator configurator, boolean success, RetrofitError retrofitError) {
-
+        if (LOGGING) {
+            Log.v(TAG, "MainActivity:AppConfigurator.onGetConfiguratorResult():"
+                    + " success[" + success + "]"
+                    + " retrofitError[" + retrofitError + "]"
+                    + " configurator[" + configurator + "]");
+        }
         // note that retrofitError may be non-null even if success==true, since config may have been
         // successfully drawn from a persisted location following a failed network attempt.
         // Regardless of success, if retrofitError not null, check for the redirect error condition
