@@ -35,6 +35,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -64,8 +65,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class StoreFragment extends Fragment implements Callback<StoreQuery>, GoogleMap.OnMarkerClickListener,
-            GoogleMap.OnMapClickListener, View.OnClickListener, EditText.OnEditorActionListener {
+public class StoreFragment extends Fragment implements Callback<StoreQuery>,
+        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, View.OnClickListener, EditText.OnEditorActionListener {
     private static final String TAG = "StoreFragment";
 
     private static int FITSTORES = 5; // Number of stores to fit in initial view
@@ -96,23 +97,13 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
             view = inflater.inflate(R.layout.store_fragment_map, container, false);
             mapView = (MapView) view.findViewById(R.id.map);
             mapView.onCreate(bundle);
-
-            googleMap = mapView.getMap();
-            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-            googleMap.setMyLocationEnabled(true);
-            googleMap.setOnMarkerClickListener(this);
-            googleMap.setOnMapClickListener(this);
-
-            MapsInitializer.initialize(getActivity());
-
-            // Create icons
-            hotIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-            coldIcon = BitmapDescriptorFactory.fromResource(R.drawable.ic_store_cold);
+            mapView.getMapAsync(this);
         }
 
         // No Google Play Services
         else {
             view = inflater.inflate(R.layout.store_fragment_nomap, container, false);
+            gotoHere();
         }
 
         list = (RecyclerView) view.findViewById(R.id.list);
@@ -123,29 +114,52 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         adapter.setSingleMode(mapView!=null);
         adapter.setFullStoreDetail(false); // initially only summary store info is displayed
 
-
         searchText = (EditText) view.findViewById(R.id.store_search);
         searchText.setOnEditorActionListener(this);
         searchText.setHint(getHint());
 
+        view.findViewById(R.id.store_here).setOnClickListener(this);
+
+        return (view);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        googleMap.setMyLocationEnabled(true);
+        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+        // Set listeners
+        googleMap.setOnMarkerClickListener(this);
+        googleMap.setOnMapClickListener(this);
+
+        // Create icons
+        MapsInitializer.initialize(getActivity());
+        hotIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+        coldIcon = BitmapDescriptorFactory.fromResource(R.drawable.ic_store_cold);
+
+        gotoHere();
+    }
+
+    private void gotoHere() {
         // Get location
         LocationFinder finder = LocationFinder.getInstance(getActivity());
         location = finder.getLocation();
         if (location==null) {
             Toast.makeText(getActivity(), "LocationFinder.getLocation returned null", Toast.LENGTH_LONG).show();
-            return(view);
+            return;
         }
 
         // Get postal code
         String postalCode = finder.getPostalCode();
         if (postalCode==null) {
             Toast.makeText(getActivity(), "LocationFinder.getPostalCode returned null", Toast.LENGTH_LONG).show();
-            return(view);
+            return;
         }
 
         // Find nearby stores
         Access.getInstance().getChannelApi(false).storeLocations(postalCode, this);
-        return (view);
     }
 
     private CharSequence getHint() {
@@ -343,13 +357,13 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         switch(actionId) {
             case EditorInfo.IME_ACTION_SEARCH:
                 doSearch();
-                return(true);
+                break;
             case EditorInfo.IME_NULL:
                 if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER &&
-                        event.getAction()==KeyEvent.ACTION_DOWN) {
+                    event.getAction()==KeyEvent.ACTION_DOWN) {
                     doSearch();
                 }
-                return(true);
+                break;
         }
         return(false);
     }
@@ -571,6 +585,9 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>, Goo
         switch(view.getId()) {
             case R.id.option_icon:
                 toggleView();
+                break;
+            case R.id.store_here:
+                gotoHere();
                 break;
             case R.id.store_item:
                 if (!adapter.isFullStoreDetail()) {

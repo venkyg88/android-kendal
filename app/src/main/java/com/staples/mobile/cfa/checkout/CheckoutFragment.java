@@ -23,7 +23,7 @@ import java.text.NumberFormat;
 
 
 public abstract class CheckoutFragment extends Fragment implements View.OnClickListener {
-    private static final String TAG = CheckoutFragment.class.getSimpleName();
+    public static final String TAG = CheckoutFragment.class.getSimpleName();
 
     // bundle param keys
     public static final String BUNDLE_PARAM_COUPONSREWARDS = "couponsRewards";

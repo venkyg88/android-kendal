@@ -124,7 +124,8 @@
 	<string name="last_name_label">Last Name</string>
 	<string name="phone_label">Phone</string>
 	<string name="shipto_address_label">Ship-to Address</string>
-	<string name="appartment_label">Apt/Suite/Bldg Number</string>
+	<string name="address_label">Address</string>
+	<string name="apartment_label">Apt/Suite/Bldg Number</string>
 	<string name="city_label">City</string>
 	<string name="state_label">State</string>
 	<string name="zip_code_label">Zip Code</string>
@@ -146,6 +147,8 @@
     <string name="order_confirmation_with_error">An error occurred, but your order appears to have gone through."</string>
     <string name="password_reset">Reset Password</string>
     <string name="continue_shopping">Continue Shopping</string>
+    <string name="sku_set_message">Select product options</string>
+    <string name="sku_title">Select items</string>
 
     <!--profile-->
     <string name="password">Password</string>
@@ -214,4 +217,8 @@
     <string name="error_server_connection">Unable to contact server at this time. Please try again later.</string>
     <string name="error_redirect">Please sign in to guest network and then try again.</string>
     <string name="error_no_location_service">Can\'t find nearby stores because location service is not available.</string>
+
+    <string-array name="skuset_detail">
+        <item>Select product options</item>
+    </string-array>
 </resources>
