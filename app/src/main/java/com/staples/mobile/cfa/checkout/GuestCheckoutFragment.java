@@ -198,7 +198,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         setupLabeledEditText(layoutView, R.id.phoneNumber, R.id.phoneLabel);
         setupLabeledEditText(layoutView, R.id.addressACTV, R.id.addressLabel);
         setupLabeledEditText(layoutView, R.id.addressET, R.id.addressLabel);
-        setupLabeledEditText(layoutView, R.id.appartment, R.id.appartmentLabel);
+        setupLabeledEditText(layoutView, R.id.apartment, R.id.apartmentLabel);
         setupLabeledEditText(layoutView, R.id.city, R.id.cityLabel);
         setupLabeledEditText(layoutView, R.id.state, R.id.stateLabel);
         setupLabeledEditText(layoutView, R.id.zipCode, R.id.zipCodeLabel);
@@ -263,10 +263,12 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         // change labels from GONE to INVISIBLE so that they take up space
         // change inputs to VISIBLE
 
-        layoutView.findViewById(R.id.addressET).setVisibility(View.VISIBLE);
+        View manualAddressVw = layoutView.findViewById(R.id.addressET);
+        manualAddressVw.setVisibility(View.VISIBLE);
+        manualAddressVw.requestFocus();
 
-        layoutView.findViewById(R.id.appartmentLabel).setVisibility(View.INVISIBLE);
-        layoutView.findViewById(R.id.appartment).setVisibility(View.VISIBLE);
+        layoutView.findViewById(R.id.apartmentLabel).setVisibility(View.INVISIBLE);
+        layoutView.findViewById(R.id.apartment).setVisibility(View.VISIBLE);
 
         layoutView.findViewById(R.id.cityLabel).setVisibility(View.INVISIBLE);
         layoutView.findViewById(R.id.city).setVisibility(View.VISIBLE);
@@ -277,11 +279,11 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         layoutView.findViewById(R.id.zipCodeLabel).setVisibility(View.INVISIBLE);
         layoutView.findViewById(R.id.zipCode).setVisibility(View.VISIBLE);
 
-        layoutView.findViewById(R.id.appartmentLabel).setVisibility(View.INVISIBLE);
-        layoutView.findViewById(R.id.appartment).setVisibility(View.VISIBLE);
+        layoutView.findViewById(R.id.apartmentLabel).setVisibility(View.INVISIBLE);
+        layoutView.findViewById(R.id.apartment).setVisibility(View.VISIBLE);
 
-        layoutView.findViewById(R.id.appartmentLabel).setVisibility(View.INVISIBLE);
-        layoutView.findViewById(R.id.appartment).setVisibility(View.VISIBLE);
+        layoutView.findViewById(R.id.apartmentLabel).setVisibility(View.INVISIBLE);
+        layoutView.findViewById(R.id.apartment).setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -344,7 +346,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         EditText firstNameVw = (EditText)layoutView.findViewById(R.id.firstName);
         EditText lastNameVw = (EditText)layoutView.findViewById(R.id.lastName);
         EditText addressVw = (EditText)layoutView.findViewById(R.id.addressET);
-        EditText apartmentVw = (EditText)layoutView.findViewById(R.id.appartment);
+        EditText apartmentVw = (EditText)layoutView.findViewById(R.id.apartment);
         EditText cityVw = (EditText)layoutView.findViewById(R.id.city);
         EditText stateVw = (EditText)layoutView.findViewById(R.id.state);
         EditText phoneNumberVw = (EditText)layoutView.findViewById(R.id.phoneNumber);
