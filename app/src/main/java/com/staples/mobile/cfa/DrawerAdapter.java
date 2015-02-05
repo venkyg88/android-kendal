@@ -1,6 +1,5 @@
 package com.staples.mobile.cfa;
 
-import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +15,6 @@ import com.staples.mobile.cfa.profile.OrderFragment;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.rewards.RewardsFragment;
 import com.staples.mobile.cfa.store.StoreFragment;
-import com.staples.mobile.cfa.widget.DataWrapper;
-import com.staples.mobile.common.access.Access;
 
 import java.util.ArrayList;
 
@@ -85,7 +82,7 @@ public class DrawerAdapter extends BaseAdapter {
         }
 
         // Set callback
-        View button = view.findViewById(R.id.account_button);
+        View button = view.findViewById(R.id.account_option);
         if (button!=null) button.setOnClickListener(activity);
 
         return(view);
