@@ -214,12 +214,6 @@ public class AddressFragment extends Fragment
         ActionBar.getInstance().setConfig(ActionBar.Config.ADDRESS);
     }
 
-    public void hideKeyboard(View view)
-    {
-        InputMethodManager keyboard = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
         if (LOGGING) Log.v(TAG, "AddressFragment:onItemClick():"
@@ -228,7 +222,7 @@ public class AddressFragment extends Fragment
                         + " this[" + this + "]"
         );
 
-        hideKeyboard(addressLineACTV);
+        ((MainActivity)activity).hideSoftKeyboard(addressLineACTV);
 
         String inputManually = resources.getString(R.string.input_manually_allcaps);
         String resultItem = placesArrayAdapter.getItem(position);
@@ -261,7 +255,7 @@ public class AddressFragment extends Fragment
 
     @Override
     public void onClick(View view) {
-        hideKeyboard(view);
+        ((MainActivity)activity).hideSoftKeyboard(view);
         ((MainActivity)activity).showProgressIndicator();
 
         if (entryMode == ENTRY_MODE.AUTO_COMPLETE) {
