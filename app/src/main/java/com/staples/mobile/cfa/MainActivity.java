@@ -347,7 +347,8 @@ public class MainActivity extends Activity
             Log.v(TAG, "MainActivity:AppConfigurator.onGetConfiguratorResult():"
                     + " success[" + success + "]"
                     + " retrofitError[" + retrofitError + "]"
-                    + " configurator[" + configurator + "]");
+                    + " configurator[" + configurator + "]"
+                    + " this[" + this + "]");
         }
         // note that retrofitError may be non-null even if success==true, since config may have been
         // successfully drawn from a persisted location following a failed network attempt.
