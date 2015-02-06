@@ -5,7 +5,6 @@
 package com.staples.mobile.cfa.cart;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -88,6 +86,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     // widget listeners
     private QtyDeleteButtonListener qtyDeleteButtonListener;
     private QtyChangeListener qtyChangeListener;
+    private ProductImageListener productImageListener;
     //private QtyUpdateButtonListener qtyUpdateButtonListener;
 
     private DecimalFormat currencyFormat;
@@ -133,6 +132,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         // create widget listeners
         qtyChangeListener = new QtyChangeListener();
         qtyDeleteButtonListener = new QtyDeleteButtonListener();
+        productImageListener = new ProductImageListener();
 //        qtyUpdateButtonListener = new QtyUpdateButtonListener();
 
         // Initialize coupon listview
@@ -143,7 +143,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
 
         // Initialize cart listview
-        cartAdapter = new CartAdapter(activity, R.layout.cart_item_group, qtyChangeListener, qtyDeleteButtonListener);
+        cartAdapter = new CartAdapter(activity, R.layout.cart_item_group, qtyChangeListener,
+                qtyDeleteButtonListener, productImageListener);
         cartAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
@@ -576,9 +577,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     class QtyChangeListener implements QuantityEditor.OnQtyChangeListener {
         @Override
         public void onQtyChange(View view, int value) {
-            CartAdapter.CartItemPosition position = (CartAdapter.CartItemPosition)view.getTag();
-            CartItemGroup cartItemGroup = cartAdapter.getItem(position.groupPosition);
-            CartItem cartItem = cartItemGroup.getCartItems().get(position.itemPositionWithinGroup);
+            CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition)view.getTag());
 
             // default proposed qty to orig in case new value not parseable;
             cartItem.setProposedQty(value);
@@ -592,9 +591,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
         @Override
         public void onClick(View view) {
-            CartAdapter.CartItemPosition position = (CartAdapter.CartItemPosition)view.getTag();
-            CartItemGroup cartItemGroup = cartAdapter.getItem(position.groupPosition);
-            CartItem cartItem = cartItemGroup.getCartItems().get(position.itemPositionWithinGroup);
+            CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition)view.getTag());
 
             activity.hideSoftKeyboard(view);
 
@@ -606,6 +603,14 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         }
     }
 
+    /** listener class for item deletion button */
+    class ProductImageListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition)view.getTag());
+            activity.selectSkuItem(cartItem.getDescription(), cartItem.getSku(), false);
+        }
+    }
 
 //    /** listener class for quantity update button */
 //    class QtyUpdateButtonListener implements View.OnClickListener {
