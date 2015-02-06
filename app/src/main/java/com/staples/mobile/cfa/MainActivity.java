@@ -388,15 +388,14 @@ public class MainActivity extends Activity
 
     @Override
     public void onLoginComplete(boolean guestLevel) {
-        // if registered user, update menu state and load cart info
-        if (!guestLevel) {
-            CartApiManager.loadCart(new CartApiManager.CartRefreshCallback() {
-                @Override
-                public void onCartRefreshComplete(String errMsg) {
-                    ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
-                }
-            });
-        }
+        // reload cart info (even if only a guest login because needed on device rotation)
+        CartApiManager.loadCart(new CartApiManager.CartRefreshCallback() {
+            @Override
+            public void onCartRefreshComplete(String errMsg) {
+                ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
+            }
+        });
+
         // enable/disable left drawer menu items that depend upon login
         refreshMenuItemState(!guestLevel);
     }
