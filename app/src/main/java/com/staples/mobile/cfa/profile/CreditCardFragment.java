@@ -156,15 +156,10 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         ActionBar.getInstance().setConfig(ActionBar.Config.ADDCARD);
     }
 
-    public void hideKeyboard(View view)
-    {
-        InputMethodManager keyboard = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
 
     @Override
     public void onClick(View view) {
-        hideKeyboard(view);
+        activity.hideSoftKeyboard(view);
         activity.showProgressIndicator();
         creditCardNumber = cardNumberET.getText().toString();
         String expirationDate = expDateET.getText().toString();

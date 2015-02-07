@@ -20,7 +20,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -72,8 +71,9 @@ public class MainActivity extends Activity
     private static final int CONNECTIVITY_CHECK_INTERVAL = 300000; // in milliseconds (e.g. 300000=5min)
 
     private DrawerLayout drawerLayout;
-    private ListView leftDrawer;
-    private DrawerAdapter leftDrawerAdapter;
+    private ViewGroup leftDrawer;
+    private ListView leftMenu;
+    private DrawerAdapter leftMenuAdapter;
     private LinearLayoutWithProgressOverlay mainLayout;
     private CartFragment cartFragment;
     private DrawerItem homeDrawerItem;
@@ -284,18 +284,19 @@ public class MainActivity extends Activity
 
         // Find top-level entities
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        leftDrawer = (ListView) findViewById(R.id.left_drawer);
+        leftDrawer = (ViewGroup) findViewById(R.id.left_drawer);
+        leftMenu = (ListView) findViewById(R.id.left_menu);
         mainLayout = (LinearLayoutWithProgressOverlay)findViewById(R.id.main);
         mainLayout.setProgressOverlay(findViewById(R.id.progress_overlay));
 
         // Initialize left drawer listview
-        leftDrawerAdapter = new DrawerAdapter(this);
-        leftDrawer.setAdapter(leftDrawerAdapter);
-        leftDrawerAdapter.fill();
-        leftDrawer.setOnItemClickListener(this);
+        leftMenuAdapter = new DrawerAdapter(this);
+        leftMenu.setAdapter(leftMenuAdapter);
+        leftMenuAdapter.fill();
+        leftMenu.setOnItemClickListener(this);
 
         // Create non-drawer DrawerItems
-        homeDrawerItem = leftDrawerAdapter.getItem(0); // TODO Hard-coded alias
+        homeDrawerItem = leftMenuAdapter.getItem(0); // TODO Hard-coded alias
 
         // Cart
         cartFragment = new CartFragment();
@@ -381,12 +382,12 @@ public class MainActivity extends Activity
 
     private void refreshMenuItemState(boolean registeredUser) {
         // enable/disable left drawer menu items that depend upon login
-        int itemCount = leftDrawerAdapter.getCount();
+        int itemCount = leftMenuAdapter.getCount();
         for (int position = 0; position < itemCount; position++) {
-            DrawerItem item = leftDrawerAdapter.getItem(position);
+            DrawerItem item = leftMenuAdapter.getItem(position);
             if (item.fragmentClass == RewardsFragment.class || item.fragmentClass == OrderFragment.class) {
                 item.enabled = registeredUser;
-                leftDrawerAdapter.notifyDataSetChanged();
+                leftMenuAdapter.notifyDataSetChanged();
             }
         }
 
