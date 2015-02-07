@@ -172,9 +172,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
             if(!email.isEmpty() && !password.isEmpty())
             {
-                if (!loginHelper.isGuestLogin()) {
-                    Access.getInstance().setTokens(null, null, false);
-                }
                 activity.showProgressIndicator();
                 loginHelper.registerUser(email, password, new ProfileDetails.ProfileRefreshCallback() {
                     @Override

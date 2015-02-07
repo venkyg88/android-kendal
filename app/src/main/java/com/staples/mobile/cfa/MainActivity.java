@@ -83,6 +83,7 @@ public class MainActivity extends Activity
 
 
     private LoginHelper loginHelper;
+    boolean initialLoginComplete;
 
     private AppConfigurator appConfigurator;
 
@@ -131,6 +132,7 @@ public class MainActivity extends Activity
 
             LocationFinder.getInstance(this);
 
+            initialLoginComplete = false;
             appConfigurator = AppConfigurator.getInstance();
             appConfigurator.getConfigurator(this); // AppConfiguratorCallback
         }
@@ -201,38 +203,26 @@ public class MainActivity extends Activity
             // first check for network connectivity
             if (isNetworkAvailable()) {
 
-                // if configurator available
-                if (AppConfigurator.getInstance().getConfigurator() != null) {
-
-                    // if app thinks we are logged in, attempt a small easyopen api call to ensure session is active
-                    final LoginHelper loginHelper = new LoginHelper(this);
-                    if (loginHelper.isLoggedIn()) {
-                        // make call requiring secure api which will fail if expired tokens.
-                        // If the session is expired, this test will give us the desired
-                        // "_ERR_INVALID_COOKIE" failure regardless of guest or user session.
-                        // If the session is okay, it will fail for guest session but with a
-                        // different error code, so the following logic is okay.
-                        EasyOpenApi api = Access.getInstance().getEasyOpenApi(true);
-                        api.getMemberProfile(new Callback<MemberDetail>() {
-                            @Override public void success(MemberDetail memberDetail, Response response) {}
-                            @Override public void failure(RetrofitError error) {
-                                ApiError apiError = ApiError.getApiError(error);
-                                // An example of response code of 401 (unauthorized) is:
-                                // errorKey: "_ERR_INVALID_COOKIE", errorMessage: "CMN1039E: An invalid cookie was received for the user, your logonId may be in use by another user."
-                                // But there's also response code of 400 with the following:
-                                // errorCode: "1012", errorMessage: "Activity token "41741260" has been terminated."
-                                if (apiError.getHttpStatusCode() == 401 || // test for 401 (unauthorized)
-                                    "1012".equals(apiError.getErrorCode()) // test for terminated activity token (http response 400)
-                                    ) {
-                                    // reestablish session
-                                    loginHelper.refreshSession();
-                                } else if (apiError.getHttpStatusCode() >= 300 && apiError.getHttpStatusCode() <= 399) {
-                                    // else if a redirection error
-                                    showErrorDialog(R.string.error_redirect, true);
-                                }
+                // if initial login complete, then attempt a small easyopen api call to ensure session is still active
+                if (initialLoginComplete) {
+                    // make call requiring secure api which will fail if expired tokens.
+                    // If the session is expired, this test will give us the desired
+                    // "_ERR_INVALID_COOKIE" failure regardless of guest or user session.
+                    // If the session is okay, it will fail for guest session (since no profile for guest)
+                    // but with a different error code, so the following logic is okay.
+                    EasyOpenApi api = Access.getInstance().getEasyOpenApi(true);
+                    api.getMemberProfile(new Callback<MemberDetail>() {
+                        @Override public void success(MemberDetail memberDetail, Response response) {}
+                        @Override public void failure(RetrofitError error) {
+                            ApiError apiError = ApiError.getApiError(error);
+                            if (apiError.isAuthenticationError()) {
+                                // reestablish session
+                                new LoginHelper(MainActivity.this).refreshSession();
+                            } else if (apiError.isRedirectionError()) {
+                                showErrorDialog(R.string.error_redirect, true);
                             }
-                        });
-                    }
+                        }
+                    });
                 }
             } else {
                 showNetworkSettingsDialog();
@@ -323,18 +313,10 @@ public class MainActivity extends Activity
             @Override public void onAnimationRepeat(Animation animation) { }
         });
 
-        // DLS: show main screen when configurator available. Configurator fragment now needs profile
-        // info to be loaded before it can be displayed.
-
-        // Fresh start?
-//        if (freshStart) {
-//            Runnable runs = new Runnable() {public void run() {
-//                showMainScreen();}};
-//            new Handler().postDelayed(runs, SURRENDER_TIMEOUT);
-//        } else {
-//            showMainScreen();
-//        }
+        // DLS: wait to show main screen until configurator available. Configurator fragment needs
+        // profile info to be loaded before it can be displayed.
     }
+
 
     public void onGetConfiguratorResult(Configurator configurator, boolean success, RetrofitError retrofitError) {
 
@@ -343,8 +325,7 @@ public class MainActivity extends Activity
         // Regardless of success, if retrofitError not null, check for the redirect error condition
         if (retrofitError != null) {
             ApiError apiError = ApiError.getApiError(retrofitError);
-            int status = apiError.getHttpStatusCode();
-            if (status >= 300 && status <= 399) {
+            if (apiError.isRedirectionError()) {
                 showErrorDialog(R.string.error_redirect, true);
                 return;
             }
@@ -355,31 +336,15 @@ public class MainActivity extends Activity
 
             loginHelper = new LoginHelper(this);
             loginHelper.registerLoginCompleteListener(this);
-            // if already logged in (e.g. when device is rotated), don't login again, but do notify
-            // that login is complete so that cart can be refilled
-            if (loginHelper.isLoggedIn()) {
-                onLoginComplete(loginHelper.isGuestLogin());
-                showMainScreen();
-            } else {
-                // if login info cached, log in as registered user
-                if (loginHelper.loadCachedLoginInfo()) {
-                    loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
-                        @Override public void onProfileRefresh(Member member, String errMsg) {
-                            if (member == null) {
-                                // if cached login failed, initiate guest log in
-                                loginHelper.getGuestTokens();
-                            }
-                            // open home page after profile loaded (if available) since home page now needs it
-                            showMainScreen();
-                        }
-                    });
-                } else {
-                    // otherwise, log in as guest
-                    loginHelper.getGuestTokens();
-                    // open home page
+
+            // do login based on persisted cache if available
+            loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
+                @Override public void onProfileRefresh(Member member, String errMsg) {
+                    initialLoginComplete = true;
+                    // open home page after profile loaded (if available) since home page now needs it
                     showMainScreen();
                 }
-            }
+            });
 
         } else { // can't get configurator from network or from persisted file
             showErrorDialog(R.string.error_server_connection, true);
