@@ -145,86 +145,116 @@
 
     <!--by default, set this to below phone number since email address will not be visible except
         in guest checkout. Guest checkout will take care of adjusting positioning for itself. -->
-	<TextView
-		android:id="@+id/addressLabel"
-		android:layout_below="@id/phoneNumber"
-		android:ems="10"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentStart="true"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="8dp"
-		android:layout_width="wrap_content"
-		android:paddingLeft="4dp"
-		android:text="@string/address_label"
-		android:textColor="@color/text_blue"
-		android:visibility="invisible"
-	/>
-
 	<LinearLayout
 		android:id="@+id/addressLayout"
-		android:layout_below="@id/addressLabel"
+		android:layout_below="@id/phoneNumber"
 		android:layout_alignEnd="@+id/lastName"
 		android:layout_alignParentLeft="true"
 		android:layout_alignParentStart="true"
 		android:layout_alignRight="@+id/lastName"
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
-		android:orientation="vertical"
-	>
-		<AutoCompleteTextView
-			android:id="@+id/addressACTV"
-			android:ems="10"
-			android:hint="@string/address_label"
-			android:dropDownAnchor="@+id/autoCompleteAnchor"
-			android:inputType="textPostalAddress"
-			android:layout_height="wrap_content"
-			android:layout_width="match_parent"
-		/>
+		android:orientation="horizontal">
 
-		<EditText
-			android:id="@+id/addressET"
-			android:ems="10"
-			android:hint="@string/address_label"
-			android:inputType="textPostalAddress"
-			android:layout_height="wrap_content"
-			android:layout_width="match_parent"
-			android:visibility="gone"
-		/>
+        <!--address autocomplete and its label-->
+        <LinearLayout
+            android:id="@+id/addressACTVLayout"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/addressACTVLabel"
+                android:ems="10"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_width="wrap_content"
+                android:paddingLeft="4dp"
+                android:text="@string/address_label"
+                android:textColor="@color/text_blue"
+                android:visibility="invisible"
+                />
+
+            <AutoCompleteTextView
+                android:id="@+id/addressACTV"
+                android:ems="10"
+                android:hint="@string/address_label"
+                android:dropDownAnchor="@+id/autoCompleteAnchor"
+                android:inputType="textPostalAddress"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+            />
+        </LinearLayout>
+
+        <!--address manual-entry and its label-->
+        <LinearLayout
+            android:id="@+id/addressManualLayout"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/addressLabel"
+                android:layout_below="@id/phoneNumber"
+                android:ems="10"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_width="wrap_content"
+                android:paddingLeft="4dp"
+                android:text="@string/address_label"
+                android:textColor="@color/text_blue"
+                android:visibility="invisible"
+                />
+            <EditText
+                android:id="@+id/addressET"
+                android:ems="10"
+                android:hint="@string/address_label"
+                android:inputType="textPostalAddress"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+            />
+        </LinearLayout>
+
+        <!--apartment and its label-->
+        <LinearLayout
+            android:id="@+id/apartmentLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/apartmentLabel"
+                android:ems="10"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_width="wrap_content"
+                android:paddingLeft="4dp"
+                android:text="@string/apartment_label"
+                android:textColor="@color/text_blue"
+                android:visibility="invisible"
+                />
+
+            <EditText
+                android:id="@+id/apartment"
+                android:ems="10"
+                android:hint="@string/apartment_label"
+                android:inputType="textPostalAddress"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                />
+        </LinearLayout>
 	</LinearLayout>
 
-	<TextView
-		android:id="@+id/apartmentLabel"
-		android:layout_below="@id/addressLayout"
-		android:ems="10"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentStart="true"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="8dp"
-		android:layout_width="wrap_content"
-		android:paddingLeft="4dp"
-		android:text="@string/apartment_label"
-		android:textColor="@color/text_blue"
-		android:visibility="gone"
-	/>
-
-    <EditText
-		android:id="@+id/apartment"
-		android:layout_below="@id/apartmentLabel"
-        android:ems="10"
-		android:hint="@string/apartment_label"
-        android:inputType="textPostalAddress"
-		android:layout_alignEnd="@+id/lastName"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/lastName"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-		android:visibility="gone"
-	/>
 
 	<TextView
 		android:id="@+id/cityLabel"
-		android:layout_below="@id/apartment"
+		android:layout_below="@id/addressLayout"
 		android:ems="10"
 		android:layout_alignParentLeft="true"
 		android:layout_alignParentStart="true"
