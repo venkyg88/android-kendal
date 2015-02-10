@@ -40,7 +40,8 @@ public class ActionBar extends LinearLayout {
         SKU      (false, false, true,  false, true,  false, true,  false, 0),
         SKUSET   (true, false, false,  false, false,  false, false,  false, R.string.sku_title),
         STORE    (false, false, true,  false, false, false, true,  false, R.string.store_locator_title),
-        VIEWCARD (false, false, true,  false, true,  false, true,  false, R.string.credit_card_title);
+        VIEWCARD (false, false, true,  false, true,  false, true,  false, R.string.credit_card_title),
+        WEEKLYAD (false, false, true,  false, true,  false, true,  false, R.string.weekly_ad_title);
 
         private boolean close;
         private boolean back;

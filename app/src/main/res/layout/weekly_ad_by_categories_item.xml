@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_white">
+    <ImageView
+        android:id="@+id/weekly_ad_category_image"
+        android:layout_width="@dimen/weekly_ad_category_item_image_width"
+        android:layout_height="@dimen/weekly_ad_category_item_image_height"
+        android:layout_weight="1"
+
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="12dp"/>
+
+    <TextView
+        android:id="@+id/weekly_ad_category_title_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:lines="2"
+        android:ellipsize="end"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:paddingLeft="15dip"
+        android:paddingTop="10dip"
+        android:textColor="@color/text_nearly_black"/>
+    <TextView
+        android:id="@+id/weekly_ad_category_deals_count_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:lines="2"
+        android:ellipsize="end"
+        android:textSize="18sp"
+        android:paddingLeft="15dip"
+        android:paddingTop="15dip"
+        android:textColor="@color/text_red"/>
+</RelativeLayout>
