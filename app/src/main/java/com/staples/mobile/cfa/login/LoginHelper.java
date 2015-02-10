@@ -282,8 +282,8 @@ public class LoginHelper {
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
-                        Log.i("Fail Message to Register User", " " + retrofitError.getMessage());
-                        Log.i("Post URL address For Register User", " " + retrofitError.getUrl());
+                        Log.i(TAG, "Fail Message to Register User: " + retrofitError.getMessage());
+                        Log.i(TAG, "Post URL address For Register User: " + retrofitError.getUrl());
                         if (callback != null) {
                             callback.onProfileRefresh(null, ApiError.getErrorMessage(retrofitError));
                         }

@@ -3,23 +3,17 @@ package com.staples.mobile.cfa.profile;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-
 import android.content.res.Resources;
-
 import android.os.Bundle;
-
 import android.text.TextUtils;
 import android.util.Log;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -42,7 +36,6 @@ import retrofit.client.Response;
  */
 public class AddressFragment extends Fragment
     implements View.OnClickListener,
-               View.OnFocusChangeListener,
                AdapterView.OnItemClickListener,
                PlacesArrayAdapter.PlaceDataCallback
 {
@@ -80,20 +73,6 @@ public class AddressFragment extends Fragment
     EditText phoneNumberET;
     EditText zipCodeET;
 
-    TextView firstNameLabel;
-    TextView lastNameLabel;
-    TextView phoneLabel;
-    TextView addressACTVLabel;
-    TextView addressLabel;
-    TextView apartmentLabel;
-    TextView cityLabel;
-    TextView stateLabel;
-    TextView zipCodeLabel;
-
-    View addressACTVLayout;
-    View addressManualLayout;
-    View apartmentLayout;
-
     AutoCompleteTextView addressLineACTV;
     private PlacesArrayAdapter placesArrayAdapter;
     private PlacesArrayAdapter.PlaceData placeData;
@@ -112,64 +91,15 @@ public class AddressFragment extends Fragment
         activity = getActivity();
         resources = activity.getResources();
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
-        View view = inflater.inflate(R.layout.add_address_actv_fragment, container, false);
-
-        firstNameLabel = (TextView) view.findViewById(R.id.firstNameLabel);
-        lastNameLabel = (TextView) view.findViewById(R.id.lastNameLabel);
-        phoneLabel = (TextView) view.findViewById(R.id.phoneLabel);
-        addressACTVLabel = (TextView) view.findViewById(R.id.addressACTVLabel);
-        addressLabel = (TextView) view.findViewById(R.id.addressLabel);
-        apartmentLabel = (TextView) view.findViewById(R.id.apartmentLabel);
-        cityLabel = (TextView) view.findViewById(R.id.cityLabel);
-        stateLabel = (TextView) view.findViewById(R.id.stateLabel);
-        zipCodeLabel = (TextView) view.findViewById(R.id.zipCodeLabel);
-
-        firstNameET = (EditText) view.findViewById(R.id.firstName);
-        firstNameET.setTag(firstNameLabel);
-        firstNameET.setOnFocusChangeListener(this);
-        firstNameET.requestFocus();
-
-        lastNameET = (EditText) view.findViewById(R.id.lastName);
-        lastNameET.setTag(lastNameLabel);
-        lastNameET.setOnFocusChangeListener(this);
-
-        phoneNumberET = (EditText) view.findViewById(R.id.phoneNumber);
-        phoneNumberET.setTag(phoneLabel);
-        phoneNumberET.setOnFocusChangeListener(this);
-
-        addressLineET = (EditText) view.findViewById(R.id.addressET);
-        addressLineET.setTag(addressLabel);
-        addressLineET.setOnFocusChangeListener(this);
-
-        apartmentET = (EditText) view.findViewById(R.id.apartment);
-        apartmentET.setTag(apartmentLabel);
-        apartmentET.setOnFocusChangeListener(this);
-
-        cityET = (EditText) view.findViewById(R.id.city);
-        cityET.setTag(cityLabel);
-        cityET.setOnFocusChangeListener(this);
-
-        stateET = (EditText) view.findViewById(R.id.state);
-        stateET.setTag(stateLabel);
-        stateET.setOnFocusChangeListener(this);
-
-        zipCodeET = (EditText) view.findViewById(R.id.zipCode);
-        zipCodeET.setTag(zipCodeLabel);
-        zipCodeET.setOnFocusChangeListener(this);
+        View view = inflater.inflate(R.layout.address_fragment, container, false);
 
         placesArrayAdapter = new PlacesArrayAdapter(activity, R.layout.places_list_item);
 
         addressLineACTV = (AutoCompleteTextView) view.findViewById(R.id.addressACTV);
-        addressLineACTV.setTag(addressACTVLabel);
-        addressLineACTV.setOnFocusChangeListener(this);
         addressLineACTV.setAdapter(placesArrayAdapter);
         addressLineACTV.setOnItemClickListener(this);
         addressLineACTV.setFocusable(true);
         addressLineACTV.setFocusableInTouchMode(true);
-
-        addressACTVLayout = view.findViewById(R.id.addressACTVLayout);
-        addressManualLayout = view.findViewById(R.id.addressManualLayout);
-        apartmentLayout = view.findViewById(R.id.apartmentLayout);
 
         Bundle args = getArguments();
         if(args != null) {
@@ -198,7 +128,7 @@ public class AddressFragment extends Fragment
             setEntryModeManual();
         }
 
-        addShippingBtn = (Button) view.findViewById(R.id.addressSaveBtn);
+        addShippingBtn = (Button) view.findViewById(R.id.address_save);
         addShippingBtn.setOnClickListener(this);
 
         return (view);
@@ -238,7 +168,6 @@ public class AddressFragment extends Fragment
             setEntryModeManual();
         } else {
             placesArrayAdapter.getPlaceDetails(position, this);
-            apartmentLayout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -270,22 +199,6 @@ public class AddressFragment extends Fragment
             doSaveAutoComplete();
         } else {
             doSaveManual();
-        }
-    }
-
-    @Override
-    public void onFocusChange(View view, boolean hasFocus) {
-
-        if (hasFocus) {
-            Object viewTag = view.getTag();
-            if (viewTag != null) {
-                if (view instanceof EditText) {
-                    ((EditText) view).setHint("");
-                }
-                if (viewTag instanceof TextView) {
-                    ((TextView) viewTag).setVisibility(View.VISIBLE);
-                }
-            }
         }
     }
 
@@ -419,20 +332,17 @@ public class AddressFragment extends Fragment
 
         entryMode = ENTRY_MODE.AUTO_COMPLETE;
 
-        addressACTVLayout.setVisibility(View.VISIBLE);
-        addressManualLayout.setVisibility(View.GONE);
-        apartmentLayout.setVisibility(View.GONE);
-
+        addressLineACTV.setVisibility(View.VISIBLE);
         addressLineACTV.dismissDropDown();
         addressLineACTV.clearListSelection();
+        addressLineET.setVisibility(View.GONE);
 
-        cityLabel.setVisibility(View.GONE);
+        apartmentET.setVisibility(View.GONE);
+
         cityET.setVisibility(View.GONE);
 
-        stateLabel.setVisibility(View.GONE);
         stateET.setVisibility(View.GONE);
 
-        zipCodeLabel.setVisibility(View.GONE);
         zipCodeET.setVisibility(View.GONE);
 
         firstNameET.requestFocus();
@@ -447,17 +357,15 @@ public class AddressFragment extends Fragment
 
         entryMode = ENTRY_MODE.MANUAL;
 
-        addressACTVLayout.setVisibility(View.GONE);
-        addressManualLayout.setVisibility(View.VISIBLE);
-        apartmentLayout.setVisibility(View.VISIBLE);
+        addressLineACTV.setVisibility(View.GONE);
+        addressLineET.setVisibility(View.VISIBLE);
 
-        cityLabel.setVisibility(View.INVISIBLE);
+        apartmentET.setVisibility(View.VISIBLE);
+
         cityET.setVisibility(View.VISIBLE);
 
-        stateLabel.setVisibility(View.INVISIBLE);
         stateET.setVisibility(View.VISIBLE);
 
-        zipCodeLabel.setVisibility(View.INVISIBLE);
         zipCodeET.setVisibility(View.VISIBLE);
 
         firstNameET.requestFocus();

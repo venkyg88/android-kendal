@@ -65,20 +65,20 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
 
     /** initializes variable entry area of checkout screen */
     @Override
-    protected void initEntryArea(View view) {
+    protected void initEntryArea(View frame) {
 
         // init views
-        shippingNameVw = (TextView) view.findViewById(R.id.checkout_shipping_name);
-        shippingAddrVw = (TextView) view.findViewById(R.id.checkout_shipping_addr);
-        paymentMethodVw = (TextView) view.findViewById(R.id.checkout_payment_method);
-        paymentMethodImage = (ImageView) view.findViewById(R.id.card_image);
-        billingNameVw = (TextView) view.findViewById(R.id.checkout_billing_name);
-        billingAddrVw = (TextView) view.findViewById(R.id.checkout_billing_addr);
+        shippingNameVw = (TextView) frame.findViewById(R.id.checkout_shipping_name);
+        shippingAddrVw = (TextView) frame.findViewById(R.id.checkout_shipping_addr);
+        paymentMethodVw = (TextView) frame.findViewById(R.id.checkout_payment_method);
+        paymentMethodImage = (ImageView) frame.findViewById(R.id.card_image);
+        billingNameVw = (TextView) frame.findViewById(R.id.checkout_billing_name);
+        billingAddrVw = (TextView) frame.findViewById(R.id.checkout_billing_addr);
 
         // Set click listeners
-        view.findViewById(R.id.shipping_addresses).setOnClickListener(this);
-        view.findViewById(R.id.payment_methods).setOnClickListener(this);
-        view.findViewById(R.id.billing_addresses).setOnClickListener(this);
+        frame.findViewById(R.id.shipping_addresses).setOnClickListener(this);
+        frame.findViewById(R.id.payment_methods).setOnClickListener(this);
+        frame.findViewById(R.id.billing_addresses).setOnClickListener(this);
 
         // get additional checkout info from bundle (tax, shipping, and subtotals retrieved by super class)
         Bundle checkoutBundle = this.getArguments();
@@ -138,8 +138,6 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         }
     }
 
-
-
     /** applies shipping address to cart and initiates precheckout */
     private void applyShippingAddressAndPrecheckout() {
         final com.staples.mobile.common.access.easyopen.model.member.Address profileAddress = ProfileDetails.getAddress(shippingAddressId);
@@ -178,7 +176,6 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
             });
         }
     }
-
 
     /** handles order submission */
     @Override
@@ -229,7 +226,6 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         });
     }
 
-
     @Override
     public void onClick(View view) {
         super.onClick(view);
@@ -266,7 +262,6 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                 break;
         }
     }
-
 
     /** formats payment method for display in widget */
     private String formatPaymentMethod(CCDetails paymentMethod) {
