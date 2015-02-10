@@ -230,7 +230,6 @@
 
             <TextView
                 android:id="@+id/apartmentLabel"
-                android:ems="10"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_width="wrap_content"
@@ -242,7 +241,7 @@
 
             <EditText
                 android:id="@+id/apartment"
-                android:ems="10"
+                android:ems="5"
                 android:hint="@string/apartment_label"
                 android:inputType="textPostalAddress"
                 android:layout_height="wrap_content"
