@@ -72,6 +72,7 @@ public class MainApplication
 
         if (LOGGING) Log.v(TAG, "MainApplication:AppConfigurator.onGetConfiguratorResult():"
                         + " success[" + success + "]"
+                        + " retrofitError[" + retrofitError + "]"
                         + " this[" + this + "]"
         );
 

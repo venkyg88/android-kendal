@@ -13,18 +13,7 @@
     <TextView
         style="@style/GraySubheading"
         android:text="@string/shipping_addr"/>
-    <include layout="@layout/add_address_fragment" android:id="@+id/shipping_addr_layout" />
-
-
-    <!--email address-->
-    <EditText
-        android:id="@+id/emailAddr"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:hint="@string/email"
-        android:imeOptions="actionNext"
-        android:singleLine="true"/>
+    <include layout="@layout/add_address_actv_fragment" android:id="@+id/shipping_addr_layout" />
 
 
     <!--payment method-->
@@ -32,27 +21,7 @@
         style="@style/GraySubheading"
         android:layout_marginTop="20dp"
         android:text="@string/payment_method"/>
-
     <include layout="@layout/add_creditcard_fragment" android:id="@+id/payment_method_layout" />
-
-    <!--included this in add credit card layout to be more consistent-->
-        <!--android:id="@+id/cid"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:inputType="number"-->
-        <!--android:maxLength="4"-->
-        <!--android:hint="@string/cid"-->
-        <!--android:imeOptions="actionDone"-->
-        <!--android:singleLine="true"/>-->
-
-    <!--for now, hard code payment method-->
-    <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginTop="20dp"-->
-        <!--android:textSize="24sp"-->
-        <!--android:textColor="#FF0000"-->
-        <!--android:text="TBD: payment method entry will go here"/>-->
 
 
     <!--widget for choosing billing addr to match shipping addr-->
@@ -72,7 +41,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
            />
-
     </LinearLayout>
 
 
@@ -90,7 +58,7 @@
             android:text="@string/billing_addr"/>
 
         <!--billing address-->
-        <include layout="@layout/add_address_fragment" android:id="@+id/billing_addr_layout" />
+        <include layout="@layout/add_address_actv_fragment" android:id="@+id/billing_addr_layout" />
 
     </LinearLayout>
 

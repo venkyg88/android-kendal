@@ -3,6 +3,7 @@ package com.staples.mobile.cfa.profile;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
@@ -417,8 +418,6 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
                 resultList.add(predictionsJsonArray.getJSONObject(predsNdx).getString("description"));
             }
 
-            // @@@ TODO Add "INPUT MANUALLY" here. (input_manually_allcaps)
-
         } catch (JSONException jsonException) {
 
             if (LOGGING)
@@ -460,6 +459,17 @@ public class PlacesArrayAdapter extends ArrayAdapter<String> implements Filterab
             zipCodeSuffix = "";
             errorCode = ERROR_CODE.NONE;
             exception = null;
+        }
+
+        public String getFullZipCode() {
+            StringBuilder fullZipCode = new StringBuilder();
+            if (!TextUtils.isEmpty(zipCode)) {
+                fullZipCode.append(zipCode);
+                if (!TextUtils.isEmpty(zipCodeSuffix)) {
+                    fullZipCode.append("-").append(zipCodeSuffix);
+                }
+            }
+            return fullZipCode.toString();
         }
     }
 }

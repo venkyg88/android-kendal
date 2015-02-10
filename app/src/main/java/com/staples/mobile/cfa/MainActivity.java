@@ -11,16 +11,17 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
+import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.bundle.BundleFragment;
@@ -62,19 +63,19 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-import retrofit.RetrofitError;
-
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener,
         LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback{
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final boolean LOGGING = false;
 
     private static final int SURRENDER_TIMEOUT = 5000;
     private static final int CONNECTIVITY_CHECK_INTERVAL = 300000; // in milliseconds (e.g. 300000=5min)
 
     private DrawerLayout drawerLayout;
-    private ListView leftDrawer;
-    private DrawerAdapter leftDrawerAdapter;
+    private ViewGroup leftDrawer;
+    private ListView leftMenu;
+    private DrawerAdapter leftMenuAdapter;
     private LinearLayoutWithProgressOverlay mainLayout;
     private CartFragment cartFragment;
     private DrawerItem homeDrawerItem;
@@ -84,6 +85,7 @@ public class MainActivity extends Activity
 
 
     private LoginHelper loginHelper;
+    boolean initialLoginComplete;
 
     private AppConfigurator appConfigurator;
 
@@ -123,7 +125,10 @@ public class MainActivity extends Activity
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-
+        if (LOGGING) {
+            Log.v(TAG, "MainActivity:onCreate():"
+                    + " bundle[" + bundle + "]");
+        }
         // Note: error handling for no network availability will happen in ensureActiveSession() called from onResume()
         if (isNetworkAvailable()) {
 
@@ -132,6 +137,7 @@ public class MainActivity extends Activity
 
             LocationFinder.getInstance(this);
 
+            initialLoginComplete = false;
             appConfigurator = AppConfigurator.getInstance();
             appConfigurator.getConfigurator(this); // AppConfiguratorCallback
         }
@@ -202,43 +208,36 @@ public class MainActivity extends Activity
             // first check for network connectivity
             if (isNetworkAvailable()) {
 
-                // if configurator available
-                if (AppConfigurator.getInstance().getConfigurator() != null) {
-
-                    // if app thinks we are logged in, attempt a small easyopen api call to ensure session is active
-                    final LoginHelper loginHelper = new LoginHelper(this);
-                    if (loginHelper.isLoggedIn()) {
-                        // make call requiring secure api which will fail if expired tokens.
-                        // If the session is expired, this test will give us the desired
-                        // "_ERR_INVALID_COOKIE" failure regardless of guest or user session.
-                        // If the session is okay, it will fail for guest session but with a
-                        // different error code, so the following logic is okay.
-                        EasyOpenApi api = Access.getInstance().getEasyOpenApi(true);
-                        api.getMemberProfile(new Callback<MemberDetail>() {
-                            @Override public void success(MemberDetail memberDetail, Response response) {}
-                            @Override public void failure(RetrofitError error) {
-                                ApiError apiError = ApiError.getApiError(error);
-                                // An example of response code of 401 (unauthorized) is:
-                                // errorKey: "_ERR_INVALID_COOKIE", errorMessage: "CMN1039E: An invalid cookie was received for the user, your logonId may be in use by another user."
-                                // But there's also response code of 400 with the following:
-                                // errorCode: "1012", errorMessage: "Activity token "41741260" has been terminated."
-                                if (apiError.getHttpStatusCode() == 401 || // test for 401 (unauthorized)
-                                    "1012".equals(apiError.getErrorCode()) // test for terminated activity token (http response 400)
-                                    ) {
-                                    // reestablish session
-                                    loginHelper.refreshSession();
-                                } else if (apiError.getHttpStatusCode() >= 300 && apiError.getHttpStatusCode() <= 399) {
-                                    // else if a redirection error
-                                    showErrorDialog(R.string.error_redirect, true);
-                                }
+                // if initial login complete, then attempt a small easyopen api call to ensure session is still active
+                if (initialLoginComplete) {
+                    // make call requiring secure api which will fail if expired tokens.
+                    // If the session is expired, this test will give us the desired
+                    // "_ERR_INVALID_COOKIE" failure regardless of guest or user session.
+                    // If the session is okay, it will fail for guest session (since no profile for guest)
+                    // but with a different error code, so the following logic is okay.
+                    EasyOpenApi api = Access.getInstance().getEasyOpenApi(true);
+                    api.getMemberProfile(new Callback<MemberDetail>() {
+                        @Override public void success(MemberDetail memberDetail, Response response) {}
+                        @Override public void failure(RetrofitError error) {
+                            ApiError apiError = ApiError.getApiError(error);
+                            if (apiError.isAuthenticationError()) {
+                                // reestablish session
+                                new LoginHelper(MainActivity.this).refreshSession();
+                            } else if (apiError.isRedirectionError()) {
+                                showErrorDialog(R.string.error_redirect, true);
                             }
-                        });
-                    }
+                        }
+                    });
                 }
             } else {
                 showNetworkSettingsDialog();
             }
         }
+    }
+
+    public void hideSoftKeyboard(View view) {
+        InputMethodManager keyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     public void showErrorDialog(int msgId) {
@@ -280,28 +279,32 @@ public class MainActivity extends Activity
     }
 
     public void prepareMainScreen(boolean freshStart) {
-        // Inflate
+        // Inflate, add ActionBar
         setContentView(R.layout.main);
-        ActionBar.getInstance().init(this);
+        ViewGroup stationary = (ViewGroup) findViewById(R.id.stationary);
+        LayoutInflater inflater = getLayoutInflater();
+        ActionBar actionBar = (ActionBar) inflater.inflate(R.layout.action_bar, stationary, false);
+        stationary.addView(actionBar, 0);
+        actionBar.init(this);
 
         // Find top-level entities
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        leftDrawer = (ListView) findViewById(R.id.left_drawer);
+        leftDrawer = (ViewGroup) findViewById(R.id.left_drawer);
+        leftMenu = (ListView) findViewById(R.id.left_menu);
         mainLayout = (LinearLayoutWithProgressOverlay)findViewById(R.id.main);
         mainLayout.setProgressOverlay(findViewById(R.id.progress_overlay));
 
         // Initialize left drawer listview
-        leftDrawerAdapter = new DrawerAdapter(this);
-        leftDrawer.setAdapter(leftDrawerAdapter);
-        leftDrawerAdapter.fill();
-        leftDrawer.setOnItemClickListener(this);
+        leftMenuAdapter = new DrawerAdapter(this);
+        leftMenu.setAdapter(leftMenuAdapter);
+        leftMenuAdapter.fill();
+        leftMenu.setOnItemClickListener(this);
 
         // Create non-drawer DrawerItems
-        homeDrawerItem = leftDrawerAdapter.getItem(0); // TODO Hard-coded alias
+        homeDrawerItem = leftMenuAdapter.getItem(0); // TODO Hard-coded alias
 
         // Cart
         cartFragment = new CartFragment();
-        ActionBar.getInstance().setCartCount(0);
 
         // get notification banner and set up animation
         notificationBanner = (TextView) findViewById(R.id.notification_banner);
@@ -316,28 +319,25 @@ public class MainActivity extends Activity
             @Override public void onAnimationRepeat(Animation animation) { }
         });
 
-        // DLS: show main screen when configurator available. Configurator fragment now needs profile
-        // info to be loaded before it can be displayed.
-
-        // Fresh start?
-//        if (freshStart) {
-//            Runnable runs = new Runnable() {public void run() {
-//                showMainScreen();}};
-//            new Handler().postDelayed(runs, SURRENDER_TIMEOUT);
-//        } else {
-//            showMainScreen();
-//        }
+        // DLS: wait to show main screen until configurator available. Configurator fragment needs
+        // profile info to be loaded before it can be displayed.
     }
 
-    public void onGetConfiguratorResult(Configurator configurator, boolean success, RetrofitError retrofitError) {
 
+    public void onGetConfiguratorResult(Configurator configurator, boolean success, RetrofitError retrofitError) {
+        if (LOGGING) {
+            Log.v(TAG, "MainActivity:AppConfigurator.onGetConfiguratorResult():"
+                    + " success[" + success + "]"
+                    + " retrofitError[" + retrofitError + "]"
+                    + " configurator[" + configurator + "]"
+                    + " this[" + this + "]");
+        }
         // note that retrofitError may be non-null even if success==true, since config may have been
         // successfully drawn from a persisted location following a failed network attempt.
         // Regardless of success, if retrofitError not null, check for the redirect error condition
         if (retrofitError != null) {
             ApiError apiError = ApiError.getApiError(retrofitError);
-            int status = apiError.getHttpStatusCode();
-            if (status >= 300 && status <= 399) {
+            if (apiError.isRedirectionError()) {
                 showErrorDialog(R.string.error_redirect, true);
                 return;
             }
@@ -348,31 +348,15 @@ public class MainActivity extends Activity
 
             loginHelper = new LoginHelper(this);
             loginHelper.registerLoginCompleteListener(this);
-            // if already logged in (e.g. when device is rotated), don't login again, but do notify
-            // that login is complete so that cart can be refilled
-            if (loginHelper.isLoggedIn()) {
-                onLoginComplete(loginHelper.isGuestLogin());
-                showMainScreen();
-            } else {
-                // if login info cached, log in as registered user
-                if (loginHelper.loadCachedLoginInfo()) {
-                    loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
-                        @Override public void onProfileRefresh(Member member, String errMsg) {
-                            if (member == null) {
-                                // if cached login failed, initiate guest log in
-                                loginHelper.getGuestTokens();
-                            }
-                            // open home page after profile loaded (if available) since home page now needs it
-                            showMainScreen();
-                        }
-                    });
-                } else {
-                    // otherwise, log in as guest
-                    loginHelper.getGuestTokens();
-                    // open home page
+
+            // do login based on persisted cache if available
+            loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
+                @Override public void onProfileRefresh(Member member, String errMsg) {
+                    initialLoginComplete = true;
+                    // open home page after profile loaded (if available) since home page now needs it
                     showMainScreen();
                 }
-            }
+            });
 
         } else { // can't get configurator from network or from persisted file
             showErrorDialog(R.string.error_server_connection, true);
@@ -381,15 +365,14 @@ public class MainActivity extends Activity
 
     @Override
     public void onLoginComplete(boolean guestLevel) {
-        // if registered user, update menu state and load cart info
-        if (!guestLevel) {
-            CartApiManager.loadCart(new CartApiManager.CartRefreshCallback() {
-                @Override
-                public void onCartRefreshComplete(String errMsg) {
-                    ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
-                }
-            });
-        }
+        // reload cart info (even if only a guest login because needed on device rotation)
+        CartApiManager.loadCart(new CartApiManager.CartRefreshCallback() {
+            @Override
+            public void onCartRefreshComplete(String errMsg) {
+                ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
+            }
+        });
+
         // enable/disable left drawer menu items that depend upon login
         refreshMenuItemState(!guestLevel);
     }
@@ -410,17 +393,17 @@ public class MainActivity extends Activity
 
     private void refreshMenuItemState(boolean registeredUser) {
         // enable/disable left drawer menu items that depend upon login
-        int itemCount = leftDrawerAdapter.getCount();
+        int itemCount = leftMenuAdapter.getCount();
         for (int position = 0; position < itemCount; position++) {
-            DrawerItem item = leftDrawerAdapter.getItem(position);
+            DrawerItem item = leftMenuAdapter.getItem(position);
             if (item.fragmentClass == RewardsFragment.class || item.fragmentClass == OrderFragment.class) {
                 item.enabled = registeredUser;
-                leftDrawerAdapter.notifyDataSetChanged();
+                leftMenuAdapter.notifyDataSetChanged();
             }
         }
 
         // update sign-in button text
-        Button signInButton = (Button)findViewById(R.id.account_button);
+        TextView signInButton = (TextView) findViewById(R.id.account_option);
         if (signInButton != null) { // is null in roboelectric tests
             signInButton.setText(registeredUser ? R.string.signout_title : R.string.login_title);
         }
@@ -633,7 +616,7 @@ public class MainActivity extends Activity
                 ActionBar.getInstance().closeSearch();
                 break;
 
-            case R.id.account_button:
+            case R.id.account_option:
                 if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
                     loginHelper.userSignOut();
                     selectDrawerItem(homeDrawerItem, Transition.RIGHT, true);

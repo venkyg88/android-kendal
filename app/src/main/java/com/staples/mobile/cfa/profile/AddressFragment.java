@@ -4,14 +4,13 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 
-import android.content.Context;
 import android.content.res.Resources;
 
 import android.os.Bundle;
 
+import android.text.TextUtils;
 import android.util.Log;
 
-import android.view.inputmethod.InputMethodManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,6 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -76,7 +74,7 @@ public class AddressFragment extends Fragment
     EditText firstNameET;
     EditText lastNameET;
     EditText addressLineET;
-    EditText appartmentET;
+    EditText apartmentET;
     EditText cityET;
     EditText stateET;
     EditText phoneNumberET;
@@ -85,11 +83,16 @@ public class AddressFragment extends Fragment
     TextView firstNameLabel;
     TextView lastNameLabel;
     TextView phoneLabel;
+    TextView addressACTVLabel;
     TextView addressLabel;
-    TextView appartmentLabel;
+    TextView apartmentLabel;
     TextView cityLabel;
     TextView stateLabel;
     TextView zipCodeLabel;
+
+    View addressACTVLayout;
+    View addressManualLayout;
+    View apartmentLayout;
 
     AutoCompleteTextView addressLineACTV;
     private PlacesArrayAdapter placesArrayAdapter;
@@ -114,8 +117,9 @@ public class AddressFragment extends Fragment
         firstNameLabel = (TextView) view.findViewById(R.id.firstNameLabel);
         lastNameLabel = (TextView) view.findViewById(R.id.lastNameLabel);
         phoneLabel = (TextView) view.findViewById(R.id.phoneLabel);
+        addressACTVLabel = (TextView) view.findViewById(R.id.addressACTVLabel);
         addressLabel = (TextView) view.findViewById(R.id.addressLabel);
-        appartmentLabel = (TextView) view.findViewById(R.id.appartmentLabel);
+        apartmentLabel = (TextView) view.findViewById(R.id.apartmentLabel);
         cityLabel = (TextView) view.findViewById(R.id.cityLabel);
         stateLabel = (TextView) view.findViewById(R.id.stateLabel);
         zipCodeLabel = (TextView) view.findViewById(R.id.zipCodeLabel);
@@ -137,9 +141,9 @@ public class AddressFragment extends Fragment
         addressLineET.setTag(addressLabel);
         addressLineET.setOnFocusChangeListener(this);
 
-        appartmentET = (EditText) view.findViewById(R.id.appartment);
-        appartmentET.setTag(appartmentLabel);
-        appartmentET.setOnFocusChangeListener(this);
+        apartmentET = (EditText) view.findViewById(R.id.apartment);
+        apartmentET.setTag(apartmentLabel);
+        apartmentET.setOnFocusChangeListener(this);
 
         cityET = (EditText) view.findViewById(R.id.city);
         cityET.setTag(cityLabel);
@@ -156,12 +160,16 @@ public class AddressFragment extends Fragment
         placesArrayAdapter = new PlacesArrayAdapter(activity, R.layout.places_list_item);
 
         addressLineACTV = (AutoCompleteTextView) view.findViewById(R.id.addressACTV);
-        addressLineACTV.setTag(addressLabel);
+        addressLineACTV.setTag(addressACTVLabel);
         addressLineACTV.setOnFocusChangeListener(this);
         addressLineACTV.setAdapter(placesArrayAdapter);
         addressLineACTV.setOnItemClickListener(this);
         addressLineACTV.setFocusable(true);
         addressLineACTV.setFocusableInTouchMode(true);
+
+        addressACTVLayout = view.findViewById(R.id.addressACTVLayout);
+        addressManualLayout = view.findViewById(R.id.addressManualLayout);
+        apartmentLayout = view.findViewById(R.id.apartmentLayout);
 
         Bundle args = getArguments();
         if(args != null) {
@@ -171,7 +179,7 @@ public class AddressFragment extends Fragment
                 firstNameET.setText(address.getFirstname());
                 lastNameET.setText(address.getLastname());
                 addressLineET.setText(address.getAddress1());
-                appartmentET.setText(address.getAddress2());
+                apartmentET.setText(address.getAddress2());
                 cityET.setText(address.getCity());
                 stateET.setText(address.getState());
                 phoneNumberET.setText(address.getPhone1());
@@ -213,12 +221,6 @@ public class AddressFragment extends Fragment
         ActionBar.getInstance().setConfig(ActionBar.Config.ADDRESS);
     }
 
-    public void hideKeyboard(View view)
-    {
-        InputMethodManager keyboard = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
         if (LOGGING) Log.v(TAG, "AddressFragment:onItemClick():"
@@ -227,7 +229,7 @@ public class AddressFragment extends Fragment
                         + " this[" + this + "]"
         );
 
-        hideKeyboard(addressLineACTV);
+        ((MainActivity)activity).hideSoftKeyboard(addressLineACTV);
 
         String inputManually = resources.getString(R.string.input_manually_allcaps);
         String resultItem = placesArrayAdapter.getItem(position);
@@ -236,6 +238,7 @@ public class AddressFragment extends Fragment
             setEntryModeManual();
         } else {
             placesArrayAdapter.getPlaceDetails(position, this);
+            apartmentLayout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -250,20 +253,9 @@ public class AddressFragment extends Fragment
 
         this.placeData = placeData;
 
-        String autoCompleteText = addressLineACTV.getText().toString();
-
-        boolean textchanged = false;
-
-        if (placeData.zipCode.length() > 0) {
-            autoCompleteText += " " + placeData.zipCode;
-            textchanged = true;
-            if (placeData.zipCodeSuffix.length() > 0) {
-                autoCompleteText += "-" + placeData.zipCodeSuffix;
-            }
-        }
-
-        if (textchanged == true) {
-            addressLineACTV.setText(autoCompleteText);
+        String fullZipCode = placeData.getFullZipCode();
+        if (!TextUtils.isEmpty(fullZipCode)) {
+            addressLineACTV.setText(addressLineACTV.getText().toString() + " " + fullZipCode);
         }
 
         addressLineACTV.dismissDropDown();
@@ -271,7 +263,7 @@ public class AddressFragment extends Fragment
 
     @Override
     public void onClick(View view) {
-        hideKeyboard(view);
+        ((MainActivity)activity).hideSoftKeyboard(view);
         ((MainActivity)activity).showProgressIndicator();
 
         if (entryMode == ENTRY_MODE.AUTO_COMPLETE) {
@@ -306,7 +298,7 @@ public class AddressFragment extends Fragment
         firstName = firstNameET.getText().toString();
         lastName = lastNameET.getText().toString();
         addressLine1 = addressLineET.getText().toString();
-        addressLine2 = appartmentET.getText().toString();
+        addressLine2 = apartmentET.getText().toString();
         city = cityET.getText().toString();
         state = stateET.getText().toString();
         phoneNumber = phoneNumberET.getText().toString();
@@ -427,13 +419,12 @@ public class AddressFragment extends Fragment
 
         entryMode = ENTRY_MODE.AUTO_COMPLETE;
 
-        addressLineACTV.setVisibility(View.VISIBLE);
+        addressACTVLayout.setVisibility(View.VISIBLE);
+        addressManualLayout.setVisibility(View.GONE);
+        apartmentLayout.setVisibility(View.GONE);
+
         addressLineACTV.dismissDropDown();
         addressLineACTV.clearListSelection();
-        addressLineET.setVisibility(View.GONE);
-
-        appartmentLabel.setVisibility(View.GONE);
-        appartmentET.setVisibility(View.GONE);
 
         cityLabel.setVisibility(View.GONE);
         cityET.setVisibility(View.GONE);
@@ -456,11 +447,9 @@ public class AddressFragment extends Fragment
 
         entryMode = ENTRY_MODE.MANUAL;
 
-        addressLineACTV.setVisibility(View.GONE);
-        addressLineET.setVisibility(View.VISIBLE);
-
-        appartmentLabel.setVisibility(View.INVISIBLE);
-        appartmentET.setVisibility(View.VISIBLE);
+        addressACTVLayout.setVisibility(View.GONE);
+        addressManualLayout.setVisibility(View.VISIBLE);
+        apartmentLayout.setVisibility(View.VISIBLE);
 
         cityLabel.setVisibility(View.INVISIBLE);
         cityET.setVisibility(View.VISIBLE);

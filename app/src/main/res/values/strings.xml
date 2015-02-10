@@ -75,6 +75,7 @@
     <string name="payment_method">Payment Method</string>
     <string name="payment_method_required">Payment Method is required</string>
     <string name="billing_address_required">Billing address is required</string>
+    <string name="required_fields">Please fill in required fields</string>
     <string name="billing_addr">Billing Address</string>
     <string name="use_as_billing_addr">Use above as billing address</string>
     <string name="item_subtotal">Item total</string>
@@ -124,7 +125,8 @@
 	<string name="last_name_label">Last Name</string>
 	<string name="phone_label">Phone</string>
 	<string name="shipto_address_label">Ship-to Address</string>
-	<string name="appartment_label">Apt/Suite/Bldg Number</string>
+	<string name="address_label">Address</string>
+	<string name="apartment_label">Apt/Suite</string>
 	<string name="city_label">City</string>
 	<string name="state_label">State</string>
 	<string name="zip_code_label">Zip Code</string>

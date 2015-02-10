@@ -1,6 +1,5 @@
 package com.staples.mobile.cfa;
 
-import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +16,6 @@ import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.rewards.RewardsFragment;
 import com.staples.mobile.cfa.store.StoreFragment;
 import com.staples.mobile.cfa.weeklyad.WeeklyAdByCategoryFragment;
-import com.staples.mobile.cfa.widget.DataWrapper;
-import com.staples.mobile.common.access.Access;
 
 import java.util.ArrayList;
 
@@ -86,23 +83,22 @@ public class DrawerAdapter extends BaseAdapter {
         }
 
         // Set callback
-        View button = view.findViewById(R.id.account_button);
+        View button = view.findViewById(R.id.account_option);
         if (button!=null) button.setOnClickListener(activity);
 
         return(view);
     }
 
     public void fill() {
-        // Fill menu list TODO icons nulled out
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.home_title, ConfiguratorFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.personal_feed_title, PersonalFeedFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.browse_title, BrowseFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.store_locator_title, StoreFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.weekly_ad_title, WeeklyAdByCategoryFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.ACCOUNT, activity, 0, R.string.account_title, LoginFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.rewards_title, RewardsFragment.class, false)); // set initially disabled
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.order_title, OrderFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.PROFILE, activity, 0, R.string.profile_title, ProfileFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, 0, R.string.about_title, AboutFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_home_black, R.string.home_title, ConfiguratorFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_android, R.string.personal_feed_title, PersonalFeedFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_browse_black, R.string.browse_title, BrowseFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_store_locator_black, R.string.store_locator_title, StoreFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_weekly_ad_black, R.string.weekly_ad_title, WeeklyAdByCategoryFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.ACCOUNT, activity, R.drawable.ic_account_black, R.string.account_title, LoginFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_rewards_black, R.string.rewards_title, RewardsFragment.class, false)); // set initially disabled
+        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_orders_black, R.string.order_title, OrderFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.PROFILE, activity, R.drawable.ic_profile_black, R.string.profile_title, ProfileFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_android, R.string.about_title, AboutFragment.class));
     }
 }

@@ -19,82 +19,48 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="invisible">
-        <com.staples.mobile.cfa.widget.ActionBar
-            android:id="@+id/action_bar"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:animateLayoutChanges="true"
-            android:background="@color/staples_light">
-            <!-- ActionBar, these must be kept in priority order -->
-            <ImageView
-                android:id="@+id/close_button"
-                style="@style/ActionBarIconStyle"
-                android:layout_gravity="center_vertical|left"
-                android:src="@drawable/ic_close_white"/>
-            <ImageView
-                android:id="@+id/back_button"
-                style="@style/ActionBarIconStyle"
-                android:layout_gravity="center_vertical|left"
-                android:src="@drawable/ic_arrow_back_white"/>
-            <ImageView
-                android:id="@+id/action_left_drawer"
-                style="@style/ActionBarIconStyle"
-                android:layout_gravity="center_vertical|left"
-                android:src="@drawable/ic_menu_white"/>
-            <com.staples.mobile.cfa.widget.BadgeImageView
-                android:id="@+id/action_show_cart"
-                style="@style/ActionBarBadgeStyle"
-                android:layout_gravity="center_vertical|right"/>
-            <Button
-                android:id="@+id/co_signin_button"
-                style="@style/ActionBarButtonStyle"
-                android:layout_gravity="center_vertical|right"
-                android:text="@string/common_signin_button_text"/>
-            <TextView
-                android:id="@+id/cart_item_qty"
-                style="@style/ActionBarTextStyle"
-                android:layout_gravity="center_vertical|right"/>
-            <ImageView
-                android:id="@+id/option_icon"
-                style="@style/ActionBarIconStyle"
-                android:layout_gravity="center_vertical|right"
-                android:src="@drawable/ic_search_white"/>
-            <com.staples.mobile.cfa.search.SearchBarView
-                android:id="@+id/search_view"
-                style="@style/ActionBarSearchStyle"
-                android:layout_gravity="center_vertical|right"
-                android:src="@drawable/ic_search_white"/>
-            <ImageView
-                android:id="@+id/action_logo"
-                style="@style/ActionBarIconStyle"
-                android:layout_gravity="center_vertical|left"
-                android:src="@drawable/ic_staples"/>
-            <TextView
-                android:id="@+id/action_title"
-                style="@style/ActionBarTextStyle"
-                android:layout_gravity="center_vertical|left"/>
-        </com.staples.mobile.cfa.widget.ActionBar>
         <android.support.v4.widget.DrawerLayout
             android:id="@+id/drawer_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <!-- Main content -->
-            <FrameLayout
-                android:id="@+id/content"
+            <LinearLayout
+                android:id="@+id/stationary"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
-            <!-- Left drawer (menu) -->
-            <ListView
-                android:id="@+id/left_drawer"
-                android:layout_width="200dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="start"
+                android:orientation="vertical">
+                <!-- The ActionBar gets inserted here -->
+                <FrameLayout
+                    android:id="@+id/content"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+            <!-- Left drawer (menu) -->
+            <LinearLayout
+                android:id="@+id/left_drawer"
+                android:layout_width="300dp"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:background="#ffffff"
-                android:choiceMode="singleChoice"/>
+                android:layout_gravity="start">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@color/staples_light"
+                    android:paddingRight="44dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:src="@drawable/ic_staples"/>
+                <ListView
+                    android:id="@+id/left_menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:divider="@null"
+                    android:background="#ffffff"
+                    android:choiceMode="singleChoice"/>
+            </LinearLayout>
         </android.support.v4.widget.DrawerLayout>
     </com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay>
 
