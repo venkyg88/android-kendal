@@ -130,7 +130,7 @@ public class LoginHelper {
                 public void failure(RetrofitError error) {
                     ApiError apiError = ApiError.getApiError(error);
                     if (apiError.isAuthenticationError()) {
-                        resetTokens(true);
+                        resetTokens(false);
                         ProfileDetails.resetMember();
                         if (registeredUser) {
                             getUserTokens(cachedUsername, cachedPassword, callback);
@@ -171,6 +171,8 @@ public class LoginHelper {
 
     private void getGuestTokens(final boolean refreshOnly)
     {
+        cachedUsername = null;
+        cachedPassword = null;
         resetTokens(false);
         easyOpenApi.guestLogin(new Callback<TokenObject>() {
 
@@ -318,8 +320,6 @@ public class LoginHelper {
     }
 
     private void resetTokens(boolean persist) {
-        cachedUsername = null;
-        cachedPassword = null;
         setTokens(null, null, false, persist);
     }
 
