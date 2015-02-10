@@ -210,6 +210,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         final View layoutView = shipping? shippingAddrLayoutVw : billingAddrLayoutVw;
         final AutoCompleteTextView addressAutocompleteVw = (AutoCompleteTextView) layoutView.findViewById(R.id.addressACTV);
         final PlacesArrayAdapter placesArrayAdapter = new PlacesArrayAdapter(activity, R.layout.places_list_item);
+        final View apartmentLayout = layoutView.findViewById(R.id.apartmentLayout);
         addressAutocompleteVw.setAdapter(placesArrayAdapter);
         addressAutocompleteVw.setFocusable(true);
         addressAutocompleteVw.setFocusableInTouchMode(true);
@@ -217,7 +218,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         setupEditText(layoutView, R.id.firstName, R.id.firstNameLabel, addrChangeListener);
         setupEditText(layoutView, R.id.lastName, R.id.lastNameLabel, addrChangeListener);
         setupEditText(layoutView, R.id.phoneNumber, R.id.phoneLabel, addrChangeListener);
-        setupEditText(layoutView, R.id.addressACTV, R.id.addressLabel, addrChangeListener);
+        setupEditText(layoutView, R.id.addressACTV, R.id.addressACTVLabel, addrChangeListener);
         setupEditText(layoutView, R.id.addressET, R.id.addressLabel, addrChangeListener);
         setupEditText(layoutView, R.id.apartment, R.id.apartmentLabel, addrChangeListener);
         setupEditText(layoutView, R.id.city, R.id.cityLabel, addrChangeListener);
@@ -230,10 +231,10 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
             layoutView.findViewById(R.id.emailAddrLabel).setVisibility(View.INVISIBLE);
 
             // move address label to below email address
-            View addressLabel = layoutView.findViewById(R.id.addressLabel);
-            RelativeLayout.LayoutParams addressLabelParams = (RelativeLayout.LayoutParams)addressLabel.getLayoutParams();
+            View addressLayout = layoutView.findViewById(R.id.addressLayout);
+            RelativeLayout.LayoutParams addressLabelParams = (RelativeLayout.LayoutParams)addressLayout.getLayoutParams();
             addressLabelParams.addRule(RelativeLayout.BELOW, R.id.emailAddr);
-            addressLabel.setLayoutParams(addressLabelParams); //causes layout update
+            addressLayout.setLayoutParams(addressLabelParams); //causes layout update
         }
 
         // handle item clicks
@@ -244,8 +245,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                 String inputManually = getResources().getString(R.string.input_manually_allcaps);
                 String resultItem = placesArrayAdapter.getItem(position);
                 if (resultItem.equals(inputManually) ) {
-                    addressAutocompleteVw.setVisibility(View.GONE);
-                    showAddressManualInputs(layoutView);
+                    switchAddressToManualInputs(layoutView);
                 } else {
                     placesArrayAdapter.getPlaceDetails(position, new PlacesArrayAdapter.PlaceDataCallback() {
                         @Override
@@ -263,6 +263,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
                         }
                     });
                 }
+                apartmentLayout.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -276,17 +277,17 @@ public class GuestCheckoutFragment extends CheckoutFragment implements CompoundB
         editText.setOnEditorActionListener(addrChangeListener);
     }
 
-    private void showAddressManualInputs(View layoutView) {
+    private void switchAddressToManualInputs(View layoutView) {
 
         // change labels from GONE to INVISIBLE so that they take up space
         // change inputs to VISIBLE
 
-        View manualAddressVw = layoutView.findViewById(R.id.addressET);
-        manualAddressVw.setVisibility(View.VISIBLE);
-        manualAddressVw.requestFocus();
+        layoutView.findViewById(R.id.addressACTVLayout).setVisibility(View.GONE);
+        layoutView.findViewById(R.id.addressManualLayout).setVisibility(View.VISIBLE);
+        layoutView.findViewById(R.id.apartmentLayout).setVisibility(View.VISIBLE);
 
-        layoutView.findViewById(R.id.apartmentLabel).setVisibility(View.INVISIBLE);
-        layoutView.findViewById(R.id.apartment).setVisibility(View.VISIBLE);
+        View manualAddressVw = layoutView.findViewById(R.id.addressET);
+        manualAddressVw.requestFocus();
 
         layoutView.findViewById(R.id.cityLabel).setVisibility(View.INVISIBLE);
         layoutView.findViewById(R.id.city).setVisibility(View.VISIBLE);
