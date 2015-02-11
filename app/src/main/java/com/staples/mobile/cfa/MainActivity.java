@@ -396,7 +396,8 @@ public class MainActivity extends Activity
         int itemCount = leftMenuAdapter.getCount();
         for (int position = 0; position < itemCount; position++) {
             DrawerItem item = leftMenuAdapter.getItem(position);
-            if (item.fragmentClass == RewardsFragment.class || item.fragmentClass == OrderFragment.class) {
+            if (item.fragmentClass == RewardsFragment.class || item.fragmentClass == OrderFragment.class ||
+                item.fragmentClass == ProfileFragment.class) {
                 item.enabled = registeredUser;
                 leftMenuAdapter.notifyDataSetChanged();
             }
