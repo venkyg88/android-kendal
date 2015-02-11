@@ -1,5 +1,6 @@
 package com.staples.mobile.cfa;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,6 +83,18 @@ public class DrawerAdapter extends BaseAdapter {
             title.setTextColor(activity.getResources().getColor(item.enabled? R.color.text_black : R.color.text_gray));
         }
 
+        // Set additional text
+        TextView additionalTextVw = (TextView) view.findViewById(R.id.additional_text);
+        if (additionalTextVw!=null) {
+            if (!TextUtils.isEmpty(item.additionalText) && item.enabled) {
+                additionalTextVw.setText(item.additionalText);
+                additionalTextVw.setTextColor(activity.getResources().getColor(R.color.text_red));
+                additionalTextVw.setVisibility(View.VISIBLE);
+            } else {
+                additionalTextVw.setVisibility(View.GONE);
+            }
+        }
+
         // Set callback
         View button = view.findViewById(R.id.account_option);
         if (button!=null) button.setOnClickListener(activity);
@@ -97,8 +110,8 @@ public class DrawerAdapter extends BaseAdapter {
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_weekly_ad_black, R.string.weekly_ad_title, WeeklyAdByCategoryFragment.class));
         array.add(new DrawerItem(DrawerItem.Type.ACCOUNT, activity, R.drawable.ic_account_black, R.string.account_title, LoginFragment.class));
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_rewards_black, R.string.rewards_title, RewardsFragment.class, false)); // set initially disabled
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_orders_black, R.string.order_title, OrderFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.PROFILE, activity, R.drawable.ic_profile_black, R.string.profile_title, ProfileFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_orders_black, R.string.order_title, OrderFragment.class, false)); // set initially disabled
+        array.add(new DrawerItem(DrawerItem.Type.PROFILE, activity, R.drawable.ic_profile_black, R.string.profile_title, ProfileFragment.class, false)); // set initially disabled
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_android, R.string.about_title, AboutFragment.class));
     }
 }

@@ -22,6 +22,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.rewards.RewardsLinkingFragment;
+import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.Access;
@@ -89,16 +90,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private ProductImageListener productImageListener;
     //private QtyUpdateButtonListener qtyUpdateButtonListener;
 
-    private DecimalFormat currencyFormat;
-
-    /** default constructor - note that fragment instance will be retained whereas view will come and go as attached to activity */
-    public CartFragment() {
-        // set up currency format to use minus sign for negative amounts (needed for coupons)
-        currencyFormat = (DecimalFormat)NumberFormat.getCurrencyInstance();
-        String symbol = currencyFormat.getCurrency().getSymbol();
-        currencyFormat.setNegativePrefix("-"+symbol);
-        currencyFormat.setNegativeSuffix("");
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -260,6 +251,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
             emptyCartLayout.setVisibility(totalItemCount == 0? View.VISIBLE : View.GONE);
 
+            DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
 
             // set text of free shipping msg
             if (totalItemCount > 0) {

@@ -1166,7 +1166,7 @@ public class ConfiguratorFragment extends Fragment {
             float rewards = 0;
             Member member = ProfileDetails.getMember();
             if(member.getRewardsNumber() != null && member.getRewardDetails() != null) {
-                rewards = member.getRewardDetails().get(0).getAmountRewards();
+                rewards = ProfileDetails.getRewardsTotal();
             }
 
             if(rewards != 0) {
