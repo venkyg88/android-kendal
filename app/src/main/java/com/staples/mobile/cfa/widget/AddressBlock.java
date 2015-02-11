@@ -149,6 +149,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         addr.setEmailAddress(extractField(R.id.emailAddr));
         addr.setReenterEmailAddress(extractField(R.id.emailAddr));
         addr.setDeliveryAddress1(extractField(R.id.addressET));
+        addr.setDeliveryAddress2(extractField(R.id.apartment));
         addr.setDeliveryCity(extractField(R.id.city));
         addr.setDeliveryState(extractField(R.id.state));
         addr.setDeliveryZipCode(extractField(R.id.zipCode));
@@ -164,6 +165,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         injectField(R.id.lastName, addr.getLastName());
         injectField(R.id.phoneNumber, addr.getPhone1());
         injectField(R.id.addressET, addr.getAddress1());
+        injectField(R.id.apartment, addr.getAddress2());
         injectField(R.id.city, addr.getCity());
         injectField(R.id.state, addr.getState());
         injectField(R.id.zipCode, addr.getZipCode());
@@ -176,6 +178,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         addr.setLastName(extractField(R.id.lastName));
         addr.setPhoneNumber(extractField(R.id.phoneNumber));
         addr.setAddressLine1(extractField(R.id.addressET));
+        addr.setAddressLine2(extractField(R.id.apartment));
         addr.setCity(extractField(R.id.city));
         addr.setState(extractField(R.id.state));
         addr.setZipCode(extractField(R.id.zipCode));
