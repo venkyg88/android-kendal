@@ -1,10 +1,8 @@
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -18,6 +16,8 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.profile.PlacesArrayAdapter;
 import com.staples.mobile.cfa.profile.UsState;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
+import com.staples.mobile.common.access.easyopen.model.member.Address;
+import com.staples.mobile.common.access.easyopen.model.member.UpdateAddress;
 
 public class AddressBlock extends LinearLayout implements TextView.OnEditorActionListener, AdapterView.OnItemClickListener {
     public static final String TAG = "AddressBlock";
@@ -46,7 +46,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         super(context, attrs, defStyle);
     }
 
-    public void init(boolean showEmail) {
+    public void init(boolean autoMode, boolean showEmail) {
         if (!showEmail) findViewById(R.id.emailAddr).setVisibility(GONE);
 
         autoComplete = (AutoCompleteTextView) findViewById(R.id.addressACTV);
@@ -57,25 +57,23 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         for(int id : addressFields) {
             ((EditText) findViewById(id)).setOnEditorActionListener(this);
         }
-        switchToAutoInput();
+        selectMode(autoMode);
     }
 
     public void setOnDoneListener(OnDoneListener listener) {
         this.listener = listener;
     }
 
-    private void switchToManualInput() {
-        findViewById(R.id.addressACTV).setVisibility(View.GONE);
-        for(int id : manualFields) {
-            findViewById(id).setVisibility(View.VISIBLE);
-        }
-    }
+    private void selectMode(boolean autoMode) {
+        int visibility;
 
-    private void switchToAutoInput() {
+        visibility = autoMode ? VISIBLE : GONE;
+        findViewById(R.id.addressACTV).setVisibility(visibility);
+
+        visibility = autoMode ? GONE : VISIBLE;
         for(int id : manualFields) {
-            findViewById(id).setVisibility(View.GONE);
+            findViewById(id).setVisibility(visibility);
         }
-        findViewById(R.id.addressACTV).setVisibility(View.VISIBLE);
     }
 
     // Validation
@@ -124,6 +122,8 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         return (valid);
     }
 
+    // Lower level methods
+
     private String extractField(int id) {
         TextView view = (TextView) findViewById(id);
         if (view==null) return(null);
@@ -131,6 +131,15 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         if (text.length()==0) return(null);
         return(text.toString());
     }
+
+    private void injectField(int id, String text) {
+        TextView view = (TextView) findViewById(id);
+        if (view==null) return;
+        if (text!=null) text = text.trim();
+        view.setText(text);
+    }
+
+    // Methods for higher levels
 
     public ShippingAddress getShippingAddress() {
         ShippingAddress addr =new ShippingAddress();
@@ -149,6 +158,31 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
     public String getEmailAddress() {
         return(extractField(R.id.emailAddr));
     }
+
+    public void setAddress(Address addr) {
+        injectField(R.id.firstName, addr.getFirstName());
+        injectField(R.id.lastName, addr.getLastName());
+        injectField(R.id.phoneNumber, addr.getPhone1());
+        injectField(R.id.addressET, addr.getAddress1());
+        injectField(R.id.city, addr.getCity());
+        injectField(R.id.state, addr.getState());
+        injectField(R.id.zipCode, addr.getZipCode());
+    }
+
+    public UpdateAddress getUpdateAddress() {
+        // TODO no no-arg constructor
+        UpdateAddress addr = new UpdateAddress();
+        addr.setFirstName(extractField(R.id.firstName));
+        addr.setLastName(extractField(R.id.lastName));
+        addr.setPhoneNumber(extractField(R.id.phoneNumber));
+        addr.setAddressLine1(extractField(R.id.addressET));
+        addr.setCity(extractField(R.id.city));
+        addr.setState(extractField(R.id.state));
+        addr.setZipCode(extractField(R.id.zipCode));
+        return(addr);
+    }
+
+    // Internal callbacks
 
     @Override
     public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
@@ -176,7 +210,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         String item = adapter.getItem(position);
         String inputManually = getResources().getString(R.string.input_manually_allcaps);
         if (item.equals(inputManually)) {
-            switchToManualInput();
+            selectMode(false);
         } else {
             adapter.getPlaceDetails(position, new PlacesArrayAdapter.PlaceDataCallback() {
                 @Override

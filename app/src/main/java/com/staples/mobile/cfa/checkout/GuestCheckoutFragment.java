@@ -61,10 +61,10 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     @Override
     protected void initEntryArea(View frame) {
         shippingAddrBlock = (AddressBlock) frame.findViewById(R.id.shipping_addr_layout);
-        shippingAddrBlock.init(true);
+        shippingAddrBlock.init(true, true);
         shippingAddrBlock.setOnDoneListener(this);
         billingAddrBlock = (AddressBlock) frame.findViewById(R.id.billing_addr_layout);
-        billingAddrBlock.init(false);
+        billingAddrBlock.init(true, false);
         billingAddrBlock.setOnDoneListener(this);
 
         paymentMethodLayoutVw = frame.findViewById(R.id.payment_method_layout);

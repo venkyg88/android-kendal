@@ -59,10 +59,13 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
             rowView  = convertView;
         }
         Address address = values.get(position);
-        String tmpName = Character.toUpperCase(address.getFirstname().charAt(0)) + address.getFirstname().substring(1) + " " + Character.toUpperCase(address.getLastname().charAt(0)) + address.getLastname().substring(1);
-        String tmpAddress = Character.toUpperCase(address.getAddress1().charAt(0)) +  address.getAddress1().substring(1) + "," + "\n" +
-                Character.toUpperCase(address.getCity().charAt(0)) +  address.getCity().substring(1) + ", " + address.getState().toUpperCase() + " " + address.getZipcode().substring(0,5) + "\n" +
-                address.getPhone1();
+// TODO The below code is brittle and dangerous
+//        String tmpName = Character.toUpperCase(address.getFirstName().charAt(0)) + address.getFirstName().substring(1) + " " + Character.toUpperCase(address.getLastName().charAt(0)) + address.getLastName().substring(1);
+//        String tmpAddress = Character.toUpperCase(address.getAddress1().charAt(0)) +  address.getAddress1().substring(1) + "," + "\n" +
+//                Character.toUpperCase(address.getCity().charAt(0)) +  address.getCity().substring(1) + ", " + address.getState().toUpperCase() + " " + address.getZipcode().substring(0,5) + "\n" +
+//                address.getPhone1();
+        String tmpName = address.getFirstName()+" "+address.getLastName();
+        String tmpAddress = address.getAddress1()+"\n"+address.getCity()+", "+address.getState()+" "+address.getZipCode()+"\n"+address.getPhone1();
 
         optionButton = (ImageButton) rowView.findViewById(R.id.listOptions);
         optionButton.setTag(position);
