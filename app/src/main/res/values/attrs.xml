@@ -26,4 +26,9 @@
         <attr name="android:gravity"/>
         <attr name="noReviews" format="string"/>
     </declare-styleable>
+    <declare-styleable name="DualHintEdit">
+        <attr name="textDualSize" format="dimension"/>
+        <attr name="textDualGap" format="dimension"/>
+        <attr name="textDualColor" format="color"/>
+    </declare-styleable>
 </resources>

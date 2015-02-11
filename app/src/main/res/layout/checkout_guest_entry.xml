@@ -13,7 +13,7 @@
     <TextView
         style="@style/GraySubheading"
         android:text="@string/shipping_addr"/>
-    <include layout="@layout/add_address_actv_fragment" android:id="@+id/shipping_addr_layout" />
+    <include layout="@layout/address_block" android:id="@+id/shipping_addr_layout" />
 
 
     <!--payment method-->
@@ -25,7 +25,7 @@
 
 
     <!--widget for choosing billing addr to match shipping addr-->
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -45,21 +45,9 @@
 
 
     <!-- billing address (visible when different from shipping address) -->
-    <LinearLayout
-        android:id="@+id/billing_addr_container"
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:visibility="gone">
-
-        <TextView
-            style="@style/GraySubheading"
-            android:text="@string/billing_addr"/>
-
-        <!--billing address-->
-        <include layout="@layout/add_address_actv_fragment" android:id="@+id/billing_addr_layout" />
-
-    </LinearLayout>
-
+    <TextView
+        android:id="@+id/billing_addr_heading"
+        style="@style/GraySubheading"
+        android:text="@string/billing_addr"/>
+    <include layout="@layout/address_block" android:id="@+id/billing_addr_layout" />
 </LinearLayout>
