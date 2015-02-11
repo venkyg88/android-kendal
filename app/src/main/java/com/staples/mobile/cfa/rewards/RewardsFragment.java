@@ -127,10 +127,14 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
         if (m != null) {
             // membership card text
             memberNameVw.setText(m.getUserName());
-            memberDurationVw.setText("member since ???????????????");
-            rewardsNumberLabelVw.setText("type of rewards member ?????");
-            rewardsNumberBarcodeVw.setText(m.getRewardsNumber());
-            rewardsNumberBarcodeVw.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/3of9_new.ttf"));
+            // for now hide the text for which there's not yet api support
+            memberDurationVw.setVisibility(View.GONE);
+            rewardsNumberLabelVw.setVisibility(View.GONE);
+            rewardsNumberBarcodeVw.setVisibility(View.GONE);
+//            memberDurationVw.setText("member since ???????????????");
+//            rewardsNumberLabelVw.setText("type of rewards member ?????");
+//            rewardsNumberBarcodeVw.setText(m.getRewardsNumber());
+//            rewardsNumberBarcodeVw.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/3of9_new.ttf"));
             rewardsNumberVw.setText(m.getRewardsNumber());
 
 
