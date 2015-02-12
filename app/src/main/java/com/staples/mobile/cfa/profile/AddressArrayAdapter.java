@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,10 +60,19 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
             rowView  = convertView;
         }
         Address address = values.get(position);
-        String tmpName = Character.toUpperCase(address.getFirstname().charAt(0)) + address.getFirstname().substring(1) + " " + Character.toUpperCase(address.getLastname().charAt(0)) + address.getLastname().substring(1);
-        String tmpAddress = Character.toUpperCase(address.getAddress1().charAt(0)) +  address.getAddress1().substring(1) + "," + "\n" +
-                Character.toUpperCase(address.getCity().charAt(0)) +  address.getCity().substring(1) + ", " + address.getState().toUpperCase() + " " + address.getZipcode().substring(0,5) + "\n" +
-                address.getPhone1();
+// TODO The below code is brittle and dangerous
+//        String tmpName = Character.toUpperCase(address.getFirstName().charAt(0)) + address.getFirstName().substring(1) + " " + Character.toUpperCase(address.getLastName().charAt(0)) + address.getLastName().substring(1);
+//        String tmpAddress = Character.toUpperCase(address.getAddress1().charAt(0)) +  address.getAddress1().substring(1) + "," + "\n" +
+//                Character.toUpperCase(address.getCity().charAt(0)) +  address.getCity().substring(1) + ", " + address.getState().toUpperCase() + " " + address.getZipcode().substring(0,5) + "\n" +
+//                address.getPhone1();
+        String tmpName = address.getFirstName()+" "+address.getLastName();
+        StringBuilder addressBuf = new StringBuilder();
+        addressBuf.append(address.getAddress1());
+        if (!TextUtils.isEmpty(address.getAddress2())) { // conditionally append line 2 which may be an apt #
+            addressBuf.append(" ").append(address.getAddress2());
+        }
+        addressBuf.append("\n").append(address.getCity()).append(", ").append(address.getState())
+                .append(" ").append(address.getZipCode()).append("\n").append(address.getPhone1());
 
         optionButton = (ImageButton) rowView.findViewById(R.id.listOptions);
         optionButton.setTag(position);
@@ -79,7 +89,7 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
 
         TextView nameText = (TextView) rowView.findViewById(R.id.rowItemText);
         TextView addressText = (TextView) rowView.findViewById(R.id.secondItemText);
-        addressText.setText(tmpAddress);
+        addressText.setText(addressBuf.toString());
         addressText.setTextColor(context.getResources().getColor(R.color.text_black));
         nameText.setText(tmpName);
         nameText.setTypeface(null, Typeface.BOLD);

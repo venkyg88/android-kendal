@@ -125,7 +125,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         // set the item subtotal
         itemSubtotalVw.setText(currencyFormat.format(itemSubtotal));
 
-        // allow sub-classes to do there initialization
+        // allow sub-classes to do their initialization
         initEntryArea(view);
 
         return view;
@@ -154,7 +154,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     protected abstract int getEntryLayoutId();
 
     /** initializes variable entry area of checkout screen */
-    protected abstract void initEntryArea(View view);
+    protected abstract void initEntryArea(View frame);
 
 
     protected void startPrecheckout() {

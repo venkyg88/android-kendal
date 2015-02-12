@@ -281,12 +281,9 @@ public class MainActivity extends Activity
     }
 
     public void prepareMainScreen(boolean freshStart) {
-        // Inflate, add ActionBar
+        // Inflate, init ActionBar
         setContentView(R.layout.main);
-        ViewGroup stationary = (ViewGroup) findViewById(R.id.stationary);
-        LayoutInflater inflater = getLayoutInflater();
-        ActionBar actionBar = (ActionBar) inflater.inflate(R.layout.action_bar, stationary, false);
-        stationary.addView(actionBar, 0);
+        ActionBar actionBar = (ActionBar) findViewById(R.id.action_bar);
         actionBar.init(this);
 
         // Find top-level entities
