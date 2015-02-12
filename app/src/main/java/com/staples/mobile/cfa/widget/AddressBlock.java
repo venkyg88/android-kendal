@@ -74,6 +74,11 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         for(int id : manualFields) {
             findViewById(id).setVisibility(visibility);
         }
+
+        // special case for apartment... needs to be visible if autocomplete contains text
+        if (autoMode && !TextUtils.isEmpty(autoComplete.getText().toString())) {
+            findViewById(R.id.apartment).setVisibility(VISIBLE);
+        }
     }
 
     // Validation
@@ -215,6 +220,9 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         if (item.equals(inputManually)) {
             selectMode(false);
         } else {
+            TextView apartmentView = (TextView)findViewById(R.id.apartment);
+            apartmentView.setVisibility(VISIBLE);
+            apartmentView.requestFocus();
             adapter.getPlaceDetails(position, new PlacesArrayAdapter.PlaceDataCallback() {
                 @Override
                 public void onPlaceDataResult(PlacesArrayAdapter.PlaceData placeData) {
