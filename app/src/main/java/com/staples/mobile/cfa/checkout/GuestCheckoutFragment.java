@@ -68,7 +68,10 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         billingAddrBlock.init(true, false);
         billingAddrBlock.setOnDoneListener(this);
 
-        AutoCompleteTextView addressACTV = (AutoCompleteTextView) frame.findViewById(R.id.addressACTV);
+        AutoCompleteTextView addressACTV = (AutoCompleteTextView) shippingAddrBlock.findViewById(R.id.addressACTV);
+        addressACTV.setDropDownAnchor(R.id.autoCompleteAnchor);
+
+        addressACTV = (AutoCompleteTextView) billingAddrBlock.findViewById(R.id.addressACTV);
         addressACTV.setDropDownAnchor(R.id.autoCompleteAnchor);
 
         paymentMethodLayoutVw = frame.findViewById(R.id.payment_method_layout);
