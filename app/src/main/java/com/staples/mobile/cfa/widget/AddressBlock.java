@@ -27,7 +27,8 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
     private static final int[] manualFields = {R.id.addressET, R.id.apartment, R.id.city, R.id.state, R.id.zipCode};
 
     public interface OnDoneListener {
-        public void onDone(AddressBlock addressBlock);
+        public void onDone(AddressBlock addressBlock, boolean valid);
+        public void onNext(AddressBlock addressBlock);
     }
 
     private AutoCompleteTextView autoComplete;
@@ -194,20 +195,32 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
 
     @Override
     public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+        boolean valid = false;
         switch(actionId) {
+            case EditorInfo.IME_ACTION_NEXT:
+                if (listener!=null) {
+                    listener.onNext(this);
+                }
+                break;
             case EditorInfo.IME_ACTION_DONE:
-                if (!validate()) return(true);
-                if (listener!=null)
-                    listener.onDone(this);
+                valid = validate();
+                if (listener!=null) {
+                    listener.onDone(this, valid);
+                }
                 break;
             case EditorInfo.IME_NULL:
                 if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER &&
                         event.getAction()==KeyEvent.ACTION_DOWN) {
-                    if (!validate()) return(true);
-                    if (listener!=null)
-                        listener.onDone(this);
+                    valid = validate();
+                    if (listener!=null) {
+                        listener.onDone(this, valid);
+                    }
                 }
                 break;
+        }
+        // if text, clear previous error
+        if (!TextUtils.isEmpty(view.getText())) {
+            view.setError(null);
         }
         return(false);
     }
@@ -222,6 +235,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         } else {
             TextView apartmentView = (TextView)findViewById(R.id.apartment);
             apartmentView.setVisibility(VISIBLE);
+            apartmentView.setImeOptions(EditorInfo.IME_ACTION_DONE);
             apartmentView.requestFocus();
             adapter.getPlaceDetails(position, new PlacesArrayAdapter.PlaceDataCallback() {
                 @Override
