@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -32,11 +33,14 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
 
     private AddressBlock addressBlock;
     private String addressId;
+    private AutoCompleteTextView addressACTV;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         View view = inflater.inflate(R.layout.address_fragment, container, false);
         addressBlock = (AddressBlock) view.findViewById(R.id.shipping_address);
+        addressACTV = (AutoCompleteTextView) view.findViewById(R.id.addressACTV);
+        addressACTV.setDropDownAnchor(R.id.autoCompleteAnchor);
 
         boolean autoMode = true;
         Bundle args = getArguments();
