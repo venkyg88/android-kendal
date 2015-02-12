@@ -184,9 +184,9 @@ public class LoginHelper {
                     notifyListeners(true, true); // guest login, signing in
                 }
 
-                Log.i("Status Code", " " + code);
-                Log.i("wcToken", tokenObjectReturned.getWCToken());
-                Log.i("wctrustedToken", tokenObjectReturned.getWCTrustedToken());
+                Log.i(TAG, "Status Code " + code);
+                Log.i(TAG, "wcToken " + tokenObjectReturned.getWCToken());
+                Log.i(TAG, "wctrustedToken " + tokenObjectReturned.getWCTrustedToken());
             }
 
             @Override
@@ -233,9 +233,9 @@ public class LoginHelper {
                             notifyListeners(false, true); // NOT guest login, signing in
                             loadProfile(callback);
                         }
-                        Log.i("Status Code", " " + code);
-                        Log.i("wcToken", tokenObjectReturned.getWCToken());
-                        Log.i("wctrustedToken", tokenObjectReturned.getWCTrustedToken());
+                        Log.i(TAG, "Status Code " + code);
+                        Log.i(TAG, "wcToken " + tokenObjectReturned.getWCToken());
+                        Log.i(TAG, "wctrustedToken " + tokenObjectReturned.getWCTrustedToken());
                     }
 
                     @Override
@@ -261,7 +261,7 @@ public class LoginHelper {
         cachedUsername = emailAddress;
         cachedPassword = password;
         CreateUserLogin user = new CreateUserLogin(emailAddress, password);
-        Log.i("Register User object", " " + user);
+        Log.i(TAG, "Register User object " + user);
         if (!isGuestLogin()) {
             resetTokens(false);
         }
@@ -275,9 +275,9 @@ public class LoginHelper {
 
                         loadProfile(callback);
 
-                        Log.i("Status Code", " " + code);
-                        Log.i("wcToken", tokenObjectReturned.getWCToken());
-                        Log.i("wctrustedToken", tokenObjectReturned.getWCTrustedToken());
+                        Log.i(TAG, "Status Code " + code);
+                        Log.i(TAG, "wcToken " + tokenObjectReturned.getWCToken());
+                        Log.i(TAG, "wctrustedToken " + tokenObjectReturned.getWCTrustedToken());
                     }
 
                     @Override

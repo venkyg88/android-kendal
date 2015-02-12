@@ -67,8 +67,6 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Log.d(TAG, "onCreateView()");
-
         activity = (MainActivity) getActivity();
 
         // inflate and get child views

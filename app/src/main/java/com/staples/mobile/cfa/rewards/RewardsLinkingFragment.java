@@ -47,8 +47,6 @@ public class RewardsLinkingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         activity = (MainActivity)getActivity();
-
-        Log.d(TAG, "onCreateView()");
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.rewards_linking_fragment, container, false);
         rewardsNumberVw = ((EditText)view.findViewById(R.id.rewards_card_number));
         phoneNumberVw = ((EditText)view.findViewById(R.id.rewards_phone_number));

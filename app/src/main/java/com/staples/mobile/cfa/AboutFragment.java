@@ -38,7 +38,6 @@ public class AboutFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Log.d(TAG, "onCreateView()");
         View view = inflater.inflate(R.layout.about_fragment, container, false);
         TableLayout table = (TableLayout) view.findViewById(R.id.about_table);
         dateFormat = new SimpleDateFormat(("yyyy-MM-dd HH:mm"));

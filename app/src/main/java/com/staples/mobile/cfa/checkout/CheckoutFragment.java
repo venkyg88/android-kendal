@@ -87,8 +87,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Log.d(TAG, "onCreateView()");
-
         Resources r = getResources();
 
         activity = (MainActivity)getActivity();

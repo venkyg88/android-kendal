@@ -3,13 +3,11 @@ package com.staples.mobile.cfa.profile;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
-import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.InkRecyclingDetail;
@@ -19,7 +17,6 @@ import com.staples.mobile.common.access.easyopen.model.member.Reward;
 import com.staples.mobile.common.access.easyopen.model.member.RewardDetail;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -105,8 +102,8 @@ public class ProfileDetails implements Callback<MemberDetail> {
             @Override
             public void failure(RetrofitError retrofitError) {
                 String errMsg = ApiError.getErrorMessage(retrofitError);
-                Log.i("Fail message when getting member details", " " + errMsg);
-                Log.i("URl used to get member details", " " + retrofitError.getUrl());
+                Log.i(TAG, "Fail message when getting member details " + errMsg);
+                Log.i(TAG, "URl used to get member details " + retrofitError.getUrl());
                 if (ProfileDetails.this.callback != null) {
                     ProfileDetails.this.callback.onProfileRefresh(null, errMsg);
                 }
@@ -180,8 +177,8 @@ public class ProfileDetails implements Callback<MemberDetail> {
     /** implements Callback<MemberDetail> */
     public void failure(RetrofitError retrofitError) {
         String errMsg = ApiError.getErrorMessage(retrofitError);
-        Log.i("Fail message when getting member details", " " + errMsg);
-        Log.i("URl used to get member details", " " + retrofitError.getUrl());
+        Log.i(TAG, "Fail message when getting member details " + errMsg);
+        Log.i(TAG, "URl used to get member details " + retrofitError.getUrl());
         if (callback != null) {
             callback.onProfileRefresh(null, errMsg);
         }
