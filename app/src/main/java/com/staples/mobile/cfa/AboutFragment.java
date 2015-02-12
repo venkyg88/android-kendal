@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
@@ -48,6 +49,7 @@ public class AboutFragment extends Fragment {
         addPackageRows(inflater, table);
         addGoogleRows(inflater, table);
         addLocationRows(inflater, table);
+        addFontRows(inflater, table);
 
         return(view);
     }
@@ -58,11 +60,12 @@ public class AboutFragment extends Fragment {
         ActionBar.getInstance().setConfig(ActionBar.Config.ABOUT);
     }
 
-    private void addRow(LayoutInflater inflater, TableLayout table, String key, String value) {
+    private TableRow addRow(LayoutInflater inflater, TableLayout table, String key, String value) {
         TableRow row = (TableRow) inflater.inflate(R.layout.about_item, table, false);
         table.addView(row);
         ((TextView) row.findViewById(R.id.about_key)).setText(key);
         ((TextView) row.findViewById(R.id.about_value)).setText(value);
+        return(row);
     }
 
     private String formatDensity(int density) {
@@ -175,18 +178,18 @@ public class AboutFragment extends Fragment {
         // Format fields
         StringBuilder sb = new StringBuilder();
         if (days>0) {
-            sb.append(Integer.toString(days));
+            sb.append(days);
             sb.append("d ");
         }
         if (hours>0 || sb.length()>0) {
-            sb.append(Integer.toString(hours));
+            sb.append(hours);
             sb.append("h ");
         }
         if (minutes>0 || sb.length()>0) {
-            sb.append(Integer.toString(minutes));
+            sb.append(minutes);
             sb.append("m ");
         }
-        sb.append(Integer.toString(seconds));
+        sb.append(seconds);
         sb.append("s");
         return(sb.toString());
     }
@@ -207,5 +210,21 @@ public class AboutFragment extends Fragment {
         String postalCode = finder.getPostalCode();
         if (postalCode==null) postalCode = "Not available";
         addRow(inflater, table, "Postal code", postalCode);
+    }
+
+    private void addFontRows(LayoutInflater inflater, TableLayout table) {
+        TableRow row = addRow(inflater, table, "3 of 9 font", null);
+        TextView view = (TextView) row.getChildAt(1);
+        Typeface standard = view.getTypeface();
+        Typeface barcode = Typeface.createFromAsset(getActivity().getAssets(), "fonts/3of9_new.ttf");
+
+        if (barcode==null) {
+            view.setText("Create returned null");
+        } else if (barcode==standard) {
+            view.setText("Create returned default font");
+        } else {
+            view.setText("1234567890");
+            view.setTypeface(barcode);
+        }
     }
 }

@@ -93,7 +93,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
     public void success(Browse browse, Response response) {
         List<Category> categories = browse.getCategory();
         if (categories == null || categories.size() < 1) {
-            adapter.notifyDataSetChanged();
+            wrapper.setState(DataWrapper.State.NOMORE);
             return;
         }
         processCategories(categories);
@@ -156,6 +156,8 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
             adapter.notifyDataSetChanged();
             return;
         }
+
+        wrapper.setState(DataWrapper.State.NOMORE);
     }
 
     @Override
