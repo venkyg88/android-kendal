@@ -42,7 +42,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sign In"
+        android:text="@string/login_title"
         android:textColor="@color/text_white"
         android:id="@+id/submit_button"
         android:layout_marginTop="50dp"

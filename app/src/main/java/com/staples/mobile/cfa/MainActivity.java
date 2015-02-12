@@ -8,6 +8,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ import com.staples.mobile.cfa.rewards.RewardsLinkingFragment;
 import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.skuset.SkuSetFragment;
+import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.Access;
@@ -389,15 +391,24 @@ public class MainActivity extends Activity
     }
 
     private void refreshMenuItemState(boolean registeredUser) {
+        Resources r = getResources();
         // enable/disable left drawer menu items that depend upon login
         int itemCount = leftMenuAdapter.getCount();
         for (int position = 0; position < itemCount; position++) {
             DrawerItem item = leftMenuAdapter.getItem(position);
-            if (item.fragmentClass == RewardsFragment.class || item.fragmentClass == OrderFragment.class) {
+            if (item.fragmentClass == RewardsFragment.class || item.fragmentClass == OrderFragment.class ||
+                item.fragmentClass == ProfileFragment.class) {
                 item.enabled = registeredUser;
-                leftMenuAdapter.notifyDataSetChanged();
+                if (item.fragmentClass == RewardsFragment.class) {
+                    if (registeredUser) {
+                        item.additionalText = CurrencyFormat.getFormatter().format(ProfileDetails.getRewardsTotal());
+                    } else {
+                        item.additionalText = null;
+                    }
+                }
             }
         }
+        leftMenuAdapter.notifyDataSetChanged();
 
         // update sign-in button text
         TextView signInButton = (TextView) findViewById(R.id.account_option);

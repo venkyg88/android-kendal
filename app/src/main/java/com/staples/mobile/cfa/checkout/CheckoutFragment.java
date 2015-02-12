@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartApiManager;
+import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.widget.ActionBar;
 
 import java.text.DecimalFormat;
@@ -32,8 +33,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     public static final String BUNDLE_PARAM_DELIVERY_RANGE = "deliveryRange";
     public static final String BUNDLE_PARAM_SHIPPING_CHARGE = "shippingCharge";
     public static final String BUNDLE_PARAM_TAX = "tax";
-
-    private DecimalFormat currencyFormat;
 
     // saving around Activity object since getActivity() returns null after user navigates away from
     // fragment, but api call may still be returning
@@ -63,14 +62,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     private Float pretaxSubtotal;
     private String deliveryRange;
 
-
-    protected CheckoutFragment() {
-        // set up currency format to use minus sign for negative amounts (needed for coupons)
-        currencyFormat = (DecimalFormat)NumberFormat.getCurrencyInstance();
-        String symbol = currencyFormat.getCurrency().getSymbol();
-        currencyFormat.setNegativePrefix("-" + symbol);
-        currencyFormat.setNegativeSuffix("");
-    }
 
     /**
      * Create a new instance of RegisteredCheckoutFragment that will be initialized
@@ -125,6 +116,8 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         if (tax == -1) {
             tax = null;
         }
+
+        DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
 
         // set coupons/rewards adjusted amount
         couponsRewardsVw.setText(currencyFormat.format(couponsRewardsAmount));
@@ -201,6 +194,8 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
             public void onOrderSubmissionComplete(String orderId, String orderNumber, String errMsg) {
                 hideProgressIndicator();
 
+                final DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
+
                 // if success
                 if (errMsg == null) {
                     // reset cart since empty after successful order submission
@@ -253,6 +248,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         checkoutBundle.putFloat(BUNDLE_PARAM_TAX, tax);
         this.shippingCharge = shippingCharge;
         this.tax = tax;
+        DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
         shippingChargeVw.setText(formatShippingCharge(shippingCharge, currencyFormat));
         shippingChargeVw.setTextColor("Free".equals(shippingCharge) ? greenText : blackText);
         taxVw.setText(currencyFormat.format(tax));

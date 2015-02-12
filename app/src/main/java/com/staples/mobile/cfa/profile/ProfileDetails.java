@@ -242,12 +242,29 @@ public class ProfileDetails implements Callback<MemberDetail> {
     }
 
     /** extracts list of rewards from profile */
+    public static float getRewardsTotal() {
+        float total = 0;
+        List<Reward> rewards = getAllProfileRewards();
+        for (Reward reward : rewards) {
+            String amount = reward.getAmount();
+            if (amount.startsWith("$")) {
+                amount = amount.substring(1);
+            }
+            try {
+                total += Float.parseFloat(amount);
+            } catch (Exception e) {}
+        }
+        return total;
+    }
+
+    /** extracts list of rewards from profile */
     public static List<Reward> getAllProfileRewards() {
 
         List<Reward> profileRewards = new ArrayList<Reward>();
-        if (ProfileDetails.getMember() != null) {
-            if (ProfileDetails.getMember().getInkRecyclingDetails() != null) {
-                for (InkRecyclingDetail detail : ProfileDetails.getMember().getInkRecyclingDetails()) {
+        Member member = ProfileDetails.getMember();
+        if (member != null) {
+            if (member.getInkRecyclingDetails() != null) {
+                for (InkRecyclingDetail detail : member.getInkRecyclingDetails()) {
                     if (detail.getReward() != null) {
                         for (Reward reward : detail.getReward()) {
                             profileRewards.add(reward);
@@ -255,8 +272,8 @@ public class ProfileDetails implements Callback<MemberDetail> {
                     }
                 }
             }
-            if (ProfileDetails.getMember().getRewardDetails() != null) {
-                for (RewardDetail detail : ProfileDetails.getMember().getRewardDetails()) {
+            if (member.getRewardDetails() != null) {
+                for (RewardDetail detail : member.getRewardDetails()) {
                     if (detail.getReward() != null) {
                         for (Reward reward : detail.getReward()) {
                             profileRewards.add(reward);

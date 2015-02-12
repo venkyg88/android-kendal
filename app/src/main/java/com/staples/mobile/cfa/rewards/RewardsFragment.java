@@ -21,6 +21,7 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.profile.ProfileDetails;
+import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.easyopen.model.member.InkRecyclingDetail;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
@@ -28,6 +29,7 @@ import com.staples.mobile.common.access.easyopen.model.member.Reward;
 import com.staples.mobile.common.access.easyopen.model.member.YearToDateSave;
 import com.staples.mobile.common.access.easyopen.model.member.YearToDateSpend;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
 
@@ -55,8 +57,6 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
     private TextView ytdMessageVw;
 
     private String confirmationMsg;
-
-    NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -127,10 +127,14 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
         if (m != null) {
             // membership card text
             memberNameVw.setText(m.getUserName());
-            memberDurationVw.setText("member since ???????????????");
-            rewardsNumberLabelVw.setText("type of rewards member ?????");
+            // for now hide the text for which there's not yet api support
+            memberDurationVw.setVisibility(View.GONE);
+            rewardsNumberLabelVw.setVisibility(View.GONE);
+//            memberDurationVw.setText("member since ???????????????");
+//            rewardsNumberLabelVw.setText("type of rewards member ?????");
             rewardsNumberBarcodeVw.setText(m.getRewardsNumber());
-            rewardsNumberBarcodeVw.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/3of9_new.ttf"));
+            Typeface typeface = Typeface.createFromAsset(activity.getAssets(), "fonts/3of9_new.ttf");
+            rewardsNumberBarcodeVw.setTypeface(typeface);
             rewardsNumberVw.setText(m.getRewardsNumber());
 
 
@@ -155,6 +159,8 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
                 ytdMessage = yearToDateSpend.getYtdMessage();
             }
         }
+
+        DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
 
         // set text of ink recycling views
         cartridgesRecycledVw.setText(""+cartridgesRecycled);
