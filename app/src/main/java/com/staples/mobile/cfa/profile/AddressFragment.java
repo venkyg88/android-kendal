@@ -61,8 +61,9 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
         ActionBar.getInstance().setConfig(ActionBar.Config.ADDRESS);
     }
 
-    private void save() {
+    private void save(View view) {
         MainActivity activity = (MainActivity) getActivity();
+        activity.hideSoftKeyboard(view);
         activity.showProgressIndicator();
 
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
@@ -99,6 +100,6 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
 
     @Override
     public void onClick(View view) {
-        save();
+        save(view);
     }
 }

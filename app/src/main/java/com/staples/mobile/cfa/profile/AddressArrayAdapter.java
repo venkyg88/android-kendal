@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -65,7 +66,13 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
 //                Character.toUpperCase(address.getCity().charAt(0)) +  address.getCity().substring(1) + ", " + address.getState().toUpperCase() + " " + address.getZipcode().substring(0,5) + "\n" +
 //                address.getPhone1();
         String tmpName = address.getFirstName()+" "+address.getLastName();
-        String tmpAddress = address.getAddress1()+"\n"+address.getCity()+", "+address.getState()+" "+address.getZipCode()+"\n"+address.getPhone1();
+        StringBuilder addressBuf = new StringBuilder();
+        addressBuf.append(address.getAddress1());
+        if (!TextUtils.isEmpty(address.getAddress2())) { // conditionally append line 2 which may be an apt #
+            addressBuf.append(" ").append(address.getAddress2());
+        }
+        addressBuf.append("\n").append(address.getCity()).append(", ").append(address.getState())
+                .append(" ").append(address.getZipCode()).append("\n").append(address.getPhone1());
 
         optionButton = (ImageButton) rowView.findViewById(R.id.listOptions);
         optionButton.setTag(position);
@@ -82,7 +89,7 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
 
         TextView nameText = (TextView) rowView.findViewById(R.id.rowItemText);
         TextView addressText = (TextView) rowView.findViewById(R.id.secondItemText);
-        addressText.setText(tmpAddress);
+        addressText.setText(addressBuf.toString());
         addressText.setTextColor(context.getResources().getColor(R.color.text_black));
         nameText.setText(tmpName);
         nameText.setTypeface(null, Typeface.BOLD);

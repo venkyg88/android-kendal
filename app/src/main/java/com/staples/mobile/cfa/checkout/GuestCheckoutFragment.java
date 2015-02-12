@@ -152,17 +152,25 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         useShipAddrAsBillingAddrSwitch.setOnCheckedChangeListener(this);
     }
 
-    public void onDone(AddressBlock addressBlock) {
-        if (addressBlock==shippingAddrBlock) {
+    public void onNext(AddressBlock addressBlock) {
+        ShippingAddress shippingAddress = addressBlock.getShippingAddress();
+        if (!TextUtils.isEmpty(shippingAddress.getDeliveryZipCode())) {
+            onDone(addressBlock, addressBlock.validate());
+        }
+    }
+
+    public void onDone(AddressBlock addressBlock, boolean valid) {
+        if (addressBlock == shippingAddrBlock) {
             shippingAddrNeedsApplying = true;
             if (useShipAddrAsBillingAddrSwitch.isChecked()) {
                 billingAddrNeedsApplying = true;
             }
-            applyAddressesAndPrecheckout();
-        }
-
-        else if (addressBlock==billingAddrBlock) {
+        } else if (addressBlock == billingAddrBlock) {
             billingAddrNeedsApplying = true;
+        }
+        if (!valid) {
+            activity.showErrorDialog(R.string.required_fields);
+        } else {
             applyAddressesAndPrecheckout();
         }
     }
@@ -173,7 +181,10 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         getView().findViewById(R.id.billing_addr_heading).setVisibility(visibility);
         billingAddrBlock.setVisibility(visibility);
         billingAddrNeedsApplying = true;
-//        applyAddressesAndPrecheckout();
+        billingAddrBlock.requestFocus();
+        if (isChecked || !TextUtils.isEmpty(billingAddrBlock.getShippingAddress().getDeliveryZipCode())) {
+            applyAddressesAndPrecheckout();
+        }
     }
 
     /** gets shipping address from user's entries */
