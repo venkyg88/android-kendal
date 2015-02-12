@@ -8,10 +8,11 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.inputmethod.EditorInfo;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
+import android.widget.AutoCompleteTextView;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -66,6 +67,9 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         billingAddrBlock = (AddressBlock) frame.findViewById(R.id.billing_addr_layout);
         billingAddrBlock.init(true, false);
         billingAddrBlock.setOnDoneListener(this);
+
+        AutoCompleteTextView addressACTV = (AutoCompleteTextView) frame.findViewById(R.id.addressACTV);
+        addressACTV.setDropDownAnchor(R.id.autoCompleteAnchor);
 
         paymentMethodLayoutVw = frame.findViewById(R.id.payment_method_layout);
         cardNumberVw = (EditText) paymentMethodLayoutVw.findViewById(R.id.cardNumber);
