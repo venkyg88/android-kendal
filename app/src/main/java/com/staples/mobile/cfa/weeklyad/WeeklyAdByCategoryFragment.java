@@ -3,10 +3,13 @@ package com.staples.mobile.cfa.weeklyad;
 
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.staples.mobile.cfa.MainActivity;
@@ -14,9 +17,11 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.browse.Image;
 import com.staples.mobile.common.access.easyopen.model.weeklyadbycategory.Data;
 import com.staples.mobile.common.access.easyopen.model.weeklyadbycategory.WeeklyAdCategories;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Callback;
@@ -27,8 +32,11 @@ public class WeeklyAdByCategoryFragment extends Fragment {
 
     String storeId = "2278338";
     MainActivity activity;
-    ListView listView;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
     WeeklyAdByCategoryAdapter adapter;
+    List<Data> weeklyAdItems;
+
     public WeeklyAdByCategoryFragment() {
         // Required empty public constructor
     }
@@ -39,22 +47,15 @@ public class WeeklyAdByCategoryFragment extends Fragment {
                              Bundle savedInstanceState) {
         activity = (MainActivity)getActivity();
         View view = inflater.inflate(R.layout.weekly_ad_by_category, container, false);
-        listView = (ListView) view.findViewById(R.id.weekly_ad_categories_list);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Data data = adapter.getItem(position);
-                WeeklyAdListFragment weeklyAdListFragment = new WeeklyAdListFragment();
-                weeklyAdListFragment.setCategoryTreeId(data.getCategorytreeid());
-                weeklyAdListFragment.setStoreId(storeId);
-                activity.selectFragment(weeklyAdListFragment, MainActivity.Transition.FADE, true);
-            }
-        });
-        adapter = new WeeklyAdByCategoryAdapter(activity);
-        listView.setAdapter(adapter);
-
+        ImageView weeklyAdImage = (ImageView) view.findViewById(R.id.weeklyad_image);
+        weeklyAdImage.setScaleType(ImageView.ScaleType.FIT_XY);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.weekly_ad_categories_list);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
         getWeeklyAdData();
+        adapter = new WeeklyAdByCategoryAdapter(getActivity());
+        mRecyclerView.setAdapter(adapter);
         return view;
     }
 
@@ -64,14 +65,12 @@ public class WeeklyAdByCategoryFragment extends Fragment {
         easyOpenApi.getWeeklyAdByCategories(storeId, new Callback<WeeklyAdCategories>() {
             @Override
             public void success(WeeklyAdCategories weeklyAdCategories, Response response) {
-
                 activity.hideProgressIndicator();
-
-                List<Data> data = weeklyAdCategories.getContent().getCollection().getData();
-                if (data == null) {
+                weeklyAdItems = weeklyAdCategories.getContent().getCollection().getData();
+                if (weeklyAdItems == null) {
                     //TODO: Display error
                 } else {
-                    adapter.addAll(data);
+                    adapter.fill(weeklyAdItems);
                 }
             }
 
