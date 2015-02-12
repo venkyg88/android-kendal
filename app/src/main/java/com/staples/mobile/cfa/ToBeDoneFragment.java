@@ -12,12 +12,9 @@ import com.staples.mobile.cfa.widget.ActionBar;
 
 public class ToBeDoneFragment extends Fragment {
     private static final String TAG = "ToBeDoneFragment";
-    private static String token1;
-    private static String token2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Log.d(TAG, "onCreateView()");
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.tobedone, container, false);
 
         Bundle args = getArguments();
@@ -27,7 +24,7 @@ public class ToBeDoneFragment extends Fragment {
         }
 
         // TODO Not for release
-        for(int size : new int[] {10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30}) {
+        for(int size : new int[] {10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 32}) {
             TextView test = new TextView(getActivity());
             test.setTextSize(size);
             test.setText("This is " + size + "sp text.");

@@ -40,7 +40,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Log.d(TAG, "onCreateView()");
         activity = (MainActivity)getActivity();
         loginHelper = new LoginHelper((MainActivity)getActivity());
         Resources r = activity.getResources();

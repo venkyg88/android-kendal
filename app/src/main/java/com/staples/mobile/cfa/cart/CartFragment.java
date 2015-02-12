@@ -46,11 +46,9 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
     private static final String TAG = CartFragment.class.getSimpleName();
 
-
     // saving around Activity object since getActivity() returns null after user navigates away from
     // fragment, but api call may still be returning
     private MainActivity activity;
-
 
     private TextView cartSubtotal;
     private TextView cartFreeShippingMsg;
@@ -74,15 +72,12 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private int greenText;
     private int blackText;
 
-
     // cart object - make these static so they're not lost on device rotation
     private static List<CartItem> cartListItems;
     private static List<CartItemGroup> cartItemGroups;
 
-
     private int minExpectedBusinessDays;
     private int maxExpectedBusinessDays;
-
 
     // widget listeners
     private QtyDeleteButtonListener qtyDeleteButtonListener;
@@ -93,9 +88,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Log.d(TAG, "onCreateView()");
-
-        activity = (MainActivity)getActivity();
+        activity = (MainActivity) getActivity();
 
         // inflate and get child views
         View view = inflater.inflate(R.layout.cart_fragment, container, false);

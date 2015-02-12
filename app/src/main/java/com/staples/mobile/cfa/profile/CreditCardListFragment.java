@@ -30,8 +30,6 @@ public class CreditCardListFragment extends Fragment implements View.OnClickList
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Log.d(TAG, "onCreateView()");
-
         View view = inflater.inflate(R.layout.profile_list_fragment, container, false);
         listview = (ListView) view.findViewById(R.id.profileListView);
         activity = getActivity();

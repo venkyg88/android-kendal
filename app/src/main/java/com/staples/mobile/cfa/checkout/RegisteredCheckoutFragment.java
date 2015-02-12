@@ -294,8 +294,8 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
     private String formatAddress(com.staples.mobile.common.access.easyopen.model.member.Address address) {
         StringBuilder b = new StringBuilder();
         if (address != null) {
-            if (!TextUtils.isEmpty(address.getOrganizationName())) {
-                b.append(address.getOrganizationName()).append("\n");
+            if (!TextUtils.isEmpty(address.getCompanyName())) {
+                b.append(address.getCompanyName()).append("\n");
             }
             b.append(address.getAddress1() + "\n");
             if (!TextUtils.isEmpty(address.getAddress2())) {

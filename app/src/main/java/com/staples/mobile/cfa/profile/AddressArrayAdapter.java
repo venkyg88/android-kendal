@@ -19,6 +19,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.EmptyResponse;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 
@@ -152,10 +153,10 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
     public void deleteAddress(final int position){
         String addressId = values.get(position).getAddressId();
         ((MainActivity)context).showProgressIndicator();
-        easyOpenApi.deleteMemberAddress(addressId, new Callback<Response>() {
+        easyOpenApi.deleteMemberAddress(addressId, new Callback<EmptyResponse>() {
 
             @Override
-            public void success(Response response, Response response2) {
+            public void success(EmptyResponse empty, Response response) {
                 (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
                     @Override public void onProfileRefresh(Member member, String errMsg) {
                         ((MainActivity)context).hideProgressIndicator();

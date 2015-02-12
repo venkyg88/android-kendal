@@ -29,7 +29,6 @@ public class AddressListFragment extends Fragment implements View.OnClickListene
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Log.d(TAG, "onCreateView()");
         activity = getActivity();
 
         View view = inflater.inflate(R.layout.profile_list_fragment, container, false);
