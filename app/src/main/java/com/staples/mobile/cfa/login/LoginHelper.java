@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -22,6 +21,7 @@ import java.util.List;
 import java.util.Vector;
 
 import retrofit.Callback;
+import retrofit.ResponseCallback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
@@ -240,8 +240,8 @@ public class LoginHelper {
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
-                        Log.i("Fail Message For Registered User", " " + retrofitError.getMessage());
-                        Log.i("Post URL address For Registered User", " " + retrofitError.getUrl());
+                        Log.i(TAG, "Fail Message For Registered User " + retrofitError.getMessage());
+                        Log.i(TAG, "Post URL address For Registered User " + retrofitError.getUrl());
                         // if no guest login yet, attempt a guest login
                         if (!isLoggedIn()) {
                             getGuestTokens(refreshOnly);
@@ -294,16 +294,16 @@ public class LoginHelper {
 
     public void userSignOut ()
     {
-        easyOpenApi.registeredUserSignOut(new Callback<Response>() {
+        easyOpenApi.registeredUserSignOut(new ResponseCallback() {
             @Override
-            public void success(Response empty, Response response) {
-                Log.i("Code for signout", " " + response.getStatus());
+            public void success(Response response) {
+                Log.i(TAG, "Code for signout " + response.getStatus());
                 handleSigningOut();
             }
 
             @Override
             public void failure(RetrofitError error) {
-                Log.i("Failed signout, URL: ", " " + error.getUrl());
+                Log.i(TAG, "Failed signout, URL: " + error.getUrl());
                 // Even if sign out appears to fail, the app needs to act as though signed out because
                 // there probably is not a legitimate session. For example, maybe signing out failed because
                 // the last valid session had timed out.

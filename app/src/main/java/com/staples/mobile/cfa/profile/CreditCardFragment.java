@@ -25,6 +25,7 @@ import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.EmptyResponse;
 import com.staples.mobile.common.access.easyopen.model.member.AddCreditCard;
 import com.staples.mobile.common.access.easyopen.model.member.AddCreditCardPOW;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
@@ -197,9 +198,9 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                     }
                     else if(creditCardId != null) {
                         UpdateCreditCard updatedCard= new UpdateCreditCard(cardType, encryptedPacket, expirationMonth, expirationYear, "notes", creditCardId);
-                        easyOpenApi.updateMemberCreditCard(updatedCard, new Callback<Response>() {
+                        easyOpenApi.updateMemberCreditCard(updatedCard, new Callback<EmptyResponse>() {
                             @Override
-                            public void success(Response response, Response response2) {
+                            public void success(EmptyResponse empty, Response response) {
                                 (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
                                     @Override public void onProfileRefresh(Member member, String errMsg) {
                                         activity.hideProgressIndicator();
