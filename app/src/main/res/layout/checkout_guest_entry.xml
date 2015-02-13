@@ -9,6 +9,13 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+	<TextView android:id="@+id/autoCompleteAnchor"
+		android:layout_centerHorizontal="true"
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:visibility="invisible"
+	/>
+
     <!--shipping address-->
     <TextView
         style="@style/GraySubheading"
