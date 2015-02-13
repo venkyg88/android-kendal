@@ -67,15 +67,18 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
     private void save(View view) {
         MainActivity activity = (MainActivity) getActivity();
         activity.hideSoftKeyboard(view);
-        activity.showProgressIndicator();
 
-        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
-        UpdateAddress addr = addressBlock.getUpdateAddress();
-        if (addressId!=null) {
-            addr.setAddressId(addressId);
-            easyOpenApi.updateMemberAddress(addr, this);
-        } else {
-            easyOpenApi.addMemberAddress(addr, this);
+        if (addressBlock.validate()) {
+
+            activity.showProgressIndicator();
+            EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
+            UpdateAddress addr = addressBlock.getUpdateAddress();
+            if (addressId != null) {
+                addr.setAddressId(addressId);
+                easyOpenApi.updateMemberAddress(addr, this);
+            } else {
+                easyOpenApi.addMemberAddress(addr, this);
+            }
         }
     }
 
