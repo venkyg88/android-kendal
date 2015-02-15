@@ -23,6 +23,7 @@ import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.widget.ActionBar;
+import com.staples.mobile.cfa.widget.Numeric39Barcode;
 import com.staples.mobile.common.access.easyopen.model.member.InkRecyclingDetail;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
@@ -41,7 +42,7 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
     private TextView memberNameVw;
     private TextView memberDurationVw;
     private TextView rewardsNumberLabelVw;
-    private TextView rewardsNumberBarcodeVw;
+    private Numeric39Barcode rewardsNumberBarcode39Vw;
     private TextView rewardsNumberVw;
     private RecyclerView rewardsListView;
     private RewardAdapter rewardAdapter;
@@ -84,7 +85,7 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
         memberNameVw = (TextView) view.findViewById(R.id.member_name);
         memberDurationVw = (TextView) view.findViewById(R.id.member_duration);
         rewardsNumberLabelVw = (TextView) view.findViewById(R.id.rewards_number_label);
-        rewardsNumberBarcodeVw = (TextView) view.findViewById(R.id.rewards_number_barcode);
+        rewardsNumberBarcode39Vw = (Numeric39Barcode) view.findViewById(R.id.rewards_number_barcode39);
         rewardsNumberVw = (TextView) view.findViewById(R.id.rewards_number);
 
         // get rewards list views
@@ -132,9 +133,9 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
             rewardsNumberLabelVw.setVisibility(View.GONE);
 //            memberDurationVw.setText("member since ???????????????");
 //            rewardsNumberLabelVw.setText("type of rewards member ?????");
-            rewardsNumberBarcodeVw.setText(m.getRewardsNumber());
-            Typeface typeface = Typeface.createFromAsset(activity.getAssets(), "fonts/3of9_new.ttf");
-            rewardsNumberBarcodeVw.setTypeface(typeface);
+            rewardsNumberBarcode39Vw.setText(m.getRewardsNumber());
+//            rewardsNumberBarcodeVw.setText("*"+m.getRewardsNumber()+"*");
+//            rewardsNumberBarcodeVw.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/3of9_new.ttf"));
             rewardsNumberVw.setText(m.getRewardsNumber());
 
 
