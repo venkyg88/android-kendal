@@ -400,11 +400,11 @@ public class MainActivity extends Activity
                 item.fragmentClass == ProfileFragment.class) {
                 item.enabled = registeredUser;
                 if (item.fragmentClass == RewardsFragment.class) {
+                    float rewardsTotal = 0;
                     if (registeredUser) {
-                        item.additionalText = CurrencyFormat.getFormatter().format(ProfileDetails.getRewardsTotal());
-                    } else {
-                        item.additionalText = null;
+                        rewardsTotal = ProfileDetails.getRewardsTotal();
                     }
+                    item.additionalText = (rewardsTotal > 0)? CurrencyFormat.getFormatter().format(rewardsTotal) : null;
                 }
             }
         }
