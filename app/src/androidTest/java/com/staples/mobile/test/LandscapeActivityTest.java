@@ -53,7 +53,7 @@ public class LandscapeActivityTest {
     public void testLeftDrawer() throws InterruptedException {
         System.out.println("testLeftDrawer");
 
-        ListView menu = (ListView) activity.findViewById(R.id.left_drawer);
+        ListView menu = (ListView) activity.findViewById(R.id.left_menu);
         Assert.assertNotNull("Left drawer should contain a list", menu);
 
         DrawerAdapter adapter = (DrawerAdapter) menu.getAdapter();

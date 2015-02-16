@@ -85,7 +85,7 @@ public class CartModelTest {
 
         TypedJsonString body = new TypedJsonString("{" +
                 "\"orderItem\": [" +
-                "{\"partNumber_0\":123455,\"quantity_0\": \"3\"}," +
+                "{\"partNumber_0\":733333,\"quantity_0\": \"3\"}," +
                 "{\"partNumber_1\":487908,\"quantity_1\": \"3\"}" +
                 "]}");
         easyOpenApi.addToCart(body,
