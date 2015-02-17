@@ -30,7 +30,7 @@ import retrofit.client.Response;
 
 public class WeeklyAdByCategoryFragment extends Fragment {
 
-    String storeId = "2278338";
+    String storeId = "2278338"; // TODO This needs to be implemented
     MainActivity activity;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -40,7 +40,6 @@ public class WeeklyAdByCategoryFragment extends Fragment {
     public WeeklyAdByCategoryFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
