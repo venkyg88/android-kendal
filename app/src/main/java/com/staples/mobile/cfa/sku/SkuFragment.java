@@ -859,6 +859,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                         ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
                         if (errMsg == null) {
                             ((Button) wrapper.findViewById(R.id.add_to_cart)).setText(R.string.add_another);
+                            activity.showNotificationBanner(R.string.cart_updated_msg);
                         } else {
                             activity.showErrorDialog(errMsg);
                         }
