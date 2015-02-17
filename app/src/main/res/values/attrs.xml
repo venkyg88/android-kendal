@@ -31,4 +31,8 @@
         <attr name="textDualGap" format="dimension"/>
         <attr name="textDualColor" format="color"/>
     </declare-styleable>
+    <declare-styleable name="Numeric39Barcode">
+        <attr name="barcodeHeight" format="dimension"/>
+        <attr name="barcodeColor" format="color"/>
+    </declare-styleable>
 </resources>
