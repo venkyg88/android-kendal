@@ -26,8 +26,9 @@ public class Numeric39Barcode extends View {
 
     private static final int LINE_WIDTH = 2;
     private static final int WIDELINE_WIDTH = LINE_WIDTH*3; // 3-to-1 ratio between wide and narrow lines
-    private static final int DIVIDER_WIDTH = LINE_WIDTH;
-    private static final int SYMBOL_WIDTH = LINE_WIDTH*4 + WIDELINE_WIDTH*2 + DIVIDER_WIDTH*6;
+    private static final int SYMBOL_WIDTH = LINE_WIDTH*3 +      // 3 narrow lines
+                                            WIDELINE_WIDTH*3 +  // 2 wide lines and 1 wide space
+                                            LINE_WIDTH*4;       // 4 narrow spaces
 
     private static HashMap<Character, String> mapChars;
     static {
@@ -56,7 +57,13 @@ public class Numeric39Barcode extends View {
     private String text;
     private int startingXPosition;
     private int startingYPosition;
+    private int desiredWidth;
+    private int desiredHeight;
 
+    // initialize widths based on defaults, adjust later if small screen
+    private int lineWidth = LINE_WIDTH;
+    private int wideLineWidth = WIDELINE_WIDTH;
+    private int symbolWidth = SYMBOL_WIDTH;
 
     // Constructors
 
@@ -96,8 +103,6 @@ public class Numeric39Barcode extends View {
         }
 
         // create paint object
-//        narrowLinePaint = createLinePaint(LINE_WIDTH);
-//        wideLinePaint = createLinePaint(WIDELINE_WIDTH);
         linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         linePaint.setColor(barcodeColor);
         linePaint.setStyle(Paint.Style.FILL);
@@ -107,12 +112,9 @@ public class Numeric39Barcode extends View {
         startingYPosition = getPaddingTop();
     }
 
-//    private Paint createLinePaint(int lineWidth) {
-//        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-//        paint.setColor(barcodeColor);
-//        paint.setStrokeWidth(lineWidth);
-//        return paint;
-//    }
+    // these exist just for clarity, even though divider widths are the same as line widths
+    private int getDividerWidth() { return lineWidth; }
+    private int getWideDividerWidth() { return wideLineWidth; }
 
     private void drawCharacter(Canvas canvas, int x, int y, char c) {
         String charCode = mapChars.get(c);
@@ -121,15 +123,15 @@ public class Numeric39Barcode extends View {
                 char codeElement = charCode.charAt(i);
                 switch (codeElement) {
                     case '0': // narrow line
-                        canvas.drawRect(x, y, x + LINE_WIDTH, y + barcodeHeight, linePaint);
-                        x += (LINE_WIDTH + DIVIDER_WIDTH);
+                        canvas.drawRect(x, y, x + lineWidth, y + barcodeHeight, linePaint);
+                        x += (lineWidth + getDividerWidth());
                         break;
                     case '1': // wide line
-                        canvas.drawRect(x, y, x + WIDELINE_WIDTH, y + barcodeHeight, linePaint);
-                        x += (WIDELINE_WIDTH + DIVIDER_WIDTH);
+                        canvas.drawRect(x, y, x + wideLineWidth, y + barcodeHeight, linePaint);
+                        x += (wideLineWidth + getDividerWidth());
                         break;
-                    case '-': // space
-                        x += (LINE_WIDTH + DIVIDER_WIDTH);
+                    case '-': // wide space
+                        x += (getWideDividerWidth() - getDividerWidth());  // subtracting off already added diverWidth from last character
                         break;
                 }
             }
@@ -143,9 +145,9 @@ public class Numeric39Barcode extends View {
         if (!TextUtils.isEmpty(text)) {
             barcodeSymbolCount += text.length();
         }
-        int width = getPaddingLeft() + getPaddingRight() + (barcodeSymbolCount * SYMBOL_WIDTH);
-        int height = getPaddingTop() + getPaddingBottom() + barcodeHeight;
-        setMeasuredDimension(resolveSize(width, widthSpec), resolveSize(height, heightSpec));
+        desiredWidth = getPaddingLeft() + getPaddingRight() + (barcodeSymbolCount * symbolWidth);
+        desiredHeight = getPaddingTop() + getPaddingBottom() + barcodeHeight;
+        setMeasuredDimension(resolveSize(desiredWidth, widthSpec), resolveSize(desiredHeight, heightSpec));
     }
 
     @Override
@@ -155,12 +157,22 @@ public class Numeric39Barcode extends View {
         int x = startingXPosition;
         int y = startingYPosition;
 
+        // make adjustments based on actual dimensions
+        if (getWidth() < desiredWidth) {
+            lineWidth = LINE_WIDTH/2;
+            wideLineWidth = WIDELINE_WIDTH/2;
+            symbolWidth = SYMBOL_WIDTH/2;
+        }
+        if (getHeight() < desiredHeight) {
+            barcodeHeight -= (desiredHeight - getHeight());
+        }
+
         drawCharacter(canvas, x, y, '*');
-        x += SYMBOL_WIDTH;
+        x += symbolWidth;
         if (text != null) {
             for (int i = 0; i < text.length(); i++) {
                 drawCharacter(canvas, x, y, text.charAt(i));
-                x += SYMBOL_WIDTH;
+                x += symbolWidth;
             }
         }
         drawCharacter(canvas, x, y, '*');

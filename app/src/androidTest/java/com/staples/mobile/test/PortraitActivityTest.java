@@ -50,9 +50,7 @@ public class PortraitActivityTest {
     }
 
     @Test
-    public void testLeftDrawer() throws InterruptedException {
-        System.out.println("testLeftDrawer");
-
+    public void testLeftDrawer() {
         ListView menu = (ListView) activity.findViewById(R.id.left_menu);
         Assert.assertNotNull("Left drawer should contain a list", menu);
 
