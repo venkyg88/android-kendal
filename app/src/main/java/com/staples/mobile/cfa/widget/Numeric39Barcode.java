@@ -26,8 +26,9 @@ public class Numeric39Barcode extends View {
 
     private static final int LINE_WIDTH = 2;
     private static final int WIDELINE_WIDTH = LINE_WIDTH*3; // 3-to-1 ratio between wide and narrow lines
-    private static final int DIVIDER_WIDTH = LINE_WIDTH;
-    private static final int SYMBOL_WIDTH = LINE_WIDTH*4 + WIDELINE_WIDTH*2 + DIVIDER_WIDTH*6;
+    private static final int SYMBOL_WIDTH = LINE_WIDTH*3 +      // 3 narrow lines
+                                            WIDELINE_WIDTH*3 +  // 2 wide lines and 1 wide space
+                                            LINE_WIDTH*4;       // 4 narrow spaces
 
     private static HashMap<Character, String> mapChars;
     static {
@@ -62,7 +63,6 @@ public class Numeric39Barcode extends View {
     // initialize widths based on defaults, adjust later if small screen
     private int lineWidth = LINE_WIDTH;
     private int wideLineWidth = WIDELINE_WIDTH;
-    private int dividerWidth = DIVIDER_WIDTH;
     private int symbolWidth = SYMBOL_WIDTH;
 
     // Constructors
@@ -112,6 +112,10 @@ public class Numeric39Barcode extends View {
         startingYPosition = getPaddingTop();
     }
 
+    // these exist just for clarity, even though divider widths are the same as line widths
+    private int getDividerWidth() { return lineWidth; }
+    private int getWideDividerWidth() { return wideLineWidth; }
+
     private void drawCharacter(Canvas canvas, int x, int y, char c) {
         String charCode = mapChars.get(c);
         if (charCode != null) {
@@ -120,14 +124,14 @@ public class Numeric39Barcode extends View {
                 switch (codeElement) {
                     case '0': // narrow line
                         canvas.drawRect(x, y, x + lineWidth, y + barcodeHeight, linePaint);
-                        x += (lineWidth + dividerWidth);
+                        x += (lineWidth + getDividerWidth());
                         break;
                     case '1': // wide line
                         canvas.drawRect(x, y, x + wideLineWidth, y + barcodeHeight, linePaint);
-                        x += (wideLineWidth + dividerWidth);
+                        x += (wideLineWidth + getDividerWidth());
                         break;
-                    case '-': // space
-                        x += (lineWidth + dividerWidth);
+                    case '-': // wide space
+                        x += (getWideDividerWidth() - getDividerWidth());  // subtracting off already added diverWidth from last character
                         break;
                 }
             }
@@ -157,7 +161,6 @@ public class Numeric39Barcode extends View {
         if (getWidth() < desiredWidth) {
             lineWidth = LINE_WIDTH/2;
             wideLineWidth = WIDELINE_WIDTH/2;
-            dividerWidth = DIVIDER_WIDTH/2;
             symbolWidth = SYMBOL_WIDTH/2;
         }
         if (getHeight() < desiredHeight) {
