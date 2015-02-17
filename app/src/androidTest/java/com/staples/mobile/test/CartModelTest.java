@@ -102,7 +102,7 @@ public class CartModelTest {
                         error.printStackTrace();
                     }
                 });
-        Thread.sleep(5000);
+        Thread.sleep(10000);
         Robolectric.runUiThreadTasksIncludingDelayedTasks();
 
         Assert.assertFalse("Api call should not have failed", failure);
