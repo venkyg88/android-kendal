@@ -861,6 +861,10 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                             ((Button) wrapper.findViewById(R.id.add_to_cart)).setText(R.string.add_another);
                             activity.showNotificationBanner(R.string.cart_updated_msg);
                         } else {
+                            // if non-grammatical out-of-stock message from api, provide a nicer message
+                            if (errMsg.contains("items is out of stock")) {
+                                errMsg = activity.getResources().getString(R.string.avail_outofstock);
+                            }
                             activity.showErrorDialog(errMsg);
                         }
                     }
