@@ -72,11 +72,11 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
         viewHolder.setClickListener(new ViewHolder.ClickListener() {
             @Override
             public void onClick(View v, int position) {
-//                Data data = array.get(position);
+                Data data = array.get(position);
 //                WeeklyAdListFragment weeklyAdListFragment = new WeeklyAdListFragment();
 //                weeklyAdListFragment.setCategoryTreeId(data.getCategorytreeid());
 //                weeklyAdListFragment.setStoreId("2278338");
-//                ((MainActivity)activity).selectFragment(weeklyAdListFragment, MainActivity.Transition.FADE, true);
+                ((MainActivity)activity).selectBundle(data.getName(), data.getCategorytreeid());
                   ((MainActivity)activity).showNotificationBanner("In Progress");
             }
         });

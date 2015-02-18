@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -48,7 +49,12 @@ public class WeeklyAdByCategoryFragment extends Fragment {
         activity = (MainActivity)getActivity();
         View view = inflater.inflate(R.layout.weekly_ad_by_category, container, false);
         ImageView weeklyAdImage = (ImageView) view.findViewById(R.id.weeklyad_image);
-        weeklyAdImage.setScaleType(ImageView.ScaleType.FIT_XY);
+//        weeklyAdImage.setScaleType(ImageView.ScaleType.FIT_XY);
+
+        Picasso.with(activity)
+                .load(R.drawable.weekly_ad)
+                .into(weeklyAdImage);
+
         mRecyclerView = (RecyclerView) view.findViewById(R.id.weekly_ad_categories_list);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
