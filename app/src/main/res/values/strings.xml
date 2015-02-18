@@ -12,6 +12,7 @@
     <string name="account_title">Account</string>
     <string name="login_title">Sign In</string>
     <string name="signout_title">Sign Out</string>
+    <string name="create_account_title">Create Account</string>
     <string name="rewards_title">Staples Rewards</string>
     <string name="link_rewards_title">Link Rewards Account</string>
     <string name="order_title">Orders</string>
@@ -78,7 +79,7 @@
     <string name="required_fields">Please fill in required fields</string>
     <string name="billing_addr">Billing Address</string>
     <string name="use_as_billing_addr">Use above as billing address</string>
-    <string name="item_subtotal">Item total</string>
+    <string name="item_subtotal">Subtotal</string>
     <string name="coupons_rewards">Coupons &amp; Rewards</string>
     <string name="coupon_code_hint">Add Coupon Code here</string>
     <string name="redeemable_rewards">Redeemable Rewards</string>
@@ -164,7 +165,7 @@
     <string name="address_updated">Address updated</string>
     <string name="cc_updated">Credit card updated</string>
     <string name="cc_deleted">Credit card deleted</string>
-    <string name="check_exp_date">"Check expiration date</string>
+    <string name="check_exp_date">Check expiration date</string>
     <string name="cc_encryption_failure">Credit card encryption failed</string>
     <string name="all_fields_required">All fields are required. Please fill and try again</string>
 

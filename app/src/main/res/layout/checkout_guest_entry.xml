@@ -3,11 +3,18 @@
   ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp">
+
+	<TextView android:id="@+id/autoCompleteAnchor"
+		android:layout_centerHorizontal="true"
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:visibility="invisible"
+	/>
 
     <!--shipping address-->
     <TextView
@@ -15,14 +22,12 @@
         android:text="@string/shipping_addr"/>
     <include layout="@layout/address_block" android:id="@+id/shipping_addr_layout" />
 
-
     <!--payment method-->
     <TextView
         style="@style/GraySubheading"
         android:layout_marginTop="20dp"
         android:text="@string/payment_method"/>
     <include layout="@layout/add_creditcard_fragment" android:id="@+id/payment_method_layout" />
-
 
     <!--widget for choosing billing addr to match shipping addr-->
     <LinearLayout
@@ -43,11 +48,10 @@
            />
     </LinearLayout>
 
-
     <!-- billing address (visible when different from shipping address) -->
     <TextView
         android:id="@+id/billing_addr_heading"
         style="@style/GraySubheading"
         android:text="@string/billing_addr"/>
     <include layout="@layout/address_block" android:id="@+id/billing_addr_layout" />
-</LinearLayout>
+</com.staples.mobile.cfa.widget.AnimatorLayout>

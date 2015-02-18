@@ -3,6 +3,14 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
+
+	<TextView android:id="@+id/autoCompleteAnchor"
+		android:layout_centerHorizontal="true"
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:visibility="invisible"
+	/>
+
     <include layout="@layout/address_block"
              android:id="@+id/shipping_address"/>
     <Button

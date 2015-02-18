@@ -18,6 +18,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.EmptyResponse;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 
@@ -149,10 +150,10 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
     public void deleteCreditCard(final int position) {
         String creditCardId = values.get(position).getCreditCardId();
         ((MainActivity)context).showProgressIndicator();
-        easyOpenApi.deleteMemberCreditCard(creditCardId, new Callback<Response>() {
+        easyOpenApi.deleteMemberCreditCard(creditCardId, new Callback<EmptyResponse>() {
 
             @Override
-            public void success(Response response, Response response2) {
+            public void success(EmptyResponse empty, Response response) {
                 (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
                     @Override
                     public void onProfileRefresh(Member member, String errMsg) {

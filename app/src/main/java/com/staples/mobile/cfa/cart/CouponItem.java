@@ -4,6 +4,7 @@
 
 package com.staples.mobile.cfa.cart;
 
+import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
 
@@ -25,8 +26,6 @@ public class CouponItem {
     private int itemType;
     private String couponCodeToAdd;
 
-    private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
-
 
     public CouponItem(Coupon coupon, Reward reward, int itemType) {
         this.coupon = coupon;
@@ -39,7 +38,7 @@ public class CouponItem {
             return reward.getAmount();
         } else if (coupon != null) {
             return (reward != null)? reward.getAmount() :
-                    (currencyFormat.format(Math.abs(coupon.getAdjustedAmount())) + " off");
+                    (CurrencyFormat.getFormatter().format(Math.abs(coupon.getAdjustedAmount())) + " off");
         }
         return "";
     }

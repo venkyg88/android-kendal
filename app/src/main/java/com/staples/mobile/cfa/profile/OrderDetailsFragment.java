@@ -35,8 +35,7 @@ public class OrderDetailsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Log.d(TAG, "onCreateView()");
-        activity = (MainActivity)getActivity();
+        activity = (MainActivity) getActivity();
         View view = inflater.inflate(R.layout.order_detail_fragment, container, false);
         orderNumber = (TextView)view.findViewById(R.id.orderNumber);
         orderDate = (TextView)view.findViewById(R.id.orderDate);

@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.login;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -39,9 +40,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Log.d(TAG, "onCreateView()");
         activity = (MainActivity)getActivity();
         loginHelper = new LoginHelper((MainActivity)getActivity());
+        Resources r = activity.getResources();
 
         if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
             getFragmentManager().popBackStack();
@@ -55,10 +56,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             TabHost.TabSpec tab1 = tabHost.newTabSpec("First Tab");
             TabHost.TabSpec tab2 = tabHost.newTabSpec("Second Tab");
 
-            tab1.setIndicator("Sign In");
+            tab1.setIndicator(r.getString(R.string.login_title));
             tab1.setContent(R.id.tab1);
 
-            tab2.setIndicator("Create Account");
+            tab2.setIndicator(r.getString(R.string.create_account_title));
             tab2.setContent(R.id.tab2);
 
             tabHost.addTab(tab1);

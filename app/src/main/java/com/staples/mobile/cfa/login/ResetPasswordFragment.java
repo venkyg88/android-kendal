@@ -18,7 +18,6 @@ public class ResetPasswordFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Log.d(TAG, "onCreateView()");
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.reset_password_fragment, container, false);
         return(view);
     }

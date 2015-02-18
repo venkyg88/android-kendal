@@ -45,9 +45,7 @@ public class OrderFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-
-        Log.d(TAG, "onCreateView()");
-        activity = (MainActivity)getActivity();
+        activity = (MainActivity) getActivity();
         View view = inflater.inflate(R.layout.order_fragment, container, false);
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
         listview = (ListView) view.findViewById(R.id.orderListView);
@@ -98,7 +96,7 @@ public class OrderFragment extends Fragment {
                         public void failure(RetrofitError error) {
                             activity.hideProgressIndicator();
                             activity.showErrorDialog(ApiError.getErrorMessage(error));
-                            Log.i("Fail Response Order Status", error.getUrl() + error.getMessage());
+                            Log.i(TAG, "Fail Response Order Status " + error.getUrl() + " " + error.getMessage());
                         }
                     });
                 }
@@ -111,7 +109,7 @@ public class OrderFragment extends Fragment {
                 orderTV.setText("No Orders Found");
                 activity.hideProgressIndicator();
                 activity.showErrorDialog(ApiError.getErrorMessage(error));
-                Log.i("Fail Response Order History", error.getUrl() + error.getMessage());
+                Log.i(TAG, "Fail Response Order History " + error.getUrl() + " " + error.getMessage());
             }
         });
     }

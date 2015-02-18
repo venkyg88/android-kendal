@@ -28,6 +28,7 @@ public class DrawerItem {
     // Generic info
     public Type type;
     public String title;
+    public String additionalText;
     public Drawable icon;
     public boolean enabled;
 
