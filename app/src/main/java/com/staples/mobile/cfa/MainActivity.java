@@ -573,6 +573,8 @@ public class MainActivity extends Activity
 
     @Override
     public void onBackPressed () {
+        hideProgressIndicator();
+
         // if on order confirmation fragment, don't go back to any of the checkout related pages, go to Home page
         FragmentManager manager = getFragmentManager();
         Fragment confirmationFragment = manager.findFragmentByTag(ConfirmationFragment.TAG);

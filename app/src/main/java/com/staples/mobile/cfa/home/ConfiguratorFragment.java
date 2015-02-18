@@ -1162,7 +1162,8 @@ public class ConfiguratorFragment extends Fragment {
 
         Access access = Access.getInstance();
         // Logged In
-        if(access.isLoggedIn() && !access.isGuestLogin()){
+        // Note that member can be null if failure to retrieve profile following successful login
+        if(access.isLoggedIn() && !access.isGuestLogin() && ProfileDetails.getMember() != null){
             float rewards = 0;
             Member member = ProfileDetails.getMember();
             if(member.getRewardsNumber() != null && member.getRewardDetails() != null) {

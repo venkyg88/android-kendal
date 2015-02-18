@@ -154,8 +154,13 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                                 // if success
                                 if (errMsg == null) {
                                     buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.added_to_cart));
+                                    activity.showNotificationBanner(R.string.cart_updated_msg);
                                 } else {
                                     buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.add_to_cart));
+                                    // if non-grammatical out-of-stock message from api, provide a nicer message
+                                    if (errMsg.contains("items is out of stock")) {
+                                        errMsg = activity.getResources().getString(R.string.avail_outofstock);
+                                    }
                                     activity.showErrorDialog(errMsg);
                                 }
                             }
