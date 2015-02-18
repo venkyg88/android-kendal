@@ -14,7 +14,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
-import android.view.LayoutInflater;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.adobe.mobile.Config;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.cart.CartFragment;
@@ -142,6 +142,12 @@ public class MainActivity extends Activity
             initialLoginComplete = false;
             appConfigurator = AppConfigurator.getInstance();
             appConfigurator.getConfigurator(this); // AppConfiguratorCallback
+            //Analytics
+            Config.setContext(this.getApplicationContext());
+            //@TODO this shall come from Configurator
+            Config.setDebugLogging(true);
+            //Analytics
+            Config.collectLifecycleData();
         }
     }
 
@@ -149,6 +155,9 @@ public class MainActivity extends Activity
     protected void onResume() {
         super.onResume();
         ensureActiveSession();
+        //@TODO So what happens ensure errors out! REach next line?
+        //Analytics
+        Config.collectLifecycleData();
     }
 
     @Override
@@ -162,6 +171,8 @@ public class MainActivity extends Activity
         if (actionBar != null) {
             actionBar.saveSearchHistory();
         }
+        //Analytics
+        Config.pauseCollectingLifecycleData();
     }
 
     @Override

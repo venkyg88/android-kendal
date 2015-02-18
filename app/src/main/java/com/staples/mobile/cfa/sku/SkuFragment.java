@@ -13,26 +13,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.adobe.mobile.Analytics;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.analytics.AppType;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.feed.PersistentSizedArrayList;
 import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
-import com.staples.mobile.cfa.login.ResetPasswordFragment;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PagerStripe;
@@ -42,6 +40,7 @@ import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.browse.Analytic;
 import com.staples.mobile.common.access.easyopen.model.browse.BulletDescription;
 import com.staples.mobile.common.access.easyopen.model.browse.Description;
 import com.staples.mobile.common.access.easyopen.model.browse.Image;
@@ -579,6 +578,16 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         if (products != null && products.size() > 0) {
             // Use the first product in the list
             final Product product = products.get(0);
+            //Analytics
+            //@TODO check for null  --hate get(0)
+            Analytic an  = product.getAnalytic().get(0);
+            Analytics.trackState("s.pageName", Tracker.getInstance(AppType.AFA).
+                    getContext4Product(product.getDisplayName(), product.getDisplayName(), an.getSuperCategoryName(),
+                            an.getCategoryName(), an.getDepartmentName(),
+                            an.getClassName(),
+                            product.getCustomerReviewRating()
+                    ));
+
             tabAdapter.setProduct(product);
 
             // Handle availability
@@ -687,6 +696,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
             // Save seen products detail for personal feed
             saveSeenProduct(product);
+
         }
     }
 
