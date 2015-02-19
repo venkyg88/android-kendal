@@ -11,10 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.adobe.mobile.Analytics;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.analytics.AppType;
 import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.bundle.BundleAdapter;
 import com.staples.mobile.cfa.bundle.BundleItem;
@@ -97,7 +95,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         //get the actual count of search results
         int countR = searchResult.getSearch().get(0).getItemCount();
         //@TODO quesry string is the term
-        Analytics.trackState("s.pageName", Tracker.getInstance(AppType.AFA).getContext4SearchResults("query string-tbd", countR));
+        Tracker.getInstance().trackState4SearchResults("query string-tbd", countR); //Analytics
 
     }
 

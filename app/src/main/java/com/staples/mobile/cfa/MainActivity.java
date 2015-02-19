@@ -24,7 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.adobe.mobile.Config;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.cart.CartFragment;
@@ -142,12 +142,6 @@ public class MainActivity extends Activity
             initialLoginComplete = false;
             appConfigurator = AppConfigurator.getInstance();
             appConfigurator.getConfigurator(this); // AppConfiguratorCallback
-            //Analytics
-            Config.setContext(this.getApplicationContext());
-            //@TODO this shall come from Configurator
-            Config.setDebugLogging(true);
-            //Analytics
-            Config.collectLifecycleData();
         }
     }
 
@@ -157,7 +151,7 @@ public class MainActivity extends Activity
         ensureActiveSession();
         //@TODO So what happens ensure errors out! REach next line?
         //Analytics
-        Config.collectLifecycleData();
+        Tracker.getInstance().enableTracking(true); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
     }
 
     @Override
@@ -172,7 +166,7 @@ public class MainActivity extends Activity
             actionBar.saveSearchHistory();
         }
         //Analytics
-        Config.pauseCollectingLifecycleData();
+        Tracker.getInstance().enableTracking(false); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
     }
 
     @Override
@@ -237,7 +231,7 @@ public class MainActivity extends Activity
                                 // reestablish session
                                 new LoginHelper(MainActivity.this).refreshSession();
                             } else if (apiError.isRedirectionError()) {
-                                showErrorDialog(R.string.error_redirect, true);
+                                showErrorDialog(R.string.error_redirect, true); // setting fatal=true which will close the app
                             }
                         }
                     });
@@ -348,7 +342,7 @@ public class MainActivity extends Activity
         if (retrofitError != null) {
             ApiError apiError = ApiError.getApiError(retrofitError);
             if (apiError.isRedirectionError()) {
-                showErrorDialog(R.string.error_redirect, true);
+                showErrorDialog(R.string.error_redirect, true); // setting fatal=true which will close the app
                 return;
             }
         }
@@ -368,8 +362,16 @@ public class MainActivity extends Activity
                 }
             });
 
+
+            // initialize analytics
+            Tracker.getInstance().initialize(Tracker.AppType.CFA, this.getApplicationContext(),
+                    configurator.getAppContext().getDev()); // allow logging only for dev environment
+            // The call in onResume to enable tracking will be ignored during application creation
+            // because the configurator object is not yet available. Therefore, enable here.
+            Tracker.getInstance().enableTracking(true);
+
         } else { // can't get configurator from network or from persisted file
-            showErrorDialog(R.string.error_server_connection, true);
+            showErrorDialog(R.string.error_server_connection, true); // setting fatal=true which will close the app
         }
     }
 
