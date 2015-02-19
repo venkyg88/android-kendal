@@ -121,7 +121,7 @@ public class Tracker {
     //////////////////////////////////////////////////////////
 
 
-    public void trackState4Home() {
+    public void trackStateForHome() {
         HashMap<String, Object> contextData = createContextWithGlobal();
         contextData.put("s.pageName", "Homepage");
         contextData.put("Channel", "Home");
@@ -133,7 +133,7 @@ public class Tracker {
         Analytics.trackState("s.pageName", contextData);
     }
 
-    public void trackState4Search() {
+    public void trackStateForSearch() {
         HashMap<String, Object> contextData = createContextWithGlobal();
         contextData.put("s.pageName", "Search on the Action Bar");
         contextData.put("s.evar3", "Search");
@@ -143,7 +143,7 @@ public class Tracker {
         Analytics.trackState("s.pageName", contextData);
     }
 
-    public void trackState4SearchResults(String term, int count) {
+    public void trackStateForSearchResults(String term, int count) {
         HashMap<String, Object> contextData = createContextWithGlobal();
         contextData.put("s.pageName", "Search Results");
         contextData.put("Channel", "Search Results");
@@ -157,7 +157,7 @@ public class Tracker {
         Analytics.trackState("s.pageName", contextData);
     }
 
-    public void trackState4Product(Product product) {
+    public void trackStateForProduct(Product product) {
         if (product != null) {
             HashMap<String, Object> contextData = createContextWithGlobal();
             contextData.put("s.pageName", "Product Screen");
@@ -181,17 +181,17 @@ public class Tracker {
     ////////////// trackAction calls //////////////////////////
     //////////////////////////////////////////////////////////
 
-    public void trackAction4PersonalizedMessaging(String personalizedMsg) {
+    public void trackActionForPersonalizedMessaging(String personalizedMsg) {
         // TODO: are really supposed to track a count???
-        HashMap<String, Object> contextData = createContextWithGlobal();
+        HashMap<String, Object> contextData = new HashMap<String, Object>();
         contextData.put("Item Click", personalizedMsg);
         contextData.put("Click", 1);
         Analytics.trackAction("Item Click", contextData);
     }
 
-    public void trackAction4HomePage(ConfigItem configItem) {
+    public void trackActionForHomePage(ConfigItem configItem) {
         if (configItem != null) {
-            HashMap<String, Object> contextData = createContextWithGlobal();
+            HashMap<String, Object> contextData = new HashMap<String, Object>();
             contextData.put("Item Click", "Homepage Banner");
             contextData.put("Click", 1);
             contextData.put("s.evar4", configItem.title);

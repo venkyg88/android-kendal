@@ -576,7 +576,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             // Use the first product in the list
             final Product product = products.get(0);
 
-            Tracker.getInstance().trackState4Product(product); // Analytics
+            Tracker.getInstance().trackStateForProduct(product); // Analytics
 
             tabAdapter.setProduct(product);
 

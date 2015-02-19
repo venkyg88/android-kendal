@@ -95,7 +95,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         //get the actual count of search results
         int countR = searchResult.getSearch().get(0).getItemCount();
         //@TODO quesry string is the term
-        Tracker.getInstance().trackState4SearchResults("query string-tbd", countR); //Analytics
+        Tracker.getInstance().trackStateForSearchResults("query string-tbd", countR); //Analytics
 
     }
 

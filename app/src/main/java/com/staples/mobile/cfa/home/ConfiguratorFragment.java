@@ -186,7 +186,7 @@ public class ConfiguratorFragment extends Fragment {
                 );
 
                 ConfigItem configItem = (ConfigItem) view.getTag();
-                Tracker.getInstance().trackAction4HomePage(configItem); // Analytics
+                Tracker.getInstance().trackActionForHomePage(configItem); // Analytics
                 activity.selectBundle(configItem.title, configItem.identifier);
             }
         };
@@ -209,7 +209,7 @@ public class ConfiguratorFragment extends Fragment {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
         isMessageBarShow = true;
-        Tracker.getInstance().trackState4Home(); // Analytics
+        Tracker.getInstance().trackStateForHome(); // Analytics
     }
 
     public void initFromConfiguratorResult(Configurator configurator) {
@@ -1202,7 +1202,7 @@ public class ConfiguratorFragment extends Fragment {
         signInTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Tracker.getInstance().trackAction4PersonalizedMessaging("Login"); // Analytics
+                Tracker.getInstance().trackActionForPersonalizedMessaging("Login"); // Analytics
                 MainActivity mainActivity = (MainActivity) getActivity();
                 mainActivity.selectLoginFragment();
             }
@@ -1211,7 +1211,7 @@ public class ConfiguratorFragment extends Fragment {
         signUpTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Tracker.getInstance().trackAction4PersonalizedMessaging("Register"); // Analytics
+                Tracker.getInstance().trackActionForPersonalizedMessaging("Register"); // Analytics
                 MainActivity mainActivity = (MainActivity) getActivity();
                 mainActivity.selectLoginFragment();
             }
@@ -1220,7 +1220,7 @@ public class ConfiguratorFragment extends Fragment {
         storeNameTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Tracker.getInstance().trackAction4PersonalizedMessaging("Store"); // Analytics
+                Tracker.getInstance().trackActionForPersonalizedMessaging("Store"); // Analytics
                 MainActivity mainActivity = (MainActivity) getActivity();
                 mainActivity.selectFragment(new StoreFragment(), MainActivity.Transition.NONE, true);
             }
