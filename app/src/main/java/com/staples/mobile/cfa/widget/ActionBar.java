@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.search.SearchBarView;
 
 public class ActionBar extends LinearLayout {
@@ -167,6 +168,26 @@ public class ActionBar extends LinearLayout {
         update();
     }
 
+    /** needed for analytics */
+    public String getPageName() {
+        String pageName = null;
+        if (state.config != null) {
+            if (state.config.title > 0) {
+                pageName = getResources().getString(state.config.title);
+            } else {
+                switch (state.config) {
+                    case BROWSE:  pageName = "Browse"; break;
+                    case BUNDLE:  pageName = "Bundle"; break;
+                    case SKU:     pageName = "SKU"; break;
+                    case DEFAULT: pageName = "Home"; break;
+                    case QUERY:   pageName = "Search"; break;
+                    case SEARCH:  pageName = "Search Results"; break;
+                }
+            }
+        }
+        return pageName;
+    }
+
     private void update() {
         if (state.config==null) return;
 
@@ -213,6 +234,8 @@ public class ActionBar extends LinearLayout {
         update();
 
         searchBar.open();
+
+        Tracker.getInstance().trackStateForSearchBar(); // analytics
     }
 
     public void closeSearch() {

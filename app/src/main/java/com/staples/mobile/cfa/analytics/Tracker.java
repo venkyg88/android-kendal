@@ -133,15 +133,29 @@ public class Tracker {
         Analytics.trackState("s.pageName", contextData);
     }
 
-    public void trackStateForSearch() {
+
+    /** search tab used by afa */
+    public void trackStateForSearchTab() {
         HashMap<String, Object> contextData = createContextWithGlobal();
-        contextData.put("s.pageName", "Search on the Action Bar");
+        contextData.put("s.pageName", "Search Tab");
         contextData.put("s.evar3", "Search");
         contextData.put("s.evar17", "Search: Basic Search");
         contextData.put("s.prop3", "Search");
         contextData.put("s.prop38", "Search");
         Analytics.trackState("s.pageName", contextData);
     }
+
+    /** search bar used by cfa */
+    public void trackStateForSearchBar() {
+        HashMap<String, Object> contextData = createContextWithGlobal();
+        contextData.put("s.pageName", "Search Bar");
+        contextData.put("s.prop3", "Search Bar");
+        contextData.put("s.prop4", "Search Bar");
+        contextData.put("s.prop5", "Search Bar");
+        contextData.put("s.prop6", "Search Bar");
+        Analytics.trackState("s.pageName", contextData);
+    }
+
 
     public void trackStateForSearchResults(String term, int count) {
         HashMap<String, Object> contextData = createContextWithGlobal();
@@ -150,12 +164,16 @@ public class Tracker {
         contextData.put("s.evar1", term);
         contextData.put("s.prop1", term);
         contextData.put("s.prop2", count);
-        contextData.put("s.prop3", "Search ");
+        contextData.put("s.prop3", "Search Results");
         contextData.put("s.prop4", "Search Results");
         contextData.put("s.prop5", "Search Results");
         contextData.put("s.prop6", "Search Results");
+        contextData.put("s.prop54", "Best Match");
+        contextData.put("s.prop53", "List");
         Analytics.trackState("s.pageName", contextData);
     }
+
+
 
     public void trackStateForProduct(Product product) {
         if (product != null) {
@@ -180,6 +198,15 @@ public class Tracker {
     //////////////////////////////////////////////////////////
     ////////////// trackAction calls //////////////////////////
     //////////////////////////////////////////////////////////
+
+    public void trackActionForNavigationDrawer(String drawerItemText, String currentPageName) {
+        HashMap<String, Object> contextData = new HashMap<String, Object>();
+        contextData.put("Item Click", "Nav Drawer");
+        contextData.put("Click", 1);
+        contextData.put("s.prop27", drawerItemText + "|" + currentPageName);
+        Analytics.trackAction("Item Click", contextData);
+    }
+
 
     public void trackActionForPersonalizedMessaging(String personalizedMsg) {
         // TODO: are really supposed to track a count???

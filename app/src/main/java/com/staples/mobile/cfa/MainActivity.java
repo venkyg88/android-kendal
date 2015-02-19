@@ -655,6 +655,7 @@ public class MainActivity extends Activity
     public void onItemClick(AdapterView parent, View view, int position, long id) {
         DrawerItem item = (DrawerItem) parent.getItemAtPosition(position);
         if (item.enabled) {
+            Tracker.getInstance().trackActionForNavigationDrawer(item.title, ActionBar.getInstance().getPageName()); // analytics
             switch (item.type) {
                 case FRAGMENT:
                     // special case of RewardsFragment but not registered user not a rewards member
