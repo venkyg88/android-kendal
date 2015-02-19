@@ -21,7 +21,7 @@ public class Tracker {
 
     public enum AppType { AFA, CFA }
     public enum UserType { GUEST, REGISTERED }
-
+    public enum SearchType { BASIC_SEARCH, AUTOCOMPLETE, RECENT_SEARCH }
 
 
     private static volatile Tracker instance = null;
@@ -235,6 +235,21 @@ public class Tracker {
             Analytics.trackAction("Item Click", contextData);
         }
     }
+
+    public void trackActionForSearch(SearchType searchType) {
+        HashMap<String, Object> contextData = new HashMap<String, Object>();
+        contextData.put("s.evar3", "Search");
+        contextData.put("s.prop38", "Search");
+        String searchTypeString = null;
+        switch (searchType) {
+            case BASIC_SEARCH: searchTypeString = "Basic Search"; break;
+            case AUTOCOMPLETE: searchTypeString = "Autocomplete"; break;
+            case RECENT_SEARCH: searchTypeString = "Recent Searches"; break;
+        }
+        contextData.put("s.evar17", searchTypeString);
+        Analytics.trackAction("Item Click", contextData);
+    }
+
 
     //////////////////////////////////////////////////////////
     ////////////// private calls //////////////////////////
