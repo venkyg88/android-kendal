@@ -103,6 +103,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     private String title;
     private String identifier;
+    private String productName;
     private boolean isSkuSetOriginated;
 
     private DataWrapper wrapper;
@@ -404,7 +405,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         for (final Product accessory : accessories) {
             String accessoryImageUrl = accessory.getImage().get(0).getUrl();
-            String accessoryTitle = accessory.getProductName();
+            final String accessoryTitle = accessory.getProductName();
             final String sku = accessory.getSku();
 
             View skuAccessoryRow = inflater.inflate(R.layout.sku_accessory_item, null);
@@ -417,7 +418,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             accessoryImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity)getActivity()).selectSkuItem(null, sku, false);
+                    ((MainActivity)getActivity()).selectSkuItem(accessoryTitle, sku, false);
                 }
             });
 
@@ -429,7 +430,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             accessoryTitleTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity)getActivity()).selectSkuItem(null, sku, false);
+                    ((MainActivity)getActivity()).selectSkuItem(accessoryTitle, sku, false);
                 }
             });
 
@@ -650,7 +651,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             }
 
             // Add info
-            String productName = Html.fromHtml(product.getProductName()).toString();
+            productName = Html.fromHtml(product.getProductName()).toString();
             ((TextView) summary.findViewById(R.id.title)).setText(productName);
             ((TextView) summary.findViewById(R.id.numbers)).setText(formatNumbers(product));
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
