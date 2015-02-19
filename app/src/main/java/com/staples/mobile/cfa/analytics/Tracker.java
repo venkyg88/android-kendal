@@ -207,6 +207,13 @@ public class Tracker {
         Analytics.trackAction("Item Click", contextData);
     }
 
+    // e.g. ShopCategory:<SC>:<CG>:<DP>:<CL>
+    public void trackActionForShopByCategory(String shopCategory) {
+        HashMap<String, Object> contextData = new HashMap<String, Object>();
+        contextData.put("s.prop27", shopCategory);
+        Analytics.trackAction("Item Click", contextData);
+    }
+
 
     public void trackActionForPersonalizedMessaging(String personalizedMsg) {
         // TODO: are really supposed to track a count???

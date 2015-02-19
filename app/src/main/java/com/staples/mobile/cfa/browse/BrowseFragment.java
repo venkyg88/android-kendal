@@ -14,6 +14,7 @@ import android.widget.ListView;
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
@@ -187,6 +188,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
                         adapterState = adapter.saveState(adapterState);
                         wrapper.setState(DataWrapper.State.ADDING);
                         adapter.notifyDataSetChanged();
+                        Tracker.getInstance().trackActionForShopByCategory(adapter.getStackHierarchy()); // analytics
                         break;
                 }
                 break;
