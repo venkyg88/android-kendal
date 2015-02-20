@@ -13,26 +13,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.feed.PersistentSizedArrayList;
 import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
-import com.staples.mobile.cfa.login.ResetPasswordFragment;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PagerStripe;
@@ -107,6 +103,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     private String title;
     private String identifier;
+    private String productName;
     private boolean isSkuSetOriginated;
 
     private DataWrapper wrapper;
@@ -408,7 +405,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         for (final Product accessory : accessories) {
             String accessoryImageUrl = accessory.getImage().get(0).getUrl();
-            String accessoryTitle = accessory.getProductName();
+            final String accessoryTitle = accessory.getProductName();
             final String sku = accessory.getSku();
 
             View skuAccessoryRow = inflater.inflate(R.layout.sku_accessory_item, null);
@@ -421,7 +418,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             accessoryImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity)getActivity()).selectSkuItem(null, sku, false);
+                    ((MainActivity)getActivity()).selectSkuItem(accessoryTitle, sku, false);
                 }
             });
 
@@ -433,7 +430,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             accessoryTitleTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity)getActivity()).selectSkuItem(null, sku, false);
+                    ((MainActivity)getActivity()).selectSkuItem(accessoryTitle, sku, false);
                 }
             });
 
@@ -579,6 +576,9 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         if (products != null && products.size() > 0) {
             // Use the first product in the list
             final Product product = products.get(0);
+
+            Tracker.getInstance().trackStateForProduct(product); // Analytics
+
             tabAdapter.setProduct(product);
 
             // Handle availability
@@ -651,7 +651,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             }
 
             // Add info
-            String productName = Html.fromHtml(product.getProductName()).toString();
+            productName = Html.fromHtml(product.getProductName()).toString();
             ((TextView) summary.findViewById(R.id.title)).setText(productName);
             ((TextView) summary.findViewById(R.id.numbers)).setText(formatNumbers(product));
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
@@ -687,6 +687,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
             // Save seen products detail for personal feed
             saveSeenProduct(product);
+
         }
     }
 
@@ -859,7 +860,12 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                         ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
                         if (errMsg == null) {
                             ((Button) wrapper.findViewById(R.id.add_to_cart)).setText(R.string.add_another);
+                            activity.showNotificationBanner(R.string.cart_updated_msg);
                         } else {
+                            // if non-grammatical out-of-stock message from api, provide a nicer message
+                            if (errMsg.contains("items is out of stock")) {
+                                errMsg = activity.getResources().getString(R.string.avail_outofstock);
+                            }
                             activity.showErrorDialog(errMsg);
                         }
                     }

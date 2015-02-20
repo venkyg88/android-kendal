@@ -84,7 +84,8 @@ public class PersonalFeedFragment extends Fragment {
             View seenSavedProductRow = inflater.inflate(R.layout.personal_feed_product_item, null);
 
             TextView title = (TextView) seenSavedProductRow.findViewById(R.id.title);
-            title.setText(Html.fromHtml(seenProduct.getProductName()).toString());
+            final String productName = Html.fromHtml(seenProduct.getProductName()).toString();
+            title.setText(productName);
 
             RatingStars ratingStars = (RatingStars) seenSavedProductRow.findViewById(R.id.rating);
             ratingStars.setRating(seenProduct.getCustomerReviewRating(),
@@ -112,14 +113,14 @@ public class PersonalFeedFragment extends Fragment {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity) getActivity()).selectSkuItem(null, skuId, false);
+                    ((MainActivity) getActivity()).selectSkuItem(productName, skuId, false);
                 }
             });
 
             title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity) getActivity()).selectSkuItem(null, skuId, false);
+                    ((MainActivity) getActivity()).selectSkuItem(productName, skuId, false);
                 }
             });
 
@@ -305,7 +306,7 @@ public class PersonalFeedFragment extends Fragment {
     }
 
     private void fillContainer(CartItem cartItem, LinearLayout container){
-        String productName = Html.fromHtml(cartItem.getProduct().getProductName()).toString();
+        final String productName = Html.fromHtml(cartItem.getProduct().getProductName()).toString();
         String currentPrice = String.valueOf(cartItem.getProduct().getPricing().get(0).getFinalPrice());
         String reviewCount = String.valueOf(cartItem.getProduct().getCustomerReviewCount());
         String rating = String.valueOf(cartItem.getProduct().getCustomerReviewRating());
@@ -335,14 +336,14 @@ public class PersonalFeedFragment extends Fragment {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).selectSkuItem(null, sku, false);
+                ((MainActivity) getActivity()).selectSkuItem(productName, sku, false);
             }
         });
 
         title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).selectSkuItem(null, sku, false);
+                ((MainActivity) getActivity()).selectSkuItem(productName, sku, false);
             }
         });
     }

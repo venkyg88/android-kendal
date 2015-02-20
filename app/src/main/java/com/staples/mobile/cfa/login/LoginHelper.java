@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -182,6 +183,7 @@ public class LoginHelper {
                 setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), true);
                 if (!refreshOnly) {
                     notifyListeners(true, true); // guest login, signing in
+                    Tracker.getInstance().setUserType(Tracker.UserType.GUEST); // update analytics header info
                 }
 
                 Log.i(TAG, "Status Code " + code);
@@ -231,6 +233,7 @@ public class LoginHelper {
                         setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
                         if (!refreshOnly) {
                             notifyListeners(false, true); // NOT guest login, signing in
+                            Tracker.getInstance().setUserType(Tracker.UserType.REGISTERED); // update analytics header info
                             loadProfile(callback);
                         }
                         Log.i(TAG, "Status Code " + code);
@@ -272,6 +275,7 @@ public class LoginHelper {
                         int code = response.getStatus();
                         setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
                         notifyListeners(false, true); // NOT guest login, signing in
+                        Tracker.getInstance().setUserType(Tracker.UserType.REGISTERED); // update analytics header info
 
                         loadProfile(callback);
 

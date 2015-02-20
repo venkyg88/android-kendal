@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -90,6 +91,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         if (count==0) wrapper.setState(DataWrapper.State.EMPTY);
         else wrapper.setState(DataWrapper.State.DONE);
         adapter.notifyDataSetChanged();
+        Tracker.getInstance().trackStateForClass(title, count); // analytics
     }
 
     @Override
@@ -132,12 +134,14 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
                     ((MainActivity)getActivity()).selectSkuItem(item.title, item.identifier, false);
+                    Tracker.getInstance().trackActionForClassItemSelection(item.title, adapter.getItemPosition(item), 1); // analytics
                 }
                 break;
             case R.id.bundle_action:
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
+                    Tracker.getInstance().trackActionForClassItemSelection(item.title, adapter.getItemPosition(item), 1); // analytics
                     if (item.type==IdentifierType.SKUSET) {
                         final MainActivity activity = (MainActivity) getActivity();
                         activity.selectSkuItem(item.title, item.identifier, false);
@@ -154,8 +158,13 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                                 // if success
                                 if (errMsg == null) {
                                     buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.added_to_cart));
+                                    activity.showNotificationBanner(R.string.cart_updated_msg);
                                 } else {
                                     buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.add_to_cart));
+                                    // if non-grammatical out-of-stock message from api, provide a nicer message
+                                    if (errMsg.contains("items is out of stock")) {
+                                        errMsg = activity.getResources().getString(R.string.avail_outofstock);
+                                    }
                                     activity.showErrorDialog(errMsg);
                                 }
                             }

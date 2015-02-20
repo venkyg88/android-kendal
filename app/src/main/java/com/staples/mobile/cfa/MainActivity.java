@@ -14,7 +14,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
-import android.view.LayoutInflater;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.cart.CartFragment;
@@ -149,6 +149,9 @@ public class MainActivity extends Activity
     protected void onResume() {
         super.onResume();
         ensureActiveSession();
+        //@TODO So what happens ensure errors out! REach next line?
+        //Analytics
+        Tracker.getInstance().enableTracking(true); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
     }
 
     @Override
@@ -162,6 +165,8 @@ public class MainActivity extends Activity
         if (actionBar != null) {
             actionBar.saveSearchHistory();
         }
+        //Analytics
+        Tracker.getInstance().enableTracking(false); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
     }
 
     @Override
@@ -226,7 +231,7 @@ public class MainActivity extends Activity
                                 // reestablish session
                                 new LoginHelper(MainActivity.this).refreshSession();
                             } else if (apiError.isRedirectionError()) {
-                                showErrorDialog(R.string.error_redirect, true);
+                                showErrorDialog(R.string.error_redirect, true); // setting fatal=true which will close the app
                             }
                         }
                     });
@@ -337,7 +342,7 @@ public class MainActivity extends Activity
         if (retrofitError != null) {
             ApiError apiError = ApiError.getApiError(retrofitError);
             if (apiError.isRedirectionError()) {
-                showErrorDialog(R.string.error_redirect, true);
+                showErrorDialog(R.string.error_redirect, true); // setting fatal=true which will close the app
                 return;
             }
         }
@@ -357,8 +362,16 @@ public class MainActivity extends Activity
                 }
             });
 
+
+            // initialize analytics
+            Tracker.getInstance().initialize(Tracker.AppType.CFA, this.getApplicationContext(),
+                    configurator.getAppContext().getDev()); // allow logging only for dev environment
+            // The call in onResume to enable tracking will be ignored during application creation
+            // because the configurator object is not yet available. Therefore, enable here.
+            Tracker.getInstance().enableTracking(true);
+
         } else { // can't get configurator from network or from persisted file
-            showErrorDialog(R.string.error_server_connection, true);
+            showErrorDialog(R.string.error_server_connection, true); // setting fatal=true which will close the app
         }
     }
 
@@ -573,6 +586,8 @@ public class MainActivity extends Activity
 
     @Override
     public void onBackPressed () {
+        hideProgressIndicator();
+
         // if on order confirmation fragment, don't go back to any of the checkout related pages, go to Home page
         FragmentManager manager = getFragmentManager();
         Fragment confirmationFragment = manager.findFragmentByTag(ConfirmationFragment.TAG);
@@ -640,6 +655,7 @@ public class MainActivity extends Activity
     public void onItemClick(AdapterView parent, View view, int position, long id) {
         DrawerItem item = (DrawerItem) parent.getItemAtPosition(position);
         if (item.enabled) {
+            Tracker.getInstance().trackActionForNavigationDrawer(item.title, ActionBar.getInstance().getPageName()); // analytics
             switch (item.type) {
                 case FRAGMENT:
                     // special case of RewardsFragment but not registered user not a rewards member
