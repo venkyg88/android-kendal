@@ -210,17 +210,26 @@ public class Tracker {
     public void trackStateForProduct(Product product) {
         if (product != null) {
             HashMap<String, Object> contextData = createContextWithGlobal();
-            contextData.put("s.pageName", "Product Screen");
-            contextData.put("s.products", product.getDisplayName());
-            contextData.put("s.prop3", product.getDisplayName());
+            contextData.put("s.pageName", "Product Detail"); // initialize with at least this, add SC below if analytic available
+            contextData.put("s.products", product.getSku());
+            contextData.put("s.prop3", "Product Detail");
             contextData.put("s.evar27", product.getCustomerReviewRating());
             if (product.getAnalytic() != null && product.getAnalytic().size() > 0) {
                 Analytic an = product.getAnalytic().get(0);
                 if (an != null) {
-                    contextData.put("Channel", an.getSuperCategoryName());
-                    contextData.put("s.prop4", an.getCategoryName());
-                    contextData.put("s.prop5", an.getDepartmentName());
-                    contextData.put("s.prop6", an.getClassName());
+                    if (!TextUtils.isEmpty(an.getSuperCategoryCode())) {
+                        contextData.put("s.pageName", "Product Detail: " + an.getSuperCategoryCode());
+                        contextData.put("Channel", an.getSuperCategoryCode());
+                    }
+                    if (!TextUtils.isEmpty(an.getCategoryCode())) {
+                        contextData.put("s.prop4", an.getCategoryCode());
+                    }
+                    if (!TextUtils.isEmpty(an.getDepartmentCode())) {
+                        contextData.put("s.prop5", an.getDepartmentCode());
+                    }
+                    if (!TextUtils.isEmpty(an.getClassCode())) {
+                        contextData.put("s.prop6", an.getClassCode());
+                    }
                 }
             }
             Analytics.trackState("s.pageName", contextData);
