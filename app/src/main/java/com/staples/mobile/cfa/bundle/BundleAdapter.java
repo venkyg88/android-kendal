@@ -65,6 +65,11 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         else  this.layout = R.layout.bundle_item_wide;
     }
 
+    /** needed for analytics */
+    public int getItemPosition(BundleItem item) {
+        return array.indexOf(item);
+    }
+
     @Override
     public int getItemCount() {
         return(array.size());

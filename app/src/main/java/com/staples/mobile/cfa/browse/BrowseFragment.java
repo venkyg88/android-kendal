@@ -167,6 +167,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
         BrowseItem item = (BrowseItem) parent.getItemAtPosition(position);
         switch(item.type) {
             case STACK:
+                Tracker.getInstance().trackActionForShopByCategory(adapter.getStackHierarchy()); // analytics
                 identifier = adapter.popStack(item);
                 fill(identifier);
                 adapterState = adapter.saveState(adapterState);
@@ -179,8 +180,10 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
                     case CLASS:
                     case BUNDLE:
                         MainActivity activity = (MainActivity) getActivity();
-                        if (activity!=null)
+                        if (activity!=null) {
                             activity.selectBundle(item.title, identifier);
+                            Tracker.getInstance().trackActionForShopByCategory(adapter.getStackHierarchy() + ":" + item.title); // analytics
+                        }
                         break;
                     default:
                         adapter.pushStack(item);

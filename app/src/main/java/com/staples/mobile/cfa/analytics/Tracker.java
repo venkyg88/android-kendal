@@ -161,6 +161,9 @@ public class Tracker {
         HashMap<String, Object> contextData = createContextWithGlobal();
         contextData.put("s.pageName", "Search Results");
         contextData.put("Channel", "Search Results");
+        if (count == 0) {
+            term = "null:" + term;
+        }
         contextData.put("s.evar1", term);
         contextData.put("s.prop1", term);
         contextData.put("s.prop2", count);
@@ -173,7 +176,13 @@ public class Tracker {
         Analytics.trackState("s.pageName", contextData);
     }
 
-
+    public void trackStateForClass(String title, int count) {
+        HashMap<String, Object> contextData = createContextWithGlobal();
+        contextData.put("s.pageName", title);
+        contextData.put("s.prop2", count);
+        contextData.put("s.prop3", "Class");
+        Analytics.trackState("s.pageName", contextData);
+    }
 
     public void trackStateForProduct(Product product) {
         if (product != null) {
@@ -247,6 +256,21 @@ public class Tracker {
             case RECENT_SEARCH: searchTypeString = "Recent Searches"; break;
         }
         contextData.put("s.evar17", searchTypeString);
+        Analytics.trackAction("Item Click", contextData);
+    }
+
+
+    public void trackActionForSearchItemSelection(String title, int itemPosition, int pageNo) {
+        trackActionForItemSelection(title, itemPosition, pageNo, "Search");
+    }
+    public void trackActionForClassItemSelection(String title, int itemPosition, int pageNo) {
+        trackActionForItemSelection(title, itemPosition, pageNo, "Class");
+    }
+    private void trackActionForItemSelection(String title, int itemPosition, int pageNo, String selectionType) {
+        HashMap<String, Object> contextData = new HashMap<String, Object>();
+        contextData.put("s.pageName", title);
+        contextData.put("s.prop3", "Search");
+        contextData.put("s.evar19", itemPosition + ":" + pageNo);
         Analytics.trackAction("Item Click", contextData);
     }
 
