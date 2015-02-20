@@ -506,9 +506,9 @@ public class MainActivity extends Activity
         return selectFragment(new RewardsLinkingFragment(), Transition.RIGHT, true);
     }
 
-    public boolean selectBundle(String title, String identifier) {
+    public boolean selectBundle(String title, String identifier, String categoryHierarchy) {
         BundleFragment fragment = new BundleFragment();
-        fragment.setArguments(title, identifier);
+        fragment.setArguments(title, identifier, categoryHierarchy);
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 

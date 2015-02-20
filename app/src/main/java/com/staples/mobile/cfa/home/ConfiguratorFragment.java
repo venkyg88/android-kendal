@@ -187,7 +187,7 @@ public class ConfiguratorFragment extends Fragment {
 
                 ConfigItem configItem = (ConfigItem) view.getTag();
                 Tracker.getInstance().trackActionForHomePage(configItem); // Analytics
-                activity.selectBundle(configItem.title, configItem.identifier);
+                activity.selectBundle(configItem.title, configItem.identifier, null);
             }
         };
 

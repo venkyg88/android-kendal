@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.analytics;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.adobe.mobile.Analytics;
 import com.adobe.mobile.Config;
@@ -176,11 +177,33 @@ public class Tracker {
         Analytics.trackState("s.pageName", contextData);
     }
 
-    public void trackStateForClass(String title, int count) {
+    public void trackStateForClass(String title, int count, String categoryHierarchy) {
         HashMap<String, Object> contextData = createContextWithGlobal();
         contextData.put("s.pageName", title);
         contextData.put("s.prop2", count);
         contextData.put("s.prop3", "Class");
+        if (!TextUtils.isEmpty(categoryHierarchy)) {
+            String[] categories = categoryHierarchy.split(":");
+            StringBuilder buf = new StringBuilder();
+            for (String category : categories) {
+                if (category.startsWith("SC")) {
+                    buf.append(category);
+                    contextData.put("Channel", buf.toString());  // <SC>
+                } else if (category.startsWith("CG")) {
+                    buf.append(":").append(category);
+                    contextData.put("s.prop4", buf.toString());  // <SC>:<CG>
+                } else if (category.startsWith("DP")) {
+                    buf.append(":").append(category);
+                    contextData.put("s.prop5", buf.toString());  // <SC>:<CG>:<DP>
+                } else if (category.startsWith("CL")) {
+                    buf.append(":").append(category);
+                    contextData.put("s.prop6", buf.toString());  // <SC>:<CG>:<DP>:<CL>
+                }
+            }
+            contextData.put("s.prop31", categoryHierarchy);
+            contextData.put("s.evar38", categoryHierarchy);
+            contextData.put("s.pageName", categoryHierarchy); // overwrite pagename if hierarchy available
+        }
         Analytics.trackState("s.pageName", contextData);
     }
 
@@ -217,9 +240,9 @@ public class Tracker {
     }
 
     // e.g. ShopCategory:<SC>:<CG>:<DP>:<CL>
-    public void trackActionForShopByCategory(String shopCategory) {
+    public void trackActionForShopByCategory(String categoryHierarchy) {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
-        contextData.put("s.prop27", shopCategory);
+        contextData.put("s.prop27", "ShopCategory:" + categoryHierarchy);
         Analytics.trackAction("Item Click", contextData);
     }
 
@@ -269,7 +292,7 @@ public class Tracker {
     private void trackActionForItemSelection(String title, int itemPosition, int pageNo, String selectionType) {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
         contextData.put("s.pageName", title);
-        contextData.put("s.prop3", "Search");
+        contextData.put("s.prop3", selectionType);
         contextData.put("s.evar19", itemPosition + ":" + pageNo);
         Analytics.trackAction("Item Click", contextData);
     }
