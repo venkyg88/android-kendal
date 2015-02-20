@@ -11,10 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.adobe.mobile.Analytics;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.analytics.AppType;
 import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.bundle.BundleAdapter;
 import com.staples.mobile.cfa.bundle.BundleItem;
@@ -43,6 +41,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
     private DataWrapper wrapper;
     private BundleAdapter adapter;
+    private String keyword;
 
     public void setArguments(String keyword) {
         Bundle args = new Bundle();
@@ -52,7 +51,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        String keyword = null;
+        keyword = null;
 
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
 
@@ -97,7 +96,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         //get the actual count of search results
         int countR = searchResult.getSearch().get(0).getItemCount();
         //@TODO quesry string is the term
-        Analytics.trackState("s.pageName", Tracker.getInstance(AppType.AFA).getContext4SearchResults("query string-tbd", countR));
+        Tracker.getInstance().trackStateForSearchResults(keyword, countR); //Analytics
 
     }
 
@@ -131,6 +130,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
                     ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier, false);
+                    Tracker.getInstance().trackActionForSearchItemSelection(item.title, adapter.getItemPosition(item), 1);
                 }
                 break;
             case R.id.bundle_action:
@@ -138,6 +138,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
                     Toast.makeText(getActivity(), "Clicked on " + item.title, Toast.LENGTH_LONG).show();
+                    Tracker.getInstance().trackActionForSearchItemSelection(item.title, adapter.getItemPosition(item), 1);
                 }
                 break;
         }

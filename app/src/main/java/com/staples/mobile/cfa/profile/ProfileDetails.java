@@ -3,6 +3,7 @@ package com.staples.mobile.cfa.profile;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -130,6 +131,7 @@ public class ProfileDetails implements Callback<MemberDetail> {
                     member = memberUnderConstruction;
                 }
                 if (callback != null) {
+                    Tracker.getInstance().setProfileInfo(member.getEmailAddress(), member.getRewardsNumber()); // update analytics header info
                     callback.onProfileRefresh(member, null);
                 }
             }

@@ -115,6 +115,18 @@ public class BrowseAdapter extends BaseAdapter {
         return (item.identifier);
     }
 
+    /** needed for analytics */
+    public String getStackHierarchy() {
+        StringBuilder buf = new StringBuilder();
+        for (BrowseItem item : stackList) {
+            if (buf.length() > 0) {
+                buf.append(":");
+            }
+            buf.append(item.title);
+        }
+        return buf.toString();
+    }
+
     public void addItem(BrowseItem item) {
         item.type = BrowseItem.Type.ITEM;
         browseList.add(item);
