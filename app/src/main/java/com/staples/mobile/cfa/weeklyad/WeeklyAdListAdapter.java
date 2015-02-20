@@ -1,10 +1,10 @@
 package com.staples.mobile.cfa.weeklyad;
 
-import android.content.Context;
+import android.app.Activity;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,37 +13,60 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.easyopen.util.WeeklyAdImageUrlHelper;
 import com.staples.mobile.common.access.easyopen.model.weeklyad.Data;
 
-public class WeeklyAdListAdapter extends ArrayAdapter<Data> {
+import java.util.ArrayList;
+import java.util.List;
 
-    private LayoutInflater inflater;
-    private Context context;
+public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapter.ViewHolder> {
 
-    public WeeklyAdListAdapter(Context context) {
-        super(context, R.layout.weekly_ad_by_categories_item);
-        this.context = context;
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    private ArrayList<Data> array;
+    private Activity activity;
+
+    public static class ViewHolder extends RecyclerView.ViewHolder{
+        public TextView dealTitleTV;
+        public TextView dealsCountTV;
+        ImageView dealIV;
+
+        public ViewHolder(View v) {
+            super(v);
+            dealTitleTV = (TextView)v.findViewById(R.id.weekly_ad_list_title_text);
+            dealsCountTV = (TextView)v.findViewById(R.id.weekly_ad_list_deal_text);
+            dealIV = (ImageView)v.findViewById(R.id.weekly_ad_list_image);
+        }
+    }
+
+    public WeeklyAdListAdapter(Activity activity) {
+        this.activity = activity;
+        this.array = new ArrayList<Data>();
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public WeeklyAdListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+                                                                   int viewType) {
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.weekly_ad_list_item, parent, false);
+        ViewHolder viewHolder = new ViewHolder(v);
 
-        if (convertView == null) {
-            convertView = inflater.inflate(R.layout.weekly_ad_list_item, parent, false);
-        }
+        return viewHolder;
+    }
 
-        Data data = getItem(position);
-        ImageView imageView = (ImageView) convertView.findViewById(R.id.weekly_ad_list_item_image);
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        Data data = array.get(position);
 
-        Picasso.with(context)
-                .load(WeeklyAdImageUrlHelper.getUrl(60, 100, data.getImage()))
-                .into(imageView);
+        holder.dealTitleTV.setText(data.getTitle());
+        holder.dealsCountTV.setText(data.getPrice());
+        Picasso.with(activity)
+                .load(WeeklyAdImageUrlHelper.getUrl(60,100, data.getImage()))
+                .into(holder.dealIV);
+    }
 
-        TextView titleTextView = (TextView) convertView.findViewById(R.id.weekly_ad_list_item_title_text);
-        titleTextView.setText(data.getTitle());
+    @Override
+    public int getItemCount() {
+        return array.size();
+    }
 
-        TextView priceTextView = (TextView) convertView.findViewById(R.id.weekly_ad_list_item_price_text);
-        priceTextView.setText(data.getPrice());
-
-        return convertView;
+    public void fill(List<Data> items) {
+        array.addAll(items);
+        notifyDataSetChanged();
     }
 }

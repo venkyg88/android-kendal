@@ -67,17 +67,15 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
     public WeeklyAdByCategoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                    int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.weekly_ad_by_categories_item, parent, false);
+                .inflate(R.layout.weekly_ad_categories_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(v);
         viewHolder.setClickListener(new ViewHolder.ClickListener() {
             @Override
             public void onClick(View v, int position) {
                 Data data = array.get(position);
-//                WeeklyAdListFragment weeklyAdListFragment = new WeeklyAdListFragment();
-//                weeklyAdListFragment.setCategoryTreeId(data.getCategorytreeid());
-//                weeklyAdListFragment.setStoreId("2278338");
-                ((MainActivity)activity).selectBundle(data.getName(), data.getCategorytreeid());
-                  ((MainActivity)activity).showNotificationBanner("In Progress");
+                WeeklyAdListFragment weeklyAdFragment = new WeeklyAdListFragment();
+                weeklyAdFragment.setArguments("2278338",data.getCategorytreeid(), data.getName());
+                ((MainActivity)activity).navigateToFragment(weeklyAdFragment);
             }
         });
 

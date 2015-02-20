@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/username"
-        android:hint="Email"
+        android:hint="UserName"
         android:imeOptions="actionNext"
         android:singleLine="true" />
 
