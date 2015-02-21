@@ -190,10 +190,7 @@ public class Tracker {
                 Analytic analytic = analytics.get(0);
                 if (analytic != null) {
                     addAnalyticProperties(contextData, analytic);
-                    String categoryHierarchy = buildCategoryHierarchy(analytic);
-                    contextData.put("s.prop31", categoryHierarchy);
-                    contextData.put("s.evar38", categoryHierarchy);
-                    contextData.put("s.pageName", categoryHierarchy); // overwrite pagename if hierarchy available
+                    contextData.put("s.pageName", buildCategoryHierarchy(analytic)); // overwrite pagename if hierarchy available
                 }
             }
         }
@@ -220,6 +217,24 @@ public class Tracker {
         }
     }
 
+
+    public void trackStateForSkuSet(Product product) {
+        if (product != null) {
+            HashMap<String, Object> contextData = createContextWithGlobal();
+            contextData.put("s.pageName", "SKU Set"); // initialize with at least this, add SC below if analytic available
+            contextData.put("s.prop3", "Product Detail");
+            if (product.getAnalytic() != null && product.getAnalytic().size() > 0) {
+                Analytic analytic = product.getAnalytic().get(0);
+                if (analytic != null) {
+                    addAnalyticProperties(contextData, analytic);
+                    if (!TextUtils.isEmpty(analytic.getSuperCategoryCode())) {
+                        contextData.put("s.pageName", "SKU Set: " + analytic.getSuperCategoryCode());
+                    }
+                }
+            }
+            Analytics.trackState("s.pageName", contextData);
+        }
+    }
 
     //////////////////////////////////////////////////////////
     ////////////// trackAction calls //////////////////////////
@@ -318,6 +333,9 @@ public class Tracker {
             if (!TextUtils.isEmpty(analytic.getClassCode())) {
                 contextData.put("s.prop6", analytic.getClassCode());
             }
+            String categoryHierarchy = buildCategoryHierarchy(analytic);
+            contextData.put("s.prop31", categoryHierarchy);
+            contextData.put("s.evar38", categoryHierarchy);
         }
     }
 
