@@ -36,20 +36,17 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
     private static final String TITLE = "title";
     private static final String IDENTIFIER = "identifier";
-    private static final String CATEGORIES = "CATEGORIES";
 
     private static final int MAXFETCH = 50;
 
     private DataWrapper wrapper;
     private BundleAdapter adapter;
     private String title;
-    String categoryHierarchy;
 
-    public void setArguments(String title, String identifier, String categoryHierarchy) {
+    public void setArguments(String title, String identifier) {
         Bundle args = new Bundle();
         args.putString(TITLE, title);
         args.putString(IDENTIFIER, identifier);
-        args.putString(CATEGORIES, categoryHierarchy);
         setArguments(args);
     }
 
@@ -62,7 +59,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         if (args!=null) {
             title = args.getString(TITLE);
             identifier = args.getString(IDENTIFIER);
-            categoryHierarchy = args.getString(CATEGORIES);
         }
 
         wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
@@ -95,7 +91,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         if (count==0) wrapper.setState(DataWrapper.State.EMPTY);
         else wrapper.setState(DataWrapper.State.DONE);
         adapter.notifyDataSetChanged();
-        Tracker.getInstance().trackStateForClass(title, count, categoryHierarchy); // analytics
+        Tracker.getInstance().trackStateForClass(title, count, browse); // analytics
     }
 
     @Override

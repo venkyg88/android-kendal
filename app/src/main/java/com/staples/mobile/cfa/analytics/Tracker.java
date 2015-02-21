@@ -7,9 +7,11 @@ import com.adobe.mobile.Analytics;
 import com.adobe.mobile.Config;
 import com.staples.mobile.cfa.home.ConfigItem;
 import com.staples.mobile.common.access.easyopen.model.browse.Analytic;
+import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by burcoral on 2/5/15.
@@ -177,32 +179,23 @@ public class Tracker {
         Analytics.trackState("s.pageName", contextData);
     }
 
-    public void trackStateForClass(String title, int count, String categoryHierarchy) {
+    public void trackStateForClass(String title, int count, Browse browse) {
         HashMap<String, Object> contextData = createContextWithGlobal();
         contextData.put("s.pageName", title);
         contextData.put("s.prop2", count);
         contextData.put("s.prop3", "Class");
-        if (!TextUtils.isEmpty(categoryHierarchy)) {
-            String[] categories = categoryHierarchy.split(":");
-            StringBuilder buf = new StringBuilder();
-            for (String category : categories) {
-                if (category.startsWith("SC")) {
-                    buf.append(category);
-                    contextData.put("Channel", buf.toString());  // <SC>
-                } else if (category.startsWith("CG")) {
-                    buf.append(":").append(category);
-                    contextData.put("s.prop4", buf.toString());  // <SC>:<CG>
-                } else if (category.startsWith("DP")) {
-                    buf.append(":").append(category);
-                    contextData.put("s.prop5", buf.toString());  // <SC>:<CG>:<DP>
-                } else if (category.startsWith("CL")) {
-                    buf.append(":").append(category);
-                    contextData.put("s.prop6", buf.toString());  // <SC>:<CG>:<DP>:<CL>
+        if (browse != null && browse.getCategory() != null && browse.getCategory().size() > 0) {
+            List<Analytic> analytics = browse.getCategory().get(0).getCategoryAnalytic();
+            if (analytics != null && analytics.size() > 0) {
+                Analytic analytic = analytics.get(0);
+                if (analytic != null) {
+                    addAnalyticProperties(contextData, analytic);
+                    String categoryHierarchy = buildCategoryHierarchy(analytic);
+                    contextData.put("s.prop31", categoryHierarchy);
+                    contextData.put("s.evar38", categoryHierarchy);
+                    contextData.put("s.pageName", categoryHierarchy); // overwrite pagename if hierarchy available
                 }
             }
-            contextData.put("s.prop31", categoryHierarchy);
-            contextData.put("s.evar38", categoryHierarchy);
-            contextData.put("s.pageName", categoryHierarchy); // overwrite pagename if hierarchy available
         }
         Analytics.trackState("s.pageName", contextData);
     }
@@ -215,26 +208,18 @@ public class Tracker {
             contextData.put("s.prop3", "Product Detail");
             contextData.put("s.evar27", product.getCustomerReviewRating());
             if (product.getAnalytic() != null && product.getAnalytic().size() > 0) {
-                Analytic an = product.getAnalytic().get(0);
-                if (an != null) {
-                    if (!TextUtils.isEmpty(an.getSuperCategoryCode())) {
-                        contextData.put("s.pageName", "Product Detail: " + an.getSuperCategoryCode());
-                        contextData.put("Channel", an.getSuperCategoryCode());
-                    }
-                    if (!TextUtils.isEmpty(an.getCategoryCode())) {
-                        contextData.put("s.prop4", an.getCategoryCode());
-                    }
-                    if (!TextUtils.isEmpty(an.getDepartmentCode())) {
-                        contextData.put("s.prop5", an.getDepartmentCode());
-                    }
-                    if (!TextUtils.isEmpty(an.getClassCode())) {
-                        contextData.put("s.prop6", an.getClassCode());
+                Analytic analytic = product.getAnalytic().get(0);
+                if (analytic != null) {
+                    addAnalyticProperties(contextData, analytic);
+                    if (!TextUtils.isEmpty(analytic.getSuperCategoryCode())) {
+                        contextData.put("s.pageName", "Product Detail: " + analytic.getSuperCategoryCode());
                     }
                 }
             }
             Analytics.trackState("s.pageName", contextData);
         }
     }
+
 
     //////////////////////////////////////////////////////////
     ////////////// trackAction calls //////////////////////////
@@ -317,6 +302,42 @@ public class Tracker {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
         contextData.putAll(globalContextData);
         return contextData;
+    }
+
+    private void addAnalyticProperties(HashMap<String, Object> contextData, Analytic analytic) {
+        if (analytic != null) {
+            if (!TextUtils.isEmpty(analytic.getSuperCategoryCode())) {
+                contextData.put("Channel", analytic.getSuperCategoryCode());
+            }
+            if (!TextUtils.isEmpty(analytic.getCategoryCode())) {
+                contextData.put("s.prop4", analytic.getCategoryCode());
+            }
+            if (!TextUtils.isEmpty(analytic.getDepartmentCode())) {
+                contextData.put("s.prop5", analytic.getDepartmentCode());
+            }
+            if (!TextUtils.isEmpty(analytic.getClassCode())) {
+                contextData.put("s.prop6", analytic.getClassCode());
+            }
+        }
+    }
+
+    private String buildCategoryHierarchy(Analytic analytic) {
+        StringBuilder buf = new StringBuilder();
+        if (analytic != null) {
+            if (analytic.getSuperCategoryCode() != null) {
+                buf.append(analytic.getSuperCategoryCode());
+            }
+            if (analytic.getCategoryCode() != null) {
+                buf.append(":").append(analytic.getCategoryCode());
+            }
+            if (analytic.getDepartmentCode() != null) {
+                buf.append(":").append(analytic.getDepartmentCode());
+            }
+            if (analytic.getClassCode() != null) {
+                buf.append(":").append(analytic.getClassCode());
+            }
+        }
+        return buf.toString();
     }
 
     private void setAFAGlobalDefinitions() {

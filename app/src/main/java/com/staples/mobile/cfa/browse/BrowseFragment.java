@@ -181,9 +181,8 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
                     case BUNDLE:
                         MainActivity activity = (MainActivity) getActivity();
                         if (activity!=null) {
-                            String categoryHierarchy = adapter.getCategoryHierarchy() + ":" + item.identifier;
-                            Tracker.getInstance().trackActionForShopByCategory(categoryHierarchy); // analytics
-                            activity.selectBundle(item.title, identifier, categoryHierarchy);
+                            Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy() + ":" + item.identifier); // analytics
+                            activity.selectBundle(item.title, identifier);
                         }
                         break;
                     default:
