@@ -106,7 +106,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
 
         String msg = ApiError.getErrorMessage(retrofitError);
         ((MainActivity)activity).showErrorDialog(msg);
-        wrapper.setState(DataWrapper.State.EMPTY);
+        wrapper.setState(DataWrapper.State.NOMORE);
         Log.d(TAG, msg);
     }
 
