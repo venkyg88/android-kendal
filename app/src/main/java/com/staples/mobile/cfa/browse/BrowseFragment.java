@@ -167,7 +167,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
         BrowseItem item = (BrowseItem) parent.getItemAtPosition(position);
         switch(item.type) {
             case STACK:
-                Tracker.getInstance().trackActionForShopByCategory(adapter.getStackHierarchy()); // analytics
+                Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy()); // analytics
                 identifier = adapter.popStack(item);
                 fill(identifier);
                 adapterState = adapter.saveState(adapterState);
@@ -181,8 +181,8 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
                     case BUNDLE:
                         MainActivity activity = (MainActivity) getActivity();
                         if (activity!=null) {
+                            Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy() + ":" + item.identifier); // analytics
                             activity.selectBundle(item.title, identifier);
-                            Tracker.getInstance().trackActionForShopByCategory(adapter.getStackHierarchy() + ":" + item.title); // analytics
                         }
                         break;
                     default:
@@ -191,7 +191,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
                         adapterState = adapter.saveState(adapterState);
                         wrapper.setState(DataWrapper.State.ADDING);
                         adapter.notifyDataSetChanged();
-                        Tracker.getInstance().trackActionForShopByCategory(adapter.getStackHierarchy()); // analytics
+                        Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy()); // analytics
                         break;
                 }
                 break;

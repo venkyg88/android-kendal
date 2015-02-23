@@ -577,8 +577,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             // Use the first product in the list
             final Product product = products.get(0);
 
-            Tracker.getInstance().trackStateForProduct(product); // Analytics
-
             tabAdapter.setProduct(product);
 
             // Handle availability
@@ -602,6 +600,14 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 });
 
             }
+
+            // Analytics
+            if (availability == Availability.SKUSET) {
+                Tracker.getInstance().trackStateForSkuSet(product); // Analytics
+            } else {
+                Tracker.getInstance().trackStateForProduct(product); // Analytics
+            }
+
 
             switch (availability) {
                 case NOTHING:

@@ -1,14 +1,17 @@
 package com.staples.mobile.cfa.analytics;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.adobe.mobile.Analytics;
 import com.adobe.mobile.Config;
 import com.staples.mobile.cfa.home.ConfigItem;
 import com.staples.mobile.common.access.easyopen.model.browse.Analytic;
+import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by burcoral on 2/5/15.
@@ -176,28 +179,57 @@ public class Tracker {
         Analytics.trackState("s.pageName", contextData);
     }
 
-    public void trackStateForClass(String title, int count) {
+    public void trackStateForClass(String title, int count, Browse browse) {
         HashMap<String, Object> contextData = createContextWithGlobal();
         contextData.put("s.pageName", title);
         contextData.put("s.prop2", count);
         contextData.put("s.prop3", "Class");
+        if (browse != null && browse.getCategory() != null && browse.getCategory().size() > 0) {
+            List<Analytic> analytics = browse.getCategory().get(0).getCategoryAnalytic();
+            if (analytics != null && analytics.size() > 0) {
+                Analytic analytic = analytics.get(0);
+                if (analytic != null) {
+                    addAnalyticProperties(contextData, analytic);
+                    contextData.put("s.pageName", buildCategoryHierarchy(analytic)); // overwrite pagename if hierarchy available
+                }
+            }
+        }
         Analytics.trackState("s.pageName", contextData);
     }
 
     public void trackStateForProduct(Product product) {
         if (product != null) {
             HashMap<String, Object> contextData = createContextWithGlobal();
-            contextData.put("s.pageName", "Product Screen");
-            contextData.put("s.products", product.getDisplayName());
-            contextData.put("s.prop3", product.getDisplayName());
+            contextData.put("s.pageName", "Product Detail"); // initialize with at least this, add SC below if analytic available
+            contextData.put("s.products", product.getSku());
+            contextData.put("s.prop3", "Product Detail");
             contextData.put("s.evar27", product.getCustomerReviewRating());
             if (product.getAnalytic() != null && product.getAnalytic().size() > 0) {
-                Analytic an = product.getAnalytic().get(0);
-                if (an != null) {
-                    contextData.put("Channel", an.getSuperCategoryName());
-                    contextData.put("s.prop4", an.getCategoryName());
-                    contextData.put("s.prop5", an.getDepartmentName());
-                    contextData.put("s.prop6", an.getClassName());
+                Analytic analytic = product.getAnalytic().get(0);
+                if (analytic != null) {
+                    addAnalyticProperties(contextData, analytic);
+                    if (!TextUtils.isEmpty(analytic.getSuperCategoryCode())) {
+                        contextData.put("s.pageName", "Product Detail: " + analytic.getSuperCategoryCode());
+                    }
+                }
+            }
+            Analytics.trackState("s.pageName", contextData);
+        }
+    }
+
+
+    public void trackStateForSkuSet(Product product) {
+        if (product != null) {
+            HashMap<String, Object> contextData = createContextWithGlobal();
+            contextData.put("s.pageName", "SKU Set"); // initialize with at least this, add SC below if analytic available
+            contextData.put("s.prop3", "Product Detail");
+            if (product.getAnalytic() != null && product.getAnalytic().size() > 0) {
+                Analytic analytic = product.getAnalytic().get(0);
+                if (analytic != null) {
+                    addAnalyticProperties(contextData, analytic);
+                    if (!TextUtils.isEmpty(analytic.getSuperCategoryCode())) {
+                        contextData.put("s.pageName", "SKU Set: " + analytic.getSuperCategoryCode());
+                    }
                 }
             }
             Analytics.trackState("s.pageName", contextData);
@@ -217,9 +249,9 @@ public class Tracker {
     }
 
     // e.g. ShopCategory:<SC>:<CG>:<DP>:<CL>
-    public void trackActionForShopByCategory(String shopCategory) {
+    public void trackActionForShopByCategory(String categoryHierarchy) {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
-        contextData.put("s.prop27", shopCategory);
+        contextData.put("s.prop27", "ShopCategory:" + categoryHierarchy);
         Analytics.trackAction("Item Click", contextData);
     }
 
@@ -269,7 +301,7 @@ public class Tracker {
     private void trackActionForItemSelection(String title, int itemPosition, int pageNo, String selectionType) {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
         contextData.put("s.pageName", title);
-        contextData.put("s.prop3", "Search");
+        contextData.put("s.prop3", selectionType);
         contextData.put("s.evar19", itemPosition + ":" + pageNo);
         Analytics.trackAction("Item Click", contextData);
     }
@@ -285,6 +317,45 @@ public class Tracker {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
         contextData.putAll(globalContextData);
         return contextData;
+    }
+
+    private void addAnalyticProperties(HashMap<String, Object> contextData, Analytic analytic) {
+        if (analytic != null) {
+            if (!TextUtils.isEmpty(analytic.getSuperCategoryCode())) {
+                contextData.put("Channel", analytic.getSuperCategoryCode());
+            }
+            if (!TextUtils.isEmpty(analytic.getCategoryCode())) {
+                contextData.put("s.prop4", analytic.getCategoryCode());
+            }
+            if (!TextUtils.isEmpty(analytic.getDepartmentCode())) {
+                contextData.put("s.prop5", analytic.getDepartmentCode());
+            }
+            if (!TextUtils.isEmpty(analytic.getClassCode())) {
+                contextData.put("s.prop6", analytic.getClassCode());
+            }
+            String categoryHierarchy = buildCategoryHierarchy(analytic);
+            contextData.put("s.prop31", categoryHierarchy);
+            contextData.put("s.evar38", categoryHierarchy);
+        }
+    }
+
+    private String buildCategoryHierarchy(Analytic analytic) {
+        StringBuilder buf = new StringBuilder();
+        if (analytic != null) {
+            if (analytic.getSuperCategoryCode() != null) {
+                buf.append(analytic.getSuperCategoryCode());
+            }
+            if (analytic.getCategoryCode() != null) {
+                buf.append(":").append(analytic.getCategoryCode());
+            }
+            if (analytic.getDepartmentCode() != null) {
+                buf.append(":").append(analytic.getDepartmentCode());
+            }
+            if (analytic.getClassCode() != null) {
+                buf.append(":").append(analytic.getClassCode());
+            }
+        }
+        return buf.toString();
     }
 
     private void setAFAGlobalDefinitions() {
