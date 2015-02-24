@@ -61,6 +61,7 @@ import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
 import com.urbanairship.AirshipConfigOptions;
 import com.urbanairship.UAirship;
 import com.urbanairship.push.PushManager;
+import com.urbanairship.push.notifications.NotificationFactory;
 
 import java.util.Date;
 
@@ -151,8 +152,9 @@ public class MainActivity extends Activity
         AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(this);
         UAirship.takeOff(getApplication(), options);
         PushManager manager = UAirship.shared().getPushManager();
+        manager.setNotificationFactory(new IntentReceiver.CustomNotificationFactory(this));
         manager.setUserNotificationsEnabled(true);
-        manager.getChannelId();
+//        manager.setAlias("FirstName-Device"); // TODO Only enable this once, then disable
     }
 
     @Override
