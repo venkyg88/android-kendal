@@ -5,8 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.easyopen.model.member.Shipment;
 import com.staples.mobile.common.access.easyopen.model.member.ShipmentSKU;
@@ -19,8 +21,14 @@ import java.util.Locale;
 /**
  * Created by Avinash Dodda.
  */
-public class OrderArrayAdapter extends ArrayAdapter<Shipment>{
+public class OrderArrayAdapter extends ArrayAdapter<Shipment> implements View.OnClickListener{
     private LayoutInflater inflater;
+    TextView orderNumTV;
+    TextView numItemsTV;
+    TextView orderStatusTV;
+    TextView expectedDelivery;
+    Button trackShipmentBtn;
+    Button viewRecieptBtn;
 
     public OrderArrayAdapter(Context context) {
         super(context, R.layout.order_listview_row);
@@ -30,12 +38,16 @@ public class OrderArrayAdapter extends ArrayAdapter<Shipment>{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View rowView = inflater.inflate(R.layout.order_listview_row, parent, false);
+        orderNumTV = (TextView)rowView.findViewById(R.id.orderNumTv);
+        numItemsTV = (TextView)rowView.findViewById(R.id.numItemsTV);
+        orderStatusTV = (TextView)rowView.findViewById(R.id.orderStatusTV);
+        expectedDelivery = (TextView)rowView.findViewById(R.id.orderDeliveryTV);
+        trackShipmentBtn = (Button)rowView.findViewById(R.id.trackShipmentBtn);
+        viewRecieptBtn = (Button)rowView.findViewById(R.id.orderReceiptBtn);
+        trackShipmentBtn.setOnClickListener(this);
+        viewRecieptBtn.setOnClickListener(this);
 
         Shipment shipment = getItem(position);
-        TextView orderNumTV = (TextView)rowView.findViewById(R.id.orderNumTv);
-        TextView numItemsTV = (TextView)rowView.findViewById(R.id.numItemsTV);
-        TextView orderStatusTV = (TextView)rowView.findViewById(R.id.orderStatusTV);
-        TextView expectedDelivery = (TextView)rowView.findViewById(R.id.orderDeliveryTV);
 
         orderNumTV.setText("Order# "+ shipment.getOrderNumber());
         double itemsOrdered = 0.0;
@@ -57,5 +69,20 @@ public class OrderArrayAdapter extends ArrayAdapter<Shipment>{
         orderStatusTV.setText(shipment.getShipmentStatusDescription());
         numItemsTV.setText(""+ (int)itemsOrdered + " Items");
         return rowView;
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()) {
+            case R.id.trackShipmentBtn:
+                ((MainActivity)getContext()).showNotificationBanner("hi");
+                break;
+            case  R.id.orderReceiptBtn:
+                ((MainActivity)getContext()).showNotificationBanner("hello");
+                break;
+            default:
+                break;
+        }
     }
 }

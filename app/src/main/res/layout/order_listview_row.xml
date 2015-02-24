@@ -60,7 +60,7 @@ android:paddingRight="10dp">
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:text="View receipt"
-        android:id="@+id/receiptBtn" />
+        android:id="@+id/orderReceiptBtn" />
     </LinearLayout>
 </RelativeLayout>
 
