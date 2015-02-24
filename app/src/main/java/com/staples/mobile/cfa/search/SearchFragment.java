@@ -128,7 +128,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
                     ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier, false);
-                    Tracker.getInstance().trackActionForSearchItemSelection(item.title, adapter.getItemPosition(item), 1);
+                    Tracker.getInstance().trackActionForSearchItemSelection(adapter.getItemPosition(item), 1);
                 }
                 break;
             case R.id.bundle_action:
@@ -136,7 +136,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
                     Toast.makeText(getActivity(), "Clicked on " + item.title, Toast.LENGTH_LONG).show();
-                    Tracker.getInstance().trackActionForSearchItemSelection(item.title, adapter.getItemPosition(item), 1);
+//                    Tracker.getInstance().trackActionForSearchItemSelection(item.title, adapter.getItemPosition(item), 1);
                 }
                 break;
         }

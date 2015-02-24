@@ -91,7 +91,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         if (count==0) wrapper.setState(DataWrapper.State.EMPTY);
         else wrapper.setState(DataWrapper.State.DONE);
         adapter.notifyDataSetChanged();
-        Tracker.getInstance().trackStateForClass(title, count, browse); // analytics
+        Tracker.getInstance().trackStateForClass(count, browse); // analytics
     }
 
     @Override
@@ -134,14 +134,14 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
                     ((MainActivity)getActivity()).selectSkuItem(item.title, item.identifier, false);
-                    Tracker.getInstance().trackActionForClassItemSelection(item.title, adapter.getItemPosition(item), 1); // analytics
+                    Tracker.getInstance().trackActionForClassItemSelection(adapter.getItemPosition(item), 1); // analytics
                 }
                 break;
             case R.id.bundle_action:
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
-                    Tracker.getInstance().trackActionForClassItemSelection(item.title, adapter.getItemPosition(item), 1); // analytics
+                    Tracker.getInstance().trackActionForClassItemSelection(adapter.getItemPosition(item), 1); // analytics
                     if (item.type==IdentifierType.SKUSET) {
                         final MainActivity activity = (MainActivity) getActivity();
                         activity.selectSkuItem(item.title, item.identifier, false);
