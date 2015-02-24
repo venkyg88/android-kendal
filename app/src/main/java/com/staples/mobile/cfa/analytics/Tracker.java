@@ -9,6 +9,7 @@ import com.staples.mobile.cfa.home.ConfigItem;
 import com.staples.mobile.common.access.easyopen.model.browse.Analytic;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
+import com.staples.mobile.common.access.easyopen.model.cart.Pricing;
 
 import java.util.HashMap;
 import java.util.List;
@@ -357,14 +358,25 @@ public class Tracker {
         Analytics.trackAction("Item Click", contextData);
     }
 
-    public void trackActionForAddToCart(String pageName, Product product) {
+    public void trackActionForAddToCartFromProductDetails(String sku, float price, int quantity) {
+        trackActionForAddToCart(PageType.PAGE_PRODUCT_DETAIL, sku, price, quantity);
+    }
+    public void trackActionForAddToCartFromSearchResults(String sku, float price, int quantity) {
+        trackActionForAddToCart(PageType.PAGE_SEARCH_RESULTS, sku, price, quantity);
+    }
+    public void trackActionForAddToCartFromClass(String sku, float price, int quantity) {
+        trackActionForAddToCart(PageType.PAGE_CLASS, sku, price, quantity);
+    }
+    public void trackActionForAddToCart(PageType pageType, String sku, float price, int quantity) {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
-        contextData.put("s.pageName", pageName);
-//        contextData.put("products", ...);
-//        contextData.put("s.evar12", ...);
-
-        // TODO above
-
+        float totalPrice = price;
+        if (quantity != 1) { // only doing the extra math operations if quantity not 1
+            totalPrice = Math.round(price * quantity * 100f) / 100f;
+        }
+        contextData.put("s.pageName", pageType.getName());
+        contextData.put("events", "scAdd,event35=" + totalPrice + ",event36=" + quantity);
+        contextData.put("products", sku);
+        contextData.put("s.evar12", pageType.getName());
         Analytics.trackAction("Item Click", contextData);
     }
 
@@ -379,6 +391,7 @@ public class Tracker {
         contextData.putAll(globalContextData);
         return contextData;
     }
+
 
     private void addAnalyticProperties(HashMap<String, Object> contextData, Analytic analytic) {
         if (analytic != null) {

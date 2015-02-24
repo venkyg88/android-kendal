@@ -122,6 +122,10 @@ public class PriceSticker extends View {
         return(true);
     }
 
+    public float getPrice() {
+        return price;
+    }
+
     @Override
     public void onMeasure(int widthSpec, int heightSpec) {
         float x = getPaddingLeft() + getPaddingRight();

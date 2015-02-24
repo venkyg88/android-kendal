@@ -140,7 +140,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
             case R.id.bundle_action:
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
-                    BundleItem item = (BundleItem) tag;
+                    final BundleItem item = (BundleItem) tag;
                     Tracker.getInstance().trackActionForClassItemSelection(adapter.getItemPosition(item), 1); // analytics
                     if (item.type==IdentifierType.SKUSET) {
                         final MainActivity activity = (MainActivity) getActivity();
@@ -159,6 +159,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                                 if (errMsg == null) {
                                     buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.added_to_cart));
                                     activity.showNotificationBanner(R.string.cart_updated_msg);
+                                    Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.price, 1);
                                 } else {
                                     buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.add_to_cart));
                                     // if non-grammatical out-of-stock message from api, provide a nicer message

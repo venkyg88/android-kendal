@@ -134,9 +134,11 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
             case R.id.bundle_action:
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
-                    BundleItem item = (BundleItem) tag;
+                    final BundleItem item = (BundleItem) tag;
                     Toast.makeText(getActivity(), "Clicked on " + item.title, Toast.LENGTH_LONG).show();
-//                    Tracker.getInstance().trackActionForSearchItemSelection(item.title, adapter.getItemPosition(item), 1);
+
+                    // TODO: !!!!!!!! move this into on add-to-cart success callback similar to BundleFragment !!!!!!!!
+                    Tracker.getInstance().trackActionForAddToCartFromSearchResults(item.identifier, item.price, 1);
                 }
                 break;
         }
