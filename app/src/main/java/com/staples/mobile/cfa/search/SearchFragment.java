@@ -41,7 +41,6 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
     private DataWrapper wrapper;
     private BundleAdapter adapter;
-    private String keyword;
 
     public void setArguments(String keyword) {
         Bundle args = new Bundle();
@@ -51,7 +50,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        keyword = null;
+        String keyword = null;
 
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
 
@@ -92,12 +91,11 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         adapter.notifyDataSetChanged();
 
         //Analytics
-        //@TODO get(0) again
-        //get the actual count of search results
-        int countR = searchResult.getSearch().get(0).getItemCount();
-        //@TODO quesry string is the term
-        Tracker.getInstance().trackStateForSearchResults(keyword, countR); //Analytics
-
+        if (searchResult.getSearch() != null && searchResult.getSearch().size() > 0) {
+            //get the actual count of search results
+            Search search = searchResult.getSearch().get(0);
+            Tracker.getInstance().trackStateForSearchResults(search.getSearchTerm(), search.getItemCount()); //Analytics
+        }
     }
 
     @Override

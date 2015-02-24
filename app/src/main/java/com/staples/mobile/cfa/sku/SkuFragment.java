@@ -46,6 +46,7 @@ import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
 import com.staples.mobile.common.access.easyopen.model.reviews.Data;
 import com.staples.mobile.common.access.easyopen.model.reviews.ReviewSet;
 
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -58,6 +59,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener,
+Callback,
         View.OnClickListener, FragmentManager.OnBackStackChangedListener{
     private static final String TAG = "SkuFragment";
 
@@ -197,8 +199,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         // Initiate API calls
         EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
-        api.getSkuDetails(identifier, null, MAXFETCH, new SkuDetailsCallback());
-        api.getReviews(identifier, new ReviewSetCallback());
+        api.getSkuDetails(identifier, null, MAXFETCH, this);
+        api.getReviews(identifier, this);
 
         return (wrapper);
     }
@@ -529,44 +531,39 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     // Retrofit callbacks
 
-    private class SkuDetailsCallback implements Callback<SkuDetails> {
-        @Override
-        public void success(SkuDetails details, Response response) {
-            Activity activity = getActivity();
-            if (activity==null) return;
+    @Override
+    public void success(Object obj, Response response) {
+        Activity activity = getActivity();
+        if (activity==null) return;
 
+        if (obj instanceof SkuDetails) {
+            SkuDetails details = (SkuDetails) obj;
             processSkuDetails(details);
             wrapper.setState(DataWrapper.State.DONE);
         }
 
-        @Override
-        public void failure(RetrofitError retrofitError) {
-            Activity activity = getActivity();
-            if (activity==null) return;
-
-            wrapper.setState(DataWrapper.State.EMPTY);
-            String msg = ApiError.getErrorMessage(retrofitError);
-            ((MainActivity)activity).showErrorDialog(msg);
-            Log.d(TAG, msg);
+        else if (obj instanceof ReviewSet) {
+            ReviewSet reviews = (ReviewSet) obj;
+            processReviewSet(reviews);
         }
     }
 
-    private class ReviewSetCallback implements Callback<ReviewSet> {
-        @Override
-        public void success(ReviewSet reviews, Response response) {
-            Activity activity = getActivity();
-            if (activity==null) return;
+    @Override
+    public void failure(RetrofitError retrofitError) {
+        Activity activity = getActivity();
+        if (activity==null) return;
+        Type type = retrofitError.getSuccessType();
 
-            processReviewSet(reviews);
+        if (type==SkuDetails.class) {
+            wrapper.setState(DataWrapper.State.EMPTY);
+            String msg = ApiError.getErrorMessage(retrofitError);
+            ((MainActivity) activity).showErrorDialog(msg);
+            Log.d(TAG, msg);
         }
 
-        @Override
-        public void failure(RetrofitError retrofitError) {
-            Activity activity = getActivity();
-            if (activity==null) return;
-
+        else if (type==ReviewSet.class) {
             String msg = ApiError.getErrorMessage(retrofitError);
-            ((MainActivity)activity).showErrorDialog(msg);
+            ((MainActivity) activity).showErrorDialog(msg);
             Log.d(TAG, msg);
         }
     }
@@ -576,8 +573,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         if (products != null && products.size() > 0) {
             // Use the first product in the list
             final Product product = products.get(0);
-
-            Tracker.getInstance().trackStateForProduct(product); // Analytics
 
             tabAdapter.setProduct(product);
 
@@ -602,6 +597,14 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 });
 
             }
+
+            // Analytics
+            if (availability == Availability.SKUSET) {
+                Tracker.getInstance().trackStateForSkuSet(product); // Analytics
+            } else {
+                Tracker.getInstance().trackStateForProduct(product); // Analytics
+            }
+
 
             switch (availability) {
                 case NOTHING:

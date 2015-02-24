@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.browse;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -116,13 +117,15 @@ public class BrowseAdapter extends BaseAdapter {
     }
 
     /** needed for analytics */
-    public String getStackHierarchy() {
+    public String getCategoryHierarchy() {
         StringBuilder buf = new StringBuilder();
         for (BrowseItem item : stackList) {
-            if (buf.length() > 0) {
-                buf.append(":");
+            if (!TextUtils.isEmpty(item.identifier) && Character.isLetter(item.identifier.charAt(0))) {
+                if (buf.length() > 0) {
+                    buf.append(":");
+                }
+                buf.append(item.identifier);
             }
-            buf.append(item.title);
         }
         return buf.toString();
     }

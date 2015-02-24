@@ -91,7 +91,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         if (count==0) wrapper.setState(DataWrapper.State.EMPTY);
         else wrapper.setState(DataWrapper.State.DONE);
         adapter.notifyDataSetChanged();
-        Tracker.getInstance().trackStateForClass(title, count); // analytics
+        Tracker.getInstance().trackStateForClass(title, count, browse); // analytics
     }
 
     @Override
