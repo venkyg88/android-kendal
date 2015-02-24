@@ -764,6 +764,9 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         else if (tag.equals(REVIEWS)) index = 2;
         else throw (new RuntimeException("Unknown tag from TabHost"));
 
+        // analytics
+        Tracker.getInstance().trackActionForProductTabs(tabAdapter.getPageTitle(index), tabAdapter.getProduct());
+
         tabPager.setCurrentItem(index);
     }
 

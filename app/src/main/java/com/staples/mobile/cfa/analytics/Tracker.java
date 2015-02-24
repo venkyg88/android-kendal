@@ -306,6 +306,21 @@ public class Tracker {
         Analytics.trackAction("Item Click", contextData);
     }
 
+    public void trackActionForProductTabs(String tabName, Product product) {
+        HashMap<String, Object> contextData = new HashMap<String, Object>();
+        contextData.put("s.pageName", "Product Detail:"); //  start with at least this much in case analytic empty
+        contextData.put("s.prop11", tabName);
+        contextData.put("s.prop48", product.getSku());
+        if (product.getAnalytic() != null && product.getAnalytic().size() > 0) {
+            Analytic analytic = product.getAnalytic().get(0);
+            if (analytic != null) {
+                if (!TextUtils.isEmpty(analytic.getSuperCategoryCode())) {
+                    contextData.put("s.pageName", "Product Detail: " + analytic.getSuperCategoryCode());
+                }
+            }
+        }
+        Analytics.trackAction("Item Click", contextData);
+    }
 
     //////////////////////////////////////////////////////////
     ////////////// private calls //////////////////////////
