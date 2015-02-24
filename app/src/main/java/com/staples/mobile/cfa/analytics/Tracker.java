@@ -9,7 +9,7 @@ import com.staples.mobile.cfa.home.ConfigItem;
 import com.staples.mobile.common.access.easyopen.model.browse.Analytic;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
-import com.staples.mobile.common.access.easyopen.model.cart.Pricing;
+import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,14 +39,16 @@ public class Tracker {
         PAGE_CHECKOUT_EDIT_SHIPPING("Checkout Edit Shipping"),
         PAGE_CHECKOUT_EDIT_BILLING("Checkout Edit Billing"),
         PAGE_CHECKOUT_EDIT_PAYMENT("Checkout Edit Payment"),
-        PAGE_SEARCH_RESULTS("Search Results"),
         PAGE_PRODUCT_DETAIL("Product Detail"),
+        PAGE_SKU_SET("SKU Set"),
         PAGE_CLASS("Class"),
         PAGE_ACCOUNT("My Account"),
         PAGE_STORE("Store"),
         PAGE_WEEKLY_AD("WeeklyAd"),
+        PAGE_SEARCH("Search"),
         PAGE_SEARCH_BAR("Search Bar"),
-        PAGE_SEARCH_TAB("Search Tab"),;
+        PAGE_SEARCH_TAB("Search Tab"),
+        PAGE_SEARCH_RESULTS("Search Results");
 
         private String name;
 
@@ -254,16 +256,16 @@ public class Tracker {
 
     public void trackStateForSkuSet(Product product) {
         if (product != null) {
-            String pageTypeName = PageType.PAGE_PRODUCT_DETAIL.getName();
+            String pageTypeName = PageType.PAGE_SKU_SET.getName();
             HashMap<String, Object> contextData = createContextWithGlobal();
-            contextData.put("s.pageName", "SKU Set"); // initialize with at least this, add SC below if analytic available
+            contextData.put("s.pageName", pageTypeName); // initialize with at least this, add SC below if analytic available
             contextData.put("s.prop3", pageTypeName);
             if (product.getAnalytic() != null && product.getAnalytic().size() > 0) {
                 Analytic analytic = product.getAnalytic().get(0);
                 if (analytic != null) {
                     addAnalyticProperties(contextData, analytic);
                     if (!TextUtils.isEmpty(analytic.getSuperCategoryCode())) {
-                        contextData.put("s.pageName", "SKU Set: " + analytic.getSuperCategoryCode());
+                        contextData.put("s.pageName", pageTypeName + ": " + analytic.getSuperCategoryCode());
                     }
                 }
             }
@@ -271,9 +273,32 @@ public class Tracker {
         }
     }
 
-    //////////////////////////////////////////////////////////
+    public void trackStateForCart(Cart cart) {
+        if (cart != null && cart.getProduct() != null) {
+            StringBuilder skus = new StringBuilder();
+            for (com.staples.mobile.common.access.easyopen.model.cart.Product product : cart.getProduct()) {
+                if (skus.length() > 0) {
+                    skus.append(";");
+                }
+                skus.append(product.getSku());
+            }
+            String pageTypeName = PageType.PAGE_CART.getName();
+            HashMap<String, Object> contextData = createContextWithGlobal();
+            contextData.put("s.pageName", pageTypeName);
+            contextData.put("s.events", "scView");
+            contextData.put("s.products", skus.toString());
+            contextData.put("s.prop3", pageTypeName);
+            contextData.put("s.prop4", pageTypeName);
+            contextData.put("s.prop5", pageTypeName);
+            contextData.put("s.prop6", pageTypeName);
+            Analytics.trackState("s.pageName", contextData);
+        }
+    }
+
+
+    ///////////////////////////////////////////////////////////
     ////////////// trackAction calls //////////////////////////
-    //////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////
 
     public void trackActionForNavigationDrawer(String drawerItemText, String currentPageName) {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
@@ -314,9 +339,10 @@ public class Tracker {
     }
 
     public void trackActionForSearch(SearchType searchType) {
+        String pageTypeName = PageType.PAGE_SEARCH.getName();
         HashMap<String, Object> contextData = new HashMap<String, Object>();
-        contextData.put("s.evar3", "Search");
-        contextData.put("s.prop38", "Search");
+        contextData.put("s.evar3", pageTypeName);
+        contextData.put("s.prop38", pageTypeName);
         String searchTypeString = null;
         switch (searchType) {
             case BASIC_SEARCH: searchTypeString = "Basic Search"; break;
@@ -380,6 +406,15 @@ public class Tracker {
         Analytics.trackAction("Item Click", contextData);
     }
 
+    public void trackActionForRemoveFromCart(String sku) {
+        String pageTypeName = PageType.PAGE_CART.getName();
+        HashMap<String, Object> contextData = new HashMap<String, Object>();
+        contextData.put("s.pageName", pageTypeName);
+        contextData.put("events", "scRemove");
+        contextData.put("products", sku);
+        contextData.put("s.evar12", pageTypeName);
+        Analytics.trackAction("Item Click", contextData);
+    }
 
     //////////////////////////////////////////////////////////
     ////////////// private calls /////////////////////////////
