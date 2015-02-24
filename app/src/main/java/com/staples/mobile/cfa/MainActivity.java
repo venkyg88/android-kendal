@@ -58,6 +58,9 @@ import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.urbanairship.AirshipConfigOptions;
+import com.urbanairship.UAirship;
+import com.urbanairship.push.PushManager;
 
 import java.util.Date;
 
@@ -142,6 +145,48 @@ public class MainActivity extends Activity
             initialLoginComplete = false;
             appConfigurator = AppConfigurator.getInstance();
             appConfigurator.getConfigurator(this); // AppConfiguratorCallback
+        }
+
+        // Support for Urban Airship
+        AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(this);
+        UAirship.takeOff(getApplication(), options);
+        PushManager manager = UAirship.shared().getPushManager();
+        manager.setUserNotificationsEnabled(true);
+        manager.getChannelId();
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        String action = intent.getAction();
+
+        if (IntentReceiver.ACTION_OPEN_SKU.equals(action)) {
+            String sku = intent.getStringExtra(IntentReceiver.EXTRA_SKU);
+            if (sku!=null) {
+                String title = intent.getStringExtra(IntentReceiver.EXTRA_TITLE);
+                if (title==null) title = getResources().getString(R.string.sku_notification_title);
+                selectSkuItem(title, sku, false);
+            }
+            return;
+        }
+
+        if (IntentReceiver.ACTION_OPEN_CATEGORY.equals(action)) {
+            String identifier = intent.getStringExtra(IntentReceiver.EXTRA_IDENTIFIER);
+            if (identifier!=null) {
+                String title = intent.getStringExtra(IntentReceiver.EXTRA_TITLE);
+                if (title==null) title = getResources().getString(R.string.sku_notification_title);
+                selectBundle(title, identifier);
+            }
+            return;
+        }
+
+        if (IntentReceiver.ACTION_OPEN_SEARCH.equals(action)) {
+            String keyword = intent.getStringExtra(IntentReceiver.EXTRA_KEYWORD);
+            if (keyword!=null) {
+                String title = intent.getStringExtra(IntentReceiver.EXTRA_TITLE);
+                if (title==null) title = getResources().getString(R.string.sku_notification_title);
+                selectSearch(keyword);
+            }
+            return;
         }
     }
 

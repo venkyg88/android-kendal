@@ -1,1 +1,1 @@
-include ':app', '..:android-common:common'
+include ':app', '..:android-common:common', ':urbanairship-lib-5.1.5'
