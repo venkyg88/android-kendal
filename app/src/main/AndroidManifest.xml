@@ -39,7 +39,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <receiver android:name=".IntentReceiver"
+        <receiver android:name=".notify.IntentReceiver"
                   android:exported="false">
             <intent-filter>
                 <action android:name="com.urbanairship.push.CHANNEL_UPDATED"/>

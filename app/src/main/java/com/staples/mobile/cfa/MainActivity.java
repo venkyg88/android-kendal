@@ -36,6 +36,7 @@ import com.staples.mobile.cfa.home.ConfiguratorFragment;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.notify.IntentReceiver;
 import com.staples.mobile.cfa.profile.AddressFragment;
 import com.staples.mobile.cfa.profile.AddressListFragment;
 import com.staples.mobile.cfa.profile.CreditCardFragment;
@@ -61,7 +62,6 @@ import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
 import com.urbanairship.AirshipConfigOptions;
 import com.urbanairship.UAirship;
 import com.urbanairship.push.PushManager;
-import com.urbanairship.push.notifications.NotificationFactory;
 
 import java.util.Date;
 
@@ -154,7 +154,6 @@ public class MainActivity extends Activity
         PushManager manager = UAirship.shared().getPushManager();
         manager.setNotificationFactory(new IntentReceiver.CustomNotificationFactory(this));
         manager.setUserNotificationsEnabled(true);
-//        manager.setAlias("FirstName-Device"); // TODO Only enable this once, then disable
     }
 
     @Override

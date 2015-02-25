@@ -1,4 +1,4 @@
-package com.staples.mobile.cfa;
+package com.staples.mobile.cfa.notify;
 
 import android.app.Notification;
 import android.content.Context;
@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.staples.mobile.cfa.R;
 import com.urbanairship.push.BaseIntentReceiver;
 import com.urbanairship.push.PushMessage;
 import com.urbanairship.push.notifications.NotificationFactory;
@@ -18,16 +19,16 @@ import com.urbanairship.util.NotificationIDGenerator;
 public class IntentReceiver extends BaseIntentReceiver {
     private static final String TAG = "IntentReceiver";
 
-    public static final String PACKAGE = IntentReceiver.class.getPackage().getName();
+    private static final String APPLICATION = "com.staples.mobile.cfa";
 
-    public static final String ACTION_OPEN_SKU = PACKAGE+".OPEN_SKU";
-    public static final String ACTION_OPEN_CATEGORY = PACKAGE+".OPEN_CATEGORY";
-    public static final String ACTION_OPEN_SEARCH = PACKAGE+".OPEN_SEARCH";
+    public static final String ACTION_OPEN_SKU = APPLICATION +".OPEN_SKU";
+    public static final String ACTION_OPEN_CATEGORY = APPLICATION +".OPEN_CATEGORY";
+    public static final String ACTION_OPEN_SEARCH = APPLICATION +".OPEN_SEARCH";
 
-    public static final String EXTRA_SKU = PACKAGE+".SKU";
-    public static final String EXTRA_IDENTIFIER = PACKAGE+".IDENTIFIER";
-    public static final String EXTRA_KEYWORD = PACKAGE+".KEYWORD";
-    public static final String EXTRA_TITLE = PACKAGE+".TITLE";
+    public static final String EXTRA_SKU = APPLICATION +".SKU";
+    public static final String EXTRA_IDENTIFIER = APPLICATION +".IDENTIFIER";
+    public static final String EXTRA_KEYWORD = APPLICATION +".KEYWORD";
+    public static final String EXTRA_TITLE = APPLICATION +".TITLE";
 
     private ObjectMapper mapper;
 
