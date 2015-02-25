@@ -207,7 +207,8 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                             deliveryRange, currencyFormat.format(getCheckoutTotal()));
 
                 } else {
-                    activity.showErrorDialog("Submission Error: " + errMsg);
+                    Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg);
+                    activity.showErrorDialog(errMsg);
                     Log.d(TAG, errMsg);
 
                     // sometimes there's a failure such as timeout but the order actually goes thru.
