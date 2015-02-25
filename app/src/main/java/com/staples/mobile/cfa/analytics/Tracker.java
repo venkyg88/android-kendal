@@ -33,8 +33,9 @@ public class Tracker {
         PAGE_PERSONAL_FEED("Personal Feed"),
         PAGE_CART("Shopping Cart"),
         PAGE_CART_COUPONS("Shopping Cart Coupons"),
+        PAGE_CHECKOUT("Checkout"),
         PAGE_CHECKOUT_LOGIN("Checkout Login"),
-        PAGE_CHECKOUT_PAY("Checkout & Pay"),
+        PAGE_CHECKOUT_AND_PAY("Checkout & Pay"),
         PAGE_CHECKOUT_CONFIRMATION("Checkout Confirmation"),
         PAGE_CHECKOUT_EDIT_SHIPPING("Checkout Edit Shipping"),
         PAGE_CHECKOUT_EDIT_BILLING("Checkout Edit Billing"),
@@ -295,6 +296,33 @@ public class Tracker {
         }
     }
 
+    public void trackStateForCartCoupons() {
+        String pageTypeName = PageType.PAGE_CART.getName();
+        HashMap<String, Object> contextData = createContextWithGlobal();
+        contextData.put("s.pageName", pageTypeName);
+        pageTypeName += ": Coupons";
+        contextData.put("s.prop3", pageTypeName);
+        contextData.put("s.prop4", pageTypeName);
+        contextData.put("s.prop5", pageTypeName);
+        contextData.put("s.prop6", pageTypeName);
+        Analytics.trackState("s.pageName", contextData);
+    }
+
+    public void trackStateForCheckoutReviewAndPay() {
+        HashMap<String, Object> contextData = createContextWithGlobal();
+        String pageTypeName = PageType.PAGE_CHECKOUT.getName();
+        contextData.put("Channel", pageTypeName);
+        pageTypeName += ": " + PageType.PAGE_CHECKOUT_AND_PAY.getName();
+        contextData.put("s.pageName", pageTypeName);
+        contextData.put("Channel", pageTypeName);
+        contextData.put("s.prop3", PageType.PAGE_CHECKOUT_AND_PAY.getName());
+        contextData.put("s.prop4", pageTypeName);
+        contextData.put("s.prop5", pageTypeName);
+        contextData.put("s.prop6", pageTypeName);
+        contextData.put("s.events", "event4");
+        Analytics.trackState("s.pageName", contextData);
+    }
+
 
     ///////////////////////////////////////////////////////////
     ////////////// trackAction calls //////////////////////////
@@ -416,10 +444,26 @@ public class Tracker {
         Analytics.trackAction("Item Click", contextData);
     }
 
+    public void trackActionForCheckoutEnterAddress() {
+        String pageTypeName = PageType.PAGE_CHECKOUT.getName() + ": " + PageType.PAGE_CHECKOUT_AND_PAY.getName();
+        HashMap<String, Object> contextData = new HashMap<String, Object>();
+        contextData.put("s.pageName", pageTypeName);
+        contextData.put("events", "event6");
+        Analytics.trackAction("Item Click", contextData);
+    }
+
+    public void trackActionForCheckoutEnterPayment() {
+        String pageTypeName = PageType.PAGE_CHECKOUT.getName() + ": " + PageType.PAGE_CHECKOUT_AND_PAY.getName();
+        HashMap<String, Object> contextData = new HashMap<String, Object>();
+        contextData.put("s.pageName", pageTypeName);
+        contextData.put("events", "event7");
+        Analytics.trackAction("Item Click", contextData);
+    }
+
+
     //////////////////////////////////////////////////////////
     ////////////// private calls /////////////////////////////
     //////////////////////////////////////////////////////////
-
 
     private HashMap<String, Object> createContextWithGlobal() {
         HashMap<String, Object> contextData = new HashMap<String, Object>();

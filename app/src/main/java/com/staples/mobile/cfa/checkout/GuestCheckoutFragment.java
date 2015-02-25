@@ -20,6 +20,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.profile.CreditCard;
 import com.staples.mobile.cfa.widget.AddressBlock;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
@@ -157,6 +158,15 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         useShipAddrAsBillingAddrSwitch = (Switch) frame.findViewById(R.id.useShipAddrAsBillingAddr_switch);
         useShipAddrAsBillingAddrSwitch.setChecked(true);
         useShipAddrAsBillingAddrSwitch.setOnCheckedChangeListener(this);
+
+        // analytics
+        cardNumberVw.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    Tracker.getInstance().trackActionForCheckoutEnterPayment();
+                }
+            }
+        });
     }
 
     public void onNext(AddressBlock addressBlock) {

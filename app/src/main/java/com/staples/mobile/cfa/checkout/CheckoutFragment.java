@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -133,6 +134,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(this instanceof GuestCheckoutFragment ? ActionBar.Config.COGUEST : ActionBar.Config.COREG);
+        Tracker.getInstance().trackStateForCheckoutReviewAndPay(); // analytics
     }
 
     /** override this to handle other clicks, but call this super method */

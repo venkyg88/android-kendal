@@ -362,6 +362,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                             ProfileDetails.getMember() != null && !ProfileDetails.isRewardsMember()) {
                         linkRewardsAcctLayout.setVisibility(View.VISIBLE);
                     }
+                    Tracker.getInstance().trackStateForCartCoupons(); // analytics
                 } else {
                     cartListVw.setVisibility(View.VISIBLE);
                     couponList.setVisibility(View.GONE);
