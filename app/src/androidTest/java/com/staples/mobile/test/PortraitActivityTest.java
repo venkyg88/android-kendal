@@ -58,6 +58,6 @@ public class PortraitActivityTest {
         Assert.assertNotNull("Left drawer should have adapter", adapter);
 
         int count = adapter.getCount();
-        Assert.assertEquals("Left drawer should have 10 items", 10, count);
+        Assert.assertEquals("Left drawer should have 11 items", 11, count);
     }
 }
