@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.profile.CreditCard;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
@@ -109,6 +110,14 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                     checkoutBundle.putString(BUNDLE_PARAM_PAYMENT_METHOD_ID, ccId);
                 }
             }
+        }
+
+        // analytics
+        if (shippingAddressId != null) {
+            Tracker.getInstance().trackActionForCheckoutEnterAddress();
+        }
+        if (paymentMethodId != null) {
+            Tracker.getInstance().trackActionForCheckoutEnterAddress();
         }
 
         // set widget text with checkout selections

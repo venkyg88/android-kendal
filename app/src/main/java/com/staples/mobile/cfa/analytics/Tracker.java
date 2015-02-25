@@ -314,12 +314,26 @@ public class Tracker {
         contextData.put("Channel", pageTypeName);
         pageTypeName += ": " + PageType.PAGE_CHECKOUT_REVIEW_AND_PAY.getName();
         contextData.put("s.pageName", pageTypeName);
-        contextData.put("Channel", pageTypeName);
         contextData.put("s.prop3", PageType.PAGE_CHECKOUT_REVIEW_AND_PAY.getName());
         contextData.put("s.prop4", pageTypeName);
         contextData.put("s.prop5", pageTypeName);
         contextData.put("s.prop6", pageTypeName);
         contextData.put("s.events", "event4");
+        Analytics.trackState("s.pageName", contextData);
+    }
+
+    public void trackStateForOrderConfirmation(String orderNumber) {
+        HashMap<String, Object> contextData = createContextWithGlobal();
+        String pageTypeName = PageType.PAGE_CHECKOUT.getName();
+        contextData.put("Channel", pageTypeName);
+        pageTypeName += ": Confirmation";
+        contextData.put("s.pageName", pageTypeName);
+        contextData.put("s.prop3", PageType.PAGE_CHECKOUT_CONFIRMATION.getName());
+        contextData.put("s.prop4", pageTypeName);
+        contextData.put("s.prop5", pageTypeName);
+        contextData.put("s.prop6", pageTypeName);
+        contextData.put("s.events", "purchase,event4");
+        contextData.put("purchaseID", orderNumber);
         Analytics.trackState("s.pageName", contextData);
     }
 
