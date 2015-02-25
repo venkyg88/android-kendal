@@ -160,13 +160,20 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         useShipAddrAsBillingAddrSwitch.setOnCheckedChangeListener(this);
 
         // analytics
-        cardNumberVw.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override public void onFocusChange(View v, boolean hasFocus) {
+        View.OnFocusChangeListener analyticsFocusListener = new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    Tracker.getInstance().trackActionForCheckoutEnterPayment();
+                    if (v.getId() == R.id.firstName) {
+                        Tracker.getInstance().trackActionForCheckoutEnterAddress();
+                    } else if (v.getId() == R.id.cardNumber) {
+                        Tracker.getInstance().trackActionForCheckoutEnterPayment();
+                    }
                 }
             }
-        });
+        };
+        shippingAddrBlock.findViewById(R.id.firstName).setOnFocusChangeListener(analyticsFocusListener);
+        cardNumberVw.setOnFocusChangeListener(analyticsFocusListener);
     }
 
     public void onNext(AddressBlock addressBlock) {
@@ -186,7 +193,9 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
             billingAddrNeedsApplying = true;
         }
         if (!valid) {
-            activity.showErrorDialog(R.string.required_fields);
+            String errMsg = getResources().getString(R.string.required_fields);
+            Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
+            activity.showErrorDialog(errMsg);
         } else {
             applyAddressesAndPrecheckout();
         }
@@ -276,7 +285,9 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         if (shippingAddrNeedsApplying) {
             ShippingAddress shippingAddress = getShippingAddress();
             if (shippingAddress == null) {
-                activity.showErrorDialog(R.string.required_fields);
+                String errMsg = getResources().getString(R.string.required_fields);
+                Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
+                activity.showErrorDialog(errMsg);
             } else {
                 showProgressIndicator();
                 CheckoutApiManager.applyShippingAddress(shippingAddress, new CheckoutApiManager.ApplyAddressCallback() {
@@ -289,6 +300,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                             shippingAddrNeedsApplying = false;
 
                             if (infoMsg != null) {
+                                Tracker.getInstance().trackActionForCheckoutFormErrors("Shipping address alert: " + infoMsg); // analytics
                                 activity.showErrorDialog("Shipping address alert: " + infoMsg);
                             }
 
@@ -299,6 +311,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                             // if shipping and tax already showing, need to hide them
                             resetShippingAndTax();
 
+                            Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
                             activity.showErrorDialog(errMsg);
                             Log.d(TAG, errMsg);
                         }
@@ -316,7 +329,9 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         if (billingAddrNeedsApplying) {
             BillingAddress billingAddress = getBillingAddress();
             if (billingAddress == null) {
-                activity.showErrorDialog(R.string.required_fields);
+                String errMsg = getResources().getString(R.string.required_fields);
+                Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
+                activity.showErrorDialog(errMsg);
             } else {
                 showProgressIndicator();
                 CheckoutApiManager.applyBillingAddress(billingAddress, new CheckoutApiManager.ApplyAddressCallback() {
@@ -329,6 +344,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                             billingAddrNeedsApplying = false;
 
                             if (infoMsg != null) {
+                                Tracker.getInstance().trackActionForCheckoutFormErrors("Billing address alert: " + infoMsg); // analytics
                                 activity.showErrorDialog("Billing address alert: " + infoMsg);
                             }
 
@@ -339,6 +355,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                             // if shipping and tax already showing, need to hide them
                             resetShippingAndTax();
 
+                            Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
                             activity.showErrorDialog(errMsg);
                             Log.d(TAG, errMsg);
                         }
@@ -367,7 +384,9 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 
         final PaymentMethod paymentMethod = getPaymentMethod();
         if (paymentMethod==null) {
-            activity.showErrorDialog(R.string.payment_method_required);
+            String errMsg = getResources().getString(R.string.payment_method_required);
+            Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
+            activity.showErrorDialog(errMsg);
             return;
         }
 
@@ -385,6 +404,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                     submitOrder(paymentMethod.getCardVerificationCode(), shippingAddrBlock.getEmailAddress());
 
                 } else {
+                    Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
                     activity.showErrorDialog(errMsg);
                     Log.d(TAG, errMsg);
                 }
