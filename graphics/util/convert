@@ -9,15 +9,31 @@ SIZES='mdpi:2 hdpi:3 xhdpi:4 xxhdpi:6 xxxhdpi:8'
 while read p
 do
   q=($p)
+  version=${q[0]}
+  dst=${q[1]}
+  width=${q[2]}
+  height=${q[3]}
+  color=${q[4]}
+  src=${q[5]}
+
+  if [ "${version}" == '-' ]
+  then
+    version=''
+  else
+    version="-${version}"
+  fi
+  
   for s in ${SIZES}
   do
     t=(${s//:/ })
-    if [ "${q[3]}" == '-' ]
+    density=${t[0]}
+    scale=${t[1]}
+    if [ "${color}" == '-' ]
     then
-      cp ${SOURCE}/${q[4]}.svg ${TEMPFILE}
+      cp ${SOURCE}/${src}.svg ${TEMPFILE}
     else
-      sed -e "s/<path /<path fill=\"${q[3]}\" /g" -e "s/<circle /<circle fill=\"${q[3]}\" /g" ${SOURCE}/${q[4]}.svg > ${TEMPFILE}
+      sed -e "s/<path /<path fill=\"${color}\" /g" -e "s/<circle /<circle fill=\"${color}\" /g" ${SOURCE}/${src}.svg > ${TEMPFILE}
     fi
-    ${INKSCAPE} -f ${TEMPFILE} -w $((${t[1]}*${q[1]}/2)) -h $((${t[1]}*${q[2]}/2)) -e ${RES}${t[0]}/${q[0]}.png
+    ${INKSCAPE} -f ${TEMPFILE} -w $((${scale}*${width}/2)) -h $((${scale}*${height}/2)) -e ${RES}${density}${version}/${dst}.png
   done
 done < icons.txt

@@ -85,7 +85,6 @@ dependencies {
     }
     compile project(':urbanairship-lib-5.1.5')
     compile project(':..:android-common:common')
-    compile files('libs/adobeMobileLibrary-4.4.0.jar')
 }
 
 task showTest {

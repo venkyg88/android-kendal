@@ -39,7 +39,12 @@
     <string name="empty">Nothing Found</string>
     <string name="password_forgot">Forgot your password?</string>
 
+    <!-- Notifications -->
+    <string name="notify_prefs_title">Notification Preferences</string>
+    <string name="alias_text">Alias:</string>
+    <string name="set_alias">Set</string>
     <string name="sku_notification_title">Notification</string>
+    <string name="notification_header">Staples</string>
 
     <!-- Personal Feed -->
     <string name="loading">Loading...</string>
