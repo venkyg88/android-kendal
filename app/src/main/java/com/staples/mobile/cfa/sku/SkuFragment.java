@@ -106,6 +106,7 @@ Callback,
     private String title;
     private String identifier;
     private String productName;
+    private float finalPrice;
     private boolean isSkuSetOriginated;
 
     private DataWrapper wrapper;
@@ -660,7 +661,9 @@ Callback,
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
 
             // Add pricing
-            ((PriceSticker) summary.findViewById(R.id.pricing)).setPricing(product.getPricing());
+            PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
+            priceSticker.setPricing(product.getPricing());
+            finalPrice = priceSticker.getPrice();
 
             // Add description
             LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -761,6 +764,9 @@ Callback,
         else if (tag.equals(REVIEWS)) index = 2;
         else throw (new RuntimeException("Unknown tag from TabHost"));
 
+        // analytics
+        Tracker.getInstance().trackActionForProductTabs(tabAdapter.getPageTitle(index), tabAdapter.getProduct());
+
         tabPager.setCurrentItem(index);
     }
 
@@ -853,7 +859,7 @@ Callback,
                 break;
             case R.id.add_to_cart:
                 QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
-                int qty = edit.getQuantity();
+                final int qty = edit.getQuantity();
                 final MainActivity activity = (MainActivity) getActivity();
                 activity.showProgressIndicator();
                 CartApiManager.addItemToCart(identifier, qty, new CartApiManager.CartRefreshCallback() {
@@ -864,6 +870,7 @@ Callback,
                         if (errMsg == null) {
                             ((Button) wrapper.findViewById(R.id.add_to_cart)).setText(R.string.add_another);
                             activity.showNotificationBanner(R.string.cart_updated_msg);
+                            Tracker.getInstance().trackActionForAddToCartFromProductDetails(identifier, finalPrice, qty);
                         } else {
                             // if non-grammatical out-of-stock message from api, provide a nicer message
                             if (errMsg.contains("items is out of stock")) {

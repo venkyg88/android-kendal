@@ -9,6 +9,7 @@ import com.staples.mobile.cfa.home.ConfigItem;
 import com.staples.mobile.common.access.easyopen.model.browse.Analytic;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
+import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,37 @@ public class Tracker {
     public enum AppType { AFA, CFA }
     public enum UserType { GUEST, REGISTERED }
     public enum SearchType { BASIC_SEARCH, AUTOCOMPLETE, RECENT_SEARCH }
+    public enum PageType {
+        PAGE_LOGIN("Login"),
+        PAGE_HOME("Homepage"),
+        PAGE_INTERNAL_CAMPAIGNS("Internal Campaigns"),
+        PAGE_PERSONAL_FEED("Personal Feed"),
+        PAGE_CART("Shopping Cart"),
+        PAGE_CART_COUPONS("Shopping Cart Coupons"),
+        PAGE_CHECKOUT("Checkout"),
+        PAGE_CHECKOUT_LOGIN("Checkout Login"),
+        PAGE_CHECKOUT_REVIEW_AND_PAY("Review & Pay"),
+        PAGE_CHECKOUT_CONFIRMATION("Checkout Confirmation"),
+        PAGE_CHECKOUT_EDIT_SHIPPING("Checkout Edit Shipping"),
+        PAGE_CHECKOUT_EDIT_BILLING("Checkout Edit Billing"),
+        PAGE_CHECKOUT_EDIT_PAYMENT("Checkout Edit Payment"),
+        PAGE_PRODUCT_DETAIL("Product Detail"),
+        PAGE_SKU_SET("SKU Set"),
+        PAGE_CLASS("Class"),
+        PAGE_ACCOUNT("My Account"),
+        PAGE_STORE("Store"),
+        PAGE_WEEKLY_AD("WeeklyAd"),
+        PAGE_SEARCH("Search"),
+        PAGE_SEARCH_BAR("Search Bar"),
+        PAGE_SEARCH_TAB("Search Tab"),
+        PAGE_SEARCH_RESULTS("Search Results");
 
+        private String name;
+
+        PageType(String name) { this.name = name; }
+
+        public String getName() { return name; }
+    }
 
     private static volatile Tracker instance = null;
 
@@ -126,13 +157,14 @@ public class Tracker {
 
     public void trackStateForHome() {
         HashMap<String, Object> contextData = createContextWithGlobal();
+        String pageTypeName = PageType.PAGE_HOME.getName();
         contextData.put("s.pageName", "Homepage");
-        contextData.put("Channel", "Home");
-        contextData.put("s.events", "event4");
-        contextData.put("s.prop3", "Home");
-        contextData.put("s.prop4", "Homepage");
-        contextData.put("s.prop5", "Homepage");
-        contextData.put("s.prop6", "Homepage");
+        contextData.put("Channel", pageTypeName);
+//        contextData.put("s.events", "event4");
+        contextData.put("s.prop3", pageTypeName);
+        contextData.put("s.prop4", pageTypeName);
+        contextData.put("s.prop5", pageTypeName);
+        contextData.put("s.prop6", pageTypeName);
         Analytics.trackState("s.pageName", contextData);
     }
 
@@ -140,57 +172,61 @@ public class Tracker {
     /** search tab used by afa */
     public void trackStateForSearchTab() {
         HashMap<String, Object> contextData = createContextWithGlobal();
-        contextData.put("s.pageName", "Search Tab");
-        contextData.put("s.evar3", "Search");
-        contextData.put("s.evar17", "Search: Basic Search");
-        contextData.put("s.prop3", "Search");
-        contextData.put("s.prop38", "Search");
+        String pageTypeName = PageType.PAGE_SEARCH_TAB.getName();
+        contextData.put("s.pageName", pageTypeName);
+        contextData.put("s.evar3", pageTypeName);
+        contextData.put("s.evar17", pageTypeName + ": Basic Search");
+        contextData.put("s.prop3", pageTypeName);
+        contextData.put("s.prop38", pageTypeName);
         Analytics.trackState("s.pageName", contextData);
     }
 
     /** search bar used by cfa */
     public void trackStateForSearchBar() {
         HashMap<String, Object> contextData = createContextWithGlobal();
-        contextData.put("s.pageName", "Search Bar");
-        contextData.put("s.prop3", "Search Bar");
-        contextData.put("s.prop4", "Search Bar");
-        contextData.put("s.prop5", "Search Bar");
-        contextData.put("s.prop6", "Search Bar");
+        String pageTypeName = PageType.PAGE_SEARCH_BAR.getName();
+        contextData.put("s.pageName", pageTypeName);
+        contextData.put("s.prop3", pageTypeName);
+        contextData.put("s.prop4", pageTypeName);
+        contextData.put("s.prop5", pageTypeName);
+        contextData.put("s.prop6", pageTypeName);
         Analytics.trackState("s.pageName", contextData);
     }
 
 
     public void trackStateForSearchResults(String term, int count) {
         HashMap<String, Object> contextData = createContextWithGlobal();
-        contextData.put("s.pageName", "Search Results");
-        contextData.put("Channel", "Search Results");
+        String pageTypeName = PageType.PAGE_SEARCH_RESULTS.getName();
+        contextData.put("s.pageName", pageTypeName);
+        contextData.put("Channel", pageTypeName);
         if (count == 0) {
             term = "null:" + term;
         }
         contextData.put("s.evar1", term);
         contextData.put("s.prop1", term);
         contextData.put("s.prop2", count);
-        contextData.put("s.prop3", "Search Results");
-        contextData.put("s.prop4", "Search Results");
-        contextData.put("s.prop5", "Search Results");
-        contextData.put("s.prop6", "Search Results");
+        contextData.put("s.prop3", pageTypeName);
+        contextData.put("s.prop4", pageTypeName);
+        contextData.put("s.prop5", pageTypeName);
+        contextData.put("s.prop6", pageTypeName);
         contextData.put("s.prop54", "Best Match");
         contextData.put("s.prop53", "List");
         Analytics.trackState("s.pageName", contextData);
     }
 
-    public void trackStateForClass(String title, int count, Browse browse) {
+    public void trackStateForClass(int count, Browse browse) {
         HashMap<String, Object> contextData = createContextWithGlobal();
-        contextData.put("s.pageName", title);
+        String pageTypeName = PageType.PAGE_CLASS.getName();
+        contextData.put("s.pageName", pageTypeName);
         contextData.put("s.prop2", count);
-        contextData.put("s.prop3", "Class");
+        contextData.put("s.prop3", pageTypeName);
         if (browse != null && browse.getCategory() != null && browse.getCategory().size() > 0) {
             List<Analytic> analytics = browse.getCategory().get(0).getCategoryAnalytic();
             if (analytics != null && analytics.size() > 0) {
                 Analytic analytic = analytics.get(0);
                 if (analytic != null) {
                     addAnalyticProperties(contextData, analytic);
-                    contextData.put("s.pageName", buildCategoryHierarchy(analytic)); // overwrite pagename if hierarchy available
+                    contextData.put("s.pageName", pageTypeName + ": " + buildCategoryHierarchy(analytic)); // overwrite pagename if hierarchy available
                 }
             }
         }
@@ -199,17 +235,18 @@ public class Tracker {
 
     public void trackStateForProduct(Product product) {
         if (product != null) {
+            String pageTypeName = PageType.PAGE_PRODUCT_DETAIL.getName();
             HashMap<String, Object> contextData = createContextWithGlobal();
-            contextData.put("s.pageName", "Product Detail"); // initialize with at least this, add SC below if analytic available
+            contextData.put("s.pageName", pageTypeName); // initialize with at least this, add SC below if analytic available
             contextData.put("s.products", product.getSku());
-            contextData.put("s.prop3", "Product Detail");
+            contextData.put("s.prop3", pageTypeName);
             contextData.put("s.evar27", product.getCustomerReviewRating());
             if (product.getAnalytic() != null && product.getAnalytic().size() > 0) {
                 Analytic analytic = product.getAnalytic().get(0);
                 if (analytic != null) {
                     addAnalyticProperties(contextData, analytic);
                     if (!TextUtils.isEmpty(analytic.getSuperCategoryCode())) {
-                        contextData.put("s.pageName", "Product Detail: " + analytic.getSuperCategoryCode());
+                        contextData.put("s.pageName", pageTypeName + ": " + analytic.getSuperCategoryCode());
                     }
                 }
             }
@@ -220,15 +257,16 @@ public class Tracker {
 
     public void trackStateForSkuSet(Product product) {
         if (product != null) {
+            String pageTypeName = PageType.PAGE_SKU_SET.getName();
             HashMap<String, Object> contextData = createContextWithGlobal();
-            contextData.put("s.pageName", "SKU Set"); // initialize with at least this, add SC below if analytic available
-            contextData.put("s.prop3", "Product Detail");
+            contextData.put("s.pageName", pageTypeName); // initialize with at least this, add SC below if analytic available
+            contextData.put("s.prop3", pageTypeName);
             if (product.getAnalytic() != null && product.getAnalytic().size() > 0) {
                 Analytic analytic = product.getAnalytic().get(0);
                 if (analytic != null) {
                     addAnalyticProperties(contextData, analytic);
                     if (!TextUtils.isEmpty(analytic.getSuperCategoryCode())) {
-                        contextData.put("s.pageName", "SKU Set: " + analytic.getSuperCategoryCode());
+                        contextData.put("s.pageName", pageTypeName + ": " + analytic.getSuperCategoryCode());
                     }
                 }
             }
@@ -236,9 +274,59 @@ public class Tracker {
         }
     }
 
-    //////////////////////////////////////////////////////////
+    public void trackStateForCart(Cart cart) {
+        if (cart != null && cart.getProduct() != null) {
+            StringBuilder skus = new StringBuilder();
+            for (com.staples.mobile.common.access.easyopen.model.cart.Product product : cart.getProduct()) {
+                if (skus.length() > 0) {
+                    skus.append(";");
+                }
+                skus.append(product.getSku());
+            }
+            String pageTypeName = PageType.PAGE_CART.getName();
+            HashMap<String, Object> contextData = createContextWithGlobal();
+            contextData.put("s.pageName", pageTypeName);
+            contextData.put("s.events", "scView");
+            contextData.put("s.products", skus.toString());
+            contextData.put("s.prop3", pageTypeName);
+            contextData.put("s.prop4", pageTypeName);
+            contextData.put("s.prop5", pageTypeName);
+            contextData.put("s.prop6", pageTypeName);
+            Analytics.trackState("s.pageName", contextData);
+        }
+    }
+
+    public void trackStateForCartCoupons() {
+        String pageTypeName = PageType.PAGE_CART.getName();
+        HashMap<String, Object> contextData = createContextWithGlobal();
+        contextData.put("s.pageName", pageTypeName);
+        pageTypeName += ": Coupons";
+        contextData.put("s.prop3", pageTypeName);
+        contextData.put("s.prop4", pageTypeName);
+        contextData.put("s.prop5", pageTypeName);
+        contextData.put("s.prop6", pageTypeName);
+        Analytics.trackState("s.pageName", contextData);
+    }
+
+    public void trackStateForCheckoutReviewAndPay() {
+        HashMap<String, Object> contextData = createContextWithGlobal();
+        String pageTypeName = PageType.PAGE_CHECKOUT.getName();
+        contextData.put("Channel", pageTypeName);
+        pageTypeName += ": " + PageType.PAGE_CHECKOUT_REVIEW_AND_PAY.getName();
+        contextData.put("s.pageName", pageTypeName);
+        contextData.put("Channel", pageTypeName);
+        contextData.put("s.prop3", PageType.PAGE_CHECKOUT_REVIEW_AND_PAY.getName());
+        contextData.put("s.prop4", pageTypeName);
+        contextData.put("s.prop5", pageTypeName);
+        contextData.put("s.prop6", pageTypeName);
+        contextData.put("s.events", "event4");
+        Analytics.trackState("s.pageName", contextData);
+    }
+
+
+    ///////////////////////////////////////////////////////////
     ////////////// trackAction calls //////////////////////////
-    //////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////
 
     public void trackActionForNavigationDrawer(String drawerItemText, String currentPageName) {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
@@ -266,21 +354,23 @@ public class Tracker {
 
     public void trackActionForHomePage(ConfigItem configItem) {
         if (configItem != null) {
+            String pageTypeName = PageType.PAGE_INTERNAL_CAMPAIGNS.getName();
             HashMap<String, Object> contextData = new HashMap<String, Object>();
             contextData.put("Item Click", "Homepage Banner");
             contextData.put("Click", 1);
             contextData.put("s.evar4", configItem.title);
-            contextData.put("s.evar3", "Internal Campaigns");
-            contextData.put("s.evar17", "Internal Campaigns:Homepage");
-            contextData.put("s.prop38", "Internal Campaigns");
+            contextData.put("s.evar3", pageTypeName);
+            contextData.put("s.evar17", pageTypeName + ":" + PageType.PAGE_HOME.getName());
+            contextData.put("s.prop38", pageTypeName);
             Analytics.trackAction("Item Click", contextData);
         }
     }
 
     public void trackActionForSearch(SearchType searchType) {
+        String pageTypeName = PageType.PAGE_SEARCH.getName();
         HashMap<String, Object> contextData = new HashMap<String, Object>();
-        contextData.put("s.evar3", "Search");
-        contextData.put("s.prop38", "Search");
+        contextData.put("s.evar3", pageTypeName);
+        contextData.put("s.prop38", pageTypeName);
         String searchTypeString = null;
         switch (searchType) {
             case BASIC_SEARCH: searchTypeString = "Basic Search"; break;
@@ -292,32 +382,103 @@ public class Tracker {
     }
 
 
-    public void trackActionForSearchItemSelection(String title, int itemPosition, int pageNo) {
-        trackActionForItemSelection(title, itemPosition, pageNo, "Search");
+    public void trackActionForSearchItemSelection(int itemPosition, int pageNo) {
+        trackActionForItemSelection(PageType.PAGE_SEARCH_RESULTS, itemPosition, pageNo);
     }
-    public void trackActionForClassItemSelection(String title, int itemPosition, int pageNo) {
-        trackActionForItemSelection(title, itemPosition, pageNo, "Class");
+    public void trackActionForClassItemSelection(int itemPosition, int pageNo) {
+        trackActionForItemSelection(PageType.PAGE_CLASS, itemPosition, pageNo);
     }
-    private void trackActionForItemSelection(String title, int itemPosition, int pageNo, String selectionType) {
+    private void trackActionForItemSelection(PageType pageType, int itemPosition, int pageNo) {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
-        contextData.put("s.pageName", title);
-        contextData.put("s.prop3", selectionType);
+        contextData.put("s.pageName", pageType.getName());
+        contextData.put("s.prop3", pageType.getName());
         contextData.put("s.evar19", itemPosition + ":" + pageNo);
+        Analytics.trackAction("Item Click", contextData);
+    }
+
+    public void trackActionForProductTabs(String tabName, Product product) {
+        HashMap<String, Object> contextData = new HashMap<String, Object>();
+        contextData.put("s.pageName", "Product Detail:"); //  start with at least this much in case analytic empty
+        contextData.put("s.prop11", tabName);
+        contextData.put("s.prop48", product.getSku());
+        if (product.getAnalytic() != null && product.getAnalytic().size() > 0) {
+            Analytic analytic = product.getAnalytic().get(0);
+            if (analytic != null) {
+                if (!TextUtils.isEmpty(analytic.getSuperCategoryCode())) {
+                    contextData.put("s.pageName", "Product Detail: " + analytic.getSuperCategoryCode());
+                }
+            }
+        }
+        Analytics.trackAction("Item Click", contextData);
+    }
+
+    public void trackActionForAddToCartFromProductDetails(String sku, float price, int quantity) {
+        trackActionForAddToCart(PageType.PAGE_PRODUCT_DETAIL, sku, price, quantity);
+    }
+    public void trackActionForAddToCartFromSearchResults(String sku, float price, int quantity) {
+        trackActionForAddToCart(PageType.PAGE_SEARCH_RESULTS, sku, price, quantity);
+    }
+    public void trackActionForAddToCartFromClass(String sku, float price, int quantity) {
+        trackActionForAddToCart(PageType.PAGE_CLASS, sku, price, quantity);
+    }
+    public void trackActionForAddToCart(PageType pageType, String sku, float price, int quantity) {
+        HashMap<String, Object> contextData = new HashMap<String, Object>();
+        float totalPrice = price;
+        if (quantity != 1) { // only doing the extra math operations if quantity not 1
+            totalPrice = Math.round(price * quantity * 100f) / 100f;
+        }
+        contextData.put("s.pageName", pageType.getName());
+        contextData.put("events", "scAdd,event35=" + totalPrice + ",event36=" + quantity);
+        contextData.put("products", sku);
+        contextData.put("s.evar12", pageType.getName());
+        Analytics.trackAction("Item Click", contextData);
+    }
+
+    public void trackActionForRemoveFromCart(String sku) {
+        String pageTypeName = PageType.PAGE_CART.getName();
+        HashMap<String, Object> contextData = new HashMap<String, Object>();
+        contextData.put("s.pageName", pageTypeName);
+        contextData.put("events", "scRemove");
+        contextData.put("products", sku);
+        contextData.put("s.evar12", pageTypeName);
+        Analytics.trackAction("Item Click", contextData);
+    }
+
+    public void trackActionForCheckoutEnterAddress() {
+        String pageTypeName = PageType.PAGE_CHECKOUT.getName() + ": " + PageType.PAGE_CHECKOUT_REVIEW_AND_PAY.getName();
+        HashMap<String, Object> contextData = new HashMap<String, Object>();
+        contextData.put("s.pageName", pageTypeName);
+        contextData.put("events", "event6");
+        Analytics.trackAction("Item Click", contextData);
+    }
+
+    public void trackActionForCheckoutEnterPayment() {
+        String pageTypeName = PageType.PAGE_CHECKOUT.getName() + ": " + PageType.PAGE_CHECKOUT_REVIEW_AND_PAY.getName();
+        HashMap<String, Object> contextData = new HashMap<String, Object>();
+        contextData.put("s.pageName", pageTypeName);
+        contextData.put("events", "event7");
+        Analytics.trackAction("Item Click", contextData);
+    }
+
+    public void trackActionForCheckoutFormErrors(String errMsg) {
+        String pageTypeName = PageType.PAGE_CHECKOUT.getName() + ": " + PageType.PAGE_CHECKOUT_REVIEW_AND_PAY.getName();
+        HashMap<String, Object> contextData = new HashMap<String, Object>();
+        contextData.put("s.pageName", pageTypeName);
+        contextData.put("s.prop10", errMsg);
         Analytics.trackAction("Item Click", contextData);
     }
 
 
     //////////////////////////////////////////////////////////
-    ////////////// private calls //////////////////////////
+    ////////////// private calls /////////////////////////////
     //////////////////////////////////////////////////////////
-
-
 
     private HashMap<String, Object> createContextWithGlobal() {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
         contextData.putAll(globalContextData);
         return contextData;
     }
+
 
     private void addAnalyticProperties(HashMap<String, Object> contextData, Analytic analytic) {
         if (analytic != null) {
