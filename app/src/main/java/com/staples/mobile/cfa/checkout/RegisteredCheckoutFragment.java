@@ -117,7 +117,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
             Tracker.getInstance().trackActionForCheckoutEnterAddress();
         }
         if (paymentMethodId != null) {
-            Tracker.getInstance().trackActionForCheckoutEnterAddress();
+            Tracker.getInstance().trackActionForCheckoutEnterPayment();
         }
 
         // set widget text with checkout selections
