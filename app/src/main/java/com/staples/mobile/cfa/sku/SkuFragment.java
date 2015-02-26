@@ -209,7 +209,7 @@ Callback,
         //api.getReviews(identifier, this);
 
         EasyOpenApi2 easyOpenApi2 = Access.getInstance().getEasyOpenApi2(false);
-        Api easy2API = StaplesAppContext.getInstance().getApiByName("easyopen2");
+        Api easy2API = StaplesAppContext.getInstance().getApiByName(StaplesAppContext.EASYOPEN2);
         String version = easy2API.getVersion();
         easyOpenApi2.getYotpoReviews(version, identifier, this);
 
