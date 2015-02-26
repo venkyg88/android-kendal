@@ -58,7 +58,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.4.0'
     compile 'com.google.android.gms:play-services-location:6.5.87'
     compile 'com.google.android.gms:play-services-maps:6.5.87'
-    compile 'com.crittercism:crittercism-android-agent:+'
+    compile 'com.crittercism:crittercism-android-agent:5.0.4'
     //androidTestCompile ('com.jayway.android.robotium:robotium-solo:5.2+')
     //androidTestCompile "org.mockito:mockito-core:1.+"
     androidTestCompile 'org.hamcrest:hamcrest-integration:1.1'
