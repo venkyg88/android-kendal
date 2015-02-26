@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -64,6 +65,7 @@ public class OrderDetailsFragment extends Fragment {
                 }catch (ParseException e)
                 {
                     e.printStackTrace();
+                    Crittercism.logHandledException(e);
                 }
             }
         }

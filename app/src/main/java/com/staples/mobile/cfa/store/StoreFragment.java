@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crittercism.app.Crittercism;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdate;
@@ -550,6 +551,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
             startActivity(intent);
             return(true);
         } catch(ActivityNotFoundException e) {
+            Crittercism.logHandledException(e);
             ((MainActivity) getActivity()).showErrorDialog(R.string.store_no_phone);
             return(false);
         }
@@ -568,11 +570,13 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
             startActivity(intent);
             return(true);
         } catch(ActivityNotFoundException e1) {
+            Crittercism.logHandledException(e1);
             intent = new Intent(Intent.ACTION_VIEW, uri);
             try {
                 startActivity(intent);
                 return(true);
             } catch(ActivityNotFoundException e2) {
+                Crittercism.logHandledException(e2);
                 ((MainActivity) getActivity()).showErrorDialog(R.string.store_no_maps);
                 return (false);
             }

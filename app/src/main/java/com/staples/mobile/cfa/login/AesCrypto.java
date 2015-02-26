@@ -7,6 +7,8 @@ package com.staples.mobile.cfa.login;
 import android.util.Base64;
 import android.util.Log;
 
+import com.crittercism.app.Crittercism;
+
 import java.security.Key;
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -39,6 +41,7 @@ public class AesCrypto {
             return encryptedText;
         } catch(Exception e) {
             Log.d(TAG, e.getMessage());
+            Crittercism.logHandledException(e);
         }
         return null;
     }
@@ -56,6 +59,7 @@ public class AesCrypto {
             return new String(decryptedBytes);
         } catch(Exception e) {
             Log.d(TAG, e.getMessage());
+            Crittercism.logHandledException(e);
         }
         return null;
     }
@@ -74,6 +78,7 @@ public class AesCrypto {
             return cipher;
         } catch(Exception e) {
             Log.d(TAG, e.getMessage());
+            Crittercism.logHandledException(e);
         }
         return null;
     }
@@ -93,6 +98,7 @@ public class AesCrypto {
             return new SecretKeySpec(keyBytes, "AES");
         } catch(Exception e) {
             Log.d(TAG, e.getMessage());
+            Crittercism.logHandledException(e);
         }
         return null;
     }

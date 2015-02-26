@@ -3,6 +3,7 @@ package com.staples.mobile.cfa.profile;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -251,7 +252,7 @@ public class ProfileDetails implements Callback<MemberDetail> {
             }
             try {
                 total += Float.parseFloat(amount);
-            } catch (Exception e) {}
+            } catch (Exception e) {Crittercism.logHandledException(e);}
         }
         return total;
     }
