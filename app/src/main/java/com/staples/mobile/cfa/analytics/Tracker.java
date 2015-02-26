@@ -160,7 +160,7 @@ public class Tracker {
         String pageTypeName = PageType.PAGE_HOME.getName();
         contextData.put("s.pageName", "Homepage");
         contextData.put("Channel", pageTypeName);
-//        contextData.put("s.events", "event4");
+        contextData.put("s.events", "event4");
         contextData.put("s.prop3", pageTypeName);
         contextData.put("s.prop4", pageTypeName);
         contextData.put("s.prop5", pageTypeName);
@@ -199,6 +199,7 @@ public class Tracker {
         String pageTypeName = PageType.PAGE_SEARCH_RESULTS.getName();
         contextData.put("s.pageName", pageTypeName);
         contextData.put("Channel", pageTypeName);
+        contextData.put("s.events", (count == 0)? "event1,event2,event4" : "event1,event4");
         if (count == 0) {
             term = "null:" + term;
         }
@@ -218,6 +219,7 @@ public class Tracker {
         HashMap<String, Object> contextData = createContextWithGlobal();
         String pageTypeName = PageType.PAGE_CLASS.getName();
         contextData.put("s.pageName", pageTypeName);
+        contextData.put("s.events", "event4");
         contextData.put("s.prop2", count);
         contextData.put("s.prop3", pageTypeName);
         if (browse != null && browse.getCategory() != null && browse.getCategory().size() > 0) {
@@ -238,6 +240,7 @@ public class Tracker {
             String pageTypeName = PageType.PAGE_PRODUCT_DETAIL.getName();
             HashMap<String, Object> contextData = createContextWithGlobal();
             contextData.put("s.pageName", pageTypeName); // initialize with at least this, add SC below if analytic available
+            contextData.put("s.events", "prodView,event3,event4" + (product.isInStock()? "":",event78"));
             contextData.put("s.products", product.getSku());
             contextData.put("s.prop3", pageTypeName);
             contextData.put("s.evar27", product.getCustomerReviewRating());
@@ -260,6 +263,7 @@ public class Tracker {
             String pageTypeName = PageType.PAGE_SKU_SET.getName();
             HashMap<String, Object> contextData = createContextWithGlobal();
             contextData.put("s.pageName", pageTypeName); // initialize with at least this, add SC below if analytic available
+            contextData.put("s.events", "event4,event16");
             contextData.put("s.prop3", pageTypeName);
             if (product.getAnalytic() != null && product.getAnalytic().size() > 0) {
                 Analytic analytic = product.getAnalytic().get(0);
@@ -308,7 +312,7 @@ public class Tracker {
         Analytics.trackState("s.pageName", contextData);
     }
 
-    public void trackStateForCheckoutReviewAndPay() {
+    public void trackStateForCheckoutReviewAndPay(boolean shippingAddrPrefilled, boolean paymentPrefilled) {
         HashMap<String, Object> contextData = createContextWithGlobal();
         String pageTypeName = PageType.PAGE_CHECKOUT.getName();
         contextData.put("Channel", pageTypeName);
@@ -318,7 +322,10 @@ public class Tracker {
         contextData.put("s.prop4", pageTypeName);
         contextData.put("s.prop5", pageTypeName);
         contextData.put("s.prop6", pageTypeName);
-        contextData.put("s.events", "event4");
+        String events = "event4";
+        if (shippingAddrPrefilled) { events += ",event6"; }
+        if (paymentPrefilled) { events += ",event7"; }
+        contextData.put("s.events", events);
         Analytics.trackState("s.pageName", contextData);
     }
 

@@ -130,12 +130,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ActionBar.getInstance().setConfig(this instanceof GuestCheckoutFragment ? ActionBar.Config.COGUEST : ActionBar.Config.COREG);
-        Tracker.getInstance().trackStateForCheckoutReviewAndPay(); // analytics
-    }
 
     /** override this to handle other clicks, but call this super method */
     @Override

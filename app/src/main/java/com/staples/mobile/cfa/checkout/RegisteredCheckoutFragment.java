@@ -16,6 +16,7 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.profile.CreditCard;
 import com.staples.mobile.cfa.profile.ProfileDetails;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
@@ -56,6 +57,13 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         createInitialBundle(couponsRewardsAmount, itemSubtotal, preTaxSubtotal, deliveryRange);
         f.setArguments(createInitialBundle(couponsRewardsAmount, itemSubtotal, preTaxSubtotal, deliveryRange));
         return f;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ActionBar.getInstance().setConfig(ActionBar.Config.COREG);
+        Tracker.getInstance().trackStateForCheckoutReviewAndPay(shippingAddressId != null, paymentMethodId != null); // analytics
     }
 
     /** specifies layout for variable entry area */

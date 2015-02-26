@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.profile.CreditCard;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.AddressBlock;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
@@ -51,6 +52,13 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         CheckoutFragment f = new GuestCheckoutFragment();
         f.setArguments(createInitialBundle(couponsRewardsAmount, itemSubtotal, preTaxSubtotal, deliveryRange));
         return f;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ActionBar.getInstance().setConfig(ActionBar.Config.COGUEST);
+        Tracker.getInstance().trackStateForCheckoutReviewAndPay(false, false); // analytics
     }
 
     /** specifies layout for variable entry area */
