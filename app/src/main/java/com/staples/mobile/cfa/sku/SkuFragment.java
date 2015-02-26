@@ -674,21 +674,21 @@ Callback,
             if (product.getSpecification() != null) {
                 // Add specifications
                 addSpecifications(inflater, (ViewGroup) summary.findViewById(R.id.specifications), product, 3);
-                Log.d(TAG, "Product has specification.");
+                // Log.d(TAG, "Product has specification.");
             } else {
                 summary.findViewById(R.id.specifications).setVisibility(View.GONE);
                 summary.findViewById(R.id.specification_detail).setVisibility(View.GONE);
-                Log.d(TAG, "Product has no specification.");
+                // Log.d(TAG, "Product has no specification.");
             }
 
             // Check if the product has accessories
             if (product.getAccessory() != null) {
                 // Add accessories
                 addAccessory(product);
-                Log.d(TAG, "Product has accessories.");
+                // Log.d(TAG, "Product has accessories.");
             } else {
                 summary.findViewById(R.id.accessory_title).setVisibility(View.GONE);
-                Log.d(TAG, "Product has no accessories.");
+                // Log.d(TAG, "Product has no accessories.");
             }
 
             // Save seen products detail for personal feed
