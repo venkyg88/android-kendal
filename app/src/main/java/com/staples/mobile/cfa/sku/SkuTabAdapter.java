@@ -6,11 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 import com.staples.mobile.common.access.easyopen.model.reviews.Data;
+import com.staples.mobile.common.access.easyopen2.model.review.Review;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +23,7 @@ public class SkuTabAdapter extends PagerAdapter {
     private LayoutInflater inflater;
     private Product product;
     private List<Data> reviews;
+    private List<Review> yotpoReviews;
 
     private static class SkuPageItem {
         View view;
@@ -42,6 +43,10 @@ public class SkuTabAdapter extends PagerAdapter {
 
     public void setReviews(List<Data> reviews) {
         this.reviews = reviews;
+    }
+
+    public void setYotpoReviews(List<Review> yotpoReviews) {
+        this.yotpoReviews = yotpoReviews;
     }
 
     @Override
@@ -74,9 +79,13 @@ public class SkuTabAdapter extends PagerAdapter {
                 break;
             case 2:
                 item.view = inflater.inflate(R.layout.sku_detail_list, container, false);
-                ReviewAdapter adapter = new ReviewAdapter(activity);
+                //ReviewAdapter adapter = new ReviewAdapter(activity);
+                //((ListView) item.view).setAdapter(adapter);
+                //adapter.setReviews(reviews);
+
+                YotpoReviewAdapter adapter = new YotpoReviewAdapter(activity);
                 ((ListView) item.view).setAdapter(adapter);
-                adapter.setReviews(reviews);
+                adapter.setYotpoReviews(yotpoReviews);
                 break;
         }
 

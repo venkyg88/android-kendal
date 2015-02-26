@@ -38,6 +38,8 @@ import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.config.StaplesAppContext;
+import com.staples.mobile.common.access.configurator.model.Api;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.Analytic;
@@ -48,6 +50,10 @@ import com.staples.mobile.common.access.easyopen.model.browse.Product;
 import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
 import com.staples.mobile.common.access.easyopen.model.reviews.Data;
 import com.staples.mobile.common.access.easyopen.model.reviews.ReviewSet;
+import com.staples.mobile.common.access.easyopen2.api.EasyOpenApi2;
+import com.staples.mobile.common.access.easyopen2.model.review.Review;
+import com.staples.mobile.common.access.easyopen2.model.review.Status;
+import com.staples.mobile.common.access.easyopen2.model.review.YotpoResponse;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -164,6 +170,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         // Init details (ViewPager)
         tabPager = (ViewPager) wrapper.findViewById(R.id.pager);
+        //tabAdapter = new SkuTabAdapter(getActivity());
         tabAdapter = new SkuTabAdapter(getActivity());
         tabPager.setAdapter(tabAdapter);
 
@@ -199,9 +206,14 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         wrapper.findViewById(R.id.add_to_cart).setOnClickListener(this);
 
         // Initiate API calls
-        EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
-        api.getSkuDetails(identifier, null, MAXFETCH, new SkuDetailsCallback());
-        api.getReviews(identifier, new ReviewSetCallback());
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+        easyOpenApi.getSkuDetails(identifier, null, MAXFETCH, new SkuDetailsCallback());
+        //easyOpenApi.getReviews(identifier, new ReviewSetCallback());
+
+        EasyOpenApi2 easyOpenApi2 = Access.getInstance().getEasyOpenApi2(false);
+        Api easy2API = StaplesAppContext.getInstance().getApiByName("easyopen2");
+        String version = easy2API.getVersion();
+        easyOpenApi2.getYotpoReviews(version, identifier, new YotpoReviewCallback());
 
         return (wrapper);
     }
@@ -701,7 +713,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         }
     }
 
-
     public static String formatTimestamp(String raw) {
         if (raw == null) return (null);
 
@@ -755,6 +766,89 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 //                    }
 //                }
 //            }
+    }
+
+    private class YotpoReviewCallback implements Callback<YotpoResponse> {
+        @Override
+        public void success(YotpoResponse yotpoResponse, retrofit.client.Response response2) {
+            Activity activity = getActivity();
+            if (activity == null) return;
+
+            Log.d(TAG, "Api http status:" + response2.getStatus() + ", reason:" + response2.getReason()
+                    + ", body: " +response2.toString());
+
+            processYotpoReview(yotpoResponse);
+        }
+
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            Activity activity = getActivity();
+            if (activity==null) return;
+
+            String msg = ApiError.getErrorMessage(retrofitError);
+            ((MainActivity) activity).showErrorDialog(msg);
+            Log.d(TAG, msg);
+        }
+    }
+
+    private void processYotpoReview(YotpoResponse yotpoResponse) {
+        if (yotpoResponse == null) return;
+
+        com.staples.mobile.common.access.easyopen2.model.review.Response response = yotpoResponse.getResponse();
+
+        //Status yotpoStatus = yotpoResponse.getStatus();
+        //Log.d(TAG, "YOTPO status code:" + yotpoStatus.getCode() + ", message:" + yotpoStatus.getMessage());
+
+        // List<Product> yotpoResponseProducts = response.getProducts();
+        //Product product = yotpoResponseProducts.get(0);
+        //Log.d(TAG, "YOTPO product:" + product.getName());
+
+        List<Review> yotpoReviews = response.getReviews();
+        if (yotpoReviews != null && yotpoReviews.size() > 0) {
+            tabAdapter.setYotpoReviews(yotpoReviews);
+
+            // brief review on sku page
+            Review briefReview = yotpoReviews.get(0);
+
+            // Inflate review block
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
+            View view = inflater.inflate(R.layout.sku_review_brief_item, parent, false);
+            parent.addView(view);
+
+            // Created date
+            String[] createdDateTime = briefReview.getCreatedAt().split("T");
+            String createdDate = createdDateTime[0];
+            if (createdDate != null) {
+                ((TextView) view.findViewById(R.id.sku_review_date)).setText(createdDate);
+            }
+            else {
+                view.findViewById(R.id.sku_review_date).setVisibility(View.GONE);
+            }
+
+            // Rating
+            ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(briefReview.getScore(), null);
+
+            // Comment
+            String comments = briefReview.getContent();
+            if (comments != null) {
+                ((TextView) view.findViewById(R.id.sku_review_comments)).setText(comments);
+            }
+            else {
+                view.findViewById(R.id.sku_review_comments).setVisibility(View.GONE);
+            }
+
+
+            for(int i = 0; i < yotpoReviews.size(); i++) {
+                Review review = yotpoReviews.get(i);
+                Log.d(TAG, "YOTPO review " + i + " - score: " + review.getScore() + ", content:" + review.getContent()
+                        + ", title:" + review.getTitle() + ", user:" + review.getUser().getDisplayName()
+                        + ", Time:" + review.getCreatedAt());
+            }
+        }
+        else{
+            Log.d(TAG, "This product has no YOTPO review. SKU:" + identifier);
+        }
     }
 
     // TabHost notifications
