@@ -36,6 +36,8 @@ import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.config.StaplesAppContext;
+import com.staples.mobile.common.access.configurator.model.Api;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.BulletDescription;
@@ -45,6 +47,9 @@ import com.staples.mobile.common.access.easyopen.model.browse.Product;
 import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
 import com.staples.mobile.common.access.easyopen.model.reviews.Data;
 import com.staples.mobile.common.access.easyopen.model.reviews.ReviewSet;
+import com.staples.mobile.common.access.easyopen2.api.EasyOpenApi2;
+import com.staples.mobile.common.access.easyopen2.model.review.Review;
+import com.staples.mobile.common.access.easyopen2.model.review.YotpoResponse;
 
 import java.lang.reflect.Type;
 import java.text.DateFormat;
@@ -201,7 +206,12 @@ Callback,
         // Initiate API calls
         EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
         api.getSkuDetails(identifier, null, MAXFETCH, this);
-        api.getReviews(identifier, this);
+        //api.getReviews(identifier, this);
+
+        EasyOpenApi2 easyOpenApi2 = Access.getInstance().getEasyOpenApi2(false);
+        Api easy2API = StaplesAppContext.getInstance().getApiByName(StaplesAppContext.EASYOPEN2);
+        String version = easy2API.getVersion();
+        easyOpenApi2.getYotpoReviews(version, identifier, this);
 
         return (wrapper);
     }
@@ -543,9 +553,18 @@ Callback,
             wrapper.setState(DataWrapper.State.DONE);
         }
 
-        else if (obj instanceof ReviewSet) {
-            ReviewSet reviews = (ReviewSet) obj;
-            processReviewSet(reviews);
+//        else if (obj instanceof ReviewSet) {
+//            ReviewSet reviews = (ReviewSet) obj;
+//            processReviewSet(reviews);
+//        }
+
+        else if (obj instanceof YotpoResponse) {
+//            Log.d(TAG, "Yotpo Api http status:" + response.getStatus()
+//                    + ", reason:" + response.getReason()
+//                    + ", body: " +response.toString());
+
+            YotpoResponse yotpoResponse = (YotpoResponse) obj;
+            processYotpoReview(yotpoResponse);
         }
     }
 
@@ -562,7 +581,13 @@ Callback,
             Log.d(TAG, msg);
         }
 
-        else if (type==ReviewSet.class) {
+//        else if (type==ReviewSet.class) {
+//            String msg = ApiError.getErrorMessage(retrofitError);
+//            ((MainActivity) activity).showErrorDialog(msg);
+//            Log.d(TAG, msg);
+//        }
+
+        else if (type == YotpoResponse.class) {
             String msg = ApiError.getErrorMessage(retrofitError);
             ((MainActivity) activity).showErrorDialog(msg);
             Log.d(TAG, msg);
@@ -674,21 +699,21 @@ Callback,
             if (product.getSpecification() != null) {
                 // Add specifications
                 addSpecifications(inflater, (ViewGroup) summary.findViewById(R.id.specifications), product, 3);
-                Log.d(TAG, "Product has specification.");
+                // Log.d(TAG, "Product has specification.");
             } else {
                 summary.findViewById(R.id.specifications).setVisibility(View.GONE);
                 summary.findViewById(R.id.specification_detail).setVisibility(View.GONE);
-                Log.d(TAG, "Product has no specification.");
+                // Log.d(TAG, "Product has no specification.");
             }
 
             // Check if the product has accessories
             if (product.getAccessory() != null) {
                 // Add accessories
                 addAccessory(product);
-                Log.d(TAG, "Product has accessories.");
+                // Log.d(TAG, "Product has accessories.");
             } else {
                 summary.findViewById(R.id.accessory_title).setVisibility(View.GONE);
-                Log.d(TAG, "Product has no accessories.");
+                // Log.d(TAG, "Product has no accessories.");
             }
 
             // Save seen products detail for personal feed
@@ -696,7 +721,6 @@ Callback,
 
         }
     }
-
 
     public static String formatTimestamp(String raw) {
         if (raw == null) return (null);
@@ -751,6 +775,69 @@ Callback,
 //                    }
 //                }
 //            }
+    }
+
+    private void processYotpoReview(YotpoResponse yotpoResponse) {
+        if (yotpoResponse == null) return;
+
+        com.staples.mobile.common.access.easyopen2.model.review.Response response = yotpoResponse.getResponse();
+
+        //Status yotpoStatus = yotpoResponse.getStatus();
+        //Log.d(TAG, "YOTPO status code:" + yotpoStatus.getCode() + ", message:" + yotpoStatus.getMessage());
+
+        // List<Product> yotpoResponseProducts = response.getProducts();
+        //Product product = yotpoResponseProducts.get(0);
+        //Log.d(TAG, "YOTPO product:" + product.getName());
+
+        List<Review> yotpoReviews = response.getReviews();
+        if (yotpoReviews != null && yotpoReviews.size() > 0) {
+            tabAdapter.setYotpoReviews(yotpoReviews);
+
+            // brief review on sku page
+            Review briefReview = yotpoReviews.get(0);
+
+            // Inflate review block
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
+            View view = inflater.inflate(R.layout.sku_review_brief_item, parent, false);
+            parent.addView(view);
+
+            // Created date
+            String[] createdDateTime = briefReview.getCreatedAt().split("T");
+            String createdDate = createdDateTime[0];
+            if (createdDate != null) {
+                ((TextView) view.findViewById(R.id.sku_review_date)).setText(createdDate);
+            }
+            else {
+                view.findViewById(R.id.sku_review_date).setVisibility(View.GONE);
+            }
+
+            // Rating
+            ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(briefReview.getScore(), null);
+
+            // Comment
+            String comments = briefReview.getContent();
+            if (comments != null) {
+                ((TextView) view.findViewById(R.id.sku_review_comments)).setText(comments);
+            }
+            else {
+                view.findViewById(R.id.sku_review_comments).setVisibility(View.GONE);
+            }
+
+
+            for(int i = 0; i < yotpoReviews.size(); i++) {
+                Review review = yotpoReviews.get(i);
+                Log.d(TAG, "YOTPO review " + i + " - score: " + review.getScore() + ", content:" + review.getContent()
+                        + ", title:" + review.getTitle() + ", user:" + review.getUser().getDisplayName()
+                        + ", Time:" + review.getCreatedAt());
+            }
+        }
+        else{
+            summary.findViewById(R.id.reviews).setVisibility(View.GONE);
+            summary.findViewById(R.id.review_detail).setVisibility(View.GONE);
+
+            Log.d(TAG, "This product has no YOTPO review. SKU:" + identifier);
+        }
     }
 
     // TabHost notifications
