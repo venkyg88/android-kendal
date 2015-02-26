@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -47,6 +48,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
     RelativeLayoutWithProgressOverlay accountDialogLayout;
 
     String emailAddress;
+    String orderNumber;
 
 
     /**
@@ -83,7 +85,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
 
         // get order info from bundle
         Bundle confirmationBundle = this.getArguments();
-        String orderNumber = confirmationBundle.getString(BUNDLE_PARAM_ORDERNUMBER);
+        orderNumber = confirmationBundle.getString(BUNDLE_PARAM_ORDERNUMBER);
         emailAddress = confirmationBundle.getString(BUNDLE_PARAM_EMAILADDR);
         String deliveryRange = confirmationBundle.getString(BUNDLE_PARAM_DELIVERY);
         String total = confirmationBundle.getString(BUNDLE_PARAM_TOTAL);
@@ -107,6 +109,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.CONFIRM);
+        Tracker.getInstance().trackStateForOrderConfirmation(orderNumber);
     }
 
     @Override
