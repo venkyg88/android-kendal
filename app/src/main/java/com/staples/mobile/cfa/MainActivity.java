@@ -24,7 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.adobe.mobile.Config;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.cart.CartFragment;
@@ -36,6 +36,7 @@ import com.staples.mobile.cfa.home.ConfiguratorFragment;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.notify.IntentReceiver;
 import com.staples.mobile.cfa.profile.AddressFragment;
 import com.staples.mobile.cfa.profile.AddressListFragment;
 import com.staples.mobile.cfa.profile.CreditCardFragment;
@@ -58,6 +59,9 @@ import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.urbanairship.AirshipConfigOptions;
+import com.urbanairship.UAirship;
+import com.urbanairship.push.PushManager;
 
 import java.util.Date;
 
@@ -142,12 +146,48 @@ public class MainActivity extends Activity
             initialLoginComplete = false;
             appConfigurator = AppConfigurator.getInstance();
             appConfigurator.getConfigurator(this); // AppConfiguratorCallback
-            //Analytics
-            Config.setContext(this.getApplicationContext());
-            //@TODO this shall come from Configurator
-            Config.setDebugLogging(true);
-            //Analytics
-            Config.collectLifecycleData();
+        }
+
+        // Support for Urban Airship
+        AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(this);
+        UAirship.takeOff(getApplication(), options);
+        PushManager manager = UAirship.shared().getPushManager();
+        manager.setNotificationFactory(new IntentReceiver.CustomNotificationFactory(this));
+        manager.setUserNotificationsEnabled(true);
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        String action = intent.getAction();
+
+        if (IntentReceiver.ACTION_OPEN_SKU.equals(action)) {
+            String sku = intent.getStringExtra(IntentReceiver.EXTRA_SKU);
+            if (sku!=null) {
+                String title = intent.getStringExtra(IntentReceiver.EXTRA_TITLE);
+                if (title==null) title = getResources().getString(R.string.sku_notification_title);
+                selectSkuItem(title, sku, false);
+            }
+            return;
+        }
+
+        if (IntentReceiver.ACTION_OPEN_CATEGORY.equals(action)) {
+            String identifier = intent.getStringExtra(IntentReceiver.EXTRA_IDENTIFIER);
+            if (identifier!=null) {
+                String title = intent.getStringExtra(IntentReceiver.EXTRA_TITLE);
+                if (title==null) title = getResources().getString(R.string.sku_notification_title);
+                selectBundle(title, identifier);
+            }
+            return;
+        }
+
+        if (IntentReceiver.ACTION_OPEN_SEARCH.equals(action)) {
+            String keyword = intent.getStringExtra(IntentReceiver.EXTRA_KEYWORD);
+            if (keyword!=null) {
+                String title = intent.getStringExtra(IntentReceiver.EXTRA_TITLE);
+                if (title==null) title = getResources().getString(R.string.sku_notification_title);
+                selectSearch(keyword);
+            }
+            return;
         }
     }
 
@@ -157,7 +197,7 @@ public class MainActivity extends Activity
         ensureActiveSession();
         //@TODO So what happens ensure errors out! REach next line?
         //Analytics
-        Config.collectLifecycleData();
+        Tracker.getInstance().enableTracking(true); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
     }
 
     @Override
@@ -172,7 +212,7 @@ public class MainActivity extends Activity
             actionBar.saveSearchHistory();
         }
         //Analytics
-        Config.pauseCollectingLifecycleData();
+        Tracker.getInstance().enableTracking(false); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
     }
 
     @Override
@@ -237,7 +277,7 @@ public class MainActivity extends Activity
                                 // reestablish session
                                 new LoginHelper(MainActivity.this).refreshSession();
                             } else if (apiError.isRedirectionError()) {
-                                showErrorDialog(R.string.error_redirect, true);
+                                showErrorDialog(R.string.error_redirect, true); // setting fatal=true which will close the app
                             }
                         }
                     });
@@ -348,7 +388,7 @@ public class MainActivity extends Activity
         if (retrofitError != null) {
             ApiError apiError = ApiError.getApiError(retrofitError);
             if (apiError.isRedirectionError()) {
-                showErrorDialog(R.string.error_redirect, true);
+                showErrorDialog(R.string.error_redirect, true); // setting fatal=true which will close the app
                 return;
             }
         }
@@ -368,8 +408,16 @@ public class MainActivity extends Activity
                 }
             });
 
+
+            // initialize analytics
+            Tracker.getInstance().initialize(Tracker.AppType.CFA, this.getApplicationContext(),
+                    configurator.getAppContext().getDev()); // allow logging only for dev environment
+            // The call in onResume to enable tracking will be ignored during application creation
+            // because the configurator object is not yet available. Therefore, enable here.
+            Tracker.getInstance().enableTracking(true);
+
         } else { // can't get configurator from network or from persisted file
-            showErrorDialog(R.string.error_server_connection, true);
+            showErrorDialog(R.string.error_server_connection, true); // setting fatal=true which will close the app
         }
     }
 
@@ -653,6 +701,7 @@ public class MainActivity extends Activity
     public void onItemClick(AdapterView parent, View view, int position, long id) {
         DrawerItem item = (DrawerItem) parent.getItemAtPosition(position);
         if (item.enabled) {
+            Tracker.getInstance().trackActionForNavigationDrawer(item.title, ActionBar.getInstance().getPageName()); // analytics
             switch (item.type) {
                 case FRAGMENT:
                     // special case of RewardsFragment but not registered user not a rewards member

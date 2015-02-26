@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -129,11 +130,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ActionBar.getInstance().setConfig(this instanceof GuestCheckoutFragment ? ActionBar.Config.COGUEST : ActionBar.Config.COREG);
-    }
 
     /** override this to handle other clicks, but call this super method */
     @Override
@@ -205,7 +201,8 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                             deliveryRange, currencyFormat.format(getCheckoutTotal()));
 
                 } else {
-                    activity.showErrorDialog("Submission Error: " + errMsg);
+                    Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg);
+                    activity.showErrorDialog(errMsg);
                     Log.d(TAG, errMsg);
 
                     // sometimes there's a failure such as timeout but the order actually goes thru.

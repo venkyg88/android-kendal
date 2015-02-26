@@ -22,11 +22,9 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.adobe.mobile.Analytics;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.analytics.AppType;
 import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.feed.PersistentSizedArrayList;
@@ -38,11 +36,8 @@ import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.config.StaplesAppContext;
-import com.staples.mobile.common.access.configurator.model.Api;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.browse.Analytic;
 import com.staples.mobile.common.access.easyopen.model.browse.BulletDescription;
 import com.staples.mobile.common.access.easyopen.model.browse.Description;
 import com.staples.mobile.common.access.easyopen.model.browse.Image;
@@ -50,11 +45,8 @@ import com.staples.mobile.common.access.easyopen.model.browse.Product;
 import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
 import com.staples.mobile.common.access.easyopen.model.reviews.Data;
 import com.staples.mobile.common.access.easyopen.model.reviews.ReviewSet;
-import com.staples.mobile.common.access.easyopen2.api.EasyOpenApi2;
-import com.staples.mobile.common.access.easyopen2.model.review.Review;
-import com.staples.mobile.common.access.easyopen2.model.review.Status;
-import com.staples.mobile.common.access.easyopen2.model.review.YotpoResponse;
 
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -67,6 +59,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener,
+Callback,
         View.OnClickListener, FragmentManager.OnBackStackChangedListener{
     private static final String TAG = "SkuFragment";
 
@@ -113,6 +106,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private String title;
     private String identifier;
     private String productName;
+    private float finalPrice;
     private boolean isSkuSetOriginated;
 
     private DataWrapper wrapper;
@@ -170,7 +164,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         // Init details (ViewPager)
         tabPager = (ViewPager) wrapper.findViewById(R.id.pager);
-        //tabAdapter = new SkuTabAdapter(getActivity());
         tabAdapter = new SkuTabAdapter(getActivity());
         tabPager.setAdapter(tabAdapter);
 
@@ -206,14 +199,9 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         wrapper.findViewById(R.id.add_to_cart).setOnClickListener(this);
 
         // Initiate API calls
-        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.getSkuDetails(identifier, null, MAXFETCH, new SkuDetailsCallback());
-        //easyOpenApi.getReviews(identifier, new ReviewSetCallback());
-
-        EasyOpenApi2 easyOpenApi2 = Access.getInstance().getEasyOpenApi2(false);
-        Api easy2API = StaplesAppContext.getInstance().getApiByName("easyopen2");
-        String version = easy2API.getVersion();
-        easyOpenApi2.getYotpoReviews(version, identifier, new YotpoReviewCallback());
+        EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
+        api.getSkuDetails(identifier, null, MAXFETCH, this);
+        api.getReviews(identifier, this);
 
         return (wrapper);
     }
@@ -544,44 +532,39 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     // Retrofit callbacks
 
-    private class SkuDetailsCallback implements Callback<SkuDetails> {
-        @Override
-        public void success(SkuDetails details, Response response) {
-            Activity activity = getActivity();
-            if (activity==null) return;
+    @Override
+    public void success(Object obj, Response response) {
+        Activity activity = getActivity();
+        if (activity==null) return;
 
+        if (obj instanceof SkuDetails) {
+            SkuDetails details = (SkuDetails) obj;
             processSkuDetails(details);
             wrapper.setState(DataWrapper.State.DONE);
         }
 
-        @Override
-        public void failure(RetrofitError retrofitError) {
-            Activity activity = getActivity();
-            if (activity==null) return;
-
-            wrapper.setState(DataWrapper.State.EMPTY);
-            String msg = ApiError.getErrorMessage(retrofitError);
-            ((MainActivity)activity).showErrorDialog(msg);
-            Log.d(TAG, msg);
+        else if (obj instanceof ReviewSet) {
+            ReviewSet reviews = (ReviewSet) obj;
+            processReviewSet(reviews);
         }
     }
 
-    private class ReviewSetCallback implements Callback<ReviewSet> {
-        @Override
-        public void success(ReviewSet reviews, Response response) {
-            Activity activity = getActivity();
-            if (activity==null) return;
+    @Override
+    public void failure(RetrofitError retrofitError) {
+        Activity activity = getActivity();
+        if (activity==null) return;
+        Type type = retrofitError.getSuccessType();
 
-            processReviewSet(reviews);
+        if (type==SkuDetails.class) {
+            wrapper.setState(DataWrapper.State.EMPTY);
+            String msg = ApiError.getErrorMessage(retrofitError);
+            ((MainActivity) activity).showErrorDialog(msg);
+            Log.d(TAG, msg);
         }
 
-        @Override
-        public void failure(RetrofitError retrofitError) {
-            Activity activity = getActivity();
-            if (activity==null) return;
-
+        else if (type==ReviewSet.class) {
             String msg = ApiError.getErrorMessage(retrofitError);
-            ((MainActivity)activity).showErrorDialog(msg);
+            ((MainActivity) activity).showErrorDialog(msg);
             Log.d(TAG, msg);
         }
     }
@@ -591,15 +574,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         if (products != null && products.size() > 0) {
             // Use the first product in the list
             final Product product = products.get(0);
-            //Analytics
-            //@TODO check for null  --hate get(0)
-            Analytic an  = product.getAnalytic().get(0);
-            Analytics.trackState("s.pageName", Tracker.getInstance(AppType.AFA).
-                    getContext4Product(product.getDisplayName(), product.getDisplayName(), an.getSuperCategoryName(),
-                            an.getCategoryName(), an.getDepartmentName(),
-                            an.getClassName(),
-                            product.getCustomerReviewRating()
-                    ));
 
             tabAdapter.setProduct(product);
 
@@ -624,6 +598,14 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 });
 
             }
+
+            // Analytics
+            if (availability == Availability.SKUSET) {
+                Tracker.getInstance().trackStateForSkuSet(product); // Analytics
+            } else {
+                Tracker.getInstance().trackStateForProduct(product); // Analytics
+            }
+
 
             switch (availability) {
                 case NOTHING:
@@ -679,7 +661,9 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
 
             // Add pricing
-            ((PriceSticker) summary.findViewById(R.id.pricing)).setPricing(product.getPricing());
+            PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
+            priceSticker.setPricing(product.getPricing());
+            finalPrice = priceSticker.getPrice();
 
             // Add description
             LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -712,6 +696,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         }
     }
+
 
     public static String formatTimestamp(String raw) {
         if (raw == null) return (null);
@@ -768,89 +753,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 //            }
     }
 
-    private class YotpoReviewCallback implements Callback<YotpoResponse> {
-        @Override
-        public void success(YotpoResponse yotpoResponse, retrofit.client.Response response2) {
-            Activity activity = getActivity();
-            if (activity == null) return;
-
-            Log.d(TAG, "Api http status:" + response2.getStatus() + ", reason:" + response2.getReason()
-                    + ", body: " +response2.toString());
-
-            processYotpoReview(yotpoResponse);
-        }
-
-        @Override
-        public void failure(RetrofitError retrofitError) {
-            Activity activity = getActivity();
-            if (activity==null) return;
-
-            String msg = ApiError.getErrorMessage(retrofitError);
-            ((MainActivity) activity).showErrorDialog(msg);
-            Log.d(TAG, msg);
-        }
-    }
-
-    private void processYotpoReview(YotpoResponse yotpoResponse) {
-        if (yotpoResponse == null) return;
-
-        com.staples.mobile.common.access.easyopen2.model.review.Response response = yotpoResponse.getResponse();
-
-        //Status yotpoStatus = yotpoResponse.getStatus();
-        //Log.d(TAG, "YOTPO status code:" + yotpoStatus.getCode() + ", message:" + yotpoStatus.getMessage());
-
-        // List<Product> yotpoResponseProducts = response.getProducts();
-        //Product product = yotpoResponseProducts.get(0);
-        //Log.d(TAG, "YOTPO product:" + product.getName());
-
-        List<Review> yotpoReviews = response.getReviews();
-        if (yotpoReviews != null && yotpoReviews.size() > 0) {
-            tabAdapter.setYotpoReviews(yotpoReviews);
-
-            // brief review on sku page
-            Review briefReview = yotpoReviews.get(0);
-
-            // Inflate review block
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
-            View view = inflater.inflate(R.layout.sku_review_brief_item, parent, false);
-            parent.addView(view);
-
-            // Created date
-            String[] createdDateTime = briefReview.getCreatedAt().split("T");
-            String createdDate = createdDateTime[0];
-            if (createdDate != null) {
-                ((TextView) view.findViewById(R.id.sku_review_date)).setText(createdDate);
-            }
-            else {
-                view.findViewById(R.id.sku_review_date).setVisibility(View.GONE);
-            }
-
-            // Rating
-            ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(briefReview.getScore(), null);
-
-            // Comment
-            String comments = briefReview.getContent();
-            if (comments != null) {
-                ((TextView) view.findViewById(R.id.sku_review_comments)).setText(comments);
-            }
-            else {
-                view.findViewById(R.id.sku_review_comments).setVisibility(View.GONE);
-            }
-
-
-            for(int i = 0; i < yotpoReviews.size(); i++) {
-                Review review = yotpoReviews.get(i);
-                Log.d(TAG, "YOTPO review " + i + " - score: " + review.getScore() + ", content:" + review.getContent()
-                        + ", title:" + review.getTitle() + ", user:" + review.getUser().getDisplayName()
-                        + ", Time:" + review.getCreatedAt());
-            }
-        }
-        else{
-            Log.d(TAG, "This product has no YOTPO review. SKU:" + identifier);
-        }
-    }
-
     // TabHost notifications
 
     public void onTabChanged(String tag) {
@@ -861,6 +763,9 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         else if (tag.equals(SPECIFICATIONS)) index = 1;
         else if (tag.equals(REVIEWS)) index = 2;
         else throw (new RuntimeException("Unknown tag from TabHost"));
+
+        // analytics
+        Tracker.getInstance().trackActionForProductTabs(tabAdapter.getPageTitle(index), tabAdapter.getProduct());
 
         tabPager.setCurrentItem(index);
     }
@@ -954,7 +859,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 break;
             case R.id.add_to_cart:
                 QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
-                int qty = edit.getQuantity();
+                final int qty = edit.getQuantity();
                 final MainActivity activity = (MainActivity) getActivity();
                 activity.showProgressIndicator();
                 CartApiManager.addItemToCart(identifier, qty, new CartApiManager.CartRefreshCallback() {
@@ -965,6 +870,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                         if (errMsg == null) {
                             ((Button) wrapper.findViewById(R.id.add_to_cart)).setText(R.string.add_another);
                             activity.showNotificationBanner(R.string.cart_updated_msg);
+                            Tracker.getInstance().trackActionForAddToCartFromProductDetails(identifier, finalPrice, qty);
                         } else {
                             // if non-grammatical out-of-stock message from api, provide a nicer message
                             if (errMsg.contains("items is out of stock")) {

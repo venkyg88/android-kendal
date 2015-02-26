@@ -25,6 +25,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.store.StoreFragment;
@@ -185,6 +186,7 @@ public class ConfiguratorFragment extends Fragment {
                 );
 
                 ConfigItem configItem = (ConfigItem) view.getTag();
+                Tracker.getInstance().trackActionForHomePage(configItem); // Analytics
                 activity.selectBundle(configItem.title, configItem.identifier);
             }
         };
@@ -207,6 +209,7 @@ public class ConfiguratorFragment extends Fragment {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
         isMessageBarShow = true;
+        Tracker.getInstance().trackStateForHome(); // Analytics
     }
 
     public void initFromConfiguratorResult(Configurator configurator) {
@@ -1199,6 +1202,7 @@ public class ConfiguratorFragment extends Fragment {
         signInTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Tracker.getInstance().trackActionForPersonalizedMessaging("Login"); // Analytics
                 MainActivity mainActivity = (MainActivity) getActivity();
                 mainActivity.selectLoginFragment();
             }
@@ -1207,6 +1211,7 @@ public class ConfiguratorFragment extends Fragment {
         signUpTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Tracker.getInstance().trackActionForPersonalizedMessaging("Register"); // Analytics
                 MainActivity mainActivity = (MainActivity) getActivity();
                 mainActivity.selectLoginFragment();
             }
@@ -1215,6 +1220,7 @@ public class ConfiguratorFragment extends Fragment {
         storeNameTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Tracker.getInstance().trackActionForPersonalizedMessaging("Store"); // Analytics
                 MainActivity mainActivity = (MainActivity) getActivity();
                 mainActivity.selectFragment(new StoreFragment(), MainActivity.Transition.NONE, true);
             }

@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.rewards.RewardsLinkingFragment;
@@ -186,6 +187,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         ActionBar.getInstance().setConfig(ActionBar.Config.CART);
         //initialize cart based on what's been returned from api so far
         convertCart(CartApiManager.getCart());
+        Tracker.getInstance().trackStateForCart(CartApiManager.getCart()); // analytics
     }
 
     @Override
@@ -360,6 +362,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                             ProfileDetails.getMember() != null && !ProfileDetails.isRewardsMember()) {
                         linkRewardsAcctLayout.setVisibility(View.VISIBLE);
                     }
+                    Tracker.getInstance().trackStateForCartCoupons(); // analytics
                 } else {
                     cartListVw.setVisibility(View.VISIBLE);
                     couponList.setVisibility(View.GONE);
@@ -445,23 +448,22 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     }
 
     /** updates item quantity */
-    private void updateItemQty(CartItem cartItem) {
+    private void updateItemQty(final CartItem cartItem) {
         if (cartItem.isProposedQtyDifferent()) {
             showProgressIndicator();
             if (cartItem.getProposedQty() == 0) {
-                CartApiManager.deleteItem(cartItem.getOrderItemId(), this);
+                CartApiManager.deleteItem(cartItem.getOrderItemId(), new CartApiManager.CartRefreshCallback() {
+                    @Override public void onCartRefreshComplete(String errMsg) {
+                        Tracker.getInstance().trackActionForRemoveFromCart(cartItem.getSku());
+                        CartFragment.this.onCartRefreshComplete(errMsg);
+                    }
+                });
             } else {
                 CartApiManager.updateItemQty(cartItem.getOrderItemId(), cartItem.getSku(), cartItem.getProposedQty(), this);
             }
         }
     }
 
-    private void notifyDataSetChanged() {
-        // if fragment is attached to activity, then update the fragment's views
-        if (cartAdapter != null) {
-            cartAdapter.notifyDataSetChanged();
-        }
-    }
 
     // synchronizing this method in case cartListItems updated simultaneously (not sure this would
     // happen since this should all be on the main UI thread)

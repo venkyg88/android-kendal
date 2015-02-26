@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.suggest.api.SuggestApi;
@@ -274,6 +275,7 @@ public class SearchBarView extends LinearLayout implements View.OnClickListener,
     }
 
     private void doSearch(String keyword) {
+        Tracker.getInstance().trackActionForSearch(keyword==null? Tracker.SearchType.BASIC_SEARCH : Tracker.SearchType.AUTOCOMPLETE); // analytics
         if (keyword==null) {
             keyword = searchText.getText().toString().trim();
         }

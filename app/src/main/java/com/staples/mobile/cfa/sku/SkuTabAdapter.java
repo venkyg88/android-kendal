@@ -37,6 +37,9 @@ public class SkuTabAdapter extends PagerAdapter {
         inflater = activity.getLayoutInflater();
     }
 
+    public Product getProduct() {
+        return this.product;
+    }
     public void setProduct(Product product) {
         this.product = product;
     }

@@ -11,10 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.adobe.mobile.Analytics;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.analytics.AppType;
 import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.bundle.BundleAdapter;
 import com.staples.mobile.cfa.bundle.BundleItem;
@@ -93,12 +91,11 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         adapter.notifyDataSetChanged();
 
         //Analytics
-        //@TODO get(0) again
-        //get the actual count of search results
-        int countR = searchResult.getSearch().get(0).getItemCount();
-        //@TODO quesry string is the term
-        Analytics.trackState("s.pageName", Tracker.getInstance(AppType.AFA).getContext4SearchResults("query string-tbd", countR));
-
+        if (searchResult.getSearch() != null && searchResult.getSearch().size() > 0) {
+            //get the actual count of search results
+            Search search = searchResult.getSearch().get(0);
+            Tracker.getInstance().trackStateForSearchResults(search.getSearchTerm(), search.getItemCount()); //Analytics
+        }
     }
 
     @Override
@@ -131,13 +128,17 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
                     ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier, false);
+                    Tracker.getInstance().trackActionForSearchItemSelection(adapter.getItemPosition(item), 1);
                 }
                 break;
             case R.id.bundle_action:
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
-                    BundleItem item = (BundleItem) tag;
+                    final BundleItem item = (BundleItem) tag;
                     Toast.makeText(getActivity(), "Clicked on " + item.title, Toast.LENGTH_LONG).show();
+
+                    // TODO: !!!!!!!! move this into on add-to-cart success callback similar to BundleFragment !!!!!!!!
+                    Tracker.getInstance().trackActionForAddToCartFromSearchResults(item.identifier, item.price, 1);
                 }
                 break;
         }

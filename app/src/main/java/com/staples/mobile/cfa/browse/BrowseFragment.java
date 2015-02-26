@@ -14,6 +14,7 @@ import android.widget.ListView;
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
@@ -106,7 +107,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
 
         String msg = ApiError.getErrorMessage(retrofitError);
         ((MainActivity)activity).showErrorDialog(msg);
-        wrapper.setState(DataWrapper.State.EMPTY);
+        wrapper.setState(DataWrapper.State.NOMORE);
         Log.d(TAG, msg);
     }
 
@@ -166,6 +167,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
         BrowseItem item = (BrowseItem) parent.getItemAtPosition(position);
         switch(item.type) {
             case STACK:
+                Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy()); // analytics
                 identifier = adapter.popStack(item);
                 fill(identifier);
                 adapterState = adapter.saveState(adapterState);
@@ -178,8 +180,10 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
                     case CLASS:
                     case BUNDLE:
                         MainActivity activity = (MainActivity) getActivity();
-                        if (activity!=null)
+                        if (activity!=null) {
+                            Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy() + ":" + item.identifier); // analytics
                             activity.selectBundle(item.title, identifier);
+                        }
                         break;
                     default:
                         adapter.pushStack(item);
@@ -187,6 +191,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, Adapt
                         adapterState = adapter.saveState(adapterState);
                         wrapper.setState(DataWrapper.State.ADDING);
                         adapter.notifyDataSetChanged();
+                        Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy()); // analytics
                         break;
                 }
                 break;
