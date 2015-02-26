@@ -833,6 +833,9 @@ Callback,
             }
         }
         else{
+            summary.findViewById(R.id.reviews).setVisibility(View.GONE);
+            summary.findViewById(R.id.review_detail).setVisibility(View.GONE);
+
             Log.d(TAG, "This product has no YOTPO review. SKU:" + identifier);
         }
     }
