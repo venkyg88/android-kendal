@@ -22,6 +22,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -733,6 +734,7 @@ Callback,
             String text = DateFormat.getDateInstance().format(date);
             return (text);
         } catch (ParseException e) {
+            Crittercism.logHandledException(e);
             return (null);
         }
     }

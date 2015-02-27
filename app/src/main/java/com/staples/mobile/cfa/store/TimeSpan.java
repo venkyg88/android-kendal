@@ -3,6 +3,7 @@ package com.staples.mobile.cfa.store;
 import android.content.Context;
 import android.text.SpannableStringBuilder;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.R;
 
 import java.text.SimpleDateFormat;
@@ -68,6 +69,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
             end += parseTimeFormat.parse(chunks[1]).getTime();
             if (end<start) end += ONEDAY;
         } catch(Exception e) {
+            Crittercism.logHandledException(e);
             return(null);
         }
 
