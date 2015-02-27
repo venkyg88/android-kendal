@@ -125,6 +125,7 @@ public class LoginHelper {
                     // the tokens are good, so load profile and notify listeners
                     notifyListeners(!registeredUser, true);
                     loadProfile(callback);
+                    Tracker.getInstance().setUserType(registeredUser? Tracker.UserType.REGISTERED : Tracker.UserType.GUEST); // update analytics header info
                 }
 
                 @Override

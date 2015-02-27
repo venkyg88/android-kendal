@@ -57,10 +57,12 @@ public class IntentReceiver extends BaseIntentReceiver {
         @Override
         public Notification createNotification(PushMessage message, int notificationId) {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext());
+            builder.setDefaults(0);
             builder.setContentTitle(header);
             builder.setContentText(message.getAlert());
             builder.setAutoCancel(true);
             builder.setSmallIcon(R.drawable.ic_notification);
+            builder.setColor(0xffc0c0c0);
             builder.extend(createNotificationActionsExtender(message, notificationId));
             return builder.build();
         }

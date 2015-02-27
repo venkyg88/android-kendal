@@ -52,7 +52,7 @@ public class PersonalFeedSingleton {
                 String sku = savedProductsArray[i];
                 savedProductsList.add(sku);
 
-                Log.d(TAG, i + 1 + "th Saved Seen Product -> " + sku);
+                //Log.d(TAG, i + 1 + "th Saved Seen Product -> " + sku);
             }
         }
         else{
