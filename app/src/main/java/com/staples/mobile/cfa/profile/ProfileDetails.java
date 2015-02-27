@@ -14,6 +14,7 @@ import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.InkRecyclingDetail;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.staples.mobile.common.access.easyopen.model.member.OrderStatus;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
 import com.staples.mobile.common.access.easyopen.model.member.RewardDetail;
 
@@ -46,6 +47,16 @@ public class ProfileDetails implements Callback<MemberDetail> {
 
     // static cached member variable
     private static Member member;
+
+    public static OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
+
+    public static void setOrderStatus(OrderStatus orderStatus) {
+        ProfileDetails.orderStatus = orderStatus;
+    }
+
+    private static OrderStatus orderStatus;
     public static Member getMember() {
         return member;
     }

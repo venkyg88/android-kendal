@@ -1,6 +1,8 @@
 package com.staples.mobile.cfa.profile;
 
+import android.app.Fragment;
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,16 +47,14 @@ public class OrderArrayAdapter extends ArrayAdapter<Shipment> implements View.On
         trackShipmentBtn = (Button)rowView.findViewById(R.id.trackShipmentBtn);
         viewRecieptBtn = (Button)rowView.findViewById(R.id.orderReceiptBtn);
         trackShipmentBtn.setOnClickListener(this);
-        viewRecieptBtn.setOnClickListener(this);
 
-        Shipment shipment = getItem(position);
+        final Shipment shipment = getItem(position);
 
         orderNumTV.setText("Order# "+ shipment.getOrderNumber());
         double itemsOrdered = 0.0;
         for(ShipmentSKU sku : shipment.getShipmentSku()) {
             itemsOrdered += Double.parseDouble(sku.getQtyOrdered());
         }
-
 
         try{
             SimpleDateFormat sdf = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy",
@@ -68,6 +68,20 @@ public class OrderArrayAdapter extends ArrayAdapter<Shipment> implements View.On
         }
         orderStatusTV.setText(shipment.getShipmentStatusDescription());
         numItemsTV.setText(""+ (int)itemsOrdered + " Items");
+
+        viewRecieptBtn.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Fragment orderDetailsFragment = Fragment.instantiate(getContext(), OrderDetailsFragment.class.getName());
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("orderData", shipment);
+                orderDetailsFragment.setArguments(bundle);
+                ((MainActivity)getContext()).navigateToFragment(orderDetailsFragment);
+            }
+        });
+
         return rowView;
     }
 
@@ -76,10 +90,7 @@ public class OrderArrayAdapter extends ArrayAdapter<Shipment> implements View.On
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.trackShipmentBtn:
-                ((MainActivity)getContext()).showNotificationBanner("hi");
-                break;
-            case  R.id.orderReceiptBtn:
-                ((MainActivity)getContext()).showNotificationBanner("hello");
+                ((MainActivity)getContext()).showNotificationBanner("In Progress");
                 break;
             default:
                 break;

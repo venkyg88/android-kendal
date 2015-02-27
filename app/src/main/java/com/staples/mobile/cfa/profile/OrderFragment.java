@@ -51,19 +51,6 @@ public class OrderFragment extends Fragment {
         listview = (ListView) view.findViewById(R.id.orderListView);
         adapter = new OrderArrayAdapter(activity);
         listview.setAdapter(adapter);
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                if(adapter != null) {
-                    Fragment orderDetailsFragment = Fragment.instantiate(activity, OrderDetailsFragment.class.getName());
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("orderData", adapter.getItem(position));
-                    orderDetailsFragment.setArguments(bundle);
-                    activity.navigateToFragment(orderDetailsFragment);
-                }
-
-            }
-        });
         fill();
         return (view);
     }
@@ -87,6 +74,21 @@ public class OrderFragment extends Fragment {
                             for(Shipment shipment: orderStatusDetail.getOrderStatus().get(0).getShipment()){
                                 shipment.setOrderNumber(orderStatusDetail.getOrderStatus().get(0).getOrderNumber());
                                 shipment.setOrderDate(orderStatusDetail.getOrderStatus().get(0).getOrderDate());
+                                shipment.setCcNumber(orderStatusDetail.getOrderStatus().get(0).getPayment().get(0).getCcLast4Digits());
+                                shipment.setCcType(orderStatusDetail.getOrderStatus().get(0).getPayment().get(0).getPaymentMethodCode());
+                                shipment.setShiptoFirstName(orderStatusDetail.getOrderStatus().get(0).getShiptoFirstName());
+                                shipment.setShiptoLastName(orderStatusDetail.getOrderStatus().get(0).getShiptoLastName());
+                                shipment.setShiptoAddress1(orderStatusDetail.getOrderStatus().get(0).getShiptoAddress1());
+                                shipment.setShiptoAddress2(orderStatusDetail.getOrderStatus().get(0).getShiptoAddress2());
+                                shipment.setShiptoCity(orderStatusDetail.getOrderStatus().get(0).getShiptoCity());
+                                shipment.setShiptoState(orderStatusDetail.getOrderStatus().get(0).getShiptoState());
+                                shipment.setShiptoZip(orderStatusDetail.getOrderStatus().get(0).getShiptoZip());
+                                shipment.setShipmentSkuSubtotal(orderStatusDetail.getOrderStatus().get(0).getShipmentSkuSubtotal());
+                                shipment.setCouponTotal(orderStatusDetail.getOrderStatus().get(0).getCouponTotal());
+                                shipment.setShippingAndHandlingTotal(orderStatusDetail.getOrderStatus().get(0).getShippingAndHandlingTotal());
+                                shipment.setSalesTaxTotal(orderStatusDetail.getOrderStatus().get(0).getSalesTaxTotal());
+                                shipment.setGrandTotal(orderStatusDetail.getOrderStatus().get(0).getGrandTotal());
+
                                 adapter.add(shipment);
                             }
                             activity.hideProgressIndicator();
