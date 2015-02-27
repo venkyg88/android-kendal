@@ -1,5 +1,6 @@
 package com.staples.mobile.test;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
 
@@ -22,6 +23,7 @@ public class CartGeneratorTest {
             method = CartApiManager.class.getDeclaredMethod("generateAddUpdateBody", List.class);
             method.setAccessible(true);
         } catch(NoSuchMethodException e) {
+            Crittercism.logHandledException(e);
             Assert.fail("Could not find generateAddUpdateBody in CartApiManager");
         }
 
@@ -34,6 +36,7 @@ public class CartGeneratorTest {
         try {
             generatedString = (String) method.invoke(null, list);
         } catch(Exception e) {
+            Crittercism.logHandledException(e);
             Assert.fail("Could not invoke generateAddUpdateBody on CartApiManager ");
         }
 

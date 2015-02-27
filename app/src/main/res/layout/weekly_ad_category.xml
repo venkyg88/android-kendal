@@ -5,18 +5,9 @@
     <ImageView
     android:id="@+id/weeklyad_image"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:src="@drawable/weekly_ad"/>
+    android:layout_height="150dp"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/weekly_ad_categories_list"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"/>
-    <!--<ListView-->
-        <!--android:id="@+id/weekly_ad_categories_list"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight="1"-->
-        <!--android:layout_width="match_parent">-->
-    <!--</ListView>-->
-
 </com.staples.mobile.cfa.widget.AnimatorLayout>

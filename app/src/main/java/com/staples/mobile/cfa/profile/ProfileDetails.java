@@ -3,6 +3,7 @@ package com.staples.mobile.cfa.profile;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -14,6 +15,7 @@ import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.InkRecyclingDetail;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.staples.mobile.common.access.easyopen.model.member.OrderStatus;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
 import com.staples.mobile.common.access.easyopen.model.member.RewardDetail;
 
@@ -46,6 +48,7 @@ public class ProfileDetails implements Callback<MemberDetail> {
 
     // static cached member variable
     private static Member member;
+
     public static Member getMember() {
         return member;
     }
@@ -251,7 +254,7 @@ public class ProfileDetails implements Callback<MemberDetail> {
             }
             try {
                 total += Float.parseFloat(amount);
-            } catch (Exception e) {}
+            } catch (Exception e) {Crittercism.logHandledException(e);}
         }
         return total;
     }

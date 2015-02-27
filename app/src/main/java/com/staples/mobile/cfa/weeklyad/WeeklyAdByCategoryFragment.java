@@ -8,25 +8,27 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 
+import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.browse.Image;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.weeklyadbycategory.Data;
 import com.staples.mobile.common.access.easyopen.model.weeklyadbycategory.WeeklyAdCategories;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+
+/**
+ * Created by Avinash Dodda.
+ */
 
 public class WeeklyAdByCategoryFragment extends Fragment {
 
@@ -45,9 +47,14 @@ public class WeeklyAdByCategoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         activity = (MainActivity)getActivity();
-        View view = inflater.inflate(R.layout.weekly_ad_by_category, container, false);
+        View view = inflater.inflate(R.layout.weekly_ad_category, container, false);
         ImageView weeklyAdImage = (ImageView) view.findViewById(R.id.weeklyad_image);
-        weeklyAdImage.setScaleType(ImageView.ScaleType.FIT_XY);
+
+        Picasso.with(activity)
+                .load(R.drawable.weekly_ad_image)
+                .fit()
+                .into(weeklyAdImage);
+
         mRecyclerView = (RecyclerView) view.findViewById(R.id.weekly_ad_categories_list);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
@@ -66,15 +73,12 @@ public class WeeklyAdByCategoryFragment extends Fragment {
             public void success(WeeklyAdCategories weeklyAdCategories, Response response) {
                 activity.hideProgressIndicator();
                 weeklyAdItems = weeklyAdCategories.getContent().getCollection().getData();
-                if (weeklyAdItems == null) {
-                    //TODO: Display error
-                } else {
-                    adapter.fill(weeklyAdItems);
-                }
+                adapter.fill(weeklyAdItems);
             }
 
             @Override
             public void failure(RetrofitError error) {
+                activity.showErrorDialog(ApiError.getErrorMessage(error));
                 activity.hideProgressIndicator();
             }
         });

@@ -41,7 +41,7 @@ import com.staples.mobile.cfa.profile.AddressFragment;
 import com.staples.mobile.cfa.profile.AddressListFragment;
 import com.staples.mobile.cfa.profile.CreditCardFragment;
 import com.staples.mobile.cfa.profile.CreditCardListFragment;
-import com.staples.mobile.cfa.profile.OrderFragment;
+import com.staples.mobile.cfa.order.OrderFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.rewards.RewardsFragment;

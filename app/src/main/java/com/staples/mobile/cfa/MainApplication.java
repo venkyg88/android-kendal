@@ -16,6 +16,8 @@ import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 
+import com.crittercism.app.Crittercism;
+
 import retrofit.RetrofitError;
 
 public class MainApplication
@@ -46,6 +48,20 @@ public class MainApplication
 
         resources = getResources();
 
+        try {
+
+            Crittercism.initialize(this, "54de24c551de5e9f042ed9bc");
+
+        } catch (Exception exception) {
+
+            if (LOGGING) Log.e(TAG, "MainApplication:onCreate(): EXCEPTION[Exception]: Crittercism.initialize()"
+                            + " exception[" + exception + "]"
+                            + " this[" + this + "]"
+            );
+
+            if (exception != null) exception.printStackTrace();
+        }
+
         String configServerUrl = resources.getString(R.string.configuration_destination);
         appConfigurator = AppConfigurator.getInstance(this, configServerUrl);
         appConfigurator.getConfigurator(this);
@@ -57,13 +73,16 @@ public class MainApplication
 
     public void uncaughtException(Thread terminatedThread, Throwable causeThrowable) {
 
-        if (LOGGING) Log.v(TAG, "MainApplication:uncaughtException(): Entry."
+        if (LOGGING) Log.e(TAG, "MainApplication:uncaughtException(): EXCEPTION[Throwable]:"
                         + " terminatedThread[" + terminatedThread + "]"
                         + " causeThrowable[" + causeThrowable + "]"
                         + " this[" + this + "]"
         );
 
         causeThrowable.printStackTrace();
+
+        Crittercism.leaveBreadcrumb("MainApplication:uncaughtException():");
+        Crittercism.logHandledException(causeThrowable);
 
         return;
     }
