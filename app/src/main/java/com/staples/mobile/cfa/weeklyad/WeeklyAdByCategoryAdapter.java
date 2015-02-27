@@ -17,22 +17,26 @@ import com.staples.mobile.common.access.easyopen.model.weeklyadbycategory.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by Avinash Dodda.
+ */
+
 public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCategoryAdapter.ViewHolder>{
     private ArrayList<Data> array;
     private Activity activity;
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        public TextView dealTitleTV;
-        public TextView dealsCountTV;
-        ImageView dealIV;
+        public TextView weeklyAdDealTileTV;
+        public TextView weeklyAdDealCountTV;
+        ImageView weeklyAdCategoryIV;
         private ClickListener clickListener;
 
         public ViewHolder(View v) {
             super(v);
             v.setOnClickListener(this);
-            dealTitleTV = (TextView)v.findViewById(R.id.weekly_ad_category_title_text);
-            dealsCountTV = (TextView)v.findViewById(R.id.weekly_ad_category_deals_count_text);
-            dealIV = (ImageView)v.findViewById(R.id.weekly_ad_category_image);
+            weeklyAdDealTileTV = (TextView)v.findViewById(R.id.weekly_ad_category_title_text);
+            weeklyAdDealCountTV = (TextView)v.findViewById(R.id.weekly_ad_category_deals_count_text);
+            weeklyAdCategoryIV = (ImageView)v.findViewById(R.id.weekly_ad_category_image);
         }
 
         public interface ClickListener {
@@ -67,17 +71,15 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
     public WeeklyAdByCategoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                    int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.weekly_ad_by_categories_item, parent, false);
+                .inflate(R.layout.weekly_ad_categories_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(v);
         viewHolder.setClickListener(new ViewHolder.ClickListener() {
             @Override
             public void onClick(View v, int position) {
-//                Data data = array.get(position);
-//                WeeklyAdListFragment weeklyAdListFragment = new WeeklyAdListFragment();
-//                weeklyAdListFragment.setCategoryTreeId(data.getCategorytreeid());
-//                weeklyAdListFragment.setStoreId("2278338");
-//                ((MainActivity)activity).selectFragment(weeklyAdListFragment, MainActivity.Transition.FADE, true);
-                  ((MainActivity)activity).showNotificationBanner("In Progress");
+                Data data = array.get(position);
+                WeeklyAdListFragment weeklyAdFragment = new WeeklyAdListFragment();
+                weeklyAdFragment.setArguments("2278338",data.getCategorytreeid(), data.getName());
+                ((MainActivity)activity).navigateToFragment(weeklyAdFragment);
             }
         });
 
@@ -88,11 +90,12 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
     public void onBindViewHolder(ViewHolder holder, int position) {
         Data data = array.get(position);
 
-        holder.dealTitleTV.setText(data.getName());
-        holder.dealsCountTV.setText(data.getCount() + " deals");
+        holder.weeklyAdDealTileTV.setText(data.getName());
+        holder.weeklyAdDealCountTV.setText(data.getCount() + " deals");
         Picasso.with(activity)
                 .load(WeeklyAdImageUrlHelper.getUrl(60,100, data.getImagelocation()))
-                .into(holder.dealIV);
+                .fit()
+                .into(holder.weeklyAdCategoryIV);
     }
 
     @Override
