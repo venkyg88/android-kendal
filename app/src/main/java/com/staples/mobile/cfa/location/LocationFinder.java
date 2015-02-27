@@ -9,6 +9,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.crittercism.app.Crittercism;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -85,6 +86,7 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
                 }
             } catch(Exception e) {
                 Log.d(TAG, "Error by Geocoder: "+e.toString());
+                Crittercism.logHandledException(e);
             }
         }
     }
@@ -140,7 +142,7 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
             try {
                 Log.d(TAG, "Trying resolution");
                 result.startResolutionForResult(activity, 0);
-            } catch(Exception e) {};
+            } catch(Exception e) {Crittercism.logHandledException(e);};
         }
     }
 

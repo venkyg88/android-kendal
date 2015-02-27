@@ -20,6 +20,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.crittercism.app.Crittercism;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.staples.mobile.cfa.location.LocationFinder;
@@ -117,7 +118,9 @@ public class AboutFragment extends Fragment {
             addRow(inflater, table, "First install", dateFormat.format(packInfo.firstInstallTime));
             addRow(inflater, table, "Last build", dateFormat.format(stamp));
             addRow(inflater, table, "Last install", dateFormat.format(packInfo.lastUpdateTime));
-        } catch(Exception e) {}
+        } catch(Exception exception) {
+            Crittercism.logHandledException(exception);
+        }
     }
 
     private String formatGooglePlayVersion() {
