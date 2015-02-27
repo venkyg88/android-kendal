@@ -1,2 +1,0 @@
-configurations.create("default")
-artifacts.add("default", file('urbanairship-lib-5.1.5.aar'))
