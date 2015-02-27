@@ -58,8 +58,8 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.4.0'
     compile 'com.google.android.gms:play-services-location:6.5.87'
     compile 'com.google.android.gms:play-services-maps:6.5.87'
-    //androidTestCompile ('com.jayway.android.robotium:robotium-solo:5.2+')
-    //androidTestCompile "org.mockito:mockito-core:1.+"
+    compile(name: 'urbanairship-lib-5.1.5', ext: 'aar')
+
     androidTestCompile 'org.hamcrest:hamcrest-integration:1.1'
     androidTestCompile 'org.hamcrest:hamcrest-core:1.1'
     androidTestCompile 'org.hamcrest:hamcrest-library:1.1'
@@ -83,7 +83,7 @@ dependencies {
         exclude module: 'wagon-http-lightweight'
         exclude module: 'wagon-provider-api'
     }
-    compile project(':urbanairship-lib-5.1.5')
+    
     compile project(':..:android-common:common')
 }
 
