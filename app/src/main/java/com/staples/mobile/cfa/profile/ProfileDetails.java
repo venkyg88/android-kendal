@@ -48,15 +48,6 @@ public class ProfileDetails implements Callback<MemberDetail> {
     // static cached member variable
     private static Member member;
 
-    public static OrderStatus getOrderStatus() {
-        return orderStatus;
-    }
-
-    public static void setOrderStatus(OrderStatus orderStatus) {
-        ProfileDetails.orderStatus = orderStatus;
-    }
-
-    private static OrderStatus orderStatus;
     public static Member getMember() {
         return member;
     }

@@ -3,52 +3,58 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="wrap_content"
 android:layout_height="wrap_content"
-android:id="@+id/orderLayout"
-android:paddingTop="15dp"
-android:paddingLeft="10dp"
-android:paddingRight="10dp">
+android:id="@+id/orderLayout">
 <TextView
     android:id="@+id/orderNumTv"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:textColor="@android:color/black"
-    android:text="Status"
     android:textSize="18dip"
+    android:paddingTop="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
     android:layout_alignParentLeft="true"/>
 <TextView
     android:id="@+id/numItemsTV"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:textSize="18dip"
-    android:text="Status"
+    android:paddingTop="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
     android:layout_alignParentRight="true"
     android:textColor="@android:color/black" />
 <TextView
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:text="Status"
     android:id="@+id/orderStatusTV"
     android:textSize="18dip"
+    android:paddingTop="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
     android:textColor="@android:color/holo_purple"
     android:maxLines="1"
-    android:layout_below="@+id/orderNumTv"
-    android:paddingTop="10dip"/>
+    android:layout_below="@+id/orderNumTv"/>
 <TextView
     android:id="@+id/orderDeliveryTV"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:textSize="18dip"
-    android:text="Status"
     android:layout_below="@+id/orderStatusTV"
     android:textColor="@android:color/black"
-    android:paddingTop="10dp"/>
+    android:paddingTop="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"/>
 <LinearLayout
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/buttonLayout"
     android:layout_below="@+id/orderDeliveryTV"
-    android:paddingTop="10dip">
+    android:paddingTop="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
     <Button
-        android:layout_width="100dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="5"
         android:text="Track shipment"
@@ -57,11 +63,17 @@ android:paddingRight="10dp">
         android:layout_below="@id/orderDeliveryTV"/>
     <Button
         android:layout_weight="5"
-        android:layout_width="50dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="View receipt"
         android:id="@+id/orderReceiptBtn" />
     </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/buttonLayout"
+        android:background="@color/background_light_gray" />
 </RelativeLayout>
 
 

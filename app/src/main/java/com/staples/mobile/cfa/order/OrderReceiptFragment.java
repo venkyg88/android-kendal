@@ -1,37 +1,30 @@
-package com.staples.mobile.cfa.profile;
+package com.staples.mobile.cfa.order;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.profile.CreditCard;
 import com.staples.mobile.cfa.widget.ActionBar;
-import com.staples.mobile.cfa.widget.PriceSticker;
-import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
-import com.staples.mobile.common.access.easyopen.model.member.OrderStatus;
 import com.staples.mobile.common.access.easyopen.model.member.Shipment;
 import com.staples.mobile.common.access.easyopen.model.member.ShipmentSKU;
-
-import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.TimeoutException;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -40,18 +33,18 @@ import retrofit.client.Response;
 /**
  * Created by Avinash Dodda.
  */
-public class OrderDetailsFragment extends Fragment {
+public class OrderReceiptFragment extends Fragment {
     private static final String TAG = "OrderDetailsFragment";
     MainActivity activity;
+    EasyOpenApi easyOpenApi;
     Shipment shipment;
+
     TextView orderNumber;
     TextView orderTotal;
     TextView orderDate;
     TextView orderQty;
     TextView deliveryDate;
-    ImageView cardImage;
     TextView cardInfo;
-    EasyOpenApi easyOpenApi;
     TextView orderName;
     TextView billingAddress;
     TextView orderSubTotal;
@@ -59,11 +52,14 @@ public class OrderDetailsFragment extends Fragment {
     TextView orderShipping;
     TextView orderTax;
     TextView orderGrandTotal;
+    ImageView cardImage;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         activity = (MainActivity) getActivity();
+        activity.showProgressIndicator();
         View view = inflater.inflate(R.layout.order_detail_fragment, container, false);
+
         orderNumber = (TextView)view.findViewById(R.id.orderNumber);
         orderDate = (TextView)view.findViewById(R.id.orderDate);
         orderTotal = (TextView)view.findViewById(R.id.orderTotal);
@@ -79,8 +75,7 @@ public class OrderDetailsFragment extends Fragment {
         orderTax = (TextView)view.findViewById(R.id.orderTaxTV);
         orderGrandTotal = (TextView)view.findViewById(R.id.orderGrandTotalTV);
 
-        final LinearLayout shipmentItem = (LinearLayout)view.findViewById(R.id.shipment_item_list);
-
+        final LinearLayout shipmentItem = (LinearLayout)view.findViewById(R.id.sku_item);
 
         Bundle args = getArguments();
         if(args != null) {
@@ -99,7 +94,6 @@ public class OrderDetailsFragment extends Fragment {
                     final ImageView skuImage = (ImageView)v.findViewById(R.id.skuImage);
                     shipmentNum.setText("Shipment " + i);
 
-
                     easyOpenApi = Access.getInstance().getEasyOpenApi(false);
                     easyOpenApi.getSkuDetails(sku.getSkuNumber(), null, 50, new Callback<SkuDetails>() {
                         @Override
@@ -117,29 +111,30 @@ public class OrderDetailsFragment extends Fragment {
                         }
                     });
 
-
                     shipmentItem.addView(v);
-
 
                     itemsOrdered += Float.parseFloat(sku.getQtyOrdered());
                     total += Float.parseFloat(sku.getLineTotal());
                     i = i+1;
                 }
-                orderNumber.setText(shipment.getOrderNumber());
-                orderTotal.setText("$"+shipment.getGrandTotal());
+                orderNumber.setText(shipment.getOrderStatus().getOrderNumber());
+                orderTotal.setText("$"+shipment.getOrderStatus().getGrandTotal());
                 orderQty.setText("("+ Integer.toString((int) itemsOrdered)+" Items)");
                 deliveryDate.setText(dateFormatter(shipment.getScheduledDeliveryDate()));
-                orderDate.setText(dateFormatter(shipment.getOrderDate()));
-                cardImage.setImageResource(CreditCard.Type.matchOnApiName(shipment.getCcType()).getImageResource());
-                cardInfo.setText("Card ending in " + shipment.getCcNumber());
-                orderName.setText(shipment.getShiptoFirstName() + " " + shipment.getShiptoLastName());
-                billingAddress.setText(shipment.getShiptoAddress1() + ((shipment.getShiptoAddress2()!=null) ? " " +
-                        shipment.getShiptoAddress2() + " " : " ") + shipment.getShiptoCity() + ", " + shipment.getShiptoState() + " "+ shipment.getShiptoZip());
-                orderSubTotal.setText(shipment.getShipmentSkuSubtotal());
-                orderCoupons.setText(shipment.getCouponTotal());
-                orderShipping.setText(shipment.getShippingAndHandlingTotal());
-                orderTax.setText(shipment.getSalesTaxTotal());
-                orderGrandTotal.setText(shipment.getGrandTotal());
+                orderDate.setText(dateFormatter(shipment.getOrderStatus().getOrderDate()));
+                cardImage.setImageResource(CreditCard.Type.matchOnApiName(shipment.getOrderStatus().getPayment().get(0)
+                        .getPaymentMethodCode()).getImageResource());
+                cardInfo.setText("Card ending in " + shipment.getOrderStatus().getPayment().get(0).getCcLast4Digits());
+                orderName.setText(shipment.getOrderStatus().getShiptoFirstName() + " " + shipment.getOrderStatus().getShiptoLastName());
+                billingAddress.setText(shipment.getOrderStatus().getShiptoAddress1() + ((shipment.getOrderStatus().getShiptoAddress2()!=null) ? " " +
+                        shipment.getOrderStatus().getShiptoAddress2() + " " : " ") + shipment.getOrderStatus().getShiptoCity() + ", " +
+                        shipment.getOrderStatus().getShiptoState() + " "+ shipment.getOrderStatus().getShiptoZip());
+                orderSubTotal.setText(shipment.getOrderStatus().getShipmentSkuSubtotal());
+                orderCoupons.setText(shipment.getOrderStatus().getCouponTotal());
+                orderShipping.setText(shipment.getOrderStatus().getShippingAndHandlingTotal());
+                orderTax.setText(shipment.getOrderStatus().getSalesTaxTotal());
+                orderGrandTotal.setText(shipment.getOrderStatus().getGrandTotal());
+                activity.hideProgressIndicator();
             }
         }
         return view;

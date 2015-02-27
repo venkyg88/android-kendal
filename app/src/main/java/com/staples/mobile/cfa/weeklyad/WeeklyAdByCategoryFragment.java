@@ -26,6 +26,10 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+/**
+ * Created by Avinash Dodda.
+ */
+
 public class WeeklyAdByCategoryFragment extends Fragment {
 
     String storeId = "2278338"; // TODO This needs to be implemented
@@ -47,7 +51,8 @@ public class WeeklyAdByCategoryFragment extends Fragment {
         ImageView weeklyAdImage = (ImageView) view.findViewById(R.id.weeklyad_image);
 
         Picasso.with(activity)
-                .load(R.drawable.weekly_ad)
+                .load(R.drawable.weekly_ad_image)
+                .fit()
                 .into(weeklyAdImage);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.weekly_ad_categories_list);
@@ -68,11 +73,7 @@ public class WeeklyAdByCategoryFragment extends Fragment {
             public void success(WeeklyAdCategories weeklyAdCategories, Response response) {
                 activity.hideProgressIndicator();
                 weeklyAdItems = weeklyAdCategories.getContent().getCollection().getData();
-                if (weeklyAdItems == null) {
-                    //TODO: Display error
-                } else {
-                    adapter.fill(weeklyAdItems);
-                }
+                adapter.fill(weeklyAdItems);
             }
 
             @Override

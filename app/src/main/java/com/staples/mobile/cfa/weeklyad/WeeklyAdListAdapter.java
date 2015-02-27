@@ -19,27 +19,31 @@ import com.staples.mobile.common.access.easyopen.model.weeklyad.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by Avinash Dodda.
+ */
+
 public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapter.ViewHolder>{
 
     private ArrayList<Data> array;
     private Activity activity;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView dealTitleTV;
-        public TextView dealsCountTV;
-        public TextView inStoreDesc;
+        public TextView weeklyAdListDealTV;
+        public TextView weeklyAdDealPriceInfoTV;
+        public TextView weeklyAdDealAvailabilityTV;
         public TextView priceExtension;
-        ImageView dealIV;
+        ImageView weeklyAdListIV;
         ImageView weeklyAdAction;
 
         public ViewHolder(View v) {
             super(v);
-            dealTitleTV = (TextView)v.findViewById(R.id.weekly_ad_list_title_text);
-            dealsCountTV = (TextView)v.findViewById(R.id.weekly_ad_list_deal_text);
-            dealIV = (ImageView)v.findViewById(R.id.weekly_ad_list_image);
-            inStoreDesc = (TextView)v.findViewById(R.id.inStoreTV);
+            weeklyAdListDealTV = (TextView)v.findViewById(R.id.weekly_ad_list_title_text);
+            weeklyAdDealPriceInfoTV = (TextView)v.findViewById(R.id.weekly_ad_list_price);
+            weeklyAdDealAvailabilityTV = (TextView)v.findViewById(R.id.inStoreTV);
             priceExtension = (TextView)v.findViewById(R.id.weeklyad_price_extension);
             weeklyAdAction = (ImageView)v.findViewById(R.id.weeklyad_sku_action);
+            weeklyAdListIV = (ImageView)v.findViewById(R.id.weekly_ad_list_image);
         }
     }
 
@@ -63,8 +67,8 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
         final Data data = array.get(position);
 
         if(data.getFineprint().contains("In store only") || data.getRetailerproductcode() == "") {
-          holder.inStoreDesc.setVisibility(View.VISIBLE);
-          holder.inStoreDesc.setText("Available in store only");
+          holder.weeklyAdDealAvailabilityTV.setVisibility(View.VISIBLE);
+          holder.weeklyAdDealAvailabilityTV.setText("Available in store only");
         }
         else {
             holder.weeklyAdAction.setVisibility(View.VISIBLE);
@@ -98,8 +102,8 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
             });
         }
 
-        holder.dealTitleTV.setText(data.getTitle());
-        holder.dealsCountTV.setText(data.getPrice());
+        holder.weeklyAdListDealTV.setText(data.getTitle());
+        holder.weeklyAdDealPriceInfoTV.setText(data.getPrice());
 
         if(data.getPrice().contains("$")) {
             holder.priceExtension.setVisibility(View.VISIBLE);
@@ -108,7 +112,7 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
 
         Picasso.with(activity)
                 .load(WeeklyAdImageUrlHelper.getUrl(60,100, data.getImage()))
-                .into(holder.dealIV);
+                .into(holder.weeklyAdListIV);
     }
 
     @Override

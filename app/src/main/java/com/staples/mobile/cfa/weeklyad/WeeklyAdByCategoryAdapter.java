@@ -17,22 +17,26 @@ import com.staples.mobile.common.access.easyopen.model.weeklyadbycategory.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by Avinash Dodda.
+ */
+
 public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCategoryAdapter.ViewHolder>{
     private ArrayList<Data> array;
     private Activity activity;
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        public TextView dealTitleTV;
-        public TextView dealsCountTV;
-        ImageView dealIV;
+        public TextView weeklyAdDealTileTV;
+        public TextView weeklyAdDealCountTV;
+        ImageView weeklyAdCategoryIV;
         private ClickListener clickListener;
 
         public ViewHolder(View v) {
             super(v);
             v.setOnClickListener(this);
-            dealTitleTV = (TextView)v.findViewById(R.id.weekly_ad_category_title_text);
-            dealsCountTV = (TextView)v.findViewById(R.id.weekly_ad_category_deals_count_text);
-            dealIV = (ImageView)v.findViewById(R.id.weekly_ad_category_image);
+            weeklyAdDealTileTV = (TextView)v.findViewById(R.id.weekly_ad_category_title_text);
+            weeklyAdDealCountTV = (TextView)v.findViewById(R.id.weekly_ad_category_deals_count_text);
+            weeklyAdCategoryIV = (ImageView)v.findViewById(R.id.weekly_ad_category_image);
         }
 
         public interface ClickListener {
@@ -86,11 +90,12 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
     public void onBindViewHolder(ViewHolder holder, int position) {
         Data data = array.get(position);
 
-        holder.dealTitleTV.setText(data.getName());
-        holder.dealsCountTV.setText(data.getCount() + " deals");
+        holder.weeklyAdDealTileTV.setText(data.getName());
+        holder.weeklyAdDealCountTV.setText(data.getCount() + " deals");
         Picasso.with(activity)
                 .load(WeeklyAdImageUrlHelper.getUrl(60,100, data.getImagelocation()))
-                .into(holder.dealIV);
+                .fit()
+                .into(holder.weeklyAdCategoryIV);
     }
 
     @Override

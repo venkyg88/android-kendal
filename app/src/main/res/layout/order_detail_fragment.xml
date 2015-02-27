@@ -33,7 +33,7 @@
         </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/shipment_item_list"
+        android:id="@+id/sku_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="16dp"

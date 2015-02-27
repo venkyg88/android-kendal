@@ -12,7 +12,7 @@ import com.staples.mobile.cfa.browse.BrowseFragment;
 import com.staples.mobile.cfa.feed.PersonalFeedFragment;
 import com.staples.mobile.cfa.home.ConfiguratorFragment;
 import com.staples.mobile.cfa.login.LoginFragment;
-import com.staples.mobile.cfa.profile.OrderFragment;
+import com.staples.mobile.cfa.order.OrderFragment;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.rewards.RewardsFragment;
 import com.staples.mobile.cfa.store.StoreFragment;

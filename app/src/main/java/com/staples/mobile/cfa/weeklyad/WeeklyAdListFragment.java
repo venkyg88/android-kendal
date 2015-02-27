@@ -16,6 +16,7 @@ import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.weeklyad.Data;
 import com.staples.mobile.common.access.easyopen.model.weeklyad.WeeklyAd;
 
@@ -24,6 +25,10 @@ import java.util.List;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+
+/**
+ * Created by Avinash Dodda.
+ */
 
 public class WeeklyAdListFragment extends Fragment{
 
@@ -66,7 +71,6 @@ public class WeeklyAdListFragment extends Fragment{
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.weekly_ad_list_items);
         mRecyclerView.setHasFixedSize(true);
-
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         mRecyclerView.addItemDecoration(new HorizontalDivider(getActivity()));
         getWeeklyAdListing();
@@ -89,25 +93,14 @@ public class WeeklyAdListFragment extends Fragment{
             public void success(WeeklyAd weeklyAd, Response response) {
                 activity.hideProgressIndicator();
                 weeklyAdItems = weeklyAd.getContent().getCollection().getData();
-                if (weeklyAdItems == null) {
-                    //TODO: Display error
-                } else {
-                    adapter.fill(weeklyAdItems);
-                }
+                adapter.fill(weeklyAdItems);
             }
 
             @Override
             public void failure(RetrofitError error) {
                 activity.hideProgressIndicator();
-                Toast.makeText(activity, "Error getting data", Toast.LENGTH_SHORT).show();
+                ((MainActivity)activity).showErrorDialog(ApiError.getErrorMessage(error));
             }
         });
     }
-
-//    @Override
-//    public void onClick(View v) {
-//        Toast toast = Toast.makeText(activity.getApplicationContext(), "Still getting data", Toast.LENGTH_SHORT);
-//        toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
-//        toast.show();
-//    }
 }
