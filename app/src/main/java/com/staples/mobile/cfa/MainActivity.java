@@ -36,6 +36,7 @@ import com.staples.mobile.cfa.home.ConfiguratorFragment;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.notify.IntentReceiver;
 import com.staples.mobile.cfa.profile.AddressFragment;
 import com.staples.mobile.cfa.profile.AddressListFragment;
 import com.staples.mobile.cfa.profile.CreditCardFragment;
@@ -151,8 +152,8 @@ public class MainActivity extends Activity
         AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(this);
         UAirship.takeOff(getApplication(), options);
         PushManager manager = UAirship.shared().getPushManager();
+        manager.setNotificationFactory(new IntentReceiver.CustomNotificationFactory(this));
         manager.setUserNotificationsEnabled(true);
-        manager.getChannelId();
     }
 
     @Override
