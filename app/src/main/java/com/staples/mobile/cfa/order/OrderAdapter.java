@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.order;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -66,11 +67,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Shipment shipment = array.get(position);
+        Resources r = activity.getResources();
 
         holder.orderNumTV.setText("Order# "+ shipment.getOrderStatus().getOrderNumber());
-        double itemsOrdered = 0.0;
+        int itemsOrdered = 0;
         for(ShipmentSKU sku : shipment.getShipmentSku()) {
-            itemsOrdered += Double.parseDouble(sku.getQtyOrdered());
+            itemsOrdered += (int)Double.parseDouble(sku.getQtyOrdered()); // using parseDouble since quantity string is "1.0"
         }
 
         try{
@@ -83,7 +85,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             e.printStackTrace();
         }
         holder.orderStatusTV.setText(shipment.getShipmentStatusDescription());
-        holder.numItemsTV.setText(""+ (int)itemsOrdered + " Items");
+        holder.numItemsTV.setText(r.getQuantityString(R.plurals.cart_qty, itemsOrdered, itemsOrdered));
 
         holder.trackShipmentBtn.setOnClickListener(this);
         holder.viewRecieptBtn.setOnClickListener(new View.OnClickListener() {
