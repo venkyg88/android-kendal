@@ -24,6 +24,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.apptentive.android.sdk.Apptentive;
+
 import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartApiManager;
@@ -88,7 +90,6 @@ public class MainActivity extends Activity
     private long timeOfLastSessionCheck;
     private TextView notificationBanner;
     Animation notificationBannerAnimation;
-
 
     private LoginHelper loginHelper;
     boolean initialLoginComplete;
@@ -194,6 +195,7 @@ public class MainActivity extends Activity
     @Override
     protected void onResume() {
         super.onResume();
+        Apptentive.onStart(this);
         ensureActiveSession();
         //@TODO So what happens ensure errors out! REach next line?
         //Analytics
@@ -213,6 +215,12 @@ public class MainActivity extends Activity
         }
         //Analytics
         Tracker.getInstance().enableTracking(false); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Apptentive.onStop(this);
     }
 
     @Override
@@ -373,7 +381,6 @@ public class MainActivity extends Activity
         // profile info to be loaded before it can be displayed.
     }
 
-
     public void onGetConfiguratorResult(Configurator configurator, boolean success, RetrofitError retrofitError) {
         if (LOGGING) {
             Log.v(TAG, "MainActivity:AppConfigurator.onGetConfiguratorResult():"
@@ -407,7 +414,6 @@ public class MainActivity extends Activity
                     showMainScreen();
                 }
             });
-
 
             // initialize analytics
             Tracker.getInstance().initialize(Tracker.AppType.CFA, this.getApplicationContext(),
