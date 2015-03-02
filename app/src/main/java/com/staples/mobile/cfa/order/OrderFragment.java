@@ -36,12 +36,14 @@ public class OrderFragment extends Fragment {
     private static final String TAG = "OrderFragment";
     MainActivity activity;
     EasyOpenApi easyOpenApi;
-    String orderNumber;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     OrderAdapter adapter;
     TextView orderErrorTV;
     ArrayList<Shipment> modifiedShipment;
+    Callback<OrderStatusDetail> orderStatusDetailCallback;
+    int numOrdersToRetrieve;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -55,9 +57,9 @@ public class OrderFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        fill();
         adapter = new OrderAdapter(getActivity());
         mRecyclerView.setAdapter(adapter);
+        fill();
 
         return view;
     }
@@ -70,30 +72,13 @@ public class OrderFragment extends Fragment {
 
     public void fill(){
         activity.showProgressIndicator();
-
         easyOpenApi.getMemberOrderDetails(new Callback<OrderDetail>() {
             @Override
             public void success(OrderDetail orderDetail, Response response) {
-                for(OrderHistory order : orderDetail.getOrderHistory()) {
-                    orderNumber = order.getOrderNumber();
-                    easyOpenApi.getMemberOrderStatus(orderNumber,new Callback<OrderStatusDetail>() {
-                        @Override
-                        public void success(OrderStatusDetail orderStatusDetail, Response response) {
-                            for(Shipment shipment: orderStatusDetail.getOrderStatus().get(0).getShipment()){
-                                shipment.setOrderStatus(orderStatusDetail.getOrderStatus().get(0));
-                                modifiedShipment.add(shipment);
-                            }
-                            adapter.fill(modifiedShipment);
-                            activity.hideProgressIndicator();
-                        }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                            activity.hideProgressIndicator();
-                            activity.showErrorDialog(ApiError.getErrorMessage(error));
-                            Log.i(TAG, "Fail Response Order Status " + error.getUrl() + " " + error.getMessage());
-                        }
-                    });
+                orderStatusDetailCallback = new OrderStatusDetailCallback(); // only need to create one instance of the item detail callback
+                numOrdersToRetrieve = orderDetail.getOrderHistory().size();
+                for (OrderHistory order : orderDetail.getOrderHistory()) {
+                    easyOpenApi.getMemberOrderStatus(order.getOrderNumber(), orderStatusDetailCallback);
                 }
             }
 
@@ -108,4 +93,31 @@ public class OrderFragment extends Fragment {
             }
         });
     }
+
+    private class OrderStatusDetailCallback implements Callback<OrderStatusDetail> {
+        @Override
+        public void success(OrderStatusDetail orderStatusDetail, Response response) {
+            numOrdersToRetrieve--;
+            for(Shipment shipment: orderStatusDetail.getOrderStatus().get(0).getShipment()){
+                shipment.setOrderStatus(orderStatusDetail.getOrderStatus().get(0));
+                modifiedShipment.add(shipment);
+            }
+            // DLS: need to wait until all items retrieved (otherwise the same items get added multiple times)
+            if (numOrdersToRetrieve == 0) {
+                adapter.fill(modifiedShipment);
+                activity.hideProgressIndicator();
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            numOrdersToRetrieve--;
+            if (numOrdersToRetrieve == 0 && modifiedShipment.size() > 0) {
+                adapter.fill(modifiedShipment);
+            }
+            activity.hideProgressIndicator();
+            activity.showErrorDialog(ApiError.getErrorMessage(error));
+            Log.i(TAG, "Fail Response Order Status Detail: " + error.getUrl() + " " + error.getMessage());
+        }
+    };
 }
