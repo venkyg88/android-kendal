@@ -56,6 +56,7 @@ import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.AppConfigurator;
+import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -93,6 +94,7 @@ public class MainActivity extends Activity
 
     private LoginHelper loginHelper;
     boolean initialLoginComplete;
+    boolean activityInForeground;
 
     private AppConfigurator appConfigurator;
 
@@ -136,6 +138,8 @@ public class MainActivity extends Activity
             Log.v(TAG, "MainActivity:onCreate():"
                     + " bundle[" + bundle + "]");
         }
+        activityInForeground = true; // need to set here in addition to in onResume since configurator callback can occur before onResume
+
         // Note: error handling for no network availability will happen in ensureActiveSession() called from onResume()
         if (isNetworkAvailable()) {
 
@@ -193,9 +197,14 @@ public class MainActivity extends Activity
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        Apptentive.onStart(this);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        Apptentive.onStart(this);
         ensureActiveSession();
         //@TODO So what happens ensure errors out! REach next line?
         //Analytics
@@ -205,6 +214,7 @@ public class MainActivity extends Activity
     @Override
     protected void onPause() {
         super.onPause();
+        activityInForeground = false;
         LocationFinder locationFinder = LocationFinder.getInstance(this);
         if (locationFinder != null) {
             locationFinder.saveRecentLocation();
@@ -230,6 +240,7 @@ public class MainActivity extends Activity
         if (AppConfigurator.getInstance().getConfigurator() != null) {
             // unregister loginCompleteListener
             new LoginHelper(this).unregisterLoginCompleteListener(this);
+            StaplesAppContext.getInstance().resetConfigurator(); // need to reset so a fresh network attempt is made, to enable correct handling of redirect error
         }
     }
 
@@ -410,6 +421,16 @@ public class MainActivity extends Activity
             loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
                 @Override public void onProfileRefresh(Member member, String errMsg) {
                     initialLoginComplete = true;
+
+                    // if activity no longer showing at this point (e.g. user hit Back button during loading), then
+                    // we need to kill the activity so that loading can be re-initiated next time.
+                    // Otherwise, the app can get into a state where the activity is loaded, but no
+                    // fragment is loaded (loading fragment when activity is paused doesn't do anything.)
+                    if (!activityInForeground) {
+                        MainActivity.this.finish();
+                        return;
+                    }
+
                     // open home page after profile loaded (if available) since home page now needs it
                     showMainScreen();
                 }
