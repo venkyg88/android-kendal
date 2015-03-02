@@ -29,6 +29,7 @@ import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.store.StoreFragment;
+import com.staples.mobile.cfa.store.TimeSpan;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.common.access.Access;
@@ -37,19 +38,17 @@ import com.staples.mobile.common.access.channel.model.store.StoreAddress;
 import com.staples.mobile.common.access.channel.model.store.StoreData;
 import com.staples.mobile.common.access.channel.model.store.StoreHours;
 import com.staples.mobile.common.access.channel.model.store.StoreQuery;
+import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Area;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.configurator.model.Item;
 import com.staples.mobile.common.access.configurator.model.Screen;
-import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.device.DeviceInfo;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import retrofit.Callback;
@@ -57,7 +56,6 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class ConfiguratorFragment extends Fragment {
-
     private static final String TAG = "ConfiguratorFragment";
 
     private static final boolean LOGGING = false;
@@ -1049,59 +1047,18 @@ public class ConfiguratorFragment extends Fragment {
             String storeCity = storeAddress.getCity();
             String storeState = storeAddress.getState();
             storeNameTextView.setText(storeCity + "," + storeState);
-            Log.d(TAG, " - store location:" + storeCity + "," + storeState);
 
             // Get store office hours
             List<StoreHours> storeHourList = storeObj.getStoreHours();
-            ArrayList<Integer> storeStartHourList = new ArrayList<Integer>();
-            ArrayList<Integer> storeEndHourList = new ArrayList<Integer>();
+            ArrayList<TimeSpan> spans = new ArrayList<TimeSpan>();
             for(StoreHours hours : storeHourList) {
-                String[] timeChunk = hours.getHours().split("-");
-                int storeStartTime = parseTimeSpan(timeChunk[0]);
-                int storeEndTime = parseTimeSpan(timeChunk[1]);
-                storeStartHourList.add(storeStartTime);
-                storeEndHourList.add(storeEndTime);
-                //System.out.println(TAG + " - day:" + hours.getDayName() + ", hour:" + hours.getHours()
-                //        + ", storeStartTime: " + storeStartTime + ", storeEndTime: " + storeEndTime);
-                //TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
+                TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
+                if (span!=null) spans.add(span);
             }
-
-            Calendar cal = Calendar.getInstance();
-            int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-            cal.getTime();
-            SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
-            int currentTime = Integer.parseInt(sdf.format(cal.getTime()));
-            Log.d(TAG, " - Current day of week:" + dayOfWeek);
-            Log.d(TAG, " - Current time:" + currentTime);
-
-            switch (dayOfWeek) {
-                case 1:
-                    if(currentTime >= storeStartHourList.get(0) && currentTime <= storeEndHourList.get(0)){
-                        storeStatusTextView.setText(R.string.store_open);
-                    }
-                    else{
-                        storeStatusTextView.setText(R.string.store_close);
-                    }
-                    break;
-
-                case 2 : case 3 : case 4 : case 5 : case 6:
-                    if(currentTime >= storeStartHourList.get(1) && currentTime <= storeEndHourList.get(1)){
-                        storeStatusTextView.setText(R.string.store_open);
-                    }
-                    else{
-                        storeStatusTextView.setText(R.string.store_close);
-                    }
-                    break;
-
-                case 7:
-                    if(currentTime >= storeStartHourList.get(6) && currentTime <= storeEndHourList.get(6)){
-                        storeStatusTextView.setText(R.string.store_open);
-                    }
-                    else{
-                        storeStatusTextView.setText(R.string.store_close);
-                    }
-                    break;
-            }
+            String status = TimeSpan.formatStatus(getActivity(), spans, System.currentTimeMillis());
+            int i = status.indexOf(' ');
+            if (i>0) status = status.substring(0, i);
+            storeStatusTextView.setText(status);
 
             if (storeCity == null) {
                 storeWrapper.setState(DataWrapper.State.EMPTY);
