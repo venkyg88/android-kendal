@@ -231,11 +231,4 @@
         <item>Select product options</item>
     </string-array>
 
-	<!-- Apptentive Event Names -->
-	<string name="cart_shown_event">cart_shown</string>
-	<string name="order_confirmation_shown_event">order_confirmation_shown</string>
-	<string name="product_detail_shown_event">product_detail_shown</string>
-	<string name="search_shown_event">search_shown</string>
-	<string name="test_event">test_event</string>
-
 </resources>
