@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.profile;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -64,6 +65,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         activity = (MainActivity)getActivity();
+        Resources r = getResources();
 
         View view = inflater.inflate(R.layout.add_creditcard_fragment, container, false);
         cardNumberET = (EditText) view.findViewById(R.id.cardNumber);
@@ -75,7 +77,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         if(args != null) {
              creditCard = (CCDetails)args.getSerializable("creditCardData");
             if(creditCard != null) {
-                cardNumberET.setHint("Card ending in: " + creditCard.getCardNumber());
+                cardNumberET.setHint(r.getString(R.string.card_ending_in) + " " + creditCard.getCardNumber());
                 cardType = creditCard.getCardType();
                 cardImage.setImageResource(CreditCard.Type.matchOnApiName(cardType).getImageResource());
                 expDateET.setVisibility(View.VISIBLE);

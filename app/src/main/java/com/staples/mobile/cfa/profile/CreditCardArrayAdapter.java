@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.profile;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -72,7 +73,9 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
         } else {
             cardNumber = creditCard.getCardNumber();
         }
-        String tmpCard ="Card ending in " + cardNumber;
+
+        Resources r = context.getResources();
+        String tmpCard = r.getString(R.string.card_ending_in) + " " + cardNumber;
         String expDate = "Exp. " + creditCard.getExpirationMonth() + "/" + creditCard.getExpirationYear().substring(2,4);
         TextView ccText = (TextView) rowView.findViewById(R.id.rowItemText);
         TextView expText = (TextView) rowView.findViewById(R.id.secondItemText);
