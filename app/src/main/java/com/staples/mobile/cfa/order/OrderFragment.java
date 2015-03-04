@@ -13,14 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
-import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
+import com.staples.mobile.cfa.widget.LinearLayoutWithOverlay;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -57,7 +56,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     EasyOpenApi easyOpenApi;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    LinearLayoutWithProgressOverlay overlayableLayout;
+    LinearLayoutWithOverlay overlayableLayout;
     OrderAdapter adapter;
     TextView orderErrorTV;
     LinearLayout trackingLayout;
@@ -76,8 +75,8 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
 
         // setup overlay
-        overlayableLayout = (LinearLayoutWithProgressOverlay)view.findViewById(R.id.overlayable_layout);
-        overlayableLayout.setProgressOverlay(view.findViewById(R.id.overlay));
+        overlayableLayout = (LinearLayoutWithOverlay)view.findViewById(R.id.overlayable_layout);
+        overlayableLayout.setOverlayView(view.findViewById(R.id.overlay));
         overlayableLayout.setOnSwallowedClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,7 +90,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         bottomSheetSlideDownAnimation = AnimationUtils.loadAnimation(activity, R.anim.bottomsheet_slide_down);
         bottomSheetSlideUpAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override public void onAnimationStart(Animation animation) {
-                overlayableLayout.showProgressIndicator(true);
+                overlayableLayout.showOverlay(true);
                 trackingLayout.setVisibility(View.VISIBLE);
             }
             @Override public void onAnimationEnd(Animation animation) { }
@@ -101,7 +100,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
             @Override public void onAnimationStart(Animation animation) { }
             @Override public void onAnimationEnd(Animation animation) {
                 trackingLayout.setVisibility(View.INVISIBLE);
-                overlayableLayout.showProgressIndicator(false);
+                overlayableLayout.showOverlay(false);
             }
             @Override public void onAnimationRepeat(Animation animation) { }
         });
@@ -197,7 +196,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                         });
 
                         // make visible with animation
-                        overlayableLayout.showProgressIndicator(true); // do this before animation to avoid flash between progress overlay and this one
+                        overlayableLayout.showOverlay(true); // do this before animation to avoid flash between progress overlay and this one
                         trackingLayout.startAnimation(bottomSheetSlideUpAnimation);
                     }
 
