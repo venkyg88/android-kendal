@@ -63,6 +63,7 @@ public class OrderFragment extends Fragment {
         View view = inflater.inflate(R.layout.order_fragment, container, false);
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
 
+        orderErrorTV = (TextView)view.findViewById(R.id.orderErrorTV);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.orders_list);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
@@ -95,9 +96,7 @@ public class OrderFragment extends Fragment {
 
             @Override
             public void failure(RetrofitError error) {
-                orderErrorTV = (TextView)getView().findViewById(R.id.orderErrorTV);
                 orderErrorTV.setVisibility(View.VISIBLE);
-                orderErrorTV.setText("No Orders Found");
                 activity.hideProgressIndicator();
                 activity.showErrorDialog(ApiError.getErrorMessage(error));
                 Log.i(TAG, "Fail Response Order History " + error.getUrl() + " " + error.getMessage());
@@ -163,12 +162,14 @@ public class OrderFragment extends Fragment {
         private void finishOrderDetail() {
 
             // DLS: need to wait until all items retrieved (otherwise the same items get added multiple times)
-            if (numOrdersToRetrieve == 0 && shipmentListItems.size() > 0) {
-
-                // sort order shipments by descending order date and order number, then by shipment info
-                sortShipments(shipmentListItems);
-
-                adapter.fill(shipmentListItems);
+            if (numOrdersToRetrieve == 0) {
+                if (shipmentListItems.size() > 0) {
+                    // sort order shipments by descending order date and order number, then by shipment info
+                    sortShipments(shipmentListItems);
+                    adapter.fill(shipmentListItems);
+                } else {
+                    orderErrorTV.setVisibility(View.VISIBLE);
+                }
                 activity.hideProgressIndicator();
             }
         }
