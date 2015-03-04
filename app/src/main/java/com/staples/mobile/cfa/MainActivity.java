@@ -203,16 +203,9 @@ public class MainActivity extends Activity
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        Apptentive.onStart(this);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         activityInForeground = true;
-        Apptentive.onStart(this);
         ensureActiveSession();
         //@TODO So what happens ensure errors out! REach next line?
         //Analytics
