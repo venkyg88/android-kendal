@@ -13,23 +13,19 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.access.easyopen.model.member.Shipment;
-import com.staples.mobile.common.access.easyopen.model.member.ShipmentSKU;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by Avinash Dodda.
  */
-public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> implements View.OnClickListener{
+public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
 
     private ArrayList<OrderShipmentListItem> array;
     private Activity activity;
+    View.OnClickListener onClickListener;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView orderNumTV;
@@ -50,8 +46,9 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         }
     }
 
-    public OrderAdapter(Activity activity) {
+    public OrderAdapter(Activity activity, View.OnClickListener onClickListener) {
         this.activity = activity;
+        this.onClickListener = onClickListener;
         this.array = new ArrayList<OrderShipmentListItem>();
     }
 
@@ -65,7 +62,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final OrderShipmentListItem shipment = array.get(position);
+        OrderShipmentListItem shipment = array.get(position);
         Resources r = activity.getResources();
 
         String orderNumberText = "Order# "+ shipment.getOrderStatus().getOrderNumber();
@@ -75,22 +72,16 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         holder.orderNumTV.setText(orderNumberText);
 
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-        holder.expectedDelivery.setText("Estimated Delivery - "+ formatter.format(shipment.getScheduledDeliveryDate()));
+        holder.expectedDelivery.setText(r.getString(R.string.estimated_delivery) + " - "+ formatter.format(shipment.getScheduledDeliveryDate()));
 
         holder.orderStatusTV.setText(shipment.getShipmentStatusDescription());
         holder.numItemsTV.setText(r.getQuantityString(R.plurals.cart_qty, shipment.getQuantity(), shipment.getQuantity()));
 
-        holder.trackShipmentBtn.setOnClickListener(this);
-        holder.viewRecieptBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment orderDetailsFragment = Fragment.instantiate(activity, OrderReceiptFragment.class.getName());
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("orderData", shipment);
-                orderDetailsFragment.setArguments(bundle);
-                ((MainActivity) activity).navigateToFragment(orderDetailsFragment);
-            }
-        });
+        holder.trackShipmentBtn.setTag(position);
+        holder.viewRecieptBtn.setTag(position);
+
+        holder.trackShipmentBtn.setOnClickListener(onClickListener);
+        holder.viewRecieptBtn.setOnClickListener(onClickListener);
     }
 
     @Override
@@ -98,19 +89,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         return array.size();
     }
 
+    public OrderShipmentListItem getItem(int position) {
+        return array.get(position);
+    }
+
     public void fill(List<OrderShipmentListItem> items) {
         array.addAll(items);
         notifyDataSetChanged();
     }
 
-    @Override
-    public void onClick(View view) {
-        switch(view.getId()) {
-            case R.id.trackShipmentBtn:
-                ((MainActivity)activity).showNotificationBanner("In Progress");
-                break;
-            default:
-                break;
-        }
-    }
 }

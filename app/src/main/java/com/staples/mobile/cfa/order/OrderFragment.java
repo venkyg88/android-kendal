@@ -43,7 +43,7 @@ import retrofit.client.Response;
  * Created by Avinash Dodda.
  */
 
-public class OrderFragment extends Fragment {
+public class OrderFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "OrderFragment";
     MainActivity activity;
     EasyOpenApi easyOpenApi;
@@ -69,7 +69,7 @@ public class OrderFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        adapter = new OrderAdapter(getActivity());
+        adapter = new OrderAdapter(getActivity(), this);
         mRecyclerView.setAdapter(adapter);
         fill();
 
@@ -80,6 +80,26 @@ public class OrderFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.ORDER);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()) {
+            case R.id.trackShipmentBtn:
+                activity.showNotificationBanner("In Progress");
+                break;
+            case R.id.orderReceiptBtn:
+                int position = (int)view.getTag();
+                OrderShipmentListItem shipment = adapter.getItem(position);
+                Fragment orderDetailsFragment = Fragment.instantiate(activity, OrderReceiptFragment.class.getName());
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("orderData", shipment);
+                orderDetailsFragment.setArguments(bundle);
+                ((MainActivity) activity).navigateToFragment(orderDetailsFragment);
+                break;
+            default:
+                break;
+        }
     }
 
     public void fill(){

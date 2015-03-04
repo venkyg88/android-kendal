@@ -177,6 +177,7 @@
     <string name="all_fields_required">All fields are required. Please fill and try again</string>
     <string name="card_ending_in">Card ending in</string>
     <string name="no_orders_found">No Orders Found</string>
+    <string name="estimated_delivery">Estimated Delivery</string>
 
     <string name="description">Description</string>
     <string name="specifications">Specifications</string>
