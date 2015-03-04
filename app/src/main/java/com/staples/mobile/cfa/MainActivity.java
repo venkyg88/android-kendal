@@ -206,6 +206,7 @@ public class MainActivity extends Activity
     protected void onResume() {
         super.onResume();
         activityInForeground = true;
+        Apptentive.onStart(this);
         ensureActiveSession();
         //@TODO So what happens ensure errors out! REach next line?
         //Analytics
