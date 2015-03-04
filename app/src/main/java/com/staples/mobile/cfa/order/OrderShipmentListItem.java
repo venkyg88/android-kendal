@@ -14,9 +14,11 @@ import java.util.List;
  * Created by sutdi001 on 3/3/15.
  */
 public class OrderShipmentListItem implements Serializable {
+    private Date actualShipDate;
     private Date scheduledDeliveryDate;
     private Integer shipmentIndex; // index within order when multiple shipments (e.g. 2 for "Shipment 2" of an order, null if a single shipment)
     private String shipmentNumber;
+    private String shipmentStatusCode;
     private String shipmentStatusDescription;
     private int quantity;
     private Date orderDate;
@@ -25,20 +27,31 @@ public class OrderShipmentListItem implements Serializable {
     private OrderStatus orderStatus;
     private List<ShipmentSku> skus;
 
-    public OrderShipmentListItem(Integer shipmentIndex, String shipmentNumber, Date scheduledDeliveryDate,
-                                 String shipmentStatusDescription, int quantity,
-                                 Date orderDate, String orderNumber,
+    public OrderShipmentListItem(Integer shipmentIndex, String shipmentNumber,
+                                 Date actualShipDate, Date scheduledDeliveryDate,
+                                 String shipmentStatusCode, String shipmentStatusDescription,
+                                 int quantity, Date orderDate, String orderNumber,
                                  OrderStatus orderStatus,
                                  List<OrderShipmentListItem.ShipmentSku> skus) {
         this.shipmentIndex = shipmentIndex;
         this.shipmentNumber = shipmentNumber;
+        this.actualShipDate = actualShipDate;
         this.scheduledDeliveryDate = scheduledDeliveryDate;
+        this.shipmentStatusCode = shipmentStatusCode;
         this.shipmentStatusDescription = shipmentStatusDescription;
         this.quantity = quantity;
         this.orderDate = orderDate;
         this.orderNumber = orderNumber;
         this.orderStatus = orderStatus;
         this.skus = skus;
+    }
+
+    public Date getActualShipDate() {
+        return actualShipDate;
+    }
+
+    public void setActualShipDate(Date actualShipDate) {
+        this.actualShipDate = actualShipDate;
     }
 
     public Date getScheduledDeliveryDate() {
@@ -63,6 +76,14 @@ public class OrderShipmentListItem implements Serializable {
 
     public void setShipmentNumber(String shipmentNumber) {
         this.shipmentNumber = shipmentNumber;
+    }
+
+    public String getShipmentStatusCode() {
+        return shipmentStatusCode;
+    }
+
+    public void setShipmentStatusCode(String shipmentStatusCode) {
+        this.shipmentStatusCode = shipmentStatusCode;
     }
 
     public String getShipmentStatusDescription() {

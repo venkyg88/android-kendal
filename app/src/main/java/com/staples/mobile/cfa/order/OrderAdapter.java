@@ -72,7 +72,10 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         holder.orderNumTV.setText(orderNumberText);
 
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-        holder.expectedDelivery.setText(r.getString(R.string.estimated_delivery) + " - "+ formatter.format(shipment.getScheduledDeliveryDate()));
+        boolean delivered = "DLV".equals(shipment.getShipmentStatusCode());
+        String deliveryDate = r.getString(delivered? R.string.delivered_date : R.string.estimated_delivery);
+        deliveryDate += " - " + formatter.format(delivered? shipment.getActualShipDate() : shipment.getScheduledDeliveryDate());
+        holder.expectedDelivery.setText(deliveryDate);
 
         holder.orderStatusTV.setText(shipment.getShipmentStatusDescription());
         holder.numItemsTV.setText(r.getQuantityString(R.plurals.cart_qty, shipment.getQuantity(), shipment.getQuantity()));

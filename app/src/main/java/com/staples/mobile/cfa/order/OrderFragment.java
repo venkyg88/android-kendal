@@ -275,7 +275,9 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                 OrderStatus orderStatus = orderStatusDetail.getOrderStatus().get(0);
                 shipmentListItems.add(new OrderShipmentListItem((numShipments > 1)? i+1 : null,
                         shipment.getShipmentNumber(),
+                        parseDate(shipment.getActualShipDate()),
                         parseDate(shipment.getScheduledDeliveryDate()),
+                        shipment.getShipmentStatusCode(),
                         shipment.getShipmentStatusDescription(),
                         totalItemQtyOfShipment,
                         parseDate(orderStatus.getOrderDate()),
