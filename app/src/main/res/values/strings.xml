@@ -182,6 +182,7 @@
     <string name="estimated_delivery">Estimated Delivery</string>
     <string name="tracking_number">Tracking Number</string>
     <string name="carrier">Carrier</string>
+    <string name="no_detailed_tracking">Sorry, detailed tracking information is not available</string>
 
     <string name="description">Description</string>
     <string name="specifications">Specifications</string>

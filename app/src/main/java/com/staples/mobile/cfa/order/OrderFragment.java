@@ -126,26 +126,31 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                         TextView deliveryScansVw = (TextView)trackingLayout.findViewById(R.id.delivery_scans);
                         View closeButton = trackingLayout.findViewById(R.id.close_button);
 
-                        CartonWithSku cartonWithSku = orderStatusDetail.getOrderStatus().get(0).getShipment().get(0).getCartonWithSku().get(0);
                         String shipmentLabel = "Order# "+ shipment.getOrderNumber();
                         if (shipment.getShipmentIndex() != null) {
                             shipmentLabel = "Shipment " + shipment.getShipmentIndex() + " of " + shipmentLabel;
                         }
                         shipmentLabelVw.setText(shipmentLabel);
+
+                        CartonWithSku cartonWithSku = orderStatusDetail.getOrderStatus().get(0).getShipment().get(0).getCartonWithSku().get(0);
                         carrierVw.setText(r.getString(R.string.carrier) + ": " + cartonWithSku.getCarrierCode());
                         trackingNumberVw.setText(r.getString(R.string.tracking_number) + ": " + cartonWithSku.getTrackingNumber());
-//                                LayoutInflater layoutInflater = LayoutInflater.from(activity);
                         SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy hh:mm aa");
                         StringBuilder scanBuf = new StringBuilder();
-                        for (ScanData scanData : cartonWithSku.getScanData()) {
-                            Date date = parseDate(scanData.getScanDateAndTime());
-                            if (scanBuf.length() > 0) {
-                                scanBuf.append("\n");
+                        if (cartonWithSku.getScanData() != null) {
+                            for (ScanData scanData : cartonWithSku.getScanData()) {
+                                Date date = parseDate(scanData.getScanDateAndTime());
+                                if (scanBuf.length() > 0) {
+                                    scanBuf.append("\n");
+                                }
+                                scanBuf.append(dateFormatter.format(date));
+                                if (!TextUtils.isEmpty(scanData.getScanDescription())) {
+                                    scanBuf.append("  ").append(scanData.getScanDescription());
+                                }
                             }
-                            scanBuf.append(dateFormatter.format(date));
-                            if (!TextUtils.isEmpty(scanData.getScanDescription())) {
-                                scanBuf.append("  ").append(scanData.getScanDescription());
-                            }
+                        }
+                        if (scanBuf.length() == 0) {
+                            scanBuf.append(r.getString(R.string.no_detailed_tracking));
                         }
                         deliveryScansVw.setText(scanBuf.toString());
 

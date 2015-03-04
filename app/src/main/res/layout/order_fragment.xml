@@ -34,7 +34,7 @@
             android:background="@color/background_white"
             >
             <!--label and close button-->
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
@@ -42,27 +42,28 @@
                     android:id="@+id/shipment_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16dp"/>
+                    android:layout_alignParentLeft="true"
+                    android:textSize="18dp"/>
                 <ImageView
                     android:id="@+id/close_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right"
+                    android:layout_alignParentRight="true"
                     android:src="@drawable/ic_close_black_18dp"/>
-            </LinearLayout>
+            </RelativeLayout>
 
             <!--carrier-->
             <TextView
                 android:id="@+id/carrier"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16dp"/>
+                android:textSize="18dp"/>
             <!--tracking number-->
             <TextView
                 android:id="@+id/tracking_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16dp"/>
+                android:textSize="18dp"/>
 
             <!--horizontal rule-->
             <View
@@ -72,7 +73,7 @@
                 android:layout_marginBottom="8dp"
                 android:background="@color/hr_extra_light_gray" />
 
-            <!-- delivery  -->
+            <!-- delivery info -->
             <TextView
                 android:id="@+id/delivery_scans"
                 android:layout_width="wrap_content"
