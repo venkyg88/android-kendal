@@ -203,6 +203,12 @@ public class MainActivity extends Activity
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        Apptentive.onStart(this);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         activityInForeground = true;
