@@ -214,13 +214,27 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
 
     private void fill(){
         activity.showProgressIndicator();
-        easyOpenApi.getMemberOrderHistory("orderDate", "DESC", 1, 10, new Callback<OrderDetail>() {
+        // get orders in descending date order up to some maximum
+        easyOpenApi.getMemberOrderHistory("orderDate", "DESC", 1, 30, new Callback<OrderDetail>() {
             @Override
             public void success(OrderDetail orderDetail, Response response) {
                 orderStatusDetailCallback = new OrderStatusDetailCallback(); // only need to create one instance of the item detail callback
-                numOrdersToRetrieve = orderDetail.getOrderHistory().size();
+                numOrdersToRetrieve = 0;
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR)-1);
+                long oneYearAgo = calendar.getTimeInMillis();
                 for (OrderHistory order : orderDetail.getOrderHistory()) {
+                    Date orderDate = parseDate(order.getOrderDate());
+                    // when orders are beyond a year old, quit retrieving
+                    if (orderDate.getTime() < oneYearAgo) {
+                        break;
+                    }
                     easyOpenApi.getMemberOrderStatus(order.getOrderNumber(), orderStatusDetailCallback);
+                    numOrdersToRetrieve++;
+                }
+                if (numOrdersToRetrieve == 0) {
+                    orderErrorTV.setVisibility(View.VISIBLE);
+                    activity.hideProgressIndicator();
                 }
             }
 
