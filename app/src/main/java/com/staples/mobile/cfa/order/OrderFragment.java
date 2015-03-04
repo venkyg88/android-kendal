@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
+import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -56,6 +57,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     EasyOpenApi easyOpenApi;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
+    LinearLayoutWithProgressOverlay overlayableLayout;
     OrderAdapter adapter;
     TextView orderErrorTV;
     LinearLayout trackingLayout;
@@ -73,11 +75,23 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.order_fragment, container, false);
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
 
+        // setup overlay
+        overlayableLayout = (LinearLayoutWithProgressOverlay)view.findViewById(R.id.overlayable_layout);
+        overlayableLayout.setProgressOverlay(view.findViewById(R.id.overlay));
+        overlayableLayout.setOnSwallowedClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissTrackingInfo();
+            }
+        });
+
+        // setup tracking bottom sheet
         trackingLayout = (LinearLayout)view.findViewById(R.id.tracking_layout);
         bottomSheetSlideUpAnimation = AnimationUtils.loadAnimation(activity, R.anim.bottomsheet_slide_up);
         bottomSheetSlideDownAnimation = AnimationUtils.loadAnimation(activity, R.anim.bottomsheet_slide_down);
         bottomSheetSlideUpAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override public void onAnimationStart(Animation animation) {
+                overlayableLayout.showProgressIndicator(true);
                 trackingLayout.setVisibility(View.VISIBLE);
             }
             @Override public void onAnimationEnd(Animation animation) { }
@@ -87,6 +101,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
             @Override public void onAnimationStart(Animation animation) { }
             @Override public void onAnimationEnd(Animation animation) {
                 trackingLayout.setVisibility(View.INVISIBLE);
+                overlayableLayout.showProgressIndicator(false);
             }
             @Override public void onAnimationRepeat(Animation animation) { }
         });
@@ -154,8 +169,8 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
 
                         CartonWithSku cartonWithSku = orderStatusDetail.getOrderStatus().get(0).getShipment().get(0).getCartonWithSku().get(0);
                         carrierVw.setText(r.getString(R.string.carrier) + ": " + cartonWithSku.getCarrierCode());
-                        trackingNumberVw.setText(r.getString(R.string.tracking_number) + ": " + cartonWithSku.getTrackingNumber());
-                        SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy hh:mm aa");
+                        trackingNumberVw.setText(r.getString(R.string.tracking_number) + " " + cartonWithSku.getTrackingNumber());
+                        SimpleDateFormat dateFormatter = new SimpleDateFormat("M/d/yy h:mm aa");
                         StringBuilder scanBuf = new StringBuilder();
                         if (cartonWithSku.getScanData() != null) {
                             for (ScanData scanData : cartonWithSku.getScanData()) {
@@ -177,11 +192,12 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                         closeButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                trackingLayout.startAnimation(bottomSheetSlideDownAnimation);
+                                dismissTrackingInfo();
                             }
                         });
 
                         // make visible with animation
+                        overlayableLayout.showProgressIndicator(true); // do this before animation to avoid flash between progress overlay and this one
                         trackingLayout.startAnimation(bottomSheetSlideUpAnimation);
                     }
 
@@ -191,6 +207,10 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                         activity.showErrorDialog(ApiError.getErrorMessage(error));
                     }
                 });
+    }
+
+    private void dismissTrackingInfo() {
+        trackingLayout.startAnimation(bottomSheetSlideDownAnimation);
     }
 
     private void fill(){

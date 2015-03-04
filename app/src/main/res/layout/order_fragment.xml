@@ -7,20 +7,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/orders_list"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/orderErrorTV"
-            android:layout_marginTop="24dp"
-            android:visibility="gone"
-            android:textSize="20dip"
-            android:text="@string/no_orders_found"
-            android:textColor="@android:color/darker_gray"/>
+        <com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay
+            android:id="@+id/overlayable_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/orders_list"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/orderErrorTV"
+                android:layout_marginTop="24dp"
+                android:visibility="gone"
+                android:textSize="20dip"
+                android:text="@string/no_orders_found"
+                android:textColor="@android:color/darker_gray"/>
+
+        </com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay>
+
+        <!-- empty overlay-->
+        <RelativeLayout
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="#6f000022" >
+        </RelativeLayout>
 
         <!--tracking shipment bottom sheet-->
         <LinearLayout
@@ -43,11 +59,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
                     android:textSize="18dp"/>
                 <ImageView
                     android:id="@+id/close_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
                     android:src="@drawable/ic_close_black_18dp"/>
             </RelativeLayout>

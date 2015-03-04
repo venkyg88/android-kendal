@@ -19,6 +19,7 @@ public class LinearLayoutWithProgressOverlay extends LinearLayout {
 
     boolean swallowTouchEvents = false;
     View progressOverlay;
+    OnClickListener onSwallowedClickListener;
 
     public LinearLayoutWithProgressOverlay(Context context) {
         super(context);
@@ -42,6 +43,10 @@ public class LinearLayoutWithProgressOverlay extends LinearLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (swallowTouchEvents && onSwallowedClickListener != null) {
+            onSwallowedClickListener.onClick(this);
+        }
+
         // returning true disables touch events on view and its children
         return swallowTouchEvents;
     }
@@ -50,5 +55,10 @@ public class LinearLayoutWithProgressOverlay extends LinearLayout {
     /** sets overlay view to display when operation in progress */
     public void setProgressOverlay(View progressOverlay) {
         this.progressOverlay = progressOverlay;
+    }
+
+    /** optional: set onClick listener so app can respond (e.g. to dismiss bottom sheet)  */
+    public void setOnSwallowedClickListener(OnClickListener onSwallowedClickListener) {
+        this.onSwallowedClickListener = onSwallowedClickListener;
     }
 }
