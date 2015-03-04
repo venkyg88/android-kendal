@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.order;
 
 import android.app.Fragment;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.profile.CreditCard;
+import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -37,7 +39,7 @@ public class OrderReceiptFragment extends Fragment {
     private static final String TAG = "OrderDetailsFragment";
     MainActivity activity;
     EasyOpenApi easyOpenApi;
-    Shipment shipment;
+    OrderShipmentListItem shipment;
 
     TextView orderNumber;
     TextView orderTotal;
@@ -57,7 +59,9 @@ public class OrderReceiptFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         activity = (MainActivity) getActivity();
-        activity.showProgressIndicator();
+
+        Resources r = getResources();
+
         View view = inflater.inflate(R.layout.order_detail_fragment, container, false);
 
         orderNumber = (TextView)view.findViewById(R.id.orderNumber);
@@ -77,14 +81,16 @@ public class OrderReceiptFragment extends Fragment {
 
         final LinearLayout shipmentItem = (LinearLayout)view.findViewById(R.id.sku_item);
 
+        activity.showProgressIndicator();
+
         Bundle args = getArguments();
         if(args != null) {
-            shipment = (Shipment)args.getSerializable("orderData");
+            shipment = (OrderShipmentListItem)args.getSerializable("orderData");
             if(shipment != null) {
-                float itemsOrdered = 0;
+//                float itemsOrdered = 0;
                 float total = 0;
                 int i = 1;
-                for(final ShipmentSKU sku : shipment.getShipmentSku()) {
+                for(final OrderShipmentListItem.ShipmentSku sku : shipment.getSkus()) {
 
                     View v = inflater.inflate(R.layout.shipment_listitem, shipmentItem, false);
                     final TextView skuTitle = (TextView)v.findViewById(R.id.shipmentTitle);
@@ -95,36 +101,37 @@ public class OrderReceiptFragment extends Fragment {
                     shipmentNum.setText("Shipment " + i);
 
                     easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-                    easyOpenApi.getSkuDetails(sku.getSkuNumber(), null, 50, new Callback<SkuDetails>() {
+                    easyOpenApi.getSkuDetails(sku.getSkuNumber(), 1, 50, new Callback<SkuDetails>() {
                         @Override
                         public void success(SkuDetails skuDetails, Response response) {
                             Picasso.with(activity).load(skuDetails.getProduct().get(0).getImage().get(0).getUrl()).error(R.drawable.no_photo).into(skuImage);
                             skuTitle.setText(skuDetails.getProduct().get(0).getProductName());
-                            skuPrice.setText("$" + sku.getLineTotal());
-                            float qty = Float.parseFloat(sku.getQtyOrdered());
-                            skuQuantity.setText(Integer.toString((int) qty));
+                            skuPrice.setText(CurrencyFormat.getFormatter().format(sku.getLineTotal()));
+                            skuQuantity.setText(Integer.toString(sku.getQtyOrdered()));
                         }
 
                         @Override
                         public void failure(RetrofitError error) {
-                            ((MainActivity)activity).showErrorDialog(ApiError.getErrorMessage(error));
+                            activity.showErrorDialog(ApiError.getErrorMessage(error));
                         }
                     });
 
                     shipmentItem.addView(v);
 
-                    itemsOrdered += Float.parseFloat(sku.getQtyOrdered());
-                    total += Float.parseFloat(sku.getLineTotal());
+//                    itemsOrdered += sku.getQtyOrdered();
+                    total += sku.getLineTotal();
                     i = i+1;
                 }
-                orderNumber.setText(shipment.getOrderStatus().getOrderNumber());
+                orderNumber.setText(shipment.getOrderNumber());
                 orderTotal.setText("$"+shipment.getOrderStatus().getGrandTotal());
-                orderQty.setText("("+ Integer.toString((int) itemsOrdered)+" Items)");
-                deliveryDate.setText(dateFormatter(shipment.getScheduledDeliveryDate()));
-                orderDate.setText(dateFormatter(shipment.getOrderStatus().getOrderDate()));
+
+                orderQty.setText("("+ r.getQuantityString(R.plurals.cart_qty, shipment.getQuantity(), shipment.getQuantity()) + ")");
+                SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+                deliveryDate.setText(formatter.format(shipment.getScheduledDeliveryDate()));
+                orderDate.setText(formatter.format(shipment.getOrderDate()));
                 cardImage.setImageResource(CreditCard.Type.matchOnApiName(shipment.getOrderStatus().getPayment().get(0)
                         .getPaymentMethodCode()).getImageResource());
-                cardInfo.setText("Card ending in " + shipment.getOrderStatus().getPayment().get(0).getCcLast4Digits());
+                cardInfo.setText(r.getString(R.string.card_ending_in) + " " + shipment.getOrderStatus().getPayment().get(0).getCcLast4Digits());
                 orderName.setText(shipment.getOrderStatus().getShiptoFirstName() + " " + shipment.getOrderStatus().getShiptoLastName());
                 billingAddress.setText(shipment.getOrderStatus().getShiptoAddress1() + ((shipment.getOrderStatus().getShiptoAddress2()!=null) ? " " +
                         shipment.getOrderStatus().getShiptoAddress2() + " " : " ") + shipment.getOrderStatus().getShiptoCity() + ", " +
@@ -146,18 +153,4 @@ public class OrderReceiptFragment extends Fragment {
         ActionBar.getInstance().setConfig(ActionBar.Config.ORDER);
     }
 
-    public String dateFormatter(String dateToBeFormatted){
-        String dateFormatted = null;
-        try{
-            SimpleDateFormat sdf = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy",
-                    Locale.ENGLISH);
-            Date parsedDate = sdf.parse(dateToBeFormatted);
-            SimpleDateFormat formatter = new SimpleDateFormat("MMM. d, yyyy");
-            dateFormatted =  formatter.format(parsedDate);
-        }catch (ParseException e)
-        {
-            e.printStackTrace();
-        }
-        return dateFormatted;
-    }
 }

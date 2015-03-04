@@ -28,7 +28,7 @@ import java.util.Locale;
  */
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> implements View.OnClickListener{
 
-    private ArrayList<Shipment> array;
+    private ArrayList<OrderShipmentListItem> array;
     private Activity activity;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -52,12 +52,11 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
     public OrderAdapter(Activity activity) {
         this.activity = activity;
-        this.array = new ArrayList<Shipment>();
+        this.array = new ArrayList<OrderShipmentListItem>();
     }
 
     @Override
-    public OrderAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                                   int viewType) {
+    public OrderAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.order_item_row, parent, false);
         ViewHolder viewHolder = new ViewHolder(v);
@@ -66,26 +65,20 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final Shipment shipment = array.get(position);
+        final OrderShipmentListItem shipment = array.get(position);
         Resources r = activity.getResources();
 
-        holder.orderNumTV.setText("Order# "+ shipment.getOrderStatus().getOrderNumber());
-        int itemsOrdered = 0;
-        for(ShipmentSKU sku : shipment.getShipmentSku()) {
-            itemsOrdered += (int)Double.parseDouble(sku.getQtyOrdered()); // using parseDouble since quantity string is "1.0"
+        String orderNumberText = "Order# "+ shipment.getOrderStatus().getOrderNumber();
+        if (shipment.getShipmentIndex() != null) {
+            orderNumberText += " - Shipment " + shipment.getShipmentIndex();
         }
+        holder.orderNumTV.setText(orderNumberText);
 
-        try{
-            SimpleDateFormat sdf = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy",
-                    Locale.ENGLISH);
-            Date parsedDate = sdf.parse(shipment.getScheduledDeliveryDate());
-            SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
-            holder.expectedDelivery.setText("Estimated Delivery - "+ formatter.format(parsedDate));
-        }catch (ParseException e) {
-            e.printStackTrace();
-        }
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+        holder.expectedDelivery.setText("Estimated Delivery - "+ formatter.format(shipment.getScheduledDeliveryDate()));
+
         holder.orderStatusTV.setText(shipment.getShipmentStatusDescription());
-        holder.numItemsTV.setText(r.getQuantityString(R.plurals.cart_qty, itemsOrdered, itemsOrdered));
+        holder.numItemsTV.setText(r.getQuantityString(R.plurals.cart_qty, shipment.getQuantity(), shipment.getQuantity()));
 
         holder.trackShipmentBtn.setOnClickListener(this);
         holder.viewRecieptBtn.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +98,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         return array.size();
     }
 
-    public void fill(List<Shipment> items) {
+    public void fill(List<OrderShipmentListItem> items) {
         array.addAll(items);
         notifyDataSetChanged();
     }
