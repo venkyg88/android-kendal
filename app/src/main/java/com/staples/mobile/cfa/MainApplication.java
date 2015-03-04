@@ -17,7 +17,7 @@ import com.crittercism.app.Crittercism;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Configurator;
-import com.staples.mobile.common.access.crittercism.CrittercismSdk;
+import com.staples.mobile.cfa.crittercism.CrittercismSdk;
 
 import retrofit.RetrofitError;
 
