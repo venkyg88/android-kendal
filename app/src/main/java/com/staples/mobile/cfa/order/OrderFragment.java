@@ -1,14 +1,18 @@
 package com.staples.mobile.cfa.order;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
@@ -17,10 +21,12 @@ import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.member.CartonWithSku;
 import com.staples.mobile.common.access.easyopen.model.member.OrderDetail;
 import com.staples.mobile.common.access.easyopen.model.member.OrderHistory;
 import com.staples.mobile.common.access.easyopen.model.member.OrderStatus;
 import com.staples.mobile.common.access.easyopen.model.member.OrderStatusDetail;
+import com.staples.mobile.common.access.easyopen.model.member.ScanData;
 import com.staples.mobile.common.access.easyopen.model.member.Shipment;
 import com.staples.mobile.common.access.easyopen.model.member.ShipmentSKU;
 
@@ -31,7 +37,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -51,6 +56,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     private RecyclerView.LayoutManager mLayoutManager;
     OrderAdapter adapter;
     TextView orderErrorTV;
+    LinearLayout trackingLayout;
     ArrayList<OrderShipmentListItem> shipmentListItems;
     OrderStatusDetailCallback orderStatusDetailCallback;
     int numOrdersToRetrieve;
@@ -63,6 +69,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.order_fragment, container, false);
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
 
+        trackingLayout = (LinearLayout)view.findViewById(R.id.tracking_layout);
         orderErrorTV = (TextView)view.findViewById(R.id.orderErrorTV);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.orders_list);
         mRecyclerView.setHasFixedSize(true);
@@ -84,13 +91,14 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        OrderShipmentListItem shipment;
         switch(view.getId()) {
             case R.id.trackShipmentBtn:
-                activity.showNotificationBanner("In Progress");
+                shipment = adapter.getItem((int)view.getTag());
+                showTrackingInfo(shipment);
                 break;
             case R.id.orderReceiptBtn:
-                int position = (int)view.getTag();
-                OrderShipmentListItem shipment = adapter.getItem(position);
+                shipment = adapter.getItem((int)view.getTag());
                 Fragment orderDetailsFragment = Fragment.instantiate(activity, OrderReceiptFragment.class.getName());
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("orderData", shipment);
@@ -102,7 +110,62 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void fill(){
+    private void showTrackingInfo(final OrderShipmentListItem shipment) {
+        activity.showProgressIndicator();
+        easyOpenApi.getMemberOrderTrackingShipment(shipment.getOrderNumber(),
+                shipment.getShipmentNumber(), "000", new Callback<OrderStatusDetail>() {
+
+                    @Override
+                    public void success(OrderStatusDetail orderStatusDetail, Response response) {
+                        activity.hideProgressIndicator();
+                        Resources r = activity.getResources();
+                        trackingLayout.setVisibility(View.VISIBLE);
+                        TextView shipmentLabelVw = (TextView)trackingLayout.findViewById(R.id.shipment_label);
+                        TextView trackingNumberVw = (TextView)trackingLayout.findViewById(R.id.tracking_number);
+                        TextView carrierVw = (TextView)trackingLayout.findViewById(R.id.carrier);
+                        TextView deliveryScansVw = (TextView)trackingLayout.findViewById(R.id.delivery_scans);
+                        View closeButton = trackingLayout.findViewById(R.id.close_button);
+
+                        CartonWithSku cartonWithSku = orderStatusDetail.getOrderStatus().get(0).getShipment().get(0).getCartonWithSku().get(0);
+                        String shipmentLabel = "Order# "+ shipment.getOrderNumber();
+                        if (shipment.getShipmentIndex() != null) {
+                            shipmentLabel = "Shipment " + shipment.getShipmentIndex() + " of " + shipmentLabel;
+                        }
+                        shipmentLabelVw.setText(shipmentLabel);
+                        carrierVw.setText(r.getString(R.string.carrier) + ": " + cartonWithSku.getCarrierCode());
+                        trackingNumberVw.setText(r.getString(R.string.tracking_number) + ": " + cartonWithSku.getTrackingNumber());
+//                                LayoutInflater layoutInflater = LayoutInflater.from(activity);
+                        SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy hh:mm aa");
+                        StringBuilder scanBuf = new StringBuilder();
+                        for (ScanData scanData : cartonWithSku.getScanData()) {
+                            Date date = parseDate(scanData.getScanDateAndTime());
+                            if (scanBuf.length() > 0) {
+                                scanBuf.append("\n");
+                            }
+                            scanBuf.append(dateFormatter.format(date));
+                            if (!TextUtils.isEmpty(scanData.getScanDescription())) {
+                                scanBuf.append("  ").append(scanData.getScanDescription());
+                            }
+                        }
+                        deliveryScansVw.setText(scanBuf.toString());
+
+                        closeButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                trackingLayout.setVisibility(View.INVISIBLE);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        activity.hideProgressIndicator();
+                        activity.showErrorDialog(ApiError.getErrorMessage(error));
+                    }
+                });
+    }
+
+    private void fill(){
         activity.showProgressIndicator();
         easyOpenApi.getMemberOrderHistory("orderDate", "DESC", 1, 10, new Callback<OrderDetail>() {
             @Override
@@ -125,20 +188,25 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    private class OrderStatusDetailCallback implements Callback<OrderStatusDetail> {
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
-
-        private Date parseDate(String date) {
-            try {
-                return dateFormat.parse(date);
-            } catch (ParseException e) {
-                // return oldest possible date
-                Calendar cal = Calendar.getInstance();
-                cal.setTimeInMillis(0);
-                return cal.getTime();
-            }
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+    private Date parseDate(String date) {
+        try {
+            return dateFormat.parse(date);
+        } catch (ParseException e) {
+            // return oldest possible date
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(0);
+            return cal.getTime();
         }
+    }
+
+
+    /**
+     *
+     * order detail callback
+     *
+     * */
+    private class OrderStatusDetailCallback implements Callback<OrderStatusDetail> {
 
         @Override
         public void success(OrderStatusDetail orderStatusDetail, Response response) {

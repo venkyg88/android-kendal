@@ -65,7 +65,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         OrderShipmentListItem shipment = array.get(position);
         Resources r = activity.getResources();
 
-        String orderNumberText = "Order# "+ shipment.getOrderStatus().getOrderNumber();
+        String orderNumberText = "Order# "+ shipment.getOrderNumber();
         if (shipment.getShipmentIndex() != null) {
             orderNumberText += " - Shipment " + shipment.getShipmentIndex();
         }
