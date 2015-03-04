@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -57,6 +59,8 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     OrderAdapter adapter;
     TextView orderErrorTV;
     LinearLayout trackingLayout;
+    Animation bottomSheetSlideUpAnimation;
+    Animation bottomSheetSlideDownAnimation;
     ArrayList<OrderShipmentListItem> shipmentListItems;
     OrderStatusDetailCallback orderStatusDetailCallback;
     int numOrdersToRetrieve;
@@ -70,6 +74,23 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
 
         trackingLayout = (LinearLayout)view.findViewById(R.id.tracking_layout);
+        bottomSheetSlideUpAnimation = AnimationUtils.loadAnimation(activity, R.anim.bottomsheet_slide_up);
+        bottomSheetSlideDownAnimation = AnimationUtils.loadAnimation(activity, R.anim.bottomsheet_slide_down);
+        bottomSheetSlideUpAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) {
+                trackingLayout.setVisibility(View.VISIBLE);
+            }
+            @Override public void onAnimationEnd(Animation animation) { }
+            @Override public void onAnimationRepeat(Animation animation) { }
+        });
+        bottomSheetSlideDownAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) { }
+            @Override public void onAnimationEnd(Animation animation) {
+                trackingLayout.setVisibility(View.INVISIBLE);
+            }
+            @Override public void onAnimationRepeat(Animation animation) { }
+        });
+
         orderErrorTV = (TextView)view.findViewById(R.id.orderErrorTV);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.orders_list);
         mRecyclerView.setHasFixedSize(true);
@@ -119,7 +140,6 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                     public void success(OrderStatusDetail orderStatusDetail, Response response) {
                         activity.hideProgressIndicator();
                         Resources r = activity.getResources();
-                        trackingLayout.setVisibility(View.VISIBLE);
                         TextView shipmentLabelVw = (TextView)trackingLayout.findViewById(R.id.shipment_label);
                         TextView trackingNumberVw = (TextView)trackingLayout.findViewById(R.id.tracking_number);
                         TextView carrierVw = (TextView)trackingLayout.findViewById(R.id.carrier);
@@ -157,9 +177,12 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                         closeButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                trackingLayout.setVisibility(View.INVISIBLE);
+                                trackingLayout.startAnimation(bottomSheetSlideDownAnimation);
                             }
                         });
+
+                        // make visible with animation
+                        trackingLayout.startAnimation(bottomSheetSlideUpAnimation);
                     }
 
                     @Override
