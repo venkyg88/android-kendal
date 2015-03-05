@@ -90,8 +90,8 @@ public class OrderReceiptFragment extends Fragment {
 //                int totalItemsInOrder = 0;
 
                 // for each shipment of the order
-                for (int i = 0;  i < orderStatus.getShipment().size(); i++) {
-                    Shipment shipment = orderStatus.getShipment().get(i);
+                for (int i = 0;  i < order.getShipments().size(); i++) {
+                    Shipment shipment = order.getShipments().get(i);
 
                     boolean delivered = "DLV".equals(shipment.getShipmentStatusCode());
                     String deliveryDateText = r.getString(delivered? R.string.delivered_date : R.string.estimated_delivery);

@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -24,6 +25,10 @@ public class OrderShipmentListItem implements Serializable {
     public OrderShipmentListItem(int shipmentIndex, OrderStatus orderStatus) {
         this.shipmentIndex = shipmentIndex;
         this.orderStatus = orderStatus;
+    }
+
+    public List<Shipment> getShipments() {
+        return orderStatus.getShipment();
     }
 
     public Shipment getShipment() {
@@ -45,7 +50,6 @@ public class OrderShipmentListItem implements Serializable {
     public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
-
 
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
     public static Date parseDate(String date) {

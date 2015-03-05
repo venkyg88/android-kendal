@@ -163,27 +163,33 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                         View closeButton = trackingLayout.findViewById(R.id.close_button);
 
                         String shipmentLabel = "Order# "+ orderStatus.getOrderNumber();
-                        if (orderStatus.getShipment().size() > 1) {
+                        if (order.getShipments().size() > 1) {
                             shipmentLabel = "Shipment " + (order.getShipmentIndex()+1) + " of " + shipmentLabel;
                         }
                         shipmentLabelVw.setText(shipmentLabel);
 
-                        CartonWithSku cartonWithSku = orderStatusDetail.getOrderStatus().get(0).getShipment().get(0).getCartonWithSku().get(0);
-                        carrierVw.setText(r.getString(R.string.carrier) + ": " + cartonWithSku.getCarrierCode());
-                        trackingNumberVw.setText(r.getString(R.string.tracking_number) + " " + cartonWithSku.getTrackingNumber());
-                        SimpleDateFormat dateFormatter = new SimpleDateFormat("M/d/yy h:mm aa");
                         StringBuilder scanBuf = new StringBuilder();
-                        if (cartonWithSku.getScanData() != null) {
-                            for (ScanData scanData : cartonWithSku.getScanData()) {
-                                Date date = OrderShipmentListItem.parseDate(scanData.getScanDateAndTime());
-                                if (scanBuf.length() > 0) {
-                                    scanBuf.append("\n");
-                                }
-                                scanBuf.append(dateFormatter.format(date));
-                                if (!TextUtils.isEmpty(scanData.getScanDescription())) {
-                                    scanBuf.append("  ").append(scanData.getScanDescription());
+                        Shipment shipment = orderStatusDetail.getOrderStatus().get(0).getShipment().get(0);
+                        if (shipment.getCartonWithSku() != null && shipment.getCartonWithSku().size() > 0) {
+                            CartonWithSku cartonWithSku = shipment.getCartonWithSku().get(0);
+                            carrierVw.setText(r.getString(R.string.carrier) + ": " + cartonWithSku.getCarrierCode());
+                            trackingNumberVw.setText(r.getString(R.string.tracking_number) + " " + cartonWithSku.getTrackingNumber());
+                            SimpleDateFormat dateFormatter = new SimpleDateFormat("M/d/yy h:mm aa");
+                            if (cartonWithSku.getScanData() != null) {
+                                for (ScanData scanData : cartonWithSku.getScanData()) {
+                                    Date date = OrderShipmentListItem.parseDate(scanData.getScanDateAndTime());
+                                    if (scanBuf.length() > 0) {
+                                        scanBuf.append("\n");
+                                    }
+                                    scanBuf.append(dateFormatter.format(date));
+                                    if (!TextUtils.isEmpty(scanData.getScanDescription())) {
+                                        scanBuf.append("  ").append(scanData.getScanDescription());
+                                    }
                                 }
                             }
+                        } else {
+                            carrierVw.setText(null);
+                            trackingNumberVw.setText(null);
                         }
                         if (scanBuf.length() == 0) {
                             scanBuf.append(r.getString(R.string.no_detailed_tracking));
