@@ -63,6 +63,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+		<activity android:name="com.apptentive.android.sdk.ViewActivity" android:theme="@style/Apptentive.Theme.Transparent"/>
         <receiver android:name="com.urbanairship.CoreReceiver"
                   android:exported="false">
             <intent-filter android:priority="-999">
@@ -79,6 +80,7 @@
                 <category android:name="${applicationId}"/>
             </intent-filter>
         </receiver>
+
         <service android:name="com.urbanairship.push.PushService" android:label="Push Notification Service"/>
         <service android:name="com.urbanairship.richpush.RichPushUpdateService" android:label="Rich Push Update Service"/>
         <service android:name="com.urbanairship.actions.ActionService" android:label="Action Service"/>
@@ -90,6 +92,8 @@
             android:permission="${applicationId}.permission.UA_DATA"
             android:exported="true"
             android:multiprocess="true"/>
+        <!-- Support for Apptentive -->
+		<meta-data android:name="apptentive_api_key" android:value="58c76d08c1a68bc8da5d0749f60516d34e19920200d625bd4206d75948be29d0"/>
         <!-- Support for Google Play Services -->
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
         <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBqAikPrkScuYFOSRVtIGrqSZDsYZWdwps"/>

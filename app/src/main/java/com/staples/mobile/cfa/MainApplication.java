@@ -12,11 +12,12 @@ import android.os.StrictMode;
 
 import android.util.Log;
 
+import com.crittercism.app.Crittercism;
+
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Configurator;
-
-import com.crittercism.app.Crittercism;
+import com.staples.mobile.cfa.crittercism.CrittercismSdk;
 
 import retrofit.RetrofitError;
 
@@ -50,7 +51,7 @@ public class MainApplication
 
         try {
 
-            Crittercism.initialize(this, "54de24c551de5e9f042ed9bc");
+            Crittercism.initialize(this, CrittercismSdk.APPLICATION_ID);
 
         } catch (Exception exception) {
 
