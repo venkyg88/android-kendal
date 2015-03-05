@@ -373,35 +373,6 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         String address = searchText.getText().toString().trim();
         location = null;
         Access.getInstance().getChannelApi(false).storeLocations(address, this);
-
-        // TODO Start of hacked test stuff ************************************************************************************************************************
-        Access.getInstance().getGoogleApi().getPlaceAutoComplete("address", "country:us", address, new Callback<AutoComplete>() {
-            @Override
-            public void success(AutoComplete autoComplete, Response response) {
-
-                List<Prediction> predictions = autoComplete.getPredictions();
-                Log.d(TAG, "Places API returned " + predictions.size() + " " + autoComplete.getStatus());
-                if (predictions.size()==0) return;
-                for(Prediction prediction : predictions) {
-                    Log.d(TAG, "Prediction: " + prediction.getDescription());
-                }
-                Access.getInstance().getGoogleApi().getPlaceDetails(predictions.get(0).getPlaceId(), new Callback<Details>() {
-                    @Override
-                    public void success(Details details, Response response) {
-                        Log.d(TAG, "2nd return "+details.getResult().getFormattedAddress());
-                    }
-
-                    @Override
-                    public void failure(RetrofitError retrofitError) {
-                    }
-                });
-            }
-
-            @Override
-            public void failure(RetrofitError retrofitError) {
-            }
-        });
-        // TODO End of hacked test stuff ************************************************************************************************************************
     }
 
     @Override

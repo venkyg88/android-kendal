@@ -71,17 +71,11 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     @Override
     protected void initEntryArea(View frame) {
         shippingAddrBlock = (AddressBlock) frame.findViewById(R.id.shipping_addr_layout);
-        shippingAddrBlock.init(true, true);
+        shippingAddrBlock.init(true);
         shippingAddrBlock.setOnDoneListener(this);
         billingAddrBlock = (AddressBlock) frame.findViewById(R.id.billing_addr_layout);
-        billingAddrBlock.init(true, false);
+        billingAddrBlock.init(false);
         billingAddrBlock.setOnDoneListener(this);
-
-        AutoCompleteTextView addressACTV = (AutoCompleteTextView) shippingAddrBlock.findViewById(R.id.addressACTV);
-        addressACTV.setDropDownAnchor(R.id.autoCompleteAnchor);
-
-        addressACTV = (AutoCompleteTextView) billingAddrBlock.findViewById(R.id.addressACTV);
-        addressACTV.setDropDownAnchor(R.id.autoCompleteAnchor);
 
         paymentMethodLayoutVw = frame.findViewById(R.id.payment_method_layout);
         cardNumberVw = (EditText) paymentMethodLayoutVw.findViewById(R.id.cardNumber);

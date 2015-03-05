@@ -11,7 +11,7 @@ import android.widget.EditText;
 import com.staples.mobile.cfa.R;
 
 public class DualHintEdit extends EditText {
-    private static final String TAG = "FloatHintEdit";
+    private static final String TAG = "DualHintEdit";
 
     private TextPaint dualPaint;
     private int dualSize;

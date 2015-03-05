@@ -36,16 +36,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <AutoCompleteTextView
-            android:id="@+id/addressACTV"
-            style="@style/InputField"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:paddingTop="16sp"
-            android:inputType="textPostalAddress"
-            android:hint="@string/address_label"/>
-        <com.staples.mobile.cfa.widget.DualHintEdit
-            android:id="@+id/addressET"
+        <com.staples.mobile.cfa.widget.PlaceFieldView
+            android:id="@+id/address"
             style="@style/InputField"
             android:layout_width="0dp"
             android:layout_weight="1"
