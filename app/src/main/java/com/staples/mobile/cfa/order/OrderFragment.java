@@ -236,6 +236,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                 }
                 if (numOrdersToRetrieve == 0) {
                     orderErrorTV.setVisibility(View.VISIBLE);
+                    mRecyclerView.setVisibility(View.GONE);
                     activity.hideProgressIndicator();
                 }
             }
@@ -243,6 +244,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
             @Override
             public void failure(RetrofitError error) {
                 orderErrorTV.setVisibility(View.VISIBLE);
+                mRecyclerView.setVisibility(View.GONE);
                 activity.hideProgressIndicator();
                 activity.showErrorDialog(ApiError.getErrorMessage(error));
                 Log.i(TAG, "Fail Response Order History " + error.getUrl() + " " + error.getMessage());
