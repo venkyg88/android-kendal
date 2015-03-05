@@ -62,7 +62,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     LinearLayout trackingLayout;
     Animation bottomSheetSlideUpAnimation;
     Animation bottomSheetSlideDownAnimation;
-    ArrayList<OrderShipmentListItem> shipmentListItems;
+    ArrayList<OrderShipmentListItem> orderShipmentListItems;
     OrderStatusDetailCallback orderStatusDetailCallback;
     int numOrdersToRetrieve;
 
@@ -70,7 +70,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         activity = (MainActivity) getActivity();
-        shipmentListItems = new ArrayList<OrderShipmentListItem>();
+        orderShipmentListItems = new ArrayList<OrderShipmentListItem>();
         View view = inflater.inflate(R.layout.order_fragment, container, false);
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
 
@@ -126,17 +126,17 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        OrderShipmentListItem shipment;
+        OrderShipmentListItem order;
         switch(view.getId()) {
             case R.id.trackShipmentBtn:
-                shipment = adapter.getItem((int)view.getTag());
-                showTrackingInfo(shipment);
+                order = adapter.getItem((int)view.getTag());
+                showTrackingInfo(order);
                 break;
             case R.id.orderReceiptBtn:
-                shipment = adapter.getItem((int)view.getTag());
+                order = adapter.getItem((int)view.getTag());
                 Fragment orderDetailsFragment = Fragment.instantiate(activity, OrderReceiptFragment.class.getName());
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("orderData", shipment);
+                bundle.putSerializable("orderData", order);
                 orderDetailsFragment.setArguments(bundle);
                 ((MainActivity) activity).navigateToFragment(orderDetailsFragment);
                 break;
@@ -145,9 +145,11 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void showTrackingInfo(final OrderShipmentListItem shipment) {
+    private void showTrackingInfo(final OrderShipmentListItem order) {
         activity.showProgressIndicator();
-        easyOpenApi.getMemberOrderTrackingShipment(shipment.getOrderNumber(),
+        final OrderStatus orderStatus = order.getOrderStatus();
+        final Shipment shipment = order.getShipment();
+        easyOpenApi.getMemberOrderTrackingShipment(order.getOrderStatus().getOrderNumber(),
                 shipment.getShipmentNumber(), "000", new Callback<OrderStatusDetail>() {
 
                     @Override
@@ -160,9 +162,9 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                         TextView deliveryScansVw = (TextView)trackingLayout.findViewById(R.id.delivery_scans);
                         View closeButton = trackingLayout.findViewById(R.id.close_button);
 
-                        String shipmentLabel = "Order# "+ shipment.getOrderNumber();
-                        if (shipment.getShipmentIndex() != null) {
-                            shipmentLabel = "Shipment " + shipment.getShipmentIndex() + " of " + shipmentLabel;
+                        String shipmentLabel = "Order# "+ orderStatus.getOrderNumber();
+                        if (orderStatus.getShipment().size() > 1) {
+                            shipmentLabel = "Shipment " + (order.getShipmentIndex()+1) + " of " + shipmentLabel;
                         }
                         shipmentLabelVw.setText(shipmentLabel);
 
@@ -173,7 +175,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                         StringBuilder scanBuf = new StringBuilder();
                         if (cartonWithSku.getScanData() != null) {
                             for (ScanData scanData : cartonWithSku.getScanData()) {
-                                Date date = parseDate(scanData.getScanDateAndTime());
+                                Date date = OrderShipmentListItem.parseDate(scanData.getScanDateAndTime());
                                 if (scanBuf.length() > 0) {
                                     scanBuf.append("\n");
                                 }
@@ -224,7 +226,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                 calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR)-1);
                 long oneYearAgo = calendar.getTimeInMillis();
                 for (OrderHistory order : orderDetail.getOrderHistory()) {
-                    Date orderDate = parseDate(order.getOrderDate());
+                    Date orderDate = OrderShipmentListItem.parseDate(order.getOrderDate());
                     // when orders are beyond a year old, quit retrieving
                     if (orderDate.getTime() < oneYearAgo) {
                         break;
@@ -249,18 +251,6 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
-    private Date parseDate(String date) {
-        try {
-            return dateFormat.parse(date);
-        } catch (ParseException e) {
-            // return oldest possible date
-            Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(0);
-            return cal.getTime();
-        }
-    }
-
 
     /**
      *
@@ -272,31 +262,12 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         @Override
         public void success(OrderStatusDetail orderStatusDetail, Response response) {
             numOrdersToRetrieve--;
-            List<Shipment> shipments = orderStatusDetail.getOrderStatus().get(0).getShipment();
+            OrderStatus orderStatus =  orderStatusDetail.getOrderStatus().get(0);
+            List<Shipment> shipments = orderStatus.getShipment();
             int numShipments = shipments.size();
             for (int i = 0; i < numShipments; i++) {
-                Shipment shipment = shipments.get(i);
-                shipment.setOrderStatus(orderStatusDetail.getOrderStatus().get(0));
-                int totalItemQtyOfShipment = 0;
-                List<OrderShipmentListItem.ShipmentSku> skus = new ArrayList<OrderShipmentListItem.ShipmentSku>();
-                for (ShipmentSKU shipmentSku : shipment.getShipmentSku()) {
-                    int qtyOrdered = (int)Double.parseDouble(shipmentSku.getQtyOrdered()); // using parseDouble since quantity string is "1.0"
-                    totalItemQtyOfShipment += qtyOrdered;
-                    skus.add(new OrderShipmentListItem.ShipmentSku(shipmentSku.getSkuNumber(),
-                            shipmentSku.getSkuDescription(), qtyOrdered,
-                            Float.parseFloat(shipmentSku.getLineTotal())));
-                }
-                OrderStatus orderStatus = orderStatusDetail.getOrderStatus().get(0);
-                shipmentListItems.add(new OrderShipmentListItem((numShipments > 1)? i+1 : null,
-                        shipment.getShipmentNumber(),
-                        parseDate(shipment.getActualShipDate()),
-                        parseDate(shipment.getScheduledDeliveryDate()),
-                        shipment.getShipmentStatusCode(),
-                        shipment.getShipmentStatusDescription(),
-                        totalItemQtyOfShipment,
-                        parseDate(orderStatus.getOrderDate()),
-                        orderStatus.getOrderNumber(),
-                        orderStatus, skus));
+                // create an order object for each shipment with an index into the shipment of interest
+                orderShipmentListItems.add(new OrderShipmentListItem(i, orderStatus));
             }
             finishOrderDetail();
         }
@@ -314,10 +285,10 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
 
             // DLS: need to wait until all items retrieved (otherwise the same items get added multiple times)
             if (numOrdersToRetrieve == 0) {
-                if (shipmentListItems.size() > 0) {
+                if (orderShipmentListItems.size() > 0) {
                     // sort order shipments by descending order date and order number, then by shipment info
-                    sortShipments(shipmentListItems);
-                    adapter.fill(shipmentListItems);
+                    sortShipments(orderShipmentListItems);
+                    adapter.fill(orderShipmentListItems);
                 } else {
                     orderErrorTV.setVisibility(View.VISIBLE);
                 }
@@ -332,15 +303,15 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                 public int compare(OrderShipmentListItem left, OrderShipmentListItem right) {
                     int result = 0;
                     // first sort by descending order date to make sure most recent are shown at the top
-                    Date leftParsedDate = parseDate(left.getOrderStatus().getOrderDate());
-                    Date rightParsedDate = parseDate(right.getOrderStatus().getOrderDate());
+                    Date leftParsedDate = OrderShipmentListItem.parseDate(left.getOrderStatus().getOrderDate());
+                    Date rightParsedDate = OrderShipmentListItem.parseDate(right.getOrderStatus().getOrderDate());
                     result = rightParsedDate.compareTo(leftParsedDate);
                     if (result == 0) {
                         // next sort by descending order number to make sure shipments of an order are grouped together
                         result = right.getOrderStatus().getOrderNumber().compareTo(left.getOrderStatus().getOrderNumber());
                         if (result == 0) {
                             // next sort by delivery date
-                            result = right.getScheduledDeliveryDate().compareTo(left.getScheduledDeliveryDate());
+                            result = right.getShipment().getScheduledDeliveryDate().compareTo(left.getShipment().getScheduledDeliveryDate());
                             if (result == 0) {
                                 // next sort by shipment index
                                 result = left.getShipmentIndex() - right.getShipmentIndex();

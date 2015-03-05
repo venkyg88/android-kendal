@@ -13,6 +13,9 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.common.access.easyopen.model.member.OrderStatus;
+import com.staples.mobile.common.access.easyopen.model.member.Shipment;
+import com.staples.mobile.common.access.easyopen.model.member.ShipmentSKU;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,23 +65,34 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        OrderShipmentListItem shipment = array.get(position);
+        OrderShipmentListItem order = array.get(position);
+        OrderStatus orderStatus = order.getOrderStatus();
+        Shipment shipment = order.getShipment();
+
         Resources r = activity.getResources();
 
-        String orderNumberText = "Order# "+ shipment.getOrderNumber();
-        if (shipment.getShipmentIndex() != null) {
-            orderNumberText += " - Shipment " + shipment.getShipmentIndex();
+        String orderNumberText = "Order# "+ orderStatus.getOrderNumber();
+        if (orderStatus.getShipment().size() > 1) {
+            orderNumberText += " - Shipment " + order.getShipmentIndex() + 1;
         }
         holder.orderNumTV.setText(orderNumberText);
+
+        // determine item qty of shipment
+        int totalItemQtyOfShipment = 0;
+        for (ShipmentSKU shipmentSku : shipment.getShipmentSku()) {
+            int qtyOrdered = (int)Double.parseDouble(shipmentSku.getQtyOrdered()); // using parseDouble since quantity string is "1.0"
+            totalItemQtyOfShipment += qtyOrdered;
+        }
 
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         boolean delivered = "DLV".equals(shipment.getShipmentStatusCode());
         String deliveryDate = r.getString(delivered? R.string.delivered_date : R.string.estimated_delivery);
-        deliveryDate += " - " + formatter.format(delivered? shipment.getActualShipDate() : shipment.getScheduledDeliveryDate());
+        deliveryDate += " - " + formatter.format(OrderShipmentListItem.parseDate(delivered?
+                shipment.getActualShipDate() : shipment.getScheduledDeliveryDate()));
         holder.expectedDelivery.setText(deliveryDate);
 
         holder.orderStatusTV.setText(shipment.getShipmentStatusDescription());
-        holder.numItemsTV.setText(r.getQuantityString(R.plurals.cart_qty, shipment.getQuantity(), shipment.getQuantity()));
+        holder.numItemsTV.setText(r.getQuantityString(R.plurals.cart_qty, totalItemQtyOfShipment, totalItemQtyOfShipment));
 
         holder.trackShipmentBtn.setTag(position);
         holder.viewRecieptBtn.setTag(position);

@@ -18,15 +18,14 @@ import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.browse.Image;
+import com.staples.mobile.common.access.easyopen.model.browse.Product;
 import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
+import com.staples.mobile.common.access.easyopen.model.member.OrderStatus;
 import com.staples.mobile.common.access.easyopen.model.member.Shipment;
 import com.staples.mobile.common.access.easyopen.model.member.ShipmentSKU;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -39,12 +38,12 @@ public class OrderReceiptFragment extends Fragment {
     private static final String TAG = "OrderDetailsFragment";
     MainActivity activity;
     EasyOpenApi easyOpenApi;
-    OrderShipmentListItem shipment;
+    OrderShipmentListItem order;
 
     TextView orderNumber;
-    TextView orderTotal;
+//    TextView orderTotal;
     TextView orderDate;
-    TextView orderQty;
+//    TextView orderQty;
     TextView deliveryDate;
     TextView cardInfo;
     TextView orderName;
@@ -66,8 +65,8 @@ public class OrderReceiptFragment extends Fragment {
 
         orderNumber = (TextView)view.findViewById(R.id.orderNumber);
         orderDate = (TextView)view.findViewById(R.id.orderDate);
-        orderTotal = (TextView)view.findViewById(R.id.orderTotal);
-        orderQty = (TextView)view.findViewById(R.id.orderQtyLbl);
+//        orderTotal = (TextView)view.findViewById(R.id.orderTotal);
+//        orderQty = (TextView)view.findViewById(R.id.orderQtyLbl);
         deliveryDate = (TextView)view.findViewById(R.id.deliveryDateTV);
         cardImage = (ImageView)view.findViewById(R.id.creditCardImage);
         cardInfo = (TextView)view.findViewById(R.id.cardInfoTV);
@@ -79,69 +78,99 @@ public class OrderReceiptFragment extends Fragment {
         orderTax = (TextView)view.findViewById(R.id.orderTaxTV);
         orderGrandTotal = (TextView)view.findViewById(R.id.orderGrandTotalTV);
 
-        final LinearLayout shipmentItem = (LinearLayout)view.findViewById(R.id.sku_item);
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 
-        activity.showProgressIndicator();
+        final LinearLayout shipmentItem = (LinearLayout)view.findViewById(R.id.sku_item);
 
         Bundle args = getArguments();
         if(args != null) {
-            shipment = (OrderShipmentListItem)args.getSerializable("orderData");
-            if(shipment != null) {
-//                float itemsOrdered = 0;
-                float total = 0;
-                int i = 1;
-                for(final OrderShipmentListItem.ShipmentSku sku : shipment.getSkus()) {
+            order = (OrderShipmentListItem)args.getSerializable("orderData");
+            if (order != null) {
+                OrderStatus orderStatus = order.getOrderStatus();
+//                int totalItemsInOrder = 0;
 
-                    View v = inflater.inflate(R.layout.shipment_listitem, shipmentItem, false);
-                    final TextView skuTitle = (TextView)v.findViewById(R.id.shipmentTitle);
-                    final TextView skuPrice = (TextView)v.findViewById(R.id.shipmentPrice);
-                    final TextView skuQuantity = (TextView)v.findViewById(R.id.shipmentQty);
-                    final TextView shipmentNum = (TextView)v.findViewById(R.id.shipmentLbl);
-                    final ImageView skuImage = (ImageView)v.findViewById(R.id.skuImage);
-                    shipmentNum.setText("Shipment " + i);
+                // for each shipment of the order
+                for (int i = 0;  i < orderStatus.getShipment().size(); i++) {
+                    Shipment shipment = orderStatus.getShipment().get(i);
 
-                    easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-                    easyOpenApi.getSkuDetails(sku.getSkuNumber(), 1, 50, new Callback<SkuDetails>() {
-                        @Override
-                        public void success(SkuDetails skuDetails, Response response) {
-                            Picasso.with(activity).load(skuDetails.getProduct().get(0).getImage().get(0).getUrl()).error(R.drawable.no_photo).into(skuImage);
-                            skuTitle.setText(skuDetails.getProduct().get(0).getProductName());
-                            skuPrice.setText(CurrencyFormat.getFormatter().format(sku.getLineTotal()));
-                            skuQuantity.setText(Integer.toString(sku.getQtyOrdered()));
+                    boolean delivered = "DLV".equals(shipment.getShipmentStatusCode());
+                    String deliveryDateText = r.getString(delivered? R.string.delivered_date : R.string.estimated_delivery);
+                    deliveryDateText += " - " + formatter.format(OrderShipmentListItem.parseDate(delivered?
+                            shipment.getActualShipDate() : shipment.getScheduledDeliveryDate()));
+
+                    // for each item within the shipment
+                    for (int j = 0; j < shipment.getShipmentSku().size(); j++) {
+                        ShipmentSKU sku = shipment.getShipmentSku().get(j);
+
+                        View v = inflater.inflate(R.layout.shipment_listitem, shipmentItem, false);
+                        TextView skuTitle = (TextView) v.findViewById(R.id.shipmentTitle);
+                        TextView skuPrice = (TextView) v.findViewById(R.id.shipmentPrice);
+                        TextView skuQuantity = (TextView) v.findViewById(R.id.shipmentQty);
+                        TextView shipmentNum = (TextView) v.findViewById(R.id.shipmentLbl);
+                        TextView deliveryDate = (TextView) v.findViewById(R.id.deliveryDateTV);
+                        View horizRule = v.findViewById(R.id.horizontal_rule);
+                        final ImageView skuImage = (ImageView) v.findViewById(R.id.skuImage);
+
+                        // if first item in shipment, then include the shipment label
+                        if (j == 0) {
+                            shipmentNum.setText("Shipment " + (i + 1));
+                            deliveryDate.setText(deliveryDateText);
+                        } else {
+                            shipmentNum.setVisibility(View.GONE);
+                            deliveryDate.setVisibility(View.GONE);
+                            horizRule.setVisibility(View.GONE);
                         }
+                        skuTitle.setText(sku.getSkuDescription());
+                        skuPrice.setText(CurrencyFormat.getFormatter().format(Float.parseFloat(sku.getLineTotal())));
+                        int skuQty = (int)Float.parseFloat(sku.getQtyOrdered()); // API value has decimal point (e.g. "1.0")
+                        skuQuantity.setText(String.valueOf(skuQty));
+//                        totalItemsInOrder += skuQty;
 
-                        @Override
-                        public void failure(RetrofitError error) {
-                            activity.showErrorDialog(ApiError.getErrorMessage(error));
-                        }
-                    });
+                        shipmentItem.addView(v);
 
-                    shipmentItem.addView(v);
+                        // fill in images asynchronously
+                        easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+                        easyOpenApi.getSkuDetails(sku.getSkuNumber(), 1, 50, new Callback<SkuDetails>() {
+                            @Override public void success(SkuDetails skuDetails, Response response) {
+                                String imageUrl = null;
+                                if (skuDetails.getProduct() != null && skuDetails.getProduct().size() > 0) {
+                                    Product product = skuDetails.getProduct().get(0);
+                                    if (product.getImage() != null && product.getImage().size() > 0) {
+                                        Image image = product.getImage().get(0);
+                                        imageUrl = image.getUrl();
+                                    }
+                                }
+                                if (imageUrl != null) {
+                                    Picasso.with(activity).load(imageUrl).error(R.drawable.no_photo).into(skuImage);
+                                } else {
+                                    skuImage.setImageResource(R.drawable.no_photo);
+                                }
+                            }
+                            @Override public void failure(RetrofitError error) {
+                                skuImage.setImageResource(R.drawable.no_photo);
+                            }
+                        });
 
-//                    itemsOrdered += sku.getQtyOrdered();
-                    total += sku.getLineTotal();
-                    i = i+1;
+                    }
                 }
-                orderNumber.setText(shipment.getOrderNumber());
-                orderTotal.setText("$"+shipment.getOrderStatus().getGrandTotal());
 
-                orderQty.setText("("+ r.getQuantityString(R.plurals.cart_qty, shipment.getQuantity(), shipment.getQuantity()) + ")");
-                SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-                deliveryDate.setText(formatter.format(shipment.getScheduledDeliveryDate()));
-                orderDate.setText(formatter.format(shipment.getOrderDate()));
-                cardImage.setImageResource(CreditCard.Type.matchOnApiName(shipment.getOrderStatus().getPayment().get(0)
+                orderNumber.setText(orderStatus.getOrderNumber());
+//                orderTotal.setText("$"+orderStatus.getGrandTotal());
+//                orderQty.setText("("+ r.getQuantityString(R.plurals.cart_qty, totalItemsInOrder, totalItemsInOrder) + ")");
+
+                orderDate.setText(r.getString(R.string.order_date) + ": " + formatter.format(OrderShipmentListItem.parseDate(orderStatus.getOrderDate())));
+                cardImage.setImageResource(CreditCard.Type.matchOnApiName(orderStatus.getPayment().get(0)
                         .getPaymentMethodCode()).getImageResource());
-                cardInfo.setText(r.getString(R.string.card_ending_in) + " " + shipment.getOrderStatus().getPayment().get(0).getCcLast4Digits());
-                orderName.setText(shipment.getOrderStatus().getShiptoFirstName() + " " + shipment.getOrderStatus().getShiptoLastName());
-                billingAddress.setText(shipment.getOrderStatus().getShiptoAddress1() + ((shipment.getOrderStatus().getShiptoAddress2()!=null) ? " " +
-                        shipment.getOrderStatus().getShiptoAddress2() + " " : " ") + shipment.getOrderStatus().getShiptoCity() + ", " +
-                        shipment.getOrderStatus().getShiptoState() + " "+ shipment.getOrderStatus().getShiptoZip());
-                orderSubTotal.setText(shipment.getOrderStatus().getShipmentSkuSubtotal());
-                orderCoupons.setText(shipment.getOrderStatus().getCouponTotal());
-                orderShipping.setText(shipment.getOrderStatus().getShippingAndHandlingTotal());
-                orderTax.setText(shipment.getOrderStatus().getSalesTaxTotal());
-                orderGrandTotal.setText(shipment.getOrderStatus().getGrandTotal());
-                activity.hideProgressIndicator();
+                cardInfo.setText(r.getString(R.string.card_ending_in) + " " + orderStatus.getPayment().get(0).getCcLast4Digits());
+                orderName.setText(orderStatus.getShiptoFirstName() + " " + orderStatus.getShiptoLastName());
+                billingAddress.setText(orderStatus.getShiptoAddress1() + ((orderStatus.getShiptoAddress2()!=null) ? " " +
+                        orderStatus.getShiptoAddress2() + " " : " ") + orderStatus.getShiptoCity() + ", " +
+                        orderStatus.getShiptoState() + " "+ orderStatus.getShiptoZip());
+                orderSubTotal.setText("$"+orderStatus.getShipmentSkuSubtotal());
+                orderCoupons.setText(orderStatus.getCouponTotal());
+                orderShipping.setText(orderStatus.getShippingAndHandlingTotal());
+                orderTax.setText("$"+orderStatus.getSalesTaxTotal());
+                orderGrandTotal.setText("$"+orderStatus.getGrandTotal());
             }
         }
         return view;

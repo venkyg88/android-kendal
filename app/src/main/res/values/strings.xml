@@ -181,6 +181,7 @@
     <string name="no_orders_found">No Orders Found</string>
     <string name="estimated_delivery">Estimated Delivery</string>
     <string name="delivered_date">Delivered Date</string>
+    <string name="order_date">Order Date</string>
     <string name="tracking_number">Tracking #</string>
     <string name="carrier">Carrier</string>
     <string name="no_detailed_tracking">Sorry, detailed tracking information is not available</string>
