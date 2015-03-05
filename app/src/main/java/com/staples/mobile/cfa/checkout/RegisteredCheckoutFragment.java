@@ -288,7 +288,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
             if (cardNumber.length() > 4) {
                 cardNumber = cardNumber.substring(cardNumber.length() - 4);
             }
-            b.append("Card ending in ").append(cardNumber);
+            b.append(getResources().getString(R.string.card_ending_in)).append(" ").append(cardNumber);
         }
         return b.toString();
     }

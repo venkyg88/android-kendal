@@ -53,7 +53,7 @@ import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.skuset.SkuSetFragment;
 import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.widget.ActionBar;
-import com.staples.mobile.cfa.widget.LinearLayoutWithProgressOverlay;
+import com.staples.mobile.cfa.widget.LinearLayoutWithOverlay;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.config.StaplesAppContext;
@@ -85,7 +85,7 @@ public class MainActivity extends Activity
     private ViewGroup leftDrawer;
     private ListView leftMenu;
     private DrawerAdapter leftMenuAdapter;
-    private LinearLayoutWithProgressOverlay mainLayout;
+    private LinearLayoutWithOverlay mainLayout;
     private CartFragment cartFragment;
     private DrawerItem homeDrawerItem;
     private long timeOfLastSessionCheck;
@@ -361,8 +361,8 @@ public class MainActivity extends Activity
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawer = (ViewGroup) findViewById(R.id.left_drawer);
         leftMenu = (ListView) findViewById(R.id.left_menu);
-        mainLayout = (LinearLayoutWithProgressOverlay)findViewById(R.id.main);
-        mainLayout.setProgressOverlay(findViewById(R.id.progress_overlay));
+        mainLayout = (LinearLayoutWithOverlay)findViewById(R.id.main);
+        mainLayout.setOverlayView(findViewById(R.id.progress_overlay));
 
         // Initialize left drawer listview
         leftMenuAdapter = new DrawerAdapter(this);
@@ -505,11 +505,11 @@ public class MainActivity extends Activity
     }
 
     public void showProgressIndicator() {
-        mainLayout.showProgressIndicator(true);
+        mainLayout.showOverlay(true);
     }
 
     public void hideProgressIndicator() {
-        mainLayout.showProgressIndicator(false);
+        mainLayout.showOverlay(false);
     }
 
     // Navigation
