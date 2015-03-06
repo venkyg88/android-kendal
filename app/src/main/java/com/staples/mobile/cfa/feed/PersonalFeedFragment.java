@@ -190,7 +190,7 @@ public class PersonalFeedFragment extends Fragment {
         seenProductsWrapper.setState(DataWrapper.State.LOADING);
 
         // get cart items without going to CartFragment first
-        CartFragment.setCartListItems(CartApiManager.getCart());
+        CartFragment.convertCart(CartApiManager.getCart());
         final List<CartItem> cartItems = CartFragment.getListItems();
 
         if(cartItems != null) {
