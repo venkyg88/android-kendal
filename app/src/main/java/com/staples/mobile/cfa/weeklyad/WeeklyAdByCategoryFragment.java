@@ -8,11 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -74,7 +72,7 @@ public class WeeklyAdByCategoryFragment extends Fragment {
         // TODO: temporary
         storeInfoVw.setText("Store address line 1\nStore address line 2");
         dateRangeVw.setText("Oct 0 - Oct 0");
-        Toast.makeText(activity, "\n\n\n\nBig Alert!!!\n\n\n\nCurrently hard-coding store to: " + storeId + "\n\n\n\n", Toast.LENGTH_LONG).show();
+        Toast.makeText(activity, "\n\nAlert!!!\n\n\n\nHard-coding store to: " + storeId + "\n\n\n\n", Toast.LENGTH_LONG).show();
 
         return view;
     }
