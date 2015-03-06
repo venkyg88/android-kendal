@@ -28,7 +28,7 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public TextView weeklyAdDealTileTV;
         public TextView weeklyAdDealCountTV;
-        ImageView weeklyAdCategoryIV;
+        private ImageView weeklyAdCategoryIV;
         private ClickListener clickListener;
 
         public ViewHolder(View v) {
@@ -68,10 +68,8 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
     }
 
     @Override
-    public WeeklyAdByCategoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.weekly_ad_categories_item, parent, false);
+    public WeeklyAdByCategoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.weekly_ad_categories_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(v);
         viewHolder.setClickListener(new ViewHolder.ClickListener() {
             @Override
@@ -93,8 +91,8 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
         holder.weeklyAdDealTileTV.setText(data.getName());
         holder.weeklyAdDealCountTV.setText(data.getCount() + " deals");
         Picasso.with(activity)
-                .load(WeeklyAdImageUrlHelper.getUrl(60,100, data.getImagelocation()))
-                .fit()
+                .load(data.getImagelocation()) // note that urls returned from category api don't include dimensions
+                .error(R.drawable.no_photo)
                 .into(holder.weeklyAdCategoryIV);
     }
 
