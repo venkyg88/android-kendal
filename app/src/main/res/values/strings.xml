@@ -222,6 +222,10 @@
 
     <!--weekly ad-->
     <string name="change_store">change store</string>
+    <plurals name="deals">
+        <item quantity="one">1 deal</item>
+        <item quantity="other">%d deals</item>
+    </plurals>
 
 
     <string name="show">SHOW</string>
