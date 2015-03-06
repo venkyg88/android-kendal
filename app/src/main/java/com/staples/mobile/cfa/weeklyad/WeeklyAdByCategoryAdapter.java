@@ -89,7 +89,8 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
         Data data = array.get(position);
 
         holder.weeklyAdDealTileTV.setText(data.getName());
-        holder.weeklyAdDealCountTV.setText(data.getCount() + " deals");
+        holder.weeklyAdDealCountTV.setText(activity.getResources().getQuantityString(R.plurals.deals,
+                                           data.getCount(), data.getCount()));
         Picasso.with(activity)
                 .load(data.getImagelocation()) // note that urls returned from category api don't include dimensions
                 .error(R.drawable.no_photo)
