@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.cart.CartItem;
 import com.staples.mobile.cfa.login.LoginHelper;
@@ -188,6 +189,8 @@ public class PersonalFeedFragment extends Fragment {
 
         seenProductsWrapper.setState(DataWrapper.State.LOADING);
 
+        // get cart items without going to CartFragment first
+        CartFragment.setCartListItems(CartApiManager.getCart());
         final List<CartItem> cartItems = CartFragment.getListItems();
 
         if(cartItems != null) {

@@ -561,6 +561,25 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         setAdapterListItems();
     }
 
+    // Called from PersonalFeedFragment
+    public static void setCartListItems(Cart cart) {
+        // clear the cart before refilling
+        ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
+
+        if (cart != null) {
+            List<Product> products = cart.getProduct();
+            if (products != null) {
+                // iterate thru products to create list of cart items
+                for (Product product : products) {
+                    if (product.getQuantity() > 0) { // I actually saw a zero quantity once returned from sapi
+                        cartItems.add(new CartItem(product));
+                    }
+                }
+            }
+        }
+        cartListItems = cartItems;
+    }
+
     /************* widget listeners ************/
 
 
