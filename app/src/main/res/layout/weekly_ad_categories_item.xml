@@ -38,7 +38,6 @@
             android:layout_width="@dimen/weekly_ad_category_item_image_width"
             android:layout_height="@dimen/weekly_ad_category_item_image_height"
             android:scaleType="fitEnd"
-            android:background="@color/background_light_blue"
             android:paddingTop="16dp"
             android:paddingRight="16dp"/>
     </LinearLayout>
