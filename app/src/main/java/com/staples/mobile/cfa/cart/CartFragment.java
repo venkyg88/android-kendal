@@ -418,7 +418,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     }
 
     /** returns current list of cart items */
-    public List<CartItem> getListItems() {
+    public static List<CartItem> getListItems() {
         return cartListItems;
     }
 
