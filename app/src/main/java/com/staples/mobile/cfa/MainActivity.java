@@ -78,7 +78,8 @@ public class MainActivity extends Activity
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final boolean LOGGING = false;
 
-    private static final int SURRENDER_TIMEOUT = 5000;
+    public static final String PREFS_FILENAME = "com.staples.mobile.cfa";
+
     private static final int CONNECTIVITY_CHECK_INTERVAL = 300000; // in milliseconds (e.g. 300000=5min)
 
     private DrawerLayout drawerLayout;
