@@ -1040,30 +1040,33 @@ public class ConfiguratorFragment extends Fragment {
         @Override
         public void success(StoreQuery storeQuery, Response response) {
             List<StoreData> storeData = storeQuery.getStoreData();
-            Obj storeObj = storeData.get(0).getObj();
+            // need to check for null because some zip codes can cause problem data
+            if (storeData != null && storeData.size() > 0) {
+                Obj storeObj = storeData.get(0).getObj();
 
-            // Get store location
-            StoreAddress storeAddress = storeObj.getStoreAddress();
-            String storeCity = storeAddress.getCity();
-            String storeState = storeAddress.getState();
-            storeNameTextView.setText(storeCity + "," + storeState);
+                // Get store location
+                StoreAddress storeAddress = storeObj.getStoreAddress();
+                String storeCity = storeAddress.getCity();
+                String storeState = storeAddress.getState();
+                storeNameTextView.setText(storeCity + "," + storeState);
 
-            // Get store office hours
-            List<StoreHours> storeHourList = storeObj.getStoreHours();
-            ArrayList<TimeSpan> spans = new ArrayList<TimeSpan>();
-            for(StoreHours hours : storeHourList) {
-                TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
-                if (span!=null) spans.add(span);
-            }
-            String status = TimeSpan.formatStatus(getActivity(), spans, System.currentTimeMillis());
-            int i = status.indexOf(' ');
-            if (i>0) status = status.substring(0, i);
-            storeStatusTextView.setText(status);
+                // Get store office hours
+                List<StoreHours> storeHourList = storeObj.getStoreHours();
+                ArrayList<TimeSpan> spans = new ArrayList<TimeSpan>();
+                for (StoreHours hours : storeHourList) {
+                    TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
+                    if (span != null) spans.add(span);
+                }
+                String status = TimeSpan.formatStatus(getActivity(), spans, System.currentTimeMillis());
+                int i = status.indexOf(' ');
+                if (i > 0) status = status.substring(0, i);
+                storeStatusTextView.setText(status);
 
-            if (storeCity == null) {
-                storeWrapper.setState(DataWrapper.State.EMPTY);
-            } else {
-                storeWrapper.setState(DataWrapper.State.DONE);
+                if (storeCity == null) {
+                    storeWrapper.setState(DataWrapper.State.EMPTY);
+                } else {
+                    storeWrapper.setState(DataWrapper.State.DONE);
+                }
             }
         }
 
