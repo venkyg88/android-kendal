@@ -343,7 +343,7 @@ public class LoginHelper {
     /** persists cached username and encrypted password */
     private void persistLoginInfo(String username, String password, String wcToken, String wcTrustedToken) {
         try {
-            SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             if (!TextUtils.isEmpty(wcToken) && !TextUtils.isEmpty(wcTrustedToken)) {
                 editor.putString(PREFS_TOKEN1, wcToken);
@@ -373,7 +373,7 @@ public class LoginHelper {
         String wcToken = null;
         String wcTrustedToken = null;
         try {
-            SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
             cachedUsername = prefs.getString(PREFS_USERNAME, cachedUsername);
             String encryptedPassword = prefs.getString(PREFS_ENCRYPTEDPASSWORD, null);
             if (cachedUsername !=  null && encryptedPassword != null) {

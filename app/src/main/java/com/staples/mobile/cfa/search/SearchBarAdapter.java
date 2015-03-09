@@ -16,6 +16,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 
 import java.util.ArrayList;
@@ -154,7 +155,7 @@ class SearchBarAdapter extends BaseAdapter implements Filterable {
 
     public void loadSearchHistory() {
         // Get chunk
-        SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
         String chunk = prefs.getString(PREFS_HISTORY, null);
         if (chunk==null || chunk.isEmpty()) return;
 
@@ -176,7 +177,7 @@ class SearchBarAdapter extends BaseAdapter implements Filterable {
         }
 
         // Save in preferences
-        SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PREFS_HISTORY, chunk.toString());
         editor.apply();

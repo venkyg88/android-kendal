@@ -1,8 +1,11 @@
 package com.staples.mobile.cfa.feed;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+
+import com.staples.mobile.cfa.MainActivity;
 
 import java.util.HashSet;
 
@@ -37,9 +40,9 @@ public class PersonalFeedSingleton {
     // get seen products from the phone
     public PersistentSizedArrayList<String> getSavedSeenProducts(Activity activity) {
         SharedPreferences sp =
-                activity.getSharedPreferences(PersistentSizedArrayList.SAVED_SEEN_PRODUCTS, activity.MODE_PRIVATE);
+                activity.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
 
-        String savedProductsString = sp.getString(PersistentSizedArrayList.SEEN_PRODUCT_LIST, "");
+        String savedProductsString = sp.getString(PersonalFeedFragment.SEEN_PRODUCT_LIST, "");
 
         // initialize SeenProductsRowItem list
         PersistentSizedArrayList<String> savedProductsList
@@ -69,9 +72,9 @@ public class PersonalFeedSingleton {
     // get seen products' sku from the phone
     public HashSet<String> getSavedSkus(Activity activity) {
         SharedPreferences sp =
-                activity.getSharedPreferences(PersistentSizedArrayList.SAVED_SEEN_PRODUCTS, activity.MODE_PRIVATE);
+                activity.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
 
-        String savedSkusString = sp.getString(PersistentSizedArrayList.SEEN_PRODUCT_SKU_LIST, "");
+        String savedSkusString = sp.getString(PersonalFeedFragment.SEEN_PRODUCT_SKU_LIST, "");
 
         HashSet<String> savedProductSkuSet = new HashSet<String>();
 
