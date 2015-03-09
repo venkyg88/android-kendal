@@ -62,7 +62,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private View cartProceedToCheckout;
     private View cartShippingLayout;
     private View cartSubtotalLayout;
-    private static CartAdapter cartAdapter;
+    private CartAdapter cartAdapter;
     private RecyclerView cartListVw;
     private LinearLayoutManager cartListLayoutMgr;
     private View couponsRewardsLayout;
@@ -77,8 +77,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private static List<CartItem> cartListItems;
     private static List<CartItemGroup> cartItemGroups;
 
-    private static int minExpectedBusinessDays;
-    private static int maxExpectedBusinessDays;
+    private int minExpectedBusinessDays;
+    private int maxExpectedBusinessDays;
 
     // widget listeners
     private QtyDeleteButtonListener qtyDeleteButtonListener;
@@ -418,7 +418,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     }
 
     /** returns current list of cart items */
-    public static List<CartItem> getListItems() {
+    public List<CartItem> getListItems() {
         return cartListItems;
     }
 
@@ -467,7 +467,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
     // synchronizing this method in case cartListItems updated simultaneously (not sure this would
     // happen since this should all be on the main UI thread)
-    private static synchronized void setAdapterListItems() {
+    private synchronized void setAdapterListItems() {
         // if fragment is attached to activity, then update the fragment's views
         if (cartAdapter != null) {
             cartAdapter.setItems(cartItemGroups);
@@ -491,7 +491,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         convertCart(CartApiManager.getCart());
     }
 
-    public static void convertCart(Cart cart) {
+    private void convertCart(Cart cart) {
 
         // clear the cart before refilling
         ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
@@ -560,30 +560,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         cartItemGroups = itemGroups;
         setAdapterListItems();
     }
-
-    // Called from PersonalFeedFragment
-//    public static void setCartListItems(Cart cart) {
-//        // clear the cart before refilling
-//        ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
-//
-//        if (cart != null) {
-//
-//            // rather than call the api to refresh the profile, use the info from the cart to update coupon info in the profile
-//            ProfileDetails.updateRewardsFromCart(cart);
-//
-//            List<Product> products = cart.getProduct();
-//            if (products != null) {
-//
-//                // iterate thru products to create list of cart items
-//                for (Product product : products) {
-//                    if (product.getQuantity() > 0) { // I actually saw a zero quantity once returned from sapi
-//                        cartItems.add(new CartItem(product));
-//                    }
-//                }
-//            }
-//        }
-//        cartListItems = cartItems;
-//    }
 
     /************* widget listeners ************/
 
