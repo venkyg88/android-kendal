@@ -22,7 +22,6 @@ import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.cart.CartApiManager;
-import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.cart.CartItem;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.ActionBar;
