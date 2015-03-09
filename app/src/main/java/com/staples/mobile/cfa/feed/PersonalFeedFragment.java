@@ -6,6 +6,7 @@ package com.staples.mobile.cfa.feed;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Html;
@@ -19,8 +20,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -46,12 +47,11 @@ import retrofit.client.Response;
 public class PersonalFeedFragment extends Fragment {
     private static final String TAG = "PersonalFeedFragment";
 
-    public static final String SAVED_SEEN_PRODUCTS = "SAVED_SEEN_PRODUCTS";
-    public static final String SEEN_PRODUCT_SKU_LIST = "SEEN_PRODUCT_SKU_LIST";
-    public static final String SEEN_PRODUCT_LIST = "SEEN_PRODUCT_LIST";
+    public static final String SEEN_PRODUCT_SKU_LIST = "seenProductSkuList";
+    public static final String SEEN_PRODUCT_LIST = "seenProductList";
 
-    public static final String DAILY_DEAL_IDENTIFIER = "BI739472";
-    public static final String CLEARANCE_IDENTIFIER = "BI642994";
+    public static final String DAILY_DEAL_IDENTIFIER = "BI739472"; // TODO Needs to be configurable
+    public static final String CLEARANCE_IDENTIFIER = "BI642994"; // TODO Needs to be configurable
 
     private static final int MAXFETCH = 50;
 
@@ -352,7 +352,7 @@ public class PersonalFeedFragment extends Fragment {
     }
 
     private void removeSavedSeenProducts() {
-        SharedPreferences sp = getActivity().getSharedPreferences(SAVED_SEEN_PRODUCTS, getActivity().MODE_PRIVATE);
+        SharedPreferences sp = getActivity().getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(SEEN_PRODUCT_SKU_LIST, "");
         editor.putString(SEEN_PRODUCT_LIST, "");
