@@ -22,8 +22,6 @@ import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.cart.CartApiManager;
-import com.staples.mobile.cfa.cart.CartItem;
-import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PriceSticker;
@@ -152,6 +150,19 @@ public class PersonalFeedFragment extends Fragment {
             ((MainActivity)activity).showErrorDialog(message);
             Log.d(TAG, message);
         }
+    }
+
+    private class CartItem{
+        com.staples.mobile.common.access.easyopen.model.cart.Product product;
+
+        public CartItem(com.staples.mobile.common.access.easyopen.model.cart.Product product) {
+            this.product = product;
+        }
+
+        public com.staples.mobile.common.access.easyopen.model.cart.Product getProduct(){
+            return this.product;
+        }
+
     }
 
     @Override
@@ -360,13 +371,9 @@ public class PersonalFeedFragment extends Fragment {
     }
 
     private ArrayList<CartItem> getCartItems(Cart cart) {
-        // clear the cart before refilling
         ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
 
         if (cart != null) {
-            // rather than call the api to refresh the profile, use the info from the cart to update coupon info in the profile
-            ProfileDetails.updateRewardsFromCart(cart);
-
             List<com.staples.mobile.common.access.easyopen.model.cart.Product> products = cart.getProduct();
             if (products != null) {
                 // iterate thru products to create list of cart items
