@@ -360,7 +360,7 @@ public class PersonalFeedFragment extends Fragment {
         editor.commit();
     }
 
-    public static ArrayList<CartItem> getCartItems(Cart cart) {
+    private ArrayList<CartItem> getCartItems(Cart cart) {
         // clear the cart before refilling
         ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
 
