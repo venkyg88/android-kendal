@@ -21,13 +21,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.apptentive.android.sdk.Apptentive;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.analytics.Tracker;
-import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.store.StoreFragment;
@@ -1074,16 +1072,15 @@ public class ConfiguratorFragment extends Fragment {
 
         @Override
         public void failure(RetrofitError retrofitError) {
-            activity = (MainActivity) getActivity();
+            Activity activity = getActivity();
             if (activity == null) {
                 return;
             }
+
             String message = ApiError.getErrorMessage(retrofitError);
-            activity.showErrorDialog(message);
-            if (LOGGING) Log.v(TAG, "ConfiguratorFragment:StoreInfoCallback:failure():"
-                            + " message[" + message + "]"
-                            + " this[" + this + "]"
-            );
+            ((MainActivity)activity).showErrorDialog(message);
+            Log.d(TAG, message);
+
             storeWrapper.setState(DataWrapper.State.EMPTY);
         }
     }
@@ -1129,21 +1126,18 @@ public class ConfiguratorFragment extends Fragment {
         Access access = Access.getInstance();
         // Logged In
         // Note that member can be null if failure to retrieve profile following successful login
-        if (access.isLoggedIn() && ! access.isGuestLogin() && ProfileDetails.getMember() != null) {
+        if(access.isLoggedIn() && !access.isGuestLogin() && ProfileDetails.getMember() != null){
             float rewards = 0;
             Member member = ProfileDetails.getMember();
             if(member.getRewardsNumber() != null && member.getRewardDetails() != null) {
                 rewards = ProfileDetails.getRewardsTotal();
             }
 
-            if (rewards != 0) {
+            if(rewards != 0) {
                 login_layout.setVisibility(View.GONE);
                 reward_layout.setVisibility(View.VISIBLE);
                 rewardTextView.setText("$" + (int) rewards);
-                if (LOGGING) Log.v(TAG, "ConfiguratorFragment:StoreInfoCallback:updateMessageBar():"
-                                + " rewards[" + rewards + "]"
-                                + " this[" + this + "]"
-                );
+                Log.d(TAG, "Rewards: " + rewards);
             }
             else{
                 loginMessageTextView.setText(R.string.welcome);
