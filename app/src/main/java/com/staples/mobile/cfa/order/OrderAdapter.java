@@ -73,7 +73,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
         String orderNumberText = "Order# "+ orderStatus.getOrderNumber();
         if (order.getShipments().size() > 1) {
-            orderNumberText += " - Shipment " + order.getShipmentIndex() + 1;
+            orderNumberText += " - Shipment " + (order.getShipmentIndex() + 1);
         }
         holder.orderNumTV.setText(orderNumberText);
 

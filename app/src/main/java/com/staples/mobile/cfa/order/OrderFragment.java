@@ -229,12 +229,12 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                 orderStatusDetailCallback = new OrderStatusDetailCallback(); // only need to create one instance of the item detail callback
                 numOrdersToRetrieve = 0;
                 Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR)-1);
-                long oneYearAgo = calendar.getTimeInMillis();
+                calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR)-2); // 2 years ago
+                long ageLimit = calendar.getTimeInMillis();
                 for (OrderHistory order : orderDetail.getOrderHistory()) {
                     Date orderDate = OrderShipmentListItem.parseDate(order.getOrderDate());
-                    // when orders are beyond a year old, quit retrieving
-                    if (orderDate.getTime() < oneYearAgo) {
+                    // when orders are beyond a certain age limit, quit retrieving
+                    if (orderDate.getTime() < ageLimit) {
                         break;
                     }
                     easyOpenApi.getMemberOrderStatus(order.getOrderNumber(), orderStatusDetailCallback);
