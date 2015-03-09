@@ -24,7 +24,7 @@ import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.cart.CartFragment;
 import com.staples.mobile.cfa.cart.CartItem;
-import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PriceSticker;
@@ -34,7 +34,9 @@ import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
+import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -190,8 +192,7 @@ public class PersonalFeedFragment extends Fragment {
         seenProductsWrapper.setState(DataWrapper.State.LOADING);
 
         // get cart items without going to CartFragment first
-        CartFragment.convertCart(CartApiManager.getCart());
-        final List<CartItem> cartItems = CartFragment.getListItems();
+        final List<CartItem> cartItems = getCartItems(CartApiManager.getCart());
 
         if(cartItems != null) {
             dailyDealWrapper.setState(DataWrapper.State.LOADING);
@@ -357,5 +358,27 @@ public class PersonalFeedFragment extends Fragment {
         editor.putString(SEEN_PRODUCT_SKU_LIST, "");
         editor.putString(SEEN_PRODUCT_LIST, "");
         editor.commit();
+    }
+
+    public static ArrayList<CartItem> getCartItems(Cart cart) {
+        // clear the cart before refilling
+        ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
+
+        if (cart != null) {
+            // rather than call the api to refresh the profile, use the info from the cart to update coupon info in the profile
+            ProfileDetails.updateRewardsFromCart(cart);
+
+            List<com.staples.mobile.common.access.easyopen.model.cart.Product> products = cart.getProduct();
+            if (products != null) {
+                // iterate thru products to create list of cart items
+                for (com.staples.mobile.common.access.easyopen.model.cart.Product product : products) {
+                    if (product.getQuantity() > 0) { // I actually saw a zero quantity once returned from sapi
+                        cartItems.add(new CartItem(product));
+                    }
+                }
+            }
+        }
+
+        return cartItems;
     }
 }
