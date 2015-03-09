@@ -21,9 +21,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.cfa.cart.CartFragment;
-import com.staples.mobile.cfa.cart.CartItem;
-import com.staples.mobile.cfa.login.LoginHelper;
+import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PriceSticker;
@@ -33,7 +31,9 @@ import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
+import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -188,7 +188,9 @@ public class PersonalFeedFragment extends Fragment {
 
         seenProductsWrapper.setState(DataWrapper.State.LOADING);
 
-        final List<CartItem> cartItems = CartFragment.getListItems();
+        // get cart items without going to CartFragment first
+        final List<com.staples.mobile.common.access.easyopen.model.cart.Product> cartItems
+                = getCartItems(CartApiManager.getCart());
 
         if(cartItems != null) {
             dailyDealWrapper.setState(DataWrapper.State.LOADING);
@@ -214,11 +216,11 @@ public class PersonalFeedFragment extends Fragment {
                             }
 
                             if (cartItems != null) {
-                                for (CartItem cartItem : cartItems) {
-                                    String cartItemSku = cartItem.getProduct().getSku();
+                                for (com.staples.mobile.common.access.easyopen.model.cart.Product cartItem : cartItems) {
+                                    String cartItemSku = cartItem.getSku();
                                     if (dailyDealSkuSet.contains(cartItemSku)) {
                                         fillContainer(cartItem, dailyDealContainer);
-                                        Log.d(TAG, "Daily deal products in cart: " + cartItem.getProduct().getProductName());
+                                        Log.d(TAG, "Daily deal products in cart: " + cartItem.getProductName());
                                     }
                                 }
                             }
@@ -251,11 +253,11 @@ public class PersonalFeedFragment extends Fragment {
                             }
 
                             if (cartItems != null) {
-                                for (CartItem cartItem : cartItems) {
-                                    String cartItemSku = cartItem.getProduct().getSku();
+                                for (com.staples.mobile.common.access.easyopen.model.cart.Product cartItem : cartItems) {
+                                    String cartItemSku = cartItem.getSku();
                                     if (clearanceSkuSet.contains(cartItemSku)) {
                                         fillContainer(cartItem, clearanceContainer);
-                                        Log.d(TAG, "Clearance products in cart: " + cartItem.getProduct().getProductName());
+                                        Log.d(TAG, "Clearance products in cart: " + cartItem.getProductName());
                                     }
                                 }
                             }
@@ -305,13 +307,14 @@ public class PersonalFeedFragment extends Fragment {
         }
     }
 
-    private void fillContainer(CartItem cartItem, LinearLayout container){
-        final String productName = Html.fromHtml(cartItem.getProduct().getProductName()).toString();
-        String currentPrice = String.valueOf(cartItem.getProduct().getPricing().get(0).getFinalPrice());
-        String reviewCount = String.valueOf(cartItem.getProduct().getCustomerReviewCount());
-        String rating = String.valueOf(cartItem.getProduct().getCustomerReviewRating());
-        String unitOfMeasure = cartItem.getProduct().getPricing().get(0).getUnitOfMeasure();
-        String imageUrl = cartItem.getProduct().getImage().get(0).getUrl();
+    private void fillContainer(com.staples.mobile.common.access.easyopen.model.cart.Product cartItem,
+                               LinearLayout container){
+        final String productName = Html.fromHtml(cartItem.getProductName()).toString();
+        String currentPrice = String.valueOf(cartItem.getPricing().get(0).getFinalPrice());
+        String reviewCount = String.valueOf(cartItem.getCustomerReviewCount());
+        String rating = String.valueOf(cartItem.getCustomerReviewRating());
+        String unitOfMeasure = cartItem.getPricing().get(0).getUnitOfMeasure();
+        String imageUrl = cartItem.getImage().get(0).getUrl();
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View row = inflater.inflate(R.layout.personal_feed_product_item, null);
@@ -332,7 +335,7 @@ public class PersonalFeedFragment extends Fragment {
         container.addView(row);
 
         // Set listener for all the items
-        final String sku = cartItem.getProduct().getSku();
+        final String sku = cartItem.getSku();
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -354,5 +357,24 @@ public class PersonalFeedFragment extends Fragment {
         editor.putString(SEEN_PRODUCT_SKU_LIST, "");
         editor.putString(SEEN_PRODUCT_LIST, "");
         editor.commit();
+    }
+
+    private ArrayList<com.staples.mobile.common.access.easyopen.model.cart.Product> getCartItems(Cart cart) {
+        ArrayList<com.staples.mobile.common.access.easyopen.model.cart.Product> cartItems
+                = new ArrayList<com.staples.mobile.common.access.easyopen.model.cart.Product>();
+
+        if (cart != null) {
+            List<com.staples.mobile.common.access.easyopen.model.cart.Product> products = cart.getProduct();
+            if (products != null) {
+                // iterate thru products to create list of cart items
+                for (com.staples.mobile.common.access.easyopen.model.cart.Product product : products) {
+                    if (product.getQuantity() > 0) { // I actually saw a zero quantity once returned from sapi
+                        cartItems.add(product);
+                    }
+                }
+            }
+        }
+
+        return cartItems;
     }
 }
