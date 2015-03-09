@@ -17,9 +17,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.apptentive.android.sdk.Apptentive;
+
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.analytics.Tracker;
+import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.rewards.RewardsLinkingFragment;
@@ -188,6 +191,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         //initialize cart based on what's been returned from api so far
         convertCart(CartApiManager.getCart());
         Tracker.getInstance().trackStateForCart(CartApiManager.getCart()); // analytics
+        Apptentive.engage(activity, ApptentiveSdk.CART_SHOWN_EVENT);
     }
 
     @Override

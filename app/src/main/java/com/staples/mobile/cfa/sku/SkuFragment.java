@@ -22,11 +22,14 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.apptentive.android.sdk.Apptentive;
+
 import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.analytics.Tracker;
+import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.feed.PersistentSizedArrayList;
 import com.staples.mobile.cfa.feed.PersonalFeedSingleton;
@@ -632,6 +635,8 @@ Callback,
                 Tracker.getInstance().trackStateForProduct(product); // Analytics
             }
 
+            Activity activity = getActivity();
+            Apptentive.engage(activity, ApptentiveSdk.PRODUCT_DETAIL_SHOWN_EVENT);
 
             switch (availability) {
                 case NOTHING:
@@ -825,7 +830,6 @@ Callback,
             else {
                 view.findViewById(R.id.sku_review_comments).setVisibility(View.GONE);
             }
-
 
             for(int i = 0; i < yotpoReviews.size(); i++) {
                 Review review = yotpoReviews.get(i);
