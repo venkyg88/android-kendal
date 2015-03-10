@@ -17,7 +17,6 @@ import com.crittercism.app.Crittercism;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Configurator;
-import com.staples.mobile.cfa.crittercism.CrittercismSdk;
 
 import retrofit.RetrofitError;
 
@@ -50,9 +49,7 @@ public class MainApplication
         resources = getResources();
 
         try {
-
-            Crittercism.initialize(this, CrittercismSdk.APPLICATION_ID);
-
+            Crittercism.initialize(this, FlavorSpecific.CRITTERCISM_ID);
         } catch (Exception exception) {
 
             if (LOGGING) Log.e(TAG, "MainApplication:onCreate(): EXCEPTION[Exception]: Crittercism.initialize()"
@@ -63,8 +60,7 @@ public class MainApplication
             if (exception != null) exception.printStackTrace();
         }
 
-        String configServerUrl = resources.getString(R.string.configuration_destination);
-        appConfigurator = AppConfigurator.getInstance(this, configServerUrl);
+        appConfigurator = AppConfigurator.getInstance(this, FlavorSpecific.MCS_URL);
         appConfigurator.getConfigurator(this);
 
         /* @@@ STUBBED

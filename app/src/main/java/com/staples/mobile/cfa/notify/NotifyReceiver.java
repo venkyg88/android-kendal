@@ -3,6 +3,7 @@ package com.staples.mobile.cfa.notify;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -10,14 +11,15 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.urbanairship.push.BaseIntentReceiver;
 import com.urbanairship.push.PushMessage;
 import com.urbanairship.push.notifications.NotificationFactory;
 import com.urbanairship.util.NotificationIDGenerator;
 
-public class IntentReceiver extends BaseIntentReceiver {
-    private static final String TAG = "IntentReceiver";
+public class NotifyReceiver extends BaseIntentReceiver {
+    private static final String TAG = "NotifyReceiver";
 
     private static final String APPLICATION = "com.staples.mobile.cfa";
 
@@ -29,6 +31,8 @@ public class IntentReceiver extends BaseIntentReceiver {
     public static final String EXTRA_IDENTIFIER = APPLICATION +".IDENTIFIER";
     public static final String EXTRA_KEYWORD = APPLICATION +".KEYWORD";
     public static final String EXTRA_TITLE = APPLICATION +".TITLE";
+
+    private static final String URBAN_AIRSHIP_CHANNEL = "urbanAirshipChannel";
 
     private ObjectMapper mapper;
 
@@ -73,7 +77,7 @@ public class IntentReceiver extends BaseIntentReceiver {
         }
     }
 
-    public IntentReceiver() {
+    public NotifyReceiver() {
         super();
         mapper = new ObjectMapper();
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
@@ -83,7 +87,14 @@ public class IntentReceiver extends BaseIntentReceiver {
 
     @Override
     protected void onChannelRegistrationSucceeded(Context context, String channelId) {
-        Log.i(TAG, "Channel registration updated. Channel Id:" + channelId + ".");
+        Log.d(TAG, "Urban Airship channel " + channelId);
+        SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
+        String savedId = prefs.getString(URBAN_AIRSHIP_CHANNEL, null);
+        if (savedId==null || !savedId.equals(channelId)) {
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString(URBAN_AIRSHIP_CHANNEL, channelId);
+            Log.d(TAG, "New Urban Airship channel " + channelId);
+        }
     }
 
     @Override
