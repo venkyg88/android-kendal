@@ -9,9 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
-import android.widget.ScrollView;
 import android.widget.TabHost;
-import android.widget.Toast;
+import android.widget.TabWidget;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -79,15 +78,25 @@ public class WeeklyAdListFragment extends Fragment{
             currentTabIndex = args.getInt(TABINDEX);
         }
 
+        // set up recycler view
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.weekly_ad_list_items);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(activity, 2));
+        mRecyclerView.addItemDecoration(new HorizontalDivider(activity));
+        adapter = new WeeklyAdListAdapter(activity);
+        mRecyclerView.setAdapter(adapter);
+
         // set up tabs
         tabHost = (TabHost) view.findViewById(android.R.id.tabhost);
         tabScrollView = (HorizontalScrollView)view.findViewById(R.id.tabs_scrollview);
         tabHost.setup();
+        TabHost.TabContentFactory tabContentFactory = new TabHost.TabContentFactory() {
+            @Override public View createTabContent(String tag) { return mRecyclerView; }
+        };
         for (int i = 0; i < titles.size(); i++) {
-            String title = titles.get(i);
             TabHost.TabSpec tab = tabHost.newTabSpec(String.valueOf(i)); // this is the tabId supplied in onTabChanged
-            tab.setIndicator(title);
-            tab.setContent(R.id.weekly_ad_list_items);
+            tab.setIndicator(titles.get(i));
+            tab.setContent(tabContentFactory);
             tabHost.addTab(tab);
         }
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
@@ -100,13 +109,15 @@ public class WeeklyAdListFragment extends Fragment{
             }
         });
         tabHost.setCurrentTab(currentTabIndex);
+
         // initialize scroll position to currently selected tab (delay until position info is available)
         tabHost.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (currentTabIndex > 0) {
+                    // scroll such that currently selected tab is centered
                     View currentTabView = tabHost.getCurrentTabView();
-                    int targetScrollX = currentTabView.getLeft() - (tabScrollView.getWidth()-currentTabView.getWidth())/2;
+                    int targetScrollX = currentTabView.getLeft() - (tabScrollView.getWidth() - currentTabView.getWidth()) / 2;
                     if (currentTabView.getLeft() > targetScrollX) {
                         tabScrollView.scrollTo(targetScrollX, 0);
                     }
@@ -114,13 +125,6 @@ public class WeeklyAdListFragment extends Fragment{
             }
         }, 100);
 
-        // set up recycler view
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.weekly_ad_list_items);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        mRecyclerView.addItemDecoration(new HorizontalDivider(getActivity()));
-        adapter = new WeeklyAdListAdapter(getActivity());
-        mRecyclerView.setAdapter(adapter);
 
         // initiate call to get weekly ads
         getWeeklyAdListing();
