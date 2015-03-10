@@ -112,6 +112,9 @@ Callback,
         }
     }
 
+    private MainActivity activity;
+    private Resources resources;
+
     private String title;
     private String identifier;
     private String productName;
@@ -148,6 +151,13 @@ Callback,
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.activity = (MainActivity) activity;
+        resources = activity.getResources();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Bundle args = getArguments();
         if (args != null) {
@@ -162,24 +172,22 @@ Callback,
         // Init animated scroll bar callback
 //        summary.setAnimatedScrollCallback(new AnimatedBarScrollViewListener()) ;
 
-        Resources res = getActivity().getResources();
-
         // Init image pager
         imagePager = (ViewPager) summary.findViewById(R.id.images);
-        imageAdapter = new SkuImageAdapter(getActivity());
+        imageAdapter = new SkuImageAdapter(activity);
         imagePager.setAdapter(imageAdapter);
         stripe = (PagerStripe) summary.findViewById(R.id.stripe);
         imagePager.setOnPageChangeListener(stripe);
 
         // Init details (ViewPager)
         tabPager = (ViewPager) wrapper.findViewById(R.id.pager);
-        tabAdapter = new SkuTabAdapter(getActivity());
+        tabAdapter = new SkuTabAdapter(activity);
         tabPager.setAdapter(tabAdapter);
 
         // Fill detail (View Pager)
-        tabAdapter.add(res.getString(R.string.description));
-        tabAdapter.add(res.getString(R.string.specs));
-        tabAdapter.add(res.getString(R.string.reviews));
+        tabAdapter.add(resources.getString(R.string.description));
+        tabAdapter.add(resources.getString(R.string.specs));
+        tabAdapter.add(resources.getString(R.string.reviews));
         tabAdapter.notifyDataSetChanged();
 
         // Init details (TabHost)
@@ -190,10 +198,10 @@ Callback,
         accessoryContainer = (LinearLayout) wrapper.findViewById(R.id.accessoryContainer);
 
         // Fill details (TabHost)
-        DummyFactory dummy = new DummyFactory(getActivity());
-        addTab(dummy, res, R.string.description, DESCRIPTION);
-        addTab(dummy, res, R.string.specs, SPECIFICATIONS);
-        addTab(dummy, res, R.string.reviews, REVIEWS);
+        DummyFactory dummy = new DummyFactory(activity);
+        addTab(dummy, resources, R.string.description, DESCRIPTION);
+        addTab(dummy, resources, R.string.specs, SPECIFICATIONS);
+        addTab(dummy, resources, R.string.reviews, REVIEWS);
 
         // Set initial visibility
         wrapper.setState(DataWrapper.State.LOADING);
@@ -324,18 +332,17 @@ Callback,
         if (skuNumber != null && modelNumber != null && skuNumber.equals(modelNumber))
             modelNumber = null;
 
-        Resources res = getActivity().getResources();
         StringBuilder sb = new StringBuilder();
 
         if (skuNumber != null) {
-            sb.append(res.getString(R.string.item));
+            sb.append(resources.getString(R.string.item));
             sb.append(":\u00a0");
             sb.append(skuNumber);
         }
 
         if (modelNumber != null) {
             if (sb.length() > 0) sb.append("   ");
-            sb.append(res.getString(R.string.model));
+            sb.append(resources.getString(R.string.model));
             sb.append(":\u00a0");
             sb.append(modelNumber);
         }
@@ -418,7 +425,7 @@ Callback,
     private void addAccessory(Product product) {
         List<Product> accessories = product.getAccessory();
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        LayoutInflater inflater = activity.getLayoutInflater();
 
         for (final Product accessory : accessories) {
             String accessoryImageUrl = accessory.getImage().get(0).getUrl();
@@ -429,13 +436,13 @@ Callback,
 
             // Set accessory image
             ImageView accessoryImageView = (ImageView) skuAccessoryRow.findViewById(R.id.accessory_image);
-            Picasso.with(getActivity()).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
+            Picasso.with(activity).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
 
             // Set listener for accessory image
             accessoryImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity)getActivity()).selectSkuItem(accessoryTitle, sku, false);
+                    activity.selectSkuItem(accessoryTitle, sku, false);
                 }
             });
 
@@ -447,7 +454,7 @@ Callback,
             accessoryTitleTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity)getActivity()).selectSkuItem(accessoryTitle, sku, false);
+                    activity.selectSkuItem(accessoryTitle, sku, false);
                 }
             });
 
@@ -463,16 +470,16 @@ Callback,
     }
 
     private void saveSeenProduct(Product product){
-        PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(getActivity());
-        HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(getActivity());
+        PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(activity);
+        HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(activity);
         PersistentSizedArrayList<String> savedSeenProductList
-                = feedSingleton.getSavedSeenProducts(getActivity());
+                = feedSingleton.getSavedSeenProducts(activity);
 
         // Check if the product was saved before
         if(!savedSkuSet.contains(product.getSku())){
             Log.d(TAG, "Saving seen product's sku: " + product.getProductName());
 
-            savedSeenProductList.addSeenProduct(product.getSku(), getActivity());
+            savedSeenProductList.addSeenProduct(product.getSku(), activity);
         }
 
         // Update last seen products list's order keeping the last seen item at the end of the list
@@ -497,7 +504,7 @@ Callback,
                     feedSingleton.setSavedSeenProducts(savedSeenProductList);
 
                     // Update updated seen products list in the phone
-                    savedSeenProductList.updateSeenProductsInPhone(getActivity());
+                    savedSeenProductList.updateSeenProductsInPhone(activity);
 
                     skuString = "";
                     for(String sku : savedSeenProductList){
@@ -532,7 +539,7 @@ Callback,
                     feedSingleton.setSavedSeenProducts(savedSeenProductList);
 
                     // Update updated seen products sized ArrayList in the phone
-                    savedSeenProductList.updateSeenProductsInPhone(getActivity());
+                    savedSeenProductList.updateSeenProductsInPhone(activity);
 
                     skuString = "";
                     for(String sku : savedSeenProductList){
@@ -548,9 +555,6 @@ Callback,
 
     @Override
     public void success(Object obj, Response response) {
-        Activity activity = getActivity();
-        if (activity==null) return;
-
         if (obj instanceof SkuDetails) {
             SkuDetails details = (SkuDetails) obj;
             processSkuDetails(details);
@@ -574,14 +578,12 @@ Callback,
 
     @Override
     public void failure(RetrofitError retrofitError) {
-        Activity activity = getActivity();
-        if (activity==null) return;
         Type type = retrofitError.getSuccessType();
 
         if (type==SkuDetails.class) {
             wrapper.setState(DataWrapper.State.EMPTY);
             String msg = ApiError.getErrorMessage(retrofitError);
-            ((MainActivity) activity).showErrorDialog(msg);
+            activity.showErrorDialog(msg);
             Log.d(TAG, msg);
         }
 
@@ -593,7 +595,7 @@ Callback,
 
         else if (type == YotpoResponse.class) {
             String msg = ApiError.getErrorMessage(retrofitError);
-            ((MainActivity) activity).showErrorDialog(msg);
+            activity.showErrorDialog(msg);
             Log.d(TAG, msg);
         }
     }
@@ -635,7 +637,6 @@ Callback,
                 Tracker.getInstance().trackStateForProduct(product); // Analytics
             }
 
-            Activity activity = getActivity();
             Apptentive.engage(activity, ApptentiveSdk.PRODUCT_DETAIL_SHOWN_EVENT);
 
             switch (availability) {
@@ -649,7 +650,7 @@ Callback,
                     skuText.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            ((MainActivity)getActivity()).selectSkuSet(product.getProductName(), product.getSku(), product.getThumbnailImage().get(0).getUrl());
+                            activity.selectSkuSet(product.getProductName(), product.getSku(), product.getThumbnailImage().get(0).getUrl());
                         }
                     });
                     break;
@@ -697,7 +698,7 @@ Callback,
             finalPrice = priceSticker.getPrice();
 
             // Add description
-            LayoutInflater inflater = getActivity().getLayoutInflater();
+            LayoutInflater inflater = activity.getLayoutInflater();
             if (!buildDescription(inflater, (ViewGroup) summary.findViewById(R.id.description), product, 3))
                 summary.findViewById(R.id.description_detail).setVisibility(View.GONE);
 
@@ -753,7 +754,7 @@ Callback,
         Data item = datas.get(0);
         if (item != null) {
             // Inflate review block
-            LayoutInflater inflater = getActivity().getLayoutInflater();
+            LayoutInflater inflater = activity.getLayoutInflater();
             ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
             View view = inflater.inflate(R.layout.sku_review_brief_item, parent, false);
             parent.addView(view);
@@ -804,7 +805,7 @@ Callback,
             Review briefReview = yotpoReviews.get(0);
 
             // Inflate review block
-            LayoutInflater inflater = getActivity().getLayoutInflater();
+            LayoutInflater inflater = activity.getLayoutInflater();
             ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
             View view = inflater.inflate(R.layout.sku_review_brief_item, parent, false);
             parent.addView(view);
@@ -953,7 +954,6 @@ Callback,
             case R.id.add_to_cart:
                 QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
                 final int qty = edit.getQuantity();
-                final MainActivity activity = (MainActivity) getActivity();
                 activity.showProgressIndicator();
                 CartApiManager.addItemToCart(identifier, qty, new CartApiManager.CartRefreshCallback() {
                     @Override
