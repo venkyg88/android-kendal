@@ -10,7 +10,6 @@ import com.staples.mobile.common.access.easyopen.model.member.Shipment;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -18,7 +17,9 @@ import java.util.Locale;
 /**
  * Created by sutdi001 on 3/3/15.
  */
-public class OrderShipmentListItem implements Serializable {
+public class OrderShipmentListItem implements Serializable, Comparable<OrderShipmentListItem> {
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+
     private int shipmentIndex; // zero-based index of list item's shipment within order
     private OrderStatus orderStatus;
 
@@ -51,15 +52,33 @@ public class OrderShipmentListItem implements Serializable {
         this.orderStatus = orderStatus;
     }
 
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
     public static Date parseDate(String date) {
         try {
             return dateFormat.parse(date);
         } catch (ParseException e) {
-            // return oldest possible date
-            Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(0);
-            return cal.getTime();
+            return new Date(0);
         }
+    }
+
+    @Override
+    public int compareTo(OrderShipmentListItem another) {
+        int result = 0;
+        // first sort by descending order date to make sure most recent are shown at the top
+        Date leftParsedDate = OrderShipmentListItem.parseDate(getOrderStatus().getOrderDate());
+        Date rightParsedDate = OrderShipmentListItem.parseDate(another.getOrderStatus().getOrderDate());
+        result = rightParsedDate.compareTo(leftParsedDate);
+        if (result == 0) {
+            // next sort by descending order number to make sure shipments of an order are grouped together
+            result = another.getOrderStatus().getOrderNumber().compareTo(getOrderStatus().getOrderNumber());
+            if (result == 0) {
+                // next sort by delivery date
+                result = another.getShipment().getScheduledDeliveryDate().compareTo(getShipment().getScheduledDeliveryDate());
+                if (result == 0) {
+                    // next sort by shipment index
+                    result = getShipmentIndex() - another.getShipmentIndex();
+                }
+            }
+        }
+        return result;
     }
 }

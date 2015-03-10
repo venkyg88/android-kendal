@@ -88,9 +88,7 @@ public class PersistentSizedArrayList<T> extends ArrayList<T> {
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(PersonalFeedFragment.SEEN_PRODUCT_SKU_LIST, savedSkusString);
         editor.putString(PersonalFeedFragment.SEEN_PRODUCT_LIST, savedProductsString);
-        editor.commit();
-
-        Log.d(TAG, "Saved this seen product successfully! -> " + savedProductsString);
+        editor.apply();
     }
 
     // called for update the list when there are more than 3 items
@@ -129,9 +127,7 @@ public class PersistentSizedArrayList<T> extends ArrayList<T> {
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(PersonalFeedFragment.SEEN_PRODUCT_SKU_LIST, savedSkusString);
         editor.putString(PersonalFeedFragment.SEEN_PRODUCT_LIST, savedProductsString);
-        editor.commit();
-
-        Log.d(TAG, "Updated seen products successfully! -> " + savedProductsString);
+        editor.apply();
     }
 
 
@@ -209,7 +205,7 @@ public class PersistentSizedArrayList<T> extends ArrayList<T> {
 //        SharedPreferences.Editor editor = sp.edit();
 //        editor.putString(SEEN_PRODUCT_SKU_LIST, savedSkusString);
 //        editor.putString(SEEN_PRODUCT_LIST, savedProductsString);
-//        editor.commit();
+//        editor.apply();
 //
 //        Log.d(TAG, "Saved this seen product successfully! -> " + savedProductsString);
 //    }
