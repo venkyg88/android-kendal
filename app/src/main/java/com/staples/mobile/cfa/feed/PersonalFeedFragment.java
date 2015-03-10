@@ -356,7 +356,7 @@ public class PersonalFeedFragment extends Fragment {
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(SEEN_PRODUCT_SKU_LIST, "");
         editor.putString(SEEN_PRODUCT_LIST, "");
-        editor.commit();
+        editor.apply();
     }
 
     private ArrayList<com.staples.mobile.common.access.easyopen.model.cart.Product> getCartItems(Cart cart) {

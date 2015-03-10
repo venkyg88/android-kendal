@@ -1,8 +1,8 @@
 package com.staples.mobile.cfa.order;
 
+import android.app.Fragment;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,17 +30,13 @@ import com.staples.mobile.common.access.easyopen.model.member.OrderStatus;
 import com.staples.mobile.common.access.easyopen.model.member.OrderStatusDetail;
 import com.staples.mobile.common.access.easyopen.model.member.ScanData;
 import com.staples.mobile.common.access.easyopen.model.member.Shipment;
-import com.staples.mobile.common.access.easyopen.model.member.ShipmentSKU;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -258,8 +254,6 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         });
     }
 
-
-
     /**
      *
      * order detail callback
@@ -295,40 +289,13 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
             if (numOrdersToRetrieve == 0) {
                 if (orderShipmentListItems.size() > 0) {
                     // sort order shipments by descending order date and order number, then by shipment info
-                    sortShipments(orderShipmentListItems);
+                    Collections.sort(orderShipmentListItems);
                     adapter.fill(orderShipmentListItems);
                 } else {
                     orderErrorTV.setVisibility(View.VISIBLE);
                 }
                 activity.hideProgressIndicator();
             }
-        }
-
-        private void sortShipments(List<OrderShipmentListItem> listItems) {
-            // sort orders by descending order date, then by shipment
-            Collections.sort(listItems, new Comparator<OrderShipmentListItem>() {
-                @Override
-                public int compare(OrderShipmentListItem left, OrderShipmentListItem right) {
-                    int result = 0;
-                    // first sort by descending order date to make sure most recent are shown at the top
-                    Date leftParsedDate = OrderShipmentListItem.parseDate(left.getOrderStatus().getOrderDate());
-                    Date rightParsedDate = OrderShipmentListItem.parseDate(right.getOrderStatus().getOrderDate());
-                    result = rightParsedDate.compareTo(leftParsedDate);
-                    if (result == 0) {
-                        // next sort by descending order number to make sure shipments of an order are grouped together
-                        result = right.getOrderStatus().getOrderNumber().compareTo(left.getOrderStatus().getOrderNumber());
-                        if (result == 0) {
-                            // next sort by delivery date
-                            result = right.getShipment().getScheduledDeliveryDate().compareTo(left.getShipment().getScheduledDeliveryDate());
-                            if (result == 0) {
-                                // next sort by shipment index
-                                result = left.getShipmentIndex() - right.getShipmentIndex();
-                            }
-                        }
-                    }
-                    return result;
-                }
-            });
         }
     };
 }
