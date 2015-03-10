@@ -151,14 +151,11 @@ Callback,
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = (MainActivity) activity;
-        resources = activity.getResources();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+
+        activity = (MainActivity) getActivity();
+        resources = activity.getResources();
+
         Bundle args = getArguments();
         if (args != null) {
             title = args.getString(TITLE);
