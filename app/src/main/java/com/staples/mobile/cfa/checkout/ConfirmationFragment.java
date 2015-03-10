@@ -20,9 +20,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.apptentive.android.sdk.Apptentive;
+
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.analytics.Tracker;
+import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -110,6 +113,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.CONFIRM);
         Tracker.getInstance().trackStateForOrderConfirmation(orderNumber);
+        Apptentive.engage(activity, ApptentiveSdk.ORDER_CONFIRMATION_SHOWN_EVENT);
     }
 
     @Override

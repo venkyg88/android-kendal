@@ -11,9 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.apptentive.android.sdk.Apptentive;
+
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.analytics.Tracker;
+import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.bundle.BundleAdapter;
 import com.staples.mobile.cfa.bundle.BundleItem;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -95,6 +98,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
             //get the actual count of search results
             Search search = searchResult.getSearch().get(0);
             Tracker.getInstance().trackStateForSearchResults(search.getSearchTerm(), search.getItemCount()); //Analytics
+            Apptentive.engage(activity, ApptentiveSdk.SEARCH_SHOWN_EVENT);
         }
     }
 
