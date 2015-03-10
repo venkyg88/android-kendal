@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.access.easyopen.util.WeeklyAdImageUrlHelper;
 import com.staples.mobile.common.access.easyopen.model.weeklyadbycategory.Data;
 
 import java.util.ArrayList;
@@ -24,6 +23,9 @@ import java.util.List;
 public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCategoryAdapter.ViewHolder>{
     private ArrayList<Data> array;
     private Activity activity;
+    String storeNumber;
+    ArrayList<String> categoryTreeIds;
+    ArrayList<String> titles;
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public TextView weeklyAdDealTileTV;
@@ -62,9 +64,12 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
         }
     }
 
-    public WeeklyAdByCategoryAdapter(Activity activity) {
+    public WeeklyAdByCategoryAdapter(Activity activity, String storeNumber) {
         this.activity = activity;
         this.array = new ArrayList<Data>();
+        this.categoryTreeIds = new ArrayList<>();
+        this.titles = new ArrayList<>();
+        this.storeNumber = storeNumber;
     }
 
     @Override
@@ -74,9 +79,9 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
         viewHolder.setClickListener(new ViewHolder.ClickListener() {
             @Override
             public void onClick(View v, int position) {
-                Data data = array.get(position);
+//                Data data = array.get(position);
                 WeeklyAdListFragment weeklyAdFragment = new WeeklyAdListFragment();
-                weeklyAdFragment.setArguments("2278338",data.getCategorytreeid(), data.getName());
+                weeklyAdFragment.setArguments(storeNumber, position, categoryTreeIds, titles);
                 ((MainActivity)activity).navigateToFragment(weeklyAdFragment);
             }
         });
@@ -104,6 +109,10 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
 
     public void fill(List<Data> items) {
         array.addAll(items);
+        for (Data item : items) {
+            categoryTreeIds.add(item.getCategorytreeid());
+            titles.add(item.getName());
+        }
         notifyDataSetChanged();
     }
 }

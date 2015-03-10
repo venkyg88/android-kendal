@@ -58,7 +58,7 @@ public class WeeklyAdByCategoryFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         getWeeklyAdData();
-        adapter = new WeeklyAdByCategoryAdapter(getActivity());
+        adapter = new WeeklyAdByCategoryAdapter(getActivity(), storeId);
         mRecyclerView.setAdapter(adapter);
 
         changeStoreVw.setOnClickListener(new View.OnClickListener() {
