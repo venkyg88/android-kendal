@@ -59,8 +59,7 @@
     <string name="reward">Reward!</string>
     <string name="store_open">Open</string>
     <string name="store_close">Close</string>
-    <string name="no_store">No Nearby Store</string>
-    <string name="find_store">Find Nearby Store</string>
+    <string name="no_store">Find A Store Near You</string>
 
     <!--cart, coupon/reward, checkout -->
     <string name="add">ADD</string>

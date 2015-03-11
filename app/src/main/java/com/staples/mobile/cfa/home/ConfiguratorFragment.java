@@ -1029,7 +1029,6 @@ public class ConfiguratorFragment extends Fragment {
         String postalCode = finder.getPostalCode();
         if (TextUtils.isEmpty(postalCode)) {
             // display "no store nearby"
-            storeErrorInfoTextView.setText(getResources().getText(R.string.no_store));
             storeWrapper.setState(DataWrapper.State.EMPTY);
             String errorMessage = (String) getResources().getText(R.string.error_no_location_service);
             Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
@@ -1073,9 +1072,8 @@ public class ConfiguratorFragment extends Fragment {
                     storeWrapper.setState(DataWrapper.State.DONE);
                 }
             }
-            // display "find nearby store"
+            // display "find nearby store" if no store result
             else{
-                storeErrorInfoTextView.setText(getResources().getText(R.string.find_store));
                 storeWrapper.setState(DataWrapper.State.EMPTY);
                 Log.d(TAG, "No nearby stores found from the StoreInfoCallback.");
             }
