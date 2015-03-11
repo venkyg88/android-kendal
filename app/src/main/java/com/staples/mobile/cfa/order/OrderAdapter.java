@@ -1,9 +1,7 @@
 package com.staples.mobile.cfa.order;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.res.Resources;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.easyopen.model.member.OrderStatus;
 import com.staples.mobile.common.access.easyopen.model.member.Shipment;
@@ -73,7 +70,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
         String orderNumberText = "Order# "+ orderStatus.getOrderNumber();
         if (order.getShipments().size() > 1) {
-            orderNumberText += " - Shipment " + order.getShipmentIndex() + 1;
+            orderNumberText += " - Shipment " + (order.getShipmentIndex() + 1);
         }
         holder.orderNumTV.setText(orderNumberText);
 

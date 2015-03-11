@@ -1,9 +1,3 @@
 <resources>
     <string name="app_name">Kendall (Dev)</string>
-    <!--
-    <string name="configuration_destination">http://10.29.172.207:3030/chapi/android/tag/CFA/dev/latest</string>
-
-    -->
-    <string name="configuration_destination">http://minternal-preprod.staples.com/mobileServices/chapi/android/tag/CFA/dev/latest</string>
-
 </resources>
