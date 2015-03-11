@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!--
-  ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
-  -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:orientation="vertical"
-    android:background="@color/background_white"
-    >
+    android:background="@color/background_white">
 
     <!-- scrollable contents -->
     <ScrollView
@@ -34,8 +29,7 @@
                 android:padding="8dp"
                 android:tint="@android:color/white"
                 android:background="@drawable/green_oval"
-                android:src="@drawable/ic_check_white_24dp"
-                />
+                android:src="@drawable/ic_check_white_24dp"/>
 
             <!--confirmation message text -->
             <TextView
@@ -52,7 +46,7 @@
                 android:layout_marginTop="8dp"
                 android:textSize="14sp"
                 android:textColor="@color/text_nearly_black"
-                android:text="@string/order_confirmation_msg2" />
+                android:text="@string/order_confirmation_msg2"/>
             <TextView
                 android:id="@+id/email_confirm_msg"
                 android:layout_width="wrap_content"
@@ -62,7 +56,7 @@
                 android:layout_marginBottom="32dp"
                 android:textSize="14sp"
                 android:textColor="@color/text_nearly_black"
-                android:text="@string/order_confirmation_msg3" />
+                android:text="@string/order_confirmation_msg3"/>
 
             <!--order number-->
             <TextView
@@ -75,8 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:textSize="18sp"
-                android:textColor="@color/text_nearly_black"
-                />
+                android:textColor="@color/text_nearly_black"/>
 
             <!--delivery range-->
             <TextView
@@ -90,8 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:textSize="18sp"
-                android:textColor="@color/text_nearly_black"
-                />
+                android:textColor="@color/text_nearly_black"/>
 
             <!--order total -->
             <TextView
@@ -105,9 +97,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:textSize="18sp"
-                android:textColor="@color/text_nearly_black"
-                />
-
+                android:textColor="@color/text_nearly_black"/>
 
             <!--guest check out only - creating an account-->
             <RelativeLayout
@@ -135,8 +125,7 @@
                     android:layout_marginTop="16dp"
                     android:textSize="16sp"
                     android:textColor="@color/text_nearly_black"
-                    android:text="@string/create_acccount_msg1"
-                    />
+                    android:text="@string/create_acccount_msg1"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -145,8 +134,7 @@
                     android:layout_gravity="left"
                     android:textSize="10sp"
                     android:textColor="@color/text_nearly_black"
-                    android:text="@string/create_acccount_msg2"
-                    />
+                    android:text="@string/create_acccount_msg2"/>
                 <ImageView
                     android:id="@+id/open_account_dlg_action"
                     android:layout_width="wrap_content"
@@ -156,8 +144,7 @@
                     android:layout_marginTop="16dp"
                     android:tint="@android:color/white"
                     android:background="@drawable/oval"
-                    android:src="@android:drawable/ic_input_add"
-                    />
+                    android:src="@android:drawable/ic_input_add"/>
             </RelativeLayout>
 
             <!--guest check out only - confirmation after creating an account-->
@@ -176,7 +163,6 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="16dp"
                     android:background="@color/background_light_gray"/>
-
                 <TextView
                     android:id="@+id/account_confirmation_msg"
                     android:layout_width="wrap_content"
@@ -186,8 +172,7 @@
                     android:layout_marginTop="16dp"
                     android:textSize="16sp"
                     android:textColor="@color/text_nearly_black"
-                    android:text="@string/account_confirmation_msg"
-                    />
+                    android:text="@string/account_confirmation_msg"/>
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -197,14 +182,12 @@
                     android:padding="4dp"
                     android:tint="@android:color/white"
                     android:background="@drawable/blue_oval"
-                    android:src="@drawable/ic_check_white_18dp"
-                    />
+                    android:src="@drawable/ic_check_white_18dp"/>
                 <!--btn_check_buttonless_on-->
             </RelativeLayout>
 
         </LinearLayout>
     </ScrollView>
-
 
     <!-- continue shopping button -->
     <android.support.v7.widget.CardView
@@ -215,8 +198,7 @@
         android:padding="0dp"
         card_view:cardCornerRadius="1dp"
         card_view:cardElevation="0dp"
-        card_view:cardBackgroundColor="@color/background_red_submission" >
-
+        card_view:cardBackgroundColor="@color/background_red_submission">
         <TextView
             android:id="@+id/continue_shopping_btn"
             android:layout_height="match_parent"
@@ -224,10 +206,7 @@
             android:gravity="center"
             android:text="@string/continue_shopping"
             android:textSize="14sp"
-            android:textColor="@color/text_white"
-            />
-
+            android:textColor="@color/text_white"/>
     </android.support.v7.widget.CardView>
-
-</LinearLayout>
+</com.staples.mobile.cfa.widget.AnimatorLayout>
 

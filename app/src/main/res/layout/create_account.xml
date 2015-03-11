@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/passwordTxt"
         android:layout_below="@+id/passwordRegister"
-        android:textSize="12dip"
+        android:textSize="12sp"
         android:visibility="gone"
         android:textColor="@color/text_light_gray"
         android:text="@string/create_acccount_pw_rules" />
@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:text="@string/show"
         android:id="@+id/passwordLbl"
-        android:textSize="16dip"
+        android:textSize="16sp"
         android:clickable="true"
         android:textColor="@color/text_blue"
         android:layout_alignBottom="@+id/passwordRegister"

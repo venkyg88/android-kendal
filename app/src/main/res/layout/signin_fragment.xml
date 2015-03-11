@@ -23,7 +23,7 @@
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/password"
-        android:hint="Password"
+        android:hint="@string/password"
         android:imeOptions="actionDone"
         android:singleLine="true"
         android:layout_below="@+id/username" />
@@ -34,8 +34,8 @@
         android:clickable="true"
         android:id="@+id/forgotPwdTV"
         android:layout_below="@+id/password"
-        android:textSize="18dp"
-        android:paddingTop="10dip"
+        android:textSize="18sp"
+        android:paddingTop="10dp"
         android:textColor="@color/text_blue"
         android:text="@string/password_forgot"/>
 
