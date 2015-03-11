@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by burcoral on 2/5/15.
+ * initially created by burcoral on 2/5/15. further developed by diana sutlief
  */
 
 
@@ -27,6 +27,11 @@ public class Tracker {
     public enum AppType { AFA, CFA }
     public enum UserType { GUEST, REGISTERED }
     public enum SearchType { BASIC_SEARCH, AUTOCOMPLETE, RECENT_SEARCH }
+    public enum ViewType { LIST("List"), GRID("Grid");
+        private String name;
+        ViewType(String name) { this.name = name; }
+        public String getName() { return name; }
+    }
     public enum PageType {
         PAGE_LOGIN("Login"),
         PAGE_HOME("Homepage"),
@@ -53,9 +58,7 @@ public class Tracker {
         PAGE_SEARCH_RESULTS("Search Results");
 
         private String name;
-
         PageType(String name) { this.name = name; }
-
         public String getName() { return name; }
     }
 
@@ -192,7 +195,7 @@ public class Tracker {
     }
 
 
-    public void trackStateForSearchResults(String term, int count) {
+    public void trackStateForSearchResults(String term, int count, ViewType viewType) {
         HashMap<String, Object> contextData = createContextWithGlobal();
         String pageTypeName = PageType.PAGE_SEARCH_RESULTS.getName();
         contextData.put("Channel", pageTypeName);
@@ -210,25 +213,43 @@ public class Tracker {
         contextData.put("s.prop4", pageTypeName);
         contextData.put("s.prop5", pageTypeName);
         contextData.put("s.prop6", pageTypeName);
-        contextData.put("s.prop54", "Best Match");
-        contextData.put("s.prop53", "List");
+        contextData.put("sort", "Best Match"); // s.prop54
+        contextData.put("s.prop53", viewType.getName());
         Analytics.trackState(pageTypeName, contextData);
     }
 
-    public void trackStateForClass(int count, Browse browse) {
+    public void trackStateForClass(int count, Browse browse, ViewType viewType) {
         HashMap<String, Object> contextData = createContextWithGlobal();
         String pageTypeName = PageType.PAGE_CLASS.getName();
         contextData.put("PageViews", 1); // event4
         contextData.put("s.prop2", count);
         contextData.put("s.prop3", pageTypeName);
+        contextData.put("s.prop53", viewType.getName());
         String pageName = pageTypeName;
         if (browse != null && browse.getCategory() != null && browse.getCategory().size() > 0) {
             List<Analytic> analytics = browse.getCategory().get(0).getCategoryAnalytic();
             if (analytics != null && analytics.size() > 0) {
                 Analytic analytic = analytics.get(0);
                 if (analytic != null) {
-                    addAnalyticProperties(contextData, analytic);
-                    pageName = buildCategoryHierarchy(analytic); // overwrite pagename if hierarchy available
+                    StringBuilder categoryBuf = new StringBuilder();
+                    if (!TextUtils.isEmpty(analytic.getSuperCategoryName())) {
+                        categoryBuf.append(analytic.getSuperCategoryName());
+                        contextData.put("Channel", categoryBuf.toString());
+                    }
+                    if (!TextUtils.isEmpty(analytic.getCategoryName())) {
+                        categoryBuf.append(":").append(analytic.getCategoryName());
+                        contextData.put("s.prop4", categoryBuf.toString());
+                    }
+                    if (!TextUtils.isEmpty(analytic.getDepartmentName())) {
+                        categoryBuf.append(":").append(analytic.getDepartmentName());
+                        contextData.put("s.prop5", categoryBuf.toString());
+                    }
+                    if (!TextUtils.isEmpty(analytic.getClassName())) {
+                        categoryBuf.append(":").append(analytic.getClassName());
+                        contextData.put("s.prop6", categoryBuf.toString());
+                    }
+                    addCategoryCodeHierarchies(contextData, analytic);
+                    pageName = categoryBuf.toString(); // overwrite pagename if hierarchy available
                 }
             }
         }
@@ -238,6 +259,7 @@ public class Tracker {
     public void trackStateForProduct(Product product) {
         if (product != null) {
             String pageTypeName = PageType.PAGE_PRODUCT_DETAIL.getName();
+            String pageName = pageTypeName;
             HashMap<String, Object> contextData = createContextWithGlobal();
             contextData.put("ProductView", 1); // prodView event
             contextData.put("PageViews", 1); // event4
@@ -245,16 +267,20 @@ public class Tracker {
                 contextData.put("OutofStock", 1); // event78
             }
             contextData.put("s.products", product.getSku());
+            contextData.put("Channel", pageTypeName);
             contextData.put("s.prop3", pageTypeName);
+            pageTypeName += ": Details";
+            contextData.put("s.prop4", pageTypeName);
+            contextData.put("s.prop5", pageTypeName);
+            contextData.put("s.prop6", pageTypeName);
             contextData.put("s.evar27", product.getCustomerReviewRating());
-            String pageName = pageTypeName;
             if (product.getAnalytic() != null && product.getAnalytic().size() > 0) {
                 Analytic analytic = product.getAnalytic().get(0);
                 if (analytic != null) {
-                    addAnalyticProperties(contextData, analytic);
                     if (!TextUtils.isEmpty(analytic.getSuperCategoryName())) {
-                        pageName = pageTypeName + ": " + analytic.getSuperCategoryName();
+                        pageName = pageName + ": " + analytic.getSuperCategoryName();
                     }
+                    addCategoryCodeHierarchies(contextData, analytic);
                 }
             }
             Analytics.trackState(pageName, contextData);
@@ -265,19 +291,24 @@ public class Tracker {
     public void trackStateForSkuSet(Product product) {
         if (product != null) {
             String pageTypeName = PageType.PAGE_SKU_SET.getName();
+            String pageName = pageTypeName;
             HashMap<String, Object> contextData = createContextWithGlobal();
             contextData.put("s.pageName", pageTypeName); // initialize with at least this, add SC below if analytic available
             contextData.put("PageViews", 1); // event4
             contextData.put("skuset", 1); // event16
-            contextData.put("s.prop3", pageTypeName);
-            String pageName = pageTypeName;
+            contextData.put("Channel", PageType.PAGE_PRODUCT_DETAIL.getName());
+            contextData.put("s.prop3", PageType.PAGE_PRODUCT_DETAIL.getName());
+            pageTypeName = PageType.PAGE_PRODUCT_DETAIL.getName() + ": " + PageType.PAGE_SKU_SET.getName();
+            contextData.put("s.prop4", pageTypeName);
+            contextData.put("s.prop5", pageTypeName);
+            contextData.put("s.prop6", pageTypeName);
             if (product.getAnalytic() != null && product.getAnalytic().size() > 0) {
                 Analytic analytic = product.getAnalytic().get(0);
                 if (analytic != null) {
-                    addAnalyticProperties(contextData, analytic);
                     if (!TextUtils.isEmpty(analytic.getSuperCategoryName())) {
-                        pageName = pageTypeName + ": " + analytic.getSuperCategoryName();
+                        pageName = pageName + ": " + analytic.getSuperCategoryName();
                     }
+                    addCategoryCodeHierarchies(contextData, analytic);
                 }
             }
             Analytics.trackState(pageName, contextData);
@@ -431,8 +462,8 @@ public class Tracker {
         if (product.getAnalytic() != null && product.getAnalytic().size() > 0) {
             Analytic analytic = product.getAnalytic().get(0);
             if (analytic != null) {
-                if (!TextUtils.isEmpty(analytic.getSuperCategoryCode())) {
-                    contextData.put("s.pageName", "Product Detail: " + analytic.getSuperCategoryCode());
+                if (!TextUtils.isEmpty(analytic.getSuperCategoryName())) {
+                    contextData.put("s.pageName", "Product Detail: " + analytic.getSuperCategoryName());
                 }
             }
         }
@@ -479,7 +510,6 @@ public class Tracker {
         contextData.put("s.pageName", pageTypeName);
         contextData.put("cartremoves", 1); // scRemove event
         contextData.put("s.products", ";"+sku);
-        contextData.put("s.evar12", pageTypeName);
         Analytics.trackAction("Cart Removal", contextData);
     }
 
@@ -529,27 +559,36 @@ public class Tracker {
     }
 
 
-    private void addAnalyticProperties(HashMap<String, Object> contextData, Analytic analytic) {
+    private void addCategoryCodeHierarchies(HashMap<String, Object> contextData, Analytic analytic) {
         if (analytic != null) {
-            if (!TextUtils.isEmpty(analytic.getSuperCategoryCode())) {
-                contextData.put("Channel", analytic.getSuperCategoryCode());
+            String categoryCodeHierarchy = buildCategoryCodeHierarchy(analytic);
+            if (!TextUtils.isEmpty(categoryCodeHierarchy)) {
+                contextData.put("s.prop31", categoryCodeHierarchy);
+                contextData.put("s.evar38", categoryCodeHierarchy);
             }
-            if (!TextUtils.isEmpty(analytic.getCategoryCode())) {
-                contextData.put("s.prop4", analytic.getCategoryCode());
-            }
-            if (!TextUtils.isEmpty(analytic.getDepartmentCode())) {
-                contextData.put("s.prop5", analytic.getDepartmentCode());
-            }
-            if (!TextUtils.isEmpty(analytic.getClassCode())) {
-                contextData.put("s.prop6", analytic.getClassCode());
-            }
-            String categoryHierarchy = buildCategoryHierarchy(analytic);
-            contextData.put("s.prop31", categoryHierarchy);
-            contextData.put("s.evar38", categoryHierarchy);
         }
     }
 
-    private String buildCategoryHierarchy(Analytic analytic) {
+//    private String buildCategoryHierarchy(Analytic analytic) {
+//        StringBuilder buf = new StringBuilder();
+//        if (analytic != null) {
+//            if (analytic.getSuperCategoryName() != null) {
+//                buf.append(analytic.getSuperCategoryName());
+//            }
+//            if (analytic.getCategoryName() != null) {
+//                buf.append(":").append(analytic.getCategoryName());
+//            }
+//            if (analytic.getDepartmentName() != null) {
+//                buf.append(":").append(analytic.getDepartmentName());
+//            }
+//            if (analytic.getClassName() != null) {
+//                buf.append(":").append(analytic.getClassName());
+//            }
+//        }
+//        return buf.toString();
+//    }
+
+    private String buildCategoryCodeHierarchy(Analytic analytic) {
         StringBuilder buf = new StringBuilder();
         if (analytic != null) {
             if (analytic.getSuperCategoryCode() != null) {
