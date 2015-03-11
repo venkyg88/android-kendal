@@ -220,6 +220,14 @@
     <string name="store_no_phone">Sorry, this device has no phone application.</string>
     <string name="store_no_maps">Sorry, this device has no map application.</string>
 
+    <!--weekly ad-->
+    <string name="change_store">change store</string>
+    <plurals name="deals">
+        <item quantity="one">1 deal</item>
+        <item quantity="other">%d deals</item>
+    </plurals>
+
+
     <string name="show">SHOW</string>
     <string name="hide">HIDE</string>
     <string name="cancel">CANCEL</string>

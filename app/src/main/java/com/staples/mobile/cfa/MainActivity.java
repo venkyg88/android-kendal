@@ -38,7 +38,7 @@ import com.staples.mobile.cfa.home.ConfiguratorFragment;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
-import com.staples.mobile.cfa.notify.IntentReceiver;
+import com.staples.mobile.cfa.notify.NotifyReceiver;
 import com.staples.mobile.cfa.profile.AddressFragment;
 import com.staples.mobile.cfa.profile.AddressListFragment;
 import com.staples.mobile.cfa.profile.CreditCardFragment;
@@ -78,7 +78,8 @@ public class MainActivity extends Activity
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final boolean LOGGING = false;
 
-    private static final int SURRENDER_TIMEOUT = 5000;
+    public static final String PREFS_FILENAME = "com.staples.mobile.cfa";
+
     private static final int CONNECTIVITY_CHECK_INTERVAL = 300000; // in milliseconds (e.g. 300000=5min)
 
     private DrawerLayout drawerLayout;
@@ -157,7 +158,7 @@ public class MainActivity extends Activity
         AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(this);
         UAirship.takeOff(getApplication(), options);
         PushManager manager = UAirship.shared().getPushManager();
-        manager.setNotificationFactory(new IntentReceiver.CustomNotificationFactory(this));
+        manager.setNotificationFactory(new NotifyReceiver.CustomNotificationFactory(this));
         manager.setUserNotificationsEnabled(true);
     }
 
@@ -165,30 +166,30 @@ public class MainActivity extends Activity
     public void onNewIntent(Intent intent) {
         String action = intent.getAction();
 
-        if (IntentReceiver.ACTION_OPEN_SKU.equals(action)) {
-            String sku = intent.getStringExtra(IntentReceiver.EXTRA_SKU);
+        if (NotifyReceiver.ACTION_OPEN_SKU.equals(action)) {
+            String sku = intent.getStringExtra(NotifyReceiver.EXTRA_SKU);
             if (sku!=null) {
-                String title = intent.getStringExtra(IntentReceiver.EXTRA_TITLE);
+                String title = intent.getStringExtra(NotifyReceiver.EXTRA_TITLE);
                 if (title==null) title = getResources().getString(R.string.sku_notification_title);
                 selectSkuItem(title, sku, false);
             }
             return;
         }
 
-        if (IntentReceiver.ACTION_OPEN_CATEGORY.equals(action)) {
-            String identifier = intent.getStringExtra(IntentReceiver.EXTRA_IDENTIFIER);
+        if (NotifyReceiver.ACTION_OPEN_CATEGORY.equals(action)) {
+            String identifier = intent.getStringExtra(NotifyReceiver.EXTRA_IDENTIFIER);
             if (identifier!=null) {
-                String title = intent.getStringExtra(IntentReceiver.EXTRA_TITLE);
+                String title = intent.getStringExtra(NotifyReceiver.EXTRA_TITLE);
                 if (title==null) title = getResources().getString(R.string.sku_notification_title);
                 selectBundle(title, identifier);
             }
             return;
         }
 
-        if (IntentReceiver.ACTION_OPEN_SEARCH.equals(action)) {
-            String keyword = intent.getStringExtra(IntentReceiver.EXTRA_KEYWORD);
+        if (NotifyReceiver.ACTION_OPEN_SEARCH.equals(action)) {
+            String keyword = intent.getStringExtra(NotifyReceiver.EXTRA_KEYWORD);
             if (keyword!=null) {
-                String title = intent.getStringExtra(IntentReceiver.EXTRA_TITLE);
+                String title = intent.getStringExtra(NotifyReceiver.EXTRA_TITLE);
                 if (title==null) title = getResources().getString(R.string.sku_notification_title);
                 selectSearch(keyword);
             }

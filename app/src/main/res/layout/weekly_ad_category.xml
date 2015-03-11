@@ -2,12 +2,62 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <ImageView
-    android:id="@+id/weeklyad_image"
-    android:layout_width="match_parent"
-    android:layout_height="150dp"/>
+
+    <!--top banner image and store info need to be overlayed in frame layout-->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!--specify image height, allow to scale while maintaining aspect ratio, left align with fitStart -->
+        <ImageView
+            android:id="@+id/weeklyad_image"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_gravity="left"
+            android:scaleType="fitStart"
+            android:background="@color/background_light_blue"
+            android:src="@drawable/weekly_ad_image"
+            />
+
+        <!--store info-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:gravity="right"
+            android:padding="16dp"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:id="@+id/store_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_white"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                />
+            <TextView
+                android:id="@+id/change_store"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_white"
+                android:textSize="16sp"
+                android:text="@string/change_store"
+            />
+            <TextView
+                android:id="@+id/date_range"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:textColor="@color/text_white"
+                android:textSize="20sp"
+                />
+        </LinearLayout>
+    </FrameLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/weekly_ad_categories_list"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"/>
+
 </com.staples.mobile.cfa.widget.AnimatorLayout>

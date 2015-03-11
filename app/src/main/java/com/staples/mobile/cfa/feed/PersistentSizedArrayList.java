@@ -1,8 +1,11 @@
 package com.staples.mobile.cfa.feed;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+
+import com.staples.mobile.cfa.MainActivity;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,10 +16,6 @@ import java.util.HashSet;
 
 public class PersistentSizedArrayList<T> extends ArrayList<T> {
     private static final String TAG = "PersistentSizedArrayList";
-
-    public static final String SAVED_SEEN_PRODUCTS = "SAVED_SEEN_PRODUCTS";
-    public static final String SEEN_PRODUCT_SKU_LIST = "SEEN_PRODUCT_SKU_LIST";
-    public static final String SEEN_PRODUCT_LIST = "SEEN_PRODUCT_LIST";
 
     public static final String FIELD_SEPARATOR = "/_-_/";
 
@@ -69,9 +68,9 @@ public class PersistentSizedArrayList<T> extends ArrayList<T> {
     }
 
     private void saveSeenProductInPhone(String sku, Activity activity){
-        SharedPreferences sp = activity.getSharedPreferences(SAVED_SEEN_PRODUCTS, activity.MODE_PRIVATE);
-        String savedSkusString = sp.getString(SEEN_PRODUCT_SKU_LIST, "");
-        String savedProductsString = sp.getString(SEEN_PRODUCT_LIST, "");
+        SharedPreferences sp = activity.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
+        String savedSkusString = sp.getString(PersonalFeedFragment.SEEN_PRODUCT_SKU_LIST, "");
+        String savedProductsString = sp.getString(PersonalFeedFragment.SEEN_PRODUCT_LIST, "");
 
         // first item
         if(savedSkusString.equals("") && savedProductsString.equals("")){
@@ -87,16 +86,14 @@ public class PersistentSizedArrayList<T> extends ArrayList<T> {
 
         // save updated data
         SharedPreferences.Editor editor = sp.edit();
-        editor.putString(SEEN_PRODUCT_SKU_LIST, savedSkusString);
-        editor.putString(SEEN_PRODUCT_LIST, savedProductsString);
-        editor.commit();
-
-        Log.d(TAG, "Saved this seen product successfully! -> " + savedProductsString);
+        editor.putString(PersonalFeedFragment.SEEN_PRODUCT_SKU_LIST, savedSkusString);
+        editor.putString(PersonalFeedFragment.SEEN_PRODUCT_LIST, savedProductsString);
+        editor.apply();
     }
 
     // called for update the list when there are more than 3 items
     public void updateSeenProductsInPhone(Activity activity){
-        SharedPreferences sp = activity.getSharedPreferences(SAVED_SEEN_PRODUCTS, activity.MODE_PRIVATE);
+        SharedPreferences sp = activity.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
 
         String savedSkusString = "";
         String savedProductsString = "";
@@ -128,11 +125,9 @@ public class PersistentSizedArrayList<T> extends ArrayList<T> {
 
         // save updated data
         SharedPreferences.Editor editor = sp.edit();
-        editor.putString(SEEN_PRODUCT_SKU_LIST, savedSkusString);
-        editor.putString(SEEN_PRODUCT_LIST, savedProductsString);
-        editor.commit();
-
-        Log.d(TAG, "Updated seen products successfully! -> " + savedProductsString);
+        editor.putString(PersonalFeedFragment.SEEN_PRODUCT_SKU_LIST, savedSkusString);
+        editor.putString(PersonalFeedFragment.SEEN_PRODUCT_LIST, savedProductsString);
+        editor.apply();
     }
 
 
@@ -177,7 +172,7 @@ public class PersistentSizedArrayList<T> extends ArrayList<T> {
 //    }
 
     //    private void saveSeenProductInPhone(SeenProductsRowItem notSavedSeenProduct, Activity activity){
-//        SharedPreferences sp = activity.getSharedPreferences(SAVED_SEEN_PRODUCTS, activity.MODE_PRIVATE);
+//        SharedPreferences sp = activity.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
 //        String savedSkusString = sp.getString(SEEN_PRODUCT_SKU_LIST, "");
 //        String savedProductsString = sp.getString(SEEN_PRODUCT_LIST, "");
 //
@@ -210,7 +205,7 @@ public class PersistentSizedArrayList<T> extends ArrayList<T> {
 //        SharedPreferences.Editor editor = sp.edit();
 //        editor.putString(SEEN_PRODUCT_SKU_LIST, savedSkusString);
 //        editor.putString(SEEN_PRODUCT_LIST, savedProductsString);
-//        editor.commit();
+//        editor.apply();
 //
 //        Log.d(TAG, "Saved this seen product successfully! -> " + savedProductsString);
 //    }

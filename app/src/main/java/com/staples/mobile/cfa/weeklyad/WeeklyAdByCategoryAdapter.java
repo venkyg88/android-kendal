@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.access.easyopen.util.WeeklyAdImageUrlHelper;
 import com.staples.mobile.common.access.easyopen.model.weeklyadbycategory.Data;
 
 import java.util.ArrayList;
@@ -24,11 +23,14 @@ import java.util.List;
 public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCategoryAdapter.ViewHolder>{
     private ArrayList<Data> array;
     private Activity activity;
+    String storeNumber;
+    ArrayList<String> categoryTreeIds;
+    ArrayList<String> titles;
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public TextView weeklyAdDealTileTV;
         public TextView weeklyAdDealCountTV;
-        ImageView weeklyAdCategoryIV;
+        private ImageView weeklyAdCategoryIV;
         private ClickListener clickListener;
 
         public ViewHolder(View v) {
@@ -62,23 +64,24 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
         }
     }
 
-    public WeeklyAdByCategoryAdapter(Activity activity) {
+    public WeeklyAdByCategoryAdapter(Activity activity, String storeNumber) {
         this.activity = activity;
         this.array = new ArrayList<Data>();
+        this.categoryTreeIds = new ArrayList<>();
+        this.titles = new ArrayList<>();
+        this.storeNumber = storeNumber;
     }
 
     @Override
-    public WeeklyAdByCategoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.weekly_ad_categories_item, parent, false);
+    public WeeklyAdByCategoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.weekly_ad_categories_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(v);
         viewHolder.setClickListener(new ViewHolder.ClickListener() {
             @Override
             public void onClick(View v, int position) {
-                Data data = array.get(position);
+//                Data data = array.get(position);
                 WeeklyAdListFragment weeklyAdFragment = new WeeklyAdListFragment();
-                weeklyAdFragment.setArguments("2278338",data.getCategorytreeid(), data.getName());
+                weeklyAdFragment.setArguments(storeNumber, position, categoryTreeIds, titles);
                 ((MainActivity)activity).navigateToFragment(weeklyAdFragment);
             }
         });
@@ -91,10 +94,11 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
         Data data = array.get(position);
 
         holder.weeklyAdDealTileTV.setText(data.getName());
-        holder.weeklyAdDealCountTV.setText(data.getCount() + " deals");
+        holder.weeklyAdDealCountTV.setText(activity.getResources().getQuantityString(R.plurals.deals,
+                                           data.getCount(), data.getCount()));
         Picasso.with(activity)
-                .load(WeeklyAdImageUrlHelper.getUrl(60,100, data.getImagelocation()))
-                .fit()
+                .load(data.getImagelocation()) // note that urls returned from category api don't include dimensions
+                .error(R.drawable.no_photo)
                 .into(holder.weeklyAdCategoryIV);
     }
 
@@ -105,6 +109,10 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
 
     public void fill(List<Data> items) {
         array.addAll(items);
+        for (Data item : items) {
+            categoryTreeIds.add(item.getCategorytreeid());
+            titles.add(item.getName());
+        }
         notifyDataSetChanged();
     }
 }

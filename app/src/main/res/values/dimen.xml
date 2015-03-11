@@ -14,7 +14,7 @@
     <dimen name="store_schedule_tabstop">70sp</dimen>
     <dimen name="weekly_ad_list_item_image_width">60dp</dimen>
     <dimen name="weekly_ad_list_item_image_height">100dp</dimen>
-    <dimen name="weekly_ad_category_item_image_width">60dp</dimen>
+    <dimen name="weekly_ad_category_item_image_width">100dp</dimen>
     <dimen name="weekly_ad_category_item_image_height">100dp</dimen>
     <dimen name="left_margin">6dp</dimen>
     <dimen name="right_margin">6dp</dimen>

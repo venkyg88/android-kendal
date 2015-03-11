@@ -1,6 +1,5 @@
 package com.staples.mobile.cfa.location;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Address;
@@ -15,6 +14,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.staples.mobile.cfa.MainActivity;
 
 import java.util.List;
 
@@ -34,16 +34,16 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
 
     private static LocationFinder instance;
 
-    public static LocationFinder getInstance(Activity activity) {
+    public static LocationFinder getInstance(Context context) {
         synchronized(LocationFinder.class) {
             if (instance == null) {
-                instance = new LocationFinder(activity);
+                instance = new LocationFinder(context);
             }
             return (instance);
         }
     }
 
-    private Activity activity;
+    private Context context;
     private GoogleApiClient client;
     private Geocoder geocoder;
 
@@ -52,16 +52,16 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
     private String postalCode;
     private long startTime;
 
-    private LocationFinder(Activity activity) {
-        this.activity = activity;
+    private LocationFinder(Context context) {
+        this.context = context;
         loadRecentLocation();
 
-        geocoder = new Geocoder(activity);
+        geocoder = new Geocoder(context);
 
-        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(activity);
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
         switch(status) {
             case ConnectionResult.SUCCESS:
-                GoogleApiClient.Builder builder = new GoogleApiClient.Builder(activity);
+                GoogleApiClient.Builder builder = new GoogleApiClient.Builder(context);
                 builder.addApi(LocationServices.API);
                 builder.addConnectionCallbacks(this);
                 builder.addOnConnectionFailedListener(this);
@@ -162,18 +162,12 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
     public void onConnectionFailed(ConnectionResult result) {
         Log.d(TAG, "GoogleApiClient connect failed: "+result.toString());
         connected = false;
-        if (result.hasResolution()) {
-            try {
-                Log.d(TAG, "Trying resolution");
-                result.startResolutionForResult(activity, 0);
-            } catch(Exception e) {Crittercism.logHandledException(e);};
-        }
     }
 
     // Recent location
 
     public void loadRecentLocation() {
-        SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
         if (prefs.contains(PREFS_LATITUDE) && prefs.contains(PREFS_LONGITUDE)) {
             location = new Location(prefs.getString(PREFS_PROVIDER, "Unknown"));
             location.setLatitude(prefs.getFloat(PREFS_LATITUDE, 0.0f));
@@ -185,7 +179,7 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
     }
 
     public void saveRecentLocation() {
-        SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         if (location!=null) {
             editor.putString(PREFS_PROVIDER, location.getProvider());
