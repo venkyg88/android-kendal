@@ -124,7 +124,7 @@ public class BrowseAdapter extends BaseAdapter {
                 if (buf.length() > 0) {
                     buf.append(":");
                 }
-                buf.append(item.identifier);
+                buf.append(item.title);
             }
         }
         return buf.toString();
