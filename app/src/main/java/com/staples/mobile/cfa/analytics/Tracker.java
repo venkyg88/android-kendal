@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.analytics;
 
 import android.content.Context;
+import android.location.Location;
 import android.text.TextUtils;
 
 import com.adobe.mobile.Analytics;
@@ -160,7 +161,7 @@ public class Tracker {
         String pageTypeName = PageType.PAGE_HOME.getName();
         contextData.put("s.pageName", "Homepage");
         contextData.put("Channel", pageTypeName);
-        contextData.put("s.events", "event4");
+        contextData.put("PageViews", 1); // event4
         contextData.put("s.prop3", pageTypeName);
         contextData.put("s.prop4", pageTypeName);
         contextData.put("s.prop5", pageTypeName);
@@ -199,8 +200,11 @@ public class Tracker {
         String pageTypeName = PageType.PAGE_SEARCH_RESULTS.getName();
         contextData.put("s.pageName", pageTypeName);
         contextData.put("Channel", pageTypeName);
-        contextData.put("s.events", (count == 0)? "event1,event2,event4" : "event1,event4");
+        contextData.put("Searches", 1); // event1
+        contextData.put("PageViews", 1); // event4
         if (count == 0) {
+            contextData.put("s.pageName", pageTypeName + ": No Search Results");
+            contextData.put("NullSearches", 1); // event2
             term = "null:" + term;
         }
         contextData.put("s.evar1", term);
@@ -219,7 +223,7 @@ public class Tracker {
         HashMap<String, Object> contextData = createContextWithGlobal();
         String pageTypeName = PageType.PAGE_CLASS.getName();
         contextData.put("s.pageName", pageTypeName);
-        contextData.put("s.events", "event4");
+        contextData.put("PageViews", 1); // event4
         contextData.put("s.prop2", count);
         contextData.put("s.prop3", pageTypeName);
         if (browse != null && browse.getCategory() != null && browse.getCategory().size() > 0) {
@@ -240,7 +244,11 @@ public class Tracker {
             String pageTypeName = PageType.PAGE_PRODUCT_DETAIL.getName();
             HashMap<String, Object> contextData = createContextWithGlobal();
             contextData.put("s.pageName", pageTypeName); // initialize with at least this, add SC below if analytic available
-            contextData.put("s.events", "prodView,event3,event4" + (product.isInStock()? "":",event78"));
+            contextData.put("ProductView", 1); // prodView event
+            contextData.put("PageViews", 1); // event4
+            if (!product.isInStock()) {
+                contextData.put("OutofStock", 1); // event78
+            }
             contextData.put("s.products", product.getSku());
             contextData.put("s.prop3", pageTypeName);
             contextData.put("s.evar27", product.getCustomerReviewRating());
@@ -263,7 +271,8 @@ public class Tracker {
             String pageTypeName = PageType.PAGE_SKU_SET.getName();
             HashMap<String, Object> contextData = createContextWithGlobal();
             contextData.put("s.pageName", pageTypeName); // initialize with at least this, add SC below if analytic available
-            contextData.put("s.events", "event4,event16");
+            contextData.put("PageViews", 1); // event4
+            contextData.put("skuset", 1); // event16
             contextData.put("s.prop3", pageTypeName);
             if (product.getAnalytic() != null && product.getAnalytic().size() > 0) {
                 Analytic analytic = product.getAnalytic().get(0);
@@ -282,15 +291,12 @@ public class Tracker {
         if (cart != null && cart.getProduct() != null) {
             StringBuilder skus = new StringBuilder();
             for (com.staples.mobile.common.access.easyopen.model.cart.Product product : cart.getProduct()) {
-                if (skus.length() > 0) {
-                    skus.append(";");
-                }
-                skus.append(product.getSku());
+                skus.append(";").append(product.getSku());
             }
             String pageTypeName = PageType.PAGE_CART.getName();
             HashMap<String, Object> contextData = createContextWithGlobal();
             contextData.put("s.pageName", pageTypeName);
-            contextData.put("s.events", "scView");
+            contextData.put("CartViews", 1); // scView event
             contextData.put("s.products", skus.toString());
             contextData.put("s.prop3", pageTypeName);
             contextData.put("s.prop4", pageTypeName);
@@ -322,10 +328,13 @@ public class Tracker {
         contextData.put("s.prop4", pageTypeName);
         contextData.put("s.prop5", pageTypeName);
         contextData.put("s.prop6", pageTypeName);
-        String events = "event4";
-        if (shippingAddrPrefilled) { events += ",event6"; }
-        if (paymentPrefilled) { events += ",event7"; }
-        contextData.put("s.events", events);
+        contextData.put("PageViews", 1); // event4
+        if (shippingAddrPrefilled) {
+            contextData.put("enteraddresses", 1); // event6
+        }
+        if (paymentPrefilled) {
+            contextData.put("paymentmethod", 1); // event7
+        }
         Analytics.trackState("s.pageName", contextData);
     }
 
@@ -339,7 +348,8 @@ public class Tracker {
         contextData.put("s.prop4", pageTypeName);
         contextData.put("s.prop5", pageTypeName);
         contextData.put("s.prop6", pageTypeName);
-        contextData.put("s.events", "purchase,event4");
+        contextData.put("PageViews", 1); // event4
+        contextData.put("Purchase", 1); // purchase event
         contextData.put("purchaseID", orderNumber);
         Analytics.trackState("s.pageName", contextData);
     }
@@ -349,28 +359,28 @@ public class Tracker {
     ////////////// trackAction calls //////////////////////////
     ///////////////////////////////////////////////////////////
 
+
     public void trackActionForNavigationDrawer(String drawerItemText, String currentPageName) {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
         contextData.put("Item Click", "Nav Drawer");
         contextData.put("Click", 1);
         contextData.put("s.prop27", drawerItemText + "|" + currentPageName);
-        Analytics.trackAction("Item Click", contextData);
+        Analytics.trackAction("Nav Drawer", contextData);
     }
 
     // e.g. ShopCategory:<SC>:<CG>:<DP>:<CL>
     public void trackActionForShopByCategory(String categoryHierarchy) {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
         contextData.put("s.prop27", "ShopCategory:" + categoryHierarchy);
-        Analytics.trackAction("Item Click", contextData);
+        Analytics.trackAction("ShopCategory Drilldown", contextData);
     }
 
 
     public void trackActionForPersonalizedMessaging(String personalizedMsg) {
-        // TODO: are really supposed to track a count???
         HashMap<String, Object> contextData = new HashMap<String, Object>();
         contextData.put("Item Click", personalizedMsg);
         contextData.put("Click", 1);
-        Analytics.trackAction("Item Click", contextData);
+        Analytics.trackAction("Homepage Personalized", contextData);
     }
 
     public void trackActionForHomePage(ConfigItem configItem) {
@@ -383,7 +393,7 @@ public class Tracker {
             contextData.put("s.evar3", pageTypeName);
             contextData.put("s.evar17", pageTypeName + ":" + PageType.PAGE_HOME.getName());
             contextData.put("s.prop38", pageTypeName);
-            Analytics.trackAction("Item Click", contextData);
+            Analytics.trackAction("Homepage Banner", contextData);
         }
     }
 
@@ -399,7 +409,7 @@ public class Tracker {
             case RECENT_SEARCH: searchTypeString = "Recent Searches"; break;
         }
         contextData.put("s.evar17", searchTypeString);
-        Analytics.trackAction("Item Click", contextData);
+        Analytics.trackAction("Search Initiated", contextData);
     }
 
 
@@ -414,7 +424,7 @@ public class Tracker {
         contextData.put("s.pageName", pageType.getName());
         contextData.put("s.prop3", pageType.getName());
         contextData.put("s.evar19", itemPosition + ":" + pageNo);
-        Analytics.trackAction("Item Click", contextData);
+        Analytics.trackAction("(Slot Location", contextData);
     }
 
     public void trackActionForProductTabs(String tabName, Product product) {
@@ -430,7 +440,7 @@ public class Tracker {
                 }
             }
         }
-        Analytics.trackAction("Item Click", contextData);
+        Analytics.trackAction("Product Details Tabs", contextData);
     }
 
     public void trackActionForAddToCartFromProductDetails(String sku, float price, int quantity) {
@@ -449,36 +459,48 @@ public class Tracker {
             totalPrice = Math.round(price * quantity * 100f) / 100f;
         }
         contextData.put("s.pageName", pageType.getName());
-        contextData.put("events", "scAdd,event35=" + totalPrice + ",event36=" + quantity);
-        contextData.put("products", sku);
+        contextData.put("cartadds", 1); // scAdd event
+        contextData.put("cartopens", 1); // scOpen event
+        // format for "s.products" is ";<sku no>;;;event35=<Total Price>|event36=<Total No of Units>"
+        contextData.put("s.products", ";"+sku+";;;event35="+totalPrice+"|event36="+quantity);
         contextData.put("s.evar12", pageType.getName());
-        Analytics.trackAction("Item Click", contextData);
+        Analytics.trackAction("Cart Addition", contextData);
+    }
+
+    public void trackActionForUpdateQtyFromCart(String sku, int qty) {
+        String pageTypeName = PageType.PAGE_CART.getName();
+        HashMap<String, Object> contextData = new HashMap<String, Object>();
+        contextData.put("s.pageName", pageTypeName);
+        contextData.put("s.products", ";"+sku);
+        contextData.put("Item Click", qty);
+        contextData.put("Click", 1);
+        Analytics.trackAction("Cart Update", contextData);
     }
 
     public void trackActionForRemoveFromCart(String sku) {
         String pageTypeName = PageType.PAGE_CART.getName();
         HashMap<String, Object> contextData = new HashMap<String, Object>();
         contextData.put("s.pageName", pageTypeName);
-        contextData.put("events", "scRemove");
-        contextData.put("products", sku);
+        contextData.put("cartremoves", 1); // scRemove event
+        contextData.put("s.products", ";"+sku);
         contextData.put("s.evar12", pageTypeName);
-        Analytics.trackAction("Item Click", contextData);
+        Analytics.trackAction("Cart Removal", contextData);
     }
 
     public void trackActionForCheckoutEnterAddress() {
         String pageTypeName = PageType.PAGE_CHECKOUT.getName() + ": " + PageType.PAGE_CHECKOUT_REVIEW_AND_PAY.getName();
         HashMap<String, Object> contextData = new HashMap<String, Object>();
         contextData.put("s.pageName", pageTypeName);
-        contextData.put("events", "event6");
-        Analytics.trackAction("Item Click", contextData);
+        contextData.put("enteraddresses", 1); // event6
+        Analytics.trackAction("Checkout:Enter Address", contextData);
     }
 
     public void trackActionForCheckoutEnterPayment() {
         String pageTypeName = PageType.PAGE_CHECKOUT.getName() + ": " + PageType.PAGE_CHECKOUT_REVIEW_AND_PAY.getName();
         HashMap<String, Object> contextData = new HashMap<String, Object>();
         contextData.put("s.pageName", pageTypeName);
-        contextData.put("events", "event7");
-        Analytics.trackAction("Item Click", contextData);
+        contextData.put("paymentmethod", 1); // event7
+        Analytics.trackAction("Checkout:Payment Details", contextData);
     }
 
     public void trackActionForCheckoutFormErrors(String errMsg) {
@@ -486,8 +508,18 @@ public class Tracker {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
         contextData.put("s.pageName", pageTypeName);
         contextData.put("s.prop10", errMsg);
-        Analytics.trackAction("Item Click", contextData);
+        Analytics.trackAction("Checkout Form Error", contextData);
     }
+
+
+    ///////////////////////////////////////////////////////////
+    ////////////// trackLocation call /////////////////////////
+    ///////////////////////////////////////////////////////////
+
+    public void trackLocation(Location location) {
+        Analytics.trackLocation(location, null);
+    }
+
 
 
     //////////////////////////////////////////////////////////
