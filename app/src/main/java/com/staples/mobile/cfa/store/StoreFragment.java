@@ -75,6 +75,8 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     private static double minViewAngle = 360.0/(2.0*Math.PI*EARTHRADIUS) * 5.0; // 5 km
     private static double maxViewAngle = 360.0/(2.0*Math.PI*EARTHRADIUS) * 100.0; // 100 km
 
+    private final String FraminghamZipcode = "01702";
+
     private MapView mapView;
     private GoogleMap googleMap;
     private EditText searchText;
@@ -148,15 +150,18 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         LocationFinder finder = LocationFinder.getInstance(getActivity());
         location = finder.getLocation();
         if (location==null) {
-            Toast.makeText(getActivity(), "LocationFinder.getLocation returned null", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "LocationFinder.getLocation returned null");
+            String errorMessage = (String) getResources().getText(R.string.error_no_location_service);
+            Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
             return;
         }
 
         // Get postal code
         String postalCode = finder.getPostalCode();
         if (postalCode==null) {
-            Toast.makeText(getActivity(), "LocationFinder.getPostalCode returned null", Toast.LENGTH_LONG).show();
-            return;
+            // FraminghamZipcode is default
+            postalCode = FraminghamZipcode;
+            Log.d(TAG, "LocationFinder.getPostalCode returned null");
         }
 
         // Find nearby stores

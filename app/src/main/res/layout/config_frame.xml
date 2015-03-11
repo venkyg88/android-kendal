@@ -180,7 +180,7 @@
                                 android:lines="1"
                                 android:ellipsize="end"
                                 android:maxEms="4"
-                                android:textSize="14sp"
+                                android:textSize="13sp"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"/>
                         </LinearLayout>
@@ -209,7 +209,8 @@
                         android:gravity="center"
                         android:textSize="16sp"
                         android:text="@string/no_store"
-                        android:padding="5dp"/>
+                        android:padding="5dp"
+                        android:textStyle="bold"/>
                 </com.staples.mobile.cfa.widget.DataWrapper>
             </LinearLayout>
             <View

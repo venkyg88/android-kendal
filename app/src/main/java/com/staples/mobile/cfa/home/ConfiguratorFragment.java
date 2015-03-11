@@ -122,6 +122,7 @@ public class ConfiguratorFragment extends Fragment {
     private TextView signUpTextView;
     private TextView storeNameTextView;
     private TextView storeStatusTextView;
+    private TextView storeErrorInfoTextView;
     private TextView usernameTextView;
     private DataWrapper storeWrapper;
     private ImageView showArrowImageView;
@@ -189,15 +190,15 @@ public class ConfiguratorFragment extends Fragment {
             }
         };
 
+        // initiate personalized message bar
+        findMessageBarViews();
+        updateMessageBar();
+
         // checking for configurator just to be sure, but MainActivity should not allow this
         // fragment to be loaded if no configurator
         if (appConfigurator != null && appConfigurator.getConfigurator() != null) {
             initFromConfiguratorResult(appConfigurator.getConfigurator());
         }
-
-        // initiate personalized message bar
-        findMessageBarViews();
-        updateMessageBar();
 
         return (configFrameView);
     }
@@ -208,6 +209,9 @@ public class ConfiguratorFragment extends Fragment {
         ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
         isMessageBarShow = true;
         Tracker.getInstance().trackStateForHome(); // Analytics
+
+        // call store api and get store info
+        getStoreInfo();
     }
 
     public void initFromConfiguratorResult(Configurator configurator) {
@@ -1021,17 +1025,18 @@ public class ConfiguratorFragment extends Fragment {
 
         // Get current postal code
         LocationFinder finder = LocationFinder.getInstance(getActivity());
+        finder.getLocation();
         String postalCode = finder.getPostalCode();
         if (TextUtils.isEmpty(postalCode)) {
+            // display "no store nearby"
+            storeErrorInfoTextView.setText(getResources().getText(R.string.no_store));
             storeWrapper.setState(DataWrapper.State.EMPTY);
             String errorMessage = (String) getResources().getText(R.string.error_no_location_service);
             Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
             //activity.showErrorDialog(errorMessage, false);
         }
         else{
-            //EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
-            //api.getStoreInfo("513096", "100", 1, 1, postalCode, new StoreInfoCallback());
-
+            Log.d(TAG, "Store zipcode:" + postalCode);
             Access.getInstance().getChannelApi(false).storeLocations(postalCode, new StoreInfoCallback());
         }
     }
@@ -1040,30 +1045,39 @@ public class ConfiguratorFragment extends Fragment {
         @Override
         public void success(StoreQuery storeQuery, Response response) {
             List<StoreData> storeData = storeQuery.getStoreData();
-            Obj storeObj = storeData.get(0).getObj();
+            // if there are any nearby stores
+            if(!storeData.isEmpty()) {
+                Obj storeObj = storeData.get(0).getObj();
 
-            // Get store location
-            StoreAddress storeAddress = storeObj.getStoreAddress();
-            String storeCity = storeAddress.getCity();
-            String storeState = storeAddress.getState();
-            storeNameTextView.setText(storeCity + "," + storeState);
+                // Get store location
+                StoreAddress storeAddress = storeObj.getStoreAddress();
+                String storeCity = storeAddress.getCity();
+                String storeState = storeAddress.getState();
+                storeNameTextView.setText(storeCity + "," + storeState);
 
-            // Get store office hours
-            List<StoreHours> storeHourList = storeObj.getStoreHours();
-            ArrayList<TimeSpan> spans = new ArrayList<TimeSpan>();
-            for(StoreHours hours : storeHourList) {
-                TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
-                if (span!=null) spans.add(span);
+                // Get store office hours
+                List<StoreHours> storeHourList = storeObj.getStoreHours();
+                ArrayList<TimeSpan> spans = new ArrayList<TimeSpan>();
+                for (StoreHours hours : storeHourList) {
+                    TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
+                    if (span != null) spans.add(span);
+                }
+                String status = TimeSpan.formatStatus(getActivity(), spans, System.currentTimeMillis());
+                int i = status.indexOf(' ');
+                if (i > 0) status = status.substring(0, i);
+                storeStatusTextView.setText(status);
+
+                if (storeCity == null) {
+                    storeWrapper.setState(DataWrapper.State.EMPTY);
+                } else {
+                    storeWrapper.setState(DataWrapper.State.DONE);
+                }
             }
-            String status = TimeSpan.formatStatus(getActivity(), spans, System.currentTimeMillis());
-            int i = status.indexOf(' ');
-            if (i>0) status = status.substring(0, i);
-            storeStatusTextView.setText(status);
-
-            if (storeCity == null) {
+            // display "find nearby store"
+            else{
+                storeErrorInfoTextView.setText(getResources().getText(R.string.find_store));
                 storeWrapper.setState(DataWrapper.State.EMPTY);
-            } else {
-                storeWrapper.setState(DataWrapper.State.DONE);
+                Log.d(TAG, "No nearby stores found from the StoreInfoCallback.");
             }
         }
 
@@ -1113,6 +1127,7 @@ public class ConfiguratorFragment extends Fragment {
         usernameTextView = (TextView) configFrameView.findViewById(R.id.login_username);
         storeNameTextView = (TextView) configFrameView.findViewById(R.id.store_name);
         storeStatusTextView = (TextView) configFrameView.findViewById(R.id.store_status);
+        storeErrorInfoTextView = (TextView) configFrameView.findViewById(R.id.error_info);
         hideBannerView = configFrameView.findViewById(R.id.hide_banner);
         showArrowImageView = (ImageView) configFrameView.findViewById(R.id.show_arrow);
     }
@@ -1175,6 +1190,15 @@ public class ConfiguratorFragment extends Fragment {
         });
 
         storeNameTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Tracker.getInstance().trackActionForPersonalizedMessaging("Store"); // Analytics
+                MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.selectFragment(new StoreFragment(), MainActivity.Transition.NONE, true);
+            }
+        });
+
+        storeErrorInfoTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Tracker.getInstance().trackActionForPersonalizedMessaging("Store"); // Analytics
