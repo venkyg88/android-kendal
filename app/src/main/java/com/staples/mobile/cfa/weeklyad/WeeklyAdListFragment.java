@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.TabHost;
-import android.widget.TabWidget;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
