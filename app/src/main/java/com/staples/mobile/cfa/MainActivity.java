@@ -26,7 +26,8 @@ import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
 
-import com.staples.mobile.cfa.analytics.Tracker;
+import com.staples.mobile.cfa.analytics.AdobeTracker;
+import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.cart.CartFragment;
@@ -210,7 +211,7 @@ public class MainActivity extends Activity
         ensureActiveSession();
         //@TODO So what happens ensure errors out! REach next line?
         //Analytics
-        Tracker.getInstance().enableTracking(true); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
+        AdobeTracker.enableTracking(true); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
     }
 
     @Override
@@ -226,7 +227,7 @@ public class MainActivity extends Activity
             actionBar.saveSearchHistory();
         }
         //Analytics
-        Tracker.getInstance().enableTracking(false); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
+        AdobeTracker.enableTracking(false); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
     }
 
     @Override
@@ -439,11 +440,13 @@ public class MainActivity extends Activity
             });
 
             // initialize analytics
-            Tracker.getInstance().initialize(Tracker.AppType.CFA, this.getApplicationContext(),
-                    configurator.getAppContext().getDev()); // allow logging only for dev environment
+            new AdobeTracker(this.getApplicationContext(), configurator.getAppContext().getDev()); // allow logging only for dev environment
             // The call in onResume to enable tracking will be ignored during application creation
             // because the configurator object is not yet available. Therefore, enable here.
-            Tracker.getInstance().enableTracking(true);
+            AdobeTracker.enableTracking(true);
+
+            // TODO: set zip code as it changes
+            Tracker.getInstance().setZipCode("02139");
 
         } else { // can't get configurator from network or from persisted file
             showErrorDialog(R.string.error_server_connection, true); // setting fatal=true which will close the app

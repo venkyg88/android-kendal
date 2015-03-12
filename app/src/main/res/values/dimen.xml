@@ -18,4 +18,5 @@
     <dimen name="weekly_ad_category_item_image_height">100dp</dimen>
     <dimen name="left_margin">6dp</dimen>
     <dimen name="right_margin">6dp</dimen>
+    <dimen name="browse_item_height">42dp</dimen>
 </resources>

@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -285,6 +286,7 @@ public class PersonalFeedFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.FEED);
+        Tracker.getInstance().trackStateForPersonalFeed(); // Analytics
     }
 
     private void setSeenProductsAdapter(){
