@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.analytics.Tracker;
+import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.FixedSizeLayoutManager;

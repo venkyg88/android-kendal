@@ -24,7 +24,7 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.analytics.Tracker;
+import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.suggest.api.SuggestApi;

@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.analytics.Tracker;
+import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.profile.CreditCard;
 import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.widget.ActionBar;
