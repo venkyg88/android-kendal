@@ -500,18 +500,16 @@ public class Tracker {
         Analytics.trackAction("Homepage Personalized", contextData);
     }
 
-    public void trackActionForHomePage(ConfigItem configItem) {
-        if (configItem != null) {
-            String pageTypeName = PageType.PAGE_INTERNAL_CAMPAIGNS.getName();
-            HashMap<String, Object> contextData = new HashMap<String, Object>();
-            contextData.put("Item Click", "Homepage Banner");
-            contextData.put("Click", 1);
-            contextData.put("s.evar4", configItem.title);
-            contextData.put("s.evar3", pageTypeName);
-            contextData.put("s.evar17", pageTypeName + ":" + PageType.PAGE_HOME.getName());
-            contextData.put("s.prop38", pageTypeName);
-            Analytics.trackAction("Homepage Banner", contextData);
-        }
+    public void trackActionForHomePage(String bannerName) {
+        String pageTypeName = PageType.PAGE_INTERNAL_CAMPAIGNS.getName();
+        HashMap<String, Object> contextData = new HashMap<String, Object>();
+        contextData.put("Item Click", "Homepage Banner");
+        contextData.put("Click", 1);
+        contextData.put("s.evar4", bannerName);
+        contextData.put("s.evar3", pageTypeName);
+        contextData.put("s.evar17", pageTypeName + ":" + PageType.PAGE_HOME.getName());
+        contextData.put("s.prop38", pageTypeName);
+        Analytics.trackAction("Homepage Banner", contextData);
     }
 
     public void trackActionForSearch(SearchType searchType) {
