@@ -42,8 +42,8 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
     private static final int MAXFETCH = 50;
     private static final int SORT_BY_BEST_MATCH = 0;
 
-    private DataWrapper wrapper;
     private BundleAdapter adapter;
+    private DataWrapper.State state;
 
     public void setArguments(String keyword) {
         Bundle args = new Bundle();
@@ -52,30 +52,40 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+
         String keyword = null;
-
-        View view = inflater.inflate(R.layout.bundle_frame, container, false);
-
         Bundle args = getArguments();
         if (args!=null) {
             keyword = args.getString(KEYWORD);
         }
 
-        wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
-        RecyclerView products = (RecyclerView) view.findViewById(R.id.products);
-        adapter = new BundleAdapter(getActivity());
-        products.setAdapter(adapter);
-        products.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-        products.addItemDecoration(new HorizontalDivider(getActivity()));
-        adapter.setOnClickListener(this);
-
-        wrapper.setState(DataWrapper.State.LOADING);
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         easyOpenApi.searchResult(keyword, 1, MAXFETCH, SORT_BY_BEST_MATCH, null, this);
+        state = DataWrapper.State.LOADING;
+    }
 
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        View view = inflater.inflate(R.layout.bundle_frame, container, false);
+        RecyclerView list = (RecyclerView) view.findViewById(R.id.products);
+        list.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+        list.addItemDecoration(new HorizontalDivider(getActivity()));
+        applyState(view);
         return (view);
     }
+
+    private void applyState(View view) {
+        if (view==null) view = getView();
+        if (view==null) return;
+        DataWrapper wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
+        if (adapter!=null) {
+            RecyclerView list = (RecyclerView) wrapper.findViewById(R.id.products);
+            list.setAdapter(adapter);
+        }
+        wrapper.setState(state);
+   }
 
     @Override
     public void onResume() {
@@ -89,11 +99,11 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         if (activity==null) return;
 
         int count = processSearch(searchResult);
-        if (count==0) wrapper.setState(DataWrapper.State.EMPTY);
-        else wrapper.setState(DataWrapper.State.DONE);
-        adapter.notifyDataSetChanged();
+        if (count==0) state = DataWrapper.State.EMPTY;
+        else state = DataWrapper.State.DONE;
+        applyState(null);
 
-        //Analytics
+        // Analytics
         if (searchResult.getSearch() != null && searchResult.getSearch().size() > 0) {
             //get the actual count of search results
             Search search = searchResult.getSearch().get(0);
@@ -110,8 +120,9 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
         String msg = ApiError.getErrorMessage(retrofitError);
         ((MainActivity) activity).showErrorDialog(msg);
-        wrapper.setState(DataWrapper.State.EMPTY);
         Log.d(TAG, msg);
+        state = DataWrapper.State.EMPTY;
+        applyState(null);
     }
 
     private int processSearch(SearchResult searchResult) {
@@ -120,7 +131,11 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         if (searches==null || searches.size()<1) return(0);
         Search search = searches.get(0);
         if (search==null) return(0);
+
+        adapter = new BundleAdapter(getActivity());
+        adapter.setOnClickListener(this);
         int count = adapter.fill(search.getProduct());
+        adapter.notifyDataSetChanged();
         return(count);
     }
 
