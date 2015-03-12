@@ -606,6 +606,8 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                         toggleView();
                     }
 
+                    Tracker.getInstance().trackStateForStoreDetail(); // Analytics
+
                     obj = view.getTag();
                     if (obj instanceof StoreItem) {
                         StoreItem storeItem = (StoreItem) obj;
