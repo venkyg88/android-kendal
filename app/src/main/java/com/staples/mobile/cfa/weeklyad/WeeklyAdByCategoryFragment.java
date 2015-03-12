@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -99,5 +100,6 @@ public class WeeklyAdByCategoryFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.WEEKLYAD);
+        Tracker.getInstance().trackStateForWeeklyAdClass(); // Analytics
     }
 }

@@ -14,6 +14,7 @@ import android.widget.TabWidget;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
 import com.staples.mobile.common.access.Access;
@@ -136,6 +137,7 @@ public class WeeklyAdListFragment extends Fragment{
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.WEEKLYAD, titles.get(currentTabIndex));
+        Tracker.getInstance().trackStateForWeeklyAd(); // Analytics
     }
 
 

@@ -51,6 +51,7 @@ public class Tracker {
         PAGE_ACCOUNT("My Account"),
         PAGE_STORE("Store"),
         PAGE_WEEKLY_AD("WeeklyAd"),
+        PAGE_SHOP_BY_CATEGORY("Shop by Category"),
         PAGE_SEARCH("Search"),
         PAGE_SEARCH_BAR("Search Bar"),
         PAGE_SEARCH_TAB("Search Tab"),
@@ -223,6 +224,57 @@ public class Tracker {
         String shortName = pageTypeName;
         pageTypeName += ": Order Details";
         addNameProperties(contextData, shortName, shortName, pageTypeName, pageTypeName, pageTypeName);
+        Analytics.trackState(pageTypeName, contextData);
+    }
+
+    public void trackStateForStoreFinder() {
+        HashMap<String, Object> contextData = createContextWithGlobal();
+        String pageTypeName = PageType.PAGE_STORE.getName();
+        String shortName = pageTypeName;
+        pageTypeName += ": Store Finder";
+        addNameProperties(contextData, shortName, shortName, pageTypeName, pageTypeName, pageTypeName);
+        Analytics.trackState(pageTypeName, contextData);
+    }
+
+    public void trackStateForStoreResults() {
+        HashMap<String, Object> contextData = createContextWithGlobal();
+        String pageTypeName = PageType.PAGE_STORE.getName();
+        String shortName = pageTypeName;
+        pageTypeName += ": Store Results";
+        addNameProperties(contextData, shortName, shortName, pageTypeName, pageTypeName, pageTypeName);
+        Analytics.trackState(pageTypeName, contextData);
+    }
+
+    public void trackStateForStoreDetail() {
+        HashMap<String, Object> contextData = createContextWithGlobal();
+        String pageTypeName = PageType.PAGE_STORE.getName();
+        String shortName = pageTypeName;
+        pageTypeName += ": Store Detail";
+        addNameProperties(contextData, shortName, shortName, pageTypeName, pageTypeName, pageTypeName);
+        Analytics.trackState(pageTypeName, contextData);
+    }
+
+
+    public void trackStateForWeeklyAdClass() {
+        HashMap<String, Object> contextData = createContextWithGlobal();
+        String pageTypeName = PageType.PAGE_WEEKLY_AD.getName();
+        String shortName = pageTypeName;
+        pageTypeName += ": Class";
+        addNameProperties(contextData, shortName, shortName, pageTypeName, pageTypeName, pageTypeName);
+        Analytics.trackState(pageTypeName, contextData);
+    }
+
+    public void trackStateForWeeklyAd() {
+        HashMap<String, Object> contextData = createContextWithGlobal();
+        String pageTypeName = PageType.PAGE_WEEKLY_AD.getName();
+        addNameProperties(contextData, pageTypeName);
+        Analytics.trackState(pageTypeName, contextData);
+    }
+
+    public void trackStateForShopByCategory() {
+        HashMap<String, Object> contextData = createContextWithGlobal();
+        String pageTypeName = PageType.PAGE_SHOP_BY_CATEGORY.getName();
+        addNameProperties(contextData, pageTypeName);
         Analytics.trackState(pageTypeName, contextData);
     }
 
