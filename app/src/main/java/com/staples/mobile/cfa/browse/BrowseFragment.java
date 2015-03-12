@@ -17,6 +17,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
+import com.staples.mobile.cfa.widget.FixedSizeLayoutManager;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -50,9 +51,12 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Activity activity = getActivity();
         View view = inflater.inflate(R.layout.browse_frame, container, false);
         RecyclerView list = (RecyclerView) view.findViewById(R.id.products);
-        list.setLayoutManager(new LinearLayoutManager(getActivity()));
+        FixedSizeLayoutManager layoutManager = new FixedSizeLayoutManager(activity);
+        layoutManager.setUnitHeight(activity.getResources().getDimensionPixelSize(R.dimen.browse_item_height));
+        list.setLayoutManager(layoutManager);
         applyState(view);
         return (view);
     }
