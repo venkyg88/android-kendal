@@ -80,6 +80,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.BUNDLE, title);
+        Tracker.getInstance().trackStateForShopByCategory(); // Analytics
     }
 
     @Override
@@ -91,7 +92,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         if (count==0) wrapper.setState(DataWrapper.State.EMPTY);
         else wrapper.setState(DataWrapper.State.DONE);
         adapter.notifyDataSetChanged();
-        Tracker.getInstance().trackStateForClass(count, browse); // analytics
+        Tracker.getInstance().trackStateForClass(count, browse, Tracker.ViewType.GRID); // analytics
     }
 
     @Override

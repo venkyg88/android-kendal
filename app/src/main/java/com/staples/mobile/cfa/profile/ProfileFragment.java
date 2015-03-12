@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.checkout.ConfirmationFragment;
 import com.staples.mobile.cfa.home.ConfiguratorFragment;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -53,6 +54,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.PROFILE);
+        Tracker.getInstance().trackStateForProfile(); // Analytics
     }
 
     private void loadProfile(Member member, View view) {

@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.analytics.Tracker;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
@@ -26,6 +27,8 @@ import com.staples.mobile.common.access.easyopen.model.member.Member;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "LoginFragment";
+    private static final String TABID_SIGNIN = "Sign In Tab";
+    private static final String TABID_REGISTER = "Register Tab";
     Button signInBtn;
     Button registerBtn;
     LoginHelper loginHelper;
@@ -53,8 +56,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             TabHost tabHost = (TabHost) view.findViewById(R.id.tabHost);
             tabHost.setup();
 
-            TabHost.TabSpec tab1 = tabHost.newTabSpec("First Tab");
-            TabHost.TabSpec tab2 = tabHost.newTabSpec("Second Tab");
+            TabHost.TabSpec tab1 = tabHost.newTabSpec(TABID_SIGNIN);
+            TabHost.TabSpec tab2 = tabHost.newTabSpec(TABID_REGISTER);
 
             tab1.setIndicator(r.getString(R.string.login_title));
             tab1.setContent(R.id.tab1);
@@ -64,6 +67,17 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
             tabHost.addTab(tab1);
             tabHost.addTab(tab2);
+
+            tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+                @Override
+                public void onTabChanged(String tabId) {
+                    if (tabId.equals(TABID_SIGNIN)) {
+                        Tracker.getInstance().trackStateForLogin(); // Analytics
+                    } else if (tabId.equals(TABID_REGISTER)) {
+                        Tracker.getInstance().trackStateForRegister(); // Analytics
+                    }
+                }
+            });
 
             signInBtn = (Button) view.findViewById(R.id.submit_button);
             signInBtn.setOnClickListener(this);
@@ -129,6 +143,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.LOGIN);
+        Tracker.getInstance().trackStateForLogin(); // Analytics
     }
 
 
