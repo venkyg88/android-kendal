@@ -39,8 +39,8 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
     private static final int MAXFETCH = 50;
 
-    private DataWrapper wrapper;
     private BundleAdapter adapter;
+    private DataWrapper.State state;
     private String title;
 
     public void setArguments(String title, String identifier) {
@@ -51,29 +51,40 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        String identifier = null;
-        View view = inflater.inflate(R.layout.bundle_frame, container, false);
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
 
+        String identifier = null;
         Bundle args = getArguments();
         if (args!=null) {
             title = args.getString(TITLE);
             identifier = args.getString(IDENTIFIER);
         }
 
-        wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
-        RecyclerView list = (RecyclerView) wrapper.findViewById(R.id.products);
-        adapter = new BundleAdapter(getActivity());
-        list.setAdapter(adapter);
-        list.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-        list.addItemDecoration(new HorizontalDivider(getActivity()));
-        adapter.setOnClickListener(this);
-
-        wrapper.setState(DataWrapper.State.LOADING);
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         easyOpenApi.browseCategories(identifier, null, MAXFETCH, this);
+        state = DataWrapper.State.LOADING;
+    }
 
-        return (view);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        View view = inflater.inflate(R.layout.bundle_frame, container, false);
+        RecyclerView list = (RecyclerView) view.findViewById(R.id.products);
+        list.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+        list.addItemDecoration(new HorizontalDivider(getActivity()));
+        applyState(view);
+        return(view);
+    }
+
+    private void applyState(View view) {
+        if (view==null) view = getView();
+        if (view==null) return;
+        DataWrapper wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
+        if (adapter!=null) {
+            RecyclerView list = (RecyclerView) wrapper.findViewById(R.id.products);
+            list.setAdapter(adapter);
+        }
+        wrapper.setState(state);
     }
 
     @Override
@@ -89,10 +100,11 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         if (activity==null) return;
 
         int count = processBrowse(browse);
-        if (count==0) wrapper.setState(DataWrapper.State.EMPTY);
-        else wrapper.setState(DataWrapper.State.DONE);
-        adapter.notifyDataSetChanged();
-        Tracker.getInstance().trackStateForClass(count, browse, Tracker.ViewType.GRID); // analytics
+        if (count==0) state = DataWrapper.State.EMPTY;
+        else state = DataWrapper.State.DONE;
+        applyState(null);
+
+        Tracker.getInstance().trackStateForClass(count, browse, Tracker.ViewType.GRID); // Analytics
     }
 
     @Override
@@ -101,9 +113,10 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         if (activity==null) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
-        ((MainActivity)activity).showErrorDialog(msg);
+        ((MainActivity) activity).showErrorDialog(msg);
         Log.d(TAG, msg);
-        wrapper.setState(DataWrapper.State.EMPTY);
+        state = DataWrapper.State.EMPTY;
+        applyState(null);
     }
 
     private int processBrowse(Browse browse) {
@@ -112,6 +125,10 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         if (categories==null || categories.size()<1) return(0);
         Category category = categories.get(0);
         if (category==null) return(0);
+
+        // Create adapter
+        adapter = new BundleAdapter(getActivity());
+        adapter.setOnClickListener(this);
 
         // Add straight products
         int count = adapter.fill(category.getProduct());
@@ -122,9 +139,10 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
             for(Category promo : promos)
                 count += adapter.fill(promo.getProduct());
         }
+
+        adapter.notifyDataSetChanged();
         return(count);
     }
-
 
     @Override
     public void onClick(View view) {

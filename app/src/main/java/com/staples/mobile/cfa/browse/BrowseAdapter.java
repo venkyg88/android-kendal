@@ -1,52 +1,52 @@
 package com.staples.mobile.cfa.browse;
 
-import android.app.Activity;
-import android.os.Bundle;
+import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
 
 import java.util.ArrayList;
 
-public class BrowseAdapter extends BaseAdapter {
+public class BrowseAdapter extends RecyclerView.Adapter<BrowseAdapter.ViewHolder> {
     private static final String TAG = "BrowseAdapter";
 
-    private static final String TITLES = "titles";
-    private static final String IDENTIFIERS = "identifiers";
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        private TextView title;
+
+        private ViewHolder(View view) {
+            super(view);
+            title = (TextView) view.findViewById(R.id.title);
+        }
+    }
 
     private LayoutInflater inflater;
-
     private ArrayList<BrowseItem> stackList;
     private ArrayList<BrowseItem> browseList;
+    private View.OnClickListener listener;
 
-    public BrowseAdapter(Activity activity) {
-        super();
-
-        inflater = activity.getLayoutInflater();
+    public BrowseAdapter(Context context) {
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         stackList = new ArrayList<BrowseItem>();
         browseList = new ArrayList<BrowseItem>();
+        stackList.add(new BrowseItem(BrowseItem.Type.ACTIVE, context.getResources().getString(R.string.browse_title), null));
+    }
 
-        stackList.add(new BrowseItem(BrowseItem.Type.ACTIVE, activity.getResources().getString(R.string.browse_title), null));
+    public void setOnClickListener(View.OnClickListener listener) {
+        this.listener = listener;
     }
 
     // Items
 
     @Override
-    public int getCount() {
+    public int getItemCount() {
         return(stackList.size()+browseList.size());
     }
 
-    @Override
-    public long getItemId(int position) {
-        return(position);
-    }
-
-    @Override
     public BrowseItem getItem(int position) {
         int size = stackList.size();
         if (position < size) return (stackList.get(position));
@@ -59,30 +59,28 @@ public class BrowseAdapter extends BaseAdapter {
     /* Views */
 
     @Override
-    public int getViewTypeCount() {
-        return (BrowseItem.NTYPES);
-    }
-
-    @Override
     public int getItemViewType(int position) {
         BrowseItem item = getItem(position);
         return(item.type.viewType);
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
-        BrowseItem item = getItem(position);
-
-        // Get a new or recycled view of the right type
-        if (view==null)
-            view = inflater.inflate(item.type.layoutId, parent, false);
-
-        // Set title
-        TextView title = (TextView) view.findViewById(R.id.title);
-        if (title!=null) title.setText(item.title);
-
-        return(view);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int type) {
+        int layout = BrowseItem.Type.values()[type].layoutId;
+        View view = inflater.inflate(layout, parent, false);
+        ViewHolder vh = new ViewHolder(view);
+        vh.itemView.setOnClickListener(listener);
+        return(vh);
     }
+
+    @Override
+    public void onBindViewHolder(ViewHolder vh, int position) {
+        BrowseItem item = getItem(position);
+        vh.itemView.setTag(item);
+        vh.title.setText(item.title);
+    }
+
+    // Stack operations
 
     public void pushStack(BrowseItem item) {
         // Change old active to regular stack
@@ -96,6 +94,7 @@ public class BrowseAdapter extends BaseAdapter {
 
         // Clear browse list
         browseList.clear();
+        notifyDataSetChanged();
     }
 
     public String popStack(BrowseItem item) {
@@ -113,7 +112,13 @@ public class BrowseAdapter extends BaseAdapter {
         // Clear browse list
         browseList.clear();
 
+        notifyDataSetChanged();
         return (item.identifier);
+    }
+
+    public void addItem(BrowseItem item) {
+        item.type = BrowseItem.Type.ITEM;
+        browseList.add(item);
     }
 
     /** needed for analytics */
@@ -128,74 +133,5 @@ public class BrowseAdapter extends BaseAdapter {
             }
         }
         return buf.toString();
-    }
-
-    public void addItem(BrowseItem item) {
-        item.type = BrowseItem.Type.ITEM;
-        browseList.add(item);
-    }
-
-    public String getActiveIdentifier() {
-        int size = stackList.size();
-        if (size<1) return(null);
-        return(stackList.get(size-1).identifier);
-    }
-
-    // State save and restore
-
-    public Bundle saveState(Bundle bundle) {
-        if (bundle==null) bundle = new Bundle();
-
-        int size = stackList.size();
-        if (size<2) return(bundle);
-
-        // Build split lists
-        ArrayList<String> titles = new ArrayList<String>(size-1);
-        ArrayList<String> identifiers = new ArrayList<String>(size-1);
-        for(int i=1;i<size;i++) {
-            BrowseItem item = stackList.get(i);
-            titles.add(item.title);
-            identifiers.add(item.identifier);
-        }
-
-        // Put lists in bundle
-        bundle.putStringArrayList(TITLES, titles);
-        bundle.putStringArrayList(IDENTIFIERS, identifiers);
-        return(bundle);
-    }
-
-    public boolean restoreState(Bundle bundle) {
-        // Safety check
-        if (bundle == null) return (false);
-
-        // Get valid arrays from the bundle
-        ArrayList<String> titles = bundle.getStringArrayList(TITLES);
-        ArrayList<String> identifiers = bundle.getStringArrayList(IDENTIFIERS);
-        if (titles == null || identifiers == null) return (false);
-        int ntitles = titles.size();
-        int nidentifiers = identifiers.size();
-        if (ntitles == 0 || nidentifiers == 0 || ntitles != nidentifiers) return (false);
-
-        // Set root item as not active
-        stackList.get(0).type = BrowseItem.Type.STACK;
-
-        // Remove old entries
-        int size = stackList.size();
-        for(int i = size - 1; i > 0; i--)
-            stackList.remove(i);
-
-        // Insert new entries
-        BrowseItem item = null;
-        for(int i = 0; i < ntitles; i++) {
-            item = new BrowseItem(BrowseItem.Type.STACK, titles.get(i), identifiers.get(i));
-            stackList.add(item);
-        }
-
-        // Set last item as active
-        item.type = BrowseItem.Type.ACTIVE;
-
-        // Clear items
-        browseList.clear();
-        return (true);
     }
 }
