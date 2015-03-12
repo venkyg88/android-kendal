@@ -45,6 +45,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
@@ -182,6 +183,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         if (adapter.isSingleMode()) icon = R.drawable.ic_view_list_white;
         else icon = R.drawable.ic_map_white;
         ActionBar.getInstance().setConfig(ActionBar.Config.STORE, icon, this);
+        Tracker.getInstance().trackStateForStoreFinder(); // Analytics
     }
 
     @Override
@@ -522,6 +524,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
             adapter.notifyDataSetChanged();
             list.scrollToPosition(adapter.getSingleIndex());
             list.requestLayout();
+            Tracker.getInstance().trackStateForStoreResults(); // Analytics
         }
 
         // else if showing list of stores, then toggle to single mode
@@ -537,6 +540,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
             adapter.setSingleMode(true);
             adapter.notifyDataSetChanged();
             list.requestLayout();
+            Tracker.getInstance().trackStateForStoreDetail(); // Analytics
         }
     }
 
@@ -601,6 +605,8 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                     if (!adapter.isSingleMode()) {
                         toggleView();
                     }
+
+                    Tracker.getInstance().trackStateForStoreDetail(); // Analytics
 
                     obj = view.getTag();
                     if (obj instanceof StoreItem) {

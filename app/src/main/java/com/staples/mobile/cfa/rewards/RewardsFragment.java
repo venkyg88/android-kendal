@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.util.CurrencyFormat;
@@ -185,6 +186,7 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.REWARDS);
+        Tracker.getInstance().trackStateForRewards(); // Analytics
     }
 
     @Override

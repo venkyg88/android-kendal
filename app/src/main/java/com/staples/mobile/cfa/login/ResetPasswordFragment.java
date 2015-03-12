@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -52,6 +53,7 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.PASSWORD);
+        Tracker.getInstance().trackStateForResetPassword(); // Analytics
     }
 
     @Override

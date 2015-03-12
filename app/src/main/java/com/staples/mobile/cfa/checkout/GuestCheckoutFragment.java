@@ -20,7 +20,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.analytics.Tracker;
+import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.profile.CreditCard;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.AddressBlock;
