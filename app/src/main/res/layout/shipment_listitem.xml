@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/shipmentLbl"
         android:layout_marginTop="10dp"
-        android:textSize="16dip"
+        android:textSize="16sp"
         android:textColor="@color/text_black"/>
     <TextView
         android:layout_width="wrap_content"
@@ -48,13 +48,13 @@
                 android:id="@+id/shipmentTitle"
                 android:maxLines="2"
                 android:ellipsize="end"
-                android:textSize="16dip"
+                android:textSize="16sp"
                 android:textColor="@color/text_black"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/shipmentPrice"
-                android:textSize="16dip"
+                android:textSize="16sp"
                 android:layout_marginTop="10dp"
                 android:textColor="@color/text_green" />
             <LinearLayout
@@ -67,13 +67,13 @@
                     android:layout_height="wrap_content"
                     android:text="Quantity"
                     android:id="@+id/shipmentQtyLbl"
-                    android:textSize="16dip"
+                    android:textSize="16sp"
                     android:textColor="@color/text_light_gray" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/shipmentQty"
-                    android:textSize="16dip"
+                    android:textSize="16sp"
                     android:layout_marginLeft="10dip"
                     android:textColor="@color/text_light_gray" />
                 </LinearLayout>
