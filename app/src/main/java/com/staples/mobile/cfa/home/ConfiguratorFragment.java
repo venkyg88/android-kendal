@@ -25,7 +25,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.analytics.Tracker;
+//import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.store.StoreFragment;
@@ -46,6 +46,7 @@ import com.staples.mobile.common.access.configurator.model.Item;
 import com.staples.mobile.common.access.configurator.model.Screen;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
+import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.common.device.DeviceInfo;
 
 import java.util.ArrayList;

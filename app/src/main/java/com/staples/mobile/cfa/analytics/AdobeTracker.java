@@ -9,6 +9,7 @@ import android.location.Location;
 
 import com.adobe.mobile.Analytics;
 import com.adobe.mobile.Config;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.Map;
 

@@ -4,7 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.crittercism.app.Crittercism;
-import com.staples.mobile.cfa.analytics.Tracker;
+import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;

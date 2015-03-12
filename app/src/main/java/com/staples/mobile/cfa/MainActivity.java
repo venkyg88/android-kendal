@@ -27,7 +27,7 @@ import android.widget.TextView;
 import com.apptentive.android.sdk.Apptentive;
 
 import com.staples.mobile.cfa.analytics.AdobeTracker;
-import com.staples.mobile.cfa.analytics.Tracker;
+import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.cart.CartFragment;
