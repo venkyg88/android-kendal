@@ -4,9 +4,8 @@ import android.content.Context;
 import android.location.Location;
 import android.text.TextUtils;
 
-import com.adobe.mobile.Analytics;
-import com.adobe.mobile.Config;
-import com.staples.mobile.cfa.home.ConfigItem;
+//import com.adobe.mobile.Analytics;
+//import com.adobe.mobile.Config;
 import com.staples.mobile.common.access.easyopen.model.browse.Analytic;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
@@ -62,9 +61,17 @@ public class Tracker {
         public String getName() { return name; }
     }
 
+    public interface AnalyticsService {
+        public void trackState(java.lang.String state, java.util.Map<java.lang.String, java.lang.Object> contextData);
+        public void trackAction(java.lang.String action, java.util.Map<java.lang.String, java.lang.Object> contextData);
+        public void trackLocation(android.location.Location location, java.util.Map<java.lang.String, java.lang.Object> contextData);
+    }
+
+    private AnalyticsService service;
+
     private static volatile Tracker instance = null;
 
-    public static HashMap<String, Object> globalContextData;
+    public HashMap<String, Object> globalContextData;
 
     // private constructor
     private Tracker() {
@@ -88,33 +95,21 @@ public class Tracker {
     //////////////////////////////////////////////////////////
 
     /** initialize analytics */
-    public void initialize(AppType appType, Context context, boolean enableDebugLogging) {
-        switch(appType) {
+    public void initialize(AppType appType, AnalyticsService service) {
+        switch (appType) {
             case AFA:
                 setAFAGlobalDefinitions();
             case CFA:
                 setCFAGlobalDefinitions();
         }
-        Config.setContext(context);
-        Config.setDebugLogging(enableDebugLogging);
-        //Analytics
-        Config.collectLifecycleData();
+        this.service = service;
     }
 
-    private boolean isInitialized() {
+
+    public boolean isInitialized() {
         return (globalContextData != null);
     }
 
-    /** enable or disable tracking of data */
-    public void enableTracking(boolean enable) {
-        if (isInitialized()) {
-            if (enable) {
-                Config.collectLifecycleData();
-            } else {
-                Config.pauseCollectingLifecycleData();
-            }
-        }
-    }
 
     /** CFA should call this as user type changes between guest and registered */
     public void setUserType(UserType userType) {
@@ -137,6 +132,27 @@ public class Tracker {
         if (isInitialized()) {
             globalContextData.put("s.evar32", emailId);
             globalContextData.put("s.evar11", rewardsNumber);
+        }
+    }
+
+    /** set zip code (e.g. "02139") */
+    public void setZipCode(String zipCode) {
+        if (isInitialized()) {
+            globalContextData.put("s.evar51", zipCode);
+        }
+    }
+
+    /** AFA only: set store id (e.g. 01154) */
+    public void setStoreId(String storeId) {
+        if (isInitialized()) {
+            globalContextData.put("s.evar75", storeId);
+        }
+    }
+
+    /** AFA only: set associate id (e.g. "1656013") */
+    public void setAssociateId(String associateId) {
+        if (isInitialized()) {
+            globalContextData.put("s.evar18", associateId);
         }
     }
 
@@ -164,14 +180,14 @@ public class Tracker {
         String pageTypeName = PageType.PAGE_HOME.getName();
         addNameProperties(contextData, pageTypeName);
         contextData.put("PageViews", 1); // event4
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
     public void trackStateForLogin() {
         HashMap<String, Object> contextData = createContextWithGlobal();
         String pageTypeName = PageType.PAGE_LOGIN.getName();
         addNameProperties(contextData, pageTypeName);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
     public void trackStateForResetPassword() {
@@ -179,7 +195,7 @@ public class Tracker {
         String pageTypeName = PageType.PAGE_LOGIN.getName();
         String longName = pageTypeName + ": Reset Password";
         addNameProperties(contextData, pageTypeName, pageTypeName, longName, longName, longName);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
     public void trackStateForRegister() {
@@ -188,7 +204,7 @@ public class Tracker {
         String shortName = pageTypeName;
         pageTypeName += ": Create New Account";
         addNameProperties(contextData, shortName, shortName, pageTypeName, pageTypeName, pageTypeName);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
     public void trackStateForProfile() {
@@ -197,7 +213,7 @@ public class Tracker {
         String shortName = pageTypeName;
         pageTypeName += ": Profile";
         addNameProperties(contextData, shortName, shortName, pageTypeName, pageTypeName, pageTypeName);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
     public void trackStateForRewards() {
@@ -206,7 +222,7 @@ public class Tracker {
         String shortName = pageTypeName;
         pageTypeName += ": Rewards";
         addNameProperties(contextData, shortName, shortName, pageTypeName, pageTypeName, pageTypeName);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
     public void trackStateForOrders() {
@@ -215,7 +231,7 @@ public class Tracker {
         String shortName = pageTypeName;
         pageTypeName += ": Order";
         addNameProperties(contextData, shortName, shortName, pageTypeName, pageTypeName, pageTypeName);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
     public void trackStateForOrderDetails() {
@@ -224,7 +240,7 @@ public class Tracker {
         String shortName = pageTypeName;
         pageTypeName += ": Order Details";
         addNameProperties(contextData, shortName, shortName, pageTypeName, pageTypeName, pageTypeName);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
     public void trackStateForStoreFinder() {
@@ -233,7 +249,7 @@ public class Tracker {
         String shortName = pageTypeName;
         pageTypeName += ": Store Finder";
         addNameProperties(contextData, shortName, shortName, pageTypeName, pageTypeName, pageTypeName);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
     public void trackStateForStoreResults() {
@@ -242,7 +258,7 @@ public class Tracker {
         String shortName = pageTypeName;
         pageTypeName += ": Store Results";
         addNameProperties(contextData, shortName, shortName, pageTypeName, pageTypeName, pageTypeName);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
     public void trackStateForStoreDetail() {
@@ -251,7 +267,7 @@ public class Tracker {
         String shortName = pageTypeName;
         pageTypeName += ": Store Detail";
         addNameProperties(contextData, shortName, shortName, pageTypeName, pageTypeName, pageTypeName);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
 
@@ -261,28 +277,28 @@ public class Tracker {
         String shortName = pageTypeName;
         pageTypeName += ": Class";
         addNameProperties(contextData, shortName, shortName, pageTypeName, pageTypeName, pageTypeName);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
     public void trackStateForWeeklyAd() {
         HashMap<String, Object> contextData = createContextWithGlobal();
         String pageTypeName = PageType.PAGE_WEEKLY_AD.getName();
         addNameProperties(contextData, pageTypeName);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
     public void trackStateForShopByCategory() {
         HashMap<String, Object> contextData = createContextWithGlobal();
         String pageTypeName = PageType.PAGE_SHOP_BY_CATEGORY.getName();
         addNameProperties(contextData, pageTypeName);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
     public void trackStateForPersonalFeed() {
         HashMap<String, Object> contextData = createContextWithGlobal();
         String pageTypeName = PageType.PAGE_PERSONAL_FEED.getName();
         addNameProperties(contextData, pageTypeName);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
 
@@ -294,7 +310,7 @@ public class Tracker {
         contextData.put("s.evar3", pageTypeName);
         contextData.put("s.evar17", pageTypeName + ": Basic Search");
         contextData.put("s.prop38", pageTypeName);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
     /** search bar used by cfa */
@@ -302,7 +318,7 @@ public class Tracker {
         HashMap<String, Object> contextData = createContextWithGlobal();
         String pageTypeName = PageType.PAGE_SEARCH_BAR.getName();
         addNameProperties(contextData, pageTypeName);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
 
@@ -325,7 +341,7 @@ public class Tracker {
         contextData.put("s.prop2", count);
         contextData.put("sort", "Best Match"); // s.prop54
         contextData.put("s.prop53", viewType.getName());
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
     public void trackStateForClass(int count, Browse browse, ViewType viewType) {
@@ -363,7 +379,7 @@ public class Tracker {
                 }
             }
         }
-        Analytics.trackState(pageName, contextData);
+        service.trackState(pageName, contextData);
     }
 
     public void trackStateForProduct(Product product) {
@@ -388,7 +404,7 @@ public class Tracker {
                     addCategoryCodeHierarchies(contextData, analytic);
                 }
             }
-            Analytics.trackState(pageTypeName, contextData);
+            service.trackState(pageTypeName, contextData);
         }
     }
 
@@ -410,7 +426,7 @@ public class Tracker {
                     addCategoryCodeHierarchies(contextData, analytic);
                 }
             }
-            Analytics.trackState(pageTypeName, contextData);
+            service.trackState(pageTypeName, contextData);
         }
     }
 
@@ -425,7 +441,7 @@ public class Tracker {
             contextData.put("CartViews", 1); // scView event
             contextData.put("s.products", skus.toString());
             addNameProperties(contextData, pageTypeName);
-            Analytics.trackState(pageTypeName, contextData);
+            service.trackState(pageTypeName, contextData);
         }
     }
 
@@ -436,7 +452,7 @@ public class Tracker {
         pageTypeName += ": Coupons";
         addNameProperties(contextData, shortName, "Shopping Cart Coupons", pageTypeName,
                 pageTypeName, pageTypeName);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
     public void trackStateForCheckoutReviewAndPay(boolean shippingAddrPrefilled, boolean paymentPrefilled) {
@@ -453,7 +469,7 @@ public class Tracker {
         if (paymentPrefilled) {
             contextData.put("paymentmethod", 1); // event7
         }
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
     public void trackStateForOrderConfirmation(String orderNumber) {
@@ -466,7 +482,7 @@ public class Tracker {
         contextData.put("PageViews", 1); // event4
         contextData.put("Purchase", 1); // purchase event
         contextData.put("purchaseID", orderNumber);
-        Analytics.trackState(pageTypeName, contextData);
+        service.trackState(pageTypeName, contextData);
     }
 
 
@@ -480,7 +496,7 @@ public class Tracker {
         contextData.put("Item Click", "Nav Drawer");
         contextData.put("Click", 1);
         contextData.put("s.prop27", drawerItemText + "|" + currentPageName);
-        Analytics.trackAction("Nav Drawer", contextData);
+        service.trackAction("Nav Drawer", contextData);
     }
 
     // e.g. ShopCategory:<SC>:<CG>:<DP>:<CL>
@@ -488,7 +504,7 @@ public class Tracker {
         if (!TextUtils.isEmpty(categoryHierarchy)) {
             HashMap<String, Object> contextData = new HashMap<String, Object>();
             contextData.put("s.prop27", "ShopCategory:" + categoryHierarchy);
-            Analytics.trackAction("ShopCategory Drilldown", contextData);
+            service.trackAction("ShopCategory Drilldown", contextData);
         }
     }
 
@@ -497,7 +513,7 @@ public class Tracker {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
         contextData.put("Item Click", personalizedMsg);
         contextData.put("Click", 1);
-        Analytics.trackAction("Homepage Personalized", contextData);
+        service.trackAction("Homepage Personalized", contextData);
     }
 
     public void trackActionForHomePage(String bannerName) {
@@ -509,7 +525,7 @@ public class Tracker {
         contextData.put("s.evar3", pageTypeName);
         contextData.put("s.evar17", pageTypeName + ":" + PageType.PAGE_HOME.getName());
         contextData.put("s.prop38", pageTypeName);
-        Analytics.trackAction("Homepage Banner", contextData);
+        service.trackAction("Homepage Banner", contextData);
     }
 
     public void trackActionForSearch(SearchType searchType) {
@@ -524,7 +540,7 @@ public class Tracker {
             case RECENT_SEARCH: searchTypeString = "Recent Searches"; break;
         }
         contextData.put("s.evar17", pageTypeName + ":" + searchTypeString);
-        Analytics.trackAction("Search Initiated", contextData);
+        service.trackAction("Search Initiated", contextData);
     }
 
 
@@ -539,7 +555,7 @@ public class Tracker {
         contextData.put("s.pageName", pageType.getName());
         contextData.put("s.prop3", pageType.getName());
         contextData.put("s.evar19", (itemPosition+1) + ":" + pageNo+1);
-        Analytics.trackAction("(Slot Location", contextData);
+        service.trackAction("(Slot Location", contextData);
     }
 
     public void trackActionForProductTabs(String tabName, Product product) {
@@ -555,7 +571,7 @@ public class Tracker {
                 }
             }
         }
-        Analytics.trackAction("Product Details Tabs", contextData);
+        service.trackAction("Product Details Tabs", contextData);
     }
 
     public void trackActionForAddToCartFromProductDetails(String sku, float price, int quantity) {
@@ -579,7 +595,7 @@ public class Tracker {
         // format for "s.products" is ";<sku no>;;;event35=<Total Price>|event36=<Total No of Units>"
         contextData.put("s.products", ";"+sku+";;;event35="+totalPrice+"|event36="+quantity);
         contextData.put("s.evar12", pageType.getName());
-        Analytics.trackAction("Cart Addition", contextData);
+        service.trackAction("Cart Addition", contextData);
     }
 
     public void trackActionForUpdateQtyFromCart(String sku, int qty) {
@@ -589,7 +605,7 @@ public class Tracker {
         contextData.put("s.products", ";"+sku);
         contextData.put("Item Click", qty);
         contextData.put("Click", 1);
-        Analytics.trackAction("Cart Update", contextData);
+        service.trackAction("Cart Update", contextData);
     }
 
     public void trackActionForRemoveFromCart(String sku) {
@@ -598,7 +614,7 @@ public class Tracker {
         contextData.put("s.pageName", pageTypeName);
         contextData.put("cartremoves", 1); // scRemove event
         contextData.put("s.products", ";"+sku);
-        Analytics.trackAction("Cart Removal", contextData);
+        service.trackAction("Cart Removal", contextData);
     }
 
     public void trackActionForCheckoutEnterAddress() {
@@ -606,7 +622,7 @@ public class Tracker {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
         contextData.put("s.pageName", pageTypeName);
         contextData.put("enteraddresses", 1); // event6
-        Analytics.trackAction("Checkout:Enter Address", contextData);
+        service.trackAction("Checkout:Enter Address", contextData);
     }
 
     public void trackActionForCheckoutEnterPayment() {
@@ -614,7 +630,7 @@ public class Tracker {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
         contextData.put("s.pageName", pageTypeName);
         contextData.put("paymentmethod", 1); // event7
-        Analytics.trackAction("Checkout:Payment Details", contextData);
+        service.trackAction("Checkout:Payment Details", contextData);
     }
 
     public void trackActionForCheckoutFormErrors(String errMsg) {
@@ -622,7 +638,7 @@ public class Tracker {
         HashMap<String, Object> contextData = new HashMap<String, Object>();
         contextData.put("s.pageName", pageTypeName);
         contextData.put("s.prop10", errMsg);
-        Analytics.trackAction("Checkout Form Error", contextData);
+        service.trackAction("Checkout Form Error", contextData);
     }
 
 
@@ -631,7 +647,7 @@ public class Tracker {
     ///////////////////////////////////////////////////////////
 
     public void trackLocation(Location location) {
-        Analytics.trackLocation(location, null);
+        service.trackLocation(location, null);
     }
 
 
@@ -709,38 +725,24 @@ public class Tracker {
     }
 
     private void setAFAGlobalDefinitions() {
-        setCommonGlobalDefinitions();
-        globalContextData.put("s.evar73", "Associate App");
-        globalContextData.put("s.evar18", getAssociateId());
-        globalContextData.put("s.evar75", getStoreId());
+        setCommonGlobalDefinitions("Associate App");
     }
+
     private void setCFAGlobalDefinitions() {
-        setCommonGlobalDefinitions();
+        setCommonGlobalDefinitions("Android App");
         globalContextData.put("s.prop71", "Android App");
-        globalContextData.put("s.evar73", "Android App");
         setUserType(UserType.GUEST); // setting to Guest initially, app must update
         globalContextData.put("s.evar35", "en-US");
         globalContextData.put("s.prop41", "en-US");
 
-        // Note that the app must dynamically update rewards no as profile is loaded and reloaded.
+        // Note that the app must dynamically update rewards # as profile is loaded and reloaded.
         // Also, app must dynamically update the user type to Guest or Registered as the user signs in and out.
-    }
-    private static void setCommonGlobalDefinitions() {
-        globalContextData = new HashMap<String, Object>();
-        globalContextData.put("s.evar51", getZipCode());
+        // Also zip code
     }
 
-    //@TODO
-    private static String getZipCode() {
-        return "02139";
-    }
-    //@TODO
-    private static String getStoreId() {
-        return "01154";
-    }
-    //@TODO
-    private static String getAssociateId() {
-        return "1656013";
+    private void setCommonGlobalDefinitions(String appName) {
+        globalContextData = new HashMap<String, Object>();
+        globalContextData.put("s.evar73", appName);
     }
 
 }
