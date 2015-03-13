@@ -6,6 +6,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.crittercism.app.Crittercism;
@@ -25,6 +26,11 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
     private static final String PREFS_LONGITUDE = "locationLongitude";
     private static final String PREFS_TIMESTAMP = "locationTimestamp";
     private static final String PREFS_POSTALCODE = "postalCode";
+
+    // default Framingham store info from
+    // http://sapi.staples.com/v1/10001/stores/search?zipCode=01701&locale=en_US&catalogId=10051&distance=50&client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS
+    private static final double DefaultLatitude = 42.2986;
+    private static final double DefaultLongitude = -71.423;
 
     private static LocationFinder instance;
 
@@ -97,18 +103,36 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
         // Try update
         if (client!=null) {
             Location latest = LocationServices.FusedLocationApi.getLastLocation(client);
-            if (latest != null && latest != location) {
+            if ((latest != null) && latest != location) {
                 location = latest;
                 if (geocoder != null) {
                     new Resolver().start();
                 }
+
+                Log.d(TAG, "Current location -> Longitude:" + location.getLongitude()
+                        + ", Latitude:" + location.getLatitude());
+            }
+
+            else {
+                Log.d(TAG, "Default location -> Longitude:" + getDefaultLocation().getLongitude()
+                        + ", Latitude:" + getDefaultLocation().getLatitude());
+                return getDefaultLocation();
             }
         }
+
         return(location);
     }
 
+    // use Framingham as a default location when location service is not available
+    private Location getDefaultLocation(){
+        Location defaultLocation = new Location("default");
+        defaultLocation.setLatitude(DefaultLatitude);
+        defaultLocation.setLongitude(DefaultLongitude);
+        return defaultLocation;
+    }
+
     public String getPostalCode() {
-        return(postalCode);
+        return (postalCode);
     }
 
     // Callbacks
