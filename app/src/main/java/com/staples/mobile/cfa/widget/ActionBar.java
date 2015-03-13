@@ -3,7 +3,6 @@ package com.staples.mobile.cfa.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -125,7 +124,7 @@ public class ActionBar extends LinearLayout {
         backButton = (ImageView) findViewById(R.id.back_button);
         leftDrawerAction = (ImageView) findViewById(R.id.action_left_drawer);
         cartIconAction = (BadgeImageView) findViewById(R.id.action_show_cart);
-        checkoutSigninButton = (Button) findViewById(R.id.co_signin_button);
+        checkoutSigninButton = (Button) findViewById(R.id.checkout_login_button);
         cartQtyView = (TextView) findViewById(R.id.cart_item_qty);
         optionIcon = (ImageView) findViewById(R.id.option_icon);
         searchBar = (SearchBarView) findViewById(R.id.search_view);

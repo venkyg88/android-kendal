@@ -504,7 +504,7 @@ public class MainActivity extends Activity
         // update sign-in button text
         TextView signInButton = (TextView) findViewById(R.id.account_option);
         if (signInButton != null) { // is null in roboelectric tests
-            signInButton.setText(registeredUser ? R.string.signout_title : R.string.login_title);
+            signInButton.setText(registeredUser ? R.string.logout_title : R.string.login_title);
         }
     }
 
@@ -696,7 +696,7 @@ public class MainActivity extends Activity
                 selectShoppingCart();
                 break;
 
-            case R.id.co_signin_button:
+            case R.id.checkout_login_button:
                 selectLoginFragment();
                 break;
 

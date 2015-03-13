@@ -28,10 +28,10 @@
         style="@style/ActionBarBadgeStyle"
         android:layout_gravity="center_vertical|right"/>
     <Button
-        android:id="@+id/co_signin_button"
+        android:id="@+id/checkout_login_button"
         style="@style/ActionBarButtonStyle"
         android:layout_gravity="center_vertical|right"
-        android:text="@string/common_signin_button_text"/>
+        android:text="@string/login_title"/>
     <TextView
         android:id="@+id/cart_item_qty"
         style="@style/ActionBarTextStyle"
