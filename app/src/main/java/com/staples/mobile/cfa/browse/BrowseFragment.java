@@ -184,6 +184,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
                     switch(IdentifierType.detect(identifier)) {
                         case CLASS:
                         case BUNDLE:
+                            adapter.selectItem(item);
                             MainActivity activity = (MainActivity) getActivity();
                             if (activity != null) {
                                 Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy() + ":" + item.identifier); // analytics
