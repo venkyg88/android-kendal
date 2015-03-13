@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.weeklyad;
 
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,10 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.TabHost;
 
+import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
@@ -33,7 +37,7 @@ import retrofit.client.Response;
  * Created by Avinash Dodda.
  */
 
-public class WeeklyAdListFragment extends Fragment{
+public class WeeklyAdListFragment extends Fragment implements View.OnClickListener {
 
     private static final String STOREID = "storeid";
     private static final String CATEGORYTREEIDS = "categoryTreeIds";
@@ -83,7 +87,7 @@ public class WeeklyAdListFragment extends Fragment{
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new GridLayoutManager(activity, 2));
         mRecyclerView.addItemDecoration(new HorizontalDivider(activity));
-        adapter = new WeeklyAdListAdapter(activity);
+        adapter = new WeeklyAdListAdapter(activity, this);
         mRecyclerView.setAdapter(adapter);
 
         // set up tabs
@@ -158,5 +162,61 @@ public class WeeklyAdListFragment extends Fragment{
                 activity.showErrorDialog(ApiError.getErrorMessage(error));
             }
         });
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        final Resources r = activity.getResources();
+        Object tag;
+        switch(view.getId()) {
+            case R.id.weekly_ad_list_image: // go to sku page
+                tag = view.getTag();
+                if (tag instanceof Data) {
+                    Data data = (Data) tag;
+                    ((MainActivity)getActivity()).selectSkuItem(data.getProductdescription(), data.getRetailerproductcode(), false);
+                    // TODO: the following hasn't been specified, but I expect it's coming
+                    // Tracker.getInstance().trackActionForWeeklyAdSelection(adapter.getItemPosition(item), 1); // analytics
+                }
+                break;
+            case R.id.weeklyad_sku_action: // add to cart
+                tag = view.getTag();
+                if (tag instanceof Data) {
+                    final Data data = (Data) tag;
+                    final ImageView buttonVw = (ImageView)view;
+                    activity.showProgressIndicator();
+                    buttonVw.setImageDrawable(r.getDrawable(R.drawable.ic_android));
+                    CartApiManager.addItemToCart(data.getRetailerproductcode(), 1, new CartApiManager.CartRefreshCallback() {
+                        @Override
+                        public void onCartRefreshComplete(String errMsg) {
+                            activity.hideProgressIndicator();
+                            ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
+                            // if success
+                            if (errMsg == null) {
+                                buttonVw.setImageDrawable(r.getDrawable(R.drawable.added_to_cart));
+                                activity.showNotificationBanner(R.string.cart_updated_msg);
+
+                                // if price is parseable, send analytics
+                                if (data.getPrice().startsWith("$")) {
+                                    String price = data.getPrice().substring(1);
+                                    try {
+                                        float priceValue = Float.parseFloat(price);
+                                        Tracker.getInstance().trackActionForAddToCartFromClass(data.getRetailerproductcode(), priceValue, 1);
+                                    } catch (NumberFormatException e) {}
+                                }
+                            } else {
+                                buttonVw.setImageDrawable(r.getDrawable(R.drawable.add_to_cart));
+                                // if non-grammatical out-of-stock message from api, provide a nicer message
+                                if (errMsg.contains("items is out of stock")) {
+                                    errMsg = r.getString(R.string.avail_outofstock);
+                                }
+                                activity.showErrorDialog(errMsg);
+                            }
+                        }
+                    });
+                }
+                break;
+        }
+
     }
 }
