@@ -29,7 +29,7 @@
             android:name=".MainActivity"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustPan"
-            android:configChanges="keyboard|keyboardHidden">
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

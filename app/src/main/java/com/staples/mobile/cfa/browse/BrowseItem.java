@@ -6,9 +6,10 @@ public class BrowseItem {
     private static final String TAG = "BrowseItem";
 
     public enum Type {
-        STACK  (0, R.layout.browse_stack),
-        ACTIVE (1, R.layout.browse_active),
-        ITEM   (2, R.layout.browse_item);
+        STACK    (0, R.layout.browse_stack),
+        ACTIVE   (1, R.layout.browse_active),
+        ITEM     (2, R.layout.browse_item),
+        SELECTED (3, R.layout.browse_selected);
 
         public int viewType;
         public int layoutId;
@@ -18,8 +19,6 @@ public class BrowseItem {
             this.layoutId = layoutId;
         }
     }
-
-    public static final int NTYPES = Type.values().length;
 
     public Type type;
     public String title;
