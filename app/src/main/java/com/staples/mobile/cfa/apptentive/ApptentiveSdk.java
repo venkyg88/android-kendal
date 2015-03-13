@@ -4,6 +4,7 @@ public class ApptentiveSdk {
 
     // Apptentive Event Names -->
 
+    public static final String APP_OPEN_EVENT = "app_open";
     public static final String CART_SHOWN_EVENT = "cart_shown";
     public static final String ORDER_CONFIRMATION_SHOWN_EVENT = "order_confirmation_shown";
     public static final String PRODUCT_DETAIL_SHOWN_EVENT = "product_detail_shown";

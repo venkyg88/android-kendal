@@ -28,6 +28,7 @@ import com.apptentive.android.sdk.Apptentive;
 
 import com.staples.mobile.cfa.analytics.AdobeTracker;
 import com.staples.mobile.common.analytics.Tracker;
+import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.cart.CartFragment;
@@ -351,6 +352,7 @@ public class MainActivity extends Activity
         findViewById(R.id.splash).setVisibility(View.GONE);
         findViewById(R.id.main).setVisibility(View.VISIBLE);
         selectDrawerItem(homeDrawerItem, Transition.NONE, false);
+        Apptentive.engage(this, ApptentiveSdk.APP_OPEN_EVENT);
     }
 
     public void prepareMainScreen(boolean freshStart) {
