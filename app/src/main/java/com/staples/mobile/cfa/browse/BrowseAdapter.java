@@ -116,6 +116,14 @@ public class BrowseAdapter extends RecyclerView.Adapter<BrowseAdapter.ViewHolder
         return (item.identifier);
     }
 
+    public void selectItem(BrowseItem selected) {
+        for(BrowseItem item : browseList) {
+            if (item==selected) item.type = BrowseItem.Type.SELECTED;
+            else item.type = BrowseItem.Type.ITEM;
+        }
+        notifyDataSetChanged();
+    }
+
     public void addItem(BrowseItem item) {
         item.type = BrowseItem.Type.ITEM;
         browseList.add(item);

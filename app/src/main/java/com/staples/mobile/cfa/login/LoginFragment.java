@@ -1,17 +1,14 @@
 package com.staples.mobile.cfa.login;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TabHost;
@@ -22,7 +19,6 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.ActionBar;
-import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
@@ -60,10 +56,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             TabHost.TabSpec tab2 = tabHost.newTabSpec(TABID_REGISTER);
 
             tab1.setIndicator(r.getString(R.string.login_title));
-            tab1.setContent(R.id.tab1);
+            tab1.setContent(R.id.login_signin);
 
             tab2.setIndicator(r.getString(R.string.create_account_title));
-            tab2.setContent(R.id.tab2);
+            tab2.setContent(R.id.login_create);
 
             tabHost.addTab(tab1);
             tabHost.addTab(tab2);

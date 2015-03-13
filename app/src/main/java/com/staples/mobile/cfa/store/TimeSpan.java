@@ -185,6 +185,8 @@ public class TimeSpan implements Comparable<TimeSpan> {
     }
 
     public static String formatStatus(Context context, ArrayList<TimeSpan> spans, long now) {
+        if (spans==null) return(null);
+
         int base = (int) (now%ONEWEEK);
 
         // Loop for contiguous spans

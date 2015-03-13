@@ -10,8 +10,8 @@
     <string name="store_locator_title">Store Locator</string>
     <string name="weekly_ad_title">Weekly Ad</string>
     <string name="account_title">Account</string>
-    <string name="login_title">Sign In</string>
-    <string name="signout_title">Sign Out</string>
+    <string name="login_title">Log in</string>
+    <string name="logout_title">Log out</string>
     <string name="create_account_title">Create Account</string>
     <string name="rewards_title">Staples Rewards</string>
     <string name="link_rewards_title">Link Rewards Account</string>
@@ -59,7 +59,7 @@
     <string name="reward">Reward!</string>
     <string name="store_open">Open</string>
     <string name="store_close">Close</string>
-    <string name="no_store">No Nearby Store</string>
+    <string name="no_store">Find A Store Near You</string>
 
     <!--cart, coupon/reward, checkout -->
     <string name="add">ADD</string>
@@ -148,7 +148,7 @@
     <string name="create_acccount_msg1">What to check out faster next time?</string>
     <string name="create_acccount_msg2">Create a Staples account! We just need a password.</string>
     <string name="create_acccount_pw_rules">Case sensitive, 6-12 characters long, cannot contain spaces.</string>
-    <string name="create_account">CREATE ACCOUNT</string>
+    <string name="create_account">Create account</string>
     <string name="account_confirmation_msg">Thanks for creating an account!</string>
     <string name="order_confirmation_with_error">An error occurred, but your order appears to have gone through."</string>
     <string name="password_reset">Reset Password</string>
@@ -157,8 +157,7 @@
     <string name="sku_title">Select items</string>
 
     <!--profile-->
-    <string name="username_label">User name</string>
-    <string name="username">UserName</string>
+    <string name="username">User name</string>
     <string name="password">Password</string>
     <string name="password_forgot">Forgot your password?</string>
     <string name="email">Email</string>
