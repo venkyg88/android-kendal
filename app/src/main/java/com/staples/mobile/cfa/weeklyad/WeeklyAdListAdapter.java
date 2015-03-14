@@ -93,9 +93,7 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
             holder.priceExtension.setText("each");
         }
 
-        Picasso.with(activity)
-                .load(WeeklyAdImageUrlHelper.getUrl(60,100, data.getImage()))
-                .into(holder.weeklyAdListIV);
+        Picasso.with(activity).load(data.getImage()).into(holder.weeklyAdListIV);
     }
 
     @Override

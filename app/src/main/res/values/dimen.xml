@@ -12,8 +12,8 @@
     <dimen name="add_button_margin">16dp</dimen>
     <dimen name="round_button_diameter">50dp</dimen>
     <dimen name="store_schedule_tabstop">70sp</dimen>
-    <dimen name="weekly_ad_list_item_image_width">60dp</dimen>
-    <dimen name="weekly_ad_list_item_image_height">100dp</dimen>
+    <dimen name="weekly_ad_list_item_image_width">120dp</dimen>
+    <dimen name="weekly_ad_list_item_image_height">120dp</dimen>
     <dimen name="weekly_ad_category_item_image_width">100dp</dimen>
     <dimen name="weekly_ad_category_item_image_height">100dp</dimen>
     <dimen name="left_margin">6dp</dimen>
