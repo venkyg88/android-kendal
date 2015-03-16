@@ -17,6 +17,7 @@ import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartApiManager;
+import com.staples.mobile.common.access.easyopen.model.weeklyadlisting.Collection;
 import com.staples.mobile.common.access.easyopen.model.weeklyadlisting.WeeklyAdListing;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -174,7 +175,10 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                                 public void success(WeeklyAdListing weeklyAdListing, Response response) {
                                     activity.hideProgressIndicator();
                                     weeklyAdItems = new ArrayList<Data>();
-                                    weeklyAdItems.add(weeklyAdListing.getContent().getCollection().getData());
+                                    Collection collection = weeklyAdListing.getContent().getCollection();
+                                    if (collection != null && collection.getData() != null) {
+                                        weeklyAdItems.add(collection.getData());
+                                    }
                                     adapter.fill(weeklyAdItems);
                                 }
 
