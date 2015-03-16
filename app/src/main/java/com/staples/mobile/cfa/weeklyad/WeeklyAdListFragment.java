@@ -148,7 +148,8 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
         activity.showProgressIndicator();
         int imageWidth = (int) activity.getResources().getDimension(R.dimen.weekly_ad_list_item_image_width);
         easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.getWeeklyAdCategoryListing(storeNumber, categoryTreeIds.get(currentTabIndex), imageWidth,
+        easyOpenApi.getWeeklyAdCategoryListing(storeNumber, categoryTreeIds.get(currentTabIndex),
+                imageWidth, 1, 100,
                 new Callback<WeeklyAd>() {
             @Override
             public void success(WeeklyAd weeklyAd, Response response) {
