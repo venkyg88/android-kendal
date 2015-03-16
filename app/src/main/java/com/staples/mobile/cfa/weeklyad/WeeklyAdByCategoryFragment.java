@@ -56,10 +56,10 @@ public class WeeklyAdByCategoryFragment extends Fragment {
         TextView changeStoreVw = (TextView) view.findViewById(R.id.change_store);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.weekly_ad_categories_list);
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getActivity());
+        mLayoutManager = new LinearLayoutManager(activity);
         mRecyclerView.setLayoutManager(mLayoutManager);
         getWeeklyAdData();
-        adapter = new WeeklyAdByCategoryAdapter(getActivity(), storeId);
+        adapter = new WeeklyAdByCategoryAdapter(activity, storeId);
         mRecyclerView.setAdapter(adapter);
 
         changeStoreVw.setOnClickListener(new View.OnClickListener() {
