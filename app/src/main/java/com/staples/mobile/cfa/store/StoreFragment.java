@@ -182,8 +182,8 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         int icon;
         super.onResume();
         if (mapView!=null) mapView.onResume();
-        if (adapter.isSingleMode()) icon = R.drawable.ic_view_list_white;
-        else icon = R.drawable.ic_map_white;
+        if (adapter.isSingleMode()) icon = R.drawable.ic_view_list_black;
+        else icon = R.drawable.ic_map_black;
         ActionBar.getInstance().setConfig(ActionBar.Config.STORE, icon, this);
         Tracker.getInstance().trackStateForStoreFinder(); // Analytics
     }
@@ -485,7 +485,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
 
         // if showing single store (with map if available), toggle to list view
         if (adapter.isSingleMode()) {
-            ActionBar.getInstance().setConfig(ActionBar.Config.STORE, R.drawable.ic_map_white, this);
+            ActionBar.getInstance().setConfig(ActionBar.Config.STORE, R.drawable.ic_map_black, this);
             if (mapView != null) {
                 mapView.setVisibility(View.GONE);
             }
@@ -502,7 +502,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
 
         // else if showing list of stores, then toggle to single mode
         else {
-            ActionBar.getInstance().setConfig(ActionBar.Config.STORE, R.drawable.ic_view_list_white, this);
+            ActionBar.getInstance().setConfig(ActionBar.Config.STORE, R.drawable.ic_view_list_black, this);
             if (mapView != null) {
                 mapView.setVisibility(View.VISIBLE);
             } else {
