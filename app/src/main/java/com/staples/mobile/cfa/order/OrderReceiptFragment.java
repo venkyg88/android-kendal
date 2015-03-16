@@ -35,7 +35,7 @@ import retrofit.client.Response;
 /**
  * Created by Avinash Dodda.
  */
-public class OrderReceiptFragment extends Fragment {
+public class OrderReceiptFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "OrderDetailsFragment";
     MainActivity activity;
     EasyOpenApi easyOpenApi;
@@ -111,6 +111,8 @@ public class OrderReceiptFragment extends Fragment {
                         TextView deliveryDate = (TextView) v.findViewById(R.id.deliveryDateTV);
                         View horizRule = v.findViewById(R.id.horizontal_rule);
                         final ImageView skuImage = (ImageView) v.findViewById(R.id.skuImage);
+                        skuImage.setTag(sku);
+                        skuImage.setOnClickListener(this);
 
                         // if first item in shipment, then include the shipment label
                         if (j == 0) {
@@ -184,4 +186,17 @@ public class OrderReceiptFragment extends Fragment {
         Tracker.getInstance().trackStateForOrderDetails(); // Analytics
     }
 
+    @Override
+    public void onClick(View view) {
+        Object tag;
+        switch(view.getId()) {
+            case R.id.skuImage:
+                tag = view.getTag();
+                if (tag instanceof ShipmentSKU) {
+                    ShipmentSKU shipmentSku = (ShipmentSKU) tag;
+                    ((MainActivity)getActivity()).selectSkuItem(shipmentSku.getSkuDescription(), shipmentSku.getSkuNumber(), false);
+                }
+                break;
+        }
+    }
 }

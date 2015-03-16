@@ -1,7 +1,9 @@
 package com.staples.mobile.cfa.weeklyad;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,7 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
 
     private ArrayList<Data> array;
     private Activity activity;
+    View.OnClickListener onClickListener;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         public TextView weeklyAdListDealTV;
@@ -47,14 +50,14 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
         }
     }
 
-    public WeeklyAdListAdapter(Activity activity) {
+    public WeeklyAdListAdapter(Activity activity, View.OnClickListener onClickListener) {
         this.activity = activity;
         this.array = new ArrayList<Data>();
+        this.onClickListener = onClickListener;
     }
 
     @Override
-    public WeeklyAdListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                                   int viewType) {
+    public WeeklyAdListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.weekly_ad_list_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(v);
@@ -65,41 +68,21 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Data data = array.get(position);
+        final Resources r = activity.getResources();
 
-        if(data.getFineprint().contains("In store only") || data.getRetailerproductcode() == "") {
+        boolean skuAvailable = !TextUtils.isEmpty(data.getRetailerproductcode());
+        if(data.getFineprint().contains("In store only") || !skuAvailable) {
           holder.weeklyAdDealAvailabilityTV.setVisibility(View.VISIBLE);
-          holder.weeklyAdDealAvailabilityTV.setText("Available in store only");
+          holder.weeklyAdDealAvailabilityTV.setText(R.string.avail_retailonly);
         }
         else {
             holder.weeklyAdAction.setVisibility(View.VISIBLE);
-            holder.weeklyAdAction.setImageDrawable(holder.weeklyAdAction.getResources().getDrawable(R.drawable.add_to_cart));
-            holder.weeklyAdAction.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final ImageView buttonVw = (ImageView)view;
-                    ((MainActivity)activity).showProgressIndicator();
-                    buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.ic_android));
-                    CartApiManager.addItemToCart(data.getRetailerproductcode(), 1, new CartApiManager.CartRefreshCallback() {
-                        @Override
-                        public void onCartRefreshComplete(String errMsg) {
-                            ((MainActivity)activity).hideProgressIndicator();
-                            ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
-                            // if success
-                            if (errMsg == null) {
-                                buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.added_to_cart));
-                                ((MainActivity)activity).showNotificationBanner(R.string.cart_updated_msg);
-                            } else {
-                                buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.add_to_cart));
-                                // if non-grammatical out-of-stock message from api, provide a nicer message
-                                if (errMsg.contains("items is out of stock")) {
-                                    errMsg = activity.getResources().getString(R.string.avail_outofstock);
-                                }
-                                ((MainActivity)activity).showErrorDialog(errMsg);
-                            }
-                        }
-                    });
-                }
-            });
+            holder.weeklyAdAction.setImageDrawable(r.getDrawable(R.drawable.add_to_cart));
+            holder.weeklyAdAction.setTag(data);
+            holder.weeklyAdAction.setOnClickListener(onClickListener);
+            // set product image to link to sku page
+            holder.weeklyAdListIV.setTag(data);
+            holder.weeklyAdListIV.setOnClickListener(onClickListener);
         }
 
         holder.weeklyAdListDealTV.setText(data.getTitle());
@@ -110,9 +93,7 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
             holder.priceExtension.setText("each");
         }
 
-        Picasso.with(activity)
-                .load(WeeklyAdImageUrlHelper.getUrl(60,100, data.getImage()))
-                .into(holder.weeklyAdListIV);
+        Picasso.with(activity).load(data.getImage()).into(holder.weeklyAdListIV);
     }
 
     @Override
@@ -125,4 +106,6 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
         array.addAll(items);
         notifyDataSetChanged();
     }
+
+
 }

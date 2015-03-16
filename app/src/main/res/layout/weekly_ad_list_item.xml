@@ -5,6 +5,7 @@
     android:id="@+id/weekly_ad_list_cardview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    card_view:cardBackgroundColor="@color/background_white"
     card_view:cardCornerRadius="4dp"
     android:layout_margin="2dp">
     <RelativeLayout
@@ -19,19 +20,20 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/inStoreTV"
                 android:paddingTop="10dp"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textColor="@color/text_red"
                 android:gravity="center"
                 android:visibility="gone"
                 android:textStyle="bold"/>
             <ImageView
                 android:id="@+id/weekly_ad_list_image"
-                android:layout_width="match_parent"
-                android:layout_height="120dip"
-                android:paddingTop="10dip"
-                android:paddingRight="10dip"
-                android:paddingLeft="10dip"
-                android:src="@drawable/weekly_ad_image"/>
+                android:layout_width="@dimen/weekly_ad_list_item_image_width"
+                android:layout_height="@dimen/weekly_ad_list_item_image_height"
+                android:layout_gravity="center_horizontal"
+                android:paddingTop="10dp"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                />
             <TextView
                 android:id="@+id/weekly_ad_list_title_text"
                 android:layout_width="match_parent"
