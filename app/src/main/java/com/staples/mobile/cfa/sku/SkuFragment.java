@@ -720,6 +720,18 @@ Callback,
                 // Log.d(TAG, "Product has no accessories.");
             }
 
+            // if the product is an add-on product
+            if(product.getAddOnSku() != null && product.getAddOnSku().equals("Y")){
+                Log.d(TAG, "The product is an add-on product. sku:" + product.getSku());
+            }
+
+            // if the product is an overweight product, example sku:650465
+            if(product.getHeavyWeightSku() != null && product.getHeavyWeightSku().equals("Y")){
+                product.getPricing().get(0).getHeavyWeightShipCharge();
+                Log.d(TAG, "The product is an overweight product. sku:" + product.getSku() +
+                "HeavyWeightShipCharge:" + product.getPricing().get(0).getHeavyWeightShipCharge());
+            }
+
             // Save seen products detail for personal feed
             saveSeenProduct(product);
 
