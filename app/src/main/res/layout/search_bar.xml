@@ -11,8 +11,8 @@
         android:lines="1"
         android:singleLine="true"
         android:imeOptions="actionSearch|flagNoExtractUi"
-        android:textColor="@android:color/white"
-        android:textColorHint="#80ffffff"/>
+        android:textColor="@color/text_black"
+        android:textColorHint="@color/text_gray"/>
     <ImageView
         android:id="@+id/search_option"
         android:layout_width="wrap_content"

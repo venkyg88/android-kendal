@@ -6,23 +6,23 @@
     android:paddingLeft="4dp"
     android:paddingRight="4dp"
     android:animateLayoutChanges="true"
-    android:background="@color/staples_light">
+    android:background="@color/background_white">
     <!-- ActionBar, these must be kept in priority order -->
     <ImageView
         android:id="@+id/close_button"
         style="@style/ActionBarIconStyle"
         android:layout_gravity="center_vertical|left"
-        android:src="@drawable/ic_close_white"/>
+        android:src="@drawable/ic_close_black"/>
     <ImageView
         android:id="@+id/back_button"
         style="@style/ActionBarIconStyle"
         android:layout_gravity="center_vertical|left"
-        android:src="@drawable/ic_arrow_back_white"/>
+        android:src="@drawable/ic_arrow_back_black"/>
     <ImageView
         android:id="@+id/action_left_drawer"
         style="@style/ActionBarIconStyle"
         android:layout_gravity="center_vertical|left"
-        android:src="@drawable/ic_menu_white"/>
+        android:src="@drawable/ic_menu_black"/>
     <com.staples.mobile.cfa.widget.BadgeImageView
         android:id="@+id/action_show_cart"
         style="@style/ActionBarBadgeStyle"
@@ -40,12 +40,12 @@
         android:id="@+id/option_icon"
         style="@style/ActionBarIconStyle"
         android:layout_gravity="center_vertical|right"
-        android:src="@drawable/ic_search_white"/>
+        android:src="@drawable/ic_search_black"/>
     <com.staples.mobile.cfa.search.SearchBarView
         android:id="@+id/search_view"
         style="@style/ActionBarSearchStyle"
         android:layout_gravity="center_vertical|right"
-        android:src="@drawable/ic_search_white"/>
+        android:src="@drawable/ic_search_black"/>
     <ImageView
         android:id="@+id/action_logo"
         style="@style/ActionBarIconStyle"
