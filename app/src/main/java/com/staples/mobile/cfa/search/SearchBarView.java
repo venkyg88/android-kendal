@@ -97,7 +97,7 @@ public class SearchBarView extends LinearLayout implements View.OnClickListener,
         searchOption = (ImageView) findViewById(R.id.search_option);
         searchText = (SearchText) findViewById(R.id.search_text);
 
-        searchOption.setImageResource(R.drawable.ic_search_white);
+        searchOption.setImageResource(R.drawable.ic_search_black);
         searchOption.setOnClickListener(this);
         searchText.setVisibility(GONE);
         searchText.setHint(getHint());
@@ -120,7 +120,7 @@ public class SearchBarView extends LinearLayout implements View.OnClickListener,
         Resources res = getContext().getResources();
         SpannableStringBuilder sb = new SpannableStringBuilder("   ");
         sb.append(res.getString(R.string.search_hint));
-        Drawable icon = res.getDrawable(R.drawable.ic_search_white);
+        Drawable icon = res.getDrawable(R.drawable.ic_search_black);
         int size = (int) (searchText.getTextSize()*1.25);
         icon.setBounds(0, 0, size, size);
         sb.setSpan(new ImageSpan(icon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -145,7 +145,7 @@ public class SearchBarView extends LinearLayout implements View.OnClickListener,
         if (filled==this.filled) return;
         this.filled = filled;
         if (filled) {
-            searchOption.setImageResource(R.drawable.ic_close_white);
+            searchOption.setImageResource(R.drawable.ic_close_black);
             searchOption.setVisibility(VISIBLE);
         } else {
             searchOption.setVisibility(INVISIBLE);
@@ -154,7 +154,7 @@ public class SearchBarView extends LinearLayout implements View.OnClickListener,
 
     public void close() {
         if (!open) return;
-        searchOption.setImageResource(R.drawable.ic_search_white);
+        searchOption.setImageResource(R.drawable.ic_search_black);
         searchOption.setVisibility(VISIBLE);
         searchText.setVisibility(GONE);
 

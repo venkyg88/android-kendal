@@ -17,6 +17,8 @@ import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartApiManager;
+import com.staples.mobile.common.access.easyopen.model.weeklyadlisting.Collection;
+import com.staples.mobile.common.access.easyopen.model.weeklyadlisting.WeeklyAdListing;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
@@ -103,6 +105,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
             tab.setContent(tabContentFactory);
             tabHost.addTab(tab);
         }
+        tabHost.setCurrentTab(currentTabIndex); // call this before setting tab changed listener so we don't trigger it yet
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
@@ -112,7 +115,6 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                 getWeeklyAdListing();
             }
         });
-        tabHost.setCurrentTab(currentTabIndex);
 
         // initialize scroll position to currently selected tab (delay until position info is available)
         tabHost.postDelayed(new Runnable() {
@@ -128,7 +130,6 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                 }
             }
         }, 100);
-
 
         // initiate call to get weekly ads
         getWeeklyAdListing();
@@ -146,9 +147,10 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
 
     public void getWeeklyAdListing() {
         activity.showProgressIndicator();
-        int imageWidth = (int) activity.getResources().getDimension(R.dimen.weekly_ad_list_item_image_width);
+        final int imageWidth = (int) activity.getResources().getDimension(R.dimen.weekly_ad_list_item_image_width);
         easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.getWeeklyAdCategoryListing(storeNumber, categoryTreeIds.get(currentTabIndex), imageWidth,
+        easyOpenApi.getWeeklyAdCategoryListing(storeNumber, categoryTreeIds.get(currentTabIndex),
+                imageWidth, 1, 100,
                 new Callback<WeeklyAd>() {
             @Override
             public void success(WeeklyAd weeklyAd, Response response) {
@@ -159,8 +161,37 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
 
             @Override
             public void failure(RetrofitError error) {
-                activity.hideProgressIndicator();
-                activity.showErrorDialog(ApiError.getErrorMessage(error));
+
+                // DLS: The getWeeklyAdCategoryListing API call sadly returns a different format when count=1
+                // and therefore our retrofit code throws a deserialization error. As a workaround,
+                // check for the deserialization error, and if present call a special version of
+                // getWeeklyAdCategoryListing.
+                boolean deserializationError = error.getMessage().contains("not deserialize instance of java.util.ArrayList");
+                if (deserializationError) {
+                    easyOpenApi.getWeeklyAdCategoryListingSingle(storeNumber, categoryTreeIds.get(currentTabIndex),
+                            imageWidth, //1, 1,
+                            new Callback<WeeklyAdListing>() {
+                                @Override
+                                public void success(WeeklyAdListing weeklyAdListing, Response response) {
+                                    activity.hideProgressIndicator();
+                                    weeklyAdItems = new ArrayList<Data>();
+                                    Collection collection = weeklyAdListing.getContent().getCollection();
+                                    if (collection != null && collection.getData() != null) {
+                                        weeklyAdItems.add(collection.getData());
+                                    }
+                                    adapter.fill(weeklyAdItems);
+                                }
+
+                                @Override
+                                public void failure(RetrofitError error) {
+                                    activity.hideProgressIndicator();
+                                    activity.showErrorDialog(ApiError.getErrorMessage(error));
+                                }
+                            });
+                } else {
+                    activity.hideProgressIndicator();
+                    activity.showErrorDialog(ApiError.getErrorMessage(error));
+                }
             }
         });
     }
