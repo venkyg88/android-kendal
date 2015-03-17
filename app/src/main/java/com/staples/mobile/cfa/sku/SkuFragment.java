@@ -1,6 +1,5 @@
 package com.staples.mobile.cfa.sku;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -140,6 +139,10 @@ Callback,
     // Spec Table Container
     private TableLayout specContainer;
 
+    // Shipping Logic Container
+    private LinearLayout overweightLayout;
+    private LinearLayout addonLayout;
+
     private boolean isShiftedTab;
 
     public void setArguments(String title, String identifier, boolean isSkuSetRedirected) {
@@ -193,6 +196,10 @@ Callback,
 
         // Init accessory
         accessoryContainer = (LinearLayout) wrapper.findViewById(R.id.accessoryContainer);
+
+        // Init shipping logic
+        overweightLayout = (LinearLayout) wrapper.findViewById(R.id.overweight_layout);
+        addonLayout = (LinearLayout) wrapper.findViewById(R.id.add_on_layout);
 
         // Fill details (TabHost)
         DummyFactory dummy = new DummyFactory(activity);
@@ -720,16 +727,20 @@ Callback,
                 // Log.d(TAG, "Product has no accessories.");
             }
 
-            // if the product is an add-on product
+            // check if the product is an add-on product
             if(product.getAddOnSku() != null && product.getAddOnSku().equals("Y")){
+                addonLayout.setVisibility(View.VISIBLE);
+
                 Log.d(TAG, "The product is an add-on product. sku:" + product.getSku());
             }
 
-            // if the product is an overweight product, example sku:650465
+            // check if the product is an overweight product, example sku:650465
             if(product.getHeavyWeightSku() != null && product.getHeavyWeightSku().equals("Y")){
-                product.getPricing().get(0).getHeavyWeightShipCharge();
+                overweightLayout.setVisibility(View.VISIBLE);
+
+                float heavyWeightShipCharge = product.getPricing().get(0).getHeavyWeightShipCharge();
                 Log.d(TAG, "The product is an overweight product. sku:" + product.getSku() +
-                "HeavyWeightShipCharge:" + product.getPricing().get(0).getHeavyWeightShipCharge());
+                ", HeavyWeightShipCharge:" + heavyWeightShipCharge);
             }
 
             // Save seen products detail for personal feed
