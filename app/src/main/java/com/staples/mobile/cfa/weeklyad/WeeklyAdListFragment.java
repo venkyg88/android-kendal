@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.common.access.easyopen.model.weeklyadlisting.Collection;
 import com.staples.mobile.common.access.easyopen.model.weeklyadlisting.WeeklyAdListing;
+import com.staples.mobile.common.access.easyopen.util.WeeklyAdImageUrlHelper;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
@@ -206,9 +208,22 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                 tag = view.getTag();
                 if (tag instanceof Data) {
                     Data data = (Data) tag;
-                    ((MainActivity)getActivity()).selectSkuItem(data.getProductdescription(), data.getRetailerproductcode(), false);
-                    // TODO: the following hasn't been specified, but I expect it's coming
-                    // Tracker.getInstance().trackActionForWeeklyAdSelection(adapter.getItemPosition(item), 1); // analytics
+
+                    // if in-store item, open expanded image of the ad, otherwise open sku page
+                    if (data.getFineprint().contains("In store only") ||
+                            TextUtils.isEmpty(data.getRetailerproductcode())) {
+                        String imageUrl = WeeklyAdImageUrlHelper.getUrl(
+                                (int)r.getDimension(R.dimen.weekly_ad_image_height),
+                                (int)r.getDimension(R.dimen.weekly_ad_image_width),
+                                data.getImage());
+                        ((MainActivity) getActivity()).selectInStoreWeeklyAd(imageUrl,
+                                data.getProductdescription(), data.getPrice());
+                    } else {
+                        // open SKU page
+                        ((MainActivity) getActivity()).selectSkuItem(data.getProductdescription(), data.getRetailerproductcode(), false);
+                        // TODO: the following hasn't been specified, but I expect it's coming
+                        // Tracker.getInstance().trackActionForWeeklyAdSelection(adapter.getItemPosition(item), 1); // analytics
+                    }
                 }
                 break;
             case R.id.weeklyad_sku_action: // add to cart
