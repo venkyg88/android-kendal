@@ -21,7 +21,7 @@
     <ImageView
         android:id="@+id/weekly_ad_image"
         android:layout_width="@dimen/weekly_ad_image_width"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/weekly_ad_image_height"
         android:layout_gravity="center_horizontal"
         android:paddingTop="10dp"
         android:paddingRight="10dp"
