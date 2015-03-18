@@ -736,11 +736,12 @@ Callback,
 
             // check if the product is an overweight product, example sku:650465
             if(product.getHeavyWeightSku() != null && product.getHeavyWeightSku().equals("Y")){
-                overweightLayout.setVisibility(View.VISIBLE);
-
-                float heavyWeightShipCharge = product.getPricing().get(0).getHeavyWeightShipCharge();
-                Log.d(TAG, "The product is an overweight product. sku:" + product.getSku() +
-                ", HeavyWeightShipCharge:" + heavyWeightShipCharge);
+                if(product.getPricing() != null){
+                    overweightLayout.setVisibility(View.VISIBLE);
+                    float heavyWeightShipCharge = product.getPricing().get(0).getHeavyWeightShipCharge();
+                    Log.d(TAG, "The product is an overweight product. sku:" + product.getSku() +
+                            ", HeavyWeightShipCharge:" + heavyWeightShipCharge);
+                }
             }
 
             // Save seen products detail for personal feed
