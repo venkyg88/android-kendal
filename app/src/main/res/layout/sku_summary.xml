@@ -44,6 +44,88 @@
                 android:id="@+id/pricing"
                 style="@style/LargePriceSticker"/>
 
+            <!-- Shipping Logic -->
+            <LinearLayout
+                android:id="@+id/shipping_logic_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:id="@+id/overweight_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@color/background_dark_blue"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp">
+                        <TextView
+                            style="@style/SkuSummaryHeader"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp"
+                            android:gravity="left"
+                            android:text="@string/overweight"
+                            android:textColor="@color/text_white"/>
+                    </LinearLayout>
+                    <TextView
+                        style="@style/SkuBulletTextStyle"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:textSize="15sp"
+                        android:gravity="center_vertical|left"
+                        android:text="@string/overweight_warming"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/add_on_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@color/background_light_blue"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp">
+                        <TextView
+                            style="@style/SkuSummaryHeader"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp"
+                            android:gravity="left"
+                            android:text="@string/add_on"
+                            android:textColor="@color/text_white"/>
+                    </LinearLayout>
+                    <TextView
+                        style="@style/SkuBulletTextStyle"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:textSize="15sp"
+                        android:gravity="center_vertical|left"
+                        android:text="@string/add_on_warming"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/background_light_gray"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"/>
+            </LinearLayout>
+
             <!-- Description -->
             <LinearLayout
                 android:layout_width="match_parent"

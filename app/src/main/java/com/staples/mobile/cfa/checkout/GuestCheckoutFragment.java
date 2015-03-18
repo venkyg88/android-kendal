@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.profile.CreditCard;
+import com.staples.mobile.cfa.util.DateUtils;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.AddressBlock;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
@@ -201,7 +202,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
             billingAddrNeedsApplying = true;
         }
         if (!valid) {
-            String errMsg = getResources().getString(R.string.required_fields);
+            String errMsg = activity.getResources().getString(R.string.required_fields);
             Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
             activity.showErrorDialog(errMsg);
         } else {
@@ -240,7 +241,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 
         String text = view.getText().toString().trim();
         if (text.length()==0) {
-            view.setError(getActivity().getResources().getString(R.string.required));
+            view.setError(activity.getResources().getString(R.string.required));
             return false;
         }
         return true;
@@ -255,6 +256,15 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString());
         if (ccType.isCidUsed()) {
             valid &= validateRequired(cidVw);
+        }
+
+        if (valid) {
+            boolean dateValid = DateUtils.validateCreditCardExpDate(expirationDateVw);
+            if ( ! dateValid) {
+                String errMsg = activity.getResources().getString(R.string.expiration_date_error);
+                expirationDateVw.setError(errMsg);
+                valid = false;
+            }
         }
 
         if (valid) {
@@ -293,7 +303,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         if (shippingAddrNeedsApplying) {
             ShippingAddress shippingAddress = getShippingAddress();
             if (shippingAddress == null) {
-                String errMsg = getResources().getString(R.string.required_fields);
+                String errMsg = activity.getResources().getString(R.string.required_fields);
                 Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
                 activity.showErrorDialog(errMsg);
             } else {
@@ -337,7 +347,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         if (billingAddrNeedsApplying) {
             BillingAddress billingAddress = getBillingAddress();
             if (billingAddress == null) {
-                String errMsg = getResources().getString(R.string.required_fields);
+                String errMsg = activity.getResources().getString(R.string.required_fields);
                 Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
                 activity.showErrorDialog(errMsg);
             } else {
@@ -392,7 +402,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 
         final PaymentMethod paymentMethod = getPaymentMethod();
         if (paymentMethod==null) {
-            String errMsg = getResources().getString(R.string.payment_method_required);
+            String errMsg = activity.getResources().getString(R.string.payment_method_required);
             Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
             activity.showErrorDialog(errMsg);
             return;

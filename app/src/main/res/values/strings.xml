@@ -61,6 +61,12 @@
     <string name="store_close">Close</string>
     <string name="no_store">Find A Store Near You</string>
 
+    <!--Shipping Logic-->
+    <string name="overweight">OVERSIZED</string>
+    <string name="add_on">$25 MINIMUM</string>
+    <string name="overweight_warming">Additional shipping fees apply</string>
+    <string name="add_on_warming">$25 minimum in your order to ship</string>
+
     <!--cart, coupon/reward, checkout -->
     <string name="add">ADD</string>
     <string name="cartitem_qty_label">Qty</string>
@@ -90,6 +96,7 @@
     <string name="no_redeemable_rewards">No Redeemable Rewards</string>
     <string name="link_rewards_account">Link Your Rewards Account</string>
     <string name="link_account">Link Account</string>
+	<string name="expiration_date_error">Must be in the form MM/YY.</string>
     <plurals name="business_days">
         <item quantity="one">business day</item>
         <item quantity="other">business days</item>
