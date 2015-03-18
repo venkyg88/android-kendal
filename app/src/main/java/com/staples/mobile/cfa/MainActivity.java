@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.apptentive.android.sdk.Apptentive;
 
 import com.staples.mobile.cfa.analytics.AdobeTracker;
+import com.staples.mobile.cfa.weeklyad.WeeklyAdInStoreFragment;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.bundle.BundleFragment;
@@ -612,6 +613,12 @@ public class MainActivity extends Activity
 //        initAnimatedBar();
 
         return(selectFragment(fragment, Transition.RIGHT, true));
+    }
+
+    public boolean selectInStoreWeeklyAd(String imageUrl, String title, String price) {
+        WeeklyAdInStoreFragment fragment = new WeeklyAdInStoreFragment();
+        fragment.setArguments(imageUrl, title, price);
+        return(selectFragment(fragment, Transition.NONE, true));
     }
 
     public boolean selectProfileFragment() {
