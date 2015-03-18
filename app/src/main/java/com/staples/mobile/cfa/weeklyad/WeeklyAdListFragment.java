@@ -1,24 +1,29 @@
 package com.staples.mobile.cfa.weeklyad;
 
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.TabHost;
 
-import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.common.access.easyopen.model.weeklyadlisting.Collection;
 import com.staples.mobile.common.access.easyopen.model.weeklyadlisting.WeeklyAdListing;
+import com.staples.mobile.common.access.easyopen.util.WeeklyAdImageUrlHelper;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
@@ -92,6 +97,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
         adapter = new WeeklyAdListAdapter(activity, this);
         mRecyclerView.setAdapter(adapter);
 
+
         // set up tabs
         tabHost = (TabHost) view.findViewById(android.R.id.tabhost);
         tabScrollView = (HorizontalScrollView)view.findViewById(R.id.tabs_scrollview);
@@ -111,30 +117,47 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
             public void onTabChanged(String tabId) {
                 currentTabIndex = Integer.parseInt(tabId);
                 getArguments().putInt(TABINDEX, currentTabIndex);
+                scrollToCurrentTab();
                 ActionBar.getInstance().setConfig(ActionBar.Config.WEEKLYAD, titles.get(currentTabIndex));
                 getWeeklyAdListing();
             }
         });
 
         // initialize scroll position to currently selected tab (delay until position info is available)
-        tabHost.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (currentTabIndex > 0) {
-                    // scroll such that currently selected tab is centered
-                    View currentTabView = tabHost.getCurrentTabView();
-                    int targetScrollX = currentTabView.getLeft() - (tabScrollView.getWidth() - currentTabView.getWidth()) / 2;
-                    if (currentTabView.getLeft() > targetScrollX) {
-                        tabScrollView.scrollTo(targetScrollX, 0);
-                    }
+        if (currentTabIndex > 0) {
+            tabHost.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    scrollToCurrentTab();
                 }
+            }, 100);
+        }
+
+        // set up swipe listener
+        View tabbedFrameLayout = view.findViewById(R.id.weekly_ad_list_items);
+        final GestureDetectorCompat swipeListener = new GestureDetectorCompat(activity, new LeftRightFlingListener());
+        tabbedFrameLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return swipeListener.onTouchEvent(event);
             }
-        }, 100);
+        });
+
+
 
         // initiate call to get weekly ads
         getWeeklyAdListing();
 
         return view;
+    }
+
+    private void scrollToCurrentTab() {
+        // scroll such that currently selected tab is centered, unless it's one of the leftmost tabs
+        View currentTabView = tabHost.getCurrentTabView();
+        int targetScrollX = currentTabView.getLeft() - (tabScrollView.getWidth() - currentTabView.getWidth()) / 2;
+        if (currentTabView.getLeft() > targetScrollX) {
+            tabScrollView.scrollTo(targetScrollX, 0);
+        }
     }
 
     @Override
@@ -206,9 +229,22 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                 tag = view.getTag();
                 if (tag instanceof Data) {
                     Data data = (Data) tag;
-                    ((MainActivity)getActivity()).selectSkuItem(data.getProductdescription(), data.getRetailerproductcode(), false);
-                    // TODO: the following hasn't been specified, but I expect it's coming
-                    // Tracker.getInstance().trackActionForWeeklyAdSelection(adapter.getItemPosition(item), 1); // analytics
+
+                    // if in-store item, open expanded image of the ad, otherwise open sku page
+                    if (data.getFineprint().contains("In store only") ||
+                            TextUtils.isEmpty(data.getRetailerproductcode())) {
+                        String imageUrl = WeeklyAdImageUrlHelper.getUrl(
+                                (int)r.getDimension(R.dimen.weekly_ad_image_height),
+                                (int)r.getDimension(R.dimen.weekly_ad_image_width),
+                                data.getImage());
+                        ((MainActivity) getActivity()).selectInStoreWeeklyAd(imageUrl,
+                                data.getProductdescription(), data.getPrice());
+                    } else {
+                        // open SKU page
+                        ((MainActivity) getActivity()).selectSkuItem(data.getProductdescription(), data.getRetailerproductcode(), false);
+                        // TODO: the following hasn't been specified, but I expect it's coming
+                        // Tracker.getInstance().trackActionForWeeklyAdSelection(adapter.getItemPosition(item), 1); // analytics
+                    }
                 }
                 break;
             case R.id.weeklyad_sku_action: // add to cart
@@ -251,5 +287,33 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
         }
 
     }
+
+
+//    GestureDetectorCompat swipeListener = new GestureDetectorCompat(activity, new GestureDetector.SimpleOnGestureListener() {
+
+    private class LeftRightFlingListener extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onDown(MotionEvent event) {
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
+            if (Math.abs(velocityX) > 2 * Math.abs(velocityY)) {
+                // flinging left to right (go one tab to the left)
+                if (velocityX > 500 && currentTabIndex > 0) {
+                    tabHost.setCurrentTab(currentTabIndex - 1);
+                    return true;
+                    // else flinging right to left (go one tab to the right)
+                } else if (velocityX < -500 && currentTabIndex < categoryTreeIds.size() - 1) {
+                    tabHost.setCurrentTab(currentTabIndex + 1);
+                    return true;
+                }
+            }
+            return super.onFling(event1, event2, velocityX, velocityY);
+        }
+
+    };
 }
 

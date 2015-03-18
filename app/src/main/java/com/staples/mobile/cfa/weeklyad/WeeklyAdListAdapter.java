@@ -44,7 +44,7 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
             weeklyAdListDealTV = (TextView)v.findViewById(R.id.weekly_ad_list_title_text);
             weeklyAdDealPriceInfoTV = (TextView)v.findViewById(R.id.weekly_ad_list_price);
             weeklyAdDealAvailabilityTV = (TextView)v.findViewById(R.id.inStoreTV);
-            priceExtension = (TextView)v.findViewById(R.id.weeklyad_price_extension);
+            priceExtension = (TextView)v.findViewById(R.id.weekly_ad_price_extension);
             weeklyAdAction = (ImageView)v.findViewById(R.id.weeklyad_sku_action);
             weeklyAdListIV = (ImageView)v.findViewById(R.id.weekly_ad_list_image);
         }
@@ -71,27 +71,21 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
         final Resources r = activity.getResources();
 
         boolean skuAvailable = !TextUtils.isEmpty(data.getRetailerproductcode());
-        if(data.getFineprint().contains("In store only") || !skuAvailable) {
-          holder.weeklyAdDealAvailabilityTV.setVisibility(View.VISIBLE);
-          holder.weeklyAdDealAvailabilityTV.setText(R.string.avail_retailonly);
-        }
-        else {
-            holder.weeklyAdAction.setVisibility(View.VISIBLE);
-            holder.weeklyAdAction.setImageDrawable(r.getDrawable(R.drawable.add_to_cart));
-            holder.weeklyAdAction.setTag(data);
-            holder.weeklyAdAction.setOnClickListener(onClickListener);
-            // set product image to link to sku page
-            holder.weeklyAdListIV.setTag(data);
-            holder.weeklyAdListIV.setOnClickListener(onClickListener);
-        }
+        boolean inStoreOnly = data.getFineprint().contains("In store only") || !skuAvailable;
+
+        holder.weeklyAdDealAvailabilityTV.setVisibility(inStoreOnly? View.VISIBLE : View.GONE);
+        holder.weeklyAdAction.setVisibility(inStoreOnly? View.GONE : View.VISIBLE);
+        holder.weeklyAdAction.setTag(data);
+        holder.weeklyAdAction.setOnClickListener(onClickListener);
+
+        // set product image to link to sku page (or other if in-store ad)
+        holder.weeklyAdListIV.setTag(data);
+        holder.weeklyAdListIV.setOnClickListener(onClickListener);
 
         holder.weeklyAdListDealTV.setText(data.getTitle());
         holder.weeklyAdDealPriceInfoTV.setText(data.getPrice());
 
-        if(data.getPrice().contains("$")) {
-            holder.priceExtension.setVisibility(View.VISIBLE);
-            holder.priceExtension.setText("each");
-        }
+        holder.priceExtension.setVisibility(data.getPrice().contains("$")? View.VISIBLE: View.GONE);
 
         Picasso.with(activity).load(data.getImage()).into(holder.weeklyAdListIV);
     }
