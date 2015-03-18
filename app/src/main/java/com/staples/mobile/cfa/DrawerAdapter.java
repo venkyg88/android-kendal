@@ -52,6 +52,15 @@ public class DrawerAdapter extends BaseAdapter {
         return(array.get(position));
     }
 
+    public DrawerItem getItem(Class fragmentClass) {
+        for (DrawerItem item : array) {
+            if (item.fragmentClass.equals(fragmentClass)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
     /* Views */
 
     @Override

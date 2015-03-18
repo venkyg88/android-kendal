@@ -27,6 +27,8 @@ import android.widget.TextView;
 import com.apptentive.android.sdk.Apptentive;
 
 import com.staples.mobile.cfa.analytics.AdobeTracker;
+import com.staples.mobile.cfa.store.StoreFragment;
+import com.staples.mobile.cfa.weeklyad.WeeklyAdByCategoryFragment;
 import com.staples.mobile.cfa.weeklyad.WeeklyAdInStoreFragment;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
@@ -579,6 +581,11 @@ public class MainActivity extends Activity
         return selectFragment(fragment, Transition.NONE, true, ConfirmationFragment.TAG);
     }
 
+    public boolean selectStoreFinder() {
+        DrawerItem drawerItem = leftMenuAdapter.getItem(StoreFragment.class);
+        return selectDrawerItem(drawerItem, Transition.RIGHT, true);
+    }
+
     public boolean selectRewardsFragment() {
         return selectFragment(new RewardsFragment(), Transition.RIGHT, true);
     }
@@ -613,6 +620,12 @@ public class MainActivity extends Activity
 //        initAnimatedBar();
 
         return(selectFragment(fragment, Transition.RIGHT, true));
+    }
+
+    public boolean selectWeeklyAd(String storeNo, String city, String address) {
+        WeeklyAdByCategoryFragment fragment = new WeeklyAdByCategoryFragment();
+        fragment.setArguments(storeNo, city, address);
+        return(selectFragment(fragment, Transition.NONE, true));
     }
 
     public boolean selectInStoreWeeklyAd(String imageUrl, String title, String price) {

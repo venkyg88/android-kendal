@@ -64,12 +64,11 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
         }
     }
 
-    public WeeklyAdByCategoryAdapter(Activity activity, String storeNumber) {
+    public WeeklyAdByCategoryAdapter(Activity activity) {
         this.activity = activity;
         this.array = new ArrayList<Data>();
         this.categoryTreeIds = new ArrayList<>();
         this.titles = new ArrayList<>();
-        this.storeNumber = storeNumber;
     }
 
     @Override
@@ -107,7 +106,8 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
         return array.size();
     }
 
-    public void fill(List<Data> items) {
+    public void fill(List<Data> items, String storeNumber) {
+        this.storeNumber = storeNumber;
         array.addAll(items);
         for (Data item : items) {
             categoryTreeIds.add(item.getCategorytreeid());

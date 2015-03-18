@@ -5,14 +5,19 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.location.LocationFinder;
+import com.staples.mobile.common.access.channel.model.store.Obj;
+import com.staples.mobile.common.access.channel.model.store.StoreAddress;
+import com.staples.mobile.common.access.channel.model.store.StoreData;
+import com.staples.mobile.common.access.channel.model.store.StoreQuery;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
@@ -33,7 +38,16 @@ import retrofit.client.Response;
 
 public class WeeklyAdByCategoryFragment extends Fragment {
 
-    private String storeId = "2278338"; // TODO This needs to be implemented
+    private static final String STORENO = "storeNo";
+    private static final String CITY = "city";
+    private static final String ADDRESS = "address";
+
+    private static final String DEFAULT_STORE_NO = "0349";
+    private static final String DEFAULT_STORE_CITY = "Framingham";
+
+    private String storeNo;
+    private String city;
+    private String address;
     private MainActivity activity;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -42,14 +56,27 @@ public class WeeklyAdByCategoryFragment extends Fragment {
     private WeeklyAdByCategoryAdapter adapter;
     private List<Data> weeklyAdItems;
 
-    public WeeklyAdByCategoryFragment() {
-        // Required empty public constructor
+
+    public void setArguments(String storeNo, String city, String address) {
+        Bundle args = new Bundle();
+        args.putString(STORENO, storeNo);
+        args.putString(CITY, city);
+        args.putString(ADDRESS, address);
+        setArguments(args);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         activity = (MainActivity)getActivity();
+
+        Bundle args = getArguments();
+        if (args != null) {
+            storeNo = args.getString(STORENO);
+            city = args.getString(CITY);
+            address = args.getString(ADDRESS);
+        }
+
         View view = inflater.inflate(R.layout.weekly_ad_category, container, false);
         storeInfoVw = (TextView) view.findViewById(R.id.store_address);
         dateRangeVw = (TextView) view.findViewById(R.id.date_range);
@@ -58,22 +85,44 @@ public class WeeklyAdByCategoryFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(activity);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        getWeeklyAdData();
-        adapter = new WeeklyAdByCategoryAdapter(activity, storeId);
+        adapter = new WeeklyAdByCategoryAdapter(activity);
         mRecyclerView.setAdapter(adapter);
 
         changeStoreVw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: temporary
-                Toast.makeText(activity, "Not implemented", Toast.LENGTH_LONG).show();
+                activity.selectStoreFinder();
             }
         });
 
-        // TODO: temporary
-        storeInfoVw.setText("Store address line 1\nStore address line 2");
+
+
+
+
+        //TODO
         dateRangeVw.setText("Oct 0 - Oct 0");
-        Toast.makeText(activity, "\n\nAlert!!!\n\n\n\nHard-coding store to: " + storeId + "\n\n\n\n", Toast.LENGTH_LONG).show();
+
+
+
+
+
+
+        // if store info avail
+        if (!TextUtils.isEmpty(storeNo)) {
+            storeInfoVw.setText(address + "\n" + city);
+            getWeeklyAdData();
+        } else {
+            // otherwise get store info from postal code
+            LocationFinder finder = LocationFinder.getInstance(activity);
+            String postalCode = finder.getPostalCode();
+            if (!TextUtils.isEmpty(postalCode)) {
+                activity.showProgressIndicator();
+                Access.getInstance().getChannelApi(false).storeLocations(postalCode, new StoreInfoCallback());
+            } else {
+                useDefaultStore();
+                getWeeklyAdData();
+            }
+        }
 
         return view;
     }
@@ -81,18 +130,22 @@ public class WeeklyAdByCategoryFragment extends Fragment {
     private void getWeeklyAdData(){
         activity.showProgressIndicator();
         final EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.getWeeklyAdByCategories(storeId, new Callback<WeeklyAdCategories>() {
+        easyOpenApi.getWeeklyAdByCategories(storeNo, new Callback<WeeklyAdCategories>() {
             @Override
             public void success(WeeklyAdCategories weeklyAdCategories, Response response) {
                 activity.hideProgressIndicator();
-                weeklyAdItems = weeklyAdCategories.getContent().getCollection().getData();
-                adapter.fill(weeklyAdItems);
+                if (weeklyAdCategories.getContent().getCollection() != null) {
+                    weeklyAdItems = weeklyAdCategories.getContent().getCollection().getData();
+                    adapter.fill(weeklyAdItems, storeNo);
+                } else {
+                    activity.showErrorDialog(R.string.empty);
+                }
             }
 
             @Override
             public void failure(RetrofitError error) {
-                activity.showErrorDialog(ApiError.getErrorMessage(error));
                 activity.hideProgressIndicator();
+                activity.showErrorDialog(ApiError.getErrorMessage(error));
             }
         });
     }
@@ -102,4 +155,42 @@ public class WeeklyAdByCategoryFragment extends Fragment {
         ActionBar.getInstance().setConfig(ActionBar.Config.WEEKLYAD);
         Tracker.getInstance().trackStateForWeeklyAdClass(); // Analytics
     }
+
+
+    private void useDefaultStore() {
+        storeNo = DEFAULT_STORE_NO;
+        city = DEFAULT_STORE_CITY;
+        storeInfoVw.setText(address + "\n" + city);
+    }
+
+    private class StoreInfoCallback implements Callback<StoreQuery> {
+        @Override
+        public void success(StoreQuery storeQuery, Response response) {
+            List<StoreData> storeData = storeQuery.getStoreData();
+            // if there are any nearby stores
+            if (storeData != null && !storeData.isEmpty()) {
+
+                // Get store location
+                Obj storeObj = storeData.get(0).getObj();
+                StoreAddress storeAddress = storeObj.getStoreAddress();
+                storeNo = storeObj.getStoreNumber();
+                city = storeAddress.getCity();
+                address = storeAddress.getAddressLine1();
+                storeInfoVw.setText(address + "\n" + city);
+            }
+            // use default if no store result
+            else {
+                useDefaultStore();
+            }
+
+            getWeeklyAdData();
+        }
+
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            activity.hideProgressIndicator();
+            activity.showErrorDialog(ApiError.getErrorMessage(retrofitError));
+        }
+    }
+
 }

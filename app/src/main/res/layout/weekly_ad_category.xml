@@ -16,8 +16,10 @@
             android:layout_gravity="left"
             android:scaleType="fitStart"
             android:background="@color/background_light_blue"
-            android:src="@drawable/weekly_ad_image"
+            android:src="@drawable/no_photo"
             />
+        <!--todo: replace image above with weekly_ad_image once it's the right image-->
+        <!--android:src="@drawable/weekly_ad_image"-->
 
         <!--store info-->
         <LinearLayout
@@ -32,6 +34,7 @@
                 android:id="@+id/store_address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="right"
                 android:textColor="@color/text_white"
                 android:textStyle="bold"
                 android:textSize="20sp"
