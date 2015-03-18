@@ -96,6 +96,7 @@
     <string name="no_redeemable_rewards">No Redeemable Rewards</string>
     <string name="link_rewards_account">Link Your Rewards Account</string>
     <string name="link_account">Link Account</string>
+	<string name="expiration_date_error">Must be in the form MM/YY.</string>
     <plurals name="business_days">
         <item quantity="one">business day</item>
         <item quantity="other">business days</item>
