@@ -1,0 +1,17 @@
+#!/bin/sh
+
+SRC=../../app/src/main/res
+SIZES='mdpi hdpi xhdpi xxhdpi xxxhdpi'
+
+echo "This will delete all PNGs in the size-specific directories"
+read -p "Do you want to proceed? " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]
+then
+    exit 1
+fi
+
+for s in ${SIZES}
+do
+    rm ${SRC}/drawable-${s}/*.png
+done

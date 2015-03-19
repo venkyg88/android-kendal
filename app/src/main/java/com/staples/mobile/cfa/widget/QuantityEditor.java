@@ -197,7 +197,7 @@ public class QuantityEditor extends EditText implements View.OnClickListener, Te
         Window window = popup.getWindow();
         window.requestFeature(Window.FEATURE_NO_TITLE);
 
-        popup.setContentView(R.layout.quantity_layout);
+        popup.setContentView(R.layout.quantity_dialog);
         ViewGroup strip = (ViewGroup) popup.findViewById(R.id.strip);
 
         LayoutInflater inflater = popup.getLayoutInflater();

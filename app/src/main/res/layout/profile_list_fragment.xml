@@ -10,15 +10,7 @@
 
     <ImageButton
         android:id="@+id/listAddButton"
-        android:layout_width="@dimen/round_button_diameter"
-        android:layout_height="@dimen/round_button_diameter"
-        android:layout_gravity="end|bottom"
-        android:layout_marginBottom="@dimen/add_button_margin"
-        android:tint="@android:color/white"
-        android:background="@drawable/oval"
-        android:elevation="@dimen/elevation_low"
-        android:src="@android:drawable/ic_input_add"
-        android:layout_marginRight="10dip"
-        android:stateListAnimator="@animator/button_elevation" />
-
+        style="@style/RoundButton"
+        android:background="@drawable/red_oval"
+        android:src="@drawable/ic_add_white"/>
 </com.staples.mobile.cfa.widget.AnimatorFrame>

@@ -2,6 +2,7 @@ package com.staples.mobile.cfa;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -12,10 +13,11 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -90,13 +92,18 @@ public class AboutFragment extends Fragment {
     }
 
     private void addDisplayRows(LayoutInflater inflater, TableLayout table) {
+        Activity activity = getActivity();
         DisplayMetrics metrics = getActivity().getResources().getDisplayMetrics();
+        WindowManager wm = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+
         addRow(inflater, table, "Display width", Integer.toString(metrics.widthPixels));
         addRow(inflater, table, "Display height", Integer.toString(metrics.heightPixels));
         String density = formatDensity(metrics.densityDpi);
         if (density!=null) density = Integer.toString(metrics.densityDpi)+" ("+density+")";
         else density = Integer.toString(metrics.densityDpi);
         addRow(inflater, table, "Pixels per inch", density);
+        addRow(inflater, table, "Refresh rate", display.getRefreshRate()+" Hz");
     }
 
     private void addPackageRows(LayoutInflater inflater, TableLayout table) {

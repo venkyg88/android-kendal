@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sort_panel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/background_black">
+    <CheckBox
+        android:id="@+id/sort_best_match"
+        style="@style/SortOptionStyle"
+        android:text="@string/sort_best_match"/>
+    <CheckBox
+        android:id="@+id/sort_price_descending"
+        style="@style/SortOptionStyle"
+        android:text="@string/sort_price_descending"/>
+    <CheckBox
+        android:id="@+id/sort_price_ascending"
+        style="@style/SortOptionStyle"
+        android:text="@string/sort_price_ascending"/>
+</LinearLayout>

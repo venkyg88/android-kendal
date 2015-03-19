@@ -47,6 +47,11 @@
         <item name="android:visibility">gone</item>
     </style>
 
+    <style name="PanelStyle">
+        <item name="android:windowEnterAnimation">@anim/bottomsheet_slide_up</item>
+        <item name="android:windowExitAnimation">@anim/bottomsheet_slide_down</item>
+    </style>
+
     <style name="DrawerStyle">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center_vertical</item>
@@ -63,6 +68,13 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="SortOptionStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/text_white</item>
+    </style>
+
     <style name="InputField">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -76,6 +88,14 @@
         <item name="textDualSize">12sp</item>
         <item name="textDualGap">1dp</item>
         <item name="textDualColor">#ff0000ff</item>
+    </style>
+
+    <style name="RoundButton">
+        <item name="android:layout_width">@dimen/round_button_diameter</item>
+        <item name="android:layout_height">@dimen/round_button_diameter</item>
+        <item name="android:layout_gravity">right|bottom</item>
+        <item name="android:layout_marginBottom">@dimen/add_button_margin</item>
+        <item name="android:layout_marginRight">@dimen/add_button_margin</item>
     </style>
 
     <style name="CartHeader" parent="DrawerStyle">
