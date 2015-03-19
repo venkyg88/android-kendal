@@ -23,7 +23,7 @@ import java.util.List;
 public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCategoryAdapter.ViewHolder>{
     private ArrayList<Data> array;
     private Activity activity;
-    String storeNumber;
+    String storeId;
     ArrayList<String> categoryTreeIds;
     ArrayList<String> titles;
 
@@ -64,12 +64,11 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
         }
     }
 
-    public WeeklyAdByCategoryAdapter(Activity activity, String storeNumber) {
+    public WeeklyAdByCategoryAdapter(Activity activity) {
         this.activity = activity;
         this.array = new ArrayList<Data>();
         this.categoryTreeIds = new ArrayList<>();
         this.titles = new ArrayList<>();
-        this.storeNumber = storeNumber;
     }
 
     @Override
@@ -81,7 +80,7 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
             public void onClick(View v, int position) {
 //                Data data = array.get(position);
                 WeeklyAdListFragment weeklyAdFragment = new WeeklyAdListFragment();
-                weeklyAdFragment.setArguments(storeNumber, position, categoryTreeIds, titles);
+                weeklyAdFragment.setArguments(storeId, position, categoryTreeIds, titles);
                 ((MainActivity)activity).navigateToFragment(weeklyAdFragment);
             }
         });
@@ -107,7 +106,8 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
         return array.size();
     }
 
-    public void fill(List<Data> items) {
+    public void fill(List<Data> items, String storeId) {
+        this.storeId = storeId;
         array.addAll(items);
         for (Data item : items) {
             categoryTreeIds.add(item.getCategorytreeid());

@@ -27,6 +27,8 @@ import android.widget.TextView;
 import com.apptentive.android.sdk.Apptentive;
 
 import com.staples.mobile.cfa.analytics.AdobeTracker;
+import com.staples.mobile.cfa.store.StoreFragment;
+import com.staples.mobile.cfa.weeklyad.WeeklyAdByCategoryFragment;
 import com.staples.mobile.cfa.weeklyad.WeeklyAdInStoreFragment;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
@@ -551,7 +553,7 @@ public class MainActivity extends Activity
     }
 
     public boolean selectShoppingCart() {
-        return selectFragment(cartFragment, Transition.NONE, true);
+        return selectFragment(cartFragment, Transition.RIGHT, true);
     }
 
     public boolean selectOrderCheckout(String deliveryRange) {
@@ -567,7 +569,7 @@ public class MainActivity extends Activity
                 fragment = GuestCheckoutFragment.newInstance(couponsRewardsAmount,
                         CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal(), deliveryRange);
             }
-            return selectFragment(fragment, Transition.NONE, true, CheckoutFragment.TAG);
+            return selectFragment(fragment, Transition.RIGHT, true, CheckoutFragment.TAG);
         }
         return false;
     }
@@ -576,7 +578,12 @@ public class MainActivity extends Activity
                                            String deliveryRange, String total) {
         // open order confirmation fragment
         Fragment fragment = ConfirmationFragment.newInstance(orderNumber, emailAddress, deliveryRange, total);
-        return selectFragment(fragment, Transition.NONE, true, ConfirmationFragment.TAG);
+        return selectFragment(fragment, Transition.RIGHT, true, ConfirmationFragment.TAG);
+    }
+
+    public boolean selectStoreFinder() {
+        DrawerItem drawerItem = leftMenuAdapter.getItem(StoreFragment.class);
+        return selectDrawerItem(drawerItem, Transition.RIGHT, true);
     }
 
     public boolean selectRewardsFragment() {
@@ -615,15 +622,21 @@ public class MainActivity extends Activity
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
+    public boolean selectWeeklyAd(String storeNo) {
+        WeeklyAdByCategoryFragment fragment = new WeeklyAdByCategoryFragment();
+        fragment.setArguments(storeNo);
+        return(selectFragment(fragment, Transition.RIGHT, true));
+    }
+
     public boolean selectInStoreWeeklyAd(String imageUrl, String title, String price) {
         WeeklyAdInStoreFragment fragment = new WeeklyAdInStoreFragment();
         fragment.setArguments(imageUrl, title, price);
-        return(selectFragment(fragment, Transition.NONE, true));
+        return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
     public boolean selectProfileFragment() {
         Fragment fragment = new ProfileFragment();
-        return(selectFragment(fragment, Transition.NONE, true));
+        return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
     public boolean selectLoginFragment() {
@@ -646,7 +659,7 @@ public class MainActivity extends Activity
         } else {
             fragment = Fragment.instantiate(this, AddressFragment.class.getName());
         }
-        return(selectFragment(fragment, Transition.NONE, true));
+        return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
     /** opens the profile credit cards fragment */
@@ -664,11 +677,11 @@ public class MainActivity extends Activity
         } else {
             fragment = Fragment.instantiate(this, CreditCardFragment.class.getName());
         }
-        return(selectFragment(fragment, Transition.NONE, true));
+        return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
     public boolean navigateToFragment(Fragment fragment) {
-        return (selectFragment(fragment, Transition.NONE, true));
+        return (selectFragment(fragment, Transition.RIGHT, true));
     }
 
     @Override
@@ -680,7 +693,7 @@ public class MainActivity extends Activity
         Fragment confirmationFragment = manager.findFragmentByTag(ConfirmationFragment.TAG);
 
         if (confirmationFragment != null && confirmationFragment.isVisible()) {
-            selectDrawerItem(homeDrawerItem, Transition.NONE, true);
+            selectDrawerItem(homeDrawerItem, Transition.RIGHT, true);
         } else {
             super.onBackPressed();
         }
@@ -698,7 +711,7 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.continue_shopping_btn:
-                selectDrawerItem(homeDrawerItem, Transition.NONE, true);
+                selectDrawerItem(homeDrawerItem, Transition.RIGHT, true);
                 break;
 
             case R.id.action_show_cart:
