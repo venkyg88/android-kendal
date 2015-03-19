@@ -1,0 +1,10 @@
+#!/bin/sh
+
+SRC=../../app/src/main
+
+for f in $(find ${SRC}/res -name '*.png')
+do
+    b=$(basename $f | cut -d. -f1)
+    c=$(grep -r -o $b ${SRC} | wc -l | xargs)
+    echo $c $b
+done

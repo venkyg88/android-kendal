@@ -134,9 +134,9 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
         adapter = new BundleAdapter(getActivity());
         adapter.setOnClickListener(this);
-        int count = adapter.fill(search.getProduct());
+        adapter.fill(search.getProduct());
         adapter.notifyDataSetChanged();
-        return(count);
+        return(adapter.getItemCount());
     }
 
     @Override

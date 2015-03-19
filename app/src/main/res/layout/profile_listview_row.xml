@@ -13,7 +13,7 @@
         android:visibility="gone"
         android:id="@+id/selectionImage"
         android:tint="@color/background_blue"
-        android:src="@drawable/ic_check_black_24dp"
+        android:src="@drawable/ic_check_white_24dp"
         />
 
     <LinearLayout
