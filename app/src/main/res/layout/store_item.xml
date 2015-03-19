@@ -139,6 +139,7 @@
         <TextView
             android:id="@+id/weekly_ad_link2"
             style="@style/StoreItem"
+            android:paddingLeft="6dp"
             android:text="@string/weekly_ad_title"
             android:textColor="@color/text_blue"/>
 
