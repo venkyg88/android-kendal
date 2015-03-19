@@ -1,20 +1,23 @@
 package com.staples.mobile.cfa.bundle;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -24,6 +27,7 @@ import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Category;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.List;
 
@@ -42,6 +46,8 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     private BundleAdapter adapter;
     private DataWrapper.State state;
     private String title;
+
+    private Dialog panel;
 
     public void setArguments(String title, String identifier) {
         Bundle args = new Bundle();
@@ -68,10 +74,14 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Activity activity = getActivity();
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
         RecyclerView list = (RecyclerView) view.findViewById(R.id.products);
-        list.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-        list.addItemDecoration(new HorizontalDivider(getActivity()));
+        list.setLayoutManager(new GridLayoutManager(activity, 1));
+        list.addItemDecoration(new HorizontalDivider(activity));
+
+        view.findViewById(R.id.open_sort).setOnClickListener(this);
+
         applyState(view);
         return(view);
     }
@@ -131,17 +141,18 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         adapter.setOnClickListener(this);
 
         // Add straight products
-        int count = adapter.fill(category.getProduct());
+        adapter.fill(category.getProduct());
 
         // Add promos (in bundle)
         List<Category> promos = category.getPromoCategory();
         if (promos!=null) {
             for(Category promo : promos)
-                count += adapter.fill(promo.getProduct());
+                adapter.fill(promo.getProduct());
         }
 
+        adapter.sort(BundleItem.SortType.PRICEASCENDING.getComparator());
         adapter.notifyDataSetChanged();
-        return(count);
+        return(adapter.getItemCount());
     }
 
     @Override
@@ -180,7 +191,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                                     activity.showNotificationBanner(R.string.cart_updated_msg);
                                     Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.price, 1);
                                 } else {
-                                    buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.add_to_cart));
+                                    buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.ic_add_shopping_cart_black));
                                     // if non-grammatical out-of-stock message from api, provide a nicer message
                                     if (errMsg.contains("items is out of stock")) {
                                         errMsg = activity.getResources().getString(R.string.avail_outofstock);
@@ -192,6 +203,23 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                     }
                 }
                 break;
+            case R.id.open_sort:
+                showPanel();
+                break;
         }
+    }
+
+    private void showPanel() {
+        panel = new Dialog(getActivity());
+        Window window = panel.getWindow();
+        window.requestFeature(Window.FEATURE_NO_TITLE);
+        panel.setContentView(R.layout.sort_panel);
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.type = WindowManager.LayoutParams.TYPE_APPLICATION_PANEL;
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        params.gravity = Gravity.BOTTOM;
+        params.windowAnimations = R.style.PanelStyle;
+        panel.show();
     }
 }
