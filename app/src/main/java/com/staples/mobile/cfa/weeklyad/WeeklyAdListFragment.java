@@ -273,7 +273,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                                     } catch (NumberFormatException e) {}
                                 }
                             } else {
-                                buttonVw.setImageDrawable(r.getDrawable(R.drawable.add_to_cart));
+                                buttonVw.setImageDrawable(r.getDrawable(R.drawable.ic_add_shopping_cart_black));
                                 // if non-grammatical out-of-stock message from api, provide a nicer message
                                 if (errMsg.contains("items is out of stock")) {
                                     errMsg = r.getString(R.string.avail_outofstock);

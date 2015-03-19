@@ -20,6 +20,8 @@ import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder> implements DataWrapper.Layoutable {
@@ -101,23 +103,23 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         vh.ratingStars.setRating(item.customerRating, item.customerCount);
         vh.priceSticker.setPricing(item.price, item.unit);
         if (item.type==IdentifierType.SKUSET) vh.action.setImageResource(R.drawable.sku_set);
-        else vh.action.setImageResource(R.drawable.add_to_cart);
+        else vh.action.setImageResource(R.drawable.ic_add_shopping_cart_black);
     }
 
-    public int fill(List<Product> products) {
-        if (products==null) return(0);
-        int count = 0;
+    public void fill(List<Product> products) {
+        if (products==null) return;
         for (Product product : products) {
             String name = Html.fromHtml(product.getProductName()).toString();
-            BundleItem item = new BundleItem(name, product.getSku());
+            BundleItem item = new BundleItem(array.size(), name, product.getSku());
             item.setImageUrl(product.getImage());
             item.setPrice(product.getPricing());
             item.customerRating = product.getCustomerReviewRating();
             item.customerCount = product.getCustomerReviewCount();
             array.add(item);
-            count++;
         }
-        notifyDataSetChanged();
-        return(count);
+    }
+
+    public void sort(Comparator<BundleItem> comparator) {
+        Collections.sort(array, comparator);
     }
 }

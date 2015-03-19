@@ -1,106 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.staples.mobile.cfa.widget.AnimatorFrame xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-    <FrameLayout
+    android:layout_height="match_parent">
+    <com.staples.mobile.cfa.widget.LinearLayoutWithOverlay
+        android:id="@+id/overlayable_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <com.staples.mobile.cfa.widget.LinearLayoutWithOverlay
-            android:id="@+id/overlayable_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/orders_list"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/orderErrorTV"
-                android:layout_marginLeft="24dp"
-                android:layout_marginTop="24dp"
-                android:visibility="gone"
-                android:textSize="20sp"
-                android:text="@string/no_orders_found"
-                android:textColor="@android:color/darker_gray"/>
-
-        </com.staples.mobile.cfa.widget.LinearLayoutWithOverlay>
-
-        <!-- empty overlay-->
-        <RelativeLayout
-            android:id="@+id/overlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/orders_list"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/orderErrorTV"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="24dp"
             android:visibility="gone"
-            android:background="#6f000022" >
-        </RelativeLayout>
+            android:textSize="20sp"
+            android:text="@string/no_orders_found"
+            android:textColor="@android:color/darker_gray"/>
 
-        <!--tracking shipment bottom sheet-->
-        <LinearLayout
-            android:id="@+id/tracking_layout"
+    </com.staples.mobile.cfa.widget.LinearLayoutWithOverlay>
+
+    <!-- empty overlay-->
+    <RelativeLayout
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="#6f000022" >
+    </RelativeLayout>
+
+    <!--tracking shipment bottom sheet-->
+    <LinearLayout
+        android:id="@+id/tracking_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        android:padding="16dp"
+        android:background="@color/background_white">
+        <!--label and close button-->
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:orientation="vertical"
-            android:visibility="invisible"
-            android:padding="16dp"
-            android:background="@color/background_white"
-            >
-            <!--label and close button-->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
-                <TextView
-                    android:id="@+id/shipment_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:textSize="18sp"/>
-                <ImageView
-                    android:id="@+id/close_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true"
-                    android:src="@drawable/ic_close_black_18dp"/>
-            </RelativeLayout>
-
-            <!--carrier-->
+            android:orientation="horizontal" >
             <TextView
-                android:id="@+id/carrier"
+                android:id="@+id/shipment_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:textSize="18sp"/>
-            <!--tracking number-->
-            <TextView
-                android:id="@+id/tracking_number"
+            <ImageView
+                android:id="@+id/close_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"/>
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_close_black_18dp"/>
+        </RelativeLayout>
 
-            <!--horizontal rule-->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="6dp"
-                android:layout_marginBottom="6dp"
-                android:background="@color/hr_extra_light_gray" />
+        <!--carrier-->
+        <TextView
+            android:id="@+id/carrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"/>
+        <!--tracking number-->
+        <TextView
+            android:id="@+id/tracking_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"/>
 
-            <!-- delivery info -->
-            <TextView
-                android:id="@+id/delivery_scans"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"/>
+        <!--horizontal rule-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:background="@color/hr_extra_light_gray" />
 
-        </LinearLayout>
+        <!-- delivery info -->
+        <TextView
+            android:id="@+id/delivery_scans"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"/>
 
-    </FrameLayout>
-
-</com.staples.mobile.cfa.widget.AnimatorLayout>
+    </LinearLayout>
+</com.staples.mobile.cfa.widget.AnimatorFrame>

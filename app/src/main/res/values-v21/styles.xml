@@ -3,4 +3,13 @@
     <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:textAllCaps">false</item>
     </style>
+    <style name="RoundButton">
+        <item name="android:layout_width">@dimen/round_button_diameter</item>
+        <item name="android:layout_height">@dimen/round_button_diameter</item>
+        <item name="android:layout_gravity">right|bottom</item>
+        <item name="android:layout_marginBottom">@dimen/add_button_margin</item>
+        <item name="android:layout_marginRight">@dimen/add_button_margin</item>
+        <item name="android:elevation">@dimen/elevation_low</item>
+        <item name="android:stateListAnimator">@animator/button_elevation</item>
+    </style>
 </resources>

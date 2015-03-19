@@ -52,7 +52,6 @@
             android:layout_alignParentLeft="true"
             android:layout_gravity="center_vertical"
             android:padding="1dp"
-            android:tint="@color/text_nearly_black"
             android:background="@color/background_extra_light_gray"
             android:src="@drawable/ic_close_black_18dp"
             />
