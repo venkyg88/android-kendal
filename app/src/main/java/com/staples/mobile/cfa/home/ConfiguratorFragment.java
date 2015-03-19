@@ -1048,37 +1048,44 @@ public class ConfiguratorFragment extends Fragment {
         public void success(StoreQuery storeQuery, Response response) {
             List<StoreData> storeData = storeQuery.getStoreData();
             // if there are any nearby stores
-            if(!storeData.isEmpty()) {
-                Obj storeObj = storeData.get(0).getObj();
+            if(storeData != null) {
+                if (!storeData.isEmpty()) {
+                    Obj storeObj = storeData.get(0).getObj();
 
-                // Get store location
-                StoreAddress storeAddress = storeObj.getStoreAddress();
-                String storeCity = storeAddress.getCity();
-                String storeState = storeAddress.getState();
-                storeNameTextView.setText(storeCity + "," + storeState);
+                    // Get store location
+                    StoreAddress storeAddress = storeObj.getStoreAddress();
+                    String storeCity = storeAddress.getCity();
+                    String storeState = storeAddress.getState();
+                    storeNameTextView.setText(storeCity + "," + storeState);
 
-                // Get store office hours
-                List<StoreHours> storeHourList = storeObj.getStoreHours();
-                ArrayList<TimeSpan> spans = new ArrayList<TimeSpan>();
-                for (StoreHours hours : storeHourList) {
-                    TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
-                    if (span != null) spans.add(span);
+                    // Get store office hours
+                    List<StoreHours> storeHourList = storeObj.getStoreHours();
+                    ArrayList<TimeSpan> spans = new ArrayList<TimeSpan>();
+                    for (StoreHours hours : storeHourList) {
+                        TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
+                        if (span != null) spans.add(span);
+                    }
+                    String status = TimeSpan.formatStatus(getActivity(), spans, System.currentTimeMillis());
+                    int i = status.indexOf(' ');
+                    if (i > 0) status = status.substring(0, i);
+                    storeStatusTextView.setText(status);
+
+                    if (storeCity == null) {
+                        storeWrapper.setState(DataWrapper.State.EMPTY);
+                    } else {
+                        storeWrapper.setState(DataWrapper.State.DONE);
+                    }
                 }
-                String status = TimeSpan.formatStatus(getActivity(), spans, System.currentTimeMillis());
-                int i = status.indexOf(' ');
-                if (i > 0) status = status.substring(0, i);
-                storeStatusTextView.setText(status);
-
-                if (storeCity == null) {
+                // display "find nearby store" if no store result
+                else {
                     storeWrapper.setState(DataWrapper.State.EMPTY);
-                } else {
-                    storeWrapper.setState(DataWrapper.State.DONE);
+                    Log.d(TAG, "No nearby stores found from the StoreInfoCallback.");
                 }
             }
-            // display "find nearby store" if no store result
-            else{
+            // display "find nearby store" if storeData is null
+            else {
                 storeWrapper.setState(DataWrapper.State.EMPTY);
-                Log.d(TAG, "No nearby stores found from the StoreInfoCallback.");
+                Log.d(TAG, "storeData is null from the StoreInfoCallback.");
             }
         }
 
