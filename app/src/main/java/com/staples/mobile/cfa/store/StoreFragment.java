@@ -618,8 +618,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                 obj = view.getTag();
                 if (obj instanceof StoreItem) {
                     StoreItem storeItem = (StoreItem) obj;
-                    ((MainActivity)getActivity()).selectWeeklyAd(storeItem.storeNumber,
-                            storeItem.city, storeItem.streetAddress1);
+                    ((MainActivity)getActivity()).selectWeeklyAd(storeItem.storeNumber);
                 }
                 break;
             case R.id.directions:

@@ -622,9 +622,9 @@ public class MainActivity extends Activity
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
-    public boolean selectWeeklyAd(String storeNo, String city, String address) {
+    public boolean selectWeeklyAd(String storeNo) {
         WeeklyAdByCategoryFragment fragment = new WeeklyAdByCategoryFragment();
-        fragment.setArguments(storeNo, city, address);
+        fragment.setArguments(storeNo);
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 

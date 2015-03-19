@@ -55,7 +55,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     WeeklyAdListAdapter adapter;
-    String storeNumber;
+    String storeId;
     EasyOpenApi easyOpenApi;
     List<Data> weeklyAdItems;
     List<String> categoryTreeIds;
@@ -65,10 +65,10 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
     HorizontalScrollView tabScrollView;
 
 
-    public void setArguments(String storeNumber, int currentTabIndex,
+    public void setArguments(String storeId, int currentTabIndex,
                              ArrayList<String> categoryTreeIds, ArrayList<String> titles) {
         Bundle args = new Bundle();
-        args.putString(STOREID, storeNumber);
+        args.putString(STOREID, storeId);
         args.putStringArrayList(CATEGORYTREEIDS, categoryTreeIds);
         args.putStringArrayList(TITLES, titles);
         args.putInt(TABINDEX, currentTabIndex);
@@ -83,7 +83,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
 
         Bundle args = getArguments();
         if (args!=null) {
-            storeNumber = args.getString(STOREID);
+            storeId = args.getString(STOREID);
             categoryTreeIds = args.getStringArrayList(CATEGORYTREEIDS);
             titles = args.getStringArrayList(TITLES);
             currentTabIndex = args.getInt(TABINDEX);
@@ -172,7 +172,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
         activity.showProgressIndicator();
         final int imageWidth = (int) activity.getResources().getDimension(R.dimen.weekly_ad_list_item_image_width);
         easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.getWeeklyAdCategoryListing(storeNumber, categoryTreeIds.get(currentTabIndex),
+        easyOpenApi.getWeeklyAdCategoryListing(storeId, categoryTreeIds.get(currentTabIndex),
                 imageWidth, 1, 100,
                 new Callback<WeeklyAd>() {
             @Override
@@ -191,7 +191,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                 // getWeeklyAdCategoryListing.
                 boolean deserializationError = error.getMessage().contains("not deserialize instance of java.util.ArrayList");
                 if (deserializationError) {
-                    easyOpenApi.getWeeklyAdCategoryListingSingle(storeNumber, categoryTreeIds.get(currentTabIndex),
+                    easyOpenApi.getWeeklyAdCategoryListingSingle(storeId, categoryTreeIds.get(currentTabIndex),
                             imageWidth, //1, 1,
                             new Callback<WeeklyAdListing>() {
                                 @Override
