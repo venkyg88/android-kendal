@@ -14,17 +14,24 @@ public class BundleItem {
         PRICEDESCENDING (R.string.sort_price_descending, R.id.sort_price_descending, new BundleItem.PriceDescending());
 
         private int title;
-        private int check;
+        private int button;
         private Comparator<BundleItem> comparator;
 
-        SortType(int title, int check, Comparator<BundleItem> comparator) {
+        SortType(int title, int button, Comparator<BundleItem> comparator) {
             this.title = title;
-            this.check = check;
+            this.button = button;
             this.comparator = comparator;
         }
 
         public Comparator<BundleItem> getComparator() {
             return(comparator);
+        }
+
+        public static SortType findSortTypeById(int id) {
+            for(SortType type : values()) {
+                if (type.button==id) return(type);
+            }
+            return(null);
         }
     }
 

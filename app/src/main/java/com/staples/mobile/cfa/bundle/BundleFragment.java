@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
@@ -35,7 +37,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class BundleFragment extends Fragment implements Callback<Browse>, View.OnClickListener {
+public class BundleFragment extends Fragment implements Callback<Browse>, View.OnClickListener, RadioGroup.OnCheckedChangeListener {
     private static final String TAG = "BundleFragment";
 
     private static final String TITLE = "title";
@@ -45,6 +47,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
     private BundleAdapter adapter;
     private DataWrapper.State state;
+    private BundleItem.SortType sortType;
     private String title;
 
     private Dialog panel;
@@ -67,6 +70,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
             identifier = args.getString(IDENTIFIER);
         }
 
+        sortType = BundleItem.SortType.ORIGINAL;
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         easyOpenApi.browseCategories(identifier, null, MAXFETCH, this);
         state = DataWrapper.State.LOADING;
@@ -150,7 +154,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 adapter.fill(promo.getProduct());
         }
 
-        adapter.sort(BundleItem.SortType.PRICEASCENDING.getComparator());
+        adapter.sort(sortType.getComparator());
         adapter.notifyDataSetChanged();
         return(adapter.getItemCount());
     }
@@ -209,15 +213,28 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         }
     }
 
+    public void onCheckedChanged(RadioGroup group, int id) {
+        BundleItem.SortType type = BundleItem.SortType.findSortTypeById(id);
+        if (type!=null) {
+            panel.dismiss();
+            sortType = type;
+            adapter.sort(sortType.getComparator());
+            adapter.notifyDataSetChanged();
+        }
+    }
+
     private void showPanel() {
         panel = new Dialog(getActivity());
         Window window = panel.getWindow();
         window.requestFeature(Window.FEATURE_NO_TITLE);
         panel.setContentView(R.layout.sort_panel);
+        ((RadioGroup) panel.findViewById(R.id.sort_panel)).setOnCheckedChangeListener(this);
+
         WindowManager.LayoutParams params = window.getAttributes();
         params.type = WindowManager.LayoutParams.TYPE_APPLICATION_PANEL;
         params.width = ViewGroup.LayoutParams.MATCH_PARENT;
         params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        params.x = 0;
         params.gravity = Gravity.BOTTOM;
         params.windowAnimations = R.style.PanelStyle;
         panel.show();
