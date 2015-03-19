@@ -27,6 +27,11 @@
             <TextView
                 android:id="@+id/store_number"
                 style="@style/StoreItem"/>
+            <TextView
+                android:id="@+id/weekly_ad_link"
+                style="@style/StoreItem"
+                android:text="@string/weekly_ad_title"
+                android:textColor="@color/text_blue"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -124,6 +129,20 @@
             style="@style/StoreItem"/>
 
         <!--horizontal rule 3-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/background_light_gray"/>
+
+        <TextView
+            android:id="@+id/weekly_ad_link2"
+            style="@style/StoreItem"
+            android:text="@string/weekly_ad_title"
+            android:textColor="@color/text_blue"/>
+
+        <!--horizontal rule 4-->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

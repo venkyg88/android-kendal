@@ -26,6 +26,8 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         private TextView city;
         private TextView street;
         private TextView phone;
+        private TextView weeklyAd;
+        private TextView weeklyAd2;
         private TextView distance;
         private TextView openTime;
         private View callStore;
@@ -43,6 +45,8 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
             city = (TextView) view.findViewById(R.id.city);
             street = (TextView) view.findViewById(R.id.street);
             phone = (TextView) view.findViewById(R.id.phone);
+            weeklyAd = (TextView) view.findViewById(R.id.weekly_ad_link);
+            weeklyAd2 = (TextView) view.findViewById(R.id.weekly_ad_link2);
             distance = (TextView) view.findViewById(R.id.distance);
             openTime = (TextView) view.findViewById(R.id.open_time);
             callStore = view.findViewById(R.id.call_store);
@@ -126,6 +130,8 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         bvh.callStore.setOnClickListener(listener);
         bvh.callStore2.setOnClickListener(listener);
         bvh.directions.setOnClickListener(listener);
+        bvh.weeklyAd.setOnClickListener(listener);
+        bvh.weeklyAd2.setOnClickListener(listener);
         return(bvh);
     }
 
@@ -139,21 +145,27 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         vh.callStore.setTag(item);
         vh.callStore2.setTag(item);
         vh.directions.setTag(item);
+        vh.weeklyAd.setTag(item);
+        vh.weeklyAd2.setTag(item);
 
         // show or hide content depending on whether full store details are to be displayed
         if (isFullStoreDetail()) {
             vh.phone.setVisibility(View.GONE);
             vh.callStore.setVisibility(View.GONE);
+            vh.weeklyAd.setVisibility(View.GONE);
             vh.phone2.setVisibility(View.VISIBLE);
             vh.callStore2.setVisibility(View.VISIBLE);
+            vh.weeklyAd2.setVisibility(View.VISIBLE);
             vh.storeNumber.setVisibility(View.VISIBLE);
             vh.storeDetailLayout.setVisibility(View.VISIBLE);
         } else {
             // else summary display
             vh.phone.setVisibility(View.VISIBLE);
             vh.callStore.setVisibility(View.VISIBLE);
+            vh.weeklyAd.setVisibility(View.VISIBLE);
             vh.phone2.setVisibility(View.GONE);
             vh.callStore2.setVisibility(View.GONE);
+            vh.weeklyAd2.setVisibility(View.GONE);
             vh.storeNumber.setVisibility(View.GONE);
             vh.storeDetailLayout.setVisibility(View.GONE);
         }

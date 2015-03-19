@@ -613,6 +613,15 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                     dialStorePhone((StoreItem) obj);
                 }
                 break;
+            case R.id.weekly_ad_link:
+            case R.id.weekly_ad_link2:
+                obj = view.getTag();
+                if (obj instanceof StoreItem) {
+                    StoreItem storeItem = (StoreItem) obj;
+                    ((MainActivity)getActivity()).selectWeeklyAd(storeItem.storeNumber,
+                            storeItem.city, storeItem.streetAddress1);
+                }
+                break;
             case R.id.directions:
                 obj = view.getTag();
                 if (obj instanceof StoreItem) {
