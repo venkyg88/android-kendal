@@ -32,9 +32,9 @@ public class DataWrapper extends LinearLayout {
         // Used for making extra elements visible
         GONE    (View.GONE,    View.GONE,    View.GONE);
 
-        int list;
-        int progress;
-        int empty;
+        public final int list;
+        public final int progress;
+        public final int empty;
 
         State(int list, int progress, int empty) {
             this.list = list;
@@ -85,7 +85,7 @@ public class DataWrapper extends LinearLayout {
     }
 
     @Override
-    public void onMeasure(int widthSpec, int heightSpec) {
+    protected void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
 
         // Special handling for RecyclerView...

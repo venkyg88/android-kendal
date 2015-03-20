@@ -1,9 +1,5 @@
 package com.staples.mobile.cfa.profile;
 
-import android.util.Log;
-
-import java.util.Arrays;
-
 public enum UsState {
     // This must be sorted strictly by state name
     AL ("AL", "Alabama"),
@@ -51,15 +47,15 @@ public enum UsState {
     TX ("TX", "Texas"),
     UT ("UT", "Utah"),
     VT ("VT", "Vermont"),
-    VA ("VA", "Virginia[G]"),
+    VA ("VA", "Virginia"),
     WA ("WA", "Washington"),
     DC ("DC", "Washington DC"),
     WV ("WV", "West Virginia"),
     WI ("WI", "Wisconsin"),
     WY ("WY", "Wyoming");
 
-    public String abbr;
-    public String name;
+    public final String abbr;
+    public final String name;
 
     UsState(String abbr, String name) {
         this.abbr = abbr;

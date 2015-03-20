@@ -75,7 +75,7 @@ public class DualHintEdit extends EditText {
     }
 
     @Override
-    public void onMeasure(int widthSpec, int heightSpec) {
+    protected void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
         int width = getMeasuredWidth();
         int height = getMeasuredHeight();
@@ -84,7 +84,7 @@ public class DualHintEdit extends EditText {
     }
 
     @Override
-    public void onDraw(Canvas canvas) {
+    protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         CharSequence text = getText();
         if (text!=null && text.length()>0) {

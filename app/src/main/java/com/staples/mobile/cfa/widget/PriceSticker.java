@@ -127,7 +127,7 @@ public class PriceSticker extends View {
     }
 
     @Override
-    public void onMeasure(int widthSpec, int heightSpec) {
+    protected void onMeasure(int widthSpec, int heightSpec) {
         float x = getPaddingLeft() + getPaddingRight();
         String text = format.format(price);
         x += majorPaint.measureText(text, 0, text.length());
@@ -142,7 +142,7 @@ public class PriceSticker extends View {
     }
 
     @Override
-    public void onDraw(Canvas canvas) {
+    protected void onDraw(Canvas canvas) {
         String unitText = null;
 
         float slack = getWidth()-getPaddingLeft()-getPaddingRight();

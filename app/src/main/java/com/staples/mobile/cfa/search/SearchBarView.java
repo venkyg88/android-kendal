@@ -74,7 +74,7 @@ public class SearchBarView extends LinearLayout implements View.OnClickListener,
         }
 
         @Override
-        public void onMeasure(int widthSpec, int heightSpec) {
+        protected void onMeasure(int widthSpec, int heightSpec) {
             super.onMeasure(widthSpec, heightSpec);
             setMeasuredDimension(MeasureSpec.getSize(widthSpec), getMeasuredHeight());
         }

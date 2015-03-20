@@ -55,8 +55,8 @@ public class ActionBar extends LinearLayout {
         private boolean signin;
         private int title;
 
-        private Config(boolean close, boolean back, boolean drawer, boolean logo, boolean search,
-                       boolean quantity, boolean cart, boolean signin, int title) {
+        Config(boolean close, boolean back, boolean drawer, boolean logo, boolean search,
+               boolean quantity, boolean cart, boolean signin, int title) {
             this.close = close;
             this.back = back;
             this.drawer = drawer;
