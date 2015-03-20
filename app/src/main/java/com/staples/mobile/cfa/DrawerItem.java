@@ -14,8 +14,8 @@ public class DrawerItem {
         ACCOUNT   (1, R.layout.drawer_account),
         PROFILE   (2, R.layout.drawer_fragment);
 
-        public int viewType;
-        public int layoutId;
+        public final int viewType;
+        public final int layoutId;
 
         Type(int viewType, int layoutId) {
             this.viewType = viewType;

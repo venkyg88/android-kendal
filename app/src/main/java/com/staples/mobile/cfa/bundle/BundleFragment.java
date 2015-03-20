@@ -49,7 +49,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     private DataWrapper.State state;
     private BundleItem.SortType sortType;
     private String title;
-
     private Dialog panel;
 
     public void setArguments(String title, String identifier) {
@@ -154,7 +153,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 adapter.fill(promo.getProduct());
         }
 
-        adapter.sort(sortType.getComparator());
+        adapter.sort(sortType.comparator);
         adapter.notifyDataSetChanged();
         return(adapter.getItemCount());
     }
@@ -218,7 +217,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         if (type!=null) {
             panel.dismiss();
             sortType = type;
-            adapter.sort(sortType.getComparator());
+            adapter.sort(sortType.comparator);
             adapter.notifyDataSetChanged();
         }
     }
@@ -228,6 +227,10 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         Window window = panel.getWindow();
         window.requestFeature(Window.FEATURE_NO_TITLE);
         panel.setContentView(R.layout.sort_panel);
+
+        if (sortType!=null) {
+            ((RadioButton) panel.findViewById(sortType.button)).setChecked(true);
+        }
         ((RadioGroup) panel.findViewById(R.id.sort_panel)).setOnCheckedChangeListener(this);
 
         WindowManager.LayoutParams params = window.getAttributes();
@@ -236,7 +239,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         params.x = 0;
         params.gravity = Gravity.BOTTOM;
-        params.windowAnimations = R.style.PanelStyle;
+        params.windowAnimations = R.style.PanelAnimation;
         panel.show();
     }
 }

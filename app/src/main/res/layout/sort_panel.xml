@@ -10,6 +10,10 @@
         style="@style/SortOptionStyle"
         android:text="@string/sort_best_match"/>
     <RadioButton
+        android:id="@+id/sort_highest_rated"
+        style="@style/SortOptionStyle"
+        android:text="@string/sort_highest_rated"/>
+    <RadioButton
         android:id="@+id/sort_price_ascending"
         style="@style/SortOptionStyle"
         android:text="@string/sort_price_ascending"/>
@@ -18,11 +22,11 @@
         style="@style/SortOptionStyle"
         android:text="@string/sort_price_descending"/>
     <RadioButton
-        android:id="@+id/sort_name_ascending"
+        android:id="@+id/sort_title_ascending"
         style="@style/SortOptionStyle"
         android:text="@string/sort_title_ascending"/>
     <RadioButton
-        android:id="@+id/sort_name_descending"
+        android:id="@+id/sort_title_descending"
         style="@style/SortOptionStyle"
         android:text="@string/sort_title_descending"/>
 </com.staples.mobile.cfa.widget.FlowRadioGroup>

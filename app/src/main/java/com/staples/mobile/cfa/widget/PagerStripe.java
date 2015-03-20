@@ -82,13 +82,13 @@ public class PagerStripe extends View implements ViewPager.OnPageChangeListener 
     }
 
     @Override
-    public void onMeasure(int widthSpec, int heightSpec) {
+    protected void onMeasure(int widthSpec, int heightSpec) {
         heightSpec = getPaddingTop()+stripeThickness+textSize+getPaddingBottom();
         setMeasuredDimension(widthSpec, heightSpec);
     }
 
     @Override
-    public void onDraw(Canvas canvas) {
+    protected void onDraw(Canvas canvas) {
         // Safety check
         if (count<=0) return;
 

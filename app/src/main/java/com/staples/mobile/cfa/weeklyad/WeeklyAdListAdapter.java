@@ -101,5 +101,9 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
         notifyDataSetChanged();
     }
 
+    public void clear() {
+        array.clear();
+        notifyDataSetChanged();
+    }
 
 }

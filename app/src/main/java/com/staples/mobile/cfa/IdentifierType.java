@@ -18,7 +18,7 @@ public enum IdentifierType {
 
     private Pattern pattern;
 
-    private IdentifierType(String pattern) {
+    IdentifierType(String pattern) {
         if (pattern!=null)
             this.pattern = Pattern.compile(pattern);
     }

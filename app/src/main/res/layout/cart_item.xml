@@ -58,11 +58,12 @@
         <com.staples.mobile.cfa.widget.QuantityEditor
             android:id="@+id/cartitem_qty"
             style="@style/QtyEditorStyle"
-            android:layout_width="40dp"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/cartitem_price"
             android:layout_alignParentRight="true"
             android:layout_gravity="center_vertical"
+            android:drawableRight="@drawable/ic_arrow_drop_down"
             android:textSize="14sp"
             android:textColor="@color/text_nearly_black"
             android:maxLength="4"

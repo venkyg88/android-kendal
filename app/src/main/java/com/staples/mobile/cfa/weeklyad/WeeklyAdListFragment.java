@@ -168,8 +168,8 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
     }
 
 
-    public void getWeeklyAdListing() {
-        activity.showProgressIndicator();
+    private void getWeeklyAdListing() {
+      //  activity.showProgressIndicator();
         final int imageWidth = (int) activity.getResources().getDimension(R.dimen.weekly_ad_list_item_image_width);
         easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         easyOpenApi.getWeeklyAdCategoryListing(storeId, categoryTreeIds.get(currentTabIndex),
@@ -177,7 +177,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                 new Callback<WeeklyAd>() {
             @Override
             public void success(WeeklyAd weeklyAd, Response response) {
-                activity.hideProgressIndicator();
+//                activity.hideProgressIndicator();
                 weeklyAdItems = weeklyAd.getContent().getCollection().getData();
                 adapter.fill(weeklyAdItems);
             }
@@ -196,7 +196,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                             new Callback<WeeklyAdListing>() {
                                 @Override
                                 public void success(WeeklyAdListing weeklyAdListing, Response response) {
-                                    activity.hideProgressIndicator();
+//                                    activity.hideProgressIndicator();
                                     weeklyAdItems = new ArrayList<Data>();
                                     Collection collection = weeklyAdListing.getContent().getCollection();
                                     if (collection != null && collection.getData() != null) {
@@ -207,12 +207,12 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
 
                                 @Override
                                 public void failure(RetrofitError error) {
-                                    activity.hideProgressIndicator();
+//                                    activity.hideProgressIndicator();
                                     activity.showErrorDialog(ApiError.getErrorMessage(error));
                                 }
                             });
                 } else {
-                    activity.hideProgressIndicator();
+//                    activity.hideProgressIndicator();
                     activity.showErrorDialog(ApiError.getErrorMessage(error));
                 }
             }
