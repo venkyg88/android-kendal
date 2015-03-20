@@ -419,7 +419,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                 if (errMsg == null) {
 
                     // submit the order
-                    submitOrder(paymentMethod.getCardVerificationCode(), shippingAddrBlock.getEmailAddress());
+                    submitOrder(paymentMethod, shippingAddrBlock.getEmailAddress());
 
                 } else {
                     Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics

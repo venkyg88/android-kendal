@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
+import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.util.CurrencyFormat;
@@ -181,9 +183,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     }
 
 
-    protected void submitOrder(String cid, final String emailAddress) {
+    protected void submitOrder(final PaymentMethod paymentMethod, final String emailAddress) {
         showProgressIndicator();
-        CheckoutApiManager.submitOrder(cid, new CheckoutApiManager.OrderSubmissionCallback() {
+        CheckoutApiManager.submitOrder(paymentMethod.getCardVerificationCode(), new CheckoutApiManager.OrderSubmissionCallback() {
             @Override
             public void onOrderSubmissionComplete(String orderId, String orderNumber, String errMsg) {
                 hideProgressIndicator();
@@ -192,6 +194,12 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
                 // if success
                 if (errMsg == null) {
+
+                    // analytics
+                    Tracker.getInstance().trackStateForOrderConfirmation(orderNumber,
+                            CartApiManager.getCart(), Math.abs(couponsRewardsAmount), paymentMethod,
+                            Tracker.ShipType.SHIPTOHOME);
+
                     // reset cart since empty after successful order submission
                     CartApiManager.resetCart(); // reset cart since empty after successful order submission
                     ActionBar.getInstance().setCartCount(0);

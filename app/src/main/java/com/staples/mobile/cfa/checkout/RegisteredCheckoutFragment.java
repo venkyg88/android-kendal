@@ -221,14 +221,16 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                 // if success
                 if (errMsg == null) {
                     showProgressIndicator();
-                    CheckoutApiManager.applyPaymentMethod(new PaymentMethod(profilePaymentMethod), new CheckoutApiManager.ApplyPaymentMethodCallback() {
+                    final PaymentMethod paymentMethod = new PaymentMethod(profilePaymentMethod);
+                    CheckoutApiManager.applyPaymentMethod(paymentMethod, new CheckoutApiManager.ApplyPaymentMethodCallback() {
                         @Override
                         public void onApplyPaymentMethodComplete(String paymentMethodId, String authorized, String errMsg) {
                             hideProgressIndicator();
                             // if success
                             if (errMsg == null) {
                                 // finally, upon payment method success, submit the order
-                                submitOrder(null, ProfileDetails.getMember().getEmailAddress());
+                                paymentMethod.setCardType(profilePaymentMethod.getCardType()); // needed for analytics
+                                submitOrder(paymentMethod, ProfileDetails.getMember().getEmailAddress());
                             } else {
                                 activity.showErrorDialog(errMsg);
                                 Log.d(TAG, errMsg);
