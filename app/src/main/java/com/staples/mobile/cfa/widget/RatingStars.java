@@ -187,7 +187,7 @@ public class RatingStars extends View {
     }
 
     @Override
-    public void onMeasure(int widthSpec, int heightSpec) {
+    protected void onMeasure(int widthSpec, int heightSpec) {
         int width = NSTARS*config.starWidth+getPaddingLeft()+getPaddingRight();
         String text = getText();
         if (text!=null) width += config.textPaint.measureText(text, 0, text.length());
@@ -198,7 +198,7 @@ public class RatingStars extends View {
     }
 
     @Override
-    public void onDraw(Canvas canvas) {
+    protected void onDraw(Canvas canvas) {
         // Get text
         String text =  getText();
 

@@ -38,6 +38,7 @@ public class HorizontalDivider extends RecyclerView.ItemDecoration {
         outRect.bottom = 0;
     }
 
+    @Override
     public void onDrawOver(Canvas canvas, RecyclerView parent, RecyclerView.State state) {
         int y = parent.getTop()+parent.getPaddingTop();
         int n = parent.getChildCount();

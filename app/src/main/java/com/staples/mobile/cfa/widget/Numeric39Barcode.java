@@ -139,7 +139,7 @@ public class Numeric39Barcode extends View {
     }
 
     @Override
-    public void onMeasure(int widthSpec, int heightSpec) {
+    protected void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
         int barcodeSymbolCount = 2; // we'll at least have begin and end chars
         if (!TextUtils.isEmpty(text)) {
@@ -151,7 +151,7 @@ public class Numeric39Barcode extends View {
     }
 
     @Override
-    public void onDraw(Canvas canvas) {
+    protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
         int x = startingXPosition;

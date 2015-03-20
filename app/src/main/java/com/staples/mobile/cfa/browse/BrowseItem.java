@@ -11,8 +11,8 @@ public class BrowseItem {
         ITEM     (2, R.layout.browse_item),
         SELECTED (3, R.layout.browse_selected);
 
-        public int viewType;
-        public int layoutId;
+        public final int viewType;
+        public final int layoutId;
 
         Type(int viewType, int layoutId) {
             this.viewType = viewType;
