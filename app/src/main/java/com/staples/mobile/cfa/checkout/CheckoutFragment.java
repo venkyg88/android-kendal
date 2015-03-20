@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
-import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.util.CurrencyFormat;
@@ -197,7 +196,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
                     // analytics
                     Tracker.getInstance().trackStateForOrderConfirmation(orderNumber,
-                            CartApiManager.getCart(), Math.abs(couponsRewardsAmount), paymentMethod,
+                            CartApiManager.getCart(), couponsRewardsAmount, paymentMethod,
                             Tracker.ShipType.SHIPTOHOME);
 
                     // reset cart since empty after successful order submission
