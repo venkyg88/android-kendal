@@ -49,7 +49,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     private DataWrapper.State state;
     private BundleItem.SortType sortType;
     private String title;
-
     private Dialog panel;
 
     public void setArguments(String title, String identifier) {

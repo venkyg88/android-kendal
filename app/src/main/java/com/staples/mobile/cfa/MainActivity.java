@@ -602,7 +602,7 @@ public class MainActivity extends Activity
 
     public boolean selectSearch(String keyword) {
         SearchFragment fragment = new SearchFragment();
-        fragment.setArguments(keyword);
+        fragment.setArguments(keyword, keyword);
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 

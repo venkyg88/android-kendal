@@ -11,7 +11,9 @@ public class BundleItem {
     public enum SortType {
         ORIGINAL        (R.string.sort_best_match,       R.id.sort_best_match,       new BundleItem.Original()),
         PRICEASCENDING  (R.string.sort_price_ascending,  R.id.sort_price_ascending,  new BundleItem.PriceAscending()),
-        PRICEDESCENDING (R.string.sort_price_descending, R.id.sort_price_descending, new BundleItem.PriceDescending());
+        PRICEDESCENDING (R.string.sort_price_descending, R.id.sort_price_descending, new BundleItem.PriceDescending()),
+        TITLEASCENDING  (R.string.sort_title_ascending,  R.id.sort_title_ascending,  new BundleItem.TitleAscending()),
+        TITLEDESCENDING (R.string.sort_title_descending, R.id.sort_title_descending, new BundleItem.TitleDescending());
 
         public final int title;
         public final int button;
@@ -75,39 +77,72 @@ public class BundleItem {
 
     // Sorting comparators
 
+    private static int compareFloats(float x, float y) {
+        float s = x-y;
+        if (s<0) return(-1);
+        if (s>0) return(1);
+        return(0);
+    }
+
+    private static int compareStrings(String x, String y) {
+        if (x==null) {
+            if (y==null) return(0);
+            else return(1);
+        }
+        else {
+            if (y==null) return(-1);
+            else return(x.compareToIgnoreCase(y));
+        }
+    }
+
     public static class Original implements Comparator<BundleItem> {
         @Override
         public int compare(BundleItem x, BundleItem y) {
-            int s = x.index-y.index;
-            if (s<0) return(-1);
-            if (s>0) return(1);
-            return(0);
+            int s = compareFloats(x.index, y.index);
+            return(s);
         }
     }
 
     public static class PriceAscending implements Comparator<BundleItem> {
         @Override
         public int compare(BundleItem x, BundleItem y) {
-            float s1 = x.price-y.price;
-            if (s1 < 0f) return (-1);
-            if (s1 > 0f) return (1);
-            int s2 = x.index-y.index;
-            if (s2 < 0) return (-1);
-            if (s2 > 0) return (1);
-            return (0);
+            int s = compareFloats(x.price, y.price);
+            if (s==0) {
+                s = compareFloats(x.index, y.index);
+            }
+            return(s);
         }
     }
 
     public static class PriceDescending implements Comparator<BundleItem> {
         @Override
         public int compare(BundleItem x, BundleItem y) {
-            float s1 = y.price-x.price;
-            if (s1 < 0f) return (-1);
-            if (s1 > 0f) return (1);
-            int s2 = y.index-x.index;
-            if (s2 < 0) return (-1);
-            if (s2 > 0) return (1);
-            return (0);
+            int s = compareFloats(y.price, x.price);
+            if (s==0) {
+                s = compareFloats(y.index, x.index);
+            }
+            return(s);
+        }
+    }
+    public static class TitleAscending implements Comparator<BundleItem> {
+        @Override
+        public int compare(BundleItem x, BundleItem y) {
+            int s = compareStrings(x.title, y.title);
+            if (s==0) {
+                s = compareFloats(x.index, y.index);
+            }
+            return(s);
+        }
+    }
+
+    public static class TitleDescending implements Comparator<BundleItem> {
+        @Override
+        public int compare(BundleItem x, BundleItem y) {
+            int s = compareStrings(y.title, x.title);
+            if (s==0) {
+                s = compareFloats(y.index, x.index);
+            }
+            return(s);
         }
     }
 }
