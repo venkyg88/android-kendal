@@ -298,7 +298,7 @@
             <com.staples.mobile.cfa.widget.QuantityEditor
                 android:id="@+id/quantity"
                 style="@style/QtyEditorStyle"
-                android:layout_width="40dp"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:visibility="gone"
@@ -325,5 +325,5 @@
                 android:visibility="gone"
                 />
         </LinearLayout>
-        </LinearLayout>
+    </LinearLayout>
 </com.staples.mobile.cfa.widget.DataWrapper>

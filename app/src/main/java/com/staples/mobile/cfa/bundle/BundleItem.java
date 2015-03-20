@@ -10,6 +10,7 @@ import java.util.List;
 public class BundleItem {
     public enum SortType {
         ORIGINAL        (R.string.sort_best_match,       R.id.sort_best_match,       new BundleItem.Original()),
+        HIGHESTRATED    (R.string.sort_highest_rated,    R.id.sort_highest_rated,    new BundleItem.HighestRated()),
         PRICEASCENDING  (R.string.sort_price_ascending,  R.id.sort_price_ascending,  new BundleItem.PriceAscending()),
         PRICEDESCENDING (R.string.sort_price_descending, R.id.sort_price_descending, new BundleItem.PriceDescending()),
         TITLEASCENDING  (R.string.sort_title_ascending,  R.id.sort_title_ascending,  new BundleItem.TitleAscending()),
@@ -99,6 +100,20 @@ public class BundleItem {
         @Override
         public int compare(BundleItem x, BundleItem y) {
             int s = compareFloats(x.index, y.index);
+            return(s);
+        }
+    }
+
+    public static class HighestRated implements Comparator<BundleItem> {
+        @Override
+        public int compare(BundleItem x, BundleItem y) {
+            int s = compareFloats(y.customerRating, x.customerRating);
+            if (s==0) {
+                s = compareFloats(y.customerCount, x.customerCount);
+                if (s==0) {
+                    s = compareFloats(x.index, y.index);
+                }
+            }
             return(s);
         }
     }
