@@ -1,14 +1,20 @@
 package com.staples.mobile.cfa.search;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.apptentive.android.sdk.Apptentive;
@@ -34,9 +40,10 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SearchFragment extends Fragment implements Callback<SearchResult>, View.OnClickListener {
+public class SearchFragment extends Fragment implements Callback<SearchResult>, View.OnClickListener, RadioGroup.OnCheckedChangeListener {
     private static final String TAG = "SearchFragment";
 
+    private static final String TITLE = "title";
     private static final String KEYWORD = "keyword";
 
     private static final int MAXFETCH = 50;
@@ -44,9 +51,13 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
     private BundleAdapter adapter;
     private DataWrapper.State state;
+    private BundleItem.SortType sortType;
+    private String title;
+    private Dialog panel;
 
-    public void setArguments(String keyword) {
+    public void setArguments(String title, String keyword) {
         Bundle args = new Bundle();
+        args.putString(TITLE, title);
         args.putString(KEYWORD, keyword);
         setArguments(args);
     }
@@ -58,20 +69,25 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         String keyword = null;
         Bundle args = getArguments();
         if (args!=null) {
+            title = args.getString(TITLE);
             keyword = args.getString(KEYWORD);
         }
 
+        sortType = BundleItem.SortType.ORIGINAL;
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         easyOpenApi.searchResult(keyword, 1, MAXFETCH, SORT_BY_BEST_MATCH, null, this);
         state = DataWrapper.State.LOADING;
     }
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
         RecyclerView list = (RecyclerView) view.findViewById(R.id.products);
         list.setLayoutManager(new GridLayoutManager(getActivity(), 1));
         list.addItemDecoration(new HorizontalDivider(getActivity()));
+
+        view.findViewById(R.id.open_sort).setOnClickListener(this);
+
         applyState(view);
         return (view);
     }
@@ -90,7 +106,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
     @Override
     public void onResume() {
         super.onResume();
-        ActionBar.getInstance().setConfig(ActionBar.Config.SEARCH);
+        ActionBar.getInstance().setConfig(ActionBar.Config.SEARCH, title);
     }
 
     @Override
@@ -161,6 +177,40 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
                     Tracker.getInstance().trackActionForAddToCartFromSearchResults(item.identifier, item.price, 1);
                 }
                 break;
+            case R.id.open_sort:
+                showPanel();
+                break;
         }
+    }
+
+    public void onCheckedChanged(RadioGroup group, int id) {
+        BundleItem.SortType type = BundleItem.SortType.findSortTypeById(id);
+        if (type!=null) {
+            panel.dismiss();
+            sortType = type;
+            adapter.sort(sortType.comparator);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    private void showPanel() {
+        panel = new Dialog(getActivity());
+        Window window = panel.getWindow();
+        window.requestFeature(Window.FEATURE_NO_TITLE);
+        panel.setContentView(R.layout.sort_panel);
+
+        if (sortType!=null) {
+            ((RadioButton) panel.findViewById(sortType.button)).setChecked(true);
+        }
+        ((RadioGroup) panel.findViewById(R.id.sort_panel)).setOnCheckedChangeListener(this);
+
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.type = WindowManager.LayoutParams.TYPE_APPLICATION_PANEL;
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        params.x = 0;
+        params.gravity = Gravity.BOTTOM;
+        params.windowAnimations = R.style.PanelAnimation;
+        panel.show();
     }
 }

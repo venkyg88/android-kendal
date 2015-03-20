@@ -4,6 +4,7 @@
 -	ic_android			32	32	#A4C639	material/action/ic_android_48px
 -	ic_app				48	48	-	staples/app
 -	ic_arrow_back_black		32	32	#333333	material/navigation/ic_arrow_back_48px
+-	ic_arrow_drop_down		32	32	#333333	material/navigation/ic_arrow_drop_down_48px
 -	ic_browse_black			32	32	#333333 staples/shop_by_categories
 -	ic_check_white_18dp		18	18	#ffffff	material/navigation/ic_check_48px
 -	ic_check_white_24dp		24	24	#ffffff	material/navigation/ic_check_48px
