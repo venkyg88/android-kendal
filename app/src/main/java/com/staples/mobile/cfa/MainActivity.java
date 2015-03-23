@@ -483,9 +483,7 @@ public class MainActivity extends Activity
         // disable menu items as appropriate
         refreshMenuItemState(false);
 
-        if (activityInForeground) {
-            selectFragment(new ConfiguratorFragment(), Transition.NONE, true);
-        }
+        selectFragment(new ConfiguratorFragment(), Transition.NONE, true);
     }
 
     private void refreshMenuItemState(boolean registeredUser) {
@@ -533,14 +531,18 @@ public class MainActivity extends Activity
         drawerLayout.closeDrawers();
         ActionBar.getInstance().closeSearch();
 
-        // Swap Fragments
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        if (transition!=null) transition.setAnimation(transaction);
-        transaction.replace(R.id.content, fragment, tag);
-        if (push)
-            transaction.addToBackStack(fragment.getClass().getName());
-        transaction.commit();
+        if (activityInForeground) {
+
+            // Swap Fragments
+            FragmentManager manager = getFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            if (transition != null) transition.setAnimation(transaction);
+            transaction.replace(R.id.content, fragment, tag);
+            if (push)
+                transaction.addToBackStack(fragment.getClass().getName());
+            transaction.commit();
+        }
+
         return(true);
     }
 
