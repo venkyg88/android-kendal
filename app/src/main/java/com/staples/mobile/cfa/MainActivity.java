@@ -450,7 +450,7 @@ public class MainActivity extends Activity
             // because the configurator object is not yet available. Therefore, enable here.
             AdobeTracker.enableTracking(true);
 
-            // TODO: set zip code as it changes
+            // set default zip code for now, update it as it changes
             Tracker.getInstance().setZipCode("02139");
 
         } else { // can't get configurator from network or from persisted file
