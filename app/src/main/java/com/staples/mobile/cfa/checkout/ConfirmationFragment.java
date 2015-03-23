@@ -112,7 +112,6 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.CONFIRM);
-        Tracker.getInstance().trackStateForOrderConfirmation(orderNumber);
         Apptentive.engage(activity, ApptentiveSdk.ORDER_CONFIRMATION_SHOWN_EVENT);
     }
 
