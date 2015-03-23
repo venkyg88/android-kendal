@@ -483,7 +483,9 @@ public class MainActivity extends Activity
         // disable menu items as appropriate
         refreshMenuItemState(false);
 
-        selectFragment(new ConfiguratorFragment(), Transition.NONE, true);
+        if (activityInForeground) {
+            selectFragment(new ConfiguratorFragment(), Transition.NONE, true);
+        }
     }
 
     private void refreshMenuItemState(boolean registeredUser) {
