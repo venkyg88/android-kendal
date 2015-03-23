@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -20,7 +21,6 @@ import com.staples.mobile.cfa.widget.PriceSticker;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
@@ -37,12 +37,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     private Drawable noPhoto;
     String shippingEstimateLabel;
 
-
     // widget listeners
     private View.OnClickListener qtyDeleteButtonListener;
     private View.OnClickListener productImageListener;
     private QuantityEditor.OnQtyChangeListener qtyChangeListener;
-
 
     /** constructor */
     public CartAdapter(Context context,
@@ -58,7 +56,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.shippingEstimateLabel = context.getResources().getString(R.string.expected_delivery);
-
     }
 
     public void setItems(List<CartItemGroup> items) {
@@ -85,7 +82,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         // - replace the contents of the view with that element
 
         CartItemGroup cartItemGroup = getGroupItem(position);
-
 
         // set shipping estimate
         vh.shipEstimateTextView.setText(shippingEstimateLabel + " " + cartItemGroup.getExpectedDelivery());
@@ -125,6 +121,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             // TODO: include original price
             // set price
             ciVh.priceSticker.setPricing(cartItem.getFinalPrice(), cartItem.getPriceUnitOfMeasure());
+            ciVh.shippingLogicLayout.setVisibility(View.GONE);
 
             // associate position with each widget (position of card, and position within group)
             CartItemPosition pos = new CartItemPosition(position, i);
@@ -209,11 +206,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         View deleteButton;
 //        Button updateButton;
         View horizontalRule;
-
+        LinearLayout shippingLogicLayout;
 
         CartItemViewHolder(View convertView) {
             imageView = (ImageView) convertView.findViewById(R.id.cartitem_image);
             titleTextView = (TextView) convertView.findViewById(R.id.cartitem_title);
+            shippingLogicLayout = (LinearLayout) convertView.findViewById(R.id.shipping_logic_layout);
             priceSticker = (PriceSticker) convertView.findViewById(R.id.cartitem_price);
             qtyWidget = (QuantityEditor) convertView.findViewById(R.id.cartitem_qty);
             deleteButton = convertView.findViewById(R.id.cartitem_delete);
