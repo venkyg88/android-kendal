@@ -15,6 +15,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.staples.mobile.cfa.MainActivity;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.List;
 
@@ -89,6 +90,9 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
                     Log.d(TAG, msg);
                     Address address = addresses.get(0);
                     postalCode = address.getPostalCode();
+                    if (!TextUtils.isEmpty(postalCode)) {
+                        Tracker.getInstance().setZipCode(postalCode);
+                    }
                 }
             } catch(Exception e) {
                 Log.d(TAG, "Error by Geocoder: "+e.toString());
@@ -174,8 +178,10 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
             location.setLongitude(prefs.getFloat(PREFS_LONGITUDE, 0.0f));
             location.setTime(prefs.getLong(PREFS_TIMESTAMP, 0));
         }
-        if (prefs.contains(PREFS_POSTALCODE))
+        if (prefs.contains(PREFS_POSTALCODE)) {
             postalCode = prefs.getString(PREFS_POSTALCODE, null);
+            Tracker.getInstance().setZipCode(postalCode);
+        }
     }
 
     public void saveRecentLocation() {
