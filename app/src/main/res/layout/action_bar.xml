@@ -23,9 +23,12 @@
         style="@style/ActionBarIconStyle"
         android:layout_gravity="center_vertical|left"
         android:src="@drawable/ic_menu_black"/>
+    <!--a little padding on BadgeImageView allows better positioning of badge relative to cart-->
     <com.staples.mobile.cfa.widget.BadgeImageView
         android:id="@+id/action_show_cart"
         style="@style/ActionBarBadgeStyle"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
         android:layout_gravity="center_vertical|right"/>
     <Button
         android:id="@+id/checkout_login_button"
