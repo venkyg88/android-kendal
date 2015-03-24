@@ -17,6 +17,9 @@ android {
     }
 
     productFlavors {
+        qa {
+            versionName "Kendall-qa"
+        }
         dev {
             versionName "Kendall-dev"
         }
