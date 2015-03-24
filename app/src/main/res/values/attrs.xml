@@ -4,6 +4,7 @@
         <attr name="android:text"/>
         <attr name="android:textSize"/>
         <attr name="android:textColor"/>
+        <attr name="circleColor" format="color"/>
     </declare-styleable>
     <declare-styleable name="QuantityEditor">
         <attr name="minQuantity" format="integer"/>

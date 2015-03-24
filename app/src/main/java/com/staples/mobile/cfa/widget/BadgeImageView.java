@@ -8,8 +8,12 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
@@ -23,6 +27,7 @@ import com.staples.mobile.cfa.R;
  */
 public class BadgeImageView extends ImageView {
     private Paint textPaint;
+    private Paint circlePaint;
     private String text;
 //    private int textLeftOffset;
 //    private int textBottomOffset;
@@ -44,7 +49,12 @@ public class BadgeImageView extends ImageView {
         textPaint.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTextSize(16);
-        textPaint.setColor(Color.YELLOW);
+        textPaint.setColor(Color.RED);
+
+        circlePaint = new Paint();
+        circlePaint.setStyle(Paint.Style.FILL);
+        circlePaint.setColor(Color.WHITE);
+
 
         // get params specified in layout
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BadgeImageView);
@@ -58,6 +68,9 @@ public class BadgeImageView extends ImageView {
         // retrieve text color and apply it
         textPaint.setColor(a.getColor(R.styleable.BadgeImageView_android_textColor,
                 textPaint.getColor()));
+
+        // retrieve circle color and apply it
+        circlePaint.setColor(a.getColor(R.styleable.BadgeImageView_circleColor, circlePaint.getColor()));
 
         // retrieve text size and apply it
         int textSize = a.getDimensionPixelOffset(R.styleable.BadgeImageView_android_textSize, 0);
@@ -74,10 +87,26 @@ public class BadgeImageView extends ImageView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (text != null) {
-            int adjustUpward = 8;
-            canvas.drawText(text, (getWidth() - getPaddingRight()) / 2 + getPaddingLeft() / 2,
-                    (getHeight() - textPaint.ascent() - getPaddingBottom()) / 2 + getPaddingTop() / 2 - adjustUpward, textPaint);
+        if (!TextUtils.isEmpty(text)) {
+
+            // using circle
+//            float textHeight = textPaint.getFontSpacing();  // textPaint.getFontSpacing(), -textPaint.ascent()
+//            float textWidth = textPaint.measureText(text);
+//            float radius = Math.max(textWidth, textHeight) * 0.7f; // set radius to 70% of text size
+//            float x = getWidth() - radius;
+//            float y = radius;
+//            canvas.drawCircle(x, y, radius, circlePaint);
+//            canvas.drawText(text, x, y - textPaint.ascent()/2 - 1, textPaint);
+
+            // using oval
+            float ovalHeight = textPaint.getFontSpacing() * 1.2f; // textPaint.getFontSpacing() , textPaint.ascent() * -1.2f
+            float ovalWidth = textPaint.measureText(text) * 1.4f;
+            ovalWidth = Math.max(ovalWidth, ovalHeight); // make width at least as much as height
+            float x = getWidth() - ovalWidth / 2;
+            float y = ovalHeight / 2;
+            RectF rectF = new RectF(getWidth() - ovalWidth, 0f, (float) getWidth(), ovalHeight); //RectF(float left, float top, float right, float bottom)
+            canvas.drawOval(rectF, circlePaint);
+            canvas.drawText(text, x, y - textPaint.ascent()/2 - 1, textPaint);
         }
     }
 
