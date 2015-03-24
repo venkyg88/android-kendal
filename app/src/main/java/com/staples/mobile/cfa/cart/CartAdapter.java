@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -121,7 +120,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             // TODO: include original price
             // set price
             ciVh.priceSticker.setPricing(cartItem.getFinalPrice(), cartItem.getPriceUnitOfMeasure());
-            ciVh.shippingLogicLayout.setVisibility(View.GONE);
 
             // associate position with each widget (position of card, and position within group)
             CartItemPosition pos = new CartItemPosition(position, i);
@@ -148,6 +146,20 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
             // set visibility of horizontal rule
             ciVh.horizontalRule.setVisibility((i < groupSize-1)? View.VISIBLE : View.GONE);
+
+            boolean isHeavyWeightSKU = cartItem.isHeavyWeightSKU();
+            if (isHeavyWeightSKU) {
+                ciVh.overweightWarning.setVisibility(View.VISIBLE);
+            } else {
+                ciVh.overweightWarning.setVisibility(View.GONE);
+            }
+
+            boolean isAddOnSKU = cartItem.isAddOnSKU();
+            if (isAddOnSKU) {
+                ciVh.addOnWarning.setVisibility(View.VISIBLE);
+            } else {
+                ciVh.addOnWarning.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -206,12 +218,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         View deleteButton;
 //        Button updateButton;
         View horizontalRule;
-        LinearLayout shippingLogicLayout;
+        TextView overweightWarning;
+        TextView addOnWarning;
 
         CartItemViewHolder(View convertView) {
             imageView = (ImageView) convertView.findViewById(R.id.cartitem_image);
             titleTextView = (TextView) convertView.findViewById(R.id.cartitem_title);
-            shippingLogicLayout = (LinearLayout) convertView.findViewById(R.id.shipping_logic_layout);
+            overweightWarning = (TextView) convertView.findViewById(R.id.overweight_warning);
+            addOnWarning = (TextView) convertView.findViewById(R.id.add_on_warning);
             priceSticker = (PriceSticker) convertView.findViewById(R.id.cartitem_price);
             qtyWidget = (QuantityEditor) convertView.findViewById(R.id.cartitem_qty);
             deleteButton = convertView.findViewById(R.id.cartitem_delete);
