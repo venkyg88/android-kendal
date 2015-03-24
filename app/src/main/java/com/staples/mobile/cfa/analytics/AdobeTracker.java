@@ -22,7 +22,7 @@ public class AdobeTracker implements Tracker.AnalyticsService {
     public AdobeTracker(Context context, boolean enableDebugLogging) {
         Config.setContext(context);
         Config.setDebugLogging(enableDebugLogging);
-        Tracker.getInstance(Tracker.AppType.CFA, this);
+        Tracker.getInstance().initialize(Tracker.AppType.CFA, this);
     }
 
     /** enable or disable tracking of data, after initialization via constructor */
