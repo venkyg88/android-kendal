@@ -58,6 +58,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
     private TextView cartSubtotal;
     private TextView cartFreeShippingMsg;
+    private TextView oversizedShipping;
     private TextView cartShipping;
     private TextView couponsRewardsValue;
     private RecyclerView couponListVw;
@@ -107,6 +108,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         couponsRewardsValue = (TextView) view.findViewById(R.id.coupons_rewards_value);
         couponList = view.findViewById(R.id.coupon_list);
         linkRewardsAcctLayout = view.findViewById(R.id.link_rewards_acct_layout);
+        oversizedShipping = (TextView) view.findViewById(R.id.oversized_shipping);
         cartShipping = (TextView) view.findViewById(R.id.cart_shipping);
         cartSubtotal = (TextView) view.findViewById(R.id.cart_subtotal);
         cartShippingLayout = view.findViewById(R.id.cart_shipping_layout);
@@ -232,10 +234,12 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         float subtotal = 0;
         float preTaxSubtotal = 0;
         float freeShippingThreshold = 0;
+        float totalHandlingCost = 0;
         Cart cart = CartApiManager.getCart();
         if (cart != null) {
             totalItemCount = cart.getTotalItems();
             couponsRewardsAmount = getCouponsRewardsAdjustedAmount();
+            totalHandlingCost = cart.getTotalHandlingCost();
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();
             preTaxSubtotal = cart.getPreTaxTotal();
@@ -288,6 +292,9 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
             // set text of coupons, shipping, and subtotal
             couponsRewardsValue.setText(currencyFormat.format(couponsRewardsAmount));
+            String totalHandlingCostStr = Float.toString(totalHandlingCost);
+            oversizedShipping.setText(CheckoutFragment.formatShippingCharge(totalHandlingCostStr, currencyFormat));
+            oversizedShipping.setTextColor(blackText);
             cartShipping.setText(CheckoutFragment.formatShippingCharge(shipping, currencyFormat));
             cartShipping.setTextColor("Free".equals(shipping) ? greenText : blackText);
             cartSubtotal.setText(currencyFormat.format(preTaxSubtotal));

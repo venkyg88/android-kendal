@@ -15,12 +15,14 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.PriceSticker;
+import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
@@ -37,12 +39,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     private Drawable noPhoto;
     String shippingEstimateLabel;
 
-
     // widget listeners
     private View.OnClickListener qtyDeleteButtonListener;
     private View.OnClickListener productImageListener;
     private QuantityEditor.OnQtyChangeListener qtyChangeListener;
-
 
     /** constructor */
     public CartAdapter(Context context,
@@ -58,7 +58,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.shippingEstimateLabel = context.getResources().getString(R.string.expected_delivery);
-
     }
 
     public void setItems(List<CartItemGroup> items) {
@@ -85,7 +84,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         // - replace the contents of the view with that element
 
         CartItemGroup cartItemGroup = getGroupItem(position);
-
+        Cart cart = CartApiManager.getCart();
 
         // set shipping estimate
         vh.shipEstimateTextView.setText(shippingEstimateLabel + " " + cartItemGroup.getExpectedDelivery());
@@ -104,6 +103,13 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                 vh.cartItemListLayout.addView(v);
             }
         }
+
+        DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
+        float amountToReachToCheckoutAddOnItems = cart.getAmountToReachToCheckoutAddOnItems();
+        String amountToReachToCheckoutAddOnItemsStr = currencyFormat.format(amountToReachToCheckoutAddOnItems);
+
+        String minimum = context.getResources().getString(R.string.minimum_all_caps);
+        String addOnMinimum = amountToReachToCheckoutAddOnItemsStr + " " + minimum;
 
         // for each cart item
         for (int i = 0; i < groupSize; i++) {
@@ -151,6 +157,21 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
             // set visibility of horizontal rule
             ciVh.horizontalRule.setVisibility((i < groupSize-1)? View.VISIBLE : View.GONE);
+
+            boolean isHeavyWeightSKU = cartItem.isHeavyWeightSKU();
+            if (isHeavyWeightSKU) {
+                ciVh.overweightWarning.setVisibility(View.VISIBLE);
+            } else {
+                ciVh.overweightWarning.setVisibility(View.GONE);
+            }
+
+            boolean isAddOnSKU = cartItem.isAddOnSKU();
+            if (isAddOnSKU) {
+                ciVh.addOnWarning.setText(addOnMinimum);
+                ciVh.addOnWarning.setVisibility(View.VISIBLE);
+            } else {
+                ciVh.addOnWarning.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -209,11 +230,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         View deleteButton;
 //        Button updateButton;
         View horizontalRule;
-
+        TextView overweightWarning;
+        TextView addOnWarning;
 
         CartItemViewHolder(View convertView) {
             imageView = (ImageView) convertView.findViewById(R.id.cartitem_image);
             titleTextView = (TextView) convertView.findViewById(R.id.cartitem_title);
+            overweightWarning = (TextView) convertView.findViewById(R.id.overweight_warning);
+            addOnWarning = (TextView) convertView.findViewById(R.id.add_on_warning);
             priceSticker = (PriceSticker) convertView.findViewById(R.id.cartitem_price);
             qtyWidget = (QuantityEditor) convertView.findViewById(R.id.cartitem_qty);
             deleteButton = convertView.findViewById(R.id.cartitem_delete);
