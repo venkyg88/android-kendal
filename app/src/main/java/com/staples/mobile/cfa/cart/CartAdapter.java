@@ -15,9 +15,12 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.PriceSticker;
+import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,6 +84,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         // - replace the contents of the view with that element
 
         CartItemGroup cartItemGroup = getGroupItem(position);
+        Cart cart = CartApiManager.getCart();
 
         // set shipping estimate
         vh.shipEstimateTextView.setText(shippingEstimateLabel + " " + cartItemGroup.getExpectedDelivery());
@@ -99,6 +103,13 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                 vh.cartItemListLayout.addView(v);
             }
         }
+
+        DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
+        float amountToReachToCheckoutAddOnItems = cart.getAmountToReachToCheckoutAddOnItems();
+        String amountToReachToCheckoutAddOnItemsStr = currencyFormat.format(amountToReachToCheckoutAddOnItems);
+
+        String minimum = context.getResources().getString(R.string.minimum_all_caps);
+        String addOnMinimum = amountToReachToCheckoutAddOnItemsStr + " " + minimum;
 
         // for each cart item
         for (int i = 0; i < groupSize; i++) {
@@ -156,6 +167,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
             boolean isAddOnSKU = cartItem.isAddOnSKU();
             if (isAddOnSKU) {
+                ciVh.addOnWarning.setText(addOnMinimum);
                 ciVh.addOnWarning.setVisibility(View.VISIBLE);
             } else {
                 ciVh.addOnWarning.setVisibility(View.GONE);

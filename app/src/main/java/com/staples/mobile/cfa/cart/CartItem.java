@@ -158,19 +158,13 @@ public class CartItem {
 
     public boolean isHeavyWeightSKU() {
         String isHeavyWeightSKUStr = product.getIsHeavyWeightSKU();
-        /* @@@ STUBBED
         boolean isHeavyWeightSKUBool = isHeavyWeightSKUStr.equalsIgnoreCase("Y");
-        @@@ STUBBED */
-        boolean isHeavyWeightSKUBool = true;
         return isHeavyWeightSKUBool;
     }
 
     public boolean isAddOnSKU() {
         String isAddOnSKUStr = product.getIsAddOnSKU();
-        /* @@@ STUBBED
         boolean isAddOnSKUBool = isAddOnSKUStr.equalsIgnoreCase("Y");
-        @@@ STUBBED */
-        boolean isAddOnSKUBool = true;
         return isAddOnSKUBool;
     }
 }
