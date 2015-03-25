@@ -227,10 +227,12 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         float subtotal = 0;
         float preTaxSubtotal = 0;
         float freeShippingThreshold = 0;
+        float totalHandlingCost = 0;
         Cart cart = CartApiManager.getCart();
         if (cart != null) {
             totalItemCount = cart.getTotalItems();
             couponsRewardsAmount = getCouponsRewardsAdjustedAmount();
+            totalHandlingCost = cart.getTotalHandlingCost();
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();
             preTaxSubtotal = cart.getPreTaxTotal();
@@ -283,8 +285,9 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
             // set text of coupons, shipping, and subtotal
             couponsRewardsValue.setText(currencyFormat.format(couponsRewardsAmount));
-            oversizedShipping.setText(CheckoutFragment.formatShippingCharge(shipping, currencyFormat));
-            oversizedShipping.setTextColor("Free".equals(shipping) ? greenText : blackText);
+            String totalHandlingCostStr = Float.toString(totalHandlingCost);
+            oversizedShipping.setText(CheckoutFragment.formatShippingCharge(totalHandlingCostStr, currencyFormat));
+            oversizedShipping.setTextColor(blackText);
             cartShipping.setText(CheckoutFragment.formatShippingCharge(shipping, currencyFormat));
             cartShipping.setTextColor("Free".equals(shipping) ? greenText : blackText);
             cartSubtotal.setText(currencyFormat.format(preTaxSubtotal));
