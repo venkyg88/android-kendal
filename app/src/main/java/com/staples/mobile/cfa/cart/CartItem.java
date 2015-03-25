@@ -155,4 +155,16 @@ public class CartItem {
     public int getMaxExpectedBusinessDays() {
         return maxExpectedBusinessDays;
     }
+
+    public boolean isHeavyWeightSKU() {
+        String isHeavyWeightSKUStr = product.getIsHeavyWeightSKU();
+        boolean isHeavyWeightSKUBool = isHeavyWeightSKUStr.equalsIgnoreCase("Y");
+        return isHeavyWeightSKUBool;
+    }
+
+    public boolean isAddOnSKU() {
+        String isAddOnSKUStr = product.getIsAddOnSKU();
+        boolean isAddOnSKUBool = isAddOnSKUStr.equalsIgnoreCase("Y");
+        return isAddOnSKUBool;
+    }
 }
