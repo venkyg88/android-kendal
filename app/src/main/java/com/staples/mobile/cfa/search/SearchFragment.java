@@ -21,6 +21,9 @@ import com.apptentive.android.sdk.Apptentive;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.common.access.config.StaplesAppContext;
+import com.staples.mobile.common.access.configurator.model.Api;
+import com.staples.mobile.common.access.easyopen2.api.EasyOpenApi2;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.bundle.BundleAdapter;
@@ -74,8 +77,20 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         }
 
         sortType = BundleItem.SortType.ORIGINAL;
-        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.searchResult(keyword, 1, MAXFETCH, SORT_BY_BEST_MATCH, null, this);
+
+        EasyOpenApi2 easyOpenApi2 = Access.getInstance().getEasyOpenApi2(false);
+        Api easy2API = StaplesAppContext.getInstance().getApiByName(StaplesAppContext.EASYOPEN2);
+        String version = easy2API.getVersion();
+        String server = easy2API.getUrl();
+        // when tapi is available
+        if(server.equals("tapi.staples.com")){
+            easyOpenApi2.searchResult(version, keyword, 1, MAXFETCH, SORT_BY_BEST_MATCH, null, this);
+        }
+        else{
+            EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+            easyOpenApi.searchResult(keyword, 1, MAXFETCH, SORT_BY_BEST_MATCH, null, this);
+        }
+
         state = DataWrapper.State.LOADING;
     }
 
