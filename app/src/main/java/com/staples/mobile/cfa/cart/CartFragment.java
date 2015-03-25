@@ -589,8 +589,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    LinearLayout.LayoutParams origLayoutParams = (LinearLayout.LayoutParams) couponListVw.getLayoutParams();
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(origLayoutParams.width, origLayoutParams.height);
+                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) couponListVw.getLayoutParams();
                     layoutParams.weight = (float) animation.getAnimatedValue();
                     couponListVw.setLayoutParams(layoutParams);
                 }
