@@ -1,27 +1,32 @@
 package com.staples.mobile.cfa.search;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
+import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.apptentive.android.sdk.Apptentive;
-
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.bundle.BundleAdapter;
 import com.staples.mobile.cfa.bundle.BundleItem;
@@ -33,27 +38,31 @@ import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.Search;
 import com.staples.mobile.common.access.easyopen.model.browse.SearchResult;
+import com.staples.mobile.common.analytics.Tracker;
 
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SearchFragment extends Fragment implements Callback<SearchResult>, View.OnClickListener, RadioGroup.OnCheckedChangeListener {
+public class SearchFragment extends Fragment implements Callback<SearchResult>, View.OnClickListener, RadioGroup.OnCheckedChangeListener, Animation.AnimationListener {
     private static final String TAG = "SearchFragment";
 
     private static final String TITLE = "title";
     private static final String KEYWORD = "keyword";
 
     private static final int MAXFETCH = 50;
-    private static final int SORT_BY_BEST_MATCH = 0;
 
     private BundleAdapter adapter;
     private DataWrapper.State state;
-    private BundleItem.SortType sortType;
+    private BundleItem.SortType fetchSort;
+    private BundleItem.SortType displaySort;
     private String title;
     private Dialog panel;
+    private Animation slideUp;
+    private Animation slideDown;
 
     public void setArguments(String title, String keyword) {
         Bundle args = new Bundle();
@@ -73,18 +82,24 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
             keyword = args.getString(KEYWORD);
         }
 
-        sortType = BundleItem.SortType.ORIGINAL;
+        fetchSort = BundleItem.SortType.BESTMATCH;
+        displaySort = BundleItem.SortType.BESTMATCH;
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.searchResult(keyword, 1, MAXFETCH, SORT_BY_BEST_MATCH, null, this);
+        easyOpenApi.searchResult(keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
         state = DataWrapper.State.LOADING;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Activity activity = getActivity();
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
         RecyclerView list = (RecyclerView) view.findViewById(R.id.products);
         list.setLayoutManager(new GridLayoutManager(getActivity(), 1));
         list.addItemDecoration(new HorizontalDivider(getActivity()));
+
+        slideUp = AnimationUtils.loadAnimation(activity, R.anim.bottomsheet_slide_up);
+        slideDown = AnimationUtils.loadAnimation(activity, R.anim.bottomsheet_delay_down);
+        slideDown.setAnimationListener(this);
 
         view.findViewById(R.id.open_sort).setOnClickListener(this);
 
@@ -155,6 +170,20 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         return(adapter.getItemCount());
     }
 
+    private void sortLocally() {
+        Comparator<BundleItem> comparator;
+        if (displaySort==fetchSort) {
+            comparator = BundleItem.indexComparator;
+        } else {
+            comparator = displaySort.comparator;
+            if (comparator==null) {
+                // TODO Best match wanted, but fetch was not originally by best match
+                return;
+            }
+        }
+        adapter.sort(comparator);
+    }
+
     @Override
     public void onClick(View view) {
         Object tag;
@@ -183,34 +212,69 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         }
     }
 
+    @Override
+    public void onAnimationStart(Animation animation) {}
+
+    @Override
+    public void onAnimationEnd(Animation animation) {
+        if (panel!=null) panel.dismiss();
+    }
+
+    @Override
+    public void onAnimationRepeat(Animation animation) {}
+
     public void onCheckedChanged(RadioGroup group, int id) {
-        BundleItem.SortType type = BundleItem.SortType.findSortTypeById(id);
-        if (type!=null) {
-            panel.dismiss();
-            sortType = type;
-            adapter.sort(sortType.comparator);
+        BundleItem.SortType sortType = BundleItem.SortType.findSortTypeById(id);
+        if (sortType!=null && sortType!=displaySort) {
+            displaySort = sortType;
+            sortLocally();
             adapter.notifyDataSetChanged();
+
+            RadioGroup options = (RadioGroup) panel.findViewById(R.id.sort_options);
+            options.startAnimation(slideDown);
         }
     }
 
+    @SuppressLint("NewApi")
+    private int getSoftButtonBarHeight() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            Activity activity = getActivity();
+            if (activity!=null) {
+                Display display = activity.getWindowManager().getDefaultDisplay();
+                Point point = new Point();
+                display.getSize(point);
+                int usableHeight = point.y;
+                display.getRealSize(point);
+                int realHeight = point.y;
+                if (realHeight > usableHeight)
+                    return realHeight - usableHeight;
+            }
+        }
+        return 0;
+    }
+
     private void showPanel() {
-        panel = new Dialog(getActivity());
-        Window window = panel.getWindow();
-        window.requestFeature(Window.FEATURE_NO_TITLE);
+        panel = new Dialog(getActivity(), R.style.PanelStyle);
         panel.setContentView(R.layout.sort_panel);
 
-        if (sortType!=null) {
-            ((RadioButton) panel.findViewById(sortType.button)).setChecked(true);
-        }
-        ((RadioGroup) panel.findViewById(R.id.sort_panel)).setOnCheckedChangeListener(this);
-
+        Window window = panel.getWindow();
+        window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         WindowManager.LayoutParams params = window.getAttributes();
+        params.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND|WindowManager.LayoutParams.FLAG_SPLIT_TOUCH|WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN|WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR;
+        params.dimAmount = 0.3f;
         params.type = WindowManager.LayoutParams.TYPE_APPLICATION_PANEL;
         params.width = ViewGroup.LayoutParams.MATCH_PARENT;
         params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        params.x = 0;
         params.gravity = Gravity.BOTTOM;
-        params.windowAnimations = R.style.PanelAnimation;
+        params.y = getSoftButtonBarHeight();
+
+        if (displaySort !=null) {
+            ((RadioButton) panel.findViewById(displaySort.button)).setChecked(true);
+        }
+
+        RadioGroup options = (RadioGroup) panel.findViewById(R.id.sort_options);
+        options.setOnCheckedChangeListener(this);
+        options.startAnimation(slideUp);
         panel.show();
     }
 }

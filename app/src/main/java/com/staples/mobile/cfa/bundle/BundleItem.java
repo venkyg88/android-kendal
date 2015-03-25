@@ -9,21 +9,25 @@ import java.util.List;
 
 public class BundleItem {
     public enum SortType {
-        ORIGINAL        (R.string.sort_best_match,       R.id.sort_best_match,       new BundleItem.Original()),
-        HIGHESTRATED    (R.string.sort_highest_rated,    R.id.sort_highest_rated,    new BundleItem.HighestRated()),
-        PRICEASCENDING  (R.string.sort_price_ascending,  R.id.sort_price_ascending,  new BundleItem.PriceAscending()),
-        PRICEDESCENDING (R.string.sort_price_descending, R.id.sort_price_descending, new BundleItem.PriceDescending()),
-        TITLEASCENDING  (R.string.sort_title_ascending,  R.id.sort_title_ascending,  new BundleItem.TitleAscending()),
-        TITLEDESCENDING (R.string.sort_title_descending, R.id.sort_title_descending, new BundleItem.TitleDescending());
+        BESTMATCH       (R.string.sort_best_match,       R.id.sort_best_match,       null,                             null, null),
+        HIGHESTRATED    (R.string.sort_highest_rated,    R.id.sort_highest_rated,    new BundleItem.HighestRated(),    5,    "ratingDesc"),
+        PRICEASCENDING  (R.string.sort_price_ascending,  R.id.sort_price_ascending,  new BundleItem.PriceAscending(),  1,    "priceAsc"),
+        PRICEDESCENDING (R.string.sort_price_descending, R.id.sort_price_descending, new BundleItem.PriceDescending(), 2,    "priceDesc"),
+        TITLEASCENDING  (R.string.sort_title_ascending,  R.id.sort_title_ascending,  new BundleItem.TitleAscending(),  3,    "nameAsc"),
+        TITLEDESCENDING (R.string.sort_title_descending, R.id.sort_title_descending, new BundleItem.TitleDescending(), 4,    "nameDesc");
 
         public final int title;
         public final int button;
         public final Comparator<BundleItem> comparator;
+        public final Integer intParam;
+        public final String stringParam;
 
-        SortType(int title, int button, Comparator<BundleItem> comparator) {
+        SortType(int title, int button, Comparator<BundleItem> comparator, Integer intParam, String stringParam) {
             this.title = title;
             this.button = button;
             this.comparator = comparator;
+            this.intParam = intParam;
+            this.stringParam = stringParam;
         }
 
         public static SortType findSortTypeById(int id) {
@@ -33,6 +37,7 @@ public class BundleItem {
             return(null);
         }
     }
+    public static Comparator<BundleItem> indexComparator = new IndexSort();
 
     public int index;
     public String title;
@@ -96,7 +101,7 @@ public class BundleItem {
         }
     }
 
-    public static class Original implements Comparator<BundleItem> {
+    public static class IndexSort implements Comparator<BundleItem> {
         @Override
         public int compare(BundleItem x, BundleItem y) {
             int s = compareFloats(x.index, y.index);
