@@ -43,6 +43,8 @@ public class BundleItem {
     public String unit;
     public float customerRating;
     public int customerCount;
+    public boolean isAddOnItem;
+    public boolean isOverSized;
 
     public BundleItem(int index, String title, String identifier) {
         this.index = index;
