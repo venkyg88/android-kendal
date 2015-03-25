@@ -34,10 +34,13 @@ import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
 import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.config.StaplesAppContext;
+import com.staples.mobile.common.access.configurator.model.Api;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.Search;
 import com.staples.mobile.common.access.easyopen.model.browse.SearchResult;
+import com.staples.mobile.common.access.easyopen2.api.EasyOpenApi2;
 import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.Comparator;
@@ -84,8 +87,20 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
         fetchSort = BundleItem.SortType.BESTMATCH;
         displaySort = BundleItem.SortType.BESTMATCH;
-        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.searchResult(keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
+
+        EasyOpenApi2 easyOpenApi2 = Access.getInstance().getEasyOpenApi2(false);
+        Api easy2API = StaplesAppContext.getInstance().getApiByName(StaplesAppContext.EASYOPEN2);
+        String version = easy2API.getVersion();
+        String server = easy2API.getUrl();
+        // when tapi is available
+        if(server.equals("tapi.staples.com")){
+            easyOpenApi2.searchResult(version, keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
+        }
+        else{
+            EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+            easyOpenApi.searchResult(keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
+        }
+
         state = DataWrapper.State.LOADING;
     }
 
