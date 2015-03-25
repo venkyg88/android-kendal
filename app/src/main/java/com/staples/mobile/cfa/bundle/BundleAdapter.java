@@ -1,14 +1,15 @@
 package com.staples.mobile.cfa.bundle;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -33,6 +34,8 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         private RatingStars ratingStars;
         private PriceSticker priceSticker;
         private ImageView action;
+        private LinearLayout overweightLayout;
+        private LinearLayout addonLayout;
 
         private ViewHolder(View view) {
             super(view);
@@ -41,6 +44,8 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             ratingStars = (RatingStars) view.findViewById(R.id.rating);
             priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
             action = (ImageView) view.findViewById(R.id.bundle_action);
+            overweightLayout = (LinearLayout) view.findViewById(R.id.overweight_layout);
+            addonLayout = (LinearLayout) view.findViewById(R.id.add_on_layout);
         }
     }
 
@@ -104,6 +109,22 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         vh.priceSticker.setPricing(item.price, item.unit);
         if (item.type==IdentifierType.SKUSET) vh.action.setImageResource(R.drawable.sku_set);
         else vh.action.setImageResource(R.drawable.ic_add_shopping_cart_black);
+
+        // check if the product is an add-on product
+        if(item.isAddOnItem){
+            vh.addonLayout.setVisibility(View.VISIBLE);
+        }
+        else{
+            vh.addonLayout.setVisibility(View.GONE);
+        }
+
+        // check if the product is an overweight product, example sku:650465
+        if(item.isOverSized){
+            vh.overweightLayout.setVisibility(View.VISIBLE);
+        }
+        else{
+            vh.overweightLayout.setVisibility(View.GONE);
+        }
     }
 
     public void fill(List<Product> products) {
@@ -115,6 +136,27 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             item.setPrice(product.getPricing());
             item.customerRating = product.getCustomerReviewRating();
             item.customerCount = product.getCustomerReviewCount();
+
+            // check if the product is an add-on product
+            String isAddOn = product.getPricing().get(0).getAddOnItem();
+            if(isAddOn != null){
+                item.isAddOnItem = true;
+            }
+            else{
+                item.isAddOnItem = false;
+            }
+
+            // check if the product is an overweight product, example sku:650465
+            String isOverSized = product.getPricing().get(0).getOverSizeItem();
+            if(isOverSized != null){
+                item.isOverSized = true;
+
+                Log.d(TAG, "isOverSized:" + product.getPricing().get(0).getOverSizeItem());
+            }
+            else{
+                item.isOverSized = false;
+            }
+
             array.add(item);
         }
     }
