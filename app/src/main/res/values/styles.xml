@@ -48,13 +48,14 @@
         <item name="android:visibility">gone</item>
     </style>
 
-    <style name="PanelAnimation">
-        <item name="android:windowEnterAnimation">@anim/bottomsheet_slide_up</item>
-        <item name="android:windowExitAnimation">@anim/bottomsheet_slide_down</item>
+    <style name="PanelStyle">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
     </style>
     <style name="SortOptionStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">6dp</item>
         <item name="android:lines">1</item>
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/text_white</item>
