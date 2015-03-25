@@ -4,17 +4,20 @@
 
 package com.staples.mobile.cfa.cart;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.app.Fragment;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
@@ -38,7 +41,6 @@ import com.staples.mobile.common.access.easyopen.model.member.Reward;
 import com.staples.mobile.common.access.config.AppConfigurator;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -89,6 +91,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private ProductImageListener productImageListener;
     //private QtyUpdateButtonListener qtyUpdateButtonListener;
 
+    CouponWeightAnimator couponUpAnimator;
+    CouponWeightAnimator couponDownAnimator;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -129,6 +133,9 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         couponListVw.setAdapter(couponAdapter);
         couponListVw.setLayoutManager(new LinearLayoutManager(activity));
 
+        // set up coupons & rewards panel animation
+        couponUpAnimator = new CouponWeightAnimator(true);
+        couponDownAnimator = new CouponWeightAnimator(false);
 
         // Initialize cart listview
         cartAdapter = new CartAdapter(activity, R.layout.cart_item_group, qtyChangeListener,
@@ -358,19 +365,11 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         activity.hideSoftKeyboard(view);
         switch(view.getId()) {
             case R.id.coupons_rewards_layout:
-                if (couponList.getVisibility() != View.VISIBLE) {
-                    cartListVw.setVisibility(View.GONE);
-                    couponList.setVisibility(View.VISIBLE);
-                    // if logged in and not a rewards member, display link rewards layout
-                    if (Access.getInstance().isLoggedIn() && !Access.getInstance().isGuestLogin() &&
-                            ProfileDetails.getMember() != null && !ProfileDetails.isRewardsMember()) {
-                        linkRewardsAcctLayout.setVisibility(View.VISIBLE);
-                    }
+                if (((LinearLayout.LayoutParams)couponListVw.getLayoutParams()).weight == 0) {
+                    couponUpAnimator.start();
                     Tracker.getInstance().trackStateForCartCoupons(); // analytics
                 } else {
-                    cartListVw.setVisibility(View.VISIBLE);
-                    couponList.setVisibility(View.GONE);
-                    linkRewardsAcctLayout.setVisibility(View.GONE);
+                    couponDownAnimator.start();
                 }
                 break;
             case R.id.coupon_add_button:
@@ -564,6 +563,66 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         cartItemGroups = itemGroups;
         setAdapterListItems();
     }
+
+
+    class CouponWeightAnimator {
+        ValueAnimator valueAnimator;
+        float maxWeight = 999;
+
+        public CouponWeightAnimator(final boolean up) {
+            valueAnimator = ValueAnimator.ofFloat(0, maxWeight);
+            valueAnimator.setDuration(500);
+            valueAnimator.setInterpolator(new DecelerateInterpolator() {
+                @Override
+                public float getInterpolation(float input) {
+                    input = super.getInterpolation(input);
+                    // need a weight ratio that corresponds to the animation fraction
+                    // The cart item list has weight=1 so, input = w/(w+1), so w = (input/(1-input))
+                    if (!up) { input = 1 - input; } // if going down reverse it
+                    float weightRatio = 1;
+                    if (input < 1) {
+                        weightRatio = (input / (1 - input)) / maxWeight;
+                    }
+                    return weightRatio;
+                }
+            });
+            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    LinearLayout.LayoutParams origLayoutParams = (LinearLayout.LayoutParams) couponListVw.getLayoutParams();
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(origLayoutParams.width, origLayoutParams.height);
+                    layoutParams.weight = (float) animation.getAnimatedValue();
+                    couponListVw.setLayoutParams(layoutParams);
+                }
+            });
+            valueAnimator.addListener(new Animator.AnimatorListener() {
+                @Override public void onAnimationStart(Animator animation) {
+                    // if starting to animate down, set cart items to visible and hide rewards account
+                    if (!up) {
+                        linkRewardsAcctLayout.setVisibility(View.GONE);
+                    }
+                }
+                @Override public void onAnimationEnd(Animator animation) {
+                    // if finishing animation up, set cart items to gone and show rewards account if applicable
+                    if (up) {
+                        // if logged in and not a rewards member, display link rewards layout
+                        if (Access.getInstance().isLoggedIn() && !Access.getInstance().isGuestLogin() &&
+                                ProfileDetails.getMember() != null && !ProfileDetails.isRewardsMember()) {
+                            linkRewardsAcctLayout.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+                @Override public void onAnimationCancel(Animator animation) { }
+                @Override public void onAnimationRepeat(Animator animation) { }
+            });
+
+        }
+
+        public void start() {
+            valueAnimator.start();
+        }
+    }
+
 
     /************* widget listeners ************/
 
