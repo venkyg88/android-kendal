@@ -99,8 +99,8 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         taxLabelVw = (TextView) view.findViewById(R.id.checkout_tax_label);
         checkoutTotalVw = (TextView) view.findViewById(R.id.checkout_order_total);
 
-        greenText = r.getColor(R.color.text_green);
-        blackText = r.getColor(R.color.text_nearly_black);
+        greenText = r.getColor(R.color.staples_green);
+        blackText = r.getColor(R.color.staples_black);
 
         // Set click listeners
         submissionLayout.setOnClickListener(this);

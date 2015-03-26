@@ -6,7 +6,7 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:orientation="vertical"
-    android:background="@color/background_white">
+    android:background="@color/staples_white">
 
     <!-- scrollable contents -->
     <ScrollView
@@ -35,16 +35,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:textSize="24sp"
-                android:textColor="@color/text_nearly_black"
+                android:textSize="@dimen/fontsize_24sp"
+                android:textColor="@color/staples_black"
                 android:text="@string/order_confirmation_msg"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
-                android:textSize="14sp"
-                android:textColor="@color/text_nearly_black"
+                android:textSize="@dimen/fontsize_14sp"
+                android:textColor="@color/staples_black"
                 android:text="@string/order_confirmation_msg2"/>
             <TextView
                 android:id="@+id/email_confirm_msg"
@@ -53,8 +53,8 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="32dp"
-                android:textSize="14sp"
-                android:textColor="@color/text_nearly_black"
+                android:textSize="@dimen/fontsize_14sp"
+                android:textColor="@color/staples_black"
                 android:text="@string/order_confirmation_msg3"/>
 
             <!--order number-->
@@ -67,8 +67,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:textSize="18sp"
-                android:textColor="@color/text_nearly_black"/>
+                android:textSize="@dimen/fontsize_18sp"
+                android:textColor="@color/staples_black"/>
 
             <!--delivery range-->
             <TextView
@@ -81,8 +81,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:textSize="18sp"
-                android:textColor="@color/text_nearly_black"/>
+                android:textSize="@dimen/fontsize_18sp"
+                android:textColor="@color/staples_black"/>
 
             <!--order total -->
             <TextView
@@ -95,15 +95,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:textSize="18sp"
-                android:textColor="@color/text_nearly_black"/>
+                android:textSize="@dimen/fontsize_18sp"
+                android:textColor="@color/staples_black"/>
 
             <!--guest check out only - creating an account-->
             <RelativeLayout
                 android:id="@+id/account_suggestion_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background_white"
+                android:background="@color/staples_white"
                 android:visibility="gone">
 
                 <!--horizontal rule-->
@@ -113,7 +113,7 @@
                     android:layout_height="1dp"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="16dp"
-                    android:background="@color/background_light_gray"/>
+                    android:background="@color/staples_middle_gray"/>
 
                 <TextView
                     android:id="@+id/create_account_msg1"
@@ -122,8 +122,8 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@id/create_account_hr"
                     android:layout_marginTop="16dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/text_nearly_black"
+                    android:textSize="@dimen/fontsize_16sp"
+                    android:textColor="@color/staples_black"
                     android:text="@string/create_acccount_msg1"/>
                 <TextView
                     android:layout_width="wrap_content"
@@ -131,8 +131,8 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@id/create_account_msg1"
                     android:layout_gravity="left"
-                    android:textSize="10sp"
-                    android:textColor="@color/text_nearly_black"
+                    android:textSize="@dimen/fontsize_10sp"
+                    android:textColor="@color/staples_black"
                     android:text="@string/create_acccount_msg2"/>
                 <ImageView
                     android:id="@+id/open_account_dlg_action"
@@ -150,7 +150,7 @@
                 android:id="@+id/account_confirmation_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background_white"
+                android:background="@color/staples_white"
                 android:visibility="gone">
 
                 <!--horizontal rule-->
@@ -160,7 +160,7 @@
                     android:layout_height="1dp"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="16dp"
-                    android:background="@color/background_light_gray"/>
+                    android:background="@color/staples_middle_gray"/>
                 <TextView
                     android:id="@+id/account_confirmation_msg"
                     android:layout_width="wrap_content"
@@ -168,8 +168,8 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@id/account_confirmation_hr"
                     android:layout_marginTop="16dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/text_nearly_black"
+                    android:textSize="@dimen/fontsize_16sp"
+                    android:textColor="@color/staples_black"
                     android:text="@string/account_confirmation_msg"/>
                 <ImageView
                     android:layout_width="wrap_content"
@@ -195,15 +195,15 @@
         android:padding="0dp"
         card_view:cardCornerRadius="1dp"
         card_view:cardElevation="0dp"
-        card_view:cardBackgroundColor="@color/background_red_submission">
+        card_view:cardBackgroundColor="@color/staples_red">
         <TextView
             android:id="@+id/continue_shopping_btn"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:gravity="center"
             android:text="@string/continue_shopping"
-            android:textSize="14sp"
-            android:textColor="@color/text_white"/>
+            android:textSize="@dimen/fontsize_14sp"
+            android:textColor="@color/staples_white"/>
     </android.support.v7.widget.CardView>
 </com.staples.mobile.cfa.widget.AnimatorLayout>
 

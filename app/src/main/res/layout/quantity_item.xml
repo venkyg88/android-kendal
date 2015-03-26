@@ -8,5 +8,5 @@
     android:gravity="center"
     android:background="#ffffffff"
     android:maxLines="1"
-    android:textSize="20sp">
+    android:textSize="@dimen/fontsize_20sp">
 </TextView>

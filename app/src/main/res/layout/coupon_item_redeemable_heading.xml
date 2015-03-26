@@ -14,7 +14,7 @@
         android:id="@+id/rewards_horizontal_rule"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/hr_extra_light_gray"/>
+        android:background="@color/staples_off_white"/>
 
     <TextView
         style="@style/GraySubheading"

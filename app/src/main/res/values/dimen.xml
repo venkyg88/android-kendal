@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="fontsize_10sp">12sp</dimen>   <!-- TODO: temporary part of style guide-->
+    <dimen name="fontsize_11sp">12sp</dimen>   <!-- TODO: temporary part of style guide-->
     <dimen name="fontsize_12sp">12sp</dimen>   <!--part of style guide-->
+    <dimen name="fontsize_13sp">12sp</dimen>   <!--TODO: temporary part of style guide-->
+    <dimen name="fontsize_14sp">12sp</dimen>   <!--TODO: temporary part of style guide-->
+    <dimen name="fontsize_15sp">12sp</dimen>   <!--TODO: temporary part of style guide-->
+    <dimen name="fontsize_16sp">18sp</dimen>   <!--TODO: temporary part of style guide-->
     <dimen name="fontsize_18sp">18sp</dimen>   <!--part of style guide-->
+    <dimen name="fontsize_20sp">18sp</dimen>   <!--TODO: temporary part of style guide-->
     <dimen name="fontsize_24sp">24sp</dimen>   <!--part of style guide-->
     <dimen name="fontsize_30sp">30sp</dimen>   <!--part of style guide-->
     <dimen name="fontsize_34sp">34sp</dimen>   <!--part of style guide-->
