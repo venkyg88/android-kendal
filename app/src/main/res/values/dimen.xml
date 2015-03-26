@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="fontsize_12sp">12sp</dimen>   <!--part of style guide-->
+    <dimen name="fontsize_18sp">18sp</dimen>   <!--part of style guide-->
+    <dimen name="fontsize_24sp">24sp</dimen>   <!--part of style guide-->
+    <dimen name="fontsize_30sp">30sp</dimen>   <!--part of style guide-->
+    <dimen name="fontsize_34sp">34sp</dimen>   <!--part of style guide-->
+    <dimen name="verticalspacing_8dp">8dp</dimen>     <!--part of style guide-->
+    <dimen name="verticalspacing_24dp">24dp</dimen>   <!--part of style guide-->
+    <dimen name="verticalspacing_48dp">48dp</dimen>   <!--part of style guide-->
+    <dimen name="verticalspacing_56dp">56dp</dimen>   <!--part of style guide-->
+    <dimen name="margin_16dp">16dp</dimen>     <!--part of style guide-->
+    <dimen name="margin_72dp">72dp</dimen>     <!--part of style guide-->
+
     <dimen name="min_grid_width">180dp</dimen>
     <dimen name="fixed_grid_tall_height">224dp</dimen>
     <dimen name="fixed_grid_wide_height">120dp</dimen>
