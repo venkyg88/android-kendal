@@ -19,7 +19,7 @@
             android:layout_marginLeft="24dp"
             android:layout_marginTop="24dp"
             android:visibility="gone"
-            android:textSize="20sp"
+            android:textSize="@dimen/fontsize_20sp"
             android:text="@string/no_orders_found"
             android:textColor="@android:color/darker_gray"/>
 
@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:textSize="18sp"/>
+                android:textSize="@dimen/fontsize_18sp"/>
             <ImageView
                 android:id="@+id/close_button"
                 android:layout_width="wrap_content"
@@ -70,13 +70,13 @@
             android:id="@+id/carrier"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"/>
+            android:textSize="@dimen/fontsize_18sp"/>
         <!--tracking number-->
         <TextView
             android:id="@+id/tracking_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"/>
+            android:textSize="@dimen/fontsize_18sp"/>
 
         <!--horizontal rule-->
         <View
@@ -91,7 +91,7 @@
             android:id="@+id/delivery_scans"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"/>
+            android:textSize="@dimen/fontsize_14sp"/>
 
     </LinearLayout>
 </com.staples.mobile.cfa.widget.AnimatorFrame>

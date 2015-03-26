@@ -22,7 +22,7 @@
         android:layout_gravity="center_vertical"
         android:background="@color/background_red_submission"
         android:text="@string/add"
-        android:textSize="14sp"
+        android:textSize="@dimen/fontsize_14sp"
         android:textColor="@color/text_white"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"

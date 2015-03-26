@@ -25,7 +25,7 @@
             android:id="@+id/orderNumberLbl"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:textSize="20sp"
+            android:textSize="@dimen/fontsize_20sp"
             android:textColor="@color/text_black"/>
         <TextView
             android:layout_width="wrap_content"
@@ -33,7 +33,7 @@
             android:id="@+id/orderNumber"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:textSize="20sp"
+            android:textSize="@dimen/fontsize_20sp"
             android:textColor="@color/text_black"/>
     </LinearLayout>
 
@@ -44,7 +44,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:textSize="16sp"
+        android:textSize="@dimen/fontsize_16sp"
         android:textColor="@color/text_black" />
 
     <LinearLayout
@@ -70,7 +70,7 @@
         <!--android:layout_marginLeft="10dp"-->
         <!--android:layout_marginRight="10dp"-->
         <!--android:layout_marginTop="10dp"-->
-        <!--android:textSize="16sp"-->
+        <!--android:textSize="@dimen/fontsize_16sp"-->
         <!--android:textColor="@color/text_black" />-->
         <!--<TextView-->
             <!--android:layout_width="wrap_content"-->
@@ -79,7 +79,7 @@
             <!--android:layout_alignParentRight="true"-->
             <!--android:layout_marginRight="10dp"-->
             <!--android:layout_marginTop="10dp"-->
-            <!--android:textSize="16sp"-->
+            <!--android:textSize="@dimen/fontsize_16sp"-->
             <!--android:textColor="@color/text_black" />-->
     <!--</RelativeLayout>-->
 
@@ -94,14 +94,14 @@
             <!--android:layout_marginLeft="10dp"-->
             <!--android:layout_marginRight="10dp"-->
             <!--android:layout_marginTop="10dp"-->
-            <!--android:textSize="16sp"-->
+            <!--android:textSize="@dimen/fontsize_16sp"-->
             <!--android:layout_marginBottom="10dp"-->
             <!--android:textColor="@color/text_black"/>-->
         <!--<TextView-->
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="wrap_content"-->
             <!--android:id="@+id/orderQtyLbl"-->
-            <!--android:textSize="16sp"-->
+            <!--android:textSize="@dimen/fontsize_16sp"-->
             <!--android:textColor="@color/text_black"-->
             <!--android:layout_alignTop="@+id/orderTotalLbl"-->
             <!--android:layout_toRightOf="@+id/orderTotalLbl"-->
@@ -113,7 +113,7 @@
             <!--android:layout_marginLeft="10dp"-->
             <!--android:layout_marginRight="10dp"-->
             <!--android:layout_marginTop="10dp"-->
-            <!--android:textSize="16sp"-->
+            <!--android:textSize="@dimen/fontsize_16sp"-->
             <!--android:layout_marginBottom="10dp"-->
             <!--android:textColor="@color/text_black"-->
             <!--android:layout_alignParentRight="true"/>-->
@@ -137,7 +137,7 @@
                 android:id="@+id/paymentLbl"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="20sp"
+                android:textSize="@dimen/fontsize_20sp"
                 android:textColor="@color/text_black" />
             <TextView
                 android:layout_width="wrap_content"
@@ -146,7 +146,7 @@
                 android:id="@+id/paymentMethodLbl"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
+                android:textSize="@dimen/fontsize_16sp"
                 android:textColor="@color/text_light_gray" />
             <LinearLayout
                 android:layout_width="match_parent"
@@ -165,7 +165,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/cardInfoTV"
                     android:layout_marginLeft="10dp"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/fontsize_16sp"
                     android:textColor="@color/text_black" />
             </LinearLayout>
         </LinearLayout>
@@ -186,7 +186,7 @@
                 android:id="@+id/addressLbl"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
+                android:textSize="@dimen/fontsize_16sp"
                 android:textColor="@color/text_light_gray" />
             <TextView
                 android:layout_width="wrap_content"
@@ -194,7 +194,7 @@
                 android:id="@+id/billingNameTV"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
+                android:textSize="@dimen/fontsize_16sp"
                 android:textColor="@color/text_black" />
             <TextView
                 android:layout_width="wrap_content"
@@ -202,7 +202,7 @@
                 android:id="@+id/addressTV"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
+                android:textSize="@dimen/fontsize_16sp"
                 android:textColor="@color/text_black" />
         </LinearLayout>
         <View
@@ -222,7 +222,7 @@
             android:id="@+id/orderFinalLbl"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:textSize="20sp"
+            android:textSize="@dimen/fontsize_20sp"
             android:textColor="@color/text_black" />
 
         <RelativeLayout
@@ -236,7 +236,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
+                android:textSize="@dimen/fontsize_16sp"
                 android:textColor="@color/text_black" />
             <TextView
                 android:layout_width="wrap_content"
@@ -245,7 +245,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
+                android:textSize="@dimen/fontsize_16sp"
                 android:textColor="@color/text_black" />
         </RelativeLayout>
 
@@ -260,7 +260,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
+                android:textSize="@dimen/fontsize_16sp"
                 android:textColor="@color/text_black" />
             <TextView
                 android:layout_width="wrap_content"
@@ -269,7 +269,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
+                android:textSize="@dimen/fontsize_16sp"
                 android:textColor="@color/text_green" />
         </RelativeLayout>
 
@@ -284,7 +284,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
+                android:textSize="@dimen/fontsize_16sp"
                 android:textColor="@color/text_black" />
             <TextView
                 android:layout_width="wrap_content"
@@ -293,7 +293,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
+                android:textSize="@dimen/fontsize_16sp"
                 android:textColor="@color/text_green" />
         </RelativeLayout>
 
@@ -308,7 +308,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
+                android:textSize="@dimen/fontsize_16sp"
                 android:textColor="@color/text_black" />
             <TextView
                 android:layout_width="wrap_content"
@@ -317,7 +317,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
+                android:textSize="@dimen/fontsize_16sp"
                 android:textColor="@color/text_black" />
         </RelativeLayout>
 
@@ -332,7 +332,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
+                android:textSize="@dimen/fontsize_16sp"
                 android:textColor="@color/text_black" />
             <TextView
                 android:layout_width="wrap_content"
@@ -341,7 +341,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
+                android:textSize="@dimen/fontsize_16sp"
                 android:textColor="@color/text_black" />
         </RelativeLayout>
 

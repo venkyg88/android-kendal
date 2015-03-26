@@ -18,7 +18,7 @@
         android:layout_height="32dp"
         android:gravity="center"
         android:textColor="@color/text_white"
-        android:textSize="14sp"
+        android:textSize="@dimen/fontsize_14sp"
         />
 
     <!--empty cart messages-->
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="40dp"
             android:textColor="@color/text_nearly_black"
-            android:textSize="20sp"
+            android:textSize="@dimen/fontsize_20sp"
             android:text="@string/empty_cart_msg"
             />
         <!--shopping with us-->
@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="60dp"
             android:textColor="@color/text_gray"
-            android:textSize="18sp"
+            android:textSize="@dimen/fontsize_18sp"
             android:text="@string/shopping_with_us"
             />
         <!--price match guarantee-->
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="24dp"
             android:textColor="@color/text_gray"
-            android:textSize="18sp"
+            android:textSize="@dimen/fontsize_18sp"
             android:text="@string/price_match_guarantee"
             />
         <TextView
@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:textColor="@color/text_gray"
-            android:textSize="12sp"
+            android:textSize="@dimen/fontsize_12sp"
             android:text="@string/price_match_guarantee_conditions"
             />
         <!--free delivery-->
@@ -72,14 +72,14 @@
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
             android:textColor="@color/text_gray"
-            android:textSize="18sp"
+            android:textSize="@dimen/fontsize_18sp"
             android:text="@string/free_delivery"
             />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/text_gray"
-            android:textSize="12sp"
+            android:textSize="@dimen/fontsize_12sp"
             android:text="@string/free_delivery_conditions"
             />
         <!--easy returns-->
@@ -88,14 +88,14 @@
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
             android:textColor="@color/text_gray"
-            android:textSize="18sp"
+            android:textSize="@dimen/fontsize_18sp"
             android:text="@string/easy_returns"
             />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/text_gray"
-            android:textSize="12sp"
+            android:textSize="@dimen/fontsize_12sp"
             android:text="@string/easy_returns_conditions"
             />
     </LinearLayout>
@@ -126,7 +126,7 @@
             android:layout_width="wrap_content"
             android:layout_gravity="left|center_vertical"
             android:text="@string/coupons_rewards"
-            android:textSize="14sp"
+            android:textSize="@dimen/fontsize_14sp"
             android:textColor="@color/text_blue"
             />
         <TextView
@@ -134,7 +134,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="right|center_vertical"
-            android:textSize="14sp"
+            android:textSize="@dimen/fontsize_14sp"
             android:textColor="@color/text_blue"
             />
     </android.support.v7.widget.CardView>
@@ -174,7 +174,7 @@
 			android:paddingTop="0dp"
 			android:text="@string/oversized_shipping_fee"
             android:textColor="@color/text_nearly_black"
-            android:textSize="14sp"
+            android:textSize="@dimen/fontsize_14sp"
         />
         <TextView
 			android:id="@+id/oversized_shipping"
@@ -184,7 +184,7 @@
             android:layout_width="wrap_content"
 			android:text="$14.99"
             android:textColor="@color/text_nearly_black"
-            android:textSize="14sp"
+            android:textSize="@dimen/fontsize_14sp"
 		/>
 
 		<TextView
@@ -196,7 +196,7 @@
 			android:paddingTop="0dp"
 			android:text="@string/shipping"
 			android:textColor="@color/text_nearly_black"
-			android:textSize="14sp"
+			android:textSize="@dimen/fontsize_14sp"
 		/>
 
 		<TextView
@@ -206,7 +206,7 @@
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:textColor="@color/text_nearly_black"
-			android:textSize="14sp"
+			android:textSize="@dimen/fontsize_14sp"
 		/>
 
     </RelativeLayout>
@@ -227,7 +227,7 @@
             android:layout_width="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:textSize="14sp"
+            android:textSize="@dimen/fontsize_14sp"
             android:textStyle="bold"
             android:textColor="@color/text_black"
             android:text="@string/pretax_subtotal" />
@@ -238,7 +238,7 @@
             android:layout_width="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:textSize="14sp"
+            android:textSize="@dimen/fontsize_14sp"
             android:textStyle="bold"
 			android:textColor="@color/text_black" />
 
@@ -261,7 +261,7 @@
                 android:layout_width="match_parent"
                 android:gravity="center"
                 android:text="@string/proceed_to_checkout"
-                android:textSize="14sp"
+                android:textSize="@dimen/fontsize_14sp"
                 android:textColor="@color/text_white"
             />
 

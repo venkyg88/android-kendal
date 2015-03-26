@@ -11,7 +11,7 @@
         android:layout_gravity="center|left"
         android:gravity="center|left"
         android:padding="4dp"
-        android:textSize="14sp"
+        android:textSize="@dimen/fontsize_14sp"
         android:text="You have redeemable rewards!"/>
     <TextView
         android:layout_width="wrap_content"
@@ -19,6 +19,6 @@
         android:layout_gravity="center|right"
         android:gravity="center|right"
         android:padding="4dp"
-        android:textSize="30sp"
+        android:textSize="@dimen/fontsize_30sp"
         android:text="$75"/>
 </LinearLayout>

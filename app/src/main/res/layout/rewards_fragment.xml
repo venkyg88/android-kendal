@@ -37,21 +37,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:textSize="20sp"/>
+                    android:textSize="@dimen/fontsize_20sp"/>
                 <TextView
                     android:id="@+id/member_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_below="@id/member_name"
-                    android:textSize="14sp"/>
+                    android:textSize="@dimen/fontsize_14sp"/>
                 <TextView
                     android:id="@+id/rewards_number_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_below="@id/member_duration"
-                    android:textSize="18sp"/>
+                    android:textSize="@dimen/fontsize_18sp"/>
 
                 <com.staples.mobile.cfa.widget.Numeric39Barcode
                     android:id="@+id/rewards_number_barcode39"
@@ -69,7 +69,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_below="@id/rewards_number_barcode39"
-                    android:textSize="20sp"/>
+                    android:textSize="@dimen/fontsize_20sp"/>
             </RelativeLayout>
         </android.support.v7.widget.CardView>
     </RelativeLayout>

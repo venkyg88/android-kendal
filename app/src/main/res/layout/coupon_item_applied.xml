@@ -38,7 +38,7 @@
         android:background="@color/background_extra_light_gray"
         android:textColor="@color/text_black"
         android:text="@string/remove"
-        android:textSize="14sp"
+        android:textSize="@dimen/fontsize_14sp"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         android:paddingLeft="8dp"

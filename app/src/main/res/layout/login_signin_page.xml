@@ -35,7 +35,7 @@
         android:clickable="true"
         android:id="@+id/forgotPwdTV"
         android:layout_below="@+id/password"
-        android:textSize="18sp"
+        android:textSize="@dimen/fontsize_18sp"
         android:paddingTop="10dp"
         android:textColor="@color/text_blue"
         android:text="@string/password_forgot"/>

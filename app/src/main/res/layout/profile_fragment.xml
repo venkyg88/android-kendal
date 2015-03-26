@@ -71,7 +71,7 @@
             android:paddingLeft="10dp"
             android:paddingBottom="10dp"
             android:text="Shipping/Billing"
-            android:textSize="16sp"
+            android:textSize="@dimen/fontsize_16sp"
             android:background="@color/background_extra_light_gray"/>
     </LinearLayout>
 

@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:textSize="24sp"
+                android:textSize="@dimen/fontsize_24sp"
                 android:textColor="@color/text_nearly_black"
                 android:text="@string/order_confirmation_msg"/>
             <TextView
@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
-                android:textSize="14sp"
+                android:textSize="@dimen/fontsize_14sp"
                 android:textColor="@color/text_nearly_black"
                 android:text="@string/order_confirmation_msg2"/>
             <TextView
@@ -53,7 +53,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="32dp"
-                android:textSize="14sp"
+                android:textSize="@dimen/fontsize_14sp"
                 android:textColor="@color/text_nearly_black"
                 android:text="@string/order_confirmation_msg3"/>
 
@@ -67,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:textSize="18sp"
+                android:textSize="@dimen/fontsize_18sp"
                 android:textColor="@color/text_nearly_black"/>
 
             <!--delivery range-->
@@ -81,7 +81,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:textSize="18sp"
+                android:textSize="@dimen/fontsize_18sp"
                 android:textColor="@color/text_nearly_black"/>
 
             <!--order total -->
@@ -95,7 +95,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:textSize="18sp"
+                android:textSize="@dimen/fontsize_18sp"
                 android:textColor="@color/text_nearly_black"/>
 
             <!--guest check out only - creating an account-->
@@ -122,7 +122,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@id/create_account_hr"
                     android:layout_marginTop="16dp"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/fontsize_16sp"
                     android:textColor="@color/text_nearly_black"
                     android:text="@string/create_acccount_msg1"/>
                 <TextView
@@ -131,7 +131,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@id/create_account_msg1"
                     android:layout_gravity="left"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/fontsize_10sp"
                     android:textColor="@color/text_nearly_black"
                     android:text="@string/create_acccount_msg2"/>
                 <ImageView
@@ -168,7 +168,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@id/account_confirmation_hr"
                     android:layout_marginTop="16dp"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/fontsize_16sp"
                     android:textColor="@color/text_nearly_black"
                     android:text="@string/account_confirmation_msg"/>
                 <ImageView
@@ -202,7 +202,7 @@
             android:layout_width="match_parent"
             android:gravity="center"
             android:text="@string/continue_shopping"
-            android:textSize="14sp"
+            android:textSize="@dimen/fontsize_14sp"
             android:textColor="@color/text_white"/>
     </android.support.v7.widget.CardView>
 </com.staples.mobile.cfa.widget.AnimatorLayout>

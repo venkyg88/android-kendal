@@ -34,7 +34,7 @@
 			android:layout_marginBottom="8dp"
             android:lines="2"
             android:ellipsize="end"
-            android:textSize="14sp"
+            android:textSize="@dimen/fontsize_14sp"
             android:textColor="@color/text_nearly_black"
             android:paddingTop="0dp"
             android:paddingBottom="0dp"/>
@@ -62,7 +62,7 @@
 				android:text="@string/overweight"
 				android:textAllCaps="true"
 				android:textColor="@color/text_white"
-				android:textSize="10sp"
+				android:textSize="@dimen/fontsize_10sp"
 				android:textStyle="bold"
 				android:visibility="gone"
 			/>
@@ -82,7 +82,7 @@
 				android:paddingTop="2dp"
 				android:textAllCaps="true"
 				android:textColor="@color/text_white"
-				android:textSize="10sp"
+				android:textSize="@dimen/fontsize_10sp"
 				android:textStyle="bold"
 				android:visibility="gone"
 			/>
@@ -117,7 +117,7 @@
             android:layout_alignParentRight="true"
             android:layout_gravity="center_vertical"
             android:drawableRight="@drawable/ic_arrow_drop_down"
-            android:textSize="14sp"
+            android:textSize="@dimen/fontsize_14sp"
             android:textColor="@color/text_nearly_black"
             android:maxLength="4"
             app:maxQuantity="10"
