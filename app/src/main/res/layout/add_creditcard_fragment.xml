@@ -35,7 +35,6 @@
             android:maxLength="5"
             android:textSize="@dimen/fontsize_15sp"
             android:hint="MM/YY"
-            android:visibility="gone"
             android:imeOptions="actionDone"/>
         <EditText
             android:id="@+id/cid"
