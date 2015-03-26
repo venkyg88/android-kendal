@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background_white"
+        android:background="@color/staples_white"
         android:orientation="horizontal">
         <LinearLayout
             android:layout_width="0dp"
@@ -24,13 +24,13 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:textSize="@dimen/fontsize_16sp"
-                android:textColor="@color/text_black"/>
+                android:textColor="@color/staples_black"/>
             <TextView
                 android:id="@+id/weekly_ad_category_deals_count_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/fontsize_16sp"
-                android:textColor="@color/text_red"/>
+                android:textColor="@color/staples_red"/>
         </LinearLayout>
 
         <ImageView

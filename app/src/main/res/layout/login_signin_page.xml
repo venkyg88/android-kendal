@@ -37,14 +37,14 @@
         android:layout_below="@+id/password"
         android:textSize="@dimen/fontsize_18sp"
         android:paddingTop="10dp"
-        android:textColor="@color/text_blue"
+        android:textColor="@color/staples_blue"
         android:text="@string/password_forgot"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/login_title"
-        android:textColor="@color/text_white"
+        android:textColor="@color/staples_white"
         android:id="@+id/submit_button"
         android:layout_marginTop="50dp"
         android:layout_below="@+id/password"

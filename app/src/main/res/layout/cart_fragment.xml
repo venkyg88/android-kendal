@@ -8,7 +8,7 @@
     android:id="@+id/cart_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_off_white"
+    android:background="@color/staples_off_white"
     android:orientation="vertical">
 
     <!--free shipping message-->
@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="32dp"
         android:gravity="center"
-        android:textColor="@color/text_white"
+        android:textColor="@color/staples_white"
         android:textSize="@dimen/fontsize_14sp"
         />
 
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="40dp"
-            android:textColor="@color/text_nearly_black"
+            android:textColor="@color/staples_black"
             android:textSize="@dimen/fontsize_20sp"
             android:text="@string/empty_cart_msg"
             />
@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="60dp"
-            android:textColor="@color/text_gray"
+            android:textColor="@color/staples_middle_gray"
             android:textSize="@dimen/fontsize_18sp"
             android:text="@string/shopping_with_us"
             />
@@ -54,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="24dp"
-            android:textColor="@color/text_gray"
+            android:textColor="@color/staples_middle_gray"
             android:textSize="@dimen/fontsize_18sp"
             android:text="@string/price_match_guarantee"
             />
@@ -62,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:textColor="@color/text_gray"
+            android:textColor="@color/staples_middle_gray"
             android:textSize="@dimen/fontsize_12sp"
             android:text="@string/price_match_guarantee_conditions"
             />
@@ -71,14 +71,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
-            android:textColor="@color/text_gray"
+            android:textColor="@color/staples_middle_gray"
             android:textSize="@dimen/fontsize_18sp"
             android:text="@string/free_delivery"
             />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/text_gray"
+            android:textColor="@color/staples_middle_gray"
             android:textSize="@dimen/fontsize_12sp"
             android:text="@string/free_delivery_conditions"
             />
@@ -87,14 +87,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
-            android:textColor="@color/text_gray"
+            android:textColor="@color/staples_middle_gray"
             android:textSize="@dimen/fontsize_18sp"
             android:text="@string/easy_returns"
             />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/text_gray"
+            android:textColor="@color/staples_middle_gray"
             android:textSize="@dimen/fontsize_12sp"
             android:text="@string/easy_returns_conditions"
             />
@@ -107,7 +107,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:scrollbars="vertical"
-        android:background="@color/background_off_white"
+        android:background="@color/staples_off_white"
         />
 
     <!--coupon & rewards heading -->
@@ -120,14 +120,14 @@
         card_view:contentPaddingRight="16dp"
         card_view:cardCornerRadius="0dp"
         card_view:cardElevation="1dp"
-        card_view:cardBackgroundColor="@color/background_extra_light_gray">
+        card_view:cardBackgroundColor="@color/staples_light_gray">
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="left|center_vertical"
             android:text="@string/coupons_rewards"
             android:textSize="@dimen/fontsize_14sp"
-            android:textColor="@color/text_blue"
+            android:textColor="@color/staples_blue"
             />
         <TextView
             android:id="@+id/coupons_rewards_value"
@@ -135,7 +135,7 @@
             android:layout_width="wrap_content"
             android:layout_gravity="right|center_vertical"
             android:textSize="@dimen/fontsize_14sp"
-            android:textColor="@color/text_blue"
+            android:textColor="@color/staples_blue"
             />
     </android.support.v7.widget.CardView>
 
@@ -157,7 +157,7 @@
     <!--shipping info -->
     <RelativeLayout
 		android:id="@+id/cart_shipping_layout"
-		android:background="@color/background_off_white"
+		android:background="@color/staples_off_white"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
 		android:paddingBottom="0dp"
@@ -173,7 +173,7 @@
             android:layout_width="wrap_content"
 			android:paddingTop="0dp"
 			android:text="@string/oversized_shipping_fee"
-            android:textColor="@color/text_nearly_black"
+            android:textColor="@color/staples_black"
             android:textSize="@dimen/fontsize_14sp"
         />
         <TextView
@@ -183,7 +183,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
 			android:text="$14.99"
-            android:textColor="@color/text_nearly_black"
+            android:textColor="@color/staples_black"
             android:textSize="@dimen/fontsize_14sp"
 		/>
 
@@ -195,7 +195,7 @@
 			android:layout_width="wrap_content"
 			android:paddingTop="0dp"
 			android:text="@string/shipping"
-			android:textColor="@color/text_nearly_black"
+			android:textColor="@color/staples_black"
 			android:textSize="@dimen/fontsize_14sp"
 		/>
 
@@ -205,7 +205,7 @@
 			android:layout_alignParentRight="true"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:textColor="@color/text_nearly_black"
+			android:textColor="@color/staples_black"
 			android:textSize="@dimen/fontsize_14sp"
 		/>
 
@@ -214,7 +214,7 @@
     <!--pre-tax subtotal and checkout button -->
     <RelativeLayout
         android:id="@+id/cart_subtotal_layout"
-		android:background="@color/background_off_white"
+		android:background="@color/staples_off_white"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
 		android:paddingBottom="0dp"
@@ -229,7 +229,7 @@
             android:layout_alignParentLeft="true"
             android:textSize="@dimen/fontsize_14sp"
             android:textStyle="bold"
-            android:textColor="@color/text_black"
+            android:textColor="@color/staples_black"
             android:text="@string/pretax_subtotal" />
 
         <TextView
@@ -240,7 +240,7 @@
             android:layout_alignParentRight="true"
             android:textSize="@dimen/fontsize_14sp"
             android:textStyle="bold"
-			android:textColor="@color/text_black" />
+			android:textColor="@color/staples_black" />
 
         <!--checkout button-->
         <android.support.v7.widget.CardView
@@ -253,7 +253,7 @@
             android:padding="0dp"
             card_view:cardCornerRadius="1dp"
             card_view:cardElevation="0dp"
-            card_view:cardBackgroundColor="@color/background_red_submission" >
+            card_view:cardBackgroundColor="@color/staples_red" >
 
             <TextView
                 android:id="@+id/action_checkout_text"
@@ -262,7 +262,7 @@
                 android:gravity="center"
                 android:text="@string/proceed_to_checkout"
                 android:textSize="@dimen/fontsize_14sp"
-                android:textColor="@color/text_white"
+                android:textColor="@color/staples_white"
             />
 
         </android.support.v7.widget.CardView>

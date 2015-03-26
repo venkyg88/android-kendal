@@ -73,7 +73,7 @@ android:id="@+id/orderLayout">
         android:layout_height="1dp"
         android:layout_marginTop="10dp"
         android:layout_below="@+id/buttonLayout"
-        android:background="@color/background_light_gray" />
+        android:background="@color/staples_middle_gray" />
 </RelativeLayout>
 
 

@@ -12,7 +12,7 @@
         android:padding="10dp"
         android:visibility="gone"
         android:id="@+id/selectionImage"
-        android:tint="@color/background_blue"
+        android:tint="@color/staples_blue"
         android:src="@drawable/ic_check_white_24dp"
         />
 
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:text="New Text"
             android:textSize="@dimen/fontsize_20sp"
-            android:textColor="@color/text_gray"
+            android:textColor="@color/staples_middle_gray"
             android:id="@+id/secondItemText"
             android:paddingBottom="5dp"/>
     </LinearLayout>

@@ -9,8 +9,8 @@
         <item name="android:layout_marginLeft">4dp</item>
         <item name="android:layout_marginRight">4dp</item>
         <item name="android:textSize">@dimen/fontsize_11sp</item>
-        <item name="android:textColor">@color/text_white</item>
-        <item name="circleColor">@color/background_red_submission</item>
+        <item name="android:textColor">@color/staples_white</item>
+        <item name="circleColor">@color/staples_red</item>
         <item name="android:src">@drawable/ic_shopping_cart_black</item>
         <item name="android:visibility">gone</item>
     </style>
@@ -44,7 +44,7 @@
         <item name="android:textSize">@dimen/fontsize_20sp</item>
         <item name="android:lines">1</item>
         <item name="android:ellipsize">end</item>
-        <item name="android:textColor">@color/text_nearly_black</item>
+        <item name="android:textColor">@color/staples_black</item>
         <item name="android:visibility">gone</item>
     </style>
 
@@ -58,7 +58,7 @@
         <item name="android:padding">6dp</item>
         <item name="android:lines">1</item>
         <item name="android:textSize">@dimen/fontsize_20sp</item>
-        <item name="android:textColor">@color/text_white</item>
+        <item name="android:textColor">@color/staples_white</item>
     </style>
 
     <style name="DrawerStyle">
@@ -108,7 +108,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/fontsize_12sp</item>
-        <item name="android:textColor">@color/text_gray</item>
+        <item name="android:textColor">@color/staples_middle_gray</item>
     </style>
 
     <style name="CheckoutFooter">
@@ -124,7 +124,7 @@
 
     <style name="CheckoutText">
         <item name="android:textSize">@dimen/fontsize_14sp</item>
-        <item name="android:textColor">@color/text_nearly_black</item>
+        <item name="android:textColor">@color/staples_black</item>
     </style>
 
     <style name="TextExtraLargeListItem">
@@ -170,7 +170,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="majorTextSize">32sp</item>
-        <item name="majorTextColor">@color/staples_light</item>
+        <item name="majorTextColor">@color/staples_red</item>
         <item name="minorTextSize">@dimen/fontsize_24sp</item>
         <item name="minorTextColor">#ff8a8a8a</item>
         <item name="android:gravity">center</item>
@@ -179,7 +179,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="majorTextSize">@dimen/fontsize_14sp</item>
-        <item name="majorTextColor">@color/staples_light</item>
+        <item name="majorTextColor">@color/staples_red</item>
         <item name="minorTextSize">@dimen/fontsize_12sp</item>
         <item name="minorTextColor">#ff8a8a8a</item>
     </style>

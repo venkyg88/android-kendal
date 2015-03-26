@@ -9,7 +9,7 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingBottom="8dp"
-        android:background="@color/staples_light">
+        android:background="@color/staples_red">
         <EditText
             android:id="@+id/store_search"
             android:layout_width="match_parent"

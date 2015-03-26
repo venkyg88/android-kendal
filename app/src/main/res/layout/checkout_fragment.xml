@@ -48,7 +48,7 @@
             android:layout_alignParentLeft="true"
             android:padding="0dp"
             android:text="@string/coupons_rewards"
-            android:textColor="@color/text_nearly_black" />
+            android:textColor="@color/staples_black" />
         <TextView
             android:id="@+id/checkout_coupons_rewards"
             style="@style/CheckoutFooter"
@@ -56,7 +56,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:padding="0dp"
-            android:textColor="@color/text_nearly_black" />
+            android:textColor="@color/staples_black" />
 
         <!-- item subtotal -->
         <TextView
@@ -66,7 +66,7 @@
             android:layout_alignParentLeft="true"
             android:padding="0dp"
             android:text="@string/item_subtotal"
-            android:textColor="@color/text_nearly_black"
+            android:textColor="@color/staples_black"
             />
         <TextView
             android:id="@+id/checkout_item_subtotal"
@@ -75,7 +75,7 @@
             android:layout_below="@id/checkout_coupons_rewards"
             android:layout_alignParentRight="true"
             android:padding="0dp"
-            android:textColor="@color/text_nearly_black"
+            android:textColor="@color/staples_black"
             />
 
         <!-- shipping charge -->
@@ -88,7 +88,7 @@
             android:padding="0dp"
             android:visibility="gone"
             android:text="@string/shipping"
-            android:textColor="@color/text_nearly_black" />
+            android:textColor="@color/staples_black" />
         <TextView
             android:id="@+id/checkout_shipping"
             style="@style/CheckoutFooter"
@@ -97,7 +97,7 @@
             android:layout_alignParentRight="true"
             android:padding="0dp"
             android:visibility="gone"
-            android:textColor="@color/text_nearly_black" />
+            android:textColor="@color/staples_black" />
 
         <!--tax-->
         <TextView
@@ -109,7 +109,7 @@
             android:padding="0dp"
             android:visibility="gone"
             android:text="@string/tax"
-            android:textColor="@color/text_nearly_black" />
+            android:textColor="@color/staples_black" />
         <TextView
             android:id="@+id/checkout_tax"
             style="@style/CheckoutFooter"
@@ -118,7 +118,7 @@
             android:layout_below="@id/checkout_shipping"
             android:visibility="gone"
             android:padding="0dp"
-            android:textColor="@color/text_nearly_black"  />
+            android:textColor="@color/staples_black"  />
 
         <!-- submission button -->
         <android.support.v7.widget.CardView
@@ -130,7 +130,7 @@
             android:visibility="gone"
             card_view:cardCornerRadius="1dp"
             card_view:cardElevation="0dp"
-            card_view:cardBackgroundColor="@color/background_red_submission" >
+            card_view:cardBackgroundColor="@color/staples_red" >
 
             <TextView
                 style="@style/CheckoutFooter"
@@ -138,7 +138,7 @@
                 android:layout_gravity="left|center_vertical"
                 android:text="@string/submit_order"
                 android:textSize="@dimen/fontsize_14sp"
-                android:textColor="@color/text_white"
+                android:textColor="@color/staples_white"
                 />
             <TextView
                 android:id="@+id/checkout_order_total"
@@ -146,7 +146,7 @@
                 android:layout_width="wrap_content"
                 android:layout_gravity="right|center_vertical"
                 android:textSize="@dimen/fontsize_14sp"
-                android:textColor="@color/text_white"
+                android:textColor="@color/staples_white"
                 />
 
         </android.support.v7.widget.CardView>
@@ -167,7 +167,7 @@
                 <!--android:layout_centerVertical="true"-->
                 <!--android:text="@string/submit_order"-->
                 <!--android:textSize="@dimen/fontsize_14sp"-->
-                <!--android:textColor="@color/text_white"-->
+                <!--android:textColor="@color/staples_white"-->
                 <!--/>-->
             <!--<TextView-->
                 <!--android:id="@+id/checkout_order_total"-->
@@ -176,7 +176,7 @@
                 <!--android:layout_alignParentRight="true"-->
                 <!--android:layout_centerVertical="true"-->
                 <!--android:textSize="@dimen/fontsize_14sp"-->
-                <!--android:textColor="@color/text_white"-->
+                <!--android:textColor="@color/staples_white"-->
                 <!--/>-->
         <!--</RelativeLayout>-->
     </RelativeLayout>

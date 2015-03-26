@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/background_extra_light_gray">
+    android:background="@color/staples_light_gray">
 
     <ScrollView
         android:layout_width="wrap_content"
@@ -45,7 +45,7 @@
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
-                    android:background="@color/background_light_gray"/>
+                    android:background="@color/staples_middle_gray"/>
                 <com.staples.mobile.cfa.widget.DataWrapper
                     android:id="@+id/seen_products_wrapper"
                     android:layout_width="match_parent"
@@ -120,7 +120,7 @@
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
-                    android:background="@color/background_light_gray"/>
+                    android:background="@color/staples_middle_gray"/>
                 <com.staples.mobile.cfa.widget.DataWrapper
                     android:id="@+id/clearance_wrapper"
                     android:layout_width="match_parent"
@@ -181,7 +181,7 @@
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
-                    android:background="@color/background_light_gray"/>
+                    android:background="@color/staples_middle_gray"/>
                 <com.staples.mobile.cfa.widget.DataWrapper
                     android:id="@+id/daily_deal_wrapper"
                     android:layout_width="match_parent"

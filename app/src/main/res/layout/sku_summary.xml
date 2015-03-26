@@ -60,7 +60,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:background="@color/background_dark_blue"
+                        android:background="@color/staples_blue"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp">
                         <TextView
@@ -71,7 +71,7 @@
                             android:paddingBottom="2dp"
                             android:gravity="left"
                             android:text="@string/overweight"
-                            android:textColor="@color/text_white"/>
+                            android:textColor="@color/staples_white"/>
                     </LinearLayout>
                     <TextView
                         style="@style/SkuBulletTextStyle"
@@ -94,7 +94,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:background="@color/background_light_blue"
+                        android:background="@color/staples_blue"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp">
                         <TextView
@@ -105,7 +105,7 @@
                             android:paddingBottom="2dp"
                             android:gravity="left"
                             android:text="@string/add_on"
-                            android:textColor="@color/text_white"/>
+                            android:textColor="@color/staples_white"/>
                     </LinearLayout>
                     <TextView
                         style="@style/SkuBulletTextStyle"
@@ -121,7 +121,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/background_light_gray"
+                    android:background="@color/staples_middle_gray"
                     android:layout_gravity="center"
                     android:layout_marginTop="5dp"/>
             </LinearLayout>
@@ -286,7 +286,7 @@
             android:layout_gravity="right"
             android:onClick="onClick"
             android:clickable="true"
-            android:textColor="@color/text_blue"
+            android:textColor="@color/staples_blue"
             android:visibility="gone"
             />
         <!-- Add to cart footer -->
@@ -320,7 +320,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:textColor="@color/text_nearly_black"
+                android:textColor="@color/staples_black"
                 android:textSize="@dimen/fontsize_16sp"
                 android:visibility="gone"
                 />

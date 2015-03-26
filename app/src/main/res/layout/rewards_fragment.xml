@@ -9,7 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/background_white">
+    android:background="@color/staples_white">
 
     <!--rewards membership card-->
     <RelativeLayout
@@ -61,7 +61,7 @@
                     android:padding="8dp"
                     android:layout_below="@id/rewards_number_label"
                     other:barcodeHeight="36dp"
-                    other:barcodeColor="@color/text_nearly_black"
+                    other:barcodeColor="@color/staples_black"
                     />
                 <TextView
                     android:id="@+id/rewards_number"
@@ -112,7 +112,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="6dp"
-                    android:background="@color/background_white">
+                    android:background="@color/staples_white">
                     <include layout="@layout/rewards_ink_recycling"/>
                 </ScrollView>
 
@@ -122,7 +122,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="6dp"
-                    android:background="@color/background_white">
+                    android:background="@color/staples_white">
                     <include layout="@layout/rewards_summary"/>
                 </ScrollView>
 

@@ -13,7 +13,7 @@
     android:layout_marginTop="8dp"
     android:layout_marginBottom="0dp"
     card_view:contentPadding="0dp"
-    card_view:cardBackgroundColor="@color/background_white"
+    card_view:cardBackgroundColor="@color/staples_white"
     card_view:cardCornerRadius="2dp"
     card_view:cardElevation="2dp">
 
@@ -31,7 +31,7 @@
             android:layout_alignParentLeft="true"
             android:gravity="center_vertical"
             android:paddingLeft="16dp"
-            android:textColor="@color/text_gray"
+            android:textColor="@color/staples_middle_gray"
             android:textSize="@dimen/fontsize_12sp"/>
         <TextView
             android:id="@+id/cartitem_shipping_estimate_itemqty"
@@ -40,7 +40,7 @@
             android:layout_alignParentRight="true"
             android:gravity="center_vertical"
             android:paddingRight="16dp"
-            android:textColor="@color/text_gray"
+            android:textColor="@color/staples_middle_gray"
             android:textSize="@dimen/fontsize_12sp"/>
         <!--horizontal rule-->
         <View
@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@id/cartitem_shipping_estimate"
-            android:background="@color/hr_extra_light_gray" />
+            android:background="@color/staples_off_white" />
 
         <!--list of cart items within group on card -->
         <LinearLayout

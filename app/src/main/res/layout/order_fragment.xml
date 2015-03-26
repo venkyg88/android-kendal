@@ -43,7 +43,7 @@
         android:orientation="vertical"
         android:visibility="invisible"
         android:padding="16dp"
-        android:background="@color/background_white">
+        android:background="@color/staples_white">
         <!--label and close button-->
         <RelativeLayout
             android:layout_width="match_parent"
@@ -84,7 +84,7 @@
             android:layout_height="1dp"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="6dp"
-            android:background="@color/hr_extra_light_gray" />
+            android:background="@color/staples_off_white" />
 
         <!-- delivery info -->
         <TextView

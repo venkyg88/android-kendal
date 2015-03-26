@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/background_white">
+    android:background="@color/staples_white">
 
     <include layout="@layout/rewards_linking" android:id="@+id/link_rewards_acct_layout"/>
 

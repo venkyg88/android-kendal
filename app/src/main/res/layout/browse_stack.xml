@@ -2,5 +2,5 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
           android:id="@+id/title"
           style="@style/BrowseStyle"
-          android:background="@color/staples_light"
+          android:background="@color/staples_red"
           android:textColor="#ffffffff"/>
