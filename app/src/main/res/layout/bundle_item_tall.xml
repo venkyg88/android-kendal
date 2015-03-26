@@ -44,7 +44,7 @@
                     android:paddingRight="5dp"
                     android:gravity="left"
                     android:text="@string/overweight"
-                    android:textColor="@color/text_white"/>
+                    android:textColor="@color/staples_white"/>
             </LinearLayout>
         </LinearLayout>
 
@@ -68,7 +68,7 @@
                     android:paddingRight="5dp"
                     android:gravity="left"
                     android:text="@string/add_on"
-                    android:textColor="@color/text_white"/>
+                    android:textColor="@color/staples_white"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
