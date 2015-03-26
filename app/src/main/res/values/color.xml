@@ -10,6 +10,7 @@
     <color name="staples_green">#6fab04</color>             <!--part of style guide "Success Green"-->
     <color name="staples_black">#333333</color>             <!--part of style guide "Primary Text Color"-->
 
+    <color name="staples_opaque_black">#000000</color> <!-- needed for SortPanel background -->
     <color name="staples_blue">#036ae0</color>    <!-- TODO: proposed part of style guide? -->
 
 	<color name="text_orange_light">#FFA080</color>

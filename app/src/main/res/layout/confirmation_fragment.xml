@@ -27,7 +27,7 @@
                 android:layout_marginTop="32dp"
                 android:layout_marginBottom="16dp"
                 android:padding="8dp"
-                android:background="@drawable/green_oval"
+                android:background="@drawable/oval_green"
                 android:src="@drawable/ic_check_white_24dp"/>
 
             <!--confirmation message text -->
@@ -141,7 +141,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_below="@id/create_account_hr"
                     android:layout_marginTop="16dp"
-                    android:background="@drawable/red_oval"
+                    android:background="@drawable/oval_red"
                     android:src="@drawable/ic_add_white"/>
             </RelativeLayout>
 
@@ -178,7 +178,7 @@
                     android:layout_below="@id/account_confirmation_hr"
                     android:layout_marginTop="16dp"
                     android:padding="4dp"
-                    android:background="@drawable/blue_oval"
+                    android:background="@drawable/oval_blue"
                     android:src="@drawable/ic_check_white_18dp"/>
                 <!--btn_check_buttonless_on-->
             </RelativeLayout>
