@@ -6,8 +6,8 @@
     <style name="ActionBarBadgeStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">4dp</item>
-        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
         <item name="android:textSize">@dimen/fontsize_11sp</item>
         <item name="android:textColor">@color/staples_white</item>
         <item name="circleColor">@color/staples_red</item>
@@ -25,7 +25,8 @@
     <style name="ActionBarIconStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">6dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
         <item name="android:visibility">gone</item>
     </style>
     <style name="ActionBarSearchStyle">
@@ -55,9 +56,10 @@
     <style name="SortOptionStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">6dp</item>
+        <item name="android:padding">4dp</item>
         <item name="android:lines">1</item>
-        <item name="android:textSize">@dimen/fontsize_20sp</item>
+        <item name="android:typeface">serif</item>
+        <item name="android:textSize">@dimen/fontsize_16sp</item>
         <item name="android:textColor">@color/staples_white</item>
     </style>
 

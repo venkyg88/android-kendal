@@ -21,7 +21,7 @@ import com.staples.mobile.cfa.weeklyad.WeeklyAdByCategoryFragment;
 
 import java.util.ArrayList;
 
-public class DrawerAdapter extends BaseAdapter {
+public class    DrawerAdapter extends BaseAdapter {
     private static final String TAG = "DrawerAdapter";
 
     private MainActivity activity;
@@ -52,7 +52,7 @@ public class DrawerAdapter extends BaseAdapter {
         return(array.get(position));
     }
 
-    public DrawerItem getItem(Class fragmentClass) {
+    public DrawerItem findItemByClass(Class fragmentClass) {
         for (DrawerItem item : array) {
             if (item.fragmentClass.equals(fragmentClass)) {
                 return item;
@@ -114,7 +114,7 @@ public class DrawerAdapter extends BaseAdapter {
 
     public void fill() {
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_home_black, R.string.home_title, ConfiguratorFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_android, R.string.personal_feed_title, PersonalFeedFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_chat_black, R.string.personal_feed_title, PersonalFeedFragment.class));
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_browse_black, R.string.browse_title, BrowseFragment.class));
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_store_locator_black, R.string.store_locator_title, StoreFragment.class));
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_weekly_ad_black, R.string.weekly_ad_title, WeeklyAdByCategoryFragment.class));
