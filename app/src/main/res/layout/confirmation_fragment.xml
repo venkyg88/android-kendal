@@ -3,8 +3,8 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
+    android:paddingLeft="@dimen/margin_16dp"
+    android:paddingRight="@dimen/margin_16dp"
     android:orientation="vertical"
     android:background="@color/staples_white">
 
@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="32dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="@dimen/margin_16dp"
                 android:padding="8dp"
                 android:background="@drawable/green_oval"
                 android:src="@drawable/ic_check_white_24dp"/>
@@ -74,7 +74,7 @@
             <TextView
                 android:layout_gravity="left"
                 style="@style/GraySubheading"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/margin_16dp"
                 android:text="@string/delivery_range_label"/>
             <TextView
                 android:id="@+id/delivery_range"
@@ -88,7 +88,7 @@
             <TextView
                 android:layout_gravity="left"
                 style="@style/GraySubheading"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/margin_16dp"
                 android:text="@string/order_total_label"/>
             <TextView
                 android:id="@+id/order_total"
@@ -112,7 +112,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_alignParentTop="true"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/margin_16dp"
                     android:background="@color/staples_middle_gray"/>
 
                 <TextView
@@ -121,7 +121,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_below="@id/create_account_hr"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/margin_16dp"
                     android:textSize="@dimen/fontsize_16sp"
                     android:textColor="@color/staples_black"
                     android:text="@string/create_acccount_msg1"/>
@@ -140,7 +140,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_below="@id/create_account_hr"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/margin_16dp"
                     android:background="@drawable/red_oval"
                     android:src="@drawable/ic_add_white"/>
             </RelativeLayout>
@@ -159,7 +159,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_alignParentTop="true"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/margin_16dp"
                     android:background="@color/staples_middle_gray"/>
                 <TextView
                     android:id="@+id/account_confirmation_msg"
@@ -167,7 +167,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_below="@id/account_confirmation_hr"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/margin_16dp"
                     android:textSize="@dimen/fontsize_16sp"
                     android:textColor="@color/staples_black"
                     android:text="@string/account_confirmation_msg"/>
@@ -176,7 +176,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_below="@id/account_confirmation_hr"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/margin_16dp"
                     android:padding="4dp"
                     android:background="@drawable/blue_oval"
                     android:src="@drawable/ic_check_white_18dp"/>

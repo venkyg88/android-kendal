@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:padding="16dp"
+        android:padding="@dimen/margin_16dp"
         android:visibility="gone"
         android:orientation="vertical"
         >
@@ -70,7 +70,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
+            android:paddingTop="@dimen/margin_16dp"
             android:textColor="@color/staples_middle_gray"
             android:textSize="@dimen/fontsize_18sp"
             android:text="@string/free_delivery"
@@ -86,7 +86,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
+            android:paddingTop="@dimen/margin_16dp"
             android:textColor="@color/staples_middle_gray"
             android:textSize="@dimen/fontsize_18sp"
             android:text="@string/easy_returns"
@@ -116,8 +116,8 @@
         android:layout_height="40dp"
         android:layout_width="match_parent"
         android:gravity="center_vertical"
-        card_view:contentPaddingLeft="16dp"
-        card_view:contentPaddingRight="16dp"
+        card_view:contentPaddingLeft="@dimen/margin_16dp"
+        card_view:contentPaddingRight="@dimen/margin_16dp"
         card_view:cardCornerRadius="0dp"
         card_view:cardElevation="1dp"
         card_view:cardBackgroundColor="@color/staples_light_gray">
@@ -145,13 +145,13 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0"
-        android:padding="16dp"
+        android:padding="@dimen/margin_16dp"
         android:scrollbars="vertical"/>
 
     <!--link rewards account -->
     <include layout="@layout/rewards_linking"
         android:id="@+id/link_rewards_acct_layout"
-        android:padding="16dp"
+        android:padding="@dimen/margin_16dp"
         android:visibility="gone"/>
 
     <!--shipping info -->
@@ -161,8 +161,8 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
 		android:paddingBottom="0dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:paddingLeft="@dimen/margin_16dp"
+        android:paddingRight="@dimen/margin_16dp"
         android:paddingTop="7dp"
 		android:visibility="visible"
 	>
@@ -218,8 +218,8 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
 		android:paddingBottom="0dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:paddingLeft="@dimen/margin_16dp"
+        android:paddingRight="@dimen/margin_16dp"
 		android:paddingTop="0dp">
 
         <TextView

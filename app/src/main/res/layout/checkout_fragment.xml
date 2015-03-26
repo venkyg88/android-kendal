@@ -20,8 +20,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:paddingLeft="@dimen/margin_16dp"
+        android:paddingRight="@dimen/margin_16dp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:background="@color/staples_middle_gray">
