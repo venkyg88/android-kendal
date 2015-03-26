@@ -28,14 +28,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="6dp"
-                android:textSize="30sp"
-                android:textColor="@color/text_gray"/>
+                android:textSize="@dimen/fontsize_30sp"
+                android:textColor="@color/staples_middle_gray"/>
             <TextView
                 android:id="@+id/cartridges_recycled_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="@color/text_black"/>
+                android:textSize="@dimen/fontsize_16sp"
+                android:textColor="@color/staples_black"/>
         </LinearLayout>
 
         <!--ink cartridges limit-->
@@ -43,8 +43,8 @@
             android:id="@+id/cartridges_limit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@color/text_gray"/>
+            android:textSize="@dimen/fontsize_16sp"
+            android:textColor="@color/staples_middle_gray"/>
 
         <!--ink cartridges earned-->
         <LinearLayout
@@ -58,13 +58,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="6dp"
-                android:textSize="30sp"
-                android:textColor="@color/text_gray"/>
+                android:textSize="@dimen/fontsize_30sp"
+                android:textColor="@color/staples_middle_gray"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="@color/text_black"
+                android:textSize="@dimen/fontsize_16sp"
+                android:textColor="@color/staples_black"
                 android:text="@string/rewards_earned"/>
         </LinearLayout>
 
@@ -73,8 +73,8 @@
             android:id="@+id/ink_rewards_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@color/text_gray"/>
+            android:textSize="@dimen/fontsize_16sp"
+            android:textColor="@color/staples_middle_gray"/>
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

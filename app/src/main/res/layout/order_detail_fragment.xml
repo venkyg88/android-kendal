@@ -12,7 +12,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background_white">
+        android:background="@color/staples_white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,16 +25,16 @@
             android:id="@+id/orderNumberLbl"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:textSize="20sp"
-            android:textColor="@color/text_black"/>
+            android:textSize="@dimen/fontsize_20sp"
+            android:textColor="@color/staples_black"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/orderNumber"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:textSize="20sp"
-            android:textColor="@color/text_black"/>
+            android:textSize="@dimen/fontsize_20sp"
+            android:textColor="@color/staples_black"/>
     </LinearLayout>
 
     <TextView
@@ -44,8 +44,8 @@
         android:layout_alignParentRight="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:textSize="16sp"
-        android:textColor="@color/text_black" />
+        android:textSize="@dimen/fontsize_16sp"
+        android:textColor="@color/staples_black" />
 
     <LinearLayout
         android:id="@+id/sku_item"
@@ -70,8 +70,8 @@
         <!--android:layout_marginLeft="10dp"-->
         <!--android:layout_marginRight="10dp"-->
         <!--android:layout_marginTop="10dp"-->
-        <!--android:textSize="16sp"-->
-        <!--android:textColor="@color/text_black" />-->
+        <!--android:textSize="@dimen/fontsize_16sp"-->
+        <!--android:textColor="@color/staples_black" />-->
         <!--<TextView-->
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="wrap_content"-->
@@ -79,8 +79,8 @@
             <!--android:layout_alignParentRight="true"-->
             <!--android:layout_marginRight="10dp"-->
             <!--android:layout_marginTop="10dp"-->
-            <!--android:textSize="16sp"-->
-            <!--android:textColor="@color/text_black" />-->
+            <!--android:textSize="@dimen/fontsize_16sp"-->
+            <!--android:textColor="@color/staples_black" />-->
     <!--</RelativeLayout>-->
 
     <!--<RelativeLayout-->
@@ -94,15 +94,15 @@
             <!--android:layout_marginLeft="10dp"-->
             <!--android:layout_marginRight="10dp"-->
             <!--android:layout_marginTop="10dp"-->
-            <!--android:textSize="16sp"-->
+            <!--android:textSize="@dimen/fontsize_16sp"-->
             <!--android:layout_marginBottom="10dp"-->
-            <!--android:textColor="@color/text_black"/>-->
+            <!--android:textColor="@color/staples_black"/>-->
         <!--<TextView-->
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="wrap_content"-->
             <!--android:id="@+id/orderQtyLbl"-->
-            <!--android:textSize="16sp"-->
-            <!--android:textColor="@color/text_black"-->
+            <!--android:textSize="@dimen/fontsize_16sp"-->
+            <!--android:textColor="@color/staples_black"-->
             <!--android:layout_alignTop="@+id/orderTotalLbl"-->
             <!--android:layout_toRightOf="@+id/orderTotalLbl"-->
             <!--android:layout_toEndOf="@+id/orderTotalLbl" />-->
@@ -113,9 +113,9 @@
             <!--android:layout_marginLeft="10dp"-->
             <!--android:layout_marginRight="10dp"-->
             <!--android:layout_marginTop="10dp"-->
-            <!--android:textSize="16sp"-->
+            <!--android:textSize="@dimen/fontsize_16sp"-->
             <!--android:layout_marginBottom="10dp"-->
-            <!--android:textColor="@color/text_black"-->
+            <!--android:textColor="@color/staples_black"-->
             <!--android:layout_alignParentRight="true"/>-->
     <!--</RelativeLayout>-->
 
@@ -124,7 +124,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="10dip"
-            android:background="@color/background_light_gray" />
+            android:background="@color/staples_middle_gray" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -137,8 +137,8 @@
                 android:id="@+id/paymentLbl"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="20sp"
-                android:textColor="@color/text_black" />
+                android:textSize="@dimen/fontsize_20sp"
+                android:textColor="@color/staples_black" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -146,8 +146,8 @@
                 android:id="@+id/paymentMethodLbl"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/text_light_gray" />
+                android:textSize="@dimen/fontsize_16sp"
+                android:textColor="@color/staples_middle_gray" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -165,15 +165,15 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/cardInfoTV"
                     android:layout_marginLeft="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/text_black" />
+                    android:textSize="@dimen/fontsize_16sp"
+                    android:textColor="@color/staples_black" />
             </LinearLayout>
         </LinearLayout>
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="10dip"
-            android:background="@color/background_light_gray" />
+            android:background="@color/staples_middle_gray" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -186,30 +186,30 @@
                 android:id="@+id/addressLbl"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/text_light_gray" />
+                android:textSize="@dimen/fontsize_16sp"
+                android:textColor="@color/staples_middle_gray" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/billingNameTV"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/text_black" />
+                android:textSize="@dimen/fontsize_16sp"
+                android:textColor="@color/staples_black" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/addressTV"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/text_black" />
+                android:textSize="@dimen/fontsize_16sp"
+                android:textColor="@color/staples_black" />
         </LinearLayout>
         <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="10dip"
-        android:background="@color/background_light_gray" />
+        android:background="@color/staples_middle_gray" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -222,8 +222,8 @@
             android:id="@+id/orderFinalLbl"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:textSize="20sp"
-            android:textColor="@color/text_black" />
+            android:textSize="@dimen/fontsize_20sp"
+            android:textColor="@color/staples_black" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -236,8 +236,8 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/text_black" />
+                android:textSize="@dimen/fontsize_16sp"
+                android:textColor="@color/staples_black" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -245,8 +245,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/text_black" />
+                android:textSize="@dimen/fontsize_16sp"
+                android:textColor="@color/staples_black" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -260,8 +260,8 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/text_black" />
+                android:textSize="@dimen/fontsize_16sp"
+                android:textColor="@color/staples_black" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -269,8 +269,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/text_green" />
+                android:textSize="@dimen/fontsize_16sp"
+                android:textColor="@color/staples_green" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -284,8 +284,8 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/text_black" />
+                android:textSize="@dimen/fontsize_16sp"
+                android:textColor="@color/staples_black" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -293,8 +293,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/text_green" />
+                android:textSize="@dimen/fontsize_16sp"
+                android:textColor="@color/staples_green" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -308,8 +308,8 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/text_black" />
+                android:textSize="@dimen/fontsize_16sp"
+                android:textColor="@color/staples_black" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -317,8 +317,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/text_black" />
+                android:textSize="@dimen/fontsize_16sp"
+                android:textColor="@color/staples_black" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -332,8 +332,8 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/text_black" />
+                android:textSize="@dimen/fontsize_16sp"
+                android:textColor="@color/staples_black" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -341,8 +341,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/text_black" />
+                android:textSize="@dimen/fontsize_16sp"
+                android:textColor="@color/staples_black" />
         </RelativeLayout>
 
         </LinearLayout>

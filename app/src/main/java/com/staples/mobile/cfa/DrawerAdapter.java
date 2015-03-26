@@ -90,7 +90,7 @@ public class DrawerAdapter extends BaseAdapter {
         TextView title = (TextView) view.findViewById(R.id.title);
         if (title!=null) {
             title.setText(item.title);
-            title.setTextColor(activity.getResources().getColor(item.enabled? R.color.text_black : R.color.text_gray));
+            title.setTextColor(activity.getResources().getColor(item.enabled? R.color.staples_black : R.color.staples_middle_gray));
         }
 
         // Set additional text
@@ -98,7 +98,7 @@ public class DrawerAdapter extends BaseAdapter {
         if (additionalTextVw!=null) {
             if (!TextUtils.isEmpty(item.additionalText) && item.enabled) {
                 additionalTextVw.setText(item.additionalText);
-                additionalTextVw.setTextColor(activity.getResources().getColor(R.color.text_red));
+                additionalTextVw.setTextColor(activity.getResources().getColor(R.color.staples_red));
                 additionalTextVw.setVisibility(View.VISIBLE);
             } else {
                 additionalTextVw.setVisibility(View.GONE);

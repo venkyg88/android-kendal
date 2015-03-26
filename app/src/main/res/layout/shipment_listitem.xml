@@ -8,22 +8,22 @@
         android:layout_height="wrap_content"
         android:id="@+id/shipmentLbl"
         android:layout_marginTop="10dp"
-        android:textSize="16sp"
-        android:textColor="@color/text_black"/>
+        android:textSize="@dimen/fontsize_16sp"
+        android:textColor="@color/staples_black"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/deliveryDateTV"
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
-        android:textSize="16sp"
-        android:textColor="@color/text_black" />
+        android:textSize="@dimen/fontsize_16sp"
+        android:textColor="@color/staples_black" />
     <View
         android:id="@+id/horizontal_rule"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="10dp"
-        android:background="@color/background_light_gray" />
+        android:background="@color/staples_middle_gray" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -48,15 +48,15 @@
                 android:id="@+id/shipmentTitle"
                 android:maxLines="2"
                 android:ellipsize="end"
-                android:textSize="16sp"
-                android:textColor="@color/text_black"/>
+                android:textSize="@dimen/fontsize_16sp"
+                android:textColor="@color/staples_black"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/shipmentPrice"
-                android:textSize="16sp"
+                android:textSize="@dimen/fontsize_16sp"
                 android:layout_marginTop="10dp"
-                android:textColor="@color/text_green" />
+                android:textColor="@color/staples_green" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -67,15 +67,15 @@
                     android:layout_height="wrap_content"
                     android:text="Quantity"
                     android:id="@+id/shipmentQtyLbl"
-                    android:textSize="16sp"
-                    android:textColor="@color/text_light_gray" />
+                    android:textSize="@dimen/fontsize_16sp"
+                    android:textColor="@color/staples_middle_gray" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/shipmentQty"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/fontsize_16sp"
                     android:layout_marginLeft="10dip"
-                    android:textColor="@color/text_light_gray" />
+                    android:textColor="@color/staples_middle_gray" />
                 </LinearLayout>
 
         </LinearLayout>

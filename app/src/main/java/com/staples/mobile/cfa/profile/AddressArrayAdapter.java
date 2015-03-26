@@ -91,7 +91,7 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
         TextView nameText = (TextView) rowView.findViewById(R.id.rowItemText);
         TextView addressText = (TextView) rowView.findViewById(R.id.secondItemText);
         addressText.setText(addressBuf.toString());
-        addressText.setTextColor(context.getResources().getColor(R.color.text_black));
+        addressText.setTextColor(context.getResources().getColor(R.color.staples_black));
         nameText.setText(tmpName);
         nameText.setTypeface(null, Typeface.BOLD);
         nameText.setTag(position);

@@ -19,7 +19,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_marginLeft="72dp"
-            android:textSize="11sp"
+            android:textSize="@dimen/fontsize_11sp"
             android:textColor="#8a8a8a"
             android:textAllCaps="true"/>
         <ImageView

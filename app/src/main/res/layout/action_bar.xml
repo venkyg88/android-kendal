@@ -6,7 +6,7 @@
     android:paddingLeft="4dp"
     android:paddingRight="4dp"
     android:animateLayoutChanges="true"
-    android:background="@color/background_white">
+    android:background="@color/staples_white">
     <!-- ActionBar, these must be kept in priority order -->
     <ImageView
         android:id="@+id/close_button"
