@@ -413,7 +413,7 @@ Callback,
 
                     // set dark color for even table rows
                     if ((rowCount % 2) == 0) {
-                        skuSpecRow.setBackgroundColor(0xffdddddd);
+                        skuSpecRow.setBackgroundColor(parent.getContext().getResources().getColor(R.color.staples_middle_gray));
                     }
 
                     // Set specification

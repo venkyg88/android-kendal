@@ -4,7 +4,7 @@
     android:layout_height="@dimen/fixed_grid_wide_height"
     android:orientation="horizontal"
     android:padding="6dp"
-    android:background="#ffffff">
+    android:background="@color/staples_white">
     <ImageView
         android:id="@+id/image"
         android:layout_width="@dimen/image_square_size"

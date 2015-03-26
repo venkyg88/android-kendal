@@ -2,5 +2,5 @@
        android:shape="oval">
     <size android:width="8sp"
           android:height="8sp"/>
-    <solid android:color="#ff000000"/>
+    <solid android:color="@color/staples_black"/>
 </shape>

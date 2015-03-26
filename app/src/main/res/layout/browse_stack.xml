@@ -3,4 +3,4 @@
           android:id="@+id/title"
           style="@style/BrowseStyle"
           android:background="@color/staples_red"
-          android:textColor="#ffffffff"/>
+          android:textColor="@color/staples_white"/>

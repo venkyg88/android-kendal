@@ -66,7 +66,7 @@ public class NotifyReceiver extends BaseIntentReceiver {
             builder.setContentText(message.getAlert());
             builder.setAutoCancel(true);
             builder.setSmallIcon(R.drawable.ic_notification);
-            builder.setColor(0xffc0c0c0);
+            builder.setColor(getContext().getResources().getColor(R.color.staples_middle_gray));
             builder.extend(createNotificationActionsExtender(message, notificationId));
             return builder.build();
         }

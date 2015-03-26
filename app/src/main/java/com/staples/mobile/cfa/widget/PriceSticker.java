@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -51,8 +52,8 @@ public class PriceSticker extends View {
         // Preset default attributes
         int majorTextSize = 20;
         int minorTextSize = 16;
-        int majorTextColor = 0xff000000;
-        int minorTextColor = 0xff000000;
+        int majorTextColor = context.getResources().getColor(R.color.staples_black);
+        int minorTextColor = majorTextColor;
         gravity = Gravity.LEFT;
 
         // Get styled attributes
