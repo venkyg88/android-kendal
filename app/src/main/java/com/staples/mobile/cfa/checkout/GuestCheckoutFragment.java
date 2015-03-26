@@ -21,6 +21,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.profile.CcNumberInputFilter;
 import com.staples.mobile.cfa.profile.ExpiryDateInputFilter;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.profile.CreditCard;
@@ -115,7 +116,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         expirationDateVw.setOnEditorActionListener(paymentMethodCompletionListener);
         cidVw.setOnEditorActionListener(paymentMethodCompletionListener);
 
-        expirationDateVw.setFilters(new InputFilter[] { new ExpiryDateInputFilter() });
+        cardNumberVw.setFilters(new InputFilter[]{new CcNumberInputFilter()});
+        expirationDateVw.setFilters(new InputFilter[]{new ExpiryDateInputFilter()});
 
 
         cardNumberVw.setOnEditorActionListener(
@@ -124,7 +126,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                     @Override
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                         if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                            CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString());
+                            CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString().replaceAll(" ", ""));
                             cardImage.setImageResource(ccType.getImageResource());
                             expirationDateVw.setVisibility(View.VISIBLE);
                             if (ccType.isCidUsed()) {
@@ -239,7 +241,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         boolean valid = true;
         valid &= validateRequired(cardNumberVw);
         valid &= validateRequired(expirationDateVw);
-        CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString());
+        CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString().replaceAll(" ", ""));
         if (ccType.isCidUsed()) {
             valid &= validateRequired(cidVw);
         }
@@ -256,7 +258,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         if (valid) {
             PaymentMethod paymentMethod = new PaymentMethod();
             paymentMethod.setSaveCardIndicator("Y");
-            paymentMethod.setCardNumber(cardNumberVw.getText().toString());
+            paymentMethod.setCardNumber(cardNumberVw.getText().toString().replaceAll(" ", ""));
             paymentMethod.setCardType(ccType.getName());
             paymentMethod.setCardExpirationMonth(expirationDateVw.getText().toString().substring(0,2));
             paymentMethod.setCardExpirationYear("20" +expirationDateVw.getText().toString().substring(3,5));

@@ -103,8 +103,9 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                 return(false);
             }
         });
+        cardNumberET.setFilters(new InputFilter[] { new CcNumberInputFilter()});
 
-        expDateET.setFilters(new InputFilter[] { new ExpiryDateInputFilter() });
+        expDateET.setFilters(new InputFilter[]{new ExpiryDateInputFilter()});
 
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
 
@@ -124,7 +125,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
     private boolean validate() {
         expDateET.setVisibility(View.VISIBLE);
         expDateET.requestFocus();
-        CreditCard.Type ccType = CreditCard.Type.detect(cardNumberET.getText().toString());
+        CreditCard.Type ccType = CreditCard.Type.detect(cardNumberET.getText().toString().replaceAll(" ", ""));
         if (ccType != CreditCard.Type.UNKNOWN) {
             cardImage.setImageResource(ccType.getImageResource());
             cardType = ccType.getName();
@@ -145,7 +146,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         activity.hideSoftKeyboard(view);
 
         // ensure credit card number entered
-        creditCardNumber = cardNumberET.getText().toString();
+        creditCardNumber = cardNumberET.getText().toString().replaceAll(" ", "");
         if (TextUtils.isEmpty(creditCardNumber)) {
             activity.showErrorDialog(R.string.all_fields_required);
             return;
