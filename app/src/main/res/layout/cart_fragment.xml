@@ -138,15 +138,15 @@
             android:textColor="@color/text_blue"
             />
     </android.support.v7.widget.CardView>
-    <!-- RecyclerView for coupons -->
+
+    <!-- RecyclerView for coupons&rewards (initially set height & weight to zero to hide, will animate weight)-->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/coupon_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="0"
         android:padding="16dp"
-        android:scrollbars="vertical"
-        android:visibility="gone"/>
+        android:scrollbars="vertical"/>
 
     <!--link rewards account -->
     <include layout="@layout/rewards_linking"
@@ -154,67 +154,93 @@
         android:padding="16dp"
         android:visibility="gone"/>
 
-
     <!--shipping info -->
     <RelativeLayout
-        android:id="@+id/cart_shipping_layout"
-        android:layout_width="match_parent"
+		android:id="@+id/cart_shipping_layout"
+		android:background="@color/background_off_white"
         android:layout_height="wrap_content"
-        android:paddingTop="7dp"
+        android:layout_width="match_parent"
+		android:paddingBottom="0dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:background="@color/background_off_white">
+        android:paddingTop="7dp"
+		android:visibility="visible"
+	>
         <TextView
+			android:id="@+id/oversized_shipping_label"
+            android:layout_alignParentLeft="true"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:text="@string/shipping"
-            android:paddingBottom="0dp"
-            android:textSize="14sp"
+			android:paddingTop="0dp"
+			android:text="@string/oversized_shipping_fee"
             android:textColor="@color/text_nearly_black"
+            android:textSize="14sp"
         />
         <TextView
-            android:id="@+id/cart_shipping"
+			android:id="@+id/oversized_shipping"
+            android:layout_alignBaseline="@id/oversized_shipping_label"
+            android:layout_alignParentRight="true"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_alignParentRight="true"
-            android:paddingBottom="0dp"
-            android:textSize="14sp"
+			android:text="$14.99"
             android:textColor="@color/text_nearly_black"
-            />
+            android:textSize="14sp"
+		/>
+
+		<TextView
+			android:id="@+id/cart_shipping_label"
+			android:layout_alignParentLeft="true"
+			android:layout_below="@id/oversized_shipping_label"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:paddingTop="0dp"
+			android:text="@string/shipping"
+			android:textColor="@color/text_nearly_black"
+			android:textSize="14sp"
+		/>
+
+		<TextView
+			android:id="@+id/cart_shipping"
+			android:layout_alignBaseline="@id/cart_shipping_label"
+			android:layout_alignParentRight="true"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:textColor="@color/text_nearly_black"
+			android:textSize="14sp"
+		/>
+
     </RelativeLayout>
 
     <!--pre-tax subtotal and checkout button -->
     <RelativeLayout
         android:id="@+id/cart_subtotal_layout"
-        android:layout_width="match_parent"
+		android:background="@color/background_off_white"
         android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+		android:paddingBottom="0dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:background="@color/background_off_white">
+		android:paddingTop="0dp">
+
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@color/text_black"
             android:text="@string/pretax_subtotal" />
+
         <TextView
             android:id="@+id/cart_subtotal"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:textColor="@color/text_black"
-            />
+			android:textColor="@color/text_black" />
 
         <!--checkout button-->
         <android.support.v7.widget.CardView
@@ -240,7 +266,6 @@
             />
 
         </android.support.v7.widget.CardView>
-
 
     </RelativeLayout>
 
