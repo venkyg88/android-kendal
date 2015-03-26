@@ -127,8 +127,8 @@ public class SearchBarView extends LinearLayout implements View.OnClickListener,
         return(sb);
     }
 
-    public void open() {
-        if (open) return;
+    public boolean open() {
+        if (open) return(false);
         searchOption.setVisibility(INVISIBLE);
         searchText.setVisibility(VISIBLE);
         searchText.setText(null);
@@ -139,6 +139,7 @@ public class SearchBarView extends LinearLayout implements View.OnClickListener,
 
         open = true;
         filled = false;
+        return(true);
     }
 
     private void setFilled(boolean filled) {
@@ -152,8 +153,8 @@ public class SearchBarView extends LinearLayout implements View.OnClickListener,
         }
     }
 
-    public void close() {
-        if (!open) return;
+    public boolean close() {
+        if (!open) return(false);
         searchOption.setImageResource(R.drawable.ic_search_black);
         searchOption.setVisibility(VISIBLE);
         searchText.setVisibility(GONE);
@@ -162,6 +163,7 @@ public class SearchBarView extends LinearLayout implements View.OnClickListener,
         imm.hideSoftInputFromWindow(getWindowToken(), 0);
 
         open = false;
+        return(true);
     }
 
     public String getKeyword() {
