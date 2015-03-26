@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="#ffffff">
+        android:background="@color/staples_white">
         <!--dynamically add content here-->
     </ScrollView>
 
@@ -24,7 +24,7 @@
         android:paddingRight="16dp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
-        android:background="#cccccc">
+        android:background="@color/staples_middle_gray">
 
     <!--&lt;!&ndash; delivery range &ndash;&gt;-->
         <!--<TextView-->

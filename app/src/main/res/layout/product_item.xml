@@ -6,4 +6,4 @@
     android:layout_height="wrap_content"
     android:padding="4dp"
     android:textSize="@dimen/fontsize_16sp"
-    android:textColor="#000000"/>
+    android:textColor="@color/staples_black"/>

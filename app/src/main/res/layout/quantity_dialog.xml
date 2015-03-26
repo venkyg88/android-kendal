@@ -11,6 +11,6 @@
         android:orientation="vertical"
         android:layout_gravity="top"
         android:padding="1dp"
-        android:background="#ffcccccc"/>
+        android:background="@color/staples_middle_gray"/>
 </ScrollView>
 
