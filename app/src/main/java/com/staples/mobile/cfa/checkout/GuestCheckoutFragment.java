@@ -140,17 +140,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                     }
                 });
 
-        cardNumberVw.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (MotionEvent.ACTION_UP == event.getAction()) {
-                    cardNumberVw.getText().clear();
-                    cardImage.setImageResource(0);
-                }
-                return false; // return is important...
-            }
-        });
-
         // add listener to billing addr toggle button switch
         useShipAddrAsBillingAddrSwitch = (Switch) frame.findViewById(R.id.useShipAddrAsBillingAddr_switch);
         useShipAddrAsBillingAddrSwitch.setChecked(true);
