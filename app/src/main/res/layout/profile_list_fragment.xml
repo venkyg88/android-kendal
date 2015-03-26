@@ -11,6 +11,6 @@
     <ImageButton
         android:id="@+id/listAddButton"
         style="@style/RoundButton"
-        android:background="@drawable/red_oval"
+        android:background="@drawable/oval_red"
         android:src="@drawable/ic_add_white"/>
 </com.staples.mobile.cfa.widget.AnimatorFrame>

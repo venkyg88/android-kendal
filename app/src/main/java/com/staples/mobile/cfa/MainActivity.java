@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.apptentive.android.sdk.Apptentive;
 
 import com.staples.mobile.cfa.analytics.AdobeTracker;
+import com.staples.mobile.cfa.feed.PersonalFeedFragment;
 import com.staples.mobile.cfa.store.StoreFragment;
 import com.staples.mobile.cfa.weeklyad.WeeklyAdByCategoryFragment;
 import com.staples.mobile.cfa.weeklyad.WeeklyAdInStoreFragment;
@@ -586,7 +587,7 @@ public class MainActivity extends Activity
     }
 
     public boolean selectStoreFinder() {
-        DrawerItem drawerItem = leftMenuAdapter.getItem(StoreFragment.class);
+        DrawerItem drawerItem = leftMenuAdapter.findItemByClass(StoreFragment.class);
         return selectDrawerItem(drawerItem, Transition.RIGHT, true);
     }
 
@@ -646,6 +647,11 @@ public class MainActivity extends Activity
     public boolean selectLoginFragment() {
         Fragment fragment = new LoginFragment();
         return(selectFragment(fragment, Transition.UP, true));
+    }
+
+    public boolean selectFeedFragment() {
+        DrawerItem item = leftMenuAdapter.findItemByClass(PersonalFeedFragment.class);
+        return(selectDrawerItem(item, Transition.RIGHT, true));
     }
 
     /** opens the profile addresses fragment */
@@ -714,6 +720,10 @@ public class MainActivity extends Activity
                 } else drawerLayout.closeDrawers();
                 break;
 
+            case R.id.action_feed:
+                selectFeedFragment();
+                break;
+
             case R.id.continue_shopping_btn:
                 selectDrawerItem(homeDrawerItem, Transition.RIGHT, true);
                 break;
@@ -740,7 +750,9 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.back_button:
-                ActionBar.getInstance().closeSearch();
+                if (!ActionBar.getInstance().closeSearch()) {
+                    onBackPressed();
+                }
                 break;
 
             case R.id.account_option:

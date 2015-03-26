@@ -37,12 +37,13 @@
     <string name="empty">Nothing Found</string>
 
     <!-- Bundle/class/search -->
+    <string name="sort_refine">Refine</string>
     <string name="sort_best_match">Best Match</string>
     <string name="sort_highest_rated">Highest Rated</string>
-    <string name="sort_price_ascending">Price: Low to High</string>
-    <string name="sort_price_descending">Price: High to Low</string>
-    <string name="sort_title_ascending">Name: A to Z</string>
-    <string name="sort_title_descending">Name: Z to A</string>
+    <string name="sort_price_ascending">Price</string>
+    <string name="sort_price_descending">Price</string>
+    <string name="sort_title_ascending">Name A–Z</string>
+    <string name="sort_title_descending">Name Z–A</string>
 
     <!-- Notifications -->
     <string name="notify_prefs_title">Notification Preferences</string>
