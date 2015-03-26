@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -111,20 +112,10 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         else vh.action.setImageResource(R.drawable.ic_add_shopping_cart_black);
 
         // check if the product is an add-on product
-        if(item.isAddOnItem){
-            vh.addonLayout.setVisibility(View.VISIBLE);
-        }
-        else{
-            vh.addonLayout.setVisibility(View.GONE);
-        }
+        vh.addonLayout.setVisibility((item.isAddOnItem)? View.VISIBLE : View.GONE);
 
         // check if the product is an overweight product, example sku:650465
-        if(item.isOverSized){
-            vh.overweightLayout.setVisibility(View.VISIBLE);
-        }
-        else{
-            vh.overweightLayout.setVisibility(View.GONE);
-        }
+        vh.overweightLayout.setVisibility((item.isOverSized)? View.VISIBLE  : View.GONE);
     }
 
     public void fill(List<Product> products) {
@@ -138,24 +129,10 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             item.customerCount = product.getCustomerReviewCount();
 
             // check if the product is an add-on product
-            String isAddOn = product.getPricing().get(0).getAddOnItem();
-            if(isAddOn != null){
-                item.isAddOnItem = true;
-            }
-            else{
-                item.isAddOnItem = false;
-            }
+            item.isAddOnItem = !TextUtils.isEmpty(product.getPricing().get(0).getAddOnItem());
 
             // check if the product is an overweight product, example sku:650465
-            String isOverSized = product.getPricing().get(0).getOverSizeItem();
-            if(isOverSized != null){
-                item.isOverSized = true;
-
-                Log.d(TAG, "isOverSized:" + product.getPricing().get(0).getOverSizeItem());
-            }
-            else{
-                item.isOverSized = false;
-            }
+            item.isOverSized = !TextUtils.isEmpty(product.getPricing().get(0).getOverSizeItem());
 
             array.add(item);
         }

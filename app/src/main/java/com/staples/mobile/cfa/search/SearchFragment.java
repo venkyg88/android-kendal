@@ -91,15 +91,18 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         EasyOpenApi2 easyOpenApi2 = Access.getInstance().getEasyOpenApi2(false);
         Api easy2API = StaplesAppContext.getInstance().getApiByName(StaplesAppContext.EASYOPEN2);
         String version = easy2API.getVersion();
-        String server = easy2API.getUrl();
+        easyOpenApi2.searchResult(version, keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
+
+        // the below codes compatible with the original search w/wo tapi
+        //String server = easy2API.getUrl();
         // when tapi is available
-        if(server.equals("tapi.staples.com")){
-            easyOpenApi2.searchResult(version, keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
-        }
-        else{
-            EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-            easyOpenApi.searchResult(keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
-        }
+        //if(server.equals("tapi.staples.com")){
+        // easyOpenApi2.searchResult(version, keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
+        //}
+        //else{
+            //EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+            //easyOpenApi.searchResult(keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
+        //}
 
         state = DataWrapper.State.LOADING;
     }
