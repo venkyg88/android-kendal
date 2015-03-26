@@ -11,7 +11,7 @@
         android:layout_gravity="center"
         android:padding="12dp"
         android:src="@drawable/splash"
-        android:background="#ffffff"/>
+        android:background="@color/staples_white"/>
     <!-- Main screen -->
     <com.staples.mobile.cfa.widget.LinearLayoutWithOverlay
         android:id="@+id/main"
@@ -58,7 +58,7 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:divider="@null"
-                    android:background="#ffffff"
+                    android:background="@color/staples_white"
                     android:choiceMode="singleChoice"/>
             </LinearLayout>
         </android.support.v4.widget.DrawerLayout>
@@ -70,7 +70,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        android:background="#6f000022" >
+        android:background="@color/overlay" >
         <ProgressBar
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"

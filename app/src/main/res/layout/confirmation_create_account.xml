@@ -129,7 +129,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        android:background="#6f000022" >
+        android:background="@color/overlay" >
         <ProgressBar
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"

@@ -13,4 +13,6 @@
     <color name="staples_blue">#036ae0</color>    <!-- TODO: proposed part of style guide? -->
 
 	<color name="text_orange_light">#FFA080</color>
+
+    <color name="overlay">#6f000022</color>
 </resources>
