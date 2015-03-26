@@ -5,6 +5,7 @@
 package com.staples.mobile.cfa.checkout;
 
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -20,6 +21,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.profile.ExpiryDateInputFilter;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.profile.CreditCard;
 import com.staples.mobile.cfa.util.DateUtils;
@@ -113,24 +115,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         expirationDateVw.setOnEditorActionListener(paymentMethodCompletionListener);
         cidVw.setOnEditorActionListener(paymentMethodCompletionListener);
 
-        expirationDateVw.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        expirationDateVw.setFilters(new InputFilter[] { new ExpiryDateInputFilter() });
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(start == 1 && before < start) {
-                    expirationDateVw.setText(s+"/");
-                    expirationDateVw.setSelection(expirationDateVw.getText().length());
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }});
 
         cardNumberVw.setOnEditorActionListener(
                 new EditText.OnEditorActionListener() {
