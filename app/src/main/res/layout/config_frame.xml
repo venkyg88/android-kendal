@@ -13,7 +13,7 @@
             android:id="@+id/message_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/background_extra_light_gray">
+            android:background="@color/staples_light_gray">
             <LinearLayout
                 android:id="@+id/message_contain_layout"
                 android:layout_width="match_parent"
@@ -32,7 +32,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/fontsize_14sp"
                         android:textColor="@android:color/black"/>
                     <TextView
                         android:id="@+id/login_username"
@@ -41,7 +41,7 @@
                         android:gravity="center"
                         android:lines="1"
                         android:ellipsize="end"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/fontsize_14sp"
                         android:visibility="gone"
                         android:textColor="@android:color/black"/>
 
@@ -56,7 +56,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/fontsize_14sp"
                             android:textColor="@android:color/black"
                             android:textStyle="bold"
                             android:text="@string/login_title"/>
@@ -64,7 +64,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/fontsize_14sp"
                             android:textColor="@android:color/black"
                             android:text="@string/or"/>
                         <TextView
@@ -72,7 +72,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/fontsize_14sp"
                             android:textColor="@android:color/black"
                             android:textStyle="bold"
                             android:text="@string/signup_title"/>
@@ -80,7 +80,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/fontsize_14sp"
                             android:textColor="@android:color/black"
                             android:text="@string/question_mark"/>
                     </LinearLayout>
@@ -100,7 +100,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:textSize="20sp"
+                        android:textSize="@dimen/fontsize_20sp"
                         android:lines="1"
                         android:maxEms="4"
                         android:ellipsize="end"
@@ -115,14 +115,14 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:textSize="13sp"
+                            android:textSize="@dimen/fontsize_13sp"
                             android:textColor="@android:color/black"
                             android:text="@string/redeem"/>
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:textSize="13sp"
+                            android:textSize="@dimen/fontsize_13sp"
                             android:textColor="@android:color/black"
                             android:text="@string/reward"/>
                     </LinearLayout>
@@ -156,7 +156,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:textSize="12sp"
+                                android:textSize="@dimen/fontsize_12sp"
                                 android:textColor="@android:color/black"/>
                         </LinearLayout>
 
@@ -169,7 +169,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:textSize="13sp"
+                                android:textSize="@dimen/fontsize_13sp"
                                 android:textColor="@android:color/black"
                                 android:text="@string/store_nearby"/>
                             <TextView
@@ -180,7 +180,7 @@
                                 android:lines="1"
                                 android:ellipsize="end"
                                 android:maxEms="4"
-                                android:textSize="13sp"
+                                android:textSize="@dimen/fontsize_13sp"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"/>
                         </LinearLayout>
@@ -195,7 +195,7 @@
                         <TextView
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/fontsize_14sp"
                             android:text="@string/loading"/>
                         <ProgressBar
                             android:layout_width="wrap_content"
@@ -207,7 +207,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/fontsize_15sp"
                         android:text="@string/no_store"
                         android:padding="5dp"
                         android:textStyle="bold"/>
@@ -217,7 +217,7 @@
                 android:id="@+id/vertical_line"
                 android:layout_width="1dp"
                 android:layout_height="30dp"
-                android:background="@color/background_light_gray"
+                android:background="@color/staples_middle_gray"
                 android:layout_gravity="center"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"/>
@@ -227,7 +227,7 @@
             android:id="@+id/hide_banner"
             android:layout_width="40dp"
             android:layout_height="5dp"
-            android:background="@color/text_gray"
+            android:background="@color/staples_middle_gray"
             android:layout_gravity="bottom|center"/>
 
         <ImageView
@@ -252,7 +252,7 @@
 			android:layout_height="match_parent"
             android:layout_margin="0dp"
 			android:orientation="vertical"
-			android:background="@color/background_extra_light_gray"
+			android:background="@color/staples_light_gray"
             android:padding="0dp">
 		</LinearLayout>
 	</ScrollView>

@@ -60,7 +60,7 @@
             android:text="@string/save_btn"
             android:id="@+id/addCCBtn"
             android:imeOptions="actionDone"
-            android:textColor="@color/text_white"
+            android:textColor="@color/staples_white"
             android:layout_alignParentRight="true"
             />
         <Button
@@ -69,7 +69,7 @@
             android:text="@string/cancel_btn"
             android:id="@+id/cancelCCBtn"
             android:imeOptions="actionDone"
-            android:textColor="@color/text_white"
+            android:textColor="@color/staples_white"
             android:layout_toLeftOf="@+id/addCCBtn"/>
         </RelativeLayout>
 </com.staples.mobile.cfa.widget.AnimatorLayout>

@@ -16,7 +16,7 @@
         android:id="@+id/accessory_title"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:textSize="12sp"/>
+        android:textSize="@dimen/fontsize_12sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,7 +29,7 @@
             android:id="@+id/accessory_rating"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
+            android:textSize="@dimen/fontsize_13sp"
             android:layout_weight="0.9"/>
     </LinearLayout>
 
@@ -44,7 +44,7 @@
             android:id="@+id/accessory_price"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="17sp"
+            android:textSize="@dimen/fontsize_18sp"
             android:layout_weight="0.8"/>
     </LinearLayout>
 </LinearLayout>

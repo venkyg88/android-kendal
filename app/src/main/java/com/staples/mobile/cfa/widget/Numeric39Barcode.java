@@ -93,7 +93,7 @@ public class Numeric39Barcode extends View {
     private void init(Context context, AttributeSet attrs) {
         // Preset default attributes
         barcodeHeight = 24;
-        barcodeColor = R.color.text_black;
+        barcodeColor = R.color.staples_black;
 
         // Get styled attributes
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Numeric39Barcode);

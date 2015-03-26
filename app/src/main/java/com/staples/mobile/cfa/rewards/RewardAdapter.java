@@ -64,8 +64,8 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.ViewHolder
         Resources r = activity.getResources();
 
         // set up applied state
-        int blackTextColor = r.getColor(R.color.text_black);
-        int grayTextColor = r.getColor(R.color.text_gray);
+        int blackTextColor = r.getColor(R.color.staples_black);
+        int grayTextColor = r.getColor(R.color.staples_middle_gray);
         if (reward.isIsApplied()) {
             vh.couponField1Vw.setTextColor(grayTextColor);
             vh.couponField2Vw.setTextColor(grayTextColor);

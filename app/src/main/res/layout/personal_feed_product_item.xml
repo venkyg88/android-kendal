@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:textSize="16sp"
+                android:textSize="@dimen/fontsize_16sp"
                 android:maxLines="3"
                 android:paddingRight="25dp"/>
             <com.staples.mobile.cfa.widget.RatingStars
