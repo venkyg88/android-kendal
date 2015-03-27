@@ -157,14 +157,20 @@ public class CartItem {
     }
 
     public boolean isHeavyWeightSKU() {
+        boolean isHeavyWeightSKUBool = false;
         String isHeavyWeightSKUStr = product.getIsHeavyWeightSKU();
-        boolean isHeavyWeightSKUBool = isHeavyWeightSKUStr.equalsIgnoreCase("Y");
+        if (isHeavyWeightSKUStr != null) {
+            isHeavyWeightSKUBool = isHeavyWeightSKUStr.equalsIgnoreCase("Y");
+        }
         return isHeavyWeightSKUBool;
     }
 
     public boolean isAddOnSKU() {
+        boolean isAddOnSKUBool = false;
         String isAddOnSKUStr = product.getIsAddOnSKU();
-        boolean isAddOnSKUBool = isAddOnSKUStr.equalsIgnoreCase("Y");
+        if (isAddOnSKUStr != null) {
+            isAddOnSKUBool = isAddOnSKUStr.equalsIgnoreCase("Y");
+        }
         return isAddOnSKUBool;
     }
 }
