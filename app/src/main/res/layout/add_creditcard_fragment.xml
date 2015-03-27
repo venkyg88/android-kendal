@@ -14,6 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/card_image" />
+        <!--DLS: using inputType=datetime so that we get a numeric keyboard, but spaces are allowed-->
         <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -21,7 +22,7 @@
             android:id="@+id/cardNumber"
             android:hint="Card Number"
             android:textSize="@dimen/fontsize_15sp"
-            android:inputType="number"
+            android:inputType="datetime"
             android:imeOptions="actionNext"
             android:layout_toEndOf="@+id/card_image"
             android:layout_toRightOf="@+id/card_image" />
@@ -35,7 +36,6 @@
             android:maxLength="5"
             android:textSize="@dimen/fontsize_15sp"
             android:hint="MM/YY"
-            android:visibility="gone"
             android:imeOptions="actionDone"/>
         <EditText
             android:id="@+id/cid"
