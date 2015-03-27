@@ -30,7 +30,7 @@
             android:layout_height="32dp"
             android:layout_alignParentLeft="true"
             android:gravity="center_vertical"
-            android:paddingLeft="16dp"
+            android:paddingLeft="@dimen/margin_16dp"
             android:textColor="@color/staples_middle_gray"
             android:textSize="@dimen/fontsize_12sp"/>
         <TextView
@@ -39,7 +39,7 @@
             android:layout_height="32dp"
             android:layout_alignParentRight="true"
             android:gravity="center_vertical"
-            android:paddingRight="16dp"
+            android:paddingRight="@dimen/margin_16dp"
             android:textColor="@color/staples_middle_gray"
             android:textSize="@dimen/fontsize_12sp"/>
         <!--horizontal rule-->
@@ -56,8 +56,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/horizontal_rule"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:paddingLeft="@dimen/margin_16dp"
+            android:paddingRight="@dimen/margin_16dp"
             android:paddingBottom="8dp"
             android:paddingTop="0dp"
             android:orientation="vertical">
