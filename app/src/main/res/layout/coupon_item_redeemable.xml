@@ -32,7 +32,7 @@
     <Button
         android:id="@+id/reward_add_button"
         android:layout_width="80dp"
-        android:layout_height="35dp"
+        android:layout_height="36dp"
         android:layout_alignParentRight="true"
         android:layout_gravity="center_vertical"
         android:background="@color/staples_red"
@@ -48,7 +48,7 @@
     <Button
         android:id="@+id/reward_remove_button"
         android:layout_width="80dp"
-        android:layout_height="35dp"
+        android:layout_height="36dp"
         android:layout_alignParentRight="true"
         android:layout_gravity="center_vertical"
         android:background="@color/staples_light_gray"
