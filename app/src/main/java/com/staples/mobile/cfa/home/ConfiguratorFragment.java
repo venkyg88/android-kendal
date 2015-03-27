@@ -76,7 +76,7 @@ public class ConfiguratorFragment extends Fragment {
 
     private DeviceInfo deviceInfo;
 
-    private int last_orientation = Configuration.ORIENTATION_UNDEFINED;
+    private int lastOrientation = Configuration.ORIENTATION_UNDEFINED;
 
     private View configFrameView;
     private LinearLayout configScrollLayout;
@@ -167,7 +167,7 @@ public class ConfiguratorFragment extends Fragment {
         );
 
         Configuration configuration = resources.getConfiguration();
-        last_orientation = configuration.orientation;
+        lastOrientation = configuration.orientation;
 
         picasso = Picasso.with(activity);
 
@@ -223,15 +223,15 @@ public class ConfiguratorFragment extends Fragment {
     public void onConfigurationChanged(Configuration configuration) {
 
         if (LOGGING) Log.v(TAG, "ConfiguratorFragment:onConfigurationChanged():"
-                        + " last_orientation[" + last_orientation + "]"
+                        + " lastOrientation[" + lastOrientation + "]"
                         + " configuration.orientation[" + configuration.orientation + "]"
                         + " configurator[" + configurator + "]"
                         + " this[" + this + "]"
         );
 
-        if (configuration.orientation != last_orientation) {
+        if (configuration.orientation != lastOrientation) {
 
-            last_orientation = configuration.orientation;
+            lastOrientation = configuration.orientation;
             configScrollLayout.removeAllViews();
             initFromConfiguratorResult();
         }
