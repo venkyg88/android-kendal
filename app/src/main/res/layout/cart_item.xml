@@ -49,7 +49,7 @@
 
 			<TextView
 				android:id="@+id/overweight_warning"
-				android:background="@color/staples_blue"
+				android:background="@color/staples_green"
 				android:layout_alignParentLeft="true"
 				android:layout_height="wrap_content"
 				android:layout_marginBottom="5dp"
@@ -69,7 +69,7 @@
 
 			<TextView
 				android:id="@+id/add_on_warning"
-				android:background="@color/staples_blue"
+				android:background="@color/staples_green"
 				android:layout_alignParentLeft="true"
 				android:layout_below="@id/overweight_warning"
 				android:layout_height="wrap_content"

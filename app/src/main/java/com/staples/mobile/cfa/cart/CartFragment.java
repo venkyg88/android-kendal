@@ -74,8 +74,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private View couponsRewardsLayout;
     private View linkRewardsAcctLayout;
     private Button rewardsLinkAcctButton;
-    private int greenBackground;
-    private int blueBackground;
     private int greenText;
     private int blackText;
 
@@ -118,8 +116,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
 
         Resources r = getResources();
-        greenBackground = r.getColor(R.color.staples_green);
-        blueBackground = r.getColor(R.color.staples_blue);
         greenText = r.getColor(R.color.staples_green);
         blackText = r.getColor(R.color.staples_black);
 
@@ -270,14 +266,12 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                     cartFreeShippingMsg.setVisibility(View.VISIBLE);
                     cartFreeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
                             currencyFormat.format(freeShippingThreshold), currencyFormat.format(freeShippingThreshold - subtotal)));
-                    cartFreeShippingMsg.setBackgroundColor(blueBackground);
                 } else {
                     // qualifies for free shipping
                     String freeShippingMsg = r.getString(R.string.free_shipping_msg2);
                     if (!freeShippingMsg.equals(cartFreeShippingMsg.getText().toString())) {
                         cartFreeShippingMsg.setVisibility(View.VISIBLE);
                         cartFreeShippingMsg.setText(freeShippingMsg);
-                        cartFreeShippingMsg.setBackgroundColor(greenBackground);
                         // hide after a delay
                         cartFreeShippingMsg.postDelayed(new Runnable() {
                             @Override public void run() {
