@@ -1,28 +1,15 @@
 package com.staples.mobile.cfa.bundle;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.Fragment;
-import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
@@ -31,6 +18,7 @@ import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
+import com.staples.mobile.cfa.widget.SortPanel;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -45,7 +33,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class BundleFragment extends Fragment implements Callback<Browse>, View.OnClickListener, RadioGroup.OnCheckedChangeListener, Animation.AnimationListener {
+public class BundleFragment extends Fragment implements Callback<Browse>, View.OnClickListener {
     private static final String TAG = "BundleFragment";
 
     private static final String TITLE = "title";
@@ -58,9 +46,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     private BundleItem.SortType fetchSort;
     private BundleItem.SortType displaySort;
     private String title;
-    private Dialog panel;
-    private Animation slideUp;
-    private Animation slideDown;
 
     public void setArguments(String title, String identifier) {
         Bundle args = new Bundle();
@@ -94,10 +79,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         RecyclerView list = (RecyclerView) view.findViewById(R.id.products);
         list.setLayoutManager(new GridLayoutManager(activity, 1));
         list.addItemDecoration(new HorizontalDivider(activity));
-
-        slideUp = AnimationUtils.loadAnimation(activity, R.anim.bottomsheet_slide_up);
-        slideDown = AnimationUtils.loadAnimation(activity, R.anim.bottomsheet_delay_down);
-        slideDown.setAnimationListener(this);
 
         view.findViewById(R.id.open_sort).setOnClickListener(this);
 
@@ -186,6 +167,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
             }
         }
         adapter.sort(comparator);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -237,73 +219,18 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 }
                 break;
             case R.id.open_sort:
-                showPanel();
+                SortPanel panel = new SortPanel(getActivity());
+                panel.setSelectedRadioButton(displaySort.button);
+                panel.setOnClickListener(this);
+                panel.show();
+                break;
+            default:
+                BundleItem.SortType sortType = BundleItem.SortType.findSortTypeById(view.getId());
+                if (sortType!=null) {
+                    displaySort = sortType;
+                    sortLocally();
+                }
                 break;
         }
-    }
-
-    @Override
-    public void onAnimationStart(Animation animation) {}
-
-    @Override
-    public void onAnimationEnd(Animation animation) {
-        if (panel!=null) panel.dismiss();
-    }
-
-    @Override
-    public void onAnimationRepeat(Animation animation) {}
-
-    public void onCheckedChanged(RadioGroup group, int id) {
-        BundleItem.SortType sortType = BundleItem.SortType.findSortTypeById(id);
-        if (sortType!=null && sortType!=displaySort) {
-            displaySort = sortType;
-            sortLocally();
-            adapter.notifyDataSetChanged();
-
-            RadioGroup options = (RadioGroup) panel.findViewById(R.id.sort_options);
-            options.startAnimation(slideDown);
-        }
-    }
-
-    @SuppressLint("NewApi")
-    private int getSoftButtonBarHeight() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            Activity activity=getActivity();
-            if (activity!=null) {
-                Display display = activity.getWindowManager().getDefaultDisplay();
-                Point point = new Point();
-                display.getSize(point);
-                int usableHeight = point.y;
-                display.getRealSize(point);
-                int realHeight = point.y;
-                if (realHeight>usableHeight)
-                    return(realHeight-usableHeight);
-            }
-        }
-        return(0);
-    }
-
-    private void showPanel() {
-        panel = new Dialog(getActivity(), R.style.PanelStyle);
-        panel.setContentView(R.layout.sort_panel);
-
-        Window window = panel.getWindow();
-        window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        WindowManager.LayoutParams params = window.getAttributes();
-        params.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND|WindowManager.LayoutParams.FLAG_SPLIT_TOUCH|WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN|WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR;
-        params.dimAmount = 0.3f;
-        params.type = WindowManager.LayoutParams.TYPE_APPLICATION_PANEL;
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        params.gravity = Gravity.BOTTOM;
-        params.y = getSoftButtonBarHeight();
-
-        if (displaySort !=null) {
-            ((RadioButton) panel.findViewById(displaySort.button)).setChecked(true);
-        }
-        RadioGroup options = (RadioGroup) panel.findViewById(R.id.sort_options);
-        options.setOnCheckedChangeListener(this);
-        options.startAnimation(slideUp);
-        panel.show();
     }
 }

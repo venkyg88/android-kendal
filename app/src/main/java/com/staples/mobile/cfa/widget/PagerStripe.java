@@ -1,8 +1,10 @@
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -54,14 +56,17 @@ public class PagerStripe extends View implements ViewPager.OnPageChangeListener 
         }
         a.recycle();
 
+        Resources r = context.getResources();
+        int blackColor = r.getColor(R.color.staples_black);
+
         stripePaint = new Paint();
-        stripePaint.setColor(0xff000000);
+        stripePaint.setColor(blackColor);
 
         trackPaint = new Paint();
-        trackPaint.setColor(0xffeeeeee);
+        trackPaint.setColor(r.getColor(R.color.staples_light_gray));
 
         textPaint = new Paint();
-        textPaint.setColor(0xff000000);
+        textPaint.setColor(blackColor);
         textPaint.setTextSize(textSize);
     }
 

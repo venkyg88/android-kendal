@@ -6,7 +6,7 @@
     android:paddingTop="4dp"
     android:paddingBottom="4dp"
     android:gravity="center"
-    android:background="#ffffffff"
+    android:background="@color/staples_white"
     android:maxLines="1"
     android:textSize="@dimen/fontsize_20sp">
 </TextView>

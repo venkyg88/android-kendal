@@ -31,6 +31,6 @@
     <ImageButton
         android:id="@+id/open_sort"
         style="@style/RoundButton"
-        android:background="@drawable/red_oval"
+        android:background="@drawable/oval_red"
         android:src="@drawable/ic_sort_white"/>
 </com.staples.mobile.cfa.widget.AnimatorFrame>

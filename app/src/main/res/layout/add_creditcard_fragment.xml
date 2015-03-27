@@ -15,27 +15,25 @@
             android:layout_height="wrap_content"
             android:id="@+id/card_image" />
         <EditText
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:id="@+id/cardNumber"
             android:hint="Card Number"
+            android:textSize="@dimen/fontsize_15sp"
             android:inputType="number"
             android:imeOptions="actionNext"
             android:layout_toEndOf="@+id/card_image"
             android:layout_toRightOf="@+id/card_image" />
-        </LinearLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
         <!--DLS: setting imeOptions to actionDone by default for use in profile, guest checkout will
             modify this to actionNext programatically when CID is displayed -->
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/expirationDate"
-            android:inputType="number"
+            android:inputType="date"
             android:maxLength="5"
+            android:textSize="@dimen/fontsize_15sp"
             android:hint="MM/YY"
             android:visibility="gone"
             android:imeOptions="actionDone"/>
@@ -46,11 +44,12 @@
             android:inputType="number"
             android:maxLength="4"
             android:hint="@string/cid"
+            android:textSize="@dimen/fontsize_15sp"
             android:visibility="gone"
             android:layout_toRightOf="@+id/expirationDate"
             android:imeOptions="actionDone"
             android:singleLine="true"/>
-        </RelativeLayout>
+    </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
