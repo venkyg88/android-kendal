@@ -108,7 +108,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         vh.title.setText(item.title);
         vh.ratingStars.setRating(item.customerRating, item.customerCount);
         vh.priceSticker.setPricing(item.price, item.unit);
-        if (item.type==IdentifierType.SKUSET) vh.action.setImageResource(R.drawable.sku_set);
+        if (item.type==IdentifierType.SKUSET) vh.action.setImageResource(R.drawable.ic_more_vert_black);
         else vh.action.setImageResource(R.drawable.ic_add_shopping_cart_black);
 
         // check if the product is an add-on product

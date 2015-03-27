@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:text="New Text"
             android:textSize="@dimen/fontsize_20sp"
-            android:textColor="@android:color/black"
+			android:textColor="@color/staples_black"
             android:id="@+id/rowItemText" />
 
         <TextView

@@ -21,7 +21,7 @@
             android:visibility="gone"
             android:textSize="@dimen/fontsize_20sp"
             android:text="@string/no_orders_found"
-            android:textColor="@android:color/darker_gray"/>
+			android:textColor="@color/staples_dark_gray"/>
 
     </com.staples.mobile.cfa.widget.LinearLayoutWithOverlay>
 
