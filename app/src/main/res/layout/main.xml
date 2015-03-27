@@ -84,7 +84,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_gravity="bottom"
-        android:paddingLeft="16dp"
+        android:paddingLeft="@dimen/margin_16dp"
         android:visibility="invisible"
         android:gravity="left|center_vertical"
         android:textSize="@dimen/fontsize_16sp"
