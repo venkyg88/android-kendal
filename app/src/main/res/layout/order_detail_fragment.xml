@@ -53,7 +53,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:paddingBottom="8dp"
+        android:paddingBottom="@dimen/verticalspacing_8dp"
         android:paddingTop="0dp"
         android:orientation="vertical">
 

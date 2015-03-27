@@ -67,7 +67,7 @@
             android:layout_toRightOf="@id/password"
             android:layout_below="@id/password_label"
             android:layout_marginLeft="@dimen/margin_16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/verticalspacing_8dp"
             android:textColor="@color/staples_dark_gray"
             android:text="@string/show"/>
 

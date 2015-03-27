@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginTop="15dp"
-			android:layout_marginBottom="8dp"
+			android:layout_marginBottom="@dimen/verticalspacing_8dp"
             android:lines="2"
             android:ellipsize="end"
             android:textSize="@dimen/fontsize_14sp"
@@ -132,7 +132,7 @@
         android:layout_height="1dp"
         android:layout_below="@id/cartitem_desc_layout"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/verticalspacing_8dp"
         android:background="@color/staples_off_white"
         android:visibility="gone"/>
 
