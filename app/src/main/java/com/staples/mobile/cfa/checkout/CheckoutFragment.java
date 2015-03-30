@@ -254,20 +254,29 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
 
     /** updates the shipping charge and tax values (may be result of api response or a call from the subclass) */
-    protected void setShippingAndTax(Float totalHandlingCost, String shippingCharge, float tax){
+    protected void setShippingAndTax(float totalHandlingCost, String shippingCharge, float tax){
+
         Bundle checkoutBundle = this.getArguments();
         checkoutBundle.putFloat(BUNDLE_PARAM_TOTAL_HANDLING_COST, totalHandlingCost);
         checkoutBundle.putString(BUNDLE_PARAM_SHIPPING_CHARGE, shippingCharge);
         checkoutBundle.putFloat(BUNDLE_PARAM_TAX, tax);
+
         this.totalHandlingCost = totalHandlingCost;
         this.shippingCharge = shippingCharge;
         this.tax = tax;
+
         DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
-        oversizedShippingVw.setText(currencyFormat.format(totalHandlingCost));
+        String totalHandlingCostStr = currencyFormat.format(totalHandlingCost);
+        oversizedShippingVw.setText(totalHandlingCostStr);
+
         shippingChargeVw.setText(formatShippingCharge(shippingCharge, currencyFormat));
         shippingChargeVw.setTextColor("Free".equals(shippingCharge) ? greenText : blackText);
-        taxVw.setText(currencyFormat.format(tax));
+
+        String taxStr = currencyFormat.format(tax);
+        taxVw.setText(taxStr);
+
         checkoutTotalVw.setText(currencyFormat.format(getCheckoutTotal()));
+
         setShipTaxSubmitVisibility(true);
     }
 
