@@ -4,9 +4,9 @@
     <dimen name="fontsize_11sp">12sp</dimen>   <!-- TODO: temporary part of style guide-->
     <dimen name="fontsize_12sp">12sp</dimen>   <!--part of style guide-->
     <dimen name="fontsize_13sp">12sp</dimen>   <!--TODO: temporary part of style guide-->
-    <dimen name="fontsize_14sp">12sp</dimen>   <!--TODO: temporary part of style guide-->
-    <dimen name="fontsize_15sp">12sp</dimen>   <!--TODO: temporary part of style guide-->
-    <dimen name="fontsize_16sp">18sp</dimen>   <!--TODO: temporary part of style guide-->
+    <dimen name="fontsize_14sp">16sp</dimen>   <!--TODO: temporary part of style guide-->
+    <dimen name="fontsize_15sp">16sp</dimen>   <!--TODO: temporary part of style guide-->
+    <dimen name="fontsize_16sp">16sp</dimen>   <!--part of style guide-->
     <dimen name="fontsize_18sp">18sp</dimen>   <!--part of style guide-->
     <dimen name="fontsize_20sp">18sp</dimen>   <!--TODO: temporary part of style guide-->
     <dimen name="fontsize_24sp">24sp</dimen>   <!--part of style guide-->

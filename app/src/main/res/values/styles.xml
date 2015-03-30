@@ -169,7 +169,7 @@
     <style name="LargePriceSticker">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="majorTextSize">32sp</item>
+        <item name="majorTextSize">@dimen/fontsize_34sp</item>
         <item name="majorTextColor">@color/staples_red</item>
         <item name="minorTextSize">@dimen/fontsize_24sp</item>
         <item name="minorTextColor">@color/staples_middle_gray</item>
@@ -178,7 +178,7 @@
     <style name="SmallPriceSticker">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="majorTextSize">@dimen/fontsize_14sp</item>
+        <item name="majorTextSize">@dimen/fontsize_18sp</item>
         <item name="majorTextColor">@color/staples_red</item>
         <item name="minorTextSize">@dimen/fontsize_12sp</item>
         <item name="minorTextColor">@color/staples_middle_gray</item>
