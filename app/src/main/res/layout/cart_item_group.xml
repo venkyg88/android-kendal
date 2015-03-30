@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@id/cartitem_shipping_estimate"
-            android:background="@color/staples_off_white" />
+            android:background="@color/staples_horizontal_rule" />
 
         <!--list of cart items within group on card -->
         <LinearLayout

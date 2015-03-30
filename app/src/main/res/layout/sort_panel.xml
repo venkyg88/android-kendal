@@ -23,6 +23,8 @@
                 android:orientation="vertical">
                 <TextView
                     style="@style/SortOptionStyle"
+                    android:layout_height="24sp"
+                    android:paddingLeft="4dp"
                     android:text="@string/sort_refine"/>
                 <RadioButton
                     android:id="@+id/sort_best_match"

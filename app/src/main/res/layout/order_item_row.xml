@@ -3,25 +3,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="wrap_content"
 android:layout_height="wrap_content"
-android:id="@+id/orderLayout">
+android:id="@+id/orderLayout"
+android:layout_marginLeft="@dimen/margin_16dp"
+android:layout_marginRight="@dimen/margin_16dp" >
 <TextView
     android:id="@+id/orderNumTv"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
 	android:textColor="@color/staples_black"
     android:textSize="@dimen/fontsize_18sp"
-    android:paddingTop="10dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
+    android:paddingTop="@dimen/verticalspacing_8dp"
     android:layout_alignParentLeft="true"/>
 <TextView
     android:id="@+id/numItemsTV"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:textSize="@dimen/fontsize_18sp"
-    android:paddingTop="10dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
+    android:paddingTop="@dimen/verticalspacing_8dp"
     android:layout_alignParentRight="true"
 	android:textColor="@color/staples_black" />
 <TextView
@@ -29,9 +27,7 @@ android:id="@+id/orderLayout">
     android:layout_height="wrap_content"
     android:id="@+id/orderStatusTV"
     android:textSize="@dimen/fontsize_18sp"
-    android:paddingTop="10dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
+    android:paddingTop="@dimen/verticalspacing_8dp"
 	android:textColor="@color/staples_green"
     android:maxLines="1"
     android:layout_below="@+id/orderNumTv"/>
@@ -42,17 +38,13 @@ android:id="@+id/orderLayout">
     android:textSize="@dimen/fontsize_18sp"
     android:layout_below="@+id/orderStatusTV"
 	android:textColor="@color/staples_black"
-    android:paddingTop="10dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"/>
+    android:paddingTop="@dimen/verticalspacing_8dp"/>
 <LinearLayout
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:id="@+id/buttonLayout"
     android:layout_below="@+id/orderDeliveryTV"
-    android:paddingTop="10dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp">
+    android:paddingTop="@dimen/verticalspacing_8dp">
     <Button
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -71,7 +63,7 @@ android:id="@+id/orderLayout">
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/verticalspacing_8dp"
         android:layout_below="@+id/buttonLayout"
         android:background="@color/staples_middle_gray" />
 </RelativeLayout>

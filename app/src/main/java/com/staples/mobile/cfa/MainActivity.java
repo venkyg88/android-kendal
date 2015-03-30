@@ -16,7 +16,6 @@ import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -25,13 +24,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
-
 import com.staples.mobile.cfa.analytics.AdobeTracker;
-import com.staples.mobile.cfa.feed.PersonalFeedFragment;
-import com.staples.mobile.cfa.store.StoreFragment;
-import com.staples.mobile.cfa.weeklyad.WeeklyAdByCategoryFragment;
-import com.staples.mobile.cfa.weeklyad.WeeklyAdInStoreFragment;
-import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.bundle.BundleFragment;
 import com.staples.mobile.cfa.cart.CartApiManager;
@@ -40,16 +33,17 @@ import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.checkout.ConfirmationFragment;
 import com.staples.mobile.cfa.checkout.GuestCheckoutFragment;
 import com.staples.mobile.cfa.checkout.RegisteredCheckoutFragment;
+import com.staples.mobile.cfa.feed.PersonalFeedFragment;
 import com.staples.mobile.cfa.home.ConfiguratorFragment;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.notify.NotifyReceiver;
+import com.staples.mobile.cfa.order.OrderFragment;
 import com.staples.mobile.cfa.profile.AddressFragment;
 import com.staples.mobile.cfa.profile.AddressListFragment;
 import com.staples.mobile.cfa.profile.CreditCardFragment;
 import com.staples.mobile.cfa.profile.CreditCardListFragment;
-import com.staples.mobile.cfa.order.OrderFragment;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.rewards.RewardsFragment;
@@ -57,7 +51,10 @@ import com.staples.mobile.cfa.rewards.RewardsLinkingFragment;
 import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.skuset.SkuSetFragment;
+import com.staples.mobile.cfa.store.StoreFragment;
 import com.staples.mobile.cfa.util.CurrencyFormat;
+import com.staples.mobile.cfa.weeklyad.WeeklyAdByCategoryFragment;
+import com.staples.mobile.cfa.weeklyad.WeeklyAdInStoreFragment;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.LinearLayoutWithOverlay;
 import com.staples.mobile.common.access.Access;
@@ -68,6 +65,7 @@ import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.staples.mobile.common.analytics.Tracker;
 import com.urbanairship.AirshipConfigOptions;
 import com.urbanairship.UAirship;
 import com.urbanairship.push.PushManager;
@@ -89,7 +87,6 @@ public class MainActivity extends Activity
     private static final int CONNECTIVITY_CHECK_INTERVAL = 300000; // in milliseconds (e.g. 300000=5min)
 
     private DrawerLayout drawerLayout;
-    private ViewGroup leftDrawer;
     private ListView leftMenu;
     private DrawerAdapter leftMenuAdapter;
     private LinearLayoutWithOverlay mainLayout;
@@ -367,7 +364,6 @@ public class MainActivity extends Activity
 
         // Find top-level entities
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        leftDrawer = (ViewGroup) findViewById(R.id.left_drawer);
         leftMenu = (ListView) findViewById(R.id.left_menu);
         mainLayout = (LinearLayoutWithOverlay)findViewById(R.id.main);
         mainLayout.setOverlayView(findViewById(R.id.progress_overlay));
@@ -532,8 +528,19 @@ public class MainActivity extends Activity
         drawerLayout.closeDrawers();
         ActionBar.getInstance().closeSearch();
 
-        if (activityInForeground) {
+//        Log.e("StateBug", "selectFragment");
+//        if (!activityInForeground) {
+//            Log.e("StateBug", "Activity is not in foreground");
+//        }
+//        if (isDestroyed()) {
+//            Log.e("StateBug", "Activity is already destroyed");
+//        }
+//        if (isFinishing()) {
+//            Log.e("StateBug", "Activity is finishing");
+//        }
 
+        if (activityInForeground)
+        {
             // Swap Fragments
             FragmentManager manager = getFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
@@ -715,8 +722,8 @@ public class MainActivity extends Activity
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.action_left_drawer:
-                if (!drawerLayout.isDrawerOpen(leftDrawer)) {
-                    drawerLayout.openDrawer(leftDrawer);
+                if (!drawerLayout.isDrawerOpen(leftMenu)) {
+                    drawerLayout.openDrawer(leftMenu);
                 } else drawerLayout.closeDrawers();
                 break;
 

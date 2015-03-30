@@ -22,7 +22,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/verticalspacing_8dp"
             android:layout_marginBottom="@dimen/verticalspacing_8dp"
-            other:contentPadding="6dp"
+            other:contentPadding="@dimen/verticalspacing_8dp"
             other:cardCornerRadius="8dp"
             other:cardElevation="4dp"
             >

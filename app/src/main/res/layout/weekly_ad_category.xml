@@ -1,7 +1,8 @@
 <com.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/staples_off_white">
 
     <!--top banner image and store info need to be overlayed in frame layout-->
     <FrameLayout
@@ -15,7 +16,7 @@
             android:layout_height="150dp"
             android:layout_gravity="left"
             android:scaleType="fitStart"
-            android:background="@color/staples_blue"
+            android:background="@color/staples_green"
             android:src="@drawable/no_photo"
             />
         <!--todo: replace image above with weekly_ad_image once it's the right image-->
@@ -65,6 +66,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/weekly_ad_categories_list"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"/>
+        android:layout_width="match_parent"
+        android:paddingBottom="@dimen/verticalspacing_8dp"/>
 
 </com.staples.mobile.cfa.widget.AnimatorLayout>

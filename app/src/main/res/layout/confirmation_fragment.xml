@@ -178,7 +178,7 @@
                     android:layout_below="@id/account_confirmation_hr"
                     android:layout_marginTop="@dimen/margin_16dp"
                     android:padding="4dp"
-                    android:background="@drawable/oval_blue"
+                    android:background="@drawable/oval_green"
                     android:src="@drawable/ic_check_white_18dp"/>
                 <!--btn_check_buttonless_on-->
             </RelativeLayout>
