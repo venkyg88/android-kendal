@@ -6,9 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     card_view:cardBackgroundColor="@color/staples_white"
-    card_view:cardCornerRadius="4dp"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardElevation="2dp"
     card_view:contentPadding="@dimen/margin_16dp"
-    android:layout_margin="2dp">
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
+    android:layout_marginTop="@dimen/verticalspacing_8dp">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
