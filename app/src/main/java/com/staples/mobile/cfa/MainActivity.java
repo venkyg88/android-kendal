@@ -532,8 +532,19 @@ public class MainActivity extends Activity
         drawerLayout.closeDrawers();
         ActionBar.getInstance().closeSearch();
 
-        if (activityInForeground) {
+//        Log.e("StateBug", "selectFragment");
+//        if (!activityInForeground) {
+//            Log.e("StateBug", "Activity is not in foreground");
+//        }
+//        if (isDestroyed()) {
+//            Log.e("StateBug", "Activity is already destroyed");
+//        }
+//        if (isFinishing()) {
+//            Log.e("StateBug", "Activity is finishing");
+//        }
 
+        if (activityInForeground)
+        {
             // Swap Fragments
             FragmentManager manager = getFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();

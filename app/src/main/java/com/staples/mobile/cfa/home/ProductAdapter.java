@@ -101,8 +101,7 @@ public class ProductAdapter
     void fill() {
         add(new ProductItem(null, configItem.bannerUrl, null));
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.browseCategories(configItem.identifier,
-                                       null, MAXFETCH, this);
+        easyOpenApi.getCategory(configItem.identifier, null, MAXFETCH, null, null, this);
     }
 
     // Retrofit EasyOpen API call

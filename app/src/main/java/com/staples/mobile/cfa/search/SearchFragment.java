@@ -24,14 +24,12 @@ import com.staples.mobile.cfa.widget.SortPanel;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Api;
-import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.Search;
 import com.staples.mobile.common.access.easyopen.model.browse.SearchResult;
 import com.staples.mobile.common.access.easyopen2.api.EasyOpenApi2;
 import com.staples.mobile.common.analytics.Tracker;
 
-import java.util.Comparator;
 import java.util.List;
 
 import retrofit.Callback;
@@ -46,6 +44,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
     private static final int MAXFETCH = 50;
 
+    private String keyword;
     private BundleAdapter adapter;
     private DataWrapper.State state;
     private BundleItem.SortType fetchSort;
@@ -63,32 +62,14 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
-        String keyword = null;
         Bundle args = getArguments();
         if (args != null) {
             title = args.getString(TITLE);
             keyword = args.getString(KEYWORD);
         }
 
-        fetchSort = BundleItem.SortType.BESTMATCH;
         displaySort = BundleItem.SortType.BESTMATCH;
-
-        EasyOpenApi2 easyOpenApi2 = Access.getInstance().getEasyOpenApi2(false);
-        Api easy2API = StaplesAppContext.getInstance().getApiByName(StaplesAppContext.EASYOPEN2);
-        String version = easy2API.getVersion();
-        easyOpenApi2.searchResult(version, keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
-
-        // the below codes compatible with the original search w/wo tapi
-        //String server = easy2API.getUrl();
-        // when tapi is available
-        //if(server.equals("tapi.staples.com")){
-        // easyOpenApi2.searchResult(version, keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
-        //}
-        //else{
-            //EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-            //easyOpenApi.searchResult(keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
-        //}
-
+        query();
         state = DataWrapper.State.LOADING;
     }
 
@@ -121,6 +102,26 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.SEARCH, title);
+    }
+
+    private void query() {
+        fetchSort = displaySort;
+
+        EasyOpenApi2 easyOpenApi2 = Access.getInstance().getEasyOpenApi2(false);
+        Api easy2API = StaplesAppContext.getInstance().getApiByName(StaplesAppContext.EASYOPEN2);
+        String version = easy2API.getVersion();
+        easyOpenApi2.searchResult(version, keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
+
+        // the below codes compatible with the original search w/wo tapi
+        //String server = easy2API.getUrl();
+        // when tapi is available
+        //if(server.equals("tapi.staples.com")){
+        // easyOpenApi2.searchResult(version, keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
+        //}
+        //else{
+        //EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+        //easyOpenApi.searchResult(keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
+        //}
     }
 
     @Override
@@ -156,32 +157,36 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
     }
 
     private int processSearch(SearchResult searchResult) {
-        if (searchResult == null) return (0);
+        if (searchResult == null) return(0);
+//        complete = searchResult.isRecordSetComplete; TODO needs Common fix
+
         List<Search> searches = searchResult.getSearch();
         if (searches == null || searches.size() < 1) return (0);
         Search search = searches.get(0);
-        if (search == null) return (0);
+        if (search == null) return(0);
 
-        adapter = new BundleAdapter(getActivity());
-        adapter.setOnClickListener(this);
+        // Create adapter
+        if (adapter==null) {
+            adapter = new BundleAdapter(getActivity());
+            adapter.setOnClickListener(this);
+        }
+
         adapter.fill(search.getProduct());
         adapter.notifyDataSetChanged();
         return (adapter.getItemCount());
     }
 
-    private void sortLocally() {
-        Comparator<BundleItem> comparator;
-        if (displaySort == fetchSort) {
-            comparator = BundleItem.indexComparator;
-        } else {
-            comparator = displaySort.comparator;
-            if (comparator == null) {
-                // TODO Best match wanted, but fetch was not originally by best match
-                return;
-            }
+    private void performSort() {
+        if (adapter==null) return;
+
+        // Need to perform a server re-query
+        if (adapter!=null) {
+            adapter.clear();
+            adapter.notifyDataSetChanged();
         }
-        adapter.sort(comparator);
-        adapter.notifyDataSetChanged();
+        query();
+        state = DataWrapper.State.LOADING;
+        applyState(null);
     }
 
     @Override
@@ -216,7 +221,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
                 BundleItem.SortType sortType = BundleItem.SortType.findSortTypeById(view.getId());
                 if (sortType != null) {
                     displaySort = sortType;
-                    sortLocally();
+                    performSort();
                 }
                 break;
         }

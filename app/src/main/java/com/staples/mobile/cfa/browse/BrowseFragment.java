@@ -90,7 +90,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
                 easyOpenApi.topCategories(identifier, null, MAXFETCH, this);
                 break;
             default:
-                easyOpenApi.browseCategories(identifier, null, MAXFETCH, this);
+                easyOpenApi.getCategory(identifier, null, MAXFETCH, null, null, this);
                 break;
         }
         state = DataWrapper.State.ADDING;
