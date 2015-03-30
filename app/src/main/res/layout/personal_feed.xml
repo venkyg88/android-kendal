@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/background_extra_light_gray">
+    android:background="@color/staples_light_gray">
 
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="10dp"
+        android:padding="@dimen/margin_16dp"
         android:scrollbarStyle="outsideOverlay">
 
         <LinearLayout
@@ -21,31 +21,31 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffff"
+                android:background="@color/staples_white"
                 android:orientation="vertical">
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:background="#ffffff"
+                    android:background="@color/staples_white"
                     android:orientation="horizontal">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="left|center_vertical"
-                        android:padding="10dp"
+                        android:padding="@dimen/verticalspacing_8dp"
                         android:text="@string/feed_seen_products_title"/>
                     <TextView
                         android:id="@+id/seen_products_clear"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:gravity="right|center_vertical"
-                        android:padding="10dp"
+                        android:padding="@dimen/verticalspacing_8dp"
                         android:text="Clear"/>
                 </LinearLayout>
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
-                    android:background="@color/background_light_gray"/>
+                    android:background="@color/staples_middle_gray"/>
                 <com.staples.mobile.cfa.widget.DataWrapper
                     android:id="@+id/seen_products_wrapper"
                     android:layout_width="match_parent"
@@ -56,7 +56,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingLeft="10dp">
+                        android:paddingLeft="@dimen/verticalspacing_8dp">
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -68,9 +68,9 @@
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:textSize="20sp"
+                            android:textSize="@dimen/fontsize_20sp"
                             android:text="@string/loading"
-                            android:padding="5dp"/>
+                            android:padding="@dimen/verticalspacing_8dp"/>
                         <ProgressBar
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
@@ -80,17 +80,16 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:textSize="20sp"
+                        android:textSize="@dimen/fontsize_20sp"
                         android:text="@string/empty"
-                        android:padding="5dp"/>
-
+                        android:padding="@dimen/verticalspacing_8dp"/>
                     <RelativeLayout
                         android:id="@+id/seen_products_loading_footer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:gravity="center"
-                        android:padding="10dp"
+                        android:padding="@dimen/verticalspacing_8dp"
                         android:visibility="gone">
                         <ProgressBar
                             android:layout_width="wrap_content"
@@ -102,25 +101,25 @@
             <!-- Separator -->
             <View
                 android:layout_width="fill_parent"
-                android:layout_height="10dp"/>
+                android:layout_height="@dimen/verticalspacing_8dp"/>
 
             <!-- Clearance Products in Cart -->
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffff"
+                android:background="@color/staples_white"
                 android:orientation="vertical">
                 <TextView
                     android:id="@+id/clearance_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="left|center_vertical"
-                    android:padding="10dp"
+                    android:padding="@dimen/verticalspacing_8dp"
                     android:text="@string/feed_clearance_title"/>
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
-                    android:background="@color/background_light_gray"/>
+                    android:background="@color/staples_middle_gray"/>
                 <com.staples.mobile.cfa.widget.DataWrapper
                     android:id="@+id/clearance_wrapper"
                     android:layout_width="match_parent"
@@ -131,7 +130,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingLeft="10dp"/>
+                        android:paddingLeft="@dimen/verticalspacing_8dp"/>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -142,9 +141,9 @@
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:textSize="20sp"
+                            android:textSize="@dimen/fontsize_20sp"
                             android:text="@string/loading"
-                            android:padding="5dp"/>
+                            android:padding="@dimen/verticalspacing_8dp"/>
                         <ProgressBar
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
@@ -154,34 +153,34 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:textSize="20sp"
+                        android:textSize="@dimen/fontsize_20sp"
                         android:text="@string/empty"
-                        android:padding="5dp"/>
+                        android:padding="@dimen/verticalspacing_8dp"/>
                 </com.staples.mobile.cfa.widget.DataWrapper>
             </LinearLayout>
 
             <!-- Separator -->
             <View
                 android:layout_width="fill_parent"
-                android:layout_height="10dp"/>
+                android:layout_height="@dimen/verticalspacing_8dp"/>
 
             <!-- Daily Deal Products in Cart -->
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffff"
+                android:background="@color/staples_white"
                 android:orientation="vertical">
                 <TextView
                     android:id="@+id/daily_deal_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="left|center_vertical"
-                    android:padding="10dp"
+                    android:padding="@dimen/verticalspacing_8dp"
                     android:text="@string/feed_daily_deal_title"/>
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
-                    android:background="@color/background_light_gray"/>
+                    android:background="@color/staples_middle_gray"/>
                 <com.staples.mobile.cfa.widget.DataWrapper
                     android:id="@+id/daily_deal_wrapper"
                     android:layout_width="match_parent"
@@ -192,7 +191,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingLeft="10dp"/>
+                        android:paddingLeft="@dimen/verticalspacing_8dp"/>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -203,9 +202,9 @@
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:textSize="20sp"
+                            android:textSize="@dimen/fontsize_20sp"
                             android:text="@string/loading"
-                            android:padding="5dp"/>
+                            android:padding="@dimen/verticalspacing_8dp"/>
                         <ProgressBar
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
@@ -215,9 +214,9 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:textSize="20sp"
+                        android:textSize="@dimen/fontsize_20sp"
                         android:text="@string/empty"
-                        android:padding="5dp"/>
+                        android:padding="@dimen/verticalspacing_8dp"/>
                 </com.staples.mobile.cfa.widget.DataWrapper>
             </LinearLayout>
         </LinearLayout>

@@ -155,4 +155,22 @@ public class CartItem {
     public int getMaxExpectedBusinessDays() {
         return maxExpectedBusinessDays;
     }
+
+    public boolean isHeavyWeightSKU() {
+        boolean isHeavyWeightSKUBool = false;
+        String isHeavyWeightSKUStr = product.getIsHeavyWeightSKU();
+        if (isHeavyWeightSKUStr != null) {
+            isHeavyWeightSKUBool = isHeavyWeightSKUStr.equalsIgnoreCase("Y");
+        }
+        return isHeavyWeightSKUBool;
+    }
+
+    public boolean isAddOnSKU() {
+        boolean isAddOnSKUBool = false;
+        String isAddOnSKUStr = product.getIsAddOnSKU();
+        if (isAddOnSKUStr != null) {
+            isAddOnSKUBool = isAddOnSKUStr.equalsIgnoreCase("Y");
+        }
+        return isAddOnSKUBool;
+    }
 }

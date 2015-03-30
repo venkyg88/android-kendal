@@ -7,18 +7,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
+    android:paddingTop="@dimen/verticalspacing_8dp"
+    android:paddingBottom="@dimen/verticalspacing_8dp"
     >
 
     <!-- Shipping address -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp" >
+        android:paddingTop="@dimen/verticalspacing_8dp"
+        android:paddingBottom="@dimen/verticalspacing_8dp"
+        android:paddingLeft="@dimen/margin_16dp"
+        android:paddingRight="@dimen/margin_16dp" >
         <TextView
             android:id="@+id/checkout_shipping_addr_label"
             android:layout_alignParentTop="true"
@@ -54,16 +54,16 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/hr_extra_light_gray" />
+        android:background="@color/staples_off_white" />
 
     <!-- Payment Method -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:paddingTop="@dimen/verticalspacing_8dp"
+        android:paddingBottom="@dimen/verticalspacing_8dp"
+        android:paddingLeft="@dimen/margin_16dp"
+        android:paddingRight="@dimen/margin_16dp"
         >
         <TextView
             android:id="@+id/checkout_payment_method_label"
@@ -86,7 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/card_image"
             android:layout_below="@id/checkout_payment_method_label"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/verticalspacing_8dp"
             style="@style/CheckoutText"/>
         <ImageView
             android:id="@+id/payment_methods"
@@ -102,16 +102,16 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/hr_extra_light_gray" />
+        android:background="@color/staples_off_white" />
 
     <!-- Billing address -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:paddingTop="@dimen/verticalspacing_8dp"
+        android:paddingBottom="@dimen/verticalspacing_8dp"
+        android:paddingLeft="@dimen/margin_16dp"
+        android:paddingRight="@dimen/margin_16dp"
         >
         <TextView
             android:id="@+id/checkout_billing_addr_label"

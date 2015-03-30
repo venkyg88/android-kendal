@@ -6,11 +6,11 @@
     <style name="ActionBarBadgeStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">4dp</item>
-        <item name="android:layout_marginRight">4dp</item>
-        <item name="android:textSize">11sp</item>
-        <item name="android:textColor">@color/text_white</item>
-        <item name="circleColor">@color/background_red_submission</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:textSize">@dimen/fontsize_11sp</item>
+        <item name="android:textColor">@color/staples_white</item>
+        <item name="circleColor">@color/staples_red</item>
         <item name="android:src">@drawable/ic_shopping_cart_black</item>
         <item name="android:visibility">gone</item>
     </style>
@@ -19,13 +19,14 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginLeft">4dp</item>
         <item name="android:layout_marginRight">4dp</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">@dimen/fontsize_20sp</item>
         <item name="android:visibility">gone</item>
     </style>
     <style name="ActionBarIconStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">6dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
         <item name="android:visibility">gone</item>
     </style>
     <style name="ActionBarSearchStyle">
@@ -41,29 +42,33 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginLeft">4dp</item>
         <item name="android:layout_marginRight">4dp</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">@dimen/fontsize_20sp</item>
         <item name="android:lines">1</item>
         <item name="android:ellipsize">end</item>
-        <item name="android:textColor">@color/text_nearly_black</item>
+        <item name="android:textColor">@color/staples_black</item>
         <item name="android:visibility">gone</item>
     </style>
 
-    <style name="PanelAnimation">
-        <item name="android:windowEnterAnimation">@anim/bottomsheet_slide_up</item>
-        <item name="android:windowExitAnimation">@anim/bottomsheet_slide_down</item>
+    <style name="PanelStyle">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
     </style>
     <style name="SortOptionStyle">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">32sp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:button">@drawable/radio_button_white</item>
         <item name="android:lines">1</item>
-        <item name="android:textSize">20sp</item>
-        <item name="android:textColor">@color/text_white</item>
+        <item name="android:typeface">serif</item>
+        <item name="android:textSize">@dimen/fontsize_14sp</item>
+        <item name="android:textColor">@color/staples_white</item>
     </style>
 
     <style name="DrawerStyle">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center_vertical</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">@dimen/fontsize_14sp</item>
         <item name="android:textColor">#333333</item>
     </style>
 
@@ -73,7 +78,7 @@
         <item name="android:gravity">left|center_vertical</item>
         <item name="android:paddingLeft">6dp</item>
         <item name="android:paddingRight">6dp</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">@dimen/fontsize_20sp</item>
     </style>
 
     <style name="InputField">
@@ -84,9 +89,9 @@
         <item name="android:paddingLeft">4dp</item>
         <item name="android:paddingRight">4dp</item>
         <item name="android:gravity">start|bottom</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">@dimen/fontsize_15sp</item>
         <item name="android:textColor">#333333</item>
-        <item name="textDualSize">12sp</item>
+        <item name="textDualSize">@dimen/fontsize_12sp</item>
         <item name="textDualGap">1dp</item>
         <item name="textDualColor">#ff0000ff</item>
     </style>
@@ -106,13 +111,13 @@
     <style name="GraySubheading">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/text_gray</item>
+        <item name="android:textSize">@dimen/fontsize_12sp</item>
+        <item name="android:textColor">@color/staples_middle_gray</item>
     </style>
 
     <style name="CheckoutFooter">
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/fontsize_16sp</item>
         <item name="android:textColor">#000000</item>
         <!--setting padding individually so that individual values can be overriden -->
         <item name="android:paddingTop">4dp</item>
@@ -122,12 +127,12 @@
     </style>
 
     <style name="CheckoutText">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/text_nearly_black</item>
+        <item name="android:textSize">@dimen/fontsize_14sp</item>
+        <item name="android:textColor">@color/staples_black</item>
     </style>
 
     <style name="TextExtraLargeListItem">
-		<item name="android:textSize">15sp</item>
+		<item name="android:textSize">@dimen/fontsize_15sp</item>
 		<item name="android:textStyle">normal</item>
 		<item name="android:textColor">@color/sel_text_list_item</item>
 	</style>
@@ -139,21 +144,21 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">6dp</item>
         <item name="stripeThickness">3dp</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">@dimen/fontsize_12sp</item>
     </style>
 
     <style name="SkuSummaryTitle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">@dimen/fontsize_20sp</item>
     </style>
 
     <style name="SkuNumbers">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">@dimen/fontsize_14sp</item>
     </style>
 
     <style name="SmallProductTitle">
@@ -161,7 +166,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:lines">2</item>
         <item name="android:ellipsize">end</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">@dimen/fontsize_14sp</item>
         <item name="android:textColor">#ff333333</item>
     </style>
 
@@ -169,37 +174,37 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="majorTextSize">32sp</item>
-        <item name="majorTextColor">@color/staples_light</item>
-        <item name="minorTextSize">24sp</item>
+        <item name="majorTextColor">@color/staples_red</item>
+        <item name="minorTextSize">@dimen/fontsize_24sp</item>
         <item name="minorTextColor">#ff8a8a8a</item>
         <item name="android:gravity">center</item>
     </style>
     <style name="SmallPriceSticker">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="majorTextSize">14sp</item>
-        <item name="majorTextColor">@color/staples_light</item>
-        <item name="minorTextSize">12sp</item>
+        <item name="majorTextSize">@dimen/fontsize_14sp</item>
+        <item name="majorTextColor">@color/staples_red</item>
+        <item name="minorTextSize">@dimen/fontsize_12sp</item>
         <item name="minorTextColor">#ff8a8a8a</item>
     </style>
 
     <style name="LargeRatingStars">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/fontsize_16sp</item>
         <item name="android:gravity">center</item>
         <item name="noReviews">@string/no_reviews</item>
     </style>
     <style name="SmallRatingStars">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">10sp</item>
+        <item name="android:textSize">@dimen/fontsize_10sp</item>
     </style>
 
     <style name="SkuSummaryHeader">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/fontsize_16sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">true</item>
     </style>
@@ -216,7 +221,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">2dp</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/fontsize_16sp</item>
     </style>
 
     <style name="SkuSpecStyle">
@@ -244,7 +249,7 @@
     <style name="StoreItem">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/fontsize_16sp</item>
     </style>
 
     <style name="QtyEditorStyle">
@@ -253,6 +258,6 @@
         <item name="android:singleLine">true</item>
         <item name="android:gravity">center</item>
         <item name="android:textColorHint">#ff000000</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">@dimen/fontsize_18sp</item>
     </style>
 </resources>

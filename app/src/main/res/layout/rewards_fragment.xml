@@ -9,7 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/background_white">
+    android:background="@color/staples_white">
 
     <!--rewards membership card-->
     <RelativeLayout
@@ -20,8 +20,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="@dimen/verticalspacing_8dp"
+            android:layout_marginBottom="@dimen/verticalspacing_8dp"
             other:contentPadding="6dp"
             other:cardCornerRadius="8dp"
             other:cardElevation="4dp"
@@ -37,31 +37,31 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:textSize="20sp"/>
+                    android:textSize="@dimen/fontsize_20sp"/>
                 <TextView
                     android:id="@+id/member_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_below="@id/member_name"
-                    android:textSize="14sp"/>
+                    android:textSize="@dimen/fontsize_14sp"/>
                 <TextView
                     android:id="@+id/rewards_number_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_below="@id/member_duration"
-                    android:textSize="18sp"/>
+                    android:textSize="@dimen/fontsize_18sp"/>
 
                 <com.staples.mobile.cfa.widget.Numeric39Barcode
                     android:id="@+id/rewards_number_barcode39"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:padding="8dp"
+                    android:padding="@dimen/verticalspacing_8dp"
                     android:layout_below="@id/rewards_number_label"
                     other:barcodeHeight="36dp"
-                    other:barcodeColor="@color/text_nearly_black"
+                    other:barcodeColor="@color/staples_black"
                     />
                 <TextView
                     android:id="@+id/rewards_number"
@@ -69,7 +69,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_below="@id/rewards_number_barcode39"
-                    android:textSize="20sp"/>
+                    android:textSize="@dimen/fontsize_20sp"/>
             </RelativeLayout>
         </android.support.v7.widget.CardView>
     </RelativeLayout>
@@ -112,7 +112,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="6dp"
-                    android:background="@color/background_white">
+                    android:background="@color/staples_white">
                     <include layout="@layout/rewards_ink_recycling"/>
                 </ScrollView>
 
@@ -122,7 +122,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="6dp"
-                    android:background="@color/background_white">
+                    android:background="@color/staples_white">
                     <include layout="@layout/rewards_summary"/>
                 </ScrollView>
 

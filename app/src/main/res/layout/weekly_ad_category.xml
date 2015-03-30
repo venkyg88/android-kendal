@@ -15,7 +15,7 @@
             android:layout_height="150dp"
             android:layout_gravity="left"
             android:scaleType="fitStart"
-            android:background="@color/background_light_blue"
+            android:background="@color/staples_blue"
             android:src="@drawable/no_photo"
             />
         <!--todo: replace image above with weekly_ad_image once it's the right image-->
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right|bottom"
             android:gravity="right"
-            android:padding="16dp"
+            android:padding="@dimen/margin_16dp"
             android:orientation="vertical"
             >
             <TextView
@@ -35,9 +35,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:textColor="@color/text_white"
+                android:textColor="@color/staples_white"
                 android:textStyle="bold"
-                android:textSize="20sp"
+                android:textSize="@dimen/fontsize_20sp"
                 />
 
             <!-- "change store" link: including a little padding to increase touch area-->
@@ -47,17 +47,17 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"
-                android:textColor="@color/text_white"
-                android:textSize="16sp"
+                android:textColor="@color/staples_white"
+                android:textSize="@dimen/fontsize_16sp"
                 android:text="@string/change_store"
             />
             <TextView
                 android:id="@+id/date_range"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="8dp"
-                android:textColor="@color/text_white"
-                android:textSize="20sp"
+                android:paddingTop="@dimen/verticalspacing_8dp"
+                android:textColor="@color/staples_white"
+                android:textSize="@dimen/fontsize_20sp"
                 />
         </LinearLayout>
     </FrameLayout>

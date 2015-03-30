@@ -5,14 +5,12 @@
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.ImageView;
@@ -29,8 +27,6 @@ public class BadgeImageView extends ImageView {
     private Paint textPaint;
     private Paint circlePaint;
     private String text;
-//    private int textLeftOffset;
-//    private int textBottomOffset;
 
     public BadgeImageView(Context context) {
         this(context, null, 0);
@@ -43,17 +39,19 @@ public class BadgeImageView extends ImageView {
     public BadgeImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
+        Resources r = context.getResources();
+
         text = "";
         textPaint = new Paint();
         textPaint.setAntiAlias(true);
         textPaint.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTextSize(16);
-        textPaint.setColor(Color.RED);
+        textPaint.setColor(r.getColor(R.color.staples_red));
 
         circlePaint = new Paint();
         circlePaint.setStyle(Paint.Style.FILL);
-        circlePaint.setColor(Color.WHITE);
+        circlePaint.setColor(r.getColor(R.color.staples_white));
 
 
         // get params specified in layout

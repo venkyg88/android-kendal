@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -32,9 +33,9 @@ public class RatingStars extends View {
     private static final double INDENTFACTOR = 2.0/(Math.sqrt(5.0)+3.0); // 0.381966
     private static final double WIDTHFACTOR = Math.sqrt(2.0*Math.sqrt(5)+10.0)/4.0; // 0.951056
 
-    private static final int REDSTAR = 0xffff0000;
-    private static final int GRAYSTAR = 0xffcccccc;
-    private static final int TEXTCOLOR = 0xff666666;
+    private static int REDSTAR;
+    private static int GRAYSTAR;
+    private static int TEXTCOLOR;
 
     private static final int MAXCONFIGS = 4;
     private static final Config[] configs = new Config[MAXCONFIGS];
@@ -58,6 +59,12 @@ public class RatingStars extends View {
 
     public RatingStars(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
+        Resources r = context.getResources();
+        REDSTAR = r.getColor(R.color.staples_red);
+        GRAYSTAR = r.getColor(R.color.staples_middle_gray);
+        TEXTCOLOR = r.getColor(R.color.staples_dark_gray);
+
 
         // Preset default attributes
         int textSize = 10;

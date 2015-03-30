@@ -3,6 +3,7 @@ package com.staples.mobile.cfa.order;
 import android.app.Fragment;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import com.staples.mobile.common.access.easyopen.model.member.OrderStatus;
 import com.staples.mobile.common.access.easyopen.model.member.Shipment;
 import com.staples.mobile.common.access.easyopen.model.member.ShipmentSKU;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 import retrofit.Callback;
@@ -42,9 +44,7 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
     OrderShipmentListItem order;
 
     TextView orderNumber;
-//    TextView orderTotal;
     TextView orderDate;
-//    TextView orderQty;
     TextView deliveryDate;
     TextView cardInfo;
     TextView orderName;
@@ -66,8 +66,6 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
 
         orderNumber = (TextView)view.findViewById(R.id.orderNumber);
         orderDate = (TextView)view.findViewById(R.id.orderDate);
-//        orderTotal = (TextView)view.findViewById(R.id.orderTotal);
-//        orderQty = (TextView)view.findViewById(R.id.orderQtyLbl);
         deliveryDate = (TextView)view.findViewById(R.id.deliveryDateTV);
         cardImage = (ImageView)view.findViewById(R.id.creditCardImage);
         cardInfo = (TextView)view.findViewById(R.id.cardInfoTV);
@@ -89,6 +87,8 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
             if (order != null) {
                 OrderStatus orderStatus = order.getOrderStatus();
 //                int totalItemsInOrder = 0;
+
+                DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
 
                 // for each shipment of the order
                 for (int i = 0;  i < order.getShipments().size(); i++) {
@@ -124,7 +124,7 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
                             horizRule.setVisibility(View.GONE);
                         }
                         skuTitle.setText(sku.getSkuDescription());
-                        skuPrice.setText(CurrencyFormat.getFormatter().format(Float.parseFloat(sku.getLineTotal())));
+                        skuPrice.setText(currencyFormat.format(Float.parseFloat(sku.getLineTotal())));
                         int skuQty = (int)Float.parseFloat(sku.getQtyOrdered()); // API value has decimal point (e.g. "1.0")
                         skuQuantity.setText(String.valueOf(skuQty));
 //                        totalItemsInOrder += skuQty;
@@ -157,10 +157,7 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
                     }
                 }
 
-                orderNumber.setText(orderStatus.getOrderNumber());
-//                orderTotal.setText("$"+orderStatus.getGrandTotal());
-//                orderQty.setText("("+ r.getQuantityString(R.plurals.cart_qty, totalItemsInOrder, totalItemsInOrder) + ")");
-
+                orderNumber.setText(r.getString(R.string.order) + " " + orderStatus.getOrderNumber());
                 orderDate.setText(r.getString(R.string.order_date) + ": " + formatter.format(OrderShipmentListItem.parseDate(orderStatus.getOrderDate())));
                 cardImage.setImageResource(CreditCard.Type.matchOnApiName(orderStatus.getPayment().get(0)
                         .getPaymentMethodCode()).getImageResource());
@@ -170,8 +167,12 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
                         orderStatus.getShiptoAddress2() + " " : " ") + orderStatus.getShiptoCity() + ", " +
                         orderStatus.getShiptoState() + " "+ orderStatus.getShiptoZip());
                 orderSubTotal.setText("$"+orderStatus.getShipmentSkuSubtotal());
-                orderCoupons.setText(orderStatus.getCouponTotal());
-                orderShipping.setText(orderStatus.getShippingAndHandlingTotal());
+                orderCoupons.setText("-$"+orderStatus.getCouponTotal());
+                String formattedShipping = orderStatus.getShippingAndHandlingTotal();
+                if (TextUtils.isDigitsOnly(formattedShipping)) {
+                    formattedShipping = currencyFormat.format(Float.parseFloat(formattedShipping));
+                }
+                orderShipping.setText(formattedShipping);
                 orderTax.setText("$"+orderStatus.getSalesTaxTotal());
                 orderGrandTotal.setText("$"+orderStatus.getGrandTotal());
             }

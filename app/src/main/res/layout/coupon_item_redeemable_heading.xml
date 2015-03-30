@@ -14,12 +14,12 @@
         android:id="@+id/rewards_horizontal_rule"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/hr_extra_light_gray"/>
+        android:background="@color/staples_off_white"/>
 
     <TextView
         style="@style/GraySubheading"
         android:layout_below="@id/rewards_horizontal_rule"
-        android:paddingTop="8dp"
+        android:paddingTop="@dimen/verticalspacing_8dp"
         android:paddingBottom="6dp"
         android:text="@string/redeemable_rewards"
         />

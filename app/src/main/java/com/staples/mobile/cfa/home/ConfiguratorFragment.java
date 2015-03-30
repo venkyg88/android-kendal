@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.home;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -57,6 +58,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class ConfiguratorFragment extends Fragment {
+
     private static final String TAG = "ConfiguratorFragment";
 
     private static final boolean LOGGING = false;
@@ -74,12 +76,15 @@ public class ConfiguratorFragment extends Fragment {
 
     private DeviceInfo deviceInfo;
 
+    private int lastOrientation = Configuration.ORIENTATION_UNDEFINED;
+
     private View configFrameView;
     private LinearLayout configScrollLayout;
     private LinearLayout.LayoutParams subLayoutContainerLayoutParms;
     private LinearLayout.LayoutParams widgetLayoutParms;
 
     private AppConfigurator appConfigurator;
+    private Configurator configurator;
     private StaplesAppContext staplesAppContext;
 
     private List<ConfigItem> configItems;
@@ -161,6 +166,9 @@ public class ConfiguratorFragment extends Fragment {
                         + " this[" + this + "]"
         );
 
+        Configuration configuration = resources.getConfiguration();
+        lastOrientation = configuration.orientation;
+
         picasso = Picasso.with(activity);
 
         noPhoto = resources.getDrawable(R.drawable.no_photo);
@@ -198,17 +206,42 @@ public class ConfiguratorFragment extends Fragment {
         updateMessageBar();
 
         // checking for configurator just to be sure, but MainActivity should not allow this
-        // fragment to be loaded if no configurator
-        if (appConfigurator != null && appConfigurator.getConfigurator() != null) {
-            initFromConfiguratorResult(appConfigurator.getConfigurator());
+        // fragment to be loaded if no configurator.
+        if (appConfigurator != null) {
+
+            configurator = appConfigurator.getConfigurator();
+
+            if (configurator != null) {
+                initFromConfiguratorResult();
+            }
         }
 
         return (configFrameView);
     }
 
     @Override
+    public void onConfigurationChanged(Configuration configuration) {
+
+        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:onConfigurationChanged():"
+                        + " lastOrientation[" + lastOrientation + "]"
+                        + " configuration.orientation[" + configuration.orientation + "]"
+                        + " configurator[" + configurator + "]"
+                        + " this[" + this + "]"
+        );
+
+        if (configuration.orientation != lastOrientation) {
+
+            lastOrientation = configuration.orientation;
+            configScrollLayout.removeAllViews();
+            initFromConfiguratorResult();
+        }
+    }
+
+    @Override
     public void onResume() {
+
         super.onResume();
+
         ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
         isMessageBarShow = true;
         Tracker.getInstance().trackStateForHome(); // Analytics
@@ -217,10 +250,9 @@ public class ConfiguratorFragment extends Fragment {
         getStoreInfo();
     }
 
-    public void initFromConfiguratorResult(Configurator configurator) {
+    private void initFromConfiguratorResult() {
 
         if (LOGGING) Log.v(TAG, "ConfiguratorFragment:initFromConfiguratorResult():"
-                        + " configurator[" + configurator + "]"
                         + " this[" + this + "]"
         );
 

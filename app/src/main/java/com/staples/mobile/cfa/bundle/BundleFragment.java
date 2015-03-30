@@ -1,21 +1,15 @@
 package com.staples.mobile.cfa.bundle;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
@@ -24,6 +18,7 @@ import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
+import com.staples.mobile.cfa.widget.SortPanel;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -31,13 +26,14 @@ import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Category;
 import com.staples.mobile.common.analytics.Tracker;
 
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class BundleFragment extends Fragment implements Callback<Browse>, View.OnClickListener, RadioGroup.OnCheckedChangeListener {
+public class BundleFragment extends Fragment implements Callback<Browse>, View.OnClickListener {
     private static final String TAG = "BundleFragment";
 
     private static final String TITLE = "title";
@@ -47,9 +43,9 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
     private BundleAdapter adapter;
     private DataWrapper.State state;
-    private BundleItem.SortType sortType;
+    private BundleItem.SortType fetchSort;
+    private BundleItem.SortType displaySort;
     private String title;
-    private Dialog panel;
 
     public void setArguments(String title, String identifier) {
         Bundle args = new Bundle();
@@ -69,9 +65,10 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
             identifier = args.getString(IDENTIFIER);
         }
 
-        sortType = BundleItem.SortType.ORIGINAL;
+        fetchSort = BundleItem.SortType.BESTMATCH;
+        displaySort = BundleItem.SortType.BESTMATCH;
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.browseCategories(identifier, null, MAXFETCH, this);
+        easyOpenApi.browseCategories(identifier, fetchSort.intParam, MAXFETCH, this);
         state = DataWrapper.State.LOADING;
     }
 
@@ -153,9 +150,24 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 adapter.fill(promo.getProduct());
         }
 
-        adapter.sort(sortType.comparator);
+        sortLocally();
         adapter.notifyDataSetChanged();
         return(adapter.getItemCount());
+    }
+
+    private void sortLocally() {
+        Comparator<BundleItem> comparator;
+        if (displaySort==fetchSort) {
+            comparator = BundleItem.indexComparator;
+        } else {
+            comparator = displaySort.comparator;
+            if (comparator==null) {
+                // TODO Best match wanted, but fetch was not originally by best match
+                return;
+            }
+        }
+        adapter.sort(comparator);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -207,39 +219,18 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 }
                 break;
             case R.id.open_sort:
-                showPanel();
+                SortPanel panel = new SortPanel(getActivity());
+                panel.setSelectedRadioButton(displaySort.button);
+                panel.setOnClickListener(this);
+                panel.show();
+                break;
+            default:
+                BundleItem.SortType sortType = BundleItem.SortType.findSortTypeById(view.getId());
+                if (sortType!=null) {
+                    displaySort = sortType;
+                    sortLocally();
+                }
                 break;
         }
-    }
-
-    public void onCheckedChanged(RadioGroup group, int id) {
-        BundleItem.SortType type = BundleItem.SortType.findSortTypeById(id);
-        if (type!=null) {
-            panel.dismiss();
-            sortType = type;
-            adapter.sort(sortType.comparator);
-            adapter.notifyDataSetChanged();
-        }
-    }
-
-    private void showPanel() {
-        panel = new Dialog(getActivity());
-        Window window = panel.getWindow();
-        window.requestFeature(Window.FEATURE_NO_TITLE);
-        panel.setContentView(R.layout.sort_panel);
-
-        if (sortType!=null) {
-            ((RadioButton) panel.findViewById(sortType.button)).setChecked(true);
-        }
-        ((RadioGroup) panel.findViewById(R.id.sort_panel)).setOnCheckedChangeListener(this);
-
-        WindowManager.LayoutParams params = window.getAttributes();
-        params.type = WindowManager.LayoutParams.TYPE_APPLICATION_PANEL;
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        params.x = 0;
-        params.gravity = Gravity.BOTTOM;
-        params.windowAnimations = R.style.PanelAnimation;
-        panel.show();
     }
 }

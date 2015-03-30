@@ -8,7 +8,7 @@
         android:layout_height="1dp"
         android:layout_marginLeft="72dp"
         android:layout_marginTop="7dp"
-        android:background="#b2b2b2"/>
+        android:background="@color/staples_middle_gray"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -19,8 +19,8 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_marginLeft="72dp"
-            android:textSize="11sp"
-            android:textColor="#8a8a8a"
+            android:textSize="@dimen/fontsize_11sp"
+            android:textColor="@color/staples_middle_gray"
             android:textAllCaps="true"/>
         <ImageView
             android:id="@+id/icon"

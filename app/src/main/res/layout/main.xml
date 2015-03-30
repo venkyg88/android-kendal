@@ -11,7 +11,7 @@
         android:layout_gravity="center"
         android:padding="12dp"
         android:src="@drawable/splash"
-        android:background="#ffffff"/>
+        android:background="@color/staples_white"/>
     <!-- Main screen -->
     <com.staples.mobile.cfa.widget.LinearLayoutWithOverlay
         android:id="@+id/main"
@@ -46,7 +46,7 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:background="@color/staples_light"
+                    android:background="@color/staples_red"
                     android:paddingRight="44dp"
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
@@ -58,7 +58,7 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:divider="@null"
-                    android:background="#ffffff"
+                    android:background="@color/staples_white"
                     android:choiceMode="singleChoice"/>
             </LinearLayout>
         </android.support.v4.widget.DrawerLayout>
@@ -70,7 +70,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        android:background="#6f000022" >
+        android:background="@color/overlay" >
         <ProgressBar
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"
@@ -84,12 +84,12 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_gravity="bottom"
-        android:paddingLeft="16dp"
+        android:paddingLeft="@dimen/margin_16dp"
         android:visibility="invisible"
         android:gravity="left|center_vertical"
-        android:textSize="16sp"
-        android:textColor="@color/text_white"
-        android:background="@color/background_dark_gray" >
+        android:textSize="@dimen/fontsize_16sp"
+        android:textColor="@color/staples_white"
+        android:background="@color/staples_dark_gray" >
     </TextView>
 
 </FrameLayout>

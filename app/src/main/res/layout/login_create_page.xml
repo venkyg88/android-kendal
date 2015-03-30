@@ -42,7 +42,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/text_white"
+        android:textColor="@color/staples_white"
         android:text="@string/create_account"
         android:id="@+id/register_button"
         android:layout_marginTop="30dp"
@@ -53,9 +53,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/passwordTxt"
         android:layout_below="@+id/passwordRegister"
-        android:textSize="12sp"
+        android:textSize="@dimen/fontsize_12sp"
         android:visibility="gone"
-        android:textColor="@color/text_light_gray"
+        android:textColor="@color/staples_middle_gray"
         android:text="@string/create_acccount_pw_rules" />
 
     <TextView
@@ -63,9 +63,9 @@
         android:layout_height="wrap_content"
         android:text="@string/show"
         android:id="@+id/passwordLbl"
-        android:textSize="16sp"
+        android:textSize="@dimen/fontsize_16sp"
         android:clickable="true"
-        android:textColor="@color/text_blue"
+        android:textColor="@color/staples_dark_gray"
         android:layout_alignBottom="@+id/passwordRegister"
         android:layout_alignRight="@+id/passwordRegister"
         android:paddingBottom="10dip"

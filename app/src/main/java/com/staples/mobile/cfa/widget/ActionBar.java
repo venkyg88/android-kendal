@@ -18,53 +18,55 @@ public class ActionBar extends LinearLayout {
 
     public enum Config {
 
-        //        close  back   drawer logo   search qty    cart   signin title
-        ABOUT    (false, false, true,  true,  false, false, true,  false, R.string.about_title),
-        ADDCARD  (false, false, true,  false, true,  false, true,  false, R.string.add_card_title),
-        ADDRESS  (false, false, true,  false, true,  false, true,  false, R.string.address_title),
-        BROWSE   (false, false, true,  true,  true,  false, true,  false, 0),
-        BUNDLE   (false, false, true,  false, true,  false, true,  false, 0),
-        CART     (false, false, true,  false, false, true,  false, false, R.string.cart_title),
-        COGUEST  (true,  false, false, false, false, false, false, true,  R.string.guest_checkout_title),
-        CONFIRM  (false, false, true,  false, false, false, true,  false, R.string.order_confirm_title),
-        COREG    (true,  false, false, false, false, false, false, false, R.string.checkout_title),
-        DEFAULT  (false, false, true,  true,  true,  false, true,  false, 0),
-        FEED     (false, false, true,  false, true,  false, true,  false, R.string.personal_feed_title),
-        LINK     (false, false, true,  false, true,  false, true,  false, R.string.link_rewards_title),
-        LOGIN    (false, false, true,  false, true,  false, true,  false, R.string.login_title),
-        NOTIFY   (false, false, true,  false, false, false, true,  false, R.string.notify_prefs_title),
-        ORDER    (false, false, true,  false, true,  false, true,  false, R.string.order_title),
-        PASSWORD (false, false, true,  false, true,  false, true,  false, R.string.password_reset),
-        PROFILE  (false, false, true,  false, true,  false, true,  false, R.string.profile_title),
-        QUERY    (false, true,  false, false, true,  false, false, false, 0),
-        REWARDS  (false, false, true,  false, true,  false, true,  false, R.string.rewards_title),
-        SEARCH   (false, false, true,  false, true,  false, true,  false, 0),
-        SKU      (false, false, true,  false, true,  false, true,  false, 0),
-        SKUSET   (true,  false, false, false, false, false, false, false, R.string.sku_title),
-        STORE    (false, false, true,  false, false, false, true,  false, R.string.store_locator_title),
-        VIEWCARD (false, false, true,  false, true,  false, true,  false, R.string.credit_card_title),
-        WEEKLYAD (false, false, true,  false, true,  false, true,  false, R.string.weekly_ad_title);
+        //        back   drawer logo   feed,  search qty    cart   signin close  title
+        ABOUT    (false, true,  true,  false, false, false, true,  false, false, R.string.about_title),
+        ADDCARD  (true,  false, false, false, true,  false, true,  false, false, R.string.add_card_title),
+        ADDRESS  (true,  false, false, false, true,  false, true,  false, false, R.string.address_title),
+        BROWSE   (false, true,  true,  false, true,  false, true,  false, false, 0),
+        BUNDLE   (true,  false, false, true,  true,  false, true,  false, false, 0),
+        CART     (true,  false, false, false, false, true,  false, false, false, R.string.cart_title),
+        COGUEST  (true,  false, false, false, false, false, false, true,  false, R.string.guest_checkout_title),
+        CONFIRM  (true,  false, false, false, false, false, true,  false, false, R.string.order_confirm_title),
+        COREG    (true,  false, false, false, false, false, false, false, false, R.string.checkout_title),
+        DEFAULT  (false, true,  true,  true,  true,  false, true,  false, false, 0),
+        FEED     (false, true,  false, false, true,  false, true,  false, false, R.string.personal_feed_title),
+        LINK     (false, true,  false, false, true,  false, true,  false, false, R.string.link_rewards_title),
+        LOGIN    (false, true,  false, false, true,  false, true,  false, false, R.string.login_title),
+        NOTIFY   (false, true,  false, false, false, false, true,  false, false, R.string.notify_prefs_title),
+        ORDER    (false, true,  false, false, true,  false, true,  false, false, R.string.order_title),
+        PASSWORD (false, true,  false, false, true,  false, true,  false, false, R.string.password_reset),
+        PROFILE  (false, true,  false, false, true,  false, true,  false, false, R.string.profile_title),
+        QUERY    (true,  false, false, false, true,  false, true,  false, false, 0),
+        REWARDS  (false, true,  false, false, true,  false, true,  false, false, R.string.rewards_title),
+        SEARCH   (true,  false, false, false, true,  false, true,  false, false, 0),
+        SKU      (false, false, false, false, true,  false, true,  false, false, 0),
+        SKUSET   (false, false, false, false, false, false, false, false, false, R.string.sku_title),
+        STORE    (true,  false, false, false, false, false, true,  false, false, R.string.store_locator_title),
+        VIEWCARD (true,  false, false, false, true,  false, true,  false, false, R.string.credit_card_title),
+        WEEKLYAD (true,  false, false, false, true,  false, true,  false, false, R.string.weekly_ad_title);
 
-        private boolean close;
         private boolean back;
         private boolean drawer;
         private boolean logo;
+        private boolean feed;
         private boolean search;
         private boolean quantity;
         private boolean cart;
         private boolean signin;
+        private boolean close;
         private int title;
 
-        Config(boolean close, boolean back, boolean drawer, boolean logo, boolean search,
-               boolean quantity, boolean cart, boolean signin, int title) {
-            this.close = close;
+        Config(boolean back, boolean drawer, boolean logo, boolean feed, boolean search,
+               boolean quantity, boolean cart, boolean signin, boolean close, int title) {
             this.back = back;
             this.drawer = drawer;
             this.logo = logo;
+            this.feed = feed;
             this.search = search;
             this.quantity = quantity;
             this.cart = cart;
             this.signin = signin;
+            this.close = close;
             this.title = title;
         }
     }
@@ -89,15 +91,16 @@ public class ActionBar extends LinearLayout {
     private State state;
     private State pushed;
 
-    private ImageView closeButton;
     private ImageView backButton;
     private ImageView leftDrawerAction;
+    private ImageView logoView;
+    private ImageView feedIcon;
+    private SearchBarView searchBar;
+    private TextView cartQtyView;
     private BadgeImageView cartIconAction;
     private Button checkoutSigninButton;
-    private TextView cartQtyView;
     private ImageView optionIcon;
-    private SearchBarView searchBar;
-    private ImageView logoView;
+    private ImageView closeButton;
     private TextView titleView;
 
     public static ActionBar getInstance() {
@@ -120,23 +123,25 @@ public class ActionBar extends LinearLayout {
 
     public void init(OnClickListener listener) {
         // Find elements
-        closeButton = (ImageView) findViewById(R.id.close_button);
         backButton = (ImageView) findViewById(R.id.back_button);
         leftDrawerAction = (ImageView) findViewById(R.id.action_left_drawer);
+        logoView = (ImageView) findViewById(R.id.action_logo);
+        feedIcon = (ImageView) findViewById(R.id.action_feed);
+        searchBar = (SearchBarView) findViewById(R.id.search_view);
+        cartQtyView = (TextView) findViewById(R.id.cart_item_qty);
         cartIconAction = (BadgeImageView) findViewById(R.id.action_show_cart);
         checkoutSigninButton = (Button) findViewById(R.id.checkout_login_button);
-        cartQtyView = (TextView) findViewById(R.id.cart_item_qty);
         optionIcon = (ImageView) findViewById(R.id.option_icon);
-        searchBar = (SearchBarView) findViewById(R.id.search_view);
-        logoView = (ImageView) findViewById(R.id.action_logo);
+        closeButton = (ImageView) findViewById(R.id.close_button);
         titleView = (TextView) findViewById(R.id.action_title);
 
         // Set icon listeners
-        closeButton.setOnClickListener(listener);
         backButton.setOnClickListener(listener);
         leftDrawerAction.setOnClickListener(listener);
+        feedIcon.setOnClickListener(listener);
         cartIconAction.setOnClickListener(listener);
         checkoutSigninButton.setOnClickListener(listener);
+        closeButton.setOnClickListener(listener);
     }
 
     // Configuration setters
@@ -209,6 +214,7 @@ public class ActionBar extends LinearLayout {
         }
 
         searchBar.setVisibility(state.config.search ? VISIBLE : GONE);
+        feedIcon.setVisibility(state.config.feed ? VISIBLE : GONE);
         logoView.setVisibility(state.config.logo ? VISIBLE : GONE);
 
         // Set title
@@ -238,24 +244,21 @@ public class ActionBar extends LinearLayout {
         Tracker.getInstance().trackStateForSearchBar(); // analytics
     }
 
-    public void closeSearch() {
-        searchBar.close();
+    public boolean closeSearch() {
+        if (!searchBar.close()) return(false);
 
         if (pushed!=null) {
             state.copy(pushed);
             update();
         }
+        return(true);
     }
-
-
 
     public void setCartCount(int count) {
         cartIconAction.setText(count==0 ? null : Integer.toString(count));
         if (count==0) cartQtyView.setText(null);
         else cartQtyView.setText(getResources().getQuantityString(R.plurals.cart_qty, count, count));
     }
-
-
 
     public void saveSearchHistory() {
         searchBar.saveSearchHistory();

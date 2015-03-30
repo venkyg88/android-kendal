@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="fontsize_10sp">12sp</dimen>   <!-- TODO: temporary part of style guide-->
+    <dimen name="fontsize_11sp">12sp</dimen>   <!-- TODO: temporary part of style guide-->
+    <dimen name="fontsize_12sp">12sp</dimen>   <!--part of style guide-->
+    <dimen name="fontsize_13sp">12sp</dimen>   <!--TODO: temporary part of style guide-->
+    <dimen name="fontsize_14sp">12sp</dimen>   <!--TODO: temporary part of style guide-->
+    <dimen name="fontsize_15sp">12sp</dimen>   <!--TODO: temporary part of style guide-->
+    <dimen name="fontsize_16sp">18sp</dimen>   <!--TODO: temporary part of style guide-->
+    <dimen name="fontsize_18sp">18sp</dimen>   <!--part of style guide-->
+    <dimen name="fontsize_20sp">18sp</dimen>   <!--TODO: temporary part of style guide-->
+    <dimen name="fontsize_24sp">24sp</dimen>   <!--part of style guide-->
+    <dimen name="fontsize_30sp">30sp</dimen>   <!--part of style guide-->
+    <dimen name="fontsize_34sp">34sp</dimen>   <!--part of style guide-->
+    <dimen name="verticalspacing_8dp">8dp</dimen>     <!--part of style guide-->
+    <dimen name="verticalspacing_24dp">24dp</dimen>   <!--part of style guide-->
+    <dimen name="verticalspacing_48dp">48dp</dimen>   <!--part of style guide-->
+    <dimen name="verticalspacing_56dp">56dp</dimen>   <!--part of style guide-->
+    <dimen name="margin_16dp">16dp</dimen>     <!--part of style guide-->
+    <dimen name="margin_72dp">72dp</dimen>     <!--part of style guide-->
+
     <dimen name="min_grid_width">180dp</dimen>
     <dimen name="fixed_grid_tall_height">224dp</dimen>
     <dimen name="fixed_grid_wide_height">120dp</dimen>
@@ -11,6 +30,7 @@
     <dimen name="elevation_high">4dp</dimen>
     <dimen name="add_button_margin">16dp</dimen>
     <dimen name="round_button_diameter">50dp</dimen>
+    <dimen name="round_button_radius">25dp</dimen>
     <dimen name="store_schedule_tabstop">70sp</dimen>
     <dimen name="weekly_ad_image_width">240dp</dimen>
     <dimen name="weekly_ad_image_height">240dp</dimen>
@@ -18,6 +38,8 @@
     <dimen name="weekly_ad_list_item_image_height">120dp</dimen>
     <dimen name="weekly_ad_category_item_image_width">100dp</dimen>
     <dimen name="weekly_ad_category_item_image_height">100dp</dimen>
+    <dimen name="personal_feed_item_image_width">120dp</dimen>
+    <dimen name="personal_feed_item_image_height">120dp</dimen>
     <dimen name="left_margin">6dp</dimen>
     <dimen name="right_margin">6dp</dimen>
     <dimen name="browse_item_height">42dp</dimen>

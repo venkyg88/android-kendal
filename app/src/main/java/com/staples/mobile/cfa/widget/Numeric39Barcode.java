@@ -84,14 +84,16 @@ public class Numeric39Barcode extends View {
 
     public void setText(String text) throws NumberFormatException {
         // make sure text is numeric
-        long numericValue = Long.parseLong(text);
+        if (!TextUtils.isEmpty(text)) {
+            long numericValue = Long.parseLong(text);
+        }
         this.text = text;
     }
 
     private void init(Context context, AttributeSet attrs) {
         // Preset default attributes
         barcodeHeight = 24;
-        barcodeColor = R.color.text_black;
+        barcodeColor = R.color.staples_black;
 
         // Get styled attributes
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Numeric39Barcode);
