@@ -70,7 +70,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
 
     public void setLayout(DataWrapper.Layout layout) {
         if (layout==DataWrapper.Layout.TALL) this.layout = R.layout.bundle_item_tall;
-        else  this.layout = R.layout.bundle_item_wide;
+        else this.layout = R.layout.bundle_item_wide;
     }
 
     /** needed for analytics */
@@ -116,6 +116,10 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
 
         // check if the product is an overweight product, example sku:650465
         vh.overweightLayout.setVisibility((item.isOverSized)? View.VISIBLE  : View.GONE);
+    }
+
+    public void clear() {
+        array.clear();
     }
 
     public void fill(List<Product> products) {

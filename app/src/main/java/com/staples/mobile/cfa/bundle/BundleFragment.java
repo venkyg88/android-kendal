@@ -41,7 +41,9 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
     private static final int MAXFETCH = 50;
 
+    private String identifier;
     private BundleAdapter adapter;
+    private boolean complete;
     private DataWrapper.State state;
     private BundleItem.SortType fetchSort;
     private BundleItem.SortType displaySort;
@@ -58,17 +60,14 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
-        String identifier = null;
         Bundle args = getArguments();
         if (args!=null) {
             title = args.getString(TITLE);
             identifier = args.getString(IDENTIFIER);
         }
 
-        fetchSort = BundleItem.SortType.BESTMATCH;
         displaySort = BundleItem.SortType.BESTMATCH;
-        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.browseCategories(identifier, fetchSort.intParam, MAXFETCH, this);
+        query();
         state = DataWrapper.State.LOADING;
     }
 
@@ -104,6 +103,13 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         Tracker.getInstance().trackStateForShopByCategory(); // Analytics
     }
 
+    private void query() {
+        fetchSort = displaySort;
+        complete = false;
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+        easyOpenApi.getCategory(identifier, null, MAXFETCH, null, fetchSort.stringParam, this);
+    }
+
     @Override
     public void success(Browse browse, Response response) {
         Activity activity = getActivity();
@@ -114,7 +120,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         else state = DataWrapper.State.DONE;
         applyState(null);
 
-        Tracker.getInstance().trackStateForClass(count, browse, Tracker.ViewType.GRID, null); // Analytics
+        Tracker.getInstance().trackStateForClass(count, browse, Tracker.ViewType.GRID, Tracker.SortType.BEST_MATCH); // Analytics
     }
 
     @Override
@@ -131,14 +137,18 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
     private int processBrowse(Browse browse) {
         if (browse==null) return(0);
+        complete = browse.isRecordSetComplete();
+
         List<Category> categories = browse.getCategory();
         if (categories==null || categories.size()<1) return(0);
         Category category = categories.get(0);
         if (category==null) return(0);
 
         // Create adapter
-        adapter = new BundleAdapter(getActivity());
-        adapter.setOnClickListener(this);
+        if (adapter==null) {
+            adapter = new BundleAdapter(getActivity());
+            adapter.setOnClickListener(this);
+        }
 
         // Add straight products
         adapter.fill(category.getProduct());
@@ -150,24 +160,36 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 adapter.fill(promo.getProduct());
         }
 
-        sortLocally();
         adapter.notifyDataSetChanged();
         return(adapter.getItemCount());
     }
 
-    private void sortLocally() {
-        Comparator<BundleItem> comparator;
-        if (displaySort==fetchSort) {
-            comparator = BundleItem.indexComparator;
-        } else {
-            comparator = displaySort.comparator;
-            if (comparator==null) {
-                // TODO Best match wanted, but fetch was not originally by best match
+    private void performSort() {
+        if (adapter==null) return;
+        // If complete, a local sort will do
+        if (complete) {
+            // Can sort locally
+            Comparator<BundleItem> comparator;
+            if (displaySort==fetchSort) {
+                comparator = BundleItem.indexComparator;
+            } else {
+                comparator = displaySort.comparator;
+            }
+            if (comparator!=null) {
+                adapter.sort(comparator);
+                adapter.notifyDataSetChanged();
                 return;
             }
         }
-        adapter.sort(comparator);
-        adapter.notifyDataSetChanged();
+
+        // Need to perform a server re-query
+        if (adapter!=null) {
+            adapter.clear();
+            adapter.notifyDataSetChanged();
+        }
+        query();
+        state = DataWrapper.State.LOADING;
+        applyState(null);
     }
 
     @Override
@@ -228,7 +250,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 BundleItem.SortType sortType = BundleItem.SortType.findSortTypeById(view.getId());
                 if (sortType!=null) {
                     displaySort = sortType;
-                    sortLocally();
+                    performSort();
                 }
                 break;
         }
