@@ -15,10 +15,12 @@
 -	ic_directions_black		32	32	#333333	material/maps/ic_directions_48px
 -	ic_expand_more_black		32	32	#333333	material/navigation/ic_expand_more_48px
 -	ic_home_black			32	32	#333333	staples/home
+-	ic_info_black			32	32	#333333	material/action/ic_info_48px
 -	ic_map_black			32	32	#333333	material/maps/ic_map_48px
 -	ic_menu_black			32	32	#333333	material/navigation/ic_menu_48px
 -	ic_more_vert_black		32	32	#333333	material/navigation/ic_more_vert_48px
 -	ic_my_location_black		32	32	#333333	material/maps/ic_my_location_48px
+-	ic_notifications_black		32	32	#333333 material/social/ic_notifications_48px
 -	ic_orders_black			32	32	#333333	staples/orders
 -	ic_phone_black			32	32	#333333	material/communication/ic_phone_48px
 -	ic_place_black			32	32	#333333	material/maps/ic_place_48px
