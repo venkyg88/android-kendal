@@ -10,7 +10,7 @@
     android:layout_centerHorizontal="true"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
-    android:layout_marginTop="8dp"
+    android:layout_marginTop="@dimen/verticalspacing_8dp"
     android:layout_marginBottom="0dp"
     card_view:contentPadding="0dp"
     card_view:cardBackgroundColor="@color/staples_white"
@@ -27,7 +27,7 @@
         <TextView
             android:id="@+id/cartitem_shipping_estimate"
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
+            android:layout_height="@dimen/verticalspacing_24dp"
             android:layout_alignParentLeft="true"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/margin_16dp"
@@ -36,7 +36,7 @@
         <TextView
             android:id="@+id/cartitem_shipping_estimate_itemqty"
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
+            android:layout_height="@dimen/verticalspacing_24dp"
             android:layout_alignParentRight="true"
             android:gravity="center_vertical"
             android:paddingRight="@dimen/margin_16dp"
@@ -58,7 +58,7 @@
             android:layout_below="@id/horizontal_rule"
             android:paddingLeft="@dimen/margin_16dp"
             android:paddingRight="@dimen/margin_16dp"
-            android:paddingBottom="8dp"
+            android:paddingBottom="@dimen/verticalspacing_8dp"
             android:paddingTop="0dp"
             android:orientation="vertical">
 

@@ -15,9 +15,11 @@
     <TextView
         android:id="@+id/free_shipping_msg"
         android:layout_width="match_parent"
-        android:layout_height="32dp"
-        android:gravity="center"
-        android:textColor="@color/staples_white"
+        android:layout_height="@dimen/verticalspacing_24dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/margin_16dp"
+        android:background="@color/staples_white"
+        android:textColor="@color/staples_green"
         android:textSize="@dimen/fontsize_14sp"
         />
 
@@ -35,7 +37,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="40dp"
+            android:paddingTop="@dimen/verticalspacing_48dp"
             android:textColor="@color/staples_black"
             android:textSize="@dimen/fontsize_20sp"
             android:text="@string/empty_cart_msg"
@@ -44,7 +46,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="60dp"
+            android:paddingTop="@dimen/verticalspacing_56dp"
             android:textColor="@color/staples_middle_gray"
             android:textSize="@dimen/fontsize_18sp"
             android:text="@string/shopping_with_us"
@@ -53,7 +55,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="24dp"
+            android:paddingTop="@dimen/verticalspacing_24dp"
             android:textColor="@color/staples_middle_gray"
             android:textSize="@dimen/fontsize_18sp"
             android:text="@string/price_match_guarantee"
@@ -113,7 +115,7 @@
     <!--coupon & rewards heading -->
     <android.support.v7.widget.CardView
         android:id="@+id/coupons_rewards_layout"
-        android:layout_height="40dp"
+        android:layout_height="@dimen/verticalspacing_48dp"
         android:layout_width="match_parent"
         android:gravity="center_vertical"
         card_view:contentPaddingLeft="@dimen/margin_16dp"
@@ -127,7 +129,7 @@
             android:layout_gravity="left|center_vertical"
             android:text="@string/coupons_rewards"
             android:textSize="@dimen/fontsize_14sp"
-            android:textColor="@color/staples_blue"
+            android:textColor="@color/staples_green"
             />
         <TextView
             android:id="@+id/coupons_rewards_value"
@@ -135,7 +137,7 @@
             android:layout_width="wrap_content"
             android:layout_gravity="right|center_vertical"
             android:textSize="@dimen/fontsize_14sp"
-            android:textColor="@color/staples_blue"
+            android:textColor="@color/staples_green"
             />
     </android.support.v7.widget.CardView>
 
@@ -163,7 +165,7 @@
 		android:paddingBottom="0dp"
         android:paddingLeft="@dimen/margin_16dp"
         android:paddingRight="@dimen/margin_16dp"
-        android:paddingTop="7dp"
+        android:paddingTop="@dimen/verticalspacing_8dp"
 		android:visibility="visible"
 	>
         <TextView
@@ -248,8 +250,8 @@
             android:layout_width="match_parent"
             android:layout_height="36dp"
             android:layout_below="@id/cart_subtotal"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="@dimen/verticalspacing_8dp"
+            android:layout_marginBottom="@dimen/verticalspacing_8dp"
             android:padding="0dp"
             card_view:cardCornerRadius="1dp"
             card_view:cardElevation="0dp"

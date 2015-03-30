@@ -22,8 +22,8 @@
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/margin_16dp"
         android:paddingRight="@dimen/margin_16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:paddingTop="@dimen/verticalspacing_8dp"
+        android:paddingBottom="@dimen/verticalspacing_8dp"
         android:background="@color/staples_middle_gray">
 
     <!--&lt;!&ndash; delivery range &ndash;&gt;-->
@@ -126,7 +126,7 @@
             android:layout_width="match_parent"
             android:layout_height="36dp"
             android:layout_below="@id/checkout_tax"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/verticalspacing_8dp"
             android:visibility="gone"
             card_view:cardCornerRadius="1dp"
             card_view:cardElevation="0dp"
@@ -156,7 +156,7 @@
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="36dp"-->
             <!--android:layout_below="@id/checkout_tax"-->
-            <!--android:layout_marginTop="8dp"-->
+            <!--android:layout_marginTop="@dimen/verticalspacing_8dp"-->
             <!--android:gravity="center"-->
             <!--android:visibility="gone"-->
             <!--android:background="@color/background_red_submission">-->

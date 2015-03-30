@@ -196,6 +196,7 @@
     <string name="card_ending_in">Card ending in</string>
 
     <!-- Orders -->
+    <string name="order">Order</string>
     <string name="no_orders_found">No Orders Found</string>
     <string name="estimated_delivery">Estimated Delivery</string>
     <string name="delivered_date">Delivered Date</string>

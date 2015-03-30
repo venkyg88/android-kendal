@@ -13,7 +13,7 @@
         android:id="@+id/dialog_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:padding="@dimen/margin_16dp"
         android:background="@color/staples_white"
         >
 
@@ -67,8 +67,8 @@
             android:layout_toRightOf="@id/password"
             android:layout_below="@id/password_label"
             android:layout_marginLeft="@dimen/margin_16dp"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/staples_blue"
+            android:layout_marginTop="@dimen/verticalspacing_8dp"
+            android:textColor="@color/staples_dark_gray"
             android:text="@string/show"/>
 
         <!--password rules text-->

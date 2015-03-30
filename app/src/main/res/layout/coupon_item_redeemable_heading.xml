@@ -19,7 +19,7 @@
     <TextView
         style="@style/GraySubheading"
         android:layout_below="@id/rewards_horizontal_rule"
-        android:paddingTop="8dp"
+        android:paddingTop="@dimen/verticalspacing_8dp"
         android:paddingBottom="6dp"
         android:text="@string/redeemable_rewards"
         />

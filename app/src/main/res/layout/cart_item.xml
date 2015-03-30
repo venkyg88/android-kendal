@@ -14,8 +14,8 @@
         android:layout_height="@dimen/image_square_size"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
+        android:layout_marginTop="@dimen/margin_16dp"
+        android:layout_marginBottom="@dimen/margin_16dp"
         android:layout_marginRight="12dp"/>
     <RelativeLayout
         android:id="@+id/cartitem_desc_layout"
@@ -30,8 +30,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="15dp"
-			android:layout_marginBottom="8dp"
+            android:layout_marginTop="@dimen/margin_16dp"
+			android:layout_marginBottom="@dimen/verticalspacing_8dp"
             android:lines="2"
             android:ellipsize="end"
             android:textSize="@dimen/fontsize_14sp"
@@ -49,7 +49,7 @@
 
 			<TextView
 				android:id="@+id/overweight_warning"
-				android:background="@color/staples_blue"
+				android:background="@color/staples_green"
 				android:layout_alignParentLeft="true"
 				android:layout_height="wrap_content"
 				android:layout_marginBottom="5dp"
@@ -69,7 +69,7 @@
 
 			<TextView
 				android:id="@+id/add_on_warning"
-				android:background="@color/staples_blue"
+				android:background="@color/staples_green"
 				android:layout_alignParentLeft="true"
 				android:layout_below="@id/overweight_warning"
 				android:layout_height="wrap_content"
@@ -132,7 +132,7 @@
         android:layout_height="1dp"
         android:layout_below="@id/cartitem_desc_layout"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/verticalspacing_8dp"
         android:background="@color/staples_off_white"
         android:visibility="gone"/>
 

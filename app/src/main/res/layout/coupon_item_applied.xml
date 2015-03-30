@@ -6,7 +6,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="8dp">
+    android:paddingTop="@dimen/verticalspacing_8dp">
 
     <!--text fields-->
     <LinearLayout
@@ -32,7 +32,7 @@
     <Button
         android:id="@+id/coupon_delete_button"
         android:layout_width="80dp"
-        android:layout_height="35dp"
+        android:layout_height="36dp"
         android:layout_alignParentRight="true"
         android:layout_gravity="center_vertical"
         android:background="@color/staples_light_gray"
