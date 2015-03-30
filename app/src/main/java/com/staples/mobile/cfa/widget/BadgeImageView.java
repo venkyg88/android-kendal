@@ -94,7 +94,7 @@ public class BadgeImageView extends ImageView {
 //            float x = getWidth() - radius;
 //            float y = radius;
 //            canvas.drawCircle(x, y, radius, circlePaint);
-//            canvas.drawText(text, x, y - textPaint.ascent()/2 - 1, textPaint);
+//            canvas.drawText(text, x, y - textPaint.ascent()/2 - 2, textPaint);
 
             // using oval
             float ovalHeight = textPaint.getFontSpacing() * 1.2f; // textPaint.getFontSpacing() , textPaint.ascent() * -1.2f
@@ -104,7 +104,7 @@ public class BadgeImageView extends ImageView {
             float y = ovalHeight / 2;
             RectF rectF = new RectF(getWidth() - ovalWidth, 0f, (float) getWidth(), ovalHeight); //RectF(float left, float top, float right, float bottom)
             canvas.drawOval(rectF, circlePaint);
-            canvas.drawText(text, x, y - textPaint.ascent()/2 - 1, textPaint);
+            canvas.drawText(text, x, y - textPaint.ascent()/2 - 2, textPaint); // using arbitrary offset of 2 to make text appear more vertically centered
         }
     }
 
