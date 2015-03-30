@@ -16,8 +16,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/orderErrorTV"
-            android:layout_marginLeft="24dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginLeft="@dimen/margin_16dp"
+            android:layout_marginTop="@dimen/verticalspacing_24dp"
             android:visibility="gone"
             android:textSize="@dimen/fontsize_20sp"
             android:text="@string/no_orders_found"
@@ -84,7 +84,7 @@
             android:layout_height="1dp"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="6dp"
-            android:background="@color/staples_off_white" />
+            android:background="@color/staples_horizontal_rule" />
 
         <!-- delivery info -->
         <TextView

@@ -12,7 +12,7 @@
         android:padding="10dp"
         android:visibility="gone"
         android:id="@+id/selectionImage"
-        android:tint="@color/staples_blue"
+        android:tint="@color/staples_green"
         android:src="@drawable/ic_check_white_24dp"
         />
 

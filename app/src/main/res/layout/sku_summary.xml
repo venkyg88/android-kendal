@@ -60,7 +60,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:background="@color/staples_blue"
+                        android:background="@color/staples_green"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp">
                         <TextView
@@ -94,7 +94,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:background="@color/staples_blue"
+                        android:background="@color/staples_green"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp">
                         <TextView
@@ -286,7 +286,7 @@
             android:layout_gravity="right"
             android:onClick="onClick"
             android:clickable="true"
-            android:textColor="@color/staples_blue"
+            android:textColor="@color/staples_green"
             android:visibility="gone"
             />
         <!-- Add to cart footer -->

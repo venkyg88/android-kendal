@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="@color/staples_blue">
+                android:background="@color/staples_green">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="@color/staples_blue">
+                android:background="@color/staples_green">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

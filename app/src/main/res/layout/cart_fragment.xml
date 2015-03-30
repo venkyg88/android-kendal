@@ -159,7 +159,7 @@
     <!--shipping info -->
     <RelativeLayout
 		android:id="@+id/cart_shipping_layout"
-		android:background="@color/staples_off_white"
+		android:background="@color/staples_white"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
 		android:paddingBottom="0dp"
@@ -216,7 +216,7 @@
     <!--pre-tax subtotal and checkout button -->
     <RelativeLayout
         android:id="@+id/cart_subtotal_layout"
-		android:background="@color/staples_off_white"
+		android:background="@color/staples_white"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
 		android:paddingBottom="0dp"

@@ -30,13 +30,18 @@
             <FrameLayout
                 android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@color/staples_off_white">
 
                 <!--list of ads-->
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/weekly_ad_list_items"
                     android:layout_height="match_parent"
-                    android:layout_width="match_parent"/>
+                    android:layout_width="match_parent"
+                    android:paddingBottom="@dimen/verticalspacing_8dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    />
 
             </FrameLayout>
 

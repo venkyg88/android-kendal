@@ -41,7 +41,7 @@ public class DualHintEdit extends EditText {
         Typeface dualTypeface = getTypeface();
         dualSize = (int) (0.75f*getTextSize());
         dualGap = 0;
-        int dualColor = context.getResources().getColor(R.color.staples_blue);
+        int dualColor = context.getResources().getColor(R.color.staples_dark_gray);
 
         // Get styled attributes
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.DualHintEdit);

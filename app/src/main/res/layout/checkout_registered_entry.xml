@@ -54,7 +54,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/staples_off_white" />
+        android:background="@color/staples_horizontal_rule" />
 
     <!-- Payment Method -->
     <RelativeLayout
@@ -102,7 +102,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/staples_off_white" />
+        android:background="@color/staples_horizontal_rule" />
 
     <!-- Billing address -->
     <RelativeLayout
