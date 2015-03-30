@@ -2,8 +2,9 @@
 <resources>
     <color name="staples_dark">#b30000</color>
     <color name="staples_red">#cc0000</color>               <!--part of style guide "Staples Red"-->
-    <color name="staples_white">#ffffff</color>             <!--part of style guide "Containers Background"-->
-    <color name="staples_off_white">#f5f5f5</color>         <!--part of style guide "Background Color"-->
+    <color name="staples_white">#ffffff</color>             <!--part of style guide "Containers Background" -->
+    <color name="staples_off_white">#f5f5f5</color>         <!--part of style guide "Background Color" (for pages containing cards only)-->
+    <color name="staples_horizontal_rule">#f5f5f5</color>   <!--part of style guide "Background Color" (for pages containing cards only)-->
     <color name="staples_light_gray">#eeeeee</color>        <!--part of style guide "Light Gray"-->
     <color name="staples_middle_gray">#dddddd</color>       <!--part of style guide "Middle Gray"-->
     <color name="staples_dark_gray">#999999</color>         <!--part of style guide "Dark Gray"-->
