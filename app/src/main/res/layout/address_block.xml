@@ -41,7 +41,7 @@
             style="@style/InputField"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:paddingTop="16dp"
+            android:paddingTop="@dimen/margin_16dp"
             android:inputType="textPostalAddress"
             android:hint="@string/address_label"/>
         <com.staples.mobile.cfa.widget.DualHintEdit
