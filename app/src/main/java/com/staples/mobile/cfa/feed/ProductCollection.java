@@ -208,11 +208,7 @@ public class ProductCollection {
                 Integer offsetInt = Integer.parseInt(offset);
                 Integer limitInt = Integer.parseInt(limit);
 
-                easyOpenApi.getCategory(identifier,
-                        offsetInt,
-                        limitInt,
-                        filterList,
-                        this); // callback
+                easyOpenApi.getCategory(identifier, offsetInt, limitInt, filterList, null, this);
                 break; // while (true)
 
             } // while (true)
