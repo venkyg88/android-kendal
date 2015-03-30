@@ -37,7 +37,7 @@
         android:layout_below="@+id/password"
         android:textSize="@dimen/fontsize_18sp"
         android:paddingTop="10dp"
-        android:textColor="@color/staples_blue"
+        android:textColor="@color/staples_dark_gray"
         android:text="@string/password_forgot"/>
 
     <Button

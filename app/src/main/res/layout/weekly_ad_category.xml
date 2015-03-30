@@ -15,7 +15,7 @@
             android:layout_height="150dp"
             android:layout_gravity="left"
             android:scaleType="fitStart"
-            android:background="@color/staples_blue"
+            android:background="@color/staples_green"
             android:src="@drawable/no_photo"
             />
         <!--todo: replace image above with weekly_ad_image once it's the right image-->
