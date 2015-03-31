@@ -294,8 +294,13 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     }
 
     private void setShipTaxSubmitVisibility(boolean visible) {
-        oversizedShippingVw.setVisibility(visible? View.VISIBLE : View.GONE);
-        oversizedShippingLabelVw.setVisibility(visible? View.VISIBLE : View.GONE);
+        if (totalHandlingCost > 0) {
+            oversizedShippingVw.setVisibility(visible? View.VISIBLE : View.GONE);
+            oversizedShippingLabelVw.setVisibility(visible? View.VISIBLE : View.GONE);
+        } else {
+            oversizedShippingVw.setVisibility(View.GONE);
+            oversizedShippingLabelVw.setVisibility(View.GONE);
+        }
         shippingChargeVw.setVisibility(visible? View.VISIBLE : View.GONE);
         shippingChargeLabelVw.setVisibility(visible? View.VISIBLE : View.GONE);
         taxVw.setVisibility(visible? View.VISIBLE : View.GONE);
