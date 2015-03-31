@@ -157,7 +157,7 @@
             android:layout_width="match_parent"
             android:layout_height="36dp"
             android:layout_below="@id/checkout_tax"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/verticalspacing_8dp"
             android:visibility="gone"
             card_view:cardCornerRadius="1dp"
             card_view:cardElevation="0dp"
@@ -187,7 +187,7 @@
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="36dp"-->
             <!--android:layout_below="@id/checkout_tax"-->
-            <!--android:layout_marginTop="8dp"-->
+            <!--android:layout_marginTop="@dimen/verticalspacing_8dp"-->
             <!--android:gravity="center"-->
             <!--android:visibility="gone"-->
             <!--android:background="@color/background_red_submission">-->
