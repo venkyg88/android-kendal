@@ -3,22 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="48dp"
     android:orientation="horizontal"
-    style="@style/DrawerStyle">
+    android:paddingLeft="@dimen/action_bar_half_margin"
+    android:paddingRight="@dimen/action_bar_half_margin">
     <ImageView
         android:id="@+id/icon"
         style="@style/DrawerStyle"
-        android:layout_width="wrap_content"
-        android:layout_marginLeft="12dp"/>
+        android:paddingLeft="@dimen/action_bar_quarter_margin"
+        android:paddingRight="@dimen/action_bar_quarter_margin"/>
     <TextView
         android:id="@+id/title"
         style="@style/DrawerStyle"
         android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_marginLeft="28dp"/>
+        android:layout_weight="1"/>
     <TextView
         android:id="@+id/additional_text"
         style="@style/DrawerStyle"
-        android:layout_width="wrap_content"
-        android:layout_marginRight="16dp"
         android:visibility="gone"/>
 </LinearLayout>
