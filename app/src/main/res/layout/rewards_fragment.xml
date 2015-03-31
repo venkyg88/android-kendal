@@ -20,8 +20,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/verticalspacing_8dp"
-            android:layout_marginBottom="@dimen/verticalspacing_8dp"
+            android:layout_marginTop="@dimen/margin_16dp"
+            android:layout_marginBottom="@dimen/margin_16dp"
             other:contentPadding="@dimen/verticalspacing_8dp"
             other:cardCornerRadius="8dp"
             other:cardElevation="4dp"
@@ -101,7 +101,6 @@
                     android:id="@+id/tab1_rewards"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="6dp"
                     android:orientation="horizontal">
                     <include layout="@layout/rewards_list"/>
                 </LinearLayout>
@@ -111,8 +110,8 @@
                     android:id="@+id/tab2_ink_recycling"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="6dp"
-                    android:background="@color/staples_white">
+                    android:padding="@dimen/margin_16dp"
+                    android:background="@color/staples_off_white">
                     <include layout="@layout/rewards_ink_recycling"/>
                 </ScrollView>
 
@@ -121,8 +120,8 @@
                     android:id="@+id/tab3_summary"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="6dp"
-                    android:background="@color/staples_white">
+                    android:padding="@dimen/margin_16dp"
+                    android:background="@color/staples_off_white">
                     <include layout="@layout/rewards_summary"/>
                 </ScrollView>
 

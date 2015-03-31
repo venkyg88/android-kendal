@@ -6,7 +6,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="12dp"
+    android:paddingTop="@dimen/verticalspacing_24dp"
     >
 
     <!--horizontal rule-->
@@ -14,14 +14,17 @@
         android:id="@+id/rewards_horizontal_rule"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/staples_horizontal_rule"/>
+        android:background="@color/staples_light_gray"/>
 
     <TextView
-        style="@style/GraySubheading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/fontsize_12sp"
+        android:textColor="@color/staples_black"
+        android:text="@string/redeemable_rewards"
         android:layout_below="@id/rewards_horizontal_rule"
         android:paddingTop="@dimen/verticalspacing_8dp"
         android:paddingBottom="6dp"
-        android:text="@string/redeemable_rewards"
         />
 
 </RelativeLayout>
