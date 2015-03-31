@@ -16,6 +16,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="bottom|center"
+            android:paddingTop="@dimen/action_bar_quarter_margin"
+            android:paddingBottom="@dimen/action_bar_quarter_margin"
             android:background="@color/staples_opaque_black">
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -23,8 +25,7 @@
                 android:orientation="vertical">
                 <TextView
                     style="@style/SortOptionStyle"
-                    android:layout_height="24sp"
-                    android:paddingLeft="4dp"
+                    android:paddingLeft="@dimen/action_bar_quarter_margin"
                     android:text="@string/sort_refine"/>
                 <RadioButton
                     android:id="@+id/sort_best_match"

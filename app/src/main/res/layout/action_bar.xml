@@ -3,6 +3,8 @@
     android:id="@+id/action_bar"
     android:layout_width="match_parent"
     android:layout_height="56dp"
+    android:paddingLeft="@dimen/action_bar_half_margin"
+    android:paddingRight="@dimen/action_bar_half_margin"
     android:animateLayoutChanges="true"
     android:background="@color/staples_white">
     <!-- ActionBar, these must be kept in priority order -->
