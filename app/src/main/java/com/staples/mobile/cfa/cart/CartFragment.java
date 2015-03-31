@@ -46,7 +46,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-
 /** fragment to manage display and update of shopping cart */
 public class CartFragment extends Fragment implements View.OnClickListener, CartApiManager.CartRefreshCallback {
 
@@ -59,6 +58,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private TextView cartSubtotal;
     private TextView cartFreeShippingMsg;
     private TextView oversizedShipping;
+    private TextView oversizedShippingLabel;
     private TextView cartShipping;
     private TextView couponsRewardsLabel;
     private TextView couponsRewardsValue;
@@ -110,13 +110,13 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         couponList = view.findViewById(R.id.coupon_list);
         linkRewardsAcctLayout = view.findViewById(R.id.link_rewards_acct_layout);
         oversizedShipping = (TextView) view.findViewById(R.id.oversized_shipping);
+        oversizedShippingLabel = (TextView) view.findViewById(R.id.oversized_shipping_label);
         cartShipping = (TextView) view.findViewById(R.id.cart_shipping);
         cartSubtotal = (TextView) view.findViewById(R.id.cart_subtotal);
         cartShippingLayout = view.findViewById(R.id.cart_shipping_layout);
         cartSubtotalLayout = view.findViewById(R.id.cart_subtotal_layout);
         cartProceedToCheckout = view.findViewById(R.id.action_checkout);
         rewardsLinkAcctButton = (Button)view.findViewById(R.id.rewards_link_acct_button);
-
 
         Resources r = getResources();
         greenText = r.getColor(R.color.staples_green);
@@ -177,7 +177,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             }
         });
 
-
         // Set click listeners
         cartProceedToCheckout.setOnClickListener(this);
         couponsRewardsLayout.setOnClickListener(this);
@@ -188,7 +187,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
         return view;
     }
-
 
     @Override
     public void onResume() {
@@ -208,7 +206,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         cartAdapter = null;
     }
 
-
     /** returns sum of adjusted amounts for rewards and coupons applied to cart */
     public float getCouponsRewardsAdjustedAmount() {
         float totalAdjustedAmount = 0;
@@ -221,7 +218,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         }
         return totalAdjustedAmount;
     }
-
 
     /** Sets item count indicator on cart icon and cart drawer title */
     private void updateCartFields() {
@@ -291,11 +287,20 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             boolean couponsShowing = couponsShowing();
             couponsRewardsValue.setText(currencyFormat.format(couponsRewardsAmount));
             boolean showCouponsAmount = (couponsRewardsAmount != 0 || couponsShowing);
-            couponsRewardsValue.setVisibility(showCouponsAmount? View.VISIBLE : View.GONE);
+            couponsRewardsValue.setVisibility(showCouponsAmount ? View.VISIBLE : View.GONE);
             couponsRewardsLabel.setCompoundDrawablesWithIntrinsicBounds(couponsShowing? R.drawable.mastercard : R.drawable.visa,0,0,0);
-            String totalHandlingCostStr = Float.toString(totalHandlingCost);
-            oversizedShipping.setText(CheckoutFragment.formatShippingCharge(totalHandlingCostStr, currencyFormat));
-            oversizedShipping.setTextColor(blackText);
+
+            if (totalHandlingCost > 0) {
+                String totalHandlingCostStr = Float.toString(totalHandlingCost);
+                oversizedShipping.setText(CheckoutFragment.formatShippingCharge(totalHandlingCostStr, currencyFormat));
+                oversizedShipping.setTextColor(blackText);
+                oversizedShippingLabel.setVisibility(View.VISIBLE);
+                oversizedShipping.setVisibility(View.VISIBLE);
+            } else {
+                oversizedShippingLabel.setVisibility(View.GONE);
+                oversizedShipping.setVisibility(View.GONE);
+            }
+
             cartShipping.setText(CheckoutFragment.formatShippingCharge(shipping, currencyFormat));
             cartShipping.setTextColor("Free".equals(shipping) ? greenText : blackText);
             cartSubtotal.setText(currencyFormat.format(preTaxSubtotal));
@@ -419,7 +424,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         }
     }
 
-
     private void showProgressIndicator() {
         if (activity != null) {
             activity.showProgressIndicator();
@@ -436,8 +440,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     public static List<CartItem> getListItems() {
         return cartListItems;
     }
-
-
 
     public int getMinExpectedBusinessDays() {
         return minExpectedBusinessDays;
@@ -479,7 +481,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         }
     }
 
-
     // synchronizing this method in case cartListItems updated simultaneously (not sure this would
     // happen since this should all be on the main UI thread)
     private synchronized void setAdapterListItems() {
@@ -490,7 +491,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
         }
     }
-
 
     public void onCartRefreshComplete(String errMsg) {
         hideProgressIndicator();
@@ -516,7 +516,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
             // rather than call the api to refresh the profile, use the info from the cart to update coupon info in the profile
             ProfileDetails.updateRewardsFromCart(cart);
-
 
             List<Product> products = cart.getProduct();
             if (products != null) {
@@ -575,7 +574,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         cartItemGroups = itemGroups;
         setAdapterListItems();
     }
-
 
     class CouponWeightAnimator {
         ValueAnimator valueAnimator;
@@ -637,9 +635,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         }
     }
 
-
     /************* widget listeners ************/
-
 
     /** listener class for qty change */
     class QtyChangeListener implements QuantityEditor.OnQtyChangeListener {
