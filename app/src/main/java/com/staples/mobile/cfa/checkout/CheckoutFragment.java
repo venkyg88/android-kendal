@@ -33,6 +33,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     public static final String BUNDLE_PARAM_ITEMSUBTOTAL = "itemSubtotal";
     public static final String BUNDLE_PARAM_PRETAXSUBTOTAL = "preTaxSubtotal";
     public static final String BUNDLE_PARAM_DELIVERY_RANGE = "deliveryRange";
+    public static final String BUNDLE_PARAM_TOTAL_HANDLING_COST = "totalHandlingCost";
     public static final String BUNDLE_PARAM_SHIPPING_CHARGE = "shippingCharge";
     public static final String BUNDLE_PARAM_TAX = "tax";
 
@@ -44,6 +45,8 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     private ViewGroup checkoutEntryLayout;
     private TextView itemSubtotalVw;
     private TextView couponsRewardsVw;
+    private TextView oversizedShippingVw;
+    private TextView oversizedShippingLabelVw;
     private TextView shippingChargeVw;
     private TextView shippingChargeLabelVw;
     private TextView taxLabelVw;
@@ -55,6 +58,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
     // data returned from api
     private Float tax;
+    private Float totalHandlingCost;
     private String shippingCharge;
 
 
@@ -93,8 +97,13 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 //        taxLayout = view.findViewById(R.id.co_tax_layout);
         itemSubtotalVw = (TextView) view.findViewById(R.id.checkout_item_subtotal);
         couponsRewardsVw = (TextView) view.findViewById(R.id.checkout_coupons_rewards);
+
+        oversizedShippingVw = (TextView) view.findViewById(R.id.oversized_shipping);
+        oversizedShippingLabelVw = (TextView) view.findViewById(R.id.oversized_shipping_label);
+
         shippingChargeVw = (TextView) view.findViewById(R.id.checkout_shipping);
         shippingChargeLabelVw = (TextView) view.findViewById(R.id.checkout_shipping_label);
+
         taxVw = (TextView) view.findViewById(R.id.checkout_tax);
         taxLabelVw = (TextView) view.findViewById(R.id.checkout_tax_label);
         checkoutTotalVw = (TextView) view.findViewById(R.id.checkout_order_total);
@@ -110,6 +119,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         couponsRewardsAmount = checkoutBundle.getFloat(BUNDLE_PARAM_COUPONSREWARDS);
         itemSubtotal = checkoutBundle.getFloat(BUNDLE_PARAM_ITEMSUBTOTAL);
         pretaxSubtotal = checkoutBundle.getFloat(BUNDLE_PARAM_PRETAXSUBTOTAL);
+        totalHandlingCost = checkoutBundle.getFloat(BUNDLE_PARAM_TOTAL_HANDLING_COST);
         shippingCharge = checkoutBundle.getString(BUNDLE_PARAM_SHIPPING_CHARGE);
         deliveryRange = checkoutBundle.getString(BUNDLE_PARAM_DELIVERY_RANGE);
         tax = checkoutBundle.getFloat(BUNDLE_PARAM_TAX, -1);
@@ -156,7 +166,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         showProgressIndicator();
         CheckoutApiManager.precheckout(new CheckoutApiManager.PrecheckoutCallback() {
             @Override
-            public void onPrecheckoutComplete(String shippingCharge, Float tax, String errMsg, String infoMsg) {
+            public void onPrecheckoutComplete(Float totalHandlingCost, String shippingCharge, Float tax, String errMsg, String infoMsg) {
                 hideProgressIndicator();
 
                 // if success
@@ -168,7 +178,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                     }
 
                     // utilize shipping and tax info
-                    setShippingAndTax(shippingCharge, tax);
+                    setShippingAndTax(totalHandlingCost, shippingCharge, tax);
 
                 } else {
                     // if shipping and tax already showing, need to hide them
@@ -244,17 +254,29 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
 
     /** updates the shipping charge and tax values (may be result of api response or a call from the subclass) */
-    protected void setShippingAndTax(String shippingCharge, float tax){
+    protected void setShippingAndTax(float totalHandlingCost, String shippingCharge, float tax){
+
         Bundle checkoutBundle = this.getArguments();
+        checkoutBundle.putFloat(BUNDLE_PARAM_TOTAL_HANDLING_COST, totalHandlingCost);
         checkoutBundle.putString(BUNDLE_PARAM_SHIPPING_CHARGE, shippingCharge);
         checkoutBundle.putFloat(BUNDLE_PARAM_TAX, tax);
+
+        this.totalHandlingCost = totalHandlingCost;
         this.shippingCharge = shippingCharge;
         this.tax = tax;
+
         DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
+        String totalHandlingCostStr = currencyFormat.format(totalHandlingCost);
+        oversizedShippingVw.setText(totalHandlingCostStr);
+
         shippingChargeVw.setText(formatShippingCharge(shippingCharge, currencyFormat));
         shippingChargeVw.setTextColor("Free".equals(shippingCharge) ? greenText : blackText);
-        taxVw.setText(currencyFormat.format(tax));
+
+        String taxStr = currencyFormat.format(tax);
+        taxVw.setText(taxStr);
+
         checkoutTotalVw.setText(currencyFormat.format(getCheckoutTotal()));
+
         setShipTaxSubmitVisibility(true);
     }
 
@@ -262,6 +284,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     protected void resetShippingAndTax() {
         if (submissionLayout.getVisibility() == View.VISIBLE) {
             Bundle checkoutBundle = this.getArguments();
+            checkoutBundle.putFloat(BUNDLE_PARAM_TOTAL_HANDLING_COST, -1);
             checkoutBundle.putString(BUNDLE_PARAM_SHIPPING_CHARGE, null);
             checkoutBundle.putFloat(BUNDLE_PARAM_TAX, -1);
             this.shippingCharge = null;
@@ -271,6 +294,8 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     }
 
     private void setShipTaxSubmitVisibility(boolean visible) {
+        oversizedShippingVw.setVisibility(visible? View.VISIBLE : View.GONE);
+        oversizedShippingLabelVw.setVisibility(visible? View.VISIBLE : View.GONE);
         shippingChargeVw.setVisibility(visible? View.VISIBLE : View.GONE);
         shippingChargeLabelVw.setVisibility(visible? View.VISIBLE : View.GONE);
         taxVw.setVisibility(visible? View.VISIBLE : View.GONE);
@@ -285,6 +310,11 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     /** returns tax value if available */
     protected Float getTax() {
         return this.tax;
+    }
+
+    /** returns tax value if available */
+    protected Float getTotalHandlingCost() {
+        return this.totalHandlingCost;
     }
 
     /** returns tax value if available */

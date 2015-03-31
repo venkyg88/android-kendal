@@ -1,119 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <com.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:id="@+id/profile_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/profile_fragment">
+    android:background="@color/staples_white"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/margin_16dp"
+    android:paddingRight="@dimen/margin_16dp">
 
     <TextView
-        android:layout_width="match_parent"
-        android:text="@string/email"
         android:id="@+id/emailLabel"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
         style="@style/GraySubheading"
-        android:paddingTop="10dp"
-        android:layout_height="wrap_content" />
-
-    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+		android:paddingTop="@dimen/verticalspacing_8dp"
+        android:text="@string/email" />
+
+    <TextView
         android:id="@+id/emailProfile"
-        android:paddingTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        style="@style/DrawerStyle"/>
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:paddingTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-		android:background="@color/staples_black"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:text="@string/username"
-        style="@style/GraySubheading"
-        android:id="@+id/userNameLabel"
-        android:paddingTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_height="wrap_content" />
-
-    <TextView
+        style="@style/DrawerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/userNameProfile"
-        android:layout_marginRight="10dp"
-        android:paddingTop="10dp"
-        android:layout_marginLeft="10dp"
-        style="@style/DrawerStyle"/>
+		android:paddingTop="@dimen/verticalspacing_8dp" />
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:paddingTop="10dp"
-		android:background="@color/staples_black"/>
+        android:background="@color/staples_black"
+		android:paddingTop="@dimen/verticalspacing_8dp" />
+
+    <TextView
+        android:id="@+id/userNameLabel"
+        style="@style/GraySubheading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+		android:paddingTop="@dimen/verticalspacing_8dp"
+        android:text="@string/username" />
+
+    <TextView
+        android:id="@+id/userNameProfile"
+        style="@style/DrawerStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+		android:paddingTop="@dimen/verticalspacing_8dp" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/staples_black"
+		android:paddingTop="@dimen/verticalspacing_8dp" />
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp">
+		android:layout_marginBottom="@dimen/verticalspacing_8dp"
+		android:layout_marginTop="@dimen/verticalspacing_8dp">
+
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:paddingTop="10dp"
+            android:layout_height="wrap_content"
+            android:background="@color/staples_light_gray"
+			android:paddingBottom="@dimen/verticalspacing_8dp"
             android:paddingLeft="10dp"
-            android:paddingBottom="10dp"
+			android:paddingTop="@dimen/verticalspacing_8dp"
             android:text="Shipping/Billing"
-            android:textSize="@dimen/fontsize_16sp"
-            android:background="@color/staples_light_gray"/>
+            android:textSize="@dimen/fontsize_16sp" />
     </LinearLayout>
 
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:id="@+id/addressET"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:paddingTop="10dp"
-            android:layout_width="wrap_content"
-            android:layout_alignParentLeft="true"
-            style="@style/DrawerStyle"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/addShippingBtn"
-            android:layout_alignParentRight="true"/>
-    </RelativeLayout>
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-		android:background="@color/staples_dark_gray"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <TextView
-            android:id="@+id/ccET"
+            android:id="@+id/addressET"
+            style="@style/DrawerStyle"
             android:layout_width="wrap_content"
+            android:layout_alignBottom="@+id/addShippingBtn"
             android:layout_alignParentLeft="true"
-            style="@style/DrawerStyle"/>
+            android:ellipsize="end"
+            android:maxLines="1"
+			android:paddingTop="@dimen/verticalspacing_8dp" />
+
         <Button
+            android:id="@+id/addShippingBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/addCCBtn"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true" />
     </RelativeLayout>
+
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dp"
-		android:background="@color/staples_dark_gray"/>
+        android:background="@color/staples_black"
+		android:paddingTop="@dimen/verticalspacing_8dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/ccET"
+            style="@style/DrawerStyle"
+            android:layout_width="wrap_content"
+            android:layout_alignBottom="@id/addCCBtn"
+            android:layout_alignParentLeft="true" />
+
+        <Button
+            android:id="@+id/addCCBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/staples_black"
+		android:paddingTop="@dimen/verticalspacing_8dp" />
+
 </com.staples.mobile.cfa.widget.AnimatorLayout>

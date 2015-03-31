@@ -44,7 +44,7 @@ public class CheckoutApiManager {
     }
 
     public interface PrecheckoutCallback {
-        public void onPrecheckoutComplete(String shippingCharge, Float tax, String errMsg, String infoMsg);
+        public void onPrecheckoutComplete(Float totalHandlingCost, String shippingCharge, Float tax, String errMsg, String infoMsg);
     }
 
     public interface OrderSubmissionCallback {
@@ -190,29 +190,30 @@ public class CheckoutApiManager {
 
                         Cart cart = getCartFromResponse(cartContents);
                         if (cart != null) {
+                            final Float totalHandlingCost = cart.getTotalHandlingCost();
                             final String shippingCharge = cart.getShippingCharge();
                             secureApi.getTax(new Callback<CartContents>() {
                                 @Override
                                 public void success(CartContents cartContents, Response response) {
                                     Cart cart = getCartFromResponse(cartContents);
-                                    doCallback(precheckoutCallback, shippingCharge, cart.getTotalTax(), null, finalInfoMsg);
+                                    doCallback(precheckoutCallback, totalHandlingCost, shippingCharge, cart.getTotalTax(), null, finalInfoMsg);
                                 }
 
                                 @Override
                                 public void failure(RetrofitError retrofitError) {
-                                    doCallback(precheckoutCallback, shippingCharge, null, "Error retrieving tax: " +
+                                    doCallback(precheckoutCallback, totalHandlingCost, shippingCharge, null, "Error retrieving tax: " +
                                             ApiError.getErrorMessage(retrofitError), finalInfoMsg);
                                 }
                             });
 
                         } else {
-                            doCallback(precheckoutCallback, null, null, "Error retrieving shipping charge", finalInfoMsg);
+                            doCallback(precheckoutCallback, null, null, null, "Error retrieving shipping charge", finalInfoMsg);
                         }
                     }
 
                     @Override
                     public void failure(RetrofitError retrofitError) {
-                        doCallback(precheckoutCallback, null, null, "Error retrieving shipping charge: " +
+                        doCallback(precheckoutCallback, null, null, null, "Error retrieving shipping charge: " +
                                 ApiError.getErrorMessage(retrofitError), finalInfoMsg);
                     }
 
@@ -229,13 +230,13 @@ public class CheckoutApiManager {
 
             @Override
             public void failure(RetrofitError retrofitError) {
-                doCallback(precheckoutCallback, null, null, ApiError.getErrorMessage(retrofitError), null);
+                doCallback(precheckoutCallback, null, null, null, ApiError.getErrorMessage(retrofitError), null);
             }
 
 
-            private void doCallback(PrecheckoutCallback precheckoutCallback, String shippingCharge, Float tax, String errMsg, String infoMsg) {
+            private void doCallback(PrecheckoutCallback precheckoutCallback, Float totalHandlingCost, String shippingCharge, Float tax, String errMsg, String infoMsg) {
                 if (precheckoutCallback != null) {
-                    precheckoutCallback.onPrecheckoutComplete(shippingCharge, tax, errMsg, infoMsg);
+                    precheckoutCallback.onPrecheckoutComplete(totalHandlingCost, shippingCharge, tax, errMsg, infoMsg);
                 }
             }
 
