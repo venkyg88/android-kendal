@@ -78,7 +78,7 @@ import retrofit.client.Response;
 
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener,
-        LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback{
+        LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback, UAirship.OnReadyCallback {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final boolean LOGGING = false;
 
@@ -157,8 +157,11 @@ public class MainActivity extends Activity
 
         // Support for Urban Airship
         AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(this);
-        UAirship.takeOff(getApplication(), options);
-        PushManager manager = UAirship.shared().getPushManager();
+        UAirship.takeOff(getApplication(), options, this);
+    }
+
+    public void onAirshipReady(UAirship airship) {
+        PushManager manager = airship.getPushManager();
         manager.setNotificationFactory(new NotifyReceiver.CustomNotificationFactory(this));
         manager.setUserNotificationsEnabled(true);
     }
