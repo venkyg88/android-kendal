@@ -150,7 +150,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
             if (getTax() == null || getShippingCharge() == null) {
                 applyShippingAddressAndPrecheckout();
             } else {
-                setShippingAndTax(getShippingCharge(), getTax());
+                setShippingAndTax(getTotalHandlingCost(), getShippingCharge(), getTax());
             }
         }
     }
