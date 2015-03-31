@@ -1,6 +1,5 @@
 package com.staples.mobile.test;
 
-import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.store.TimeSpan;
 
 import org.junit.After;
@@ -8,11 +7,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowLog;
-import org.robolectric.util.ActivityController;
 
 import java.util.ArrayList;
 import java.util.TimeZone;
@@ -24,31 +20,14 @@ public class TimeSpanTest {
     private static final int ONEDAY = 24*60*60*1000;
     private static final int ONEHOUR = 60*60*1000;
 
-    private ActivityController controller;
-    private MainActivity activity;
-
     @Before
     public void setUp() {
-        // Redirect logcat to stdout logfile
-        ShadowLog.stream = System.out;
-
-        // Create activity controller
-        controller = Robolectric.buildActivity(MainActivity.class);
-        Assert.assertNotNull("Robolectric controller should not be null", controller);
-
-        // Create activity
-        controller.create();
-        controller.start();
-        controller.visible();
-        activity = (MainActivity) controller.get();
-
-        // Check for success
-        Assert.assertNotNull("Activity should exist", activity);
+        Utility.setUp();
     }
 
     @After
     public void tearDown() {
-        controller.destroy();
+        Utility.tearDown();
     }
 
     @Test
@@ -80,7 +59,7 @@ public class TimeSpanTest {
         spans.add(TimeSpan.parse("Friday", "09:00AM - 05:00PM"));
         spans.add(TimeSpan.parse("Saturday", "09:00AM - 02:00PM"));
         spans.add(TimeSpan.parse("Monday", "09:00AM - 05:00PM"));
-        String result = TimeSpan.formatSchedule(activity, spans);
+        String result = TimeSpan.formatSchedule(Utility.activity, spans);
         Assert.assertEquals("Schedule should have formatted correctly", response, result);
     }
 }
