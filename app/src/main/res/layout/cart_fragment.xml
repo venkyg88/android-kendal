@@ -124,12 +124,16 @@
         card_view:cardElevation="1dp"
         card_view:cardBackgroundColor="@color/staples_light_gray">
         <TextView
+            android:id="@+id/coupons_rewards_label"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="left|center_vertical"
+            android:gravity="center_vertical"
             android:text="@string/coupons_rewards"
             android:textSize="@dimen/fontsize_14sp"
             android:textColor="@color/staples_green"
+            android:drawableLeft="@drawable/visa"
+            android:drawablePadding="8dp"
             />
         <TextView
             android:id="@+id/coupons_rewards_value"
