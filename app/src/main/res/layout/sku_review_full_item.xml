@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="6dp">
+    android:paddingLeft="@dimen/margin_16dp"
+    android:paddingRight="@dimen/margin_16dp"
+    android:paddingTop="@dimen/margin_16dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
-        <TextView android:id="@+id/sku_review_date"
+        <TextView
+            android:id="@+id/sku_review_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <com.staples.mobile.cfa.widget.RatingStars
@@ -16,14 +20,17 @@
             style="@style/SmallRatingStars"
             android:gravity="right"/>
     </LinearLayout>
-    <TextView android:id="@+id/sku_review_title"
-              style="@style/SkuReviewTitle"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"/>
-    <TextView android:id="@+id/sku_review_comments"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"/>
-    <TextView android:id="@+id/sku_review_verdict"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/sku_review_title"
+        style="@style/SkuReviewTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/sku_review_comments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/sku_review_verdict"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 </LinearLayout>

@@ -2,11 +2,11 @@
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/SkuSpecFont"
     android:layout_width="fill_parent"
-    android:padding="10dp">
+    android:padding="@dimen/verticalspacing_8dp">
 
     <TextView android:id="@+id/specName" />
 
     <TextView
         android:id="@+id/specValue"
-        android:paddingLeft="10dp" />
+        android:paddingLeft="@dimen/right_margin" />
 </TableRow>
