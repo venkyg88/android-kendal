@@ -124,12 +124,16 @@
         card_view:cardElevation="1dp"
         card_view:cardBackgroundColor="@color/staples_light_gray">
         <TextView
+            android:id="@+id/coupons_rewards_label"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="left|center_vertical"
+            android:gravity="center_vertical"
             android:text="@string/coupons_rewards"
             android:textSize="@dimen/fontsize_14sp"
             android:textColor="@color/staples_green"
+            android:drawableLeft="@drawable/visa"
+            android:drawablePadding="8dp"
             />
         <TextView
             android:id="@+id/coupons_rewards_value"
@@ -163,9 +167,9 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
 		android:paddingBottom="0dp"
+		android:paddingTop="0dp"
         android:paddingLeft="@dimen/margin_16dp"
         android:paddingRight="@dimen/margin_16dp"
-        android:paddingTop="@dimen/verticalspacing_8dp"
 		android:visibility="visible"
 	>
         <TextView
@@ -173,10 +177,10 @@
             android:layout_alignParentLeft="true"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-			android:paddingTop="0dp"
 			android:text="@string/oversized_shipping_fee"
             android:textColor="@color/staples_black"
             android:textSize="@dimen/fontsize_14sp"
+			android:visibility="gone"
         />
         <TextView
 			android:id="@+id/oversized_shipping"
@@ -184,9 +188,9 @@
             android:layout_alignParentRight="true"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-			android:text="$14.99"
             android:textColor="@color/staples_black"
             android:textSize="@dimen/fontsize_14sp"
+			android:visibility="gone"
 		/>
 
 		<TextView
@@ -195,7 +199,6 @@
 			android:layout_below="@id/oversized_shipping_label"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:paddingTop="0dp"
 			android:text="@string/shipping"
 			android:textColor="@color/staples_black"
 			android:textSize="@dimen/fontsize_14sp"

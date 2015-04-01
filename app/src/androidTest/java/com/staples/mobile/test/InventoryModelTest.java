@@ -52,7 +52,7 @@ public class InventoryModelTest {
 
     @Test
     public void inventoryModelIsCreatedWithLiveCall() throws InterruptedException{
-        if (!com.staples.mobile.test.Config.doLiveCalls) return;
+        if (!Utility.doLiveCalls) return;
 
         easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         success = false;

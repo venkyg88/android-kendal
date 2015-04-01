@@ -78,7 +78,7 @@ import retrofit.client.Response;
 
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener,
-        LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback{
+        LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback, UAirship.OnReadyCallback {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final boolean LOGGING = false;
 
@@ -94,11 +94,10 @@ public class MainActivity extends Activity
     private DrawerItem homeDrawerItem;
     private long timeOfLastSessionCheck;
     private TextView notificationBanner;
-    Animation notificationBannerAnimation;
+    private Animation notificationBannerAnimation;
 
     private LoginHelper loginHelper;
-    boolean initialLoginComplete;
-    boolean activityInForeground;
+    private boolean initialLoginComplete;
 
     private AppConfigurator appConfigurator;
 
@@ -142,7 +141,6 @@ public class MainActivity extends Activity
             Log.v(TAG, "MainActivity:onCreate():"
                     + " bundle[" + bundle + "]");
         }
-        activityInForeground = true; // need to set here in addition to in onResume since configurator callback can occur before onResume
 
         // Note: error handling for no network availability will happen in ensureActiveSession() called from onResume()
         if (isNetworkAvailable()) {
@@ -159,8 +157,11 @@ public class MainActivity extends Activity
 
         // Support for Urban Airship
         AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(this);
-        UAirship.takeOff(getApplication(), options);
-        PushManager manager = UAirship.shared().getPushManager();
+        UAirship.takeOff(getApplication(), options, this);
+    }
+
+    public void onAirshipReady(UAirship airship) {
+        PushManager manager = airship.getPushManager();
         manager.setNotificationFactory(new NotifyReceiver.CustomNotificationFactory(this));
         manager.setUserNotificationsEnabled(true);
     }
@@ -209,7 +210,6 @@ public class MainActivity extends Activity
     @Override
     protected void onResume() {
         super.onResume();
-        activityInForeground = true;
         ensureActiveSession();
         //@TODO So what happens ensure errors out! REach next line?
         //Analytics
@@ -219,7 +219,6 @@ public class MainActivity extends Activity
     @Override
     protected void onPause() {
         super.onPause();
-        activityInForeground = false;
         LocationFinder locationFinder = LocationFinder.getInstance(this);
         if (locationFinder != null) {
             locationFinder.saveRecentLocation();
@@ -426,17 +425,6 @@ public class MainActivity extends Activity
             loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
                 @Override public void onProfileRefresh(Member member, String errMsg) {
                     initialLoginComplete = true;
-
-                    // if activity no longer showing at this point (e.g. user hit Back button during loading), then
-                    // we need to kill the activity so that loading can be re-initiated next time.
-                    // Otherwise, the app can get into a state where the activity is loaded, but no
-                    // fragment is loaded (loading fragment when activity is paused doesn't do anything.)
-                    if (!activityInForeground) {
-                        MainActivity.this.finish();
-                        return;
-                    }
-
-                    // open home page after profile loaded (if available) since home page now needs it
                     showMainScreen();
                 }
             });
@@ -528,28 +516,14 @@ public class MainActivity extends Activity
         drawerLayout.closeDrawers();
         ActionBar.getInstance().closeSearch();
 
-//        Log.e("StateBug", "selectFragment");
-//        if (!activityInForeground) {
-//            Log.e("StateBug", "Activity is not in foreground");
-//        }
-//        if (isDestroyed()) {
-//            Log.e("StateBug", "Activity is already destroyed");
-//        }
-//        if (isFinishing()) {
-//            Log.e("StateBug", "Activity is finishing");
-//        }
-
-        if (activityInForeground)
-        {
-            // Swap Fragments
-            FragmentManager manager = getFragmentManager();
-            FragmentTransaction transaction = manager.beginTransaction();
-            if (transition != null) transition.setAnimation(transaction);
-            transaction.replace(R.id.content, fragment, tag);
-            if (push)
-                transaction.addToBackStack(fragment.getClass().getName());
-            transaction.commit();
-        }
+        // Swap Fragments
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        if (transition != null) transition.setAnimation(transaction);
+        transaction.replace(R.id.content, fragment, tag);
+        if (push)
+            transaction.addToBackStack(fragment.getClass().getName());
+        transaction.commitAllowingStateLoss();
 
         return(true);
     }

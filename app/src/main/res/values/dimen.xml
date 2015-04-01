@@ -12,6 +12,7 @@
     <dimen name="fontsize_24sp">24sp</dimen>   <!--part of style guide-->
     <dimen name="fontsize_30sp">30sp</dimen>   <!--part of style guide-->
     <dimen name="fontsize_34sp">34sp</dimen>   <!--part of style guide-->
+
     <dimen name="verticalspacing_8dp">8dp</dimen>     <!--part of style guide-->
     <dimen name="verticalspacing_24dp">24dp</dimen>   <!--part of style guide-->
     <dimen name="verticalspacing_48dp">48dp</dimen>   <!--part of style guide-->
@@ -19,13 +20,14 @@
     <dimen name="margin_16dp">16dp</dimen>     <!--part of style guide-->
     <dimen name="margin_72dp">72dp</dimen>     <!--part of style guide-->
 
+    <dimen name="action_bar_half_margin">8dp</dimen>
+    <dimen name="action_bar_quarter_margin">4dp</dimen>
     <dimen name="min_grid_width">180dp</dimen>
     <dimen name="fixed_grid_tall_height">224dp</dimen>
     <dimen name="fixed_grid_wide_height">120dp</dimen>
     <dimen name="image_square_size">80dp</dimen>
     <dimen name="horizontal_divider_thickness">1dp</dimen>
     <dimen name="horizontal_divider_gap">16dp</dimen>
-    <dimen name="diameter">48dp</dimen>
     <dimen name="elevation_low">1dp</dimen>
     <dimen name="elevation_high">4dp</dimen>
     <dimen name="add_button_margin">16dp</dimen>
