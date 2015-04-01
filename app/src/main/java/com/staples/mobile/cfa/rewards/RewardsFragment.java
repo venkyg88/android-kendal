@@ -10,6 +10,8 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -169,7 +171,8 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
         cartridgesRecycledLabelVw.setText(r.getQuantityText(R.plurals.rewards_ink_recycled, cartridgesRecycled));
         cartridgesLimitVw.setText(String.format(r.getString(R.string.rewards_ink_limit), cartridgesLimit));
         cartridgesEarnedVw.setText(currencyFormat.format(cartridgesEarned));
-        inkRewardsMessageVw.setText(inkRewardsMessage);
+        inkRewardsMessageVw.setText(Html.fromHtml(inkRewardsMessage)); // this strips html, but leaves info about the spanned hyperlinks which the textview uses to display them
+        inkRewardsMessageVw.setMovementMethod(LinkMovementMethod.getInstance()); // this makes hyperlinks within the text clickable
 
         // set text of summary views
         totalYtdSavingsVw.setText(currencyFormat.format(totalYtdSavings));
@@ -177,7 +180,8 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
         int progressMax = 100;
         ytdProgressBar.setMax(progressMax);
         ytdProgressBar.setProgress(ytdSpendGoal == 0? 0 : (int)Math.round(progressMax * ytdProgress / ytdSpendGoal));
-        ytdMessageVw.setText(ytdMessage);
+        ytdMessageVw.setText(Html.fromHtml(ytdMessage)); // this strips html, but leaves info about the spanned hyperlinks which the textview uses to display them
+        ytdMessageVw.setMovementMethod(LinkMovementMethod.getInstance()); // this makes hyperlinks within the text clickable
 
         return(view);
     }
