@@ -9,25 +9,28 @@ import java.util.List;
 
 public class BundleItem {
     public enum SortType {
-        BESTMATCH       (R.string.sort_best_match,       R.id.sort_best_match,       null,                             null, null),
-        HIGHESTRATED    (R.string.sort_highest_rated,    R.id.sort_highest_rated,    new BundleItem.HighestRated(),    5,    "ratingDesc"),
-        PRICEASCENDING  (R.string.sort_price_ascending,  R.id.sort_price_ascending,  new BundleItem.PriceAscending(),  1,    "priceAsc"),
-        PRICEDESCENDING (R.string.sort_price_descending, R.id.sort_price_descending, new BundleItem.PriceDescending(), 2,    "priceDesc"),
-        TITLEASCENDING  (R.string.sort_title_ascending,  R.id.sort_title_ascending,  new BundleItem.TitleAscending(),  3,    "nameAsc"),
-        TITLEDESCENDING (R.string.sort_title_descending, R.id.sort_title_descending, new BundleItem.TitleDescending(), 4,    "nameDesc");
+        BESTMATCH       (R.string.sort_best_match,       R.id.sort_best_match,       null,                             null, null,         "Best Match"),
+        PRICEASCENDING  (R.string.sort_price_ascending,  R.id.sort_price_ascending,  new BundleItem.PriceAscending(),  1,    "priceAsc",   "Price: Low to High"),
+        PRICEDESCENDING (R.string.sort_price_descending, R.id.sort_price_descending, new BundleItem.PriceDescending(), 2,    "priceDesc",  "Price: High to Low"),
+        TITLEASCENDING  (R.string.sort_title_ascending,  R.id.sort_title_ascending,  new BundleItem.TitleAscending(),  3,    "nameAsc",    "Name: A to Z"),
+        TITLEDESCENDING (R.string.sort_title_descending, R.id.sort_title_descending, new BundleItem.TitleDescending(), 4,    "nameDesc",   "Name: Z to A"),
+        HIGHESTRATED    (R.string.sort_highest_rated,    R.id.sort_highest_rated,    new BundleItem.HighestRated(),    5,    "ratingDesc", "Highest Rated"),
+        LOWESTRATED     (0,                              0,                          null,                             6,    "ratingAsc",  "Lowest Rated");
 
         public final int title;
         public final int button;
         public final Comparator<BundleItem> comparator;
         public final Integer intParam;
         public final String stringParam;
+        public final String description;
 
-        SortType(int title, int button, Comparator<BundleItem> comparator, Integer intParam, String stringParam) {
+        SortType(int title, int button, Comparator<BundleItem> comparator, Integer intParam, String stringParam, String description) {
             this.title = title;
             this.button = button;
             this.comparator = comparator;
             this.intParam = intParam;
             this.stringParam = stringParam;
+            this.description = description;
         }
 
         public static SortType findSortTypeById(int id) {
