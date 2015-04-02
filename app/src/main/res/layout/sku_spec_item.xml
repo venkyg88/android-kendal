@@ -7,6 +7,5 @@
     <TextView android:id="@+id/specName" />
 
     <TextView
-        android:id="@+id/specValue"
-        android:paddingLeft="@dimen/right_margin" />
+        android:id="@+id/specValue" />
 </TableRow>
