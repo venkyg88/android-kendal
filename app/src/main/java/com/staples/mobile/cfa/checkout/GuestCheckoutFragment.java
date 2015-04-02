@@ -92,6 +92,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         cardImage = (ImageView) paymentMethodLayoutVw.findViewById(R.id.card_image);
         expirationDateVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationDate);
         cidVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cid);
+        cidVw.setVisibility(View.VISIBLE); // set initially visible, hide later if not applicable to card type (as per Joe Raffone)
+        expirationDateVw.setImeOptions(EditorInfo.IME_ACTION_NEXT);
 
         frame.findViewById(R.id.billing_addr_heading).setVisibility(View.GONE);
         billingAddrBlock.setVisibility(View.GONE);
@@ -120,46 +122,50 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         expirationDateVw.setFilters(new InputFilter[]{new ExpiryDateInputFilter()});
 
 
-        cardNumberVw.setOnEditorActionListener(
-                new EditText.OnEditorActionListener() {
-
-                    @Override
-                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                            CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString().replaceAll(" ", ""));
-                            cardImage.setImageResource(ccType.getImageResource());
-                            expirationDateVw.setVisibility(View.VISIBLE);
-                            if (ccType.isCidUsed()) {
-                                cidVw.setVisibility(View.VISIBLE);
-                                expirationDateVw.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-                            }
-                            expirationDateVw.requestFocus();
-                            return true; // consume.
-                        }
-                        return false; // pass on to other listeners.
-                    }
-                });
-
         // add listener to billing addr toggle button switch
         useShipAddrAsBillingAddrSwitch = (Switch) frame.findViewById(R.id.useShipAddrAsBillingAddr_switch);
         useShipAddrAsBillingAddrSwitch.setChecked(true);
         useShipAddrAsBillingAddrSwitch.setOnCheckedChangeListener(this);
 
-        // analytics
-        View.OnFocusChangeListener analyticsFocusListener = new View.OnFocusChangeListener() {
+        // focus listener for CC and shipping addr
+        View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
                     if (v.getId() == R.id.firstName) {
-                        Tracker.getInstance().trackActionForCheckoutEnterAddress();
+                        Tracker.getInstance().trackActionForCheckoutEnterAddress(); // analytics
                     } else if (v.getId() == R.id.cardNumber) {
-                        Tracker.getInstance().trackActionForCheckoutEnterPayment();
+                        Tracker.getInstance().trackActionForCheckoutEnterPayment(); // analytics
+                    } else if (v.getId() == R.id.expirationDate) {
+                        // loss of focus on CC number isn't consistent, so handle gain of focus on exp date too
+                        handleCardNumberChange();
+                    }
+                } else  {
+                    // when CC number loses focus, evaluate card type and show/hide CID
+                    if (v.getId() == R.id.cardNumber) {
+                        handleCardNumberChange();
                     }
                 }
             }
         };
-        shippingAddrBlock.findViewById(R.id.firstName).setOnFocusChangeListener(analyticsFocusListener);
-        cardNumberVw.setOnFocusChangeListener(analyticsFocusListener);
+        shippingAddrBlock.findViewById(R.id.firstName).setOnFocusChangeListener(focusListener);
+        cardNumberVw.setOnFocusChangeListener(focusListener);
+        expirationDateVw.setOnFocusChangeListener(focusListener);
+    }
+
+    private void handleCardNumberChange() {
+        String cardNumber = cardNumberVw.getText().toString();
+        if (!TextUtils.isEmpty(cardNumber)) {
+            CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString().replaceAll(" ", ""));
+            cardImage.setImageResource(ccType.getImageResource());
+            if (!ccType.isCidUsed()) {
+                cidVw.setVisibility(View.GONE);
+                expirationDateVw.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            } else {
+                cidVw.setVisibility(View.VISIBLE);
+                expirationDateVw.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+            }
+        }
     }
 
     public void onNext(AddressBlock addressBlock) {
