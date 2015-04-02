@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <TextView android:id="@+id/sku_review_date"
+    <TextView
+        android:id="@+id/sku_review_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <com.staples.mobile.cfa.widget.RatingStars

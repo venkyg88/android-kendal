@@ -4,17 +4,17 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:padding="@dimen/margin_16dp">
 
     <ImageView
         android:id="@+id/accessory_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="@dimen/sku_accessory_image_width"
+        android:layout_height="@dimen/sku_accessory_image_height"
         android:scaleType="centerInside"/>
 
     <TextView
         android:id="@+id/accessory_title"
-        android:layout_width="150dp"
+        android:layout_width="@dimen/sku_accessory_image_width"
         android:layout_height="wrap_content"
         android:textSize="@dimen/fontsize_12sp"/>
 
@@ -42,9 +42,9 @@
             android:layout_weight="0.2"/>
         <com.staples.mobile.cfa.widget.PriceSticker
             android:id="@+id/accessory_price"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/fontsize_18sp"
+            style="@style/SmallPriceSticker"
             android:layout_weight="0.8"/>
     </LinearLayout>
 </LinearLayout>
