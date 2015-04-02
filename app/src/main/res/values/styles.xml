@@ -94,7 +94,9 @@
         <item name="android:gravity">start|bottom</item>
         <item name="android:textSize">@dimen/fontsize_15sp</item>
         <item name="android:textColor">@color/staples_black</item>
+        <item name="android:imeOptions">flagNoExtractUi</item>
         <item name="textDualSize">@dimen/fontsize_12sp</item>
+        <item name="android:singleLine">true</item>
         <item name="textDualGap">1dp</item>
         <item name="textDualColor">@color/staples_dark_gray</item>
     </style>
