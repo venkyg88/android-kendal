@@ -288,7 +288,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             couponsRewardsValue.setText(currencyFormat.format(couponsRewardsAmount));
             boolean showCouponsAmount = (couponsRewardsAmount != 0 || couponsShowing);
             couponsRewardsValue.setVisibility(showCouponsAmount ? View.VISIBLE : View.GONE);
-            couponsRewardsLabel.setCompoundDrawablesWithIntrinsicBounds(couponsShowing? R.drawable.mastercard : R.drawable.visa,0,0,0);
+            couponsRewardsLabel.setCompoundDrawablesWithIntrinsicBounds(couponsShowing? R.drawable.ic_remove_green : R.drawable.ic_add_green,0,0,0);
 
             if (totalHandlingCost > 0) {
                 String totalHandlingCostStr = Float.toString(totalHandlingCost);
@@ -617,6 +617,10 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                     if (!up) {
                         linkRewardsAcctLayout.setVisibility(View.GONE);
                     }
+                    // update these at beginning of animation while it's moving fast rather than when it's coasting to a finish at the end
+                    boolean showCouponsAmount = (couponsRewardsAmount != 0 || up);
+                    couponsRewardsValue.setVisibility(showCouponsAmount? View.VISIBLE : View.GONE);
+                    couponsRewardsLabel.setCompoundDrawablesWithIntrinsicBounds(up? R.drawable.ic_remove_green : R.drawable.ic_add_green,0,0,0);
                 }
                 @Override public void onAnimationEnd(Animator animation) {
                     // if finishing animation up, set cart items to gone and show rewards account if applicable
@@ -627,9 +631,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                             linkRewardsAcctLayout.setVisibility(View.VISIBLE);
                         }
                     }
-                    boolean showCouponsAmount = (couponsRewardsAmount != 0 || up);
-                    couponsRewardsValue.setVisibility(showCouponsAmount? View.VISIBLE : View.GONE);
-                    couponsRewardsLabel.setCompoundDrawablesWithIntrinsicBounds(up? R.drawable.mastercard : R.drawable.visa,0,0,0);
                 }
                 @Override public void onAnimationCancel(Animator animation) { }
                 @Override public void onAnimationRepeat(Animator animation) { }
