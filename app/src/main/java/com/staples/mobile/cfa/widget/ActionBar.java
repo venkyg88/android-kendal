@@ -32,7 +32,7 @@ public class ActionBar extends LinearLayout {
         FEED     (false, true,  false, false, true,  false, true,  false, false, R.string.personal_feed_title),
         LINK     (false, true,  false, false, true,  false, true,  false, false, R.string.link_rewards_title),
         LOGIN    (false, true,  false, false, true,  false, true,  false, false, R.string.login_title),
-        NOTIFY   (false, true,  false, false, false, false, true,  false, false, R.string.notify_prefs_title),
+        NOTIFY   (true,  false, true,  true,  true, false,  true,  false, false, 0),
         ORDER    (false, true,  false, false, true,  false, true,  false, false, R.string.order_title),
         PASSWORD (false, true,  false, false, true,  false, true,  false, false, R.string.password_reset),
         PROFILE  (false, true,  false, false, true,  false, true,  false, false, R.string.profile_title),

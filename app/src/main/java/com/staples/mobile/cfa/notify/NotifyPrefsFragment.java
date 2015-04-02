@@ -20,7 +20,7 @@ import com.urbanairship.push.PushManager;
 import java.util.HashSet;
 import java.util.Set;
 
-public class NotifyPrefsFragment extends Fragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class NotifyPrefsFragment extends Fragment implements CompoundButton.OnCheckedChangeListener {
     private static final String TAG = "NotifyPrefsFragment";
 
     private EditText aliasText;
@@ -30,23 +30,13 @@ public class NotifyPrefsFragment extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.notify_prefs_fragment, container, false);
 
-        PushManager manager = UAirship.shared().getPushManager();
-
-        String alias = manager.getAlias();
-        aliasText = (EditText) view.findViewById(R.id.alias_text);
-        aliasText.setText(alias);
-        view.findViewById(R.id.set_alias).setOnClickListener(this);
-
         RecyclerView list = (RecyclerView) view.findViewById(R.id.list);
         adapter = new TagItemAdapter(getActivity());
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         // TODO Hardwired tags should come from MVS
-        adapter.addTagItem("orders", "Orders");
-        adapter.addTagItem("daily", "Daily Deals");
-        adapter.addTagItem("clearance", "Clearance Deals");
-        adapter.addTagItem("openings", "Store openings");
+        adapter.addTagItem("promotions", "Promotions");
 
         getTags();
         adapter.setOnCheckedChangedListener(this);
@@ -79,20 +69,6 @@ public class NotifyPrefsFragment extends Fragment implements View.OnClickListene
         }
         PushManager manager = UAirship.shared().getPushManager();
         manager.setTags(tags);
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch(view.getId()) {
-            case R.id.set_alias:
-                String alias = aliasText.getText().toString();
-                if (!alias.isEmpty()) {
-                    PushManager manager = UAirship.shared().getPushManager();
-                    manager.setAlias(alias);
-                    Toast.makeText(getActivity(), "Alias changed", Toast.LENGTH_SHORT).show();
-                }
-                break;
-        }
     }
 
     @Override
