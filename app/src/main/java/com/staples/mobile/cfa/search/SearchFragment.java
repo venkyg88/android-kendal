@@ -138,8 +138,10 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         if (searchResult.getSearch() != null && searchResult.getSearch().size() > 0) {
             //get the actual count of search results
             Search search = searchResult.getSearch().get(0);
+            Tracker.SortType sortType = Tracker.SortType.getBySearchSortNumber(
+                    fetchSort.intParam != null? fetchSort.intParam : 0);
             Tracker.getInstance().trackStateForSearchResults(search.getSearchTerm(),
-                    search.getItemCount(), Tracker.ViewType.GRID); //Analytics
+                    search.getItemCount(), Tracker.ViewType.GRID, sortType); //Analytics
             Apptentive.engage(activity, ApptentiveSdk.SEARCH_SHOWN_EVENT);
         }
     }

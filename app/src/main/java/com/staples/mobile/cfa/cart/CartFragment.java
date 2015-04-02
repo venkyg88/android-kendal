@@ -64,7 +64,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private TextView couponsRewardsValue;
     private RecyclerView couponListVw;
     private CouponAdapter couponAdapter;
-    private View couponList;
     private View emptyCartLayout;
     private View cartProceedToCheckout;
     private View cartShippingLayout;
@@ -107,7 +106,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         couponsRewardsLayout = view.findViewById(R.id.coupons_rewards_layout);
         couponsRewardsLabel = (TextView) view.findViewById(R.id.coupons_rewards_label);
         couponsRewardsValue = (TextView) view.findViewById(R.id.coupons_rewards_value);
-        couponList = view.findViewById(R.id.coupon_list);
         linkRewardsAcctLayout = view.findViewById(R.id.link_rewards_acct_layout);
         oversizedShipping = (TextView) view.findViewById(R.id.oversized_shipping);
         oversizedShippingLabel = (TextView) view.findViewById(R.id.oversized_shipping_label);
@@ -212,8 +210,10 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         Cart cart = CartApiManager.getCart();
         // coupons & rewards
         if (cart != null && cart.getCoupon() != null) {
-            for (Coupon c : cart.getCoupon()) {
-                totalAdjustedAmount += c.getAdjustedAmount();
+            for (Coupon coupon : cart.getCoupon()) {
+                if (!couponIsSkuLevel(coupon)) {
+                    totalAdjustedAmount += coupon.getAdjustedAmount();
+                }
             }
         }
         return totalAdjustedAmount;
@@ -313,12 +313,14 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             // add list of applied coupons
             if (cart != null && cart.getCoupon() != null && cart.getCoupon().size() > 0) {
                 for (Coupon coupon : cart.getCoupon()) {
-                    // coupon may or may not have a matching reward
-                    Reward reward = ProfileDetails.findMatchingReward(profileRewards, coupon.getCode());
-                    if (reward != null) {
-                        profileRewards.remove(reward); // remove the applied rewards from the list
+                    if (!couponIsSkuLevel(coupon)) {
+                        // coupon may or may not have a matching reward
+                        Reward reward = ProfileDetails.findMatchingReward(profileRewards, coupon.getCode());
+                        if (reward != null) {
+                            profileRewards.remove(reward); // remove the applied rewards from the list
+                        }
+                        couponItems.add(new CouponItem(coupon, reward, CouponItem.TYPE_APPLIED_COUPON));
                     }
-                    couponItems.add(new CouponItem(coupon, reward, CouponItem.TYPE_APPLIED_COUPON));
                 }
             }
 
@@ -371,6 +373,11 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             return view != null && view.getTop() >= -200; // giving it some margin since i've seen as low as -110 when top still visible after a scroll (e.g. when just enough content to allow scrolling)
         }
         return false;
+    }
+
+    private boolean couponIsSkuLevel(Coupon coupon) {
+        // TODO: make sure we're matching all/only sku-level coupons. Examples I've seen so far: "PERCENTOFFSKUGROUP","BUYSKUDOLLAROFF"
+        return coupon.getType().contains("SKU");
     }
 
     private boolean couponsShowing() {

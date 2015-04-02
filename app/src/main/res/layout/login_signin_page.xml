@@ -5,10 +5,10 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingRight="10dip"
-    android:paddingLeft="10dip"
-    android:paddingTop="10dip"
-    android:paddingBottom="10dip">
+    android:paddingLeft="@dimen/margin_16dp"
+    android:paddingRight="@dimen/margin_16dp"
+    android:paddingTop="@dimen/verticalspacing_8dp"
+    android:paddingBottom="@dimen/verticalspacing_8dp">
 
     <EditText
         android:layout_width="match_parent"
@@ -36,7 +36,7 @@
         android:id="@+id/forgotPwdTV"
         android:layout_below="@+id/password"
         android:textSize="@dimen/fontsize_12sp"
-        android:paddingTop="10dp"
+        android:paddingTop="@dimen/verticalspacing_8dp"
         android:textColor="@color/staples_dark_gray"
         android:text="@string/password_forgot"/>
 
@@ -44,9 +44,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/login_title"
-        android:textColor="@color/staples_white"
+        android:textColor="@color/staples_black"
         android:id="@+id/submit_button"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="@dimen/verticalspacing_48dp"
         android:layout_below="@+id/password"
         android:layout_centerHorizontal="true" />
 
