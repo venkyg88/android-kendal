@@ -467,7 +467,7 @@ Callback,
                     .setRating(accessory.getCustomerReviewRating(), accessory.getCustomerReviewCount());
 
             // Set accessory price
-            ((PriceSticker) skuAccessoryRow.findViewById(R.id.accessory_price)).setPricing(accessory.getPricing());
+            ((PriceSticker) skuAccessoryRow.findViewById(R.id.accessory_price)).setBrowsePricing(accessory.getPricing());
 
             accessoryContainer.addView(skuAccessoryRow);
         }
@@ -698,8 +698,8 @@ Callback,
 
             // Add pricing
             PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
-            priceSticker.setPricing(product.getPricing());
-            finalPrice = priceSticker.getPrice();
+            priceSticker.setBrowsePricing(product.getPricing());
+            finalPrice = priceSticker.getFinalPrice();
 
             // Add description
             LayoutInflater inflater = activity.getLayoutInflater();
