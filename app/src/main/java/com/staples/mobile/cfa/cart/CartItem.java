@@ -78,6 +78,28 @@ public class CartItem {
         return 0.0f;
     }
 
+    public float getOrderItemPrice() {
+        float totalOrderItemPrice = getTotalOrderItemPrice();
+        return totalOrderItemPrice / getQuantity();
+    }
+
+    public float getTotalOrderItemPrice() {
+        Pricing pricing = getPricing();
+        if (pricing != null) {
+            return pricing.getTotalOrderItemPrice();
+        }
+        return 0.0f;
+    }
+
+
+    public float getListPrice() {
+        Pricing pricing = getPricing();
+        if (pricing != null) {
+            return pricing.getListPrice();
+        }
+        return 0.0f;
+    }
+
     public String getPriceUnitOfMeasure() {
         Pricing pricing = getPricing();
         if (pricing != null) {
