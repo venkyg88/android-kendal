@@ -3,9 +3,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="10dip"
-    android:paddingRight="10dip"
-    android:paddingLeft="10dip">
+    android:paddingLeft="@dimen/margin_16dp"
+    android:paddingRight="@dimen/margin_16dp"
+    android:paddingTop="@dimen/verticalspacing_8dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -60,16 +60,15 @@
             android:text="@string/save_btn"
             android:id="@+id/addCCBtn"
             android:imeOptions="actionDone"
-            android:textColor="@color/staples_white"
-            android:layout_alignParentRight="true"
-            />
+			android:textColor="@color/staples_black"
+			android:layout_alignParentRight="true"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/cancel_btn"
             android:id="@+id/cancelCCBtn"
             android:imeOptions="actionDone"
-            android:textColor="@color/staples_white"
+			android:textColor="@color/staples_black"
             android:layout_toLeftOf="@+id/addCCBtn"/>
         </RelativeLayout>
 </com.staples.mobile.cfa.widget.AnimatorLayout>
