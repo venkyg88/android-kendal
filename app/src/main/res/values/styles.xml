@@ -141,7 +141,6 @@
     <style name="PagerStripe">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">6dp</item>
         <item name="stripeThickness">3dp</item>
         <item name="android:textSize">@dimen/fontsize_12sp</item>
     </style>
@@ -212,35 +211,34 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">top|center_horizontal</item>
-        <item name="android:paddingTop">9dp</item>
-        <item name="android:paddingRight">3dp</item>
+        <item name="android:paddingTop">@dimen/verticalspacing_8dp</item>
         <item name="android:src">@drawable/bullet</item>
     </style>
     <style name="SkuBulletTextStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">2dp</item>
+        <item name="android:padding">@dimen/sku_info_padding</item>
         <item name="android:textSize">@dimen/fontsize_16sp</item>
     </style>
 
     <style name="SkuSpecStyle">
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">@dimen/margin_16dp</item>
     </style>
     <style name="SkuSpecNameStyle" parent="SkuSpecStyle">
-        <item name="android:paddingLeft">2dp</item>
-        <item name="android:paddingRight">4dp</item>
+        <item name="android:paddingLeft">@dimen/sku_info_padding</item>
+        <item name="android:paddingRight">@dimen/sku_info_padding</item>
     </style>
     <style name="SkuSpecValueStyle" parent="SkuSpecStyle">
-        <item name="android:paddingLeft">4dp</item>
-        <item name="android:paddingRight">2dp</item>
+        <item name="android:paddingLeft">@dimen/sku_info_padding</item>
+        <item name="android:paddingRight">@dimen/sku_info_padding</item>
     </style>
 
     <style name="SkuSpecFont">
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">@dimen/fontsize_16sp</item>
     </style>
 
     <style name="SkuReviewTitle">
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">@dimen/fontsize_16sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 

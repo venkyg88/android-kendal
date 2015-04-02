@@ -1,7 +1,6 @@
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -11,7 +10,6 @@ import android.view.Gravity;
 import android.view.View;
 
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -25,17 +23,21 @@ import java.util.List;
  * android:gravity
  */
 public class PriceSticker extends View {
-    private static final String TAG = "StickerPrice";
+    private static final String TAG = "PriceSticker";
 
     private static final NumberFormat format = NumberFormat.getCurrencyInstance();
+
     private Paint majorPaint;
-    private Paint minorPaint;
+    private Paint unitPaint;
+    private Paint wasPaint;
 
     private int gravity;
     private int baseline;
     private int majorHeight;
+    private int[] widths;
 
-    private float price;
+    private float finalPrice;
+    private float wasPrice;
     private String unit;
 
     public PriceSticker(Context context) {
@@ -88,74 +90,105 @@ public class PriceSticker extends View {
         majorPaint.setTextSize(majorTextSize);
         majorPaint.setColor(majorTextColor);
 
-        minorPaint = new Paint();
-        minorPaint.setAntiAlias(true);
-        minorPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-        minorPaint.setTextSize(minorTextSize);
-        minorPaint.setColor(minorTextColor);
+        unitPaint = new Paint();
+        unitPaint.setAntiAlias(true);
+        unitPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        unitPaint.setTextSize(minorTextSize);
+        unitPaint.setColor(minorTextColor);
+
+        wasPaint = new Paint();
+        wasPaint.setAntiAlias(true);
+        wasPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        wasPaint.setTextSize(minorTextSize);
+        wasPaint.setColor(minorTextColor);
+        wasPaint.setFlags(wasPaint.getFlags()|Paint.STRIKE_THRU_TEXT_FLAG);
 
         // Get metrics
         baseline = (int) -majorPaint.ascent();
         majorHeight = baseline + (int) majorPaint.descent();
+        widths = new int[3];
     }
 
-    public void setPricing(float price, String unit) { // TODO old code
-        this.price = price;
+    public void setPricing(float finalPrice, float wasPrice, String unit) { // TODO old code
+        this.finalPrice = finalPrice;
+        this.wasPrice = wasPrice;
         this.unit = unit;
         if (this.unit!=null && this.unit.isEmpty()) this.unit = null;
         invalidate();
     }
 
-    public boolean setPricing(List<Pricing> pricings) {
+    // Browse pricing
+
+    public boolean setBrowsePricing(List<com.staples.mobile.common.access.easyopen.model.browse.Pricing> pricings) {
         if (pricings==null) return(false);
-        for(Pricing pricing : pricings) {
+        for(com.staples.mobile.common.access.easyopen.model.browse.Pricing pricing : pricings) {
             if (setPricing(pricing)) return (true);
         }
         return (false);
     }
 
-    public boolean setPricing(Pricing pricing) {
+    public boolean setPricing(com.staples.mobile.common.access.easyopen.model.browse.Pricing pricing) {
         if (pricing==null) return(false);
-        price = pricing.getFinalPrice();
+        finalPrice = pricing.getFinalPrice();
+        wasPrice = pricing.getListPrice();
         unit = pricing.getUnitOfMeasure();
         if (unit!=null && unit.isEmpty()) unit = null;
         invalidate();
         return(true);
     }
 
-    public float getPrice() {
-        return price;
+    // Cart pricing
+
+    public boolean setCartPricing(List<com.staples.mobile.common.access.easyopen.model.cart.Pricing> pricings) {
+        if (pricings==null) return(false);
+        for(com.staples.mobile.common.access.easyopen.model.cart.Pricing pricing : pricings) {
+            if (setPricing(pricing)) return (true);
+        }
+        return (false);
+    }
+
+    public boolean setPricing(com.staples.mobile.common.access.easyopen.model.cart.Pricing pricing) {
+        if (pricing==null) return(false);
+        finalPrice = pricing.getFinalPrice();
+        wasPrice = pricing.getListPrice();
+        unit = pricing.getUnitOfMeasure();
+        if (unit!=null && unit.isEmpty()) unit = null;
+        invalidate();
+        return(true);
+    }
+    public float getFinalPrice() {
+        return finalPrice;
+    }
+
+    private void measureWidths() {
+        int width = 0;
+        if (wasPrice>0.0f) {
+            String text = format.format(wasPrice) + " ";
+            width += unitPaint.measureText(text, 0, text.length());
+        }
+        widths[0] = width;
+        if (finalPrice>0.0f) {
+            String text = format.format(finalPrice);
+            width += majorPaint.measureText(text, 0, text.length());
+        }
+        widths[1] = width;
+        if (unit!=null) {
+            String text = " " + unit;
+            width += unitPaint.measureText(text, 0, text.length());
+        }
     }
 
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
-        float x = getPaddingLeft() + getPaddingRight();
-        String text = format.format(price);
-        x += majorPaint.measureText(text, 0, text.length());
-        if (unit!=null) {
-            text = " " + unit;
-            x += minorPaint.measureText(text, 0, text.length());
-        }
-        int height = getPaddingTop() + majorHeight + getPaddingBottom();
-        int width = resolveSize((int) Math.ceil(x), widthSpec);
-        height = resolveSize(height, heightSpec);
-        setMeasuredDimension(width, height);
+        measureWidths();
+        int height = getPaddingTop()+majorHeight+getPaddingBottom();
+        int width = getPaddingLeft()+widths[2]+getPaddingRight();
+        setMeasuredDimension(resolveSize(width, widthSpec), resolveSize(height, heightSpec));
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        String unitText = null;
-
-        float slack = getWidth()-getPaddingLeft()-getPaddingRight();
-
-        String priceText = format.format(price);
-        float priceWidth = majorPaint.measureText(priceText, 0, priceText.length());
-        slack -= priceWidth;
-
-        if (unit!=null) {
-            unitText = " " + unit;
-            slack -= minorPaint.measureText(unitText, 0, unitText.length());
-        }
+        int slack = getWidth()-getPaddingLeft()-getPaddingRight()-widths[2];
 
         // Apply gravity
         float x = getPaddingLeft();
@@ -164,10 +197,17 @@ public class PriceSticker extends View {
         float y = getPaddingTop()+baseline;
 
         // Draw texts
-        canvas.drawText(priceText, x, y, majorPaint);
+        if (wasPrice>0.0f) {
+            String text = format.format(wasPrice);
+            canvas.drawText(text, x, y, wasPaint);
+        }
+        if (finalPrice>0.0f) {
+            String text = format.format(finalPrice);
+            canvas.drawText(text, x+widths[0], y, majorPaint);
+        }
         if (unit!=null) {
-            x += priceWidth;
-            canvas.drawText(unitText, x, y, minorPaint);
+            String text = " " + unit;
+            canvas.drawText(text, x+widths[1], y, unitPaint);
         }
     }
 }

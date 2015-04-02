@@ -1136,24 +1136,6 @@ public class ConfiguratorFragment extends Fragment {
         }
     }
 
-    // "10:00AM" -> 1000 ; "6:00PM" -> 1800
-    private int parseTimeSpan(String time){
-        int formatTime = 0;
-
-        String[] tmp = time.trim().split(":");
-        String leftPart = tmp[0];
-        String rightPart = tmp[1].substring(0,2);
-        formatTime = Integer.parseInt(leftPart + rightPart);
-
-        if(tmp[1].contains("P")){
-            formatTime = formatTime + 1200;
-        }
-
-        //System.out.println(TAG + " - formatTime:" + formatTime);
-
-        return formatTime;
-    }
-
     private void findMessageBarViews(){
         login_layout = (LinearLayout) configFrameView.findViewById(R.id.login_layout);
         login_info_layout = (LinearLayout) configFrameView.findViewById(R.id.login_info_layout);

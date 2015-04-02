@@ -138,8 +138,10 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         if (searchResult.getSearch() != null && searchResult.getSearch().size() > 0) {
             //get the actual count of search results
             Search search = searchResult.getSearch().get(0);
+            Tracker.SortType sortType = Tracker.SortType.getBySearchSortNumber(
+                    fetchSort.intParam != null? fetchSort.intParam : 0);
             Tracker.getInstance().trackStateForSearchResults(search.getSearchTerm(),
-                    search.getItemCount(), Tracker.ViewType.GRID); //Analytics
+                    search.getItemCount(), Tracker.ViewType.GRID, sortType); //Analytics
             Apptentive.engage(activity, ApptentiveSdk.SEARCH_SHOWN_EVENT);
         }
     }
@@ -208,7 +210,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
                     Toast.makeText(getActivity(), "Clicked on " + item.title, Toast.LENGTH_LONG).show();
 
                     // TODO: !!!!!!!! move this into on add-to-cart success callback similar to BundleFragment !!!!!!!!
-                    Tracker.getInstance().trackActionForAddToCartFromSearchResults(item.identifier, item.price, 1);
+                    Tracker.getInstance().trackActionForAddToCartFromSearchResults(item.identifier, item.finalPrice, 1);
                 }
                 break;
             case R.id.open_sort:

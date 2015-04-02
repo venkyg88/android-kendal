@@ -47,7 +47,8 @@ public class BundleItem {
     public String identifier;
     public IdentifierType type;
     public String imageUrl;
-    public float price;
+    public float finalPrice;
+    public float wasPrice;
     public String unit;
     public float customerRating;
     public int customerCount;
@@ -78,9 +79,10 @@ public class BundleItem {
         for(Pricing pricing : pricings) {
             float finalPrice = pricing.getFinalPrice();
             if (finalPrice>0.0f) {
-                price = finalPrice;
+                this.finalPrice = finalPrice;
+                wasPrice = pricing.getListPrice();
                 unit = pricing.getUnitOfMeasure();
-                return(price);
+                return(this.finalPrice);
             }
         }
         return(null);
@@ -131,7 +133,7 @@ public class BundleItem {
     public static class PriceAscending implements Comparator<BundleItem> {
         @Override
         public int compare(BundleItem x, BundleItem y) {
-            int s = compareFloats(x.price, y.price);
+            int s = compareFloats(x.finalPrice, y.finalPrice);
             if (s==0) {
                 s = compareFloats(x.index, y.index);
             }
@@ -142,7 +144,7 @@ public class BundleItem {
     public static class PriceDescending implements Comparator<BundleItem> {
         @Override
         public int compare(BundleItem x, BundleItem y) {
-            int s = compareFloats(y.price, x.price);
+            int s = compareFloats(y.finalPrice, x.finalPrice);
             if (s==0) {
                 s = compareFloats(y.index, x.index);
             }
