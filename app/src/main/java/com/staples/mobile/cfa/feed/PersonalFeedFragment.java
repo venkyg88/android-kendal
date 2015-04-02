@@ -98,7 +98,7 @@ public class PersonalFeedFragment extends Fragment {
             ImageView imageView = (ImageView) seenSavedProductRow.findViewById(R.id.image);
 
             // API safety check
-            if(seenProduct.getImage() != null){
+            if(seenProduct.getImage() != null && seenProduct.getImage().size() > 0){
                 Picasso.with(getActivity()).load(seenProduct.getImage().get(0).getUrl()).error(R.drawable.no_photo).into(imageView);
             }
             else{
@@ -311,7 +311,6 @@ public class PersonalFeedFragment extends Fragment {
     private void fillContainer(com.staples.mobile.common.access.easyopen.model.cart.Product cartItem,
                                LinearLayout container){
         final String productName = Html.fromHtml(cartItem.getProductName()).toString();
-        String imageUrl = cartItem.getImage().get(0).getUrl();
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View row = inflater.inflate(R.layout.personal_feed_product_item, null);
@@ -326,6 +325,10 @@ public class PersonalFeedFragment extends Fragment {
         priceSticker.setCartPricing(cartItem.getPricing());
 
         ImageView imageView = (ImageView) row.findViewById(R.id.image);
+        String imageUrl= "";
+        if(cartItem.getImage() != null && cartItem.getImage().size() > 0){
+            imageUrl = cartItem.getImage().get(0).getUrl();
+        }
         Picasso.with(getActivity()).load(imageUrl).error(R.drawable.no_photo).into(imageView);
 
         container.addView(row);
