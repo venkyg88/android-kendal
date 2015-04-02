@@ -132,7 +132,7 @@
             android:text="@string/coupons_rewards"
             android:textSize="@dimen/fontsize_14sp"
             android:textColor="@color/staples_green"
-            android:drawableLeft="@drawable/visa"
+            android:drawableLeft="@drawable/ic_add_green"
             android:drawablePadding="8dp"
             />
         <TextView
