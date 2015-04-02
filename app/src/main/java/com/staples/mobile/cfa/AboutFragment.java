@@ -27,6 +27,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.widget.ActionBar;
+import com.staples.mobile.cfa.widget.AddressBlock;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
