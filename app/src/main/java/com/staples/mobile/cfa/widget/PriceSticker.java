@@ -176,6 +176,7 @@ public class PriceSticker extends View {
             String text = " " + unit;
             width += unitPaint.measureText(text, 0, text.length());
         }
+        widths[2] = width;
     }
 
     @Override
