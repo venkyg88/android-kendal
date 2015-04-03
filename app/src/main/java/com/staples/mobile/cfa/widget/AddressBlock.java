@@ -62,7 +62,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         this.listener = listener;
     }
 
-    private void selectMode(boolean autoMode) {
+    public void selectMode(boolean autoMode) {
         placeFieldView.selectMode(autoMode);
         int visibility = autoMode ? GONE : VISIBLE;
         for(int id : manualFields) {
