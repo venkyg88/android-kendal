@@ -352,7 +352,7 @@ public class MainActivity extends Activity
         findViewById(R.id.splash).setVisibility(View.GONE);
         findViewById(R.id.main).setVisibility(View.VISIBLE);
         selectDrawerItem(homeDrawerItem, Transition.NONE, false);
-        Apptentive.engage(this, ApptentiveSdk.APP_OPEN_EVENT);
+        Apptentive.engage(this, ApptentiveSdk.HOME_CONTAINER_SHOWN_EVENT);
     }
 
     public void prepareMainScreen(boolean freshStart) {
