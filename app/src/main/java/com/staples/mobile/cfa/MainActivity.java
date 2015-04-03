@@ -542,11 +542,10 @@ public class MainActivity extends Activity
         return selectFragment(cartFragment, Transition.RIGHT, true);
     }
 
-    public boolean selectOrderCheckout(String deliveryRange) {
+    public boolean selectOrderCheckout(String deliveryRange, float couponsRewardsAmount) {
         LoginHelper loginHelper = new LoginHelper(this);
         if (loginHelper.isLoggedIn()) {
             CheckoutFragment fragment;
-            float couponsRewardsAmount = cartFragment.getCouponsRewardsAdjustedAmount();
             // if logged in and have at least an address or a payment method, then use registered flow, otherwise use guest flow
             if (!loginHelper.isGuestLogin() && (ProfileDetails.hasAddress() || ProfileDetails.hasPaymentMethod())) {
                 fragment = RegisteredCheckoutFragment.newInstance(couponsRewardsAmount,
