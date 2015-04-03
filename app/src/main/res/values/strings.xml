@@ -33,7 +33,7 @@
     <string name="store_info_title">Store Info</string>
     <string name="tobedone_title">(To be done)</string>
     <string name="search_title">Search</string>
-    <string name="search_hint">Search a product</string>
+    <string name="search_hint">Search for a product</string>
     <string name="empty">Nothing Found</string>
 
     <!-- Bundle/class/search -->
