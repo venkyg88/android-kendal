@@ -73,8 +73,11 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
         return couponItems.get(position);
     }
 
+    public List<CouponItem> getCouponItems() {
+        return couponItems;
+    }
 
-/* Views */
+    /* Views */
 
     // Create new views (invoked by the layout manager)
     @Override

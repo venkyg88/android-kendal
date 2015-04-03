@@ -38,21 +38,17 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         View view = inflater.inflate(R.layout.address_fragment, container, false);
         addressBlock = (AddressBlock) view.findViewById(R.id.shipping_address);
-        AutoCompleteTextView addressACTV = (AutoCompleteTextView) view.findViewById(R.id.addressACTV);
-        addressACTV.setDropDownAnchor(R.id.autoCompleteAnchor);
 
-        boolean autoMode = true;
         Bundle args = getArguments();
         if (args!=null) {
             Address address = (Address) args.getSerializable("addressData");
             if (address != null) {
                 addressBlock.setAddress(address);
                 addressId = address.getAddressId();
-                String line1 = address.getAddress1();
-                if (line1!=null && line1.length()>0) autoMode = false;
             }
         }
-        addressBlock.init(autoMode, false);
+        addressBlock.init(false);
+        addressBlock.selectMode(false);
 
         view.findViewById(R.id.address_save).setOnClickListener(this);
         return (view);

@@ -103,7 +103,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
         if (activity==null) return;
 
         int count = processCategories(browse);
-        if (count==0) state = DataWrapper.State.EMPTY;
+        if (count==0) state = DataWrapper.State.NOMORE;
         else state = DataWrapper.State.DONE;
         applyState(null);
     }

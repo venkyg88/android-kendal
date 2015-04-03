@@ -205,16 +205,19 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     }
 
     /** returns sum of adjusted amounts for rewards and coupons applied to cart */
-    public float getCouponsRewardsAdjustedAmount() {
+    private float getCouponsRewardsAdjustedAmount() {
         float totalAdjustedAmount = 0;
         Cart cart = CartApiManager.getCart();
-        // coupons & rewards
+        // cart-level coupons & rewards
         if (cart != null && cart.getCoupon() != null) {
             for (Coupon coupon : cart.getCoupon()) {
-                if (!couponIsSkuLevel(coupon)) {
-                    totalAdjustedAmount += coupon.getAdjustedAmount();
-                }
+                totalAdjustedAmount += coupon.getAdjustedAmount();
             }
+        }
+        // sku-level
+        List<Coupon> manualSkuLevelCoupons = CartApiManager.getManualSkuLevelCoupons();
+        for (Coupon coupon : manualSkuLevelCoupons) {
+            totalAdjustedAmount += coupon.getAdjustedAmount();
         }
         return totalAdjustedAmount;
     }
@@ -225,7 +228,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
         int totalItemCount = 0;
         String shipping = "";
-        couponsRewardsAmount = 0;
         float subtotal = 0;
         float preTaxSubtotal = 0;
         float freeShippingThreshold = 0;
@@ -233,7 +235,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         Cart cart = CartApiManager.getCart();
         if (cart != null) {
             totalItemCount = cart.getTotalItems();
-            couponsRewardsAmount = getCouponsRewardsAdjustedAmount();
             totalHandlingCost = cart.getTotalHandlingCost();
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();
@@ -283,13 +284,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 cartFreeShippingMsg.setVisibility(View.GONE);
             }
 
-            // set text of coupons, shipping, and subtotal
-            boolean couponsShowing = couponsShowing();
-            couponsRewardsValue.setText(currencyFormat.format(couponsRewardsAmount));
-            boolean showCouponsAmount = (couponsRewardsAmount != 0 || couponsShowing);
-            couponsRewardsValue.setVisibility(showCouponsAmount ? View.VISIBLE : View.GONE);
-            couponsRewardsLabel.setCompoundDrawablesWithIntrinsicBounds(couponsShowing? R.drawable.mastercard : R.drawable.visa,0,0,0);
-
+            // set text of shipping, and subtotal
             if (totalHandlingCost > 0) {
                 String totalHandlingCostStr = Float.toString(totalHandlingCost);
                 oversizedShipping.setText(CheckoutFragment.formatShippingCharge(totalHandlingCostStr, currencyFormat));
@@ -304,48 +299,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             cartShipping.setText(CheckoutFragment.formatShippingCharge(shipping, currencyFormat));
             cartShipping.setTextColor("Free".equals(shipping) ? greenText : blackText);
             cartSubtotal.setText(currencyFormat.format(preTaxSubtotal));
-
-            // update coupon list
-            List<CouponItem> couponItems = new ArrayList<CouponItem>();
-            List<Reward> profileRewards = ProfileDetails.getAllProfileRewards();
-            // add line to add a coupon
-            couponItems.add(new CouponItem(null, null, CouponItem.TYPE_COUPON_TO_ADD));
-            // add list of applied coupons
-            if (cart != null && cart.getCoupon() != null && cart.getCoupon().size() > 0) {
-                for (Coupon coupon : cart.getCoupon()) {
-                    if (!couponIsSkuLevel(coupon)) {
-                        // coupon may or may not have a matching reward
-                        Reward reward = ProfileDetails.findMatchingReward(profileRewards, coupon.getCode());
-                        if (reward != null) {
-                            profileRewards.remove(reward); // remove the applied rewards from the list
-                        }
-                        couponItems.add(new CouponItem(coupon, reward, CouponItem.TYPE_APPLIED_COUPON));
-                    }
-                }
-            }
-
-            // if profile exists (registered user logged in and no errors getting profile)
-            if (ProfileDetails.getMember() != null) {
-
-                // if rewards member
-                if (ProfileDetails.isRewardsMember()) {
-
-                    // add redeemable rewards heading
-                    couponItems.add(new CouponItem(null, null, CouponItem.TYPE_REDEEMABLE_REWARD_HEADING));
-
-                    // if any unapplied redeemable rewards
-                    if (profileRewards.size() > 0) {
-                        // add redeemable rewards
-                        for (Reward reward : profileRewards) {
-                            couponItems.add(new CouponItem(null, reward, CouponItem.TYPE_REDEEMABLE_REWARD));
-                        }
-                    } else {
-                        couponItems.add(new CouponItem(null, null, CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG));
-                    }
-                }
-            }
-
-            couponAdapter.setItems(couponItems);
 
             // only show shipping, subtotal, and proceed-to-checkout when at least one item
             if (totalItemCount == 0) {
@@ -373,11 +326,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             return view != null && view.getTop() >= -200; // giving it some margin since i've seen as low as -110 when top still visible after a scroll (e.g. when just enough content to allow scrolling)
         }
         return false;
-    }
-
-    private boolean couponIsSkuLevel(Coupon coupon) {
-        // TODO: make sure we're matching all/only sku-level coupons. Examples I've seen so far: "PERCENTOFFSKUGROUP","BUYSKUDOLLAROFF"
-        return coupon.getType().contains("SKU");
     }
 
     private boolean couponsShowing() {
@@ -409,7 +357,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 CartApiManager.deleteCoupon(couponAdapter.getItem((Integer) view.getTag()).getCoupon().getCode(), this);
                 break;
             case R.id.action_checkout:
-                activity.selectOrderCheckout(getExpectedDeliveryRange());
+                activity.selectOrderCheckout(getExpectedDeliveryRange(), couponsRewardsAmount);
                 break;
             case R.id.rewards_link_acct_button:
                 String rewardsNumber = ((EditText)getView().findViewById(R.id.rewards_card_number)).getText().toString();
@@ -518,11 +466,15 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         // clear the cart before refilling
         ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
         ArrayList<CartItemGroup> itemGroups = new ArrayList<CartItemGroup>();
+        List<CouponItem> couponItems = new ArrayList<CouponItem>();
+        couponsRewardsAmount = 0;
 
         if (cart != null) {
 
             // rather than call the api to refresh the profile, use the info from the cart to update coupon info in the profile
             ProfileDetails.updateRewardsFromCart(cart);
+
+            couponsRewardsAmount = getCouponsRewardsAdjustedAmount();
 
             List<Product> products = cart.getProduct();
             if (products != null) {
@@ -576,7 +528,59 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                     }
                 }
             }
+
+            DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
+
+            // set text of coupons
+            boolean couponsShowing = couponsShowing();
+            couponsRewardsValue.setText(currencyFormat.format(couponsRewardsAmount));
+            boolean showCouponsAmount = (couponsRewardsAmount != 0 || couponsShowing);
+            couponsRewardsValue.setVisibility(showCouponsAmount ? View.VISIBLE : View.GONE);
+            couponsRewardsLabel.setCompoundDrawablesWithIntrinsicBounds(couponsShowing? R.drawable.ic_remove_green : R.drawable.ic_add_green,0,0,0);
+
+            // update coupon list
+            List<Reward> profileRewards = ProfileDetails.getAllProfileRewards();
+            // add line to add a coupon
+            couponItems.add(new CouponItem(null, null, CouponItem.TYPE_COUPON_TO_ADD));
+            // add list of applied cart-level coupons
+            if (cart != null && cart.getCoupon() != null && cart.getCoupon().size() > 0) {
+                for (Coupon coupon : cart.getCoupon()) {
+                    // coupon may or may not have a matching reward
+                    Reward reward = ProfileDetails.findMatchingReward(profileRewards, coupon.getCode());
+                    if (reward != null) {
+                        profileRewards.remove(reward); // remove the applied rewards from the list
+                    }
+                    couponItems.add(new CouponItem(coupon, reward, CouponItem.TYPE_APPLIED_COUPON));
+                }
+            }
+            // if any sku-level coupons should be displayed, add them
+            List<Coupon> skuLevelCoupons = CartApiManager.getManualSkuLevelCoupons();
+            for (Coupon coupon : skuLevelCoupons) {
+                couponItems.add(new CouponItem(coupon, null, CouponItem.TYPE_APPLIED_COUPON));
+            }
+
+            // if profile exists (registered user logged in and no errors getting profile)
+            if (ProfileDetails.getMember() != null) {
+
+                // if rewards member
+                if (ProfileDetails.isRewardsMember()) {
+
+                    // add redeemable rewards heading
+                    couponItems.add(new CouponItem(null, null, CouponItem.TYPE_REDEEMABLE_REWARD_HEADING));
+
+                    // if any unapplied redeemable rewards
+                    if (profileRewards.size() > 0) {
+                        // add redeemable rewards
+                        for (Reward reward : profileRewards) {
+                            couponItems.add(new CouponItem(null, reward, CouponItem.TYPE_REDEEMABLE_REWARD));
+                        }
+                    } else {
+                        couponItems.add(new CouponItem(null, null, CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG));
+                    }
+                }
+            }
         }
+        couponAdapter.setItems(couponItems);
         cartListItems = cartItems;
         cartItemGroups = itemGroups;
         setAdapterListItems();
@@ -617,6 +621,10 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                     if (!up) {
                         linkRewardsAcctLayout.setVisibility(View.GONE);
                     }
+                    // update these at beginning of animation while it's moving fast rather than when it's coasting to a finish at the end
+                    boolean showCouponsAmount = (couponsRewardsAmount != 0 || up);
+                    couponsRewardsValue.setVisibility(showCouponsAmount? View.VISIBLE : View.GONE);
+                    couponsRewardsLabel.setCompoundDrawablesWithIntrinsicBounds(up? R.drawable.ic_remove_green : R.drawable.ic_add_green,0,0,0);
                 }
                 @Override public void onAnimationEnd(Animator animation) {
                     // if finishing animation up, set cart items to gone and show rewards account if applicable
@@ -627,9 +635,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                             linkRewardsAcctLayout.setVisibility(View.VISIBLE);
                         }
                     }
-                    boolean showCouponsAmount = (couponsRewardsAmount != 0 || up);
-                    couponsRewardsValue.setVisibility(showCouponsAmount? View.VISIBLE : View.GONE);
-                    couponsRewardsLabel.setCompoundDrawablesWithIntrinsicBounds(up? R.drawable.mastercard : R.drawable.visa,0,0,0);
                 }
                 @Override public void onAnimationCancel(Animator animation) { }
                 @Override public void onAnimationRepeat(Animator animation) { }

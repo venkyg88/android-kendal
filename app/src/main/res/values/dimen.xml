@@ -15,6 +15,7 @@
 
     <dimen name="verticalspacing_8dp">8dp</dimen>     <!--part of style guide-->
     <dimen name="verticalspacing_24dp">24dp</dimen>   <!--part of style guide-->
+    <dimen name="verticalspacing_16dp">16dp</dimen>   <!--part of style guide-->
     <dimen name="verticalspacing_48dp">48dp</dimen>   <!--part of style guide-->
     <dimen name="verticalspacing_56dp">56dp</dimen>   <!--part of style guide-->
     <dimen name="margin_16dp">16dp</dimen>     <!--part of style guide-->
@@ -42,6 +43,13 @@
     <dimen name="weekly_ad_category_item_image_height">100dp</dimen>
     <dimen name="personal_feed_item_image_width">120dp</dimen>
     <dimen name="personal_feed_item_image_height">120dp</dimen>
+    <dimen name="personal_feed_arrow">28dp</dimen>
+    <dimen name="sku_info_padding">2dp</dimen>
+    <dimen name="sku_image_height">150dp</dimen>
+    <dimen name="sku_add_cart_height">50dp</dimen>
+    <dimen name="sku_add_cart_editor_width">60dp</dimen>
+    <dimen name="sku_accessory_image_width">120dp</dimen>
+    <dimen name="sku_accessory_image_height">120dp</dimen>
     <dimen name="left_margin">6dp</dimen>
     <dimen name="right_margin">6dp</dimen>
     <dimen name="browse_item_height">42dp</dimen>

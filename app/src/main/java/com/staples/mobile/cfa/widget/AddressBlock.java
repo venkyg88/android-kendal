@@ -1,38 +1,36 @@
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.profile.PlacesArrayAdapter;
 import com.staples.mobile.cfa.profile.UsState;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.UpdateAddress;
 
-public class AddressBlock extends LinearLayout implements TextView.OnEditorActionListener, AdapterView.OnItemClickListener {
+public class AddressBlock extends LinearLayout implements TextView.OnEditorActionListener, PlaceFieldView.OnPlaceDoneListener {
     public static final String TAG = "AddressBlock";
 
-    private static final int[] addressFields = {R.id.firstName, R.id.lastName, R.id.phoneNumber, R.id.emailAddr, R.id.addressACTV,
-            R.id.addressET, R.id.apartment, R.id.city, R.id.state, R.id.zipCode};
-    private static final int[] manualFields = {R.id.addressET, R.id.apartment, R.id.city, R.id.state, R.id.zipCode};
+    private static final int[] addressFields = {R.id.firstName, R.id.lastName, R.id.phoneNumber, R.id.emailAddr,
+                                                R.id.apartment, R.id.city, R.id.state, R.id.zipCode};
+    private static final int[] manualFields = {R.id.apartment, R.id.city, R.id.state, R.id.zipCode};
 
     public interface OnDoneListener {
         public void onDone(AddressBlock addressBlock, boolean valid);
         public void onNext(AddressBlock addressBlock);
     }
 
-    private AutoCompleteTextView autoComplete;
-    private PlacesArrayAdapter adapter;
+    private PlaceFieldView placeFieldView;
     private OnDoneListener listener;
 
     public AddressBlock(Context context) {
@@ -47,38 +45,28 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         super(context, attrs, defStyle);
     }
 
-    public void init(boolean autoMode, boolean showEmail) {
+    public void init(boolean showEmail) {
         if (!showEmail) findViewById(R.id.emailAddr).setVisibility(GONE);
 
-        autoComplete = (AutoCompleteTextView) findViewById(R.id.addressACTV);
-        adapter = new PlacesArrayAdapter(getContext(), R.layout.places_list_item);
-        autoComplete.setAdapter(adapter);
-        autoComplete.setOnItemClickListener(this);
+        placeFieldView = (PlaceFieldView) findViewById(R.id.address);
+        placeFieldView.setOnPlaceDoneListener(this);
 
         for(int id : addressFields) {
             ((EditText) findViewById(id)).setOnEditorActionListener(this);
         }
-        selectMode(autoMode);
+
+        selectMode(true);
     }
 
     public void setOnDoneListener(OnDoneListener listener) {
         this.listener = listener;
     }
 
-    private void selectMode(boolean autoMode) {
-        int visibility;
-
-        visibility = autoMode ? VISIBLE : GONE;
-        findViewById(R.id.addressACTV).setVisibility(visibility);
-
-        visibility = autoMode ? GONE : VISIBLE;
+    public void selectMode(boolean autoMode) {
+        placeFieldView.selectMode(autoMode);
+        int visibility = autoMode ? GONE : VISIBLE;
         for(int id : manualFields) {
             findViewById(id).setVisibility(visibility);
-        }
-
-        // special case for apartment... needs to be visible if autocomplete contains text
-        if (autoMode && !TextUtils.isEmpty(autoComplete.getText().toString())) {
-            findViewById(R.id.apartment).setVisibility(VISIBLE);
         }
     }
 
@@ -120,8 +108,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         valid &= validateRequired(R.id.lastName);
         valid &= validateRequired(R.id.phoneNumber);
         valid &= validateRequired(R.id.emailAddr);
-        valid &= validateRequired(R.id.addressACTV);
-        valid &= validateRequired(R.id.addressET);
+        valid &= validateRequired(R.id.address);
         valid &= validateRequired(R.id.city);
         valid &= validateUsState(R.id.state);
         valid &= validateRequired(R.id.zipCode);
@@ -154,7 +141,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         addr.setDeliveryPhone(extractField(R.id.phoneNumber));
         addr.setEmailAddress(extractField(R.id.emailAddr));
         addr.setReenterEmailAddress(extractField(R.id.emailAddr));
-        addr.setDeliveryAddress1(extractField(R.id.addressET));
+        addr.setDeliveryAddress1(extractField(R.id.address));
         addr.setDeliveryAddress2(extractField(R.id.apartment));
         addr.setDeliveryCity(extractField(R.id.city));
         addr.setDeliveryState(extractField(R.id.state));
@@ -170,7 +157,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         injectField(R.id.firstName, addr.getFirstName());
         injectField(R.id.lastName, addr.getLastName());
         injectField(R.id.phoneNumber, addr.getPhone1());
-        injectField(R.id.addressET, addr.getAddress1());
+        injectField(R.id.address, addr.getAddress1());
         injectField(R.id.apartment, addr.getAddress2());
         injectField(R.id.city, addr.getCity());
         injectField(R.id.state, addr.getState());
@@ -178,12 +165,11 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
     }
 
     public UpdateAddress getUpdateAddress() {
-        // TODO no no-arg constructor
         UpdateAddress addr = new UpdateAddress();
         addr.setFirstName(extractField(R.id.firstName));
         addr.setLastName(extractField(R.id.lastName));
         addr.setPhoneNumber(extractField(R.id.phoneNumber));
-        addr.setAddressLine1(extractField(R.id.addressET));
+        addr.setAddressLine1(extractField(R.id.address));
         addr.setAddressLine2(extractField(R.id.apartment));
         addr.setCity(extractField(R.id.city));
         addr.setState(extractField(R.id.state));
@@ -226,32 +212,13 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        activity.hideSoftKeyboard(view);
-        String item = adapter.getItem(position);
-        String inputManually = getResources().getString(R.string.input_manually_allcaps);
-        if (item.equals(inputManually)) {
-            selectMode(false);
-        } else {
-            TextView apartmentView = (TextView)findViewById(R.id.apartment);
-            apartmentView.setVisibility(VISIBLE);
-            apartmentView.setImeOptions(EditorInfo.IME_ACTION_DONE);
-            apartmentView.requestFocus();
-            adapter.getPlaceDetails(position, new PlacesArrayAdapter.PlaceDataCallback() {
-                @Override
-                public void onPlaceDataResult(PlacesArrayAdapter.PlaceData placeData) {
-                    ((TextView) findViewById(R.id.addressET)).setText(placeData.streetAddress);
-                    ((TextView) findViewById(R.id.city)).setText(placeData.city);
-                    ((TextView) findViewById(R.id.state)).setText(placeData.state);
-                    ((TextView) findViewById(R.id.zipCode)).setText(placeData.getFullZipCode());
-                    String fullZipCode = placeData.getFullZipCode();
-                    if (!TextUtils.isEmpty(fullZipCode)) {
-                        autoComplete.setText(autoComplete.getText().toString() + " " + fullZipCode);
-                    }
-                    autoComplete.dismissDropDown();
-                }
-            });
+    public void onPlaceDone(PlaceFieldView.Place place) {
+        selectMode(false);
+        if (place!=null) {
+            injectField(R.id.address, place.streetAddress);
+            injectField(R.id.city, place.city);
+            injectField(R.id.state, place.state);
+            injectField(R.id.zipCode, place.postalCode);
         }
-
     }
 }

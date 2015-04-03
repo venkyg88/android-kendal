@@ -21,7 +21,7 @@ import com.staples.mobile.cfa.R;
 
 import java.util.ArrayList;
 
-class SearchBarAdapter extends BaseAdapter implements Filterable {
+public class SearchBarAdapter extends BaseAdapter implements Filterable {
     private static final String TAG = "SearchBarAdapter";
 
     private static final String PREFS_HISTORY = "searchHistory";

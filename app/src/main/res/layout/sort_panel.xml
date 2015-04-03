@@ -18,7 +18,7 @@
             android:gravity="bottom|center"
             android:paddingTop="@dimen/action_bar_quarter_margin"
             android:paddingBottom="@dimen/action_bar_quarter_margin"
-            android:background="@color/staples_opaque_black">
+            android:background="@color/staples_black">
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

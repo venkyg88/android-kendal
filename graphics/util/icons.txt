@@ -1,6 +1,7 @@
 -	ic_account_black		32	32	#333333	staples/account
 -	ic_add_shopping_cart_black	32	32	#333333	material/action/ic_add_shopping_cart_48px
 -	ic_add_white			32	32	#ffffff	material/content/ic_add_48px
+-	ic_add_green			32	32	#6fab04	material/content/ic_add_48px
 -	ic_android			32	32	#a4c639	material/action/ic_android_48px
 -	ic_app				48	48	-	staples/app
 -	ic_arrow_back_black		32	32	#333333	material/navigation/ic_arrow_back_48px
@@ -28,11 +29,13 @@
 -	ic_radio_button_off_white_24dp	24	24	#ffffff	material/toggle/ic_radio_button_off_48px
 -	ic_radio_button_on_white_24dp	24	24	#ffffff	material/toggle/ic_radio_button_on_48px
 -	ic_rewards_black		32	32	#333333 staples/rewards
+-	ic_remove_green			32	32	#6fab04	material/content/ic_remove_48px
 -	ic_search_black			32	32	#333333	material/action/ic_search_48px
 -	ic_search_black			32	32	#333333	material/action/ic_search_48px
 -	ic_shopping_cart_black		32	32	#333333	material/action/ic_shopping_cart_48px
 -	ic_sort_white			32	32	#ffffff material/content/ic_sort_48px
 -	ic_sort_invert_white		32	32	#ffffff staples/sort_invert
+-	ic_splash			1024	64	-	staples/splash
 -	ic_staples			128	32	#cc0000	staples/staples_logo
 -	ic_store_cold			12	12	#cc0000	staples/store_cold
 -	ic_store_locator_black		32	32	#333333	staples/store_locator

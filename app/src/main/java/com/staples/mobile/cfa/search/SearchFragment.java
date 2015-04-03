@@ -210,7 +210,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
                     Toast.makeText(getActivity(), "Clicked on " + item.title, Toast.LENGTH_LONG).show();
 
                     // TODO: !!!!!!!! move this into on add-to-cart success callback similar to BundleFragment !!!!!!!!
-                    Tracker.getInstance().trackActionForAddToCartFromSearchResults(item.identifier, item.price, 1);
+                    Tracker.getInstance().trackActionForAddToCartFromSearchResults(item.identifier, item.finalPrice, 1);
                 }
                 break;
             case R.id.open_sort:

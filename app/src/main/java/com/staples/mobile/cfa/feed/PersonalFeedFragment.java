@@ -97,13 +97,12 @@ public class PersonalFeedFragment extends Fragment {
                     seenProduct.getCustomerReviewCount());
 
             PriceSticker priceSticker = (PriceSticker) seenSavedProductRow.findViewById(R.id.pricing);
-            priceSticker.setPricing(seenProduct.getPricing().get(0).getFinalPrice(),
-                    seenProduct.getPricing().get(0).getUnitOfMeasure());
+            priceSticker.setBrowsePricing(seenProduct.getPricing());
 
             ImageView imageView = (ImageView) seenSavedProductRow.findViewById(R.id.image);
 
             // API safety check
-            if(seenProduct.getImage() != null){
+            if(seenProduct.getImage() != null && seenProduct.getImage().size() > 0){
                 Picasso.with(getActivity()).load(seenProduct.getImage().get(0).getUrl()).error(R.drawable.no_photo).into(imageView);
             }
             else{
@@ -321,11 +320,6 @@ public class PersonalFeedFragment extends Fragment {
     private void fillContainer(com.staples.mobile.common.access.easyopen.model.cart.Product cartItem,
                                LinearLayout container){
         final String productName = Html.fromHtml(cartItem.getProductName()).toString();
-        String currentPrice = String.valueOf(cartItem.getPricing().get(0).getFinalPrice());
-        String reviewCount = String.valueOf(cartItem.getCustomerReviewCount());
-        String rating = String.valueOf(cartItem.getCustomerReviewRating());
-        String unitOfMeasure = cartItem.getPricing().get(0).getUnitOfMeasure();
-        String imageUrl = cartItem.getImage().get(0).getUrl();
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View row = inflater.inflate(R.layout.personal_feed_product_item, null);
@@ -334,13 +328,16 @@ public class PersonalFeedFragment extends Fragment {
         title.setText(productName);
 
         RatingStars ratingStars = (RatingStars) row.findViewById(R.id.rating);
-        ratingStars.setRating(Float.parseFloat(rating),
-                Integer.parseInt(reviewCount));
+        ratingStars.setRating(cartItem.getCustomerReviewRating(), cartItem.getCustomerReviewCount());
 
         PriceSticker priceSticker = (PriceSticker) row.findViewById(R.id.pricing);
-        priceSticker.setPricing(Float.parseFloat(currentPrice), unitOfMeasure);
+        priceSticker.setCartPricing(cartItem.getPricing());
 
         ImageView imageView = (ImageView) row.findViewById(R.id.image);
+        String imageUrl= "";
+        if(cartItem.getImage() != null && cartItem.getImage().size() > 0){
+            imageUrl = cartItem.getImage().get(0).getUrl();
+        }
         Picasso.with(getActivity()).load(imageUrl).error(R.drawable.no_photo).into(imageView);
 
         container.addView(row);

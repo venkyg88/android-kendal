@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,7 +106,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         else Picasso.with(context).load(item.imageUrl).error(noPhoto).into(vh.image);
         vh.title.setText(item.title);
         vh.ratingStars.setRating(item.customerRating, item.customerCount);
-        vh.priceSticker.setPricing(item.price, item.unit);
+        vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit);
         if (item.type==IdentifierType.SKUSET) vh.action.setImageResource(R.drawable.ic_more_vert_black);
         else vh.action.setImageResource(R.drawable.ic_add_shopping_cart_black);
 

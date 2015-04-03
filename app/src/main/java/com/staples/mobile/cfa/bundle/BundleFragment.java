@@ -226,7 +226,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                                 if (errMsg == null) {
                                     buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.added_to_cart));
                                     activity.showNotificationBanner(R.string.cart_updated_msg);
-                                    Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.price, 1);
+                                    Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
                                 } else {
                                     buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.ic_add_shopping_cart_black));
                                     // if non-grammatical out-of-stock message from api, provide a nicer message

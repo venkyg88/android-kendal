@@ -3,33 +3,38 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="6dp">
+    android:paddingLeft="@dimen/margin_16dp"
+    android:paddingRight="@dimen/margin_16dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/fontsize_18sp"
-        android:text="@string/alias_text"/>
-    <EditText
-        android:id="@+id/alias_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:imeOptions="actionDone"
-        android:singleLine="true"
-        android:lines="1"/>
-    <Button
-        android:id="@+id/set_alias"
+        android:paddingTop="@dimen/verticalspacing_16dp"
+        android:textColor="@color/staples_black"
+        android:textSize="@dimen/fontsize_24sp"
+        android:text="@string/notification_title"/>
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/set_alias"/>
+        android:paddingTop="@dimen/verticalspacing_16dp"
+        android:paddingBottom="@dimen/verticalspacing_16dp"
+        android:textColor="@color/staples_dark_gray"
+        android:textSize="@dimen/fontsize_12sp"
+        android:text="@string/notification_hint"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/staples_middle_gray" />
+
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="match_parent"
+        android:paddingTop="@dimen/verticalspacing_16dp"
         android:layout_height="0dp"
         android:layout_weight="1"/>
 </com.staples.mobile.cfa.widget.AnimatorLayout>
