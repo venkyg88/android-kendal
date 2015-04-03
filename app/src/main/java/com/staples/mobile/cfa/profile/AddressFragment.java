@@ -48,6 +48,7 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
             }
         }
         addressBlock.init(false);
+        addressBlock.selectMode(false);
 
         view.findViewById(R.id.address_save).setOnClickListener(this);
         return (view);
