@@ -121,7 +121,6 @@ public class ConfiguratorFragment extends Fragment {
     private LinearLayout login_layout;
     private LinearLayout reward_layout;
     private FrameLayout message_layout;
-    private FrameLayout messageFrameLayout;
     private TextView rewardTextView;
     private TextView loginMessageTextView;
     private TextView signInTextView;
@@ -131,9 +130,6 @@ public class ConfiguratorFragment extends Fragment {
     private TextView storeErrorInfoTextView;
     private TextView usernameTextView;
     private DataWrapper storeWrapper;
-    private ImageView showArrowImageView;
-    private View hideBannerView;
-    private boolean isMessageBarShow = true;
 
     @Override
     public void onAttach(Activity activity) {
@@ -243,7 +239,7 @@ public class ConfiguratorFragment extends Fragment {
         super.onResume();
 
         ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
-        isMessageBarShow = true;
+
         Tracker.getInstance().trackStateForHome(); // Analytics
 
         // call store api and get store info
@@ -1141,7 +1137,6 @@ public class ConfiguratorFragment extends Fragment {
         login_info_layout = (LinearLayout) configFrameView.findViewById(R.id.login_info_layout);
         reward_layout = (LinearLayout) configFrameView.findViewById(R.id.reward_layout);
         message_layout = (FrameLayout) configFrameView.findViewById(R.id.message_layout);
-        messageFrameLayout = (FrameLayout) configFrameView.findViewById(R.id.message_frame);
         rewardTextView = (TextView) configFrameView.findViewById(R.id.reward);
         loginMessageTextView = (TextView) configFrameView.findViewById(R.id.login_message);
         signInTextView = (TextView) configFrameView.findViewById(R.id.login_sign_in);
@@ -1150,8 +1145,6 @@ public class ConfiguratorFragment extends Fragment {
         storeNameTextView = (TextView) configFrameView.findViewById(R.id.store_name);
         storeStatusTextView = (TextView) configFrameView.findViewById(R.id.store_status);
         storeErrorInfoTextView = (TextView) configFrameView.findViewById(R.id.error_info);
-        hideBannerView = configFrameView.findViewById(R.id.hide_banner);
-        showArrowImageView = (ImageView) configFrameView.findViewById(R.id.show_arrow);
     }
 
     private void updateMessageBar(){
@@ -1228,114 +1221,7 @@ public class ConfiguratorFragment extends Fragment {
                 mainActivity.selectFragment(new StoreFragment(), MainActivity.Transition.NONE, true);
             }
         });
-
-        messageFrameLayout.setOnTouchListener(new View.OnTouchListener() {
-            float first_y = 0;
-
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        // finger touches the screen
-                        first_y = event.getY();
-                        //System.out.println("first_y" + first_y);
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        // finger moves on the screen
-                        float current_y = event.getY();
-                        if(current_y - first_y < -5 && isMessageBarShow){
-                            hideMessageBar();
-                        }
-                        //System.out.println("current_y" + current_y);
-                        if(current_y - first_y > 0 && !isMessageBarShow){
-                            showMessageBar();
-                        }
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        // finger leaves the screen
-                        break;
-                }
-                return true;
-            }
-        });
-
-//        message_layout.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent arg1) {
-//                // TODO Auto-generated method stub
-//                ClipData data = ClipData.newPlainText("", "");
-//                View.DragShadowBuilder shadow = new View.DragShadowBuilder(message_layout);
-//                v.startDrag(data, shadow, null, 0);
-//                return false;
-//            }
-//        });
-
-        hideBannerView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent arg1) {
-                if(isMessageBarShow) {
-                    hideMessageBar();
-                }
-                return true;
-            }
-        });
-
-        showArrowImageView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent arg1) {
-                if(!isMessageBarShow) {
-                    showMessageBar();
-                }
-                return true;
-            }
-        });
     }
-
-    private void showMessageBar(){
-        Animation fade_in = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
-        message_layout.startAnimation(fade_in);
-        hideBannerView.startAnimation(fade_in);
-
-        message_layout.setVisibility(View.VISIBLE);
-        showArrowImageView.setVisibility(View.GONE);
-        hideBannerView.setVisibility(View.VISIBLE);
-
-        isMessageBarShow = true;
-    }
-
-    private void hideMessageBar(){
-        Animation fade_out = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
-        message_layout.startAnimation(fade_out);
-        hideBannerView.startAnimation(fade_out);
-
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                message_layout.setVisibility(View.GONE);
-                showArrowImageView.setVisibility(View.VISIBLE);
-                hideBannerView.setVisibility(View.GONE);
-            }
-        }, 500);
-
-        isMessageBarShow = false;
-    }
-
-//    @Override
-//    public void onBackStackChanged() {
-//        FragmentManager manager = getFragmentManager();
-//        int fragmentEntryCount = manager.getBackStackEntryCount();
-//
-////        for(int entry = 0; entry < fragmentEntryCount; entry++){
-////            Log.d(TAG, "Found fragment " + entry + ": " + manager.getBackStackEntryAt(entry).getName());
-////        }
-//
-//        //Log.d(TAG, "Location: " + String.valueOf(LocationFinder.getInstance(this).getLocation()));
-//
-//        if(manager.getBackStackEntryAt(fragmentEntryCount - 1).getName()
-//                .equals("com.staples.mobile.cfa.home.ConfiguratorFragment")){
-//            updateMessageBar();
-//        }
-//    }
     // End of Personalized Message Bar Methods
     //////////////////////////////////////////////////////////////////////////////
 }
