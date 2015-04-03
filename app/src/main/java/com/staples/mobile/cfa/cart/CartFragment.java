@@ -284,13 +284,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 cartFreeShippingMsg.setVisibility(View.GONE);
             }
 
-            // set text of coupons, shipping, and subtotal
-            boolean couponsShowing = couponsShowing();
-            couponsRewardsValue.setText(currencyFormat.format(couponsRewardsAmount));
-            boolean showCouponsAmount = (couponsRewardsAmount != 0 || couponsShowing);
-            couponsRewardsValue.setVisibility(showCouponsAmount ? View.VISIBLE : View.GONE);
-            couponsRewardsLabel.setCompoundDrawablesWithIntrinsicBounds(couponsShowing? R.drawable.ic_remove_green : R.drawable.ic_add_green,0,0,0);
-
+            // set text of shipping, and subtotal
             if (totalHandlingCost > 0) {
                 String totalHandlingCostStr = Float.toString(totalHandlingCost);
                 oversizedShipping.setText(CheckoutFragment.formatShippingCharge(totalHandlingCostStr, currencyFormat));
@@ -305,51 +299,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             cartShipping.setText(CheckoutFragment.formatShippingCharge(shipping, currencyFormat));
             cartShipping.setTextColor("Free".equals(shipping) ? greenText : blackText);
             cartSubtotal.setText(currencyFormat.format(preTaxSubtotal));
-
-            // update coupon list
-            List<CouponItem> couponItems = new ArrayList<CouponItem>();
-            List<Reward> profileRewards = ProfileDetails.getAllProfileRewards();
-            // add line to add a coupon
-            couponItems.add(new CouponItem(null, null, CouponItem.TYPE_COUPON_TO_ADD));
-            // add list of applied cart-level coupons
-            if (cart != null && cart.getCoupon() != null && cart.getCoupon().size() > 0) {
-                for (Coupon coupon : cart.getCoupon()) {
-                    // coupon may or may not have a matching reward
-                    Reward reward = ProfileDetails.findMatchingReward(profileRewards, coupon.getCode());
-                    if (reward != null) {
-                        profileRewards.remove(reward); // remove the applied rewards from the list
-                    }
-                    couponItems.add(new CouponItem(coupon, reward, CouponItem.TYPE_APPLIED_COUPON));
-                }
-            }
-            // if any sku-level coupons should be displayed, add them
-            List<Coupon> skuLevelCoupons = CartApiManager.getManualSkuLevelCoupons();
-            for (Coupon coupon : skuLevelCoupons) {
-                couponItems.add(new CouponItem(coupon, null, CouponItem.TYPE_APPLIED_COUPON));
-            }
-
-            // if profile exists (registered user logged in and no errors getting profile)
-            if (ProfileDetails.getMember() != null) {
-
-                // if rewards member
-                if (ProfileDetails.isRewardsMember()) {
-
-                    // add redeemable rewards heading
-                    couponItems.add(new CouponItem(null, null, CouponItem.TYPE_REDEEMABLE_REWARD_HEADING));
-
-                    // if any unapplied redeemable rewards
-                    if (profileRewards.size() > 0) {
-                        // add redeemable rewards
-                        for (Reward reward : profileRewards) {
-                            couponItems.add(new CouponItem(null, reward, CouponItem.TYPE_REDEEMABLE_REWARD));
-                        }
-                    } else {
-                        couponItems.add(new CouponItem(null, null, CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG));
-                    }
-                }
-            }
-
-            couponAdapter.setItems(couponItems);
 
             // only show shipping, subtotal, and proceed-to-checkout when at least one item
             if (totalItemCount == 0) {
@@ -517,6 +466,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         // clear the cart before refilling
         ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
         ArrayList<CartItemGroup> itemGroups = new ArrayList<CartItemGroup>();
+        List<CouponItem> couponItems = new ArrayList<CouponItem>();
         couponsRewardsAmount = 0;
 
         if (cart != null) {
@@ -578,7 +528,59 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                     }
                 }
             }
+
+            DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
+
+            // set text of coupons
+            boolean couponsShowing = couponsShowing();
+            couponsRewardsValue.setText(currencyFormat.format(couponsRewardsAmount));
+            boolean showCouponsAmount = (couponsRewardsAmount != 0 || couponsShowing);
+            couponsRewardsValue.setVisibility(showCouponsAmount ? View.VISIBLE : View.GONE);
+            couponsRewardsLabel.setCompoundDrawablesWithIntrinsicBounds(couponsShowing? R.drawable.ic_remove_green : R.drawable.ic_add_green,0,0,0);
+
+            // update coupon list
+            List<Reward> profileRewards = ProfileDetails.getAllProfileRewards();
+            // add line to add a coupon
+            couponItems.add(new CouponItem(null, null, CouponItem.TYPE_COUPON_TO_ADD));
+            // add list of applied cart-level coupons
+            if (cart != null && cart.getCoupon() != null && cart.getCoupon().size() > 0) {
+                for (Coupon coupon : cart.getCoupon()) {
+                    // coupon may or may not have a matching reward
+                    Reward reward = ProfileDetails.findMatchingReward(profileRewards, coupon.getCode());
+                    if (reward != null) {
+                        profileRewards.remove(reward); // remove the applied rewards from the list
+                    }
+                    couponItems.add(new CouponItem(coupon, reward, CouponItem.TYPE_APPLIED_COUPON));
+                }
+            }
+            // if any sku-level coupons should be displayed, add them
+            List<Coupon> skuLevelCoupons = CartApiManager.getManualSkuLevelCoupons();
+            for (Coupon coupon : skuLevelCoupons) {
+                couponItems.add(new CouponItem(coupon, null, CouponItem.TYPE_APPLIED_COUPON));
+            }
+
+            // if profile exists (registered user logged in and no errors getting profile)
+            if (ProfileDetails.getMember() != null) {
+
+                // if rewards member
+                if (ProfileDetails.isRewardsMember()) {
+
+                    // add redeemable rewards heading
+                    couponItems.add(new CouponItem(null, null, CouponItem.TYPE_REDEEMABLE_REWARD_HEADING));
+
+                    // if any unapplied redeemable rewards
+                    if (profileRewards.size() > 0) {
+                        // add redeemable rewards
+                        for (Reward reward : profileRewards) {
+                            couponItems.add(new CouponItem(null, reward, CouponItem.TYPE_REDEEMABLE_REWARD));
+                        }
+                    } else {
+                        couponItems.add(new CouponItem(null, null, CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG));
+                    }
+                }
+            }
         }
+        couponAdapter.setItems(couponItems);
         cartListItems = cartItems;
         cartItemGroups = itemGroups;
         setAdapterListItems();
