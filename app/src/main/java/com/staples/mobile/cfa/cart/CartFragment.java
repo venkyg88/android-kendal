@@ -205,16 +205,19 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     }
 
     /** returns sum of adjusted amounts for rewards and coupons applied to cart */
-    public float getCouponsRewardsAdjustedAmount() {
+    private float getCouponsRewardsAdjustedAmount() {
         float totalAdjustedAmount = 0;
         Cart cart = CartApiManager.getCart();
-        // coupons & rewards
+        // cart-level coupons & rewards
         if (cart != null && cart.getCoupon() != null) {
             for (Coupon coupon : cart.getCoupon()) {
-                if (!couponIsSkuLevel(coupon)) {
-                    totalAdjustedAmount += coupon.getAdjustedAmount();
-                }
+                totalAdjustedAmount += coupon.getAdjustedAmount();
             }
+        }
+        // sku-level
+        List<Coupon> manualSkuLevelCoupons = CartApiManager.getManualSkuLevelCoupons();
+        for (Coupon coupon : manualSkuLevelCoupons) {
+            totalAdjustedAmount += coupon.getAdjustedAmount();
         }
         return totalAdjustedAmount;
     }
@@ -225,7 +228,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
         int totalItemCount = 0;
         String shipping = "";
-        couponsRewardsAmount = 0;
         float subtotal = 0;
         float preTaxSubtotal = 0;
         float freeShippingThreshold = 0;
@@ -233,7 +235,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         Cart cart = CartApiManager.getCart();
         if (cart != null) {
             totalItemCount = cart.getTotalItems();
-            couponsRewardsAmount = getCouponsRewardsAdjustedAmount();
             totalHandlingCost = cart.getTotalHandlingCost();
             shipping = cart.getDelivery();
             subtotal = cart.getSubTotal();
@@ -310,18 +311,21 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             List<Reward> profileRewards = ProfileDetails.getAllProfileRewards();
             // add line to add a coupon
             couponItems.add(new CouponItem(null, null, CouponItem.TYPE_COUPON_TO_ADD));
-            // add list of applied coupons
+            // add list of applied cart-level coupons
             if (cart != null && cart.getCoupon() != null && cart.getCoupon().size() > 0) {
                 for (Coupon coupon : cart.getCoupon()) {
-                    if (!couponIsSkuLevel(coupon)) {
-                        // coupon may or may not have a matching reward
-                        Reward reward = ProfileDetails.findMatchingReward(profileRewards, coupon.getCode());
-                        if (reward != null) {
-                            profileRewards.remove(reward); // remove the applied rewards from the list
-                        }
-                        couponItems.add(new CouponItem(coupon, reward, CouponItem.TYPE_APPLIED_COUPON));
+                    // coupon may or may not have a matching reward
+                    Reward reward = ProfileDetails.findMatchingReward(profileRewards, coupon.getCode());
+                    if (reward != null) {
+                        profileRewards.remove(reward); // remove the applied rewards from the list
                     }
+                    couponItems.add(new CouponItem(coupon, reward, CouponItem.TYPE_APPLIED_COUPON));
                 }
+            }
+            // if any sku-level coupons should be displayed, add them
+            List<Coupon> skuLevelCoupons = CartApiManager.getManualSkuLevelCoupons();
+            for (Coupon coupon : skuLevelCoupons) {
+                couponItems.add(new CouponItem(coupon, null, CouponItem.TYPE_APPLIED_COUPON));
             }
 
             // if profile exists (registered user logged in and no errors getting profile)
@@ -375,11 +379,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         return false;
     }
 
-    private boolean couponIsSkuLevel(Coupon coupon) {
-        // TODO: make sure we're matching all/only sku-level coupons. Examples I've seen so far: "PERCENTOFFSKUGROUP","BUYSKUDOLLAROFF"
-        return coupon.getType().contains("SKU");
-    }
-
     private boolean couponsShowing() {
         return (((LinearLayout.LayoutParams)couponListVw.getLayoutParams()).weight > 0);
     }
@@ -409,7 +408,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 CartApiManager.deleteCoupon(couponAdapter.getItem((Integer) view.getTag()).getCoupon().getCode(), this);
                 break;
             case R.id.action_checkout:
-                activity.selectOrderCheckout(getExpectedDeliveryRange());
+                activity.selectOrderCheckout(getExpectedDeliveryRange(), couponsRewardsAmount);
                 break;
             case R.id.rewards_link_acct_button:
                 String rewardsNumber = ((EditText)getView().findViewById(R.id.rewards_card_number)).getText().toString();
@@ -518,11 +517,14 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         // clear the cart before refilling
         ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
         ArrayList<CartItemGroup> itemGroups = new ArrayList<CartItemGroup>();
+        couponsRewardsAmount = 0;
 
         if (cart != null) {
 
             // rather than call the api to refresh the profile, use the info from the cart to update coupon info in the profile
             ProfileDetails.updateRewardsFromCart(cart);
+
+            couponsRewardsAmount = getCouponsRewardsAdjustedAmount();
 
             List<Product> products = cart.getProduct();
             if (products != null) {

@@ -16,6 +16,7 @@ import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
 import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
 import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
+import com.staples.mobile.common.access.easyopen.model.cart.Product;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
 
 import java.util.ArrayList;
@@ -48,6 +49,13 @@ public class CartApiManager {
     public static float getPreTaxTotal() {
         return cart == null? 0f: cart.getPreTaxTotal();
     }
+    public static List<String> manuallyAddedCouponCodes = new ArrayList<String>();
+    public static Coupon assocRewardsDiscountCoupon;
+    public static Coupon assocRewardsStaplesDiscountCoupon;
+
+    // special logic around these associate coupon codes
+    private final static String ASSOCIATE_REWARDS_DISCOUNT_CODE = "52797";
+    private final static String ASSOCIATE_REWARDS_STAPLES_DISCOUNT_CODE = "52798";
 
 
     /** gets cart  */
@@ -55,7 +63,7 @@ public class CartApiManager {
 
         // query for items in cart
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.viewCart(1, 1000, // 0 offset results in max of 5 items, so using 1
+        easyOpenApi.viewCart(1, 1000, "Y",  // 0 offset results in max of 5 items, so using 1
                 new Callback<CartContents>() {
 
                     @Override
@@ -82,6 +90,9 @@ public class CartApiManager {
 
     public static void resetCart() {
         cart = null;
+        manuallyAddedCouponCodes.clear();
+        assocRewardsDiscountCoupon = null;
+        assocRewardsStaplesDiscountCoupon = null;
     }
 
     /** adds item to cart */
@@ -168,7 +179,7 @@ public class CartApiManager {
         });
     }
 
-    public static void addCoupon(String couponCode, final CartRefreshCallback cartRefreshCallback) {
+    public static void addCoupon(final String couponCode, final CartRefreshCallback cartRefreshCallback) {
         if (!TextUtils.isEmpty(couponCode)) {
             EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
             Coupon coupon = new Coupon();
@@ -177,6 +188,7 @@ public class CartApiManager {
                 @Override
                 public void success(EmptyResponse emptyResponse, Response response) {
                     loadCart(cartRefreshCallback);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
+                    manuallyAddedCouponCodes.add(couponCode);
                 }
 
                 @Override
@@ -189,7 +201,7 @@ public class CartApiManager {
         }
     }
 
-    public static void deleteCoupon(String couponCode, final CartRefreshCallback cartRefreshCallback) {
+    public static void deleteCoupon(final String couponCode, final CartRefreshCallback cartRefreshCallback) {
         if (!TextUtils.isEmpty(couponCode)) {
             EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
             Coupon coupon = new Coupon();
@@ -198,6 +210,7 @@ public class CartApiManager {
                 @Override
                 public void success(EmptyResponse emptyResponse, Response response) {
                     loadCart(cartRefreshCallback);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
+                    manuallyAddedCouponCodes.remove(couponCode);
                 }
 
                 @Override
@@ -209,6 +222,40 @@ public class CartApiManager {
             });
         }
     }
+
+    /** amongst the sku-level coupons, get the ones that were manually added */
+    public static List<Coupon> getManualSkuLevelCoupons() {
+        List<Coupon> coupons = new ArrayList<Coupon>();
+        if (cart != null) {
+            for (Product product : cart.getProduct()) {
+                if (product.getCoupon() != null) {
+                    for (Coupon coupon : product.getCoupon()) {
+                        if (ASSOCIATE_REWARDS_DISCOUNT_CODE.equals(coupon.getCode())) {
+                            // if first instance of coupon, add it to coupon list, otherwise increment amount of first instance
+                            if (assocRewardsDiscountCoupon == null) {
+                                assocRewardsDiscountCoupon = coupon;
+                                coupons.add(coupon);
+                            } else {
+                                assocRewardsDiscountCoupon.setAdjustedAmount(assocRewardsDiscountCoupon.getAdjustedAmount() + coupon.getAdjustedAmount());
+                            }
+                        } else if (ASSOCIATE_REWARDS_STAPLES_DISCOUNT_CODE.equals(coupon.getCode())) {
+                            // if first instance of coupon, add it to coupon list, otherwise increment amount of first instance
+                            if (assocRewardsStaplesDiscountCoupon == null) {
+                                assocRewardsStaplesDiscountCoupon = coupon;
+                                coupons.add(coupon);
+                            } else {
+                                assocRewardsStaplesDiscountCoupon.setAdjustedAmount(assocRewardsStaplesDiscountCoupon.getAdjustedAmount() + coupon.getAdjustedAmount());
+                            }
+                        } else if (manuallyAddedCouponCodes.contains(coupon.getCode())) {
+                            coupons.add(coupon);
+                        }
+                    }
+                }
+            }
+        }
+        return coupons;
+    }
+
 
     //set orderItemId to null when adding new items
     private static TypedJsonString createCartRequestBody(String orderItemId, String sku, int qty) {
