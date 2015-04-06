@@ -224,7 +224,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                                 ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
                                 // if success
                                 if (errMsg == null) {
-                                    buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.added_to_cart));
+                                    buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.ic_android));
                                     activity.showNotificationBanner(R.string.cart_updated_msg);
                                     Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
                                 } else {

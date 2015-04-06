@@ -93,6 +93,7 @@ public class NotifyReceiver extends BaseIntentReceiver {
         if (savedId==null || !savedId.equals(channelId)) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString(URBAN_AIRSHIP_CHANNEL, channelId);
+            editor.apply();
             Log.d(TAG, "New Urban Airship channel " + channelId);
         }
     }
