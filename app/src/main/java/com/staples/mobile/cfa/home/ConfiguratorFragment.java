@@ -168,11 +168,11 @@ public class ConfiguratorFragment extends Fragment {
 
         noPhoto = resources.getDrawable(R.drawable.no_photo);
 
-        this.layoutInflater = layoutInflater;
-        this.container = container;
         configFrameView = layoutInflater.inflate(R.layout.config_frame, container, false);
 
         configScrollLayout = (LinearLayout) configFrameView.findViewById(R.id.configScrollLayout);
+
+        storeWrapper = (DataWrapper) configFrameView.findViewById(R.id.store_wrapper);
 
         subLayoutContainerLayoutParms =
                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, // width
@@ -330,8 +330,7 @@ public class ConfiguratorFragment extends Fragment {
             break; // while (true)
 
         } // while (true)
-
-    } // initFromConfiguratorResult
+    }
 
     private void doPortrait() {
 
@@ -1053,8 +1052,6 @@ public class ConfiguratorFragment extends Fragment {
     //////////////////////////////////////////////////////////////////////////////
     // Personalized Message Bar Methods created by Yongnan Zhou:
     private void getStoreInfo(){
-        configFrameView = layoutInflater.inflate(R.layout.config_frame, container, false);
-        storeWrapper = (DataWrapper) configFrameView.findViewById(R.id.store_wrapper);
         storeWrapper.setState(DataWrapper.State.LOADING);
 
         // Get current postal code
