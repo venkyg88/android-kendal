@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/SkuSpecFont"
+    android:textSize="@dimen/fontsize_16sp"
     android:layout_width="fill_parent"
     android:padding="@dimen/verticalspacing_8dp">
-
     <TextView android:id="@+id/specName" />
-
-    <TextView
-        android:id="@+id/specValue" />
+    <TextView android:id="@+id/specValue" />
 </TableRow>

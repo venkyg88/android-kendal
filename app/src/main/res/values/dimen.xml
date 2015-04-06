@@ -44,12 +44,22 @@
     <dimen name="personal_feed_item_image_width">120dp</dimen>
     <dimen name="personal_feed_item_image_height">120dp</dimen>
     <dimen name="personal_feed_arrow">28dp</dimen>
-    <dimen name="sku_info_padding">2dp</dimen>
-    <dimen name="sku_image_height">150dp</dimen>
+
+    <!--SKU-->
+    <dimen name="sku_font_34">34px</dimen>
+    <dimen name="sku_font_30">30px</dimen>
+    <dimen name="sku_font_24">24px</dimen>
+    <dimen name="sku_font_18">18px</dimen>
+    <dimen name="sku_padding_10">10dp</dimen>
+    <dimen name="sku_padding_14">14dp</dimen>
+    <dimen name="sku_hori_padding">8dp</dimen>
+    <dimen name="sku_image_width">275dp</dimen>
+    <dimen name="sku_image_height">275dp</dimen>
     <dimen name="sku_add_cart_height">50dp</dimen>
     <dimen name="sku_add_cart_editor_width">60dp</dimen>
     <dimen name="sku_accessory_image_width">120dp</dimen>
     <dimen name="sku_accessory_image_height">120dp</dimen>
+
     <dimen name="left_margin">6dp</dimen>
     <dimen name="right_margin">6dp</dimen>
     <dimen name="browse_item_height">42dp</dimen>
