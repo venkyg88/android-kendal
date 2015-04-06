@@ -36,19 +36,19 @@ import retrofit.client.Response;
 public class CheckoutApiManager {
 
     public interface ApplyAddressCallback {
-        public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg);
+        void onApplyAddressComplete(String addressId, String errMsg, String infoMsg);
     }
 
     public interface ApplyPaymentMethodCallback {
-        public void onApplyPaymentMethodComplete(String paymentMethodId, String authorized, String errMsg);
+        void onApplyPaymentMethodComplete(String paymentMethodId, String authorized, String errMsg);
     }
 
     public interface PrecheckoutCallback {
-        public void onPrecheckoutComplete(Float totalHandlingCost, String shippingCharge, Float tax, String errMsg, String infoMsg);
+        void onPrecheckoutComplete(Float totalHandlingCost, String shippingCharge, Float tax, String errMsg, String infoMsg);
     }
 
     public interface OrderSubmissionCallback {
-        public void onOrderSubmissionComplete(String orderId, String orderNumber, String errMsg);
+        void onOrderSubmissionComplete(String orderId, String orderNumber, String errMsg);
     }
 
 

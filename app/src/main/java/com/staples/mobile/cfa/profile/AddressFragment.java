@@ -3,10 +3,10 @@ package com.staples.mobile.cfa.profile;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -40,15 +40,17 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
         addressBlock = (AddressBlock) view.findViewById(R.id.shipping_address);
 
         Bundle args = getArguments();
+        Address address = null;
         if (args!=null) {
-            Address address = (Address) args.getSerializable("addressData");
+            address = (Address) args.getSerializable("addressData");
             if (address != null) {
                 addressBlock.setAddress(address);
                 addressId = address.getAddressId();
             }
         }
+
         addressBlock.init(false);
-        addressBlock.selectMode(false);
+        addressBlock.selectMode(address==null);
 
         view.findViewById(R.id.address_save).setOnClickListener(this);
         return (view);
