@@ -345,7 +345,7 @@ Callback,
         }
 
         if (modelNumber != null) {
-            if (sb.length() > 0) sb.append("                  ");
+            if (sb.length() > 0) sb.append("   ");
             sb.append(resources.getString(R.string.model));
             sb.append(":\u00a0");
             sb.append(modelNumber);

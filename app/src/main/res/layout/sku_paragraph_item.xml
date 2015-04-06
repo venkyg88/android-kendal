@@ -2,6 +2,6 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/sku_hori_padding"
+    android:padding="@dimen/sku_info_padding"
     android:ellipsize="end">
 </TextView>
