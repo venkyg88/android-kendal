@@ -90,7 +90,8 @@ public class SearchBarAdapter extends BaseAdapter implements Filterable {
         if (view == null) {
             view = inflater.inflate(R.layout.search_suggest_item, parent, false);
         }
-        setHighlightedText((TextView) view, getItem(position));
+        TextView text = (TextView) view.findViewById(R.id.text);
+        setHighlightedText(text, getItem(position));
         return (view);
     }
 

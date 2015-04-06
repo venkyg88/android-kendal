@@ -2,7 +2,9 @@
 <resources>
     <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:textAllCaps">false</item>
+        <item name="android:colorAccent">@color/staples_red</item>
     </style>
+
     <style name="RoundButton">
         <item name="android:layout_width">@dimen/round_button_diameter</item>
         <item name="android:layout_height">@dimen/round_button_diameter</item>
