@@ -7,7 +7,6 @@ import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,7 @@ public class SearchBarAdapter extends BaseAdapter implements Filterable {
 
     private static final String PREFS_HISTORY = "searchHistory";
     private static final int MAXHISTORY = 10;
+    private static final boolean INVERTHIGHLIGHT = true;
 
     private Activity activity;
     private SearchBarView searchBar;
@@ -66,21 +66,33 @@ public class SearchBarAdapter extends BaseAdapter implements Filterable {
         this.original = original;
     }
 
+    /**
+     * setHighlightedText is controlled by INVERTHIGHLIGHT
+     * false -> highlight matched text
+     * true -> highlight non-matched text
+     */
     private void setHighlightedText(TextView view, String text) {
         String keyword = searchBar.getKeyword();
-        if (text==null || keyword ==null || keyword.isEmpty()) {
+        if (text==null || keyword==null || keyword.isEmpty()) {
             view.setText(text);
             return;
         }
 
+        // Divide string into matching & non-matching spans and style
         SpannableStringBuilder sb = new SpannableStringBuilder(text);
-        int n = text.length();
-        int k = keyword.length();
-        for(int i=0;i<n;) {
-            int j = text.indexOf(keyword, i);
-            if (j<0) j = n;
-            if (j>i) sb.setSpan(new StyleSpan(Typeface.BOLD), i, j, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-            i = j+k;
+        int textLen = text.length();
+        int keyLen = keyword.length();
+        int i, j, k;
+        for(i=0;i<textLen;i=k) {
+            j = text.indexOf(keyword, i);
+            if (j<0) j = textLen;
+            if (INVERTHIGHLIGHT && i<j)
+                sb.setSpan(new StyleSpan(Typeface.BOLD), i, j, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+            if (j>=textLen) break;
+            for(k=j+keyLen;k<textLen;k+=keyLen)
+                if (!text.startsWith(keyword, k)) break;
+            if (!INVERTHIGHLIGHT && j<k)
+                sb.setSpan(new StyleSpan(Typeface.BOLD), j, k, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
         }
         view.setText(sb);
     }
@@ -118,7 +130,7 @@ public class SearchBarAdapter extends BaseAdapter implements Filterable {
                 int n = original.size();
                 for(int i=0;i<n;i++) {
                     String item = original.get(i);
-                    if (item!=null && item.indexOf(span)>=0)
+                    if (item!=null && item.contains(span))
                         array.add(item);
                 }
             }

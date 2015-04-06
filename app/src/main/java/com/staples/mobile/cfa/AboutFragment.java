@@ -27,7 +27,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.widget.ActionBar;
-import com.staples.mobile.cfa.widget.AddressBlock;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -104,7 +103,7 @@ public class AboutFragment extends Fragment {
         if (density!=null) density = Integer.toString(metrics.densityDpi)+" ("+density+")";
         else density = Integer.toString(metrics.densityDpi);
         addRow(inflater, table, "Pixels per inch", density);
-        addRow(inflater, table, "Refresh rate", display.getRefreshRate()+" Hz");
+        addRow(inflater, table, "Refresh rate", Math.round(display.getRefreshRate())+" Hz");
     }
 
     private void addPackageRows(LayoutInflater inflater, TableLayout table) {
