@@ -8,6 +8,7 @@
 -	ic_arrow_drop_down		32	32	#333333	material/navigation/ic_arrow_drop_down_48px
 -	ic_browse_black			32	32	#333333 staples/shop_by_categories
 -	ic_chat_black			32	32	#333333	material/communication/ic_chat_48px
+-	ic_check_green			32	32	#6fab04	material/navigation/ic_check_48px
 -	ic_check_white_18dp		18	18	#ffffff	material/navigation/ic_check_48px
 -	ic_check_white_24dp		24	24	#ffffff	material/navigation/ic_check_48px
 -	ic_chevron_right_black		32	32	#333333	material/navigation/ic_chevron_right_48px
