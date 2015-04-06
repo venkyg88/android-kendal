@@ -1,9 +1,7 @@
 package com.staples.mobile.cfa.profile;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +10,12 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.analytics.Tracker;
-import com.staples.mobile.cfa.checkout.ConfirmationFragment;
-import com.staples.mobile.cfa.home.ConfiguratorFragment;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.List;
 
@@ -118,8 +114,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             ccBtn.setText("+ Add");
         }
     }
-
-
 
     @Override
     public void onClick(View view) {
