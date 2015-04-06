@@ -56,6 +56,10 @@ public class PersonalFeedFragment extends Fragment {
 
     private static final int MAXFETCH = 50;
 
+    private LinearLayout dailyDealLayout;
+    private LinearLayout clearanceLayout;
+    private LinearLayout seenProductsLayout;
+
     private DataWrapper dailyDealWrapper;
     private DataWrapper clearanceWrapper;
     private DataWrapper seenProductsWrapper;
@@ -156,6 +160,10 @@ public class PersonalFeedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         LinearLayout personalFeedLayout = (LinearLayout) inflater.inflate(R.layout.personal_feed, container, false);
 
+        dailyDealLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.daily_deal_layout);
+        clearanceLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.clearance_layout);
+        seenProductsLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.seen_products_layout);
+
         dailyDealWrapper = (DataWrapper) personalFeedLayout.findViewById(R.id.daily_deal_wrapper);
         clearanceWrapper = (DataWrapper) personalFeedLayout.findViewById(R.id.clearance_wrapper);
         seenProductsWrapper = (DataWrapper) personalFeedLayout.findViewById(R.id.seen_products_wrapper);
@@ -174,13 +182,14 @@ public class PersonalFeedFragment extends Fragment {
                 seenProductClearTV.setVisibility(View.GONE);
                 seenProductsLoading.setVisibility(View.GONE);
 
+
                 removeSavedSeenProducts();
 
                 PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(getActivity());
                 feedSingleton.setSavedSkus(new HashSet<String>());
                 feedSingleton.setSavedSeenProducts(
                         new PersistentSizedArrayList<String>(PersonalFeedSingleton.SEEN_PRODUCTS_AMOUNT));
-                seenProductsWrapper.setState(DataWrapper.State.EMPTY);
+                seenProductsLayout.setVisibility(View.GONE);
             }
         });
 
@@ -227,7 +236,7 @@ public class PersonalFeedFragment extends Fragment {
 
                             // display "nothing found" if no daily deal products
                             if (dailyDealContainer.getChildCount() == 0) {
-                                dailyDealWrapper.setState(DataWrapper.State.EMPTY);
+                                dailyDealLayout.setVisibility(View.GONE);
                             } else {
                                 dailyDealWrapper.setState(DataWrapper.State.DONE);
                             }
@@ -264,7 +273,7 @@ public class PersonalFeedFragment extends Fragment {
 
                             // display "nothing found" if no clearance products
                             if (clearanceContainer.getChildCount() == 0) {
-                                clearanceWrapper.setState(DataWrapper.State.EMPTY);
+                                clearanceLayout.setVisibility(View.GONE);
                             } else {
                                 clearanceWrapper.setState(DataWrapper.State.DONE);
                             }
@@ -295,7 +304,7 @@ public class PersonalFeedFragment extends Fragment {
 
         // display "nothing found" if no saved seen products
         if(saveSeenSkus.isEmpty()){
-            seenProductsWrapper.setState(DataWrapper.State.EMPTY);
+            seenProductsLayout.setVisibility(View.GONE);
         }
         else{
             seenProductsWrapper.setState(DataWrapper.State.LOADING);
