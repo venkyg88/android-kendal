@@ -12,7 +12,9 @@
         android:singleLine="true"
         android:imeOptions="actionSearch|flagNoExtractUi"
         android:textColor="@color/staples_black"
-        android:textColorHint="@color/staples_middle_gray"/>
+        android:textColorHint="@color/staples_dark_gray"
+        android:dropDownWidth="match_parent"
+        android:dropDownHorizontalOffset="@dimen/search_negative_horizontal_offset" />
     <ImageView
         android:id="@+id/search_option"
         android:layout_width="wrap_content"

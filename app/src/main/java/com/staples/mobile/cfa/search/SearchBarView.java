@@ -9,7 +9,6 @@ import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -139,6 +138,7 @@ public class SearchBarView extends LinearLayout implements View.OnClickListener,
 
         open = true;
         filled = false;
+
         return(true);
     }
 
