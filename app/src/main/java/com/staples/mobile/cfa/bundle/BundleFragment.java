@@ -105,7 +105,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.BUNDLE, title);
-        Tracker.getInstance().trackStateForShopByCategory(); // Analytics
     }
 
     private void query() {
