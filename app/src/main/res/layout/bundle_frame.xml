@@ -33,4 +33,11 @@
         style="@style/RoundButton"
         android:background="@drawable/oval_red"
         android:src="@drawable/ic_sort_white"/>
+    <!-- Transparent layer -->
+    <RelativeLayout
+        android:id="@+id/transparentOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/overlay"
+        android:visibility="gone"/>
 </com.staples.mobile.cfa.widget.AnimatorFrame>

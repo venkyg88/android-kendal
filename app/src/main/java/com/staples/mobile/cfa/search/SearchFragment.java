@@ -3,13 +3,14 @@ package com.staples.mobile.cfa.search;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.ImageView;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.staples.mobile.cfa.MainActivity;
@@ -192,45 +193,54 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         applyState(null);
     }
 
-    private class AddToCart implements CartApiManager.CartRefreshCallback {
-        private BundleItem item;
-        private View button;
-        private View whirlie;
-
-        private AddToCart(BundleItem item, View button) {
-            this.item = item;
-            this.button = button;
-            View parent = (View) button.getParent();
-            whirlie = parent.findViewById(R.id.bundle_whirlie);
-
-            button.setVisibility(View.GONE);
-            whirlie.setVisibility(View.VISIBLE);
-
-            CartApiManager.addItemToCart(item.identifier, 1, this);
-        }
-
-        @Override
-        public void onCartRefreshComplete(String errMsg) {
-            MainActivity activity = (MainActivity) getActivity();
-            if (activity == null) return;
-
-            button.setVisibility(View.VISIBLE);
-            whirlie.setVisibility(View.GONE);
-
-            // if success
-            if (errMsg == null) {
-                ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
-                activity.showNotificationBanner(R.string.cart_updated_msg);
-                Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
-            } else {
-                // if non-grammatical out-of-stock message from api, provide a nicer message
-                if (errMsg.contains("items is out of stock")) {
-                    errMsg = activity.getResources().getString(R.string.avail_outofstock);
-                }
-                activity.showErrorDialog(errMsg);
-            }
-        }
-    }
+//    private class AddToCart implements CartApiManager.CartRefreshCallback {
+//        private final int IMAGE_DISPLAY_LENGTH = 1500;
+//        private BundleItem item;
+//        private ImageView button;
+//        private View whirlie;
+//
+//        private AddToCart(BundleItem item, View button) {
+//            this.item = item;
+//            this.button = (ImageView)button;
+//            View parent = (View) button.getParent();
+//            whirlie = parent.findViewById(R.id.bundle_whirlie);
+//
+//
+//            button.setVisibility(View.GONE);
+//            whirlie.setVisibility(View.VISIBLE);
+//
+//            CartApiManager.addItemToCart(item.identifier, 1, this);
+//        }
+//
+//        @Override
+//        public void onCartRefreshComplete(String errMsg) {
+//            MainActivity activity = (MainActivity) getActivity();
+//            if (activity == null) return;
+//
+//            button.setVisibility(View.VISIBLE);
+//            whirlie.setVisibility(View.GONE);
+//
+//            // if success
+//            if (errMsg == null) {
+//
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        button.setImageDrawable(button.getResources().getDrawable(R.drawable.ic_add_shopping_cart_black));
+//                    }
+//                }, IMAGE_DISPLAY_LENGTH);
+//                button.setImageDrawable(button.getResources().getDrawable(R.drawable.ic_check_green));
+//                ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
+//                Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
+//            } else {
+//                // if non-grammatical out-of-stock message from api, provide a nicer message
+//                if (errMsg.contains("items is out of stock")) {
+//                    errMsg = activity.getResources().getString(R.string.avail_outofstock);
+//                }
+//                activity.showErrorDialog(errMsg);
+//            }
+//        }
+//    }
 
     @Override
     public void onClick(View view) {
@@ -248,7 +258,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
                     final BundleItem item = (BundleItem) tag;
-                    new AddToCart(item, view);
+                    new AddToCart(item, view, getActivity());
                     Tracker.getInstance().trackActionForAddToCartFromSearchResults(item.identifier, item.finalPrice, 1);
                 }
                 break;

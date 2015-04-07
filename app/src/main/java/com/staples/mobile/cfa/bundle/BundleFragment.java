@@ -9,15 +9,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.cart.CartApiManager;
+import com.staples.mobile.cfa.search.AddToCart;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
+import com.staples.mobile.cfa.widget.LinearLayoutWithOverlay;
 import com.staples.mobile.cfa.widget.SortPanel;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -48,6 +48,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     private BundleItem.SortType fetchSort;
     private BundleItem.SortType displaySort;
     private String title;
+    RecyclerView list;
 
     public void setArguments(String title, String identifier) {
         Bundle args = new Bundle();
@@ -75,7 +76,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Activity activity = getActivity();
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
-        RecyclerView list = (RecyclerView) view.findViewById(R.id.products);
+        list = (RecyclerView) view.findViewById(R.id.products);
         list.setLayoutManager(new GridLayoutManager(activity, 1));
         list.addItemDecoration(new HorizontalDivider(activity));
 
@@ -213,30 +214,8 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                         final MainActivity activity = (MainActivity) getActivity();
                         activity.selectSkuItem(item.title, item.identifier, false);
                     } else {
-                        final MainActivity activity = (MainActivity) getActivity();
-                        final ImageView buttonVw = (ImageView)view;
-                        activity.showProgressIndicator();
-                        buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.ic_android));
-                        CartApiManager.addItemToCart(item.identifier, 1, new CartApiManager.CartRefreshCallback() {
-                            @Override
-                            public void onCartRefreshComplete(String errMsg) {
-                                activity.hideProgressIndicator();
-                                ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
-                                // if success
-                                if (errMsg == null) {
-                                    buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.added_to_cart));
-                                    activity.showNotificationBanner(R.string.cart_updated_msg);
-                                    Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
-                                } else {
-                                    buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.ic_add_shopping_cart_black));
-                                    // if non-grammatical out-of-stock message from api, provide a nicer message
-                                    if (errMsg.contains("items is out of stock")) {
-                                        errMsg = activity.getResources().getString(R.string.avail_outofstock);
-                                    }
-                                    activity.showErrorDialog(errMsg);
-                                }
-                            }
-                        });
+                        list.setFocusable(false);
+                        new AddToCart(item, view, getActivity());
                     }
                 }
                 break;
