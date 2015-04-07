@@ -17,6 +17,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.bundle.BundleAdapter;
 import com.staples.mobile.cfa.bundle.BundleItem;
+import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
@@ -44,12 +45,12 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
     private static final int MAXFETCH = 50;
 
+    private String title;
     private String keyword;
     private BundleAdapter adapter;
     private DataWrapper.State state;
     private BundleItem.SortType fetchSort;
     private BundleItem.SortType displaySort;
-    private String title;
 
     public void setArguments(String title, String keyword) {
         Bundle args = new Bundle();
@@ -160,7 +161,6 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
     private int processSearch(SearchResult searchResult) {
         if (searchResult == null) return(0);
-//        complete = searchResult.isRecordSetComplete; TODO needs Common fix
 
         List<Search> searches = searchResult.getSearch();
         if (searches == null || searches.size() < 1) return (0);
@@ -191,6 +191,46 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         applyState(null);
     }
 
+    private class AddToCart implements CartApiManager.CartRefreshCallback {
+        private BundleItem item;
+        private View button;
+        private View whirlie;
+
+        private AddToCart(BundleItem item, View button) {
+            this.item = item;
+            this.button = button;
+            View parent = (View) button.getParent();
+            whirlie = parent.findViewById(R.id.bundle_action);
+
+            button.setVisibility(View.GONE);
+            whirlie.setVisibility(View.VISIBLE);
+
+            CartApiManager.addItemToCart(item.identifier, 1, this);
+        }
+
+        @Override
+        public void onCartRefreshComplete(String errMsg) {
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity == null) return;
+
+            button.setVisibility(View.VISIBLE);
+            whirlie.setVisibility(View.GONE);
+
+            // if success
+            if (errMsg == null) {
+                ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
+                activity.showNotificationBanner(R.string.cart_updated_msg);
+                Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
+            } else {
+                // if non-grammatical out-of-stock message from api, provide a nicer message
+                if (errMsg.contains("items is out of stock")) {
+                    errMsg = activity.getResources().getString(R.string.avail_outofstock);
+                }
+                activity.showErrorDialog(errMsg);
+            }
+        }
+    }
+
     @Override
     public void onClick(View view) {
         Object tag;
@@ -206,10 +246,8 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
             case R.id.bundle_action:
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
-                    final BundleItem item = (BundleItem) tag;
-                    Toast.makeText(getActivity(), "Clicked on " + item.title, Toast.LENGTH_LONG).show();
-
-                    // TODO: !!!!!!!! move this into on add-to-cart success callback similar to BundleFragment !!!!!!!!
+                    BundleItem item = (BundleItem) tag;
+                    new AddToCart(item, view);
                     Tracker.getInstance().trackActionForAddToCartFromSearchResults(item.identifier, item.finalPrice, 1);
                 }
                 break;
