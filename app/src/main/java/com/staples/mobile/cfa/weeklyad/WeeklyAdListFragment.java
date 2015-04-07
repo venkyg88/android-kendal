@@ -1,10 +1,8 @@
 package com.staples.mobile.cfa.weeklyad;
 
-
-import android.content.Context;
+import android.app.Fragment;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,10 +19,6 @@ import android.widget.TabHost;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartApiManager;
-import com.staples.mobile.common.access.easyopen.model.weeklyadlisting.Collection;
-import com.staples.mobile.common.access.easyopen.model.weeklyadlisting.WeeklyAdListing;
-import com.staples.mobile.common.access.easyopen.util.WeeklyAdImageUrlHelper;
-import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
 import com.staples.mobile.common.access.Access;
@@ -32,6 +26,10 @@ import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.weeklyad.Data;
 import com.staples.mobile.common.access.easyopen.model.weeklyad.WeeklyAd;
+import com.staples.mobile.common.access.easyopen.model.weeklyadlisting.Collection;
+import com.staples.mobile.common.access.easyopen.model.weeklyadlisting.WeeklyAdListing;
+import com.staples.mobile.common.access.easyopen.util.WeeklyAdImageUrlHelper;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +62,6 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
     TabHost tabHost;
     HorizontalScrollView tabScrollView;
 
-
     public void setArguments(String storeId, int currentTabIndex,
                              ArrayList<String> categoryTreeIds, ArrayList<String> titles) {
         Bundle args = new Bundle();
@@ -96,7 +93,6 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
         mRecyclerView.addItemDecoration(new HorizontalDivider(activity));
         adapter = new WeeklyAdListAdapter(activity, this);
         mRecyclerView.setAdapter(adapter);
-
 
         // set up tabs
         tabHost = (TabHost) view.findViewById(android.R.id.tabhost);
@@ -143,8 +139,6 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
             }
         });
 
-
-
         // initiate call to get weekly ads
         getWeeklyAdListing();
 
@@ -166,7 +160,6 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
         ActionBar.getInstance().setConfig(ActionBar.Config.WEEKLYAD, titles.get(currentTabIndex));
         Tracker.getInstance().trackStateForWeeklyAd(); // Analytics
     }
-
 
     private void getWeeklyAdListing() {
       //  activity.showProgressIndicator();
@@ -219,7 +212,6 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
         });
     }
 
-
     @Override
     public void onClick(View view) {
         final Resources r = activity.getResources();
@@ -261,7 +253,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                             ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
                             // if success
                             if (errMsg == null) {
-                                buttonVw.setImageDrawable(r.getDrawable(R.drawable.added_to_cart));
+                                buttonVw.setImageDrawable(r.getDrawable(R.drawable.ic_android));
                                 activity.showNotificationBanner(R.string.cart_updated_msg);
 
                                 // if price is parseable, send analytics
@@ -285,9 +277,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                 }
                 break;
         }
-
     }
-
 
 //    GestureDetectorCompat swipeListener = new GestureDetectorCompat(activity, new GestureDetector.SimpleOnGestureListener() {
 
@@ -313,7 +303,6 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
             }
             return super.onFling(event1, event2, velocityX, velocityY);
         }
-
     };
 }
 

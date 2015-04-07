@@ -85,7 +85,7 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
     private void init(Context context, AttributeSet attrs) {
         // Add popup & adapter
         popup = new ListPopupWindow(context);
-        adapter = new ArrayAdapter<Item>(context, R.layout.search_suggest_item);
+        adapter = new ArrayAdapter<Item>(context, R.layout.place_suggest_item);
         popup.setAdapter(adapter);
         popup.setAnchorView(this);
 

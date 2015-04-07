@@ -13,11 +13,10 @@ import android.view.ViewGroup;
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.search.AddToCart;
+import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
-import com.staples.mobile.cfa.widget.LinearLayoutWithOverlay;
 import com.staples.mobile.cfa.widget.SortPanel;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -80,7 +79,12 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         list.setLayoutManager(new GridLayoutManager(activity, 1));
         list.addItemDecoration(new HorizontalDivider(activity));
 
-        view.findViewById(R.id.open_sort).setOnClickListener(this);
+        IdentifierType type = IdentifierType.detect(identifier);
+        if (type==IdentifierType.BUNDLE) {
+            view.findViewById(R.id.open_sort).setVisibility(View.GONE);
+        } else {
+            view.findViewById(R.id.open_sort).setOnClickListener(this);
+        }
 
         applyState(view);
         return(view);
@@ -193,6 +197,46 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         applyState(null);
     }
 
+    private class AddToCart implements CartApiManager.CartRefreshCallback {
+        private BundleItem item;
+        private View button;
+        private View whirlie;
+
+        private AddToCart(BundleItem item, View button) {
+            this.item = item;
+            this.button = button;
+            View parent = (View) button.getParent();
+            whirlie = parent.findViewById(R.id.bundle_action);
+
+            button.setVisibility(View.GONE);
+            whirlie.setVisibility(View.VISIBLE);
+
+            CartApiManager.addItemToCart(item.identifier, 1, this);
+        }
+
+        @Override
+        public void onCartRefreshComplete(String errMsg) {
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity == null) return;
+
+            button.setVisibility(View.VISIBLE);
+            whirlie.setVisibility(View.GONE);
+
+            // if success
+            if (errMsg == null) {
+                ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
+                activity.showNotificationBanner(R.string.cart_updated_msg);
+                Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
+            } else {
+                // if non-grammatical out-of-stock message from api, provide a nicer message
+                if (errMsg.contains("items is out of stock")) {
+                    errMsg = activity.getResources().getString(R.string.avail_outofstock);
+                }
+                activity.showErrorDialog(errMsg);
+            }
+        }
+    }
+
     @Override
     public void onClick(View view) {
         Object tag;
@@ -214,8 +258,8 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                         final MainActivity activity = (MainActivity) getActivity();
                         activity.selectSkuItem(item.title, item.identifier, false);
                     } else {
-                        list.setFocusable(false);
-                        new AddToCart(item, view, getActivity());
+                        new AddToCart(item, view);
+                        Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
                     }
                 }
                 break;
