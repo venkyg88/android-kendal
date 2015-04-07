@@ -19,31 +19,31 @@ public class ActionBar extends LinearLayout {
     public enum Config {
 
         //        back   drawer logo   feed,  search qty    cart   signin close  title
-        ABOUT    (false, true,  true,  false, false, false, true,  false, false, R.string.about_title),
-        ADDCARD  (true,  false, false, false, true,  false, true,  false, false, R.string.add_card_title),
+        ABOUT    (true,  false, true,  false, false, false, true,  false, false, R.string.about_title),
+        ADDCARD  (true,  false, false, false, false, false, false, false, false, R.string.add_card_title),
         ADDRESS  (true,  false, false, false, true,  false, true,  false, false, R.string.address_title),
-        BROWSE   (false, true,  true,  false, true,  false, true,  false, false, 0),
+        BROWSE   (true,  false, false, true,  true,  false, true,  false, false, R.string.browse_title),
         BUNDLE   (true,  false, false, true,  true,  false, true,  false, false, 0),
         CART     (true,  false, false, false, false, true,  false, false, false, R.string.cart_title),
         COGUEST  (true,  false, false, false, false, false, false, true,  false, R.string.guest_checkout_title),
         CONFIRM  (true,  false, false, false, false, false, true,  false, false, R.string.order_confirm_title),
         COREG    (true,  false, false, false, false, false, false, false, false, R.string.checkout_title),
         DEFAULT  (false, true,  true,  true,  true,  false, true,  false, false, 0),
-        FEED     (false, true,  false, false, true,  false, true,  false, false, R.string.personal_feed_title),
-        LINK     (false, true,  false, false, true,  false, true,  false, false, R.string.link_rewards_title),
-        LOGIN    (false, true,  false, false, true,  false, true,  false, false, R.string.login_title),
-        NOTIFY   (true,  false, true,  true,  true, false,  true,  false, false, 0),
-        ORDER    (false, true,  false, false, true,  false, true,  false, false, R.string.order_title),
-        PASSWORD (false, true,  false, false, true,  false, true,  false, false, R.string.password_reset),
-        PROFILE  (false, true,  false, false, true,  false, true,  false, false, R.string.profile_title),
+        FEED     (true,  false, false, false, true,  false, true,  false, false, R.string.personal_feed_title),
+        LINK     (true,  false, false, false, true,  false, true,  false, false, R.string.link_rewards_title),
+        LOGIN    (true,  false, false, false, true,  false, true,  false, false, R.string.login_title),
+        NOTIFY   (true,  false, false, true,  true,  false, true,  false, false, R.string.notify_prefs_title),
+        ORDER    (true,  false, false, false, true,  false, true,  false, false, R.string.order_title),
+        PASSWORD (true,  false, false, false, true,  false, true,  false, false, R.string.password_reset),
+        PROFILE  (true,  false, false, false, true,  false, true,  false, false, R.string.profile_title),
         QUERY    (true,  false, false, false, true,  false, true,  false, false, 0),
-        REWARDS  (false, true,  false, false, true,  false, true,  false, false, R.string.rewards_title),
-        SEARCH   (true,  false, false, false, true,  false, true,  false, false, 0),
-        SKU      (false, false, false, false, true,  false, true,  false, false, 0),
-        SKUSET   (false, false, false, false, false, false, false, false, false, R.string.sku_title),
-        STORE    (true,  false, false, false, false, false, true,  false, false, R.string.store_locator_title),
+        REWARDS  (true,  false, false, false, true,  false, true,  false, false, R.string.rewards_title),
+        SEARCH   (true,  false, false, true,  true,  false, true,  false, false, 0),
+        SKU      (true,  false, false, false, true,  false, true,  false, false, 0),
+        SKUSET   (true,  false, false, false, false, false, false, false, false, R.string.sku_title),
+        STORE    (true,  false, false, true,  true,  false, true,  false, false, R.string.store_locator_title),
         VIEWCARD (true,  false, false, false, true,  false, true,  false, false, R.string.credit_card_title),
-        WEEKLYAD (true,  false, false, false, true,  false, true,  false, false, R.string.weekly_ad_title);
+        WEEKLYAD (true,  false, false, true,  true,  false, true,  false, false, R.string.weekly_ad_title);
 
         private boolean back;
         private boolean drawer;

@@ -77,7 +77,8 @@ public class ConfiguratorFragment extends Fragment {
     private DeviceInfo deviceInfo;
 
     private int lastOrientation = Configuration.ORIENTATION_UNDEFINED;
-
+    private LayoutInflater layoutInflater;
+    private ViewGroup container;
     private View configFrameView;
     private LinearLayout configScrollLayout;
     private LinearLayout.LayoutParams subLayoutContainerLayoutParms;
@@ -113,8 +114,6 @@ public class ConfiguratorFragment extends Fragment {
     private int dItemHeight;
 
     private View.OnClickListener itemOnClickListener;
-
-    private boolean retryGetConfig = true;
 
     // Personalized Message Bar UI Elements
     private LinearLayout login_info_layout;
@@ -172,6 +171,8 @@ public class ConfiguratorFragment extends Fragment {
         configFrameView = layoutInflater.inflate(R.layout.config_frame, container, false);
 
         configScrollLayout = (LinearLayout) configFrameView.findViewById(R.id.configScrollLayout);
+
+        storeWrapper = (DataWrapper) configFrameView.findViewById(R.id.store_wrapper);
 
         subLayoutContainerLayoutParms =
                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, // width
@@ -1051,7 +1052,6 @@ public class ConfiguratorFragment extends Fragment {
     //////////////////////////////////////////////////////////////////////////////
     // Personalized Message Bar Methods created by Yongnan Zhou:
     private void getStoreInfo(){
-        storeWrapper = (DataWrapper) configFrameView.findViewById(R.id.store_wrapper);
         storeWrapper.setState(DataWrapper.State.LOADING);
 
         // Get current postal code

@@ -28,8 +28,8 @@ public class PriceSticker extends View {
     private static final NumberFormat format = NumberFormat.getCurrencyInstance();
 
     private Paint majorPaint;
-    private Paint unitPaint;
     private Paint wasPaint;
+    private Paint unitPaint;
 
     private int gravity;
     private int baseline;
@@ -90,18 +90,18 @@ public class PriceSticker extends View {
         majorPaint.setTextSize(majorTextSize);
         majorPaint.setColor(majorTextColor);
 
-        unitPaint = new Paint();
-        unitPaint.setAntiAlias(true);
-        unitPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-        unitPaint.setTextSize(minorTextSize);
-        unitPaint.setColor(minorTextColor);
-
         wasPaint = new Paint();
         wasPaint.setAntiAlias(true);
         wasPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
         wasPaint.setTextSize(minorTextSize);
         wasPaint.setColor(minorTextColor);
         wasPaint.setFlags(wasPaint.getFlags()|Paint.STRIKE_THRU_TEXT_FLAG);
+
+        unitPaint = new Paint();
+        unitPaint.setAntiAlias(true);
+        unitPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        unitPaint.setTextSize(minorTextSize);
+        unitPaint.setColor(minorTextColor);
 
         // Get metrics
         baseline = (int) -majorPaint.ascent();
@@ -162,14 +162,14 @@ public class PriceSticker extends View {
 
     private void measureWidths() {
         int width = 0;
-        if (wasPrice>0.0f) {
-            String text = format.format(wasPrice) + " ";
-            width += unitPaint.measureText(text, 0, text.length());
-        }
-        widths[0] = width;
         if (finalPrice>0.0f) {
             String text = format.format(finalPrice);
             width += majorPaint.measureText(text, 0, text.length());
+        }
+        widths[0] = width;
+        if (wasPrice>0.0f) {
+            String text = " " + format.format(wasPrice);
+            width += unitPaint.measureText(text, 0, text.length());
         }
         widths[1] = width;
         if (unit!=null) {
@@ -198,13 +198,13 @@ public class PriceSticker extends View {
         float y = getPaddingTop()+baseline;
 
         // Draw texts
-        if (wasPrice>0.0f) {
-            String text = format.format(wasPrice);
-            canvas.drawText(text, x, y, wasPaint);
-        }
         if (finalPrice>0.0f) {
             String text = format.format(finalPrice);
-            canvas.drawText(text, x+widths[0], y, majorPaint);
+            canvas.drawText(text, x, y, majorPaint);
+        }
+        if (wasPrice>0.0f) {
+            String text = " " + format.format(wasPrice);
+            canvas.drawText(text, x+widths[0], y, wasPaint);
         }
         if (unit!=null) {
             String text = " " + unit;

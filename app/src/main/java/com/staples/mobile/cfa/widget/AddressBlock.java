@@ -26,8 +26,8 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
     private static final int[] manualFields = {R.id.apartment, R.id.city, R.id.state, R.id.zipCode};
 
     public interface OnDoneListener {
-        public void onDone(AddressBlock addressBlock, boolean valid);
-        public void onNext(AddressBlock addressBlock);
+        void onDone(AddressBlock addressBlock, boolean valid);
+        void onNext(AddressBlock addressBlock);
     }
 
     private PlaceFieldView placeFieldView;
@@ -181,7 +181,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
 
     @Override
     public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-        boolean valid = false;
+        boolean valid;
         switch(actionId) {
             case EditorInfo.IME_ACTION_NEXT:
                 if (listener!=null) {
