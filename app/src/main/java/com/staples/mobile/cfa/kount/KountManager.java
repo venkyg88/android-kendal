@@ -15,7 +15,7 @@ import com.devicecollector.DeviceCollector;
 public class KountManager implements DeviceCollector.StatusListener {
     public static final String TAG = KountManager.class.getSimpleName();
 
-    private static final String KOUNT_MERCHANT_URL = "https://ssl.kaptcha.com";
+    private static final String KOUNT_MERCHANT_URL = "https://ssl.kaptcha.com/logo.htm";
     private static final String KOUNT_MERCHANT_ID = "101100"; //
 
     static KountManager instance;
