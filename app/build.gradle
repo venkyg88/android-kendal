@@ -14,18 +14,18 @@ android {
 
     defaultConfig {
         applicationId 'com.staples.mobile.cfa'
+        versionCode 8
     }
 
     productFlavors {
         qa {
-            versionName "Kendall-qa"
+            versionName "Kendall-qa-"+defaultConfig.versionCode
         }
         dev {
-            versionName "Kendall-dev"
+            versionName "Kendall-dev-"+defaultConfig.versionCode
         }
-
         prod {
-            versionName "Kendall-prod"
+            versionName "Kendall-prod-"+defaultConfig.versionCode
         }
     }
 
@@ -59,8 +59,9 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.squareup.retrofit:converter-jackson:1.9.0'
     compile 'com.squareup.picasso:picasso:2.4.0'
-    compile 'com.google.android.gms:play-services-location:6.5.87'
-    compile 'com.google.android.gms:play-services-maps:6.5.87'
+    compile 'com.google.android.gms:play-services-gcm:7.0.0'
+    compile 'com.google.android.gms:play-services-location:7.0.0'
+    compile 'com.google.android.gms:play-services-maps:7.0.0'
     compile 'com.crittercism:crittercism-android-agent:5.0.4'
     compile 'com.apptentive:apptentive-android:1.7.0@aar'
     compile(name: 'urbanairship-lib-5.1.5', ext: 'aar')

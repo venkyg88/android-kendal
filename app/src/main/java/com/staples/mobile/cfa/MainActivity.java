@@ -197,7 +197,7 @@ public class MainActivity extends Activity
             if (keyword!=null) {
                 String title = intent.getStringExtra(NotifyReceiver.EXTRA_TITLE);
                 if (title==null) title = getResources().getString(R.string.sku_notification_title);
-                selectSearch(keyword);
+                selectSearch(title, keyword);
             }
             return;
         }
@@ -590,9 +590,9 @@ public class MainActivity extends Activity
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
-    public boolean selectSearch(String keyword) {
+    public boolean selectSearch(String title, String keyword) {
         SearchFragment fragment = new SearchFragment();
-        fragment.setArguments(keyword, keyword);
+        fragment.setArguments(title, keyword);
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
