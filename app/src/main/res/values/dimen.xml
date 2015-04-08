@@ -18,7 +18,6 @@
     <dimen name="verticalspacing_16dp">16dp</dimen>   <!--part of style guide-->
     <dimen name="verticalspacing_48dp">48dp</dimen>   <!--part of style guide-->
     <dimen name="verticalspacing_56dp">56dp</dimen>   <!--part of style guide-->
-    <dimen name="margin_8dp">8dp</dimen>     <!--part of style guide-->
     <dimen name="margin_16dp">16dp</dimen>     <!--part of style guide-->
     <dimen name="margin_72dp">72dp</dimen>     <!--part of style guide-->
 
