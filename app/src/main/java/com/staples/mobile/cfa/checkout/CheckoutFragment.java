@@ -210,8 +210,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
                     // analytics (do this before resetting cart below!)
                     Tracker.getInstance().trackStateForOrderConfirmation(orderNumber,
-                            CartApiManager.getCart(), couponsRewardsAmount, paymentMethod,
-                            Tracker.ShipType.SHIPTOHOME);
+                            CartApiManager.getCart(), paymentMethod, Tracker.ShipType.SHIPTOHOME);
 
                     // reset cart since empty after successful order submission
                     CartApiManager.resetCart(); // reset cart since empty after successful order submission
