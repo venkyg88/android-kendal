@@ -201,7 +201,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
         private AddToCart(BundleItem item) {
             this.item = item;
-
             item.busy = true;
             adapter.notifyDataSetChanged();
             CartApiManager.addItemToCart(item.identifier, 1, this);
