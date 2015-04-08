@@ -194,19 +194,11 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
     private class AddToCart implements CartApiManager.CartRefreshCallback {
         private BundleItem item;
-        private View button;
-        private View whirlie;
 
-        private AddToCart(BundleItem item, View button) {
+        private AddToCart(BundleItem item) {
             this.item = item;
-            this.button = button;
-            View parent = (View) button.getParent();
-            whirlie = parent.findViewById(R.id.bundle_whirlie);
-
-            button.setVisibility(View.GONE);
-            whirlie.setVisibility(View.VISIBLE);
-            ((MainActivity)getActivity()).swallowTouchEvents(true);
-
+            item.busy = true;
+            adapter.notifyDataSetChanged();
             CartApiManager.addItemToCart(item.identifier, 1, this);
         }
 
@@ -215,9 +207,8 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
             MainActivity activity = (MainActivity) getActivity();
             if (activity == null) return;
 
-            button.setVisibility(View.VISIBLE);
-            whirlie.setVisibility(View.GONE);
-            ((MainActivity)getActivity()).swallowTouchEvents(false);
+            item.busy = false;
+            adapter.notifyDataSetChanged();
 
             // if success
             if (errMsg == null) {
@@ -249,7 +240,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
-                    new AddToCart(item, view);
+                    new AddToCart(item);
                     Tracker.getInstance().trackActionForAddToCartFromSearchResults(item.identifier, item.finalPrice, 1);
                 }
                 break;

@@ -56,6 +56,7 @@ public class BundleItem {
     public boolean isOverSized;
     public float rebatePrice;
     public String rebateIndicator;
+    public boolean busy;
 
     public BundleItem(int index, String title, String identifier) {
         this.index = index;

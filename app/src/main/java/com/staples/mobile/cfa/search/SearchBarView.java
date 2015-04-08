@@ -285,7 +285,7 @@ public class SearchBarView extends LinearLayout implements View.OnClickListener,
 
         Toast.makeText(activity, "Searching " + keyword + "...", Toast.LENGTH_SHORT).show();
         adapter.pushRecentKeyword(keyword);
-        activity.selectSearch(keyword);
+        activity.selectSearch(keyword, keyword);
     }
 
     public void saveSearchHistory() {

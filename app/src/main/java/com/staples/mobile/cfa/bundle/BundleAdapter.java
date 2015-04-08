@@ -35,11 +35,12 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         private TextView title;
         private RatingStars ratingStars;
         private PriceSticker priceSticker;
-        private ImageView action;
         private LinearLayout overweightLayout;
         private LinearLayout addonLayout;
         private LinearLayout rebateLayout;
         private TextView rebateText;
+        private ImageView action;
+        private View whirlie;
 
         private ViewHolder(View view) {
             super(view);
@@ -47,11 +48,12 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             title = (TextView) view.findViewById(R.id.title);
             ratingStars = (RatingStars) view.findViewById(R.id.rating);
             priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
-            action = (ImageView) view.findViewById(R.id.bundle_action);
             overweightLayout = (LinearLayout) view.findViewById(R.id.overweight_layout);
             addonLayout = (LinearLayout) view.findViewById(R.id.add_on_layout);
             rebateLayout = (LinearLayout) view.findViewById(R.id.rebate_layout);
             rebateText = (TextView)view.findViewById(R.id.rebate_text);
+            action = (ImageView) view.findViewById(R.id.bundle_action);
+            whirlie = view.findViewById(R.id.bundle_whirlie);
         }
     }
 
@@ -126,6 +128,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
 
         // check if the product is an overweight product, example sku:650465
         vh.overweightLayout.setVisibility((item.isOverSized)? View.VISIBLE  : View.GONE);
+
     }
 
     public void clear() {

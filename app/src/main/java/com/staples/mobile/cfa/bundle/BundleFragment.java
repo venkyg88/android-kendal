@@ -105,7 +105,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.BUNDLE, title);
-        Tracker.getInstance().trackStateForShopByCategory(); // Analytics
     }
 
     private void query() {
@@ -199,19 +198,12 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
     private class AddToCart implements CartApiManager.CartRefreshCallback {
         private BundleItem item;
-        private View button;
-        private View whirlie;
 
-        private AddToCart(BundleItem item, View button) {
+        private AddToCart(BundleItem item) {
             this.item = item;
-            this.button = button;
-            View parent = (View) button.getParent();
-            whirlie = parent.findViewById(R.id.bundle_whirlie);
 
-            button.setVisibility(View.GONE);
-            whirlie.setVisibility(View.VISIBLE);
-            ((MainActivity)getActivity()).swallowTouchEvents(true);
-
+            item.busy = true;
+            adapter.notifyDataSetChanged();
             CartApiManager.addItemToCart(item.identifier, 1, this);
         }
 
@@ -220,9 +212,8 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
             MainActivity activity = (MainActivity) getActivity();
             if (activity == null) return;
 
-            button.setVisibility(View.VISIBLE);
-            whirlie.setVisibility(View.GONE);
-            ((MainActivity)getActivity()).swallowTouchEvents(false);
+            item.busy = false;
+            adapter.notifyDataSetChanged();
 
             // if success
             if (errMsg == null) {
@@ -259,8 +250,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                         final MainActivity activity = (MainActivity) getActivity();
                         activity.selectSkuItem(item.title, item.identifier, false);
                     } else {
-                        final MainActivity activity = (MainActivity) getActivity();
-                        new AddToCart(item, view);
+                        new AddToCart(item);
                         Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
                     }
                 }
