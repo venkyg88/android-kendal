@@ -18,13 +18,14 @@
     <dimen name="verticalspacing_16dp">16dp</dimen>   <!--part of style guide-->
     <dimen name="verticalspacing_48dp">48dp</dimen>   <!--part of style guide-->
     <dimen name="verticalspacing_56dp">56dp</dimen>   <!--part of style guide-->
+    <dimen name="margin_8dp">8dp</dimen>     <!--part of style guide-->
     <dimen name="margin_16dp">16dp</dimen>     <!--part of style guide-->
     <dimen name="margin_72dp">72dp</dimen>     <!--part of style guide-->
 
     <dimen name="action_bar_half_margin">8dp</dimen>
     <dimen name="action_bar_quarter_margin">4dp</dimen>
     <dimen name="min_grid_width">180dp</dimen>
-    <dimen name="fixed_grid_tall_height">224dp</dimen>
+    <dimen name="fixed_grid_tall_height">260dp</dimen>
     <dimen name="fixed_grid_wide_height">120dp</dimen>
     <dimen name="image_square_size">80dp</dimen>
     <dimen name="horizontal_divider_thickness">1dp</dimen>

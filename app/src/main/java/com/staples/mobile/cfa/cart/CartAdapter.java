@@ -129,7 +129,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             ciVh.titleTextView.setText(cartItem.getDescription());
 
             // Set price
-            ciVh.priceSticker.setPricing(cartItem.getOrderItemPrice(), cartItem.getListPrice(), cartItem.getPriceUnitOfMeasure());
+            ciVh.priceSticker.setPricing(cartItem.getOrderItemPrice(), cartItem.getListPrice(), cartItem.getPriceUnitOfMeasure(), null);
 
             // associate position with each widget (position of card, and position within group)
             CartItemPosition pos = new CartItemPosition(position, i);

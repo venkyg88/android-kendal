@@ -44,6 +44,7 @@
     <string name="sort_price_descending">Price</string>
     <string name="sort_title_ascending">Name A–Z</string>
     <string name="sort_title_descending">Name Z–A</string>
+    <string name="rebate_text">*Price before rebate</string>
 
     <!-- Notifications -->
     <string name="notify_prefs_title">Notification Preferences</string>

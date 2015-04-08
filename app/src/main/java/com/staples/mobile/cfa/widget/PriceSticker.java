@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.View;
 
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.common.access.easyopen.model.browse.Discount;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -39,6 +40,7 @@ public class PriceSticker extends View {
     private float finalPrice;
     private float wasPrice;
     private String unit;
+    private String rebateIndicator;
 
     public PriceSticker(Context context) {
         this(context, null, 0);
@@ -109,10 +111,11 @@ public class PriceSticker extends View {
         widths = new int[3];
     }
 
-    public void setPricing(float finalPrice, float wasPrice, String unit) { // TODO old code
+    public void setPricing(float finalPrice, float wasPrice, String unit, String rebateIndicator) { // TODO old code
         this.finalPrice = finalPrice;
         this.wasPrice = wasPrice;
         this.unit = unit;
+        if(rebateIndicator!=null) this.rebateIndicator = rebateIndicator;
         if (this.unit!=null && this.unit.isEmpty()) this.unit = null;
         invalidate();
     }
@@ -165,6 +168,9 @@ public class PriceSticker extends View {
         if (finalPrice>0.0f) {
             String text = format.format(finalPrice);
             width += majorPaint.measureText(text, 0, text.length());
+            if(rebateIndicator!=null) {
+                width += majorPaint.measureText(rebateIndicator, 0, rebateIndicator.length());
+            }
         }
         widths[0] = width;
         if (wasPrice>0.0f) {
@@ -200,6 +206,9 @@ public class PriceSticker extends View {
         // Draw texts
         if (finalPrice>0.0f) {
             String text = format.format(finalPrice);
+            if(rebateIndicator!=null) {
+                text += rebateIndicator;
+            }
             canvas.drawText(text, x, y, majorPaint);
         }
         if (wasPrice>0.0f) {

@@ -3,8 +3,8 @@
     android:id="@+id/bundle_item"
     android:layout_width="match_parent"
     android:layout_height="@dimen/fixed_grid_tall_height"
-    android:paddingLeft="@dimen/margin_16dp"
-    android:paddingRight="@dimen/margin_16dp"
+    android:paddingLeft="@dimen/margin_8dp"
+    android:paddingRight="@dimen/margin_8dp"
     android:background="@color/staples_white">
     <ImageView
         android:id="@+id/image"
@@ -78,11 +78,36 @@
         style="@style/SmallPriceSticker"
         android:layout_below="@+id/shipping_logic_layout"
         android:layout_marginTop="@dimen/elevation_high"/>
+    <LinearLayout
+        android:id="@+id/rebate_layout"
+        android:layout_below="@+id/pricing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rebate_text"
+            android:textColor="@color/staples_dark_gray"
+            android:paddingBottom="@dimen/action_bar_half_margin"
+            android:textSize="@dimen/fontsize_10sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rebate_text"
+            android:textColor="@color/staples_white"
+            android:paddingTop="@dimen/action_bar_quarter_margin"
+            android:paddingLeft="@dimen/left_margin"
+            android:paddingRight="@dimen/right_margin"
+            android:paddingBottom="@dimen/action_bar_quarter_margin"
+            android:background="@drawable/rounded_corner"/>
+    </LinearLayout>
     <com.staples.mobile.cfa.widget.RatingStars
         android:id="@+id/rating"
         style="@style/SmallRatingStars"
-        android:layout_below="@+id/pricing"
-        android:layout_marginTop="@dimen/elevation_high"/>
+        android:layout_below="@+id/rebate_layout"
+        android:layout_marginTop="@dimen/verticalspacing_8dp"/>
     <ImageView
         android:id="@+id/bundle_action"
         android:layout_width="wrap_content"

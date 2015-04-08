@@ -206,10 +206,11 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
             this.item = item;
             this.button = button;
             View parent = (View) button.getParent();
-            whirlie = parent.findViewById(R.id.bundle_action);
+            whirlie = parent.findViewById(R.id.bundle_whirlie);
 
             button.setVisibility(View.GONE);
             whirlie.setVisibility(View.VISIBLE);
+            ((MainActivity)getActivity()).swallowTouchEvents(true);
 
             CartApiManager.addItemToCart(item.identifier, 1, this);
         }
@@ -221,11 +222,11 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
             button.setVisibility(View.VISIBLE);
             whirlie.setVisibility(View.GONE);
+            ((MainActivity)getActivity()).swallowTouchEvents(false);
 
             // if success
             if (errMsg == null) {
                 ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
-                activity.showNotificationBanner(R.string.cart_updated_msg);
                 Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
             } else {
                 // if non-grammatical out-of-stock message from api, provide a nicer message
@@ -258,6 +259,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                         final MainActivity activity = (MainActivity) getActivity();
                         activity.selectSkuItem(item.title, item.identifier, false);
                     } else {
+                        final MainActivity activity = (MainActivity) getActivity();
                         new AddToCart(item, view);
                         Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
                     }

@@ -54,6 +54,8 @@ public class BundleItem {
     public int customerCount;
     public boolean isAddOnItem;
     public boolean isOverSized;
+    public float rebatePrice;
+    public String rebateIndicator;
 
     public BundleItem(int index, String title, String identifier) {
         this.index = index;
@@ -82,9 +84,27 @@ public class BundleItem {
                 this.finalPrice = finalPrice;
                 wasPrice = pricing.getListPrice();
                 unit = pricing.getUnitOfMeasure();
+                List<Discount> discounts = pricing.getDiscount();
+                if (discounts != null)
+                    for (Discount discount : discounts) {
+                        if (discount.getName().equals("rebate")) {
+                            rebateIndicator = "*";
+                        }
+                    }
                 return(this.finalPrice);
             }
         }
+        return(null);
+    }
+
+    public Float setRebatePrice(List<Discount> discounts) {
+        if (discounts == null) return (null);
+            for (Discount discount : discounts) {
+                if (discount.getName().equals("rebate")) {
+                    this.rebatePrice = discount.getAmount();
+                    return (this.rebatePrice);
+                }
+            }
         return(null);
     }
 
