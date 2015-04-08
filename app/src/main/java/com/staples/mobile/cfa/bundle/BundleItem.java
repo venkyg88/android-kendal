@@ -54,6 +54,7 @@ public class BundleItem {
     public int customerCount;
     public boolean isAddOnItem;
     public boolean isOverSized;
+    public boolean busy;
 
     public BundleItem(int index, String title, String identifier) {
         this.index = index;

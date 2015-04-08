@@ -33,9 +33,10 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         private TextView title;
         private RatingStars ratingStars;
         private PriceSticker priceSticker;
-        private ImageView action;
         private LinearLayout overweightLayout;
         private LinearLayout addonLayout;
+        private ImageView action;
+        private View whirlie;
 
         private ViewHolder(View view) {
             super(view);
@@ -43,9 +44,10 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             title = (TextView) view.findViewById(R.id.title);
             ratingStars = (RatingStars) view.findViewById(R.id.rating);
             priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
-            action = (ImageView) view.findViewById(R.id.bundle_action);
             overweightLayout = (LinearLayout) view.findViewById(R.id.overweight_layout);
             addonLayout = (LinearLayout) view.findViewById(R.id.add_on_layout);
+            action = (ImageView) view.findViewById(R.id.bundle_action);
+            whirlie = view.findViewById(R.id.bundle_whirlie);
         }
     }
 
@@ -107,14 +109,18 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         vh.title.setText(item.title);
         vh.ratingStars.setRating(item.customerRating, item.customerCount);
         vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit);
-        if (item.type==IdentifierType.SKUSET) vh.action.setImageResource(R.drawable.ic_more_vert_black);
-        else vh.action.setImageResource(R.drawable.ic_add_shopping_cart_black);
-
-        // check if the product is an add-on product
-        vh.addonLayout.setVisibility((item.isAddOnItem)? View.VISIBLE : View.GONE);
-
-        // check if the product is an overweight product, example sku:650465
-        vh.overweightLayout.setVisibility((item.isOverSized)? View.VISIBLE  : View.GONE);
+        vh.addonLayout.setVisibility((item.isAddOnItem) ? View.VISIBLE : View.GONE);
+        vh.overweightLayout.setVisibility((item.isOverSized) ? View.VISIBLE : View.GONE);
+        if (item.busy) {
+            vh.action.setVisibility(View.GONE);
+            vh.whirlie.setVisibility(View.VISIBLE);
+        } else {
+            vh.action.setVisibility(View.VISIBLE);
+            if (item.type == IdentifierType.SKUSET)
+                vh.action.setImageResource(R.drawable.ic_more_vert_black);
+            else vh.action.setImageResource(R.drawable.ic_add_shopping_cart_black);
+            vh.whirlie.setVisibility(View.GONE);
+       }
     }
 
     public void clear() {
