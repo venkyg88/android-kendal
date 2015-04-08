@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -40,7 +41,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         private LinearLayout rebateLayout;
         private TextView rebateText;
         private ImageView action;
-        private View whirlie;
+        private ProgressBar whirlie;
 
         private ViewHolder(View view) {
             super(view);
@@ -53,7 +54,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             rebateLayout = (LinearLayout) view.findViewById(R.id.rebate_layout);
             rebateText = (TextView)view.findViewById(R.id.rebate_text);
             action = (ImageView) view.findViewById(R.id.bundle_action);
-            whirlie = view.findViewById(R.id.bundle_whirlie);
+            whirlie = (ProgressBar)view.findViewById(R.id.bundle_whirlie);
         }
     }
 
@@ -118,6 +119,8 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         if(item.rebatePrice != 0.0f) {
             vh.rebateLayout.setVisibility(View.VISIBLE);
             vh.rebateText.setText(format.format(item.rebatePrice) + " Rebate");
+        } else {
+            vh.rebateLayout.setVisibility(View.GONE);
         }
 
         if (item.type==IdentifierType.SKUSET) vh.action.setImageResource(R.drawable.ic_more_vert_black);
