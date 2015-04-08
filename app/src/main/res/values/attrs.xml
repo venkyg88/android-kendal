@@ -36,10 +36,4 @@
         <attr name="barcodeHeight" format="dimension"/>
         <attr name="barcodeColor" format="color"/>
     </declare-styleable>
-    <declare-styleable name="RebateSticker">
-        <attr name="labelColor" format="color"/>
-        <attr name="stickerColor" format="color"/>
-        <attr name="android:textSize" />
-        <attr name="android:text"/>
-    </declare-styleable>
 </resources>

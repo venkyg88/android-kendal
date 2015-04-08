@@ -3,14 +3,12 @@ package com.staples.mobile.cfa.search;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.staples.mobile.cfa.MainActivity;
