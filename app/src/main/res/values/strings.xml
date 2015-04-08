@@ -72,14 +72,6 @@
     <string name="store_close">Close</string>
     <string name="no_store">Find A Store Near You</string>
 
-    <!--Shipping Logic-->
-    <string name="overweight">OVERSIZED</string>
-	<string name="oversized_shipping_fee">Oversized shipping fee</string>
-	<string name="minimum_all_caps">MINIMUM</string>
-	<string name="add_on">$25 MINIMUM</string>
-    <string name="overweight_warming">Additional shipping fees apply</string>
-	<string name="add_on_warming">$25 minimum in your order to ship</string>
-
     <!--cart, coupon/reward, checkout -->
     <string name="add">ADD</string>
     <string name="cartitem_qty_label">Qty</string>
@@ -207,12 +199,24 @@
     <string name="carrier">Carrier</string>
     <string name="no_detailed_tracking">Sorry, detailed tracking information is not available</string>
 
+    <!--SKU-->
     <string name="description">Description</string>
     <string name="specifications">Specifications</string>
     <string name="specs">Specs</string>
     <string name="reviews">Reviews</string>
-    <string name="accessories">Accessories</string>
+    <string name="accessories">ACCESSORIES</string>
     <string name="remove">REMOVE</string>
+    <string name="description_detail">FULL DESCRIPTION</string>
+    <string name="specifications_detail">FULL SPECIFICATIONS</string>
+    <string name="reviews_detail">ALL REVIEWS</string>
+
+    <!--Shipping Logic-->
+    <string name="overweight">OVERSIZED</string>
+    <string name="oversized_shipping_fee">Oversized shipping fee</string>
+    <string name="minimum_all_caps">MINIMUM</string>
+    <string name="add_on">$25 MINIMUM</string>
+    <string name="overweight_warming">Additional shipping fees apply</string>
+    <string name="add_on_warming">$25 minimum to ship</string>
 
     <!-- Availability -->
     <string name="avail_nothing">Product not found</string>

@@ -2,6 +2,10 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/sku_hori_padding"
-    android:ellipsize="end">
+    android:textSize="@dimen/fontsize_16sp"
+    android:paddingBottom="@dimen/sku_padding_10"
+    android:paddingLeft="@dimen/sku_padding_10"
+    android:paddingRight="@dimen/sku_padding_10"
+    android:ellipsize="end"
+    android:textColor="@color/staples_black">
 </TextView>
