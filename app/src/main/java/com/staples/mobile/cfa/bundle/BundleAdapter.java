@@ -41,7 +41,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         private LinearLayout rebateLayout;
         private TextView rebateText;
         private ImageView action;
-        private ProgressBar whirlie;
+        private View whirlie;
 
         private ViewHolder(View view) {
             super(view);
@@ -54,7 +54,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             rebateLayout = (LinearLayout) view.findViewById(R.id.rebate_layout);
             rebateText = (TextView)view.findViewById(R.id.rebate_text);
             action = (ImageView) view.findViewById(R.id.bundle_action);
-            whirlie = (ProgressBar)view.findViewById(R.id.bundle_whirlie);
+            whirlie = view.findViewById(R.id.bundle_whirlie);
         }
     }
 
