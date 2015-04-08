@@ -23,7 +23,7 @@
         android:paddingLeft="@dimen/margin_16dp"
         android:paddingRight="@dimen/margin_16dp"
         android:paddingTop="@dimen/verticalspacing_8dp"
-        android:paddingBottom="@dimen/margin_16dp"
+        android:paddingBottom="@dimen/verticalspacing_8dp"
         android:background="@color/staples_middle_gray">
 
     <!--&lt;!&ndash; delivery range &ndash;&gt;-->
@@ -41,28 +41,28 @@
             <!--/>-->
 
         <!-- coupons & rewards -->
-        <TextView
-            style="@style/CheckoutFooter"
-            android:layout_width="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:padding="0dp"
-            android:text="@string/coupons_rewards"
-            android:textColor="@color/staples_black" />
-        <TextView
-            android:id="@+id/checkout_coupons_rewards"
-            style="@style/CheckoutFooter"
-            android:layout_width="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:padding="0dp"
-            android:textColor="@color/staples_black" />
+        <!--<TextView-->
+            <!--style="@style/CheckoutFooter"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:padding="0dp"-->
+            <!--android:text="@string/coupons_rewards"-->
+            <!--android:textColor="@color/staples_black" />-->
+        <!--<TextView-->
+            <!--android:id="@+id/checkout_coupons_rewards"-->
+            <!--style="@style/CheckoutFooter"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:padding="0dp"-->
+            <!--android:textColor="@color/staples_black" />-->
 
         <!-- item subtotal -->
         <TextView
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
-            android:layout_below="@id/checkout_coupons_rewards"
+            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:padding="0dp"
             android:text="@string/item_subtotal"
@@ -73,7 +73,7 @@
             android:id="@+id/checkout_item_subtotal"
             style="@style/CheckoutFooter"
             android:layout_width="wrap_content"
-            android:layout_below="@id/checkout_coupons_rewards"
+            android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:padding="0dp"
             android:textColor="@color/staples_black"
