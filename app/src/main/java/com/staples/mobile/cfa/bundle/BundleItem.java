@@ -89,6 +89,7 @@ public class BundleItem {
                 if (discounts != null)
                     for (Discount discount : discounts) {
                         if (discount.getName().equals("rebate")) {
+                            this.finalPrice += discount.getAmount();
                             rebateIndicator = "*";
                         }
                     }
