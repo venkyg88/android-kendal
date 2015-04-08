@@ -118,9 +118,12 @@
         android:paddingBottom="@dimen/action_bar_half_margin"/>
     <ProgressBar
         android:id="@+id/bundle_whirlie"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/verticalspacing_48dp"
+        android:layout_height="@dimen/verticalspacing_48dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:paddingRight="@dimen/action_bar_half_margin"
+        android:paddingBottom="@dimen/action_bar_half_margin"
+        android:paddingLeft="@dimen/action_bar_half_margin"
         android:visibility="gone"/>
 </RelativeLayout>

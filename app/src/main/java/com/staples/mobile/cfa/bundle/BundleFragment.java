@@ -200,8 +200,11 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         private BundleItem item;
 
         private AddToCart(BundleItem item) {
+            MainActivity activity = (MainActivity) getActivity();
             this.item = item;
             item.busy = true;
+            activity.swallowTouchEvents(true);
+
             adapter.notifyDataSetChanged();
             CartApiManager.addItemToCart(item.identifier, 1, this);
         }
@@ -210,7 +213,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         public void onCartRefreshComplete(String errMsg) {
             MainActivity activity = (MainActivity) getActivity();
             if (activity == null) return;
-
+            activity.swallowTouchEvents(false);
             item.busy = false;
             adapter.notifyDataSetChanged();
 

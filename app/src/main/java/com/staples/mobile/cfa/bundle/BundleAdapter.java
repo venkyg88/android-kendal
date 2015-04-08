@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.IdentifierType;
+import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PriceSticker;
@@ -121,6 +122,13 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             vh.rebateText.setText(format.format(item.rebatePrice) + " Rebate");
         } else {
             vh.rebateLayout.setVisibility(View.GONE);
+        }
+        if (item.busy) {
+            vh.action.setVisibility(View.GONE);
+            vh.whirlie.setVisibility(View.VISIBLE);
+        } else {
+            vh.action.setVisibility(View.VISIBLE);
+            vh.whirlie.setVisibility(View.GONE);
         }
 
         if (item.type==IdentifierType.SKUSET) vh.action.setImageResource(R.drawable.ic_more_vert_black);

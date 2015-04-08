@@ -194,8 +194,11 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         private BundleItem item;
 
         private AddToCart(BundleItem item) {
+            MainActivity activity = (MainActivity) getActivity();
             this.item = item;
             item.busy = true;
+            activity.swallowTouchEvents(true);
+
             adapter.notifyDataSetChanged();
             CartApiManager.addItemToCart(item.identifier, 1, this);
         }
@@ -206,6 +209,8 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
             if (activity == null) return;
 
             item.busy = false;
+            activity.swallowTouchEvents(false);
+
             adapter.notifyDataSetChanged();
 
             // if success
