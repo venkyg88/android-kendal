@@ -261,7 +261,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                                     String price = data.getPrice().substring(1);
                                     try {
                                         float priceValue = Float.parseFloat(price);
-                                        Tracker.getInstance().trackActionForAddToCartFromClass(data.getRetailerproductcode(), priceValue, 1);
+                                        Tracker.getInstance().trackActionForAddToCartFromWeeklyAd(data.getRetailerproductcode(), priceValue, 1);
                                     } catch (NumberFormatException e) {}
                                 }
                             } else {
