@@ -108,6 +108,7 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
         if (client!=null) {
             Location latest = LocationServices.FusedLocationApi.getLastLocation(client);
             if ((latest != null) && latest != location) {
+                Tracker.getInstance().trackLocation(latest); // analytics
                 location = latest;
                 if (geocoder != null) {
                     new Resolver().start();

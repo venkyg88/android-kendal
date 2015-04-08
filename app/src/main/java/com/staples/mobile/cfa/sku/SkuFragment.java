@@ -446,6 +446,7 @@ Callback,
             accessoryImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Tracker.getInstance().trackActionForProductAccessories(accessory); // analytics
                     activity.selectSkuItem(accessoryTitle, sku, false);
                 }
             });
