@@ -134,7 +134,8 @@ public class ProfileDetails implements Callback<MemberDetail> {
                     member = memberUnderConstruction;
                 }
                 if (callback != null) {
-                    Tracker.getInstance().setProfileInfo(member.getEmailAddress(), member.getRewardsNumber()); // update analytics header info
+                    Tracker.getInstance().setProfileInfo(member.getEmailAddress(),
+                            member.getRewardsNumber(), member.getCustomerTier()); // update analytics header info
                     callback.onProfileRefresh(member, null);
                 }
             }
