@@ -186,7 +186,7 @@
         <item name="majorTextSize">@dimen/fontsize_34sp</item>
         <item name="majorTextColor">@color/staples_red</item>
         <item name="minorTextSize">@dimen/fontsize_24sp</item>
-        <item name="minorTextColor">@color/staples_middle_gray</item>
+        <item name="minorTextColor">@color/staples_dark_gray</item>
         <item name="android:gravity">center</item>
     </style>
     <style name="SmallPriceSticker">
@@ -195,7 +195,7 @@
         <item name="majorTextSize">@dimen/fontsize_18sp</item>
         <item name="majorTextColor">@color/staples_red</item>
         <item name="minorTextSize">@dimen/fontsize_12sp</item>
-        <item name="minorTextColor">@color/staples_middle_gray</item>
+        <item name="minorTextColor">@color/staples_dark_gray</item>
     </style>
 
     <style name="LargeRatingStars">

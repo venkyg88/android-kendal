@@ -44,6 +44,7 @@
     <string name="sort_price_descending">Price</string>
     <string name="sort_title_ascending">Name A–Z</string>
     <string name="sort_title_descending">Name Z–A</string>
+    <string name="rebate_text">*Price before rebate</string>
 
     <!-- Notifications -->
     <string name="notify_prefs_title">Notification Preferences</string>
@@ -102,7 +103,7 @@
     <string name="required_fields">Please fill in required fields</string>
     <string name="billing_addr">Billing Address</string>
     <string name="use_as_billing_addr">Use above as billing address</string>
-    <string name="item_subtotal">Subtotal</string>
+    <string name="item_subtotal">Subtotal (including coupons)</string>
     <string name="coupons_rewards">Coupons &amp; Rewards</string>
     <string name="coupon_code_hint">Add Coupon Code here</string>
     <string name="redeemable_rewards">Redeemable Rewards</string>

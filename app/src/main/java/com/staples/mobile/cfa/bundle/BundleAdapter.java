@@ -10,16 +10,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.IdentifierType;
+import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,6 +30,7 @@ import java.util.List;
 
 public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder> implements DataWrapper.Layoutable {
     private static final String TAG = "BundleAdapter";
+    private static final NumberFormat format = NumberFormat.getCurrencyInstance();
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView image;
@@ -35,6 +39,8 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         private PriceSticker priceSticker;
         private LinearLayout overweightLayout;
         private LinearLayout addonLayout;
+        private LinearLayout rebateLayout;
+        private TextView rebateText;
         private ImageView action;
         private View whirlie;
 
@@ -46,6 +52,8 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
             overweightLayout = (LinearLayout) view.findViewById(R.id.overweight_layout);
             addonLayout = (LinearLayout) view.findViewById(R.id.add_on_layout);
+            rebateLayout = (LinearLayout) view.findViewById(R.id.rebate_layout);
+            rebateText = (TextView)view.findViewById(R.id.rebate_text);
             action = (ImageView) view.findViewById(R.id.bundle_action);
             whirlie = view.findViewById(R.id.bundle_whirlie);
         }
@@ -108,19 +116,30 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         else Picasso.with(context).load(item.imageUrl).error(noPhoto).into(vh.image);
         vh.title.setText(item.title);
         vh.ratingStars.setRating(item.customerRating, item.customerCount);
-        vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit);
-        vh.addonLayout.setVisibility((item.isAddOnItem) ? View.VISIBLE : View.GONE);
-        vh.overweightLayout.setVisibility((item.isOverSized) ? View.VISIBLE : View.GONE);
+        vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, item.rebateIndicator);
+        if(item.rebatePrice != 0.0f) {
+            vh.rebateLayout.setVisibility(View.VISIBLE);
+            vh.rebateText.setText(format.format(item.rebatePrice) + " Rebate");
+        } else {
+            vh.rebateLayout.setVisibility(View.GONE);
+        }
         if (item.busy) {
             vh.action.setVisibility(View.GONE);
             vh.whirlie.setVisibility(View.VISIBLE);
         } else {
             vh.action.setVisibility(View.VISIBLE);
-            if (item.type == IdentifierType.SKUSET)
-                vh.action.setImageResource(R.drawable.ic_more_vert_black);
-            else vh.action.setImageResource(R.drawable.ic_add_shopping_cart_black);
             vh.whirlie.setVisibility(View.GONE);
-       }
+        }
+
+        if (item.type==IdentifierType.SKUSET) vh.action.setImageResource(R.drawable.ic_more_vert_black);
+        else vh.action.setImageResource(R.drawable.ic_add_shopping_cart_black);
+
+        // check if the product is an add-on product
+        vh.addonLayout.setVisibility((item.isAddOnItem)? View.VISIBLE : View.GONE);
+
+        // check if the product is an overweight product, example sku:650465
+        vh.overweightLayout.setVisibility((item.isOverSized)? View.VISIBLE  : View.GONE);
+
     }
 
     public void clear() {
@@ -134,6 +153,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             BundleItem item = new BundleItem(array.size(), name, product.getSku());
             item.setImageUrl(product.getImage());
             item.setPrice(product.getPricing());
+            item.setRebatePrice(product.getPricing().get(0).getDiscount());
             item.customerRating = product.getCustomerReviewRating();
             item.customerCount = product.getCustomerReviewCount();
 

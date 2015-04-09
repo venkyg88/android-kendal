@@ -511,6 +511,11 @@ public class MainActivity extends Activity
         mainLayout.showOverlay(false);
     }
 
+    public void swallowTouchEvents(boolean swallow) {
+        mainLayout.swallowTouchEvents(swallow);
+    }
+
+
     // Navigation
     public boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
         return selectFragment(fragment, transition, push, null);

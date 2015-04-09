@@ -41,6 +41,10 @@ public class LinearLayoutWithOverlay extends LinearLayout {
         this.swallowTouchEvents = showIndicator;
     }
 
+    public void swallowTouchEvents(boolean swallow) {
+        this.swallowTouchEvents = swallow;
+    }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (swallowTouchEvents && onSwallowedClickListener != null) {
