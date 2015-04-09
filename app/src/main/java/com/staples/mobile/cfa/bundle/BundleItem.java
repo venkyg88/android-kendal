@@ -92,10 +92,10 @@ public class BundleItem {
                             if(discount.getAmount() != 0.0f) {
                                 this.finalPrice += discount.getAmount();
                                 rebateIndicator = "*";
+                                return(this.finalPrice);
                             }
                         }
                     }
-                return(this.finalPrice);
             }
         }
         return(null);
@@ -107,8 +107,9 @@ public class BundleItem {
                 if (discount.getName().equals("rebate")) {
                     if(discount.getAmount() != 0.0f) {
                         this.rebatePrice = discount.getAmount();
+                        return (this.rebatePrice);
                     }
-                    return (this.rebatePrice);
+
                 }
             }
         return(null);
