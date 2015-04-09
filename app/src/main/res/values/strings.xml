@@ -197,6 +197,7 @@
     <string name="cc_encryption_failure">Credit card encryption failed</string>
     <string name="all_fields_required">All fields are required. Please fill and try again</string>
     <string name="card_ending_in">Card ending in</string>
+    <string name="shipping_billing_text">Shipping/Billing</string>
 
     <!-- Orders -->
     <string name="order">Order</string>
