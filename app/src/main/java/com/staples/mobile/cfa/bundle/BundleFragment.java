@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
@@ -48,6 +47,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     private BundleItem.SortType fetchSort;
     private BundleItem.SortType displaySort;
     private String title;
+    RecyclerView list;
 
     public void setArguments(String title, String identifier) {
         Bundle args = new Bundle();
@@ -75,7 +75,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Activity activity = getActivity();
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
-        RecyclerView list = (RecyclerView) view.findViewById(R.id.products);
+        list = (RecyclerView) view.findViewById(R.id.products);
         list.setLayoutManager(new GridLayoutManager(activity, 1));
         list.addItemDecoration(new HorizontalDivider(activity));
 
@@ -200,8 +200,11 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         private BundleItem item;
 
         private AddToCart(BundleItem item) {
+            MainActivity activity = (MainActivity) getActivity();
             this.item = item;
             item.busy = true;
+            activity.swallowTouchEvents(true);
+
             adapter.notifyDataSetChanged();
             CartApiManager.addItemToCart(item.identifier, 1, this);
         }
@@ -210,14 +213,13 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         public void onCartRefreshComplete(String errMsg) {
             MainActivity activity = (MainActivity) getActivity();
             if (activity == null) return;
-
+            activity.swallowTouchEvents(false);
             item.busy = false;
             adapter.notifyDataSetChanged();
 
             // if success
             if (errMsg == null) {
                 ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
-                activity.showNotificationBanner(R.string.cart_updated_msg);
                 Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
             } else {
                 // if non-grammatical out-of-stock message from api, provide a nicer message

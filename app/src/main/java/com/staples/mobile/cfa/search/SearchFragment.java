@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.staples.mobile.cfa.MainActivity;
@@ -195,8 +194,11 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         private BundleItem item;
 
         private AddToCart(BundleItem item) {
+            MainActivity activity = (MainActivity) getActivity();
             this.item = item;
             item.busy = true;
+            activity.swallowTouchEvents(true);
+
             adapter.notifyDataSetChanged();
             CartApiManager.addItemToCart(item.identifier, 1, this);
         }
@@ -207,12 +209,15 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
             if (activity == null) return;
 
             item.busy = false;
+            activity.swallowTouchEvents(false);
+
             adapter.notifyDataSetChanged();
 
             // if success
             if (errMsg == null) {
                 ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
-                activity.showNotificationBanner(R.string.cart_updated_msg);
+                Tracker.getInstance().trackActionForAddToCartFromSearchResults(item.identifier, item.finalPrice, 1);
+
             } else {
                 // if non-grammatical out-of-stock message from api, provide a nicer message
                 if (errMsg.contains("items is out of stock")) {
