@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -71,6 +72,10 @@ public class PersonalFeedFragment extends Fragment {
     private TextView seenProductClearTV;
     private RelativeLayout seenProductsLoading;
 
+    private String dailyDealTitle;
+    private String clearanceTitle;
+    private String seenProductsTitle;
+
     private class SkuDetailsCallback implements Callback<SkuDetails> {
         @Override
         public void success(final SkuDetails sku, Response response) {
@@ -117,6 +122,7 @@ public class PersonalFeedFragment extends Fragment {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Tracker.getInstance().trackActionForPersonalFeed(seenProductsTitle);
                     ((MainActivity) getActivity()).selectSkuItem(productName, skuId, false);
                 }
             });
@@ -124,6 +130,7 @@ public class PersonalFeedFragment extends Fragment {
             title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Tracker.getInstance().trackActionForPersonalFeed(seenProductsTitle);
                     ((MainActivity) getActivity()).selectSkuItem(productName, skuId, false);
                 }
             });
@@ -159,6 +166,13 @@ public class PersonalFeedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         LinearLayout personalFeedLayout = (LinearLayout) inflater.inflate(R.layout.personal_feed, container, false);
+
+        // get section titles for the sake of analytics
+        Resources r = getResources();
+        dailyDealTitle = r.getString(R.string.feed_daily_deal_title);
+        clearanceTitle = r.getString(R.string.feed_clearance_title);
+        seenProductsTitle = r.getString(R.string.feed_seen_products_title);
+
 
         dailyDealLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.daily_deal_layout);
         clearanceLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.clearance_layout);
@@ -219,7 +233,7 @@ public class PersonalFeedFragment extends Fragment {
                             if (productContainer.getProducts() != null) {
                                 for (Product p : productContainer.getProducts()) {
                                     dailyDealSkuSet.add(p.getSku());
-                                    //fillContainer(p, dailyDealContainer);
+                                    //fillContainer(p, dailyDealContainer, dailyDealTitle);
                                     //Log.d(TAG, "Daily Deal Products: " + p.getProductName() + "-" + p.getSku());
                                 }
                             }
@@ -228,7 +242,7 @@ public class PersonalFeedFragment extends Fragment {
                                 for (com.staples.mobile.common.access.easyopen.model.cart.Product cartItem : cartItems) {
                                     String cartItemSku = cartItem.getSku();
                                     if (dailyDealSkuSet.contains(cartItemSku)) {
-                                        fillContainer(cartItem, dailyDealContainer);
+                                        fillContainer(cartItem, dailyDealContainer, dailyDealTitle);
                                         Log.d(TAG, "Daily deal products in cart: " + cartItem.getProductName());
                                     }
                                 }
@@ -255,7 +269,7 @@ public class PersonalFeedFragment extends Fragment {
                             if (productContainer.getProducts() != null) {
                                 for (Product p : productContainer.getProducts()) {
                                     clearanceSkuSet.add(p.getSku());
-                                    //fillContainer(p, clearanceContainer);
+                                    //fillContainer(p, clearanceContainer, clearanceTitle);
                                     //Log.d(TAG, "Clearance Products: " + p.getProductName() + "-" + p.getSku());
                                 }
 
@@ -265,7 +279,7 @@ public class PersonalFeedFragment extends Fragment {
                                 for (com.staples.mobile.common.access.easyopen.model.cart.Product cartItem : cartItems) {
                                     String cartItemSku = cartItem.getSku();
                                     if (clearanceSkuSet.contains(cartItemSku)) {
-                                        fillContainer(cartItem, clearanceContainer);
+                                        fillContainer(cartItem, clearanceContainer, clearanceTitle);
                                         Log.d(TAG, "Clearance products in cart: " + cartItem.getProductName());
                                     }
                                 }
@@ -318,7 +332,7 @@ public class PersonalFeedFragment extends Fragment {
     }
 
     private void fillContainer(com.staples.mobile.common.access.easyopen.model.cart.Product cartItem,
-                               LinearLayout container){
+                               LinearLayout container, final String containerTitle){
         final String productName = Html.fromHtml(cartItem.getProductName()).toString();
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -347,6 +361,7 @@ public class PersonalFeedFragment extends Fragment {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Tracker.getInstance().trackActionForPersonalFeed(containerTitle);
                 ((MainActivity) getActivity()).selectSkuItem(productName, sku, false);
             }
         });
@@ -354,6 +369,7 @@ public class PersonalFeedFragment extends Fragment {
         title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Tracker.getInstance().trackActionForPersonalFeed(containerTitle);
                 ((MainActivity) getActivity()).selectSkuItem(productName, sku, false);
             }
         });
