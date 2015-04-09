@@ -20,18 +20,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/verticalspacing_16dp"
-            android:text="@string/email"
-            android:textSize="@dimen/fontsize_12sp"
-            android:textColor="@color/staples_dark_gray"/>
+            android:text="@string/email"/>
 
         <TextView
             android:id="@+id/emailProfile"
-            style="@style/DrawerStyle"
+            style="@style/ProfileStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/verticalspacing_16dp"
-            android:textSize="@dimen/fontsize_16sp"
-            android:textColor="@color/staples_black"/>
+            android:layout_height="wrap_content"/>
 
         <View
             android:layout_width="fill_parent"
@@ -45,24 +40,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/verticalspacing_16dp"
-            android:textSize="@dimen/fontsize_12sp"
-            android:textColor="@color/staples_dark_gray"
             android:text="@string/username"/>
 
         <TextView
             android:id="@+id/userNameProfile"
-            style="@style/DrawerStyle"
+            style="@style/ProfileStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/verticalspacing_16dp"
-            android:textSize="@dimen/fontsize_16sp"
-            android:textColor="@color/staples_black"/>
+            android:layout_height="wrap_content" />
 
         <View
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:background="@color/staples_black"
-            android:paddingTop="@dimen/verticalspacing_8dp"/>
+            android:layout_marginTop="@dimen/verticalspacing_8dp"/>
 
     </LinearLayout>
 
@@ -74,24 +64,24 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@style/ProfileStyle"
             android:background="@color/staples_light_gray"
-			android:paddingBottom="@dimen/verticalspacing_8dp"
-            android:paddingLeft="10dp"
-			android:paddingTop="@dimen/verticalspacing_8dp"
-            android:text="Shipping/Billing"
-            android:textSize="@dimen/fontsize_16sp" />
+            android:paddingLeft="@dimen/margin_16dp"
+            android:paddingBottom="@dimen/verticalspacing_8dp"
+            android:paddingTop="@dimen/verticalspacing_8dp"
+            android:text="@string/shipping_billing_text" />
     </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/margin_16dp">
 
         <TextView
             android:id="@+id/addressET"
-            style="@style/DrawerStyle"
+            style="@style/ProfileStyle"
             android:layout_width="wrap_content"
             android:layout_alignBottom="@+id/addShippingBtn"
-            android:layout_alignParentLeft="true"
             android:ellipsize="end"
             android:maxLines="1"
 			android:paddingTop="@dimen/verticalspacing_8dp" />
