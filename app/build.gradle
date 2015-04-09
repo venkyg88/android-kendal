@@ -12,20 +12,25 @@ android {
         }
     }
 
+    ext {
+        versionPrefix = 'Kendall'
+    }
+
     defaultConfig {
         applicationId 'com.staples.mobile.cfa'
         versionCode 8
     }
 
+
     productFlavors {
         qa {
-            versionName "Kendall-qa-"+defaultConfig.versionCode
+            versionName versionPrefix+'-qa-'+defaultConfig.versionCode
         }
         dev {
-            versionName "Kendall-dev-"+defaultConfig.versionCode
+            versionName versionPrefix+'-dev-'+defaultConfig.versionCode
         }
         prod {
-            versionName "Kendall-prod-"+defaultConfig.versionCode
+            versionName versionPrefix+'-prod-'+defaultConfig.versionCode
         }
     }
 
