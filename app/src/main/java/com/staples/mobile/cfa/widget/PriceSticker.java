@@ -211,11 +211,11 @@ public class PriceSticker extends View {
             }
             canvas.drawText(text, x, y, majorPaint);
         }
-        if (wasPrice>0.0f) {
+        if (wasPrice>0.0f  && wasPrice != finalPrice) {
             String text = " " + format.format(wasPrice);
             canvas.drawText(text, x+widths[0], y, wasPaint);
         }
-        if (unit!=null) {
+        if (unit!=null && wasPrice != finalPrice) {
             String text = " " + unit;
             canvas.drawText(text, x+widths[1], y, unitPaint);
         }

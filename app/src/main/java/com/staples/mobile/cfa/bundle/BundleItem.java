@@ -89,8 +89,10 @@ public class BundleItem {
                 if (discounts != null)
                     for (Discount discount : discounts) {
                         if (discount.getName().equals("rebate")) {
-                            this.finalPrice += discount.getAmount();
-                            rebateIndicator = "*";
+                            if(discount.getAmount() != 0.0f) {
+                                this.finalPrice += discount.getAmount();
+                                rebateIndicator = "*";
+                            }
                         }
                     }
                 return(this.finalPrice);
@@ -103,7 +105,9 @@ public class BundleItem {
         if (discounts == null) return (null);
             for (Discount discount : discounts) {
                 if (discount.getName().equals("rebate")) {
-                    this.rebatePrice = discount.getAmount();
+                    if(discount.getAmount() != 0.0f) {
+                        this.rebatePrice = discount.getAmount();
+                    }
                     return (this.rebatePrice);
                 }
             }
