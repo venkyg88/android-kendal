@@ -216,8 +216,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
             // if success
             if (errMsg == null) {
                 ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
-                Tracker.getInstance().trackActionForAddToCartFromSearchResults(item.identifier, item.finalPrice, 1);
-
+                Tracker.getInstance().trackActionForAddToCartFromSearchResults(CartApiManager.getCartProduct(item.identifier), 1); // analytics
             } else {
                 // if non-grammatical out-of-stock message from api, provide a nicer message
                 if (errMsg.contains("items is out of stock")) {
@@ -245,7 +244,6 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
                     new AddToCart(item);
-                    Tracker.getInstance().trackActionForAddToCartFromSearchResults(item.identifier, item.finalPrice, 1);
                 }
                 break;
             case R.id.open_sort:

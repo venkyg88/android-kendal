@@ -220,7 +220,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
             // if success
             if (errMsg == null) {
                 ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
-                Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
+                Tracker.getInstance().trackActionForAddToCartFromClass(CartApiManager.getCartProduct(item.identifier), 1);
             } else {
                 // if non-grammatical out-of-stock message from api, provide a nicer message
                 if (errMsg.contains("items is out of stock")) {
@@ -253,7 +253,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                         activity.selectSkuItem(item.title, item.identifier, false);
                     } else {
                         new AddToCart(item);
-                        Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
                     }
                 }
                 break;
