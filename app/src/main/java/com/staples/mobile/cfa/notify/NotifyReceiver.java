@@ -31,6 +31,7 @@ public class NotifyReceiver extends BaseIntentReceiver {
     public static final String EXTRA_IDENTIFIER = APPLICATION +".IDENTIFIER";
     public static final String EXTRA_KEYWORD = APPLICATION +".KEYWORD";
     public static final String EXTRA_TITLE = APPLICATION +".TITLE";
+    public static final String EXTRA_MESSAGE = APPLICATION +".MESSAGE";
 
     private static final String URBAN_AIRSHIP_CHANNEL = "urbanAirshipChannel";
 
@@ -118,6 +119,7 @@ public class NotifyReceiver extends BaseIntentReceiver {
         Log.i(TAG, "User clicked notification. Alert: " + message.getAlert());
 
         // Parse payload
+        String userMessage = message.getAlert();
         String payload = message.getActionsPayload();
         Action note;
         try {
@@ -142,6 +144,7 @@ public class NotifyReceiver extends BaseIntentReceiver {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(EXTRA_SKU, content);
             if (title!=null) intent.putExtra(EXTRA_TITLE, title);
+            if (userMessage!=null) intent.putExtra(EXTRA_MESSAGE, userMessage);
             context.startActivity(intent);
             return(false);
         }
@@ -152,6 +155,7 @@ public class NotifyReceiver extends BaseIntentReceiver {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(EXTRA_IDENTIFIER, content);
             if (title!=null) intent.putExtra(EXTRA_TITLE, title);
+            if (userMessage!=null) intent.putExtra(EXTRA_MESSAGE, userMessage);
             context.startActivity(intent);
             return(false);
         }
@@ -162,6 +166,7 @@ public class NotifyReceiver extends BaseIntentReceiver {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(EXTRA_KEYWORD, content);
             if (title!=null) intent.putExtra(EXTRA_TITLE, title);
+            if (userMessage!=null) intent.putExtra(EXTRA_MESSAGE, userMessage);
             context.startActivity(intent);
             return(false);
         }
