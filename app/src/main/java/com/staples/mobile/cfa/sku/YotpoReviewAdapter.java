@@ -30,7 +30,7 @@ public class YotpoReviewAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if (yotpoReviews==null) return(0);
+        if (yotpoReviews == null) return(0);
         return(yotpoReviews.size());
     }
 
@@ -44,15 +44,6 @@ public class YotpoReviewAdapter extends BaseAdapter {
         return(position);
     }
 
-    private void setTextView(TextView view, String text) {
-        if (text!=null) {
-            view.setText(text);
-            view.setVisibility(View.VISIBLE);
-        } else {
-            view.setVisibility(View.GONE);
-        }
-    }
-
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         if (view==null)
@@ -60,14 +51,46 @@ public class YotpoReviewAdapter extends BaseAdapter {
 
         Review review = yotpoReviews.get(position);
 
-        String[] createdDateTime = review.getCreatedAt().split("T");
-        String createdDate = createdDateTime[0];
-        setTextView((TextView) view.findViewById(R.id.sku_review_date), createdDate);
-
+        // Rating
         ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(review.getScore(), null);
 
-        setTextView((TextView) view.findViewById(R.id.sku_review_title), review.getTitle());
-        setTextView((TextView) view.findViewById(R.id.sku_review_comments), review.getContent());
+        // Title
+        String title = review.getTitle();
+        if (title != null) {
+            ((TextView) view.findViewById(R.id.sku_review_title)).setText(title);
+        }
+        else {
+            view.findViewById(R.id.sku_review_title).setVisibility(View.GONE);
+        }
+
+        // Author
+        String author = review.getUser().getDisplayName();
+        if (author != null) {
+            ((TextView) view.findViewById(R.id.sku_review_author)).setText("By " + author + " - ");
+        }
+        else {
+            view.findViewById(R.id.sku_review_author).setVisibility(View.GONE);
+        }
+
+        // Created date
+        String[] createdDateTime = review.getCreatedAt().split("T");
+        String createdDate = createdDateTime[0];
+
+        if (createdDate != null) {
+            ((TextView) view.findViewById(R.id.sku_review_date)).setText(createdDate);
+        }
+        else {
+            view.findViewById(R.id.sku_review_date).setVisibility(View.GONE);
+        }
+
+        // Comment
+        String comments = review.getContent();
+        if (comments != null) {
+            ((TextView) view.findViewById(R.id.sku_review_comments)).setText(comments);
+        }
+        else {
+            view.findViewById(R.id.sku_review_comments).setVisibility(View.GONE);
+        }
 
         return(view);
     }

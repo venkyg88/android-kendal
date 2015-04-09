@@ -23,7 +23,6 @@ import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
 
-import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -55,10 +54,6 @@ import com.staples.mobile.common.access.easyopen2.model.review.Review;
 import com.staples.mobile.common.access.easyopen2.model.review.YotpoResponse;
 
 import java.lang.reflect.Type;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -66,9 +61,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener,
-Callback,
-        View.OnClickListener, FragmentManager.OnBackStackChangedListener{
+public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener,
+Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
     private static final String TAG = "SkuFragment";
 
     private static final String TITLE = "title";
@@ -81,7 +75,7 @@ Callback,
 
     private static final int MAXFETCH = 50;
 
-    private static SimpleDateFormat iso8601;
+    //private static SimpleDateFormat iso8601;
 
     public enum Availability {
         NOTHING      (R.string.avail_nothing),
@@ -210,7 +204,6 @@ Callback,
 
         // Set listeners
         details.setOnTabChangedListener(this);
-        tabPager.setOnPageChangeListener(this);
         summary.findViewById(R.id.description_detail).setOnClickListener(this);
         summary.findViewById(R.id.specifications_detail).setOnClickListener(this);
         summary.findViewById(R.id.reviews_detail).setOnClickListener(this);
@@ -692,6 +685,7 @@ Callback,
             ((TextView) summary.findViewById(R.id.title)).setText(productName);
             ((TextView) summary.findViewById(R.id.model)).setText(formatNumbers(product));
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
+            ((RatingStars) summary.findViewById(R.id.review_rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
 
             // Add pricing
             PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
@@ -745,21 +739,21 @@ Callback,
         }
     }
 
-    public static String formatTimestamp(String raw) {
-        if (raw == null) return (null);
-
-        if (iso8601 == null)
-            iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
-        try {
-            Date date = iso8601.parse(raw);
-            String text = DateFormat.getDateInstance().format(date);
-            return (text);
-        } catch (ParseException e) {
-            Crittercism.logHandledException(e);
-            return (null);
-        }
-    }
+//    public static String formatTimestamp(String raw) {
+//        if (raw == null) return (null);
+//
+//        if (iso8601 == null)
+//            iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+//
+//        try {
+//            Date date = iso8601.parse(raw);
+//            String text = DateFormat.getDateInstance().format(date);
+//            return (text);
+//        } catch (ParseException e) {
+//            Crittercism.logHandledException(e);
+//            return (null);
+//        }
+//    }
 
 //    private void processReviewSet(ReviewSet reviews) {
 //        if (reviews == null) return;
@@ -826,22 +820,37 @@ Callback,
             View view = inflater.inflate(R.layout.sku_review_brief_item, parent, false);
             parent.addView(view);
 
+            // Rating
+            ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(briefReview.getScore(), null);
+
+            // Title
+            String title = briefReview.getTitle();
+            if (title != null) {
+                ((TextView) view.findViewById(R.id.sku_review_title)).setText(title);
+            }
+            else {
+                view.findViewById(R.id.sku_review_title).setVisibility(View.GONE);
+            }
+
+            // Author
+            String author = briefReview.getUser().getDisplayName();
+            if (author != null) {
+                ((TextView) view.findViewById(R.id.sku_review_author)).setText("By " + author + " - ");
+            }
+            else {
+                view.findViewById(R.id.sku_review_author).setVisibility(View.GONE);
+            }
+
             // Created date
             String[] createdDateTime = briefReview.getCreatedAt().split("T");
             String createdDate = createdDateTime[0];
+
             if (createdDate != null) {
                 ((TextView) view.findViewById(R.id.sku_review_date)).setText(createdDate);
             }
             else {
                 view.findViewById(R.id.sku_review_date).setVisibility(View.GONE);
             }
-
-            // Sku Rating
-//            ((RatingStars) summary.findViewById(R.id.rating)).setRating(briefReview.getScore(),
-//                    (yotpoReviews.size() > 0 ? yotpoReviews.size() : 0));
-
-            // Sku detail Rating
-            ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(briefReview.getScore(), null);
 
             // Comment
             String comments = briefReview.getContent();
@@ -852,9 +861,11 @@ Callback,
                 view.findViewById(R.id.sku_review_comments).setVisibility(View.GONE);
             }
 
-            for(int i = 0; i < yotpoReviews.size(); i++) {
+            for(int i = 0; i < Math.min(yotpoReviews.size(), 10); i++) {
                 Review review = yotpoReviews.get(i);
-                Log.d(TAG, "YOTPO review " + i + " - score: " + review.getScore() + ", content:" + review.getContent()
+                Log.d(TAG, yotpoReviews.size() + " total YOTPO reviews. "
+                        + (i+1) + " - score: " + review.getScore()
+                        + ", content:" + review.getContent()
                         + ", title:" + review.getTitle() + ", user:" + review.getUser().getDisplayName()
                         + ", Time:" + review.getCreatedAt());
             }
@@ -867,7 +878,6 @@ Callback,
     }
 
     // TabHost notifications
-
     public void onTabChanged(String tag) {
         int index;
 
@@ -883,20 +893,7 @@ Callback,
         tabPager.setCurrentItem(index);
     }
 
-    // ViewPager notifications
-
-    public void onPageScrollStateChanged(int state) {
-    }
-
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-    }
-
-    public void onPageSelected(int position) {
-        details.setCurrentTab(position);
-    }
-
     // Detail and add-to-cart clicks
-
     private void shiftToDetail(int position) {
         if (isShiftedTab) return;
         wrapper.setState(DataWrapper.State.GONE);

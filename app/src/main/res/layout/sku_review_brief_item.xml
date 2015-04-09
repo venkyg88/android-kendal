@@ -1,36 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingLeft="@dimen/sku_padding_10"
-    android:paddingRight="@dimen/sku_padding_10"
-    android:paddingTop="@dimen/sku_padding_10">
-    <TextView
-        android:id="@+id/sku_review_date"
+    android:paddingRight="@dimen/sku_padding_10">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/staples_black"/>
-    <TextView
-        android:id="@+id/sku_review_title"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/sku_padding_5">
+        <com.staples.mobile.cfa.widget.RatingStars
+            android:id="@+id/sku_review_rating"
+            style="@style/SmallRatingStars"
+            android:paddingRight="@dimen/sku_padding_10"
+            android:layout_gravity="center_vertical"/>
+        <TextView
+            android:id="@+id/sku_review_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@color/staples_black"
+            android:paddingLeft="@dimen/sku_padding_10"
+            android:layout_gravity="center_vertical"/>
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/staples_black"/>
-    <TextView
-        android:id="@+id/sku_review_author"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/staples_black"/>
-    <com.staples.mobile.cfa.widget.RatingStars
-        android:id="@+id/sku_review_rating"
-        style="@style/SmallRatingStars"
-        android:paddingTop="@dimen/sku_padding_5"
-        android:paddingBottom="@dimen/sku_padding_5"/>
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/sku_padding_5">
+        <TextView
+            android:id="@+id/sku_review_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/staples_dark_gray"/>
+
+        <TextView
+            android:id="@+id/sku_review_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/staples_dark_gray"/>
+    </LinearLayout>
+
     <TextView
         android:id="@+id/sku_review_comments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:maxLines="3"
         android:ellipsize="end"
-        android:textColor="@color/staples_black"/>
+        android:textColor="@color/staples_black"
+        android:paddingTop="@dimen/sku_padding_5"/>
 </LinearLayout>
