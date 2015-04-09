@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
+import com.staples.mobile.common.analytics.Tracker;
 import com.urbanairship.UAirship;
 import com.urbanairship.push.PushManager;
 
@@ -48,6 +49,7 @@ public class NotifyPrefsFragment extends Fragment implements CompoundButton.OnCh
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.NOTIFY);
+        Tracker.getInstance().trackStateForNotifPreferences(); // analytics
     }
 
     private void getTags() {

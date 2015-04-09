@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
@@ -48,6 +47,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     private BundleItem.SortType fetchSort;
     private BundleItem.SortType displaySort;
     private String title;
+    RecyclerView list;
 
     public void setArguments(String title, String identifier) {
         Bundle args = new Bundle();
@@ -75,7 +75,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Activity activity = getActivity();
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
-        RecyclerView list = (RecyclerView) view.findViewById(R.id.products);
+        list = (RecyclerView) view.findViewById(R.id.products);
         list.setLayoutManager(new GridLayoutManager(activity, 1));
         list.addItemDecoration(new HorizontalDivider(activity));
 
@@ -105,7 +105,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.BUNDLE, title);
-        Tracker.getInstance().trackStateForShopByCategory(); // Analytics
     }
 
     private void query() {
@@ -199,18 +198,14 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
     private class AddToCart implements CartApiManager.CartRefreshCallback {
         private BundleItem item;
-        private View button;
-        private View whirlie;
 
-        private AddToCart(BundleItem item, View button) {
+        private AddToCart(BundleItem item) {
+            MainActivity activity = (MainActivity) getActivity();
             this.item = item;
-            this.button = button;
-            View parent = (View) button.getParent();
-            whirlie = parent.findViewById(R.id.bundle_action);
+            item.busy = true;
+            activity.swallowTouchEvents(true);
 
-            button.setVisibility(View.GONE);
-            whirlie.setVisibility(View.VISIBLE);
-
+            adapter.notifyDataSetChanged();
             CartApiManager.addItemToCart(item.identifier, 1, this);
         }
 
@@ -218,14 +213,13 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         public void onCartRefreshComplete(String errMsg) {
             MainActivity activity = (MainActivity) getActivity();
             if (activity == null) return;
-
-            button.setVisibility(View.VISIBLE);
-            whirlie.setVisibility(View.GONE);
+            activity.swallowTouchEvents(false);
+            item.busy = false;
+            adapter.notifyDataSetChanged();
 
             // if success
             if (errMsg == null) {
                 ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
-                activity.showNotificationBanner(R.string.cart_updated_msg);
                 Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
             } else {
                 // if non-grammatical out-of-stock message from api, provide a nicer message
@@ -258,7 +252,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                         final MainActivity activity = (MainActivity) getActivity();
                         activity.selectSkuItem(item.title, item.identifier, false);
                     } else {
-                        new AddToCart(item, view);
+                        new AddToCart(item);
                         Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
                     }
                 }

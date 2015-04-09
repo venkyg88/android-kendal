@@ -35,6 +35,7 @@ import com.staples.mobile.cfa.checkout.GuestCheckoutFragment;
 import com.staples.mobile.cfa.checkout.RegisteredCheckoutFragment;
 import com.staples.mobile.cfa.feed.PersonalFeedFragment;
 import com.staples.mobile.cfa.home.ConfiguratorFragment;
+import com.staples.mobile.cfa.kount.KountManager;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
@@ -100,6 +101,7 @@ public class MainActivity extends Activity
     private boolean initialLoginComplete;
 
     private AppConfigurator appConfigurator;
+
 
     public enum Transition {
         NONE (0, 0, 0, 0, 0),
@@ -195,7 +197,7 @@ public class MainActivity extends Activity
             if (keyword!=null) {
                 String title = intent.getStringExtra(NotifyReceiver.EXTRA_TITLE);
                 if (title==null) title = getResources().getString(R.string.sku_notification_title);
-                selectSearch(keyword);
+                selectSearch(title, keyword);
             }
             return;
         }
@@ -438,6 +440,9 @@ public class MainActivity extends Activity
             // set default zip code for now, update it as it changes
             Tracker.getInstance().setZipCode("02139");
 
+            // initialize Kount fraud detection
+            KountManager.getInstance(this);
+
         } else { // can't get configurator from network or from persisted file
             showErrorDialog(R.string.error_server_connection, true); // setting fatal=true which will close the app
         }
@@ -505,6 +510,11 @@ public class MainActivity extends Activity
     public void hideProgressIndicator() {
         mainLayout.showOverlay(false);
     }
+
+    public void swallowTouchEvents(boolean swallow) {
+        mainLayout.swallowTouchEvents(swallow);
+    }
+
 
     // Navigation
     public boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
@@ -585,9 +595,9 @@ public class MainActivity extends Activity
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
-    public boolean selectSearch(String keyword) {
+    public boolean selectSearch(String title, String keyword) {
         SearchFragment fragment = new SearchFragment();
-        fragment.setArguments(keyword, keyword);
+        fragment.setArguments(title, keyword);
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 

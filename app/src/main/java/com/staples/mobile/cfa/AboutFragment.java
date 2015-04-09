@@ -27,6 +27,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.widget.ActionBar;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -59,6 +60,7 @@ public class AboutFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        Tracker.getInstance().trackStateForAbout(); // analytics
         ActionBar.getInstance().setConfig(ActionBar.Config.ABOUT);
     }
 

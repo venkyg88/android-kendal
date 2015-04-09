@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.kount.KountManager;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.cart.CartApiManager;
@@ -96,7 +97,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         submissionLayout = view.findViewById(R.id.co_submission_layout);
 //        taxLayout = view.findViewById(R.id.co_tax_layout);
         itemSubtotalVw = (TextView) view.findViewById(R.id.checkout_item_subtotal);
-        couponsRewardsVw = (TextView) view.findViewById(R.id.checkout_coupons_rewards);
+//        couponsRewardsVw = (TextView) view.findViewById(R.id.checkout_coupons_rewards);
 
         oversizedShippingVw = (TextView) view.findViewById(R.id.oversized_shipping);
         oversizedShippingLabelVw = (TextView) view.findViewById(R.id.oversized_shipping_label);
@@ -129,14 +130,18 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
         DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
 
+        // DLS: taking this out as per Tim (commenting-out for now just in case they ask for it back)
         // set coupons/rewards adjusted amount
-        couponsRewardsVw.setText(currencyFormat.format(couponsRewardsAmount));
+//        couponsRewardsVw.setText(currencyFormat.format(couponsRewardsAmount));
 
         // set the item subtotal
         itemSubtotalVw.setText(currencyFormat.format(itemSubtotal));
 
         // allow sub-classes to do their initialization
         initEntryArea(view);
+
+        // initiate Kount collection
+        KountManager.getInstance().collect(CartApiManager.getCart().getOrderId());
 
         return view;
     }
@@ -204,10 +209,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                 // if success
                 if (errMsg == null) {
 
-                    // analytics
+                    // analytics (do this before resetting cart below!)
                     Tracker.getInstance().trackStateForOrderConfirmation(orderNumber,
-                            CartApiManager.getCart(), couponsRewardsAmount, paymentMethod,
-                            Tracker.ShipType.SHIPTOHOME);
+                            CartApiManager.getCart(), paymentMethod, Tracker.ShipType.SHIPTOHOME);
 
                     // reset cart since empty after successful order submission
                     CartApiManager.resetCart(); // reset cart since empty after successful order submission

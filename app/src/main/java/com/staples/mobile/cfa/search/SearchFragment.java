@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.staples.mobile.cfa.MainActivity;
@@ -193,18 +192,14 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
     private class AddToCart implements CartApiManager.CartRefreshCallback {
         private BundleItem item;
-        private View button;
-        private View whirlie;
 
-        private AddToCart(BundleItem item, View button) {
+        private AddToCart(BundleItem item) {
+            MainActivity activity = (MainActivity) getActivity();
             this.item = item;
-            this.button = button;
-            View parent = (View) button.getParent();
-            whirlie = parent.findViewById(R.id.bundle_action);
+            item.busy = true;
+            activity.swallowTouchEvents(true);
 
-            button.setVisibility(View.GONE);
-            whirlie.setVisibility(View.VISIBLE);
-
+            adapter.notifyDataSetChanged();
             CartApiManager.addItemToCart(item.identifier, 1, this);
         }
 
@@ -213,14 +208,16 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
             MainActivity activity = (MainActivity) getActivity();
             if (activity == null) return;
 
-            button.setVisibility(View.VISIBLE);
-            whirlie.setVisibility(View.GONE);
+            item.busy = false;
+            activity.swallowTouchEvents(false);
+
+            adapter.notifyDataSetChanged();
 
             // if success
             if (errMsg == null) {
                 ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
-                activity.showNotificationBanner(R.string.cart_updated_msg);
-                Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
+                Tracker.getInstance().trackActionForAddToCartFromSearchResults(item.identifier, item.finalPrice, 1);
+
             } else {
                 // if non-grammatical out-of-stock message from api, provide a nicer message
                 if (errMsg.contains("items is out of stock")) {
@@ -247,7 +244,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
-                    new AddToCart(item, view);
+                    new AddToCart(item);
                     Tracker.getInstance().trackActionForAddToCartFromSearchResults(item.identifier, item.finalPrice, 1);
                 }
                 break;
