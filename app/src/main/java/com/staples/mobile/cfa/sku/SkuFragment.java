@@ -61,7 +61,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener,
+public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener,
 Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
     private static final String TAG = "SkuFragment";
 
@@ -204,6 +204,7 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
 
         // Set listeners
         details.setOnTabChangedListener(this);
+        tabPager.setOnPageChangeListener(this);
         summary.findViewById(R.id.description_detail).setOnClickListener(this);
         summary.findViewById(R.id.specifications_detail).setOnClickListener(this);
         summary.findViewById(R.id.reviews_detail).setOnClickListener(this);
@@ -892,6 +893,20 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
 
         tabPager.setCurrentItem(index);
     }
+
+    // ViewPager notifications
+
+    public void onPageScrollStateChanged(int state) {
+    }
+
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    }
+
+    public void onPageSelected(int position) {
+        details.setCurrentTab(position);
+    }
+
+
 
     // Detail and add-to-cart clicks
     private void shiftToDetail(int position) {
