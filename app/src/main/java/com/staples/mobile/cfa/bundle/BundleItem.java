@@ -92,13 +92,12 @@ public class BundleItem {
                             if(discount.getAmount() != 0.0f) {
                                 this.finalPrice += discount.getAmount();
                                 rebateIndicator = "*";
-                                return(this.finalPrice);
                             }
                         }
                     }
             }
         }
-        return(null);
+        return(this.finalPrice);
     }
 
     public Float setRebatePrice(List<Discount> discounts) {
@@ -107,12 +106,11 @@ public class BundleItem {
                 if (discount.getName().equals("rebate")) {
                     if(discount.getAmount() != 0.0f) {
                         this.rebatePrice = discount.getAmount();
-                        return (this.rebatePrice);
                     }
 
                 }
             }
-        return(null);
+        return (this.rebatePrice);
     }
 
     // Sorting comparators
