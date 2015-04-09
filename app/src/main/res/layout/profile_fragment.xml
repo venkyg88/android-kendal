@@ -1,126 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/profile_fragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/staples_white"
-    android:orientation="vertical">
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
-    <LinearLayout
+    <com.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/profile_fragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/margin_16dp"
-        android:paddingRight="@dimen/margin_16dp">
+        android:layout_height="match_parent"
+        android:background="@color/staples_white"
+        android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/margin_16dp"
+                android:paddingRight="@dimen/margin_16dp">
 
-        <TextView
-            android:id="@+id/emailLabel"
-            style="@style/GraySubheading"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/verticalspacing_16dp"
-            android:text="@string/email"/>
+                <TextView
+                    android:id="@+id/emailLabel"
+                    style="@style/GraySubheading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/verticalspacing_16dp"
+                    android:text="@string/email"/>
 
-        <TextView
-            android:id="@+id/emailProfile"
-            style="@style/ProfileStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/emailProfile"
+                    style="@style/ProfileStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@color/staples_black"
-            android:layout_marginTop="@dimen/verticalspacing_8dp"/>
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="@dimen/div_line"
+                    android:background="@color/staples_dark_gray"
+                    android:layout_marginTop="@dimen/verticalspacing_8dp"/>
 
-        <TextView
-            android:id="@+id/userNameLabel"
-            style="@style/GraySubheading"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/verticalspacing_16dp"
-            android:text="@string/username"/>
+                <TextView
+                    android:id="@+id/userNameLabel"
+                    style="@style/GraySubheading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/verticalspacing_16dp"
+                    android:text="@string/username"/>
 
-        <TextView
-            android:id="@+id/userNameProfile"
-            style="@style/ProfileStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/userNameProfile"
+                    style="@style/ProfileStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@color/staples_black"
-            android:layout_marginTop="@dimen/verticalspacing_8dp"/>
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="@dimen/div_line"
+                    android:background="@color/staples_dark_gray"
+                    android:layout_marginTop="@dimen/verticalspacing_8dp"/>
 
-    </LinearLayout>
+            </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/verticalspacing_64dp">
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/verticalspacing_48dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/ProfileStyle"
-            android:background="@color/staples_light_gray"
-            android:paddingLeft="@dimen/margin_16dp"
-            android:paddingBottom="@dimen/verticalspacing_8dp"
-            android:paddingTop="@dimen/verticalspacing_8dp"
-            android:text="@string/shipping_billing_text" />
-    </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/verticalspacing_48dp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/margin_16dp"
+                    android:textSize="@dimen/fontsize_16sp"
+                    android:textColor="@color/staples_black"
+                    android:background="@color/staples_light_gray"
+                    android:text="@string/shipping_billing_text" />
+            </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/margin_16dp">
+            <RelativeLayout
+                android:id="@+id/address_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/profile_text_view_height"
+                android:paddingLeft="@dimen/margin_16dp"
+                android:paddingRight="@dimen/margin_16dp"
+                android:clickable="true">
 
-        <TextView
-            android:id="@+id/addressET"
-            style="@style/ProfileStyle"
-            android:layout_width="wrap_content"
-            android:layout_alignBottom="@+id/addShippingBtn"
-            android:ellipsize="end"
-            android:maxLines="1"
-			android:paddingTop="@dimen/verticalspacing_8dp" />
+                <TextView
+                    android:id="@+id/addressET"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/fontsize_16sp"
+                    android:textColor="@color/staples_black"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"/>
 
-        <Button
-            android:id="@+id/addShippingBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true" />
-    </RelativeLayout>
+                <TextView
+                    android:id="@+id/addShippingBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerInParent="true"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/fontsize_18sp"
+                    android:textColor="@color/staples_green" />
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@color/staples_black"
-		android:paddingTop="@dimen/verticalspacing_8dp" />
+            </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/div_line"
+                android:background="@color/staples_dark_gray" />
 
-        <TextView
-            android:id="@+id/ccET"
-            style="@style/DrawerStyle"
-            android:layout_width="wrap_content"
-            android:layout_alignBottom="@id/addCCBtn"
-            android:layout_alignParentLeft="true" />
+            <RelativeLayout
+                android:id="@+id/credit_card_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/profile_text_view_height"
+                android:paddingRight="@dimen/margin_16dp"
+                android:clickable="true">
 
-        <Button
-            android:id="@+id/addCCBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true" />
-    </RelativeLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/card_image_profile"
+                    android:visibility="gone"
+                    android:paddingLeft="@dimen/margin_16dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"/>
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@color/staples_black"
-		android:paddingTop="@dimen/verticalspacing_8dp" />
+                <TextView
+                    android:id="@+id/ccET"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/card_image_profile"
+                    android:paddingLeft="@dimen/margin_16dp"
+                    android:textSize="@dimen/fontsize_16sp"
+                    android:textColor="@color/staples_black" />
 
-</com.staples.mobile.cfa.widget.AnimatorLayout>
+                <TextView
+                    android:id="@+id/addCCBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/fontsize_18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/staples_green"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerInParent="true"/>
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/div_line"
+                android:background="@color/staples_dark_gray" />
+
+    </com.staples.mobile.cfa.widget.AnimatorLayout>
+
+</ScrollView>
