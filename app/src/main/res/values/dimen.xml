@@ -20,7 +20,6 @@
     <dimen name="verticalspacing_56dp">56dp</dimen>   <!--part of style guide-->
     <dimen name="margin_16dp">16dp</dimen>     <!--part of style guide-->
     <dimen name="margin_72dp">72dp</dimen>     <!--part of style guide-->
-    <dimen name="verticalspacing_64dp">64dp</dimen>     <!--part of style guide-->
 
     <dimen name="action_bar_half_margin">8dp</dimen>
     <dimen name="action_bar_quarter_margin">4dp</dimen>
