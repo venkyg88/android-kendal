@@ -59,6 +59,7 @@ public class PersonalFeedFragment extends Fragment {
     private LinearLayout dailyDealLayout;
     private LinearLayout clearanceLayout;
     private LinearLayout seenProductsLayout;
+    private LinearLayout emptyFeedLayout;
 
     private DataWrapper dailyDealWrapper;
     private DataWrapper clearanceWrapper;
@@ -70,6 +71,8 @@ public class PersonalFeedFragment extends Fragment {
 
     private TextView seenProductClearTV;
     private RelativeLayout seenProductsLoading;
+
+    private boolean isDailyEmpty = true;
 
     private class SkuDetailsCallback implements Callback<SkuDetails> {
         @Override
@@ -163,6 +166,7 @@ public class PersonalFeedFragment extends Fragment {
         dailyDealLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.daily_deal_layout);
         clearanceLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.clearance_layout);
         seenProductsLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.seen_products_layout);
+        emptyFeedLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.empty_feed_layout);
 
         dailyDealWrapper = (DataWrapper) personalFeedLayout.findViewById(R.id.daily_deal_wrapper);
         clearanceWrapper = (DataWrapper) personalFeedLayout.findViewById(R.id.clearance_wrapper);
@@ -182,6 +186,12 @@ public class PersonalFeedFragment extends Fragment {
                 seenProductClearTV.setVisibility(View.GONE);
                 seenProductsLoading.setVisibility(View.GONE);
 
+                if(dailyDealContainer.getChildCount() == 0 && clearanceContainer.getChildCount() ==0) {
+                    emptyFeedLayout.setVisibility(View.VISIBLE);
+                }
+                else {
+                    emptyFeedLayout.setVisibility(View.GONE);
+                }
 
                 removeSavedSeenProducts();
 
@@ -226,6 +236,7 @@ public class PersonalFeedFragment extends Fragment {
 
                             if (cartItems != null) {
                                 for (com.staples.mobile.common.access.easyopen.model.cart.Product cartItem : cartItems) {
+                                    dailyDealLayout.setVisibility(View.VISIBLE);
                                     String cartItemSku = cartItem.getSku();
                                     if (dailyDealSkuSet.contains(cartItemSku)) {
                                         fillContainer(cartItem, dailyDealContainer);
@@ -239,6 +250,7 @@ public class PersonalFeedFragment extends Fragment {
                                 dailyDealLayout.setVisibility(View.GONE);
                             } else {
                                 dailyDealWrapper.setState(DataWrapper.State.DONE);
+                                emptyFeedLayout.setVisibility(View.GONE);
                             }
                         }
                     }); // ProductCollection CallBack
@@ -263,6 +275,7 @@ public class PersonalFeedFragment extends Fragment {
 
                             if (cartItems != null) {
                                 for (com.staples.mobile.common.access.easyopen.model.cart.Product cartItem : cartItems) {
+                                    clearanceLayout.setVisibility(View.VISIBLE);
                                     String cartItemSku = cartItem.getSku();
                                     if (clearanceSkuSet.contains(cartItemSku)) {
                                         fillContainer(cartItem, clearanceContainer);
@@ -276,6 +289,7 @@ public class PersonalFeedFragment extends Fragment {
                                 clearanceLayout.setVisibility(View.GONE);
                             } else {
                                 clearanceWrapper.setState(DataWrapper.State.DONE);
+                                emptyFeedLayout.setVisibility(View.GONE);
                             }
                         }
                     }); // ProductCollection CallBack
@@ -305,10 +319,13 @@ public class PersonalFeedFragment extends Fragment {
         // display "nothing found" if no saved seen products
         if(saveSeenSkus.isEmpty()){
             seenProductsLayout.setVisibility(View.GONE);
+            if(dailyDealContainer.getChildCount() == 0 && clearanceContainer.getChildCount() ==0) {
+                emptyFeedLayout.setVisibility(View.VISIBLE);
+            }
         }
         else{
             seenProductsWrapper.setState(DataWrapper.State.LOADING);
-
+            emptyFeedLayout.setVisibility(View.GONE);
             for(String sku : saveSeenSkus){
                 // Initiate SKU API call
                 EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
