@@ -56,6 +56,8 @@ public class PersonalFeedFragment extends Fragment {
 
     private static final int MAXFETCH = 50;
 
+    private MainActivity mainActivity;
+
     private LinearLayout dailyDealLayout;
     private LinearLayout clearanceLayout;
     private LinearLayout seenProductsLayout;
@@ -77,12 +79,11 @@ public class PersonalFeedFragment extends Fragment {
             seenProductClearTV.setVisibility(View.VISIBLE);
             seenProductsWrapper.setState(DataWrapper.State.DONE);
 
-            Activity activity = getActivity();
-            if (activity == null) {
+            if (mainActivity == null) {
                 return;
             }
 
-            LayoutInflater inflater = getActivity().getLayoutInflater();
+            LayoutInflater inflater = mainActivity.getLayoutInflater();
 
             Product seenProduct = sku.getProduct().get(0);
 
@@ -103,7 +104,7 @@ public class PersonalFeedFragment extends Fragment {
 
             // API safety check
             if(seenProduct.getImage() != null && seenProduct.getImage().size() > 0){
-                Picasso.with(getActivity()).load(seenProduct.getImage().get(0).getUrl()).error(R.drawable.no_photo).into(imageView);
+                Picasso.with(mainActivity).load(seenProduct.getImage().get(0).getUrl()).error(R.drawable.no_photo).into(imageView);
             }
             else{
                 Log.d(TAG, "API returned empty image url!");
@@ -117,19 +118,19 @@ public class PersonalFeedFragment extends Fragment {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity) getActivity()).selectSkuItem(productName, skuId, false);
+                    mainActivity.selectSkuItem(productName, skuId, false);
                 }
             });
 
             title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity) getActivity()).selectSkuItem(productName, skuId, false);
+                    mainActivity.selectSkuItem(productName, skuId, false);
                 }
             });
 
-            PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(getActivity());
-            HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(getActivity());
+            PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(mainActivity);
+            HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(mainActivity);
             if(seenProductsContainer.getChildCount() < savedSkuSet.size()) {
                 // still loading other items' data
                 seenProductsLoading.setVisibility(View.VISIBLE);
@@ -145,19 +146,19 @@ public class PersonalFeedFragment extends Fragment {
         public void failure(RetrofitError retrofitError) {
             seenProductsWrapper.setState(DataWrapper.State.EMPTY);
 
-            Activity activity = getActivity();
-            if (activity == null) {
+            if (mainActivity == null) {
                 return;
             }
 
             String message = ApiError.getErrorMessage(retrofitError);
-            ((MainActivity)activity).showErrorDialog(message);
+            mainActivity.showErrorDialog(message);
             Log.d(TAG, message);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        mainActivity = (MainActivity) getActivity();
         LinearLayout personalFeedLayout = (LinearLayout) inflater.inflate(R.layout.personal_feed, container, false);
 
         dailyDealLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.daily_deal_layout);
@@ -185,7 +186,7 @@ public class PersonalFeedFragment extends Fragment {
 
                 removeSavedSeenProducts();
 
-                PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(getActivity());
+                PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(mainActivity);
                 feedSingleton.setSavedSkus(new HashSet<String>());
                 feedSingleton.setSavedSeenProducts(
                         new PersistentSizedArrayList<String>(PersonalFeedSingleton.SEEN_PRODUCTS_AMOUNT));
@@ -300,7 +301,7 @@ public class PersonalFeedFragment extends Fragment {
     private void setSeenProductsAdapter(){
         // set seen products list
         HashSet<String> saveSeenSkus =
-                PersonalFeedSingleton.getInstance(getActivity()).getSavedSkus(getActivity());
+                PersonalFeedSingleton.getInstance(mainActivity).getSavedSkus(mainActivity);
 
         // display "nothing found" if no saved seen products
         if(saveSeenSkus.isEmpty()){
@@ -321,7 +322,7 @@ public class PersonalFeedFragment extends Fragment {
                                LinearLayout container){
         final String productName = Html.fromHtml(cartItem.getProductName()).toString();
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        LayoutInflater inflater = mainActivity.getLayoutInflater();
         View row = inflater.inflate(R.layout.personal_feed_product_item, null);
 
         TextView title = (TextView) row.findViewById(R.id.title);
@@ -338,7 +339,7 @@ public class PersonalFeedFragment extends Fragment {
         if(cartItem.getImage() != null && cartItem.getImage().size() > 0){
             imageUrl = cartItem.getImage().get(0).getUrl();
         }
-        Picasso.with(getActivity()).load(imageUrl).error(R.drawable.no_photo).into(imageView);
+        Picasso.with(mainActivity).load(imageUrl).error(R.drawable.no_photo).into(imageView);
 
         container.addView(row);
 
@@ -347,20 +348,20 @@ public class PersonalFeedFragment extends Fragment {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).selectSkuItem(productName, sku, false);
+                mainActivity.selectSkuItem(productName, sku, false);
             }
         });
 
         title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).selectSkuItem(productName, sku, false);
+                mainActivity.selectSkuItem(productName, sku, false);
             }
         });
     }
 
     private void removeSavedSeenProducts() {
-        SharedPreferences sp = getActivity().getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
+        SharedPreferences sp = mainActivity.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(SEEN_PRODUCT_SKU_LIST, "");
         editor.putString(SEEN_PRODUCT_LIST, "");
