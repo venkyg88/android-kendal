@@ -10,7 +10,6 @@ import android.view.Gravity;
 import android.view.View;
 
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.access.easyopen.model.browse.Discount;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -167,13 +166,13 @@ public class PriceSticker extends View {
         int width = 0;
         if (finalPrice>0.0f) {
             String text = format.format(finalPrice);
-            width += majorPaint.measureText(text, 0, text.length());
-            if(rebateIndicator!=null) {
-                width += majorPaint.measureText(rebateIndicator, 0, rebateIndicator.length());
+            if (rebateIndicator!=null) {
+                text += rebateIndicator;
             }
+            width += majorPaint.measureText(text, 0, text.length());
         }
         widths[0] = width;
-        if (wasPrice>0.0f) {
+        if (wasPrice>0.0f && wasPrice!=finalPrice) {
             String text = " " + format.format(wasPrice);
             width += unitPaint.measureText(text, 0, text.length());
         }
@@ -206,12 +205,12 @@ public class PriceSticker extends View {
         // Draw texts
         if (finalPrice>0.0f) {
             String text = format.format(finalPrice);
-            if(rebateIndicator!=null) {
+            if (rebateIndicator!=null) {
                 text += rebateIndicator;
             }
             canvas.drawText(text, x, y, majorPaint);
         }
-        if (wasPrice>0.0f  && wasPrice != finalPrice) {
+        if (wasPrice>0.0f && wasPrice!=finalPrice) {
             String text = " " + format.format(wasPrice);
             canvas.drawText(text, x+widths[0], y, wasPaint);
         }
