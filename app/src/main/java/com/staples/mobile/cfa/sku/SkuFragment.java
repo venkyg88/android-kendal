@@ -985,7 +985,7 @@ Callback,
                         if (errMsg == null) {
                             ((Button) wrapper.findViewById(R.id.add_to_cart)).setText(R.string.add_another);
                             activity.showNotificationBanner(R.string.cart_updated_msg);
-                            Tracker.getInstance().trackActionForAddToCartFromProductDetails(identifier, finalPrice, qty);
+                            Tracker.getInstance().trackActionForAddToCartFromProductDetails(CartApiManager.getCartProduct(identifier), qty);
                         } else {
                             // if non-grammatical out-of-stock message from api, provide a nicer message
                             if (errMsg.contains("items is out of stock")) {
