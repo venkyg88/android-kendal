@@ -103,7 +103,7 @@
     <string name="required_fields">Please fill in required fields</string>
     <string name="billing_addr">Billing Address</string>
     <string name="use_as_billing_addr">Use above as billing address</string>
-    <string name="item_subtotal">Subtotal</string>
+    <string name="item_subtotal">Subtotal (including coupons)</string>
     <string name="coupons_rewards">Coupons &amp; Rewards</string>
     <string name="coupon_code_hint">Add Coupon Code here</string>
     <string name="redeemable_rewards">Redeemable Rewards</string>
@@ -197,6 +197,7 @@
     <string name="cc_encryption_failure">Credit card encryption failed</string>
     <string name="all_fields_required">All fields are required. Please fill and try again</string>
     <string name="card_ending_in">Card ending in</string>
+    <string name="shipping_billing_text">Shipping/Billing</string>
 
     <!-- Orders -->
     <string name="order">Order</string>

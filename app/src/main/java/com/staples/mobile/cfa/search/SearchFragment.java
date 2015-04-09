@@ -30,24 +30,29 @@ import com.staples.mobile.common.access.easyopen.model.browse.SearchResult;
 import com.staples.mobile.common.access.easyopen2.api.EasyOpenApi2;
 import com.staples.mobile.common.analytics.Tracker;
 
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SearchFragment extends Fragment implements Callback<SearchResult>, View.OnClickListener {
+public class SearchFragment extends Fragment implements Callback<SearchResult>, BundleAdapter.OnFetchMoreData, View.OnClickListener {
     private static final String TAG = "SearchFragment";
 
     private static final String TITLE = "title";
     private static final String KEYWORD = "keyword";
 
     private static final int MAXFETCH = 50;
+    private static final int LOOKAHEAD = 12;
 
     private String title;
     private String keyword;
+    private RecyclerView list;
     private BundleAdapter adapter;
     private DataWrapper.State state;
+    private boolean complete;
+    private int page;
     private BundleItem.SortType fetchSort;
     private BundleItem.SortType displaySort;
 
@@ -63,11 +68,12 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         super.onCreate(bundle);
 
         Bundle args = getArguments();
-        if (args != null) {
+        if (args!=null) {
             title = args.getString(TITLE);
             keyword = args.getString(KEYWORD);
         }
 
+        page = 1;
         displaySort = BundleItem.SortType.BESTMATCH;
         query();
         state = DataWrapper.State.LOADING;
@@ -77,7 +83,8 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Activity activity = getActivity();
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
-        RecyclerView list = (RecyclerView) view.findViewById(R.id.products);
+
+        list = (RecyclerView) view.findViewById(R.id.products);
         list.setLayoutManager(new GridLayoutManager(activity, 1));
         list.addItemDecoration(new HorizontalDivider(activity));
 
@@ -88,11 +95,10 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
     }
 
     private void applyState(View view) {
-        if (view == null) view = getView();
-        if (view == null) return;
+        if (view==null) view = getView();
+        if (view==null) return;
         DataWrapper wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
-        if (adapter != null) {
-            RecyclerView list = (RecyclerView) wrapper.findViewById(R.id.products);
+        if (list!=null && list.getAdapter()==null && adapter!=null) {
             list.setAdapter(adapter);
         }
         wrapper.setState(state);
@@ -104,33 +110,28 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         ActionBar.getInstance().setConfig(ActionBar.Config.SEARCH, title);
     }
 
+    @Override
+    public void onFetchMoreData() {
+        page++;
+        query();
+    }
+
     private void query() {
         fetchSort = displaySort;
 
         EasyOpenApi2 easyOpenApi2 = Access.getInstance().getEasyOpenApi2(false);
         Api easy2API = StaplesAppContext.getInstance().getApiByName(StaplesAppContext.EASYOPEN2);
         String version = easy2API.getVersion();
-        easyOpenApi2.searchResult(version, keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
-
-        // the below codes compatible with the original search w/wo tapi
-        //String server = easy2API.getUrl();
-        // when tapi is available
-        //if(server.equals("tapi.staples.com")){
-        // easyOpenApi2.searchResult(version, keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
-        //}
-        //else{
-        //EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        //easyOpenApi.searchResult(keyword, 1, MAXFETCH, fetchSort.intParam, null, this);
-        //}
+        easyOpenApi2.searchResult(version, keyword, page, MAXFETCH, fetchSort.intParam, null, this);
     }
 
     @Override
     public void success(SearchResult searchResult, Response response) {
         Activity activity = getActivity();
-        if (activity == null) return;
+        if (activity==null) return;
 
         int count = processSearch(searchResult);
-        if (count == 0) state = DataWrapper.State.EMPTY;
+        if (count==0) state = DataWrapper.State.EMPTY;
         else state = DataWrapper.State.DONE;
         applyState(null);
 
@@ -149,7 +150,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
     @Override
     public void failure(RetrofitError retrofitError) {
         Activity activity = getActivity();
-        if (activity == null) return;
+        if (activity==null) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
         ((MainActivity) activity).showErrorDialog(msg);
@@ -159,14 +160,15 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
     }
 
     private int processSearch(SearchResult searchResult) {
-        if (searchResult == null) return(0);
+        if (searchResult==null) return(0);
 
         List<Search> searches = searchResult.getSearch();
-        if (searches == null || searches.size() < 1) return (0);
+        if (searches==null || searches.size()<1) return (0);
         Search search = searches.get(0);
-        if (search == null) return(0);
+        if (search==null) return(0);
+        complete = (search.getItemCount()<=page*MAXFETCH);
 
-        // Create adapter
+        // Create adaptor
         if (adapter==null) {
             adapter = new BundleAdapter(getActivity());
             adapter.setOnClickListener(this);
@@ -174,17 +176,40 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
         adapter.fill(search.getProduct());
         adapter.notifyDataSetChanged();
-        return (adapter.getItemCount());
+
+        int count = adapter.getItemCount();
+        if (!complete && count>=MAXFETCH)
+            adapter.setOnFetchMoreData(this, count-LOOKAHEAD);
+        return(count);
     }
 
     private void performSort() {
         if (adapter==null) return;
+
+        // If complete, a local sort will do
+        if (complete) {
+            // Can sort locally
+            Comparator<BundleItem> comparator;
+            if (displaySort==fetchSort) {
+                comparator = BundleItem.indexComparator;
+            } else {
+                comparator = displaySort.comparator;
+            }
+            if (comparator!=null) {
+                adapter.sort(comparator);
+                adapter.notifyDataSetChanged();
+                list.scrollToPosition(0);
+                return;
+            }
+            else; // Best match desired, but fetch was on other criteria
+        }
 
         // Need to perform a server re-query
         if (adapter!=null) {
             adapter.clear();
             adapter.notifyDataSetChanged();
         }
+        page = 1;
         query();
         state = DataWrapper.State.LOADING;
         applyState(null);
@@ -209,13 +234,13 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
             if (activity == null) return;
 
             item.busy = false;
-            activity.swallowTouchEvents(false);
-
             adapter.notifyDataSetChanged();
+            activity.swallowTouchEvents(false);
 
             // if success
             if (errMsg == null) {
                 ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
+                activity.showNotificationBanner(R.string.cart_updated_msg);
                 Tracker.getInstance().trackActionForAddToCartFromSearchResults(CartApiManager.getCartProduct(item.identifier), 1); // analytics
             } else {
                 // if non-grammatical out-of-stock message from api, provide a nicer message
@@ -243,6 +268,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
+                    Tracker.getInstance().trackActionForSearchItemSelection(adapter.getItemPosition(item), 1);
                     new AddToCart(item);
                 }
                 break;
@@ -254,7 +280,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
                 break;
             default:
                 BundleItem.SortType sortType = BundleItem.SortType.findSortTypeById(view.getId());
-                if (sortType != null) {
+                if (sortType!=null) {
                     displaySort = sortType;
                     performSort();
                 }

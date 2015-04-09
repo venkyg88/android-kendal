@@ -20,6 +20,7 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.RatingStars;
+import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 
 import java.text.NumberFormat;
@@ -31,6 +32,10 @@ import java.util.List;
 public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder> implements DataWrapper.Layoutable {
     private static final String TAG = "BundleAdapter";
     private static final NumberFormat format = NumberFormat.getCurrencyInstance();
+
+    public interface OnFetchMoreData {
+        void onFetchMoreData();
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView image;
@@ -62,6 +67,8 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
     private Context context;
     private LayoutInflater inflater;
     private ArrayList<BundleItem> array;
+    private OnFetchMoreData fetcher;
+    private int threshold;
     private View.OnClickListener listener;
     private int layout;
     private Drawable noPhoto;
@@ -80,6 +87,11 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
     public void setLayout(DataWrapper.Layout layout) {
         if (layout==DataWrapper.Layout.TALL) this.layout = R.layout.bundle_item_tall;
         else this.layout = R.layout.bundle_item_wide;
+    }
+
+    public void setOnFetchMoreData(OnFetchMoreData fetcher, int threshold) {
+        this.fetcher = fetcher;
+        this.threshold = threshold;
     }
 
     /** needed for analytics */
@@ -123,6 +135,8 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         } else {
             vh.rebateLayout.setVisibility(View.GONE);
         }
+        vh.addonLayout.setVisibility((item.isAddOnItem) ? View.VISIBLE : View.GONE);
+        vh.overweightLayout.setVisibility((item.isOverSized) ? View.VISIBLE : View.GONE);
         if (item.busy) {
             vh.action.setVisibility(View.GONE);
             vh.whirlie.setVisibility(View.VISIBLE);
@@ -134,12 +148,12 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         if (item.type==IdentifierType.SKUSET) vh.action.setImageResource(R.drawable.ic_more_vert_black);
         else vh.action.setImageResource(R.drawable.ic_add_shopping_cart_black);
 
-        // check if the product is an add-on product
-        vh.addonLayout.setVisibility((item.isAddOnItem)? View.VISIBLE : View.GONE);
-
-        // check if the product is an overweight product, example sku:650465
-        vh.overweightLayout.setVisibility((item.isOverSized)? View.VISIBLE  : View.GONE);
-
+        // Need to get more data?
+        if (fetcher!=null && position>threshold) {
+            fetcher.onFetchMoreData();
+            fetcher = null;
+            threshold = 0;
+        }
     }
 
     public void clear() {
@@ -152,17 +166,19 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             String name = Html.fromHtml(product.getProductName()).toString();
             BundleItem item = new BundleItem(array.size(), name, product.getSku());
             item.setImageUrl(product.getImage());
-            item.setPrice(product.getPricing());
-            item.setRebatePrice(product.getPricing().get(0).getDiscount());
             item.customerRating = product.getCustomerReviewRating();
             item.customerCount = product.getCustomerReviewCount();
 
-            // check if the product is an add-on product
-            item.isAddOnItem = !TextUtils.isEmpty(product.getPricing().get(0).getAddOnItem());
-
-            // check if the product is an overweight product, example sku:650465
-            item.isOverSized = !TextUtils.isEmpty(product.getPricing().get(0).getOverSizeItem());
-
+            List<Pricing> pricings = product.getPricing();
+            if (pricings!=null) {
+                item.setPrice(pricings);
+                Pricing pricing = pricings.get(0);
+                if (pricing != null) {
+                    item.setRebatePrice(pricing.getDiscount());
+                    item.isAddOnItem = !TextUtils.isEmpty(pricing.getAddOnItem());
+                    item.isOverSized = !TextUtils.isEmpty(pricing.getOverSizeItem());
+                }
+            }
             array.add(item);
         }
     }

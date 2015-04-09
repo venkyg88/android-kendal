@@ -97,7 +97,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         submissionLayout = view.findViewById(R.id.co_submission_layout);
 //        taxLayout = view.findViewById(R.id.co_tax_layout);
         itemSubtotalVw = (TextView) view.findViewById(R.id.checkout_item_subtotal);
-        couponsRewardsVw = (TextView) view.findViewById(R.id.checkout_coupons_rewards);
+//        couponsRewardsVw = (TextView) view.findViewById(R.id.checkout_coupons_rewards);
 
         oversizedShippingVw = (TextView) view.findViewById(R.id.oversized_shipping);
         oversizedShippingLabelVw = (TextView) view.findViewById(R.id.oversized_shipping_label);
@@ -130,8 +130,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
         DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
 
+        // DLS: taking this out as per Tim (commenting-out for now just in case they ask for it back)
         // set coupons/rewards adjusted amount
-        couponsRewardsVw.setText(currencyFormat.format(couponsRewardsAmount));
+//        couponsRewardsVw.setText(currencyFormat.format(couponsRewardsAmount));
 
         // set the item subtotal
         itemSubtotalVw.setText(currencyFormat.format(itemSubtotal));
