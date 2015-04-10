@@ -431,6 +431,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                     }
                 });
             } else {
+                Tracker.getInstance().trackActionForUpdateQtyFromCart(cartItem.getSku());
                 CartApiManager.updateItemQty(cartItem.getOrderItemId(), cartItem.getSku(), cartItem.getProposedQty(), this);
             }
         }
