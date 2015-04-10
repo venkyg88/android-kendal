@@ -315,7 +315,6 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
     }
 
     // Formatters and builders
-
     private String formatNumbers(Product product) {
         // Safety check
         if (product == null) return (null);
@@ -734,9 +733,33 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
                 }
             }
 
+            if(addonLayout.getVisibility() == View.VISIBLE || overweightLayout.getVisibility() == View.VISIBLE){
+                summary.findViewById(R.id.shipping_logic_layout).setVisibility(View.VISIBLE);
+            }
+            else{
+                summary.findViewById(R.id.shipping_logic_layout).setVisibility(View.GONE);
+            }
+
+            // check if the product has discount
+            if(product.getPricing().get(0).getDiscount() != null
+                    && product.getPricing().get(0).getDiscount().size() > 0
+                    && product.getPricing().get(0).getDiscount().get(0).getName().equals("rebate")
+                    && product.getPricing().get(0).getDiscount().get(0).getAmount() > 0){
+                summary.findViewById(R.id.rebate_layout).setVisibility(View.VISIBLE);
+
+                Button rebateButton = (Button) summary.findViewById(R.id.rebate_button);
+                rebateButton.setText(String.valueOf("$ " + product.getPricing().get(0).getDiscount().get(0).getAmount())
+                + " " + getResources().getString(R.string.rebate));
+
+                Log.d(TAG, "The product has rebate. sku:" + product.getSku() + ", rebate:" +
+                        product.getPricing().get(0).getDiscount().get(0).getAmount());
+            }
+            else{
+                summary.findViewById(R.id.rebate_layout).setVisibility(View.GONE);
+            }
+
             // Save seen products detail for personal feed
             saveSeenProduct(product);
-
         }
     }
 
@@ -895,7 +918,6 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
     }
 
     // ViewPager notifications
-
     public void onPageScrollStateChanged(int state) {
     }
 
@@ -905,8 +927,6 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
     public void onPageSelected(int position) {
         details.setCurrentTab(position);
     }
-
-
 
     // Detail and add-to-cart clicks
     private void shiftToDetail(int position) {

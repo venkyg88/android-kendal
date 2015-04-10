@@ -67,7 +67,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="@dimen/sku_padding_10">
+                android:paddingTop="@dimen/sku_padding_10"
+                android:paddingLeft="@dimen/sku_padding_10"
+                android:paddingRight="@dimen/sku_padding_10">
                 <com.staples.mobile.cfa.widget.PriceSticker
                     android:id="@+id/pricing"
                     style="@style/LargePriceSticker"
@@ -82,14 +84,52 @@
                     android:layout_gravity="center_vertical|right"/>
             </LinearLayout>
 
+            <!-- Sku Rebate -->
+            <LinearLayout
+                android:id="@+id/rebate_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/sku_padding_10"
+                android:paddingRight="@dimen/sku_padding_10"
+                android:paddingTop="@dimen/sku_padding_10"
+                android:visibility="gone">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/fontsize_12sp"
+                    android:textColor="@color/staples_dark_gray"
+                    android:gravity="top|left"
+                    android:layout_gravity="top|left"
+                    android:text="@string/rebate_hint"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6"/>
+                <Button
+                    android:id="@+id/rebate_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sku_rebate_height"
+                    android:textSize="@dimen/fontsize_16sp"
+                    android:text="@string/rebate"
+                    android:background="@drawable/sku_add_cart_round_layout"
+                    android:textColor="@color/staples_white"
+                    android:layout_margin="@dimen/sku_padding_5"
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical|right"
+                    android:paddingLeft="@dimen/sku_padding_10"
+                    android:paddingRight="@dimen/sku_padding_10"/>
+            </LinearLayout>
+
             <!-- Shipping Logic Info -->
             <LinearLayout
                 android:id="@+id/shipping_logic_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:paddingTop="@dimen/sku_padding_10"
                 android:paddingLeft="@dimen/sku_padding_10"
-                android:paddingBottom="@dimen/sku_padding_10">
+                android:visibility="gone">
                 <LinearLayout
                     android:id="@+id/overweight_layout"
                     android:layout_width="wrap_content"

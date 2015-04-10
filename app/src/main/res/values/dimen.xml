@@ -50,6 +50,7 @@
     <dimen name="sku_padding_5">5dp</dimen>
     <dimen name="sku_padding_10">10dp</dimen>
     <dimen name="sku_padding_35">35dp</dimen>
+    <dimen name="sku_rebate_height">30dp</dimen>
     <dimen name="sku_image_width">275dp</dimen>
     <dimen name="sku_image_height">275dp</dimen>
     <dimen name="sku_add_cart_height">50dp</dimen>
