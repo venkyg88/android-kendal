@@ -683,8 +683,10 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     class ProductImageListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition)view.getTag());
-            activity.selectSkuItem(cartItem.getDescription(), cartItem.getSku(), false);
+            if (cartAdapter != null && view.getTag() != null && view.getTag() instanceof CartAdapter.CartItemPosition) {
+                CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition) view.getTag());
+                activity.selectSkuItem(cartItem.getDescription(), cartItem.getSku(), false);
+            }
         }
     }
 
