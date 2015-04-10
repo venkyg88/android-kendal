@@ -89,20 +89,28 @@
 
 		</RelativeLayout>
 
+        <!--price-->
 		<com.staples.mobile.cfa.widget.PriceSticker
 			android:id="@+id/cartitem_price"
 			android:layout_below="@id/shipping_and_price_layout"
 			style="@style/SmallPriceSticker"
-			android:layout_marginBottom="11dp"
 			android:padding="0dp"/>
+
+        <!--rebate indicator-->
+        <include layout="@layout/rebate" android:id="@+id/rebate_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cartitem_price"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/cartitem_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-			android:layout_below="@id/cartitem_price"
+			android:layout_below="@id/rebate_layout"
             android:layout_alignParentLeft="true"
             android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/verticalspacing_8dp"
             android:padding="3dp"
             android:background="@color/staples_light_gray"
             android:src="@drawable/ic_close_black_18dp"

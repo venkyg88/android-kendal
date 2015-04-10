@@ -23,11 +23,16 @@
         android:layout_alignLeft="@+id/title"
         android:layout_below="@+id/title"
         android:layout_marginTop="@dimen/elevation_high"/>
+    <include layout="@layout/rebate" android:id="@+id/rebate_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pricing"
+        android:visibility="gone"/>
     <com.staples.mobile.cfa.widget.RatingStars
         android:id="@+id/rating"
         style="@style/SmallRatingStars"
         android:layout_alignLeft="@+id/pricing"
-        android:layout_below="@+id/pricing"
+        android:layout_below="@+id/rebate_layout"
         android:layout_marginTop="@dimen/elevation_high"/>
     <ImageView
         android:id="@+id/bundle_action"
