@@ -416,7 +416,7 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
         }
     }
 
-    private void addAccessory(Product product) {
+    private void addAccessory(final Product product) {
         List<Product> accessories = product.getAccessory();
 
         LayoutInflater inflater = activity.getLayoutInflater();
@@ -436,6 +436,7 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
             accessoryImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Tracker.getInstance().trackActionForProductAccessories(sku, product, false); // analytics
                     activity.selectSkuItem(Html.fromHtml(accessoryTitle).toString(), sku, false);
                 }
             });
