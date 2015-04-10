@@ -67,9 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingTop="@dimen/sku_padding_10"
-                android:paddingLeft="@dimen/sku_padding_10"
-                android:paddingRight="@dimen/sku_padding_10">
+                android:padding="@dimen/sku_padding_10">
                 <com.staples.mobile.cfa.widget.PriceSticker
                     android:id="@+id/pricing"
                     style="@style/LargePriceSticker"
@@ -92,7 +90,7 @@
                 android:orientation="horizontal"
                 android:paddingLeft="@dimen/sku_padding_10"
                 android:paddingRight="@dimen/sku_padding_10"
-                android:paddingTop="@dimen/sku_padding_10"
+                android:paddingBottom="@dimen/sku_padding_10"
                 android:visibility="gone">
                 <TextView
                     android:layout_width="wrap_content"
@@ -127,7 +125,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/sku_padding_10"
+                android:paddingBottom="@dimen/sku_padding_10"
                 android:paddingLeft="@dimen/sku_padding_10"
                 android:visibility="gone">
                 <LinearLayout
