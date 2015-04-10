@@ -78,31 +78,11 @@
         style="@style/SmallPriceSticker"
         android:layout_below="@+id/shipping_logic_layout"
         android:layout_marginTop="@dimen/elevation_high"/>
-    <LinearLayout
-        android:id="@+id/rebate_layout"
-        android:layout_below="@+id/pricing"
+    <include layout="@layout/rebate" android:id="@+id/rebate_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/rebate_text"
-            android:textColor="@color/staples_dark_gray"
-            android:paddingBottom="@dimen/action_bar_half_margin"
-            android:textSize="@dimen/fontsize_10sp" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/rebate_text"
-            android:textColor="@color/staples_white"
-            android:paddingTop="@dimen/action_bar_quarter_margin"
-            android:paddingLeft="@dimen/left_margin"
-            android:paddingRight="@dimen/right_margin"
-            android:paddingBottom="@dimen/action_bar_quarter_margin"
-            android:background="@drawable/rounded_corner"/>
-    </LinearLayout>
+        android:layout_below="@+id/pricing"
+        android:visibility="gone"/>
     <com.staples.mobile.cfa.widget.RatingStars
         android:id="@+id/rating"
         style="@style/SmallRatingStars"

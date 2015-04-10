@@ -8,6 +8,7 @@ import android.text.Html;
 
 import com.staples.mobile.cfa.widget.QuantityEditor;
 //import com.staples.mobile.cfa.widget.QuantityEditor;
+import com.staples.mobile.common.access.easyopen.model.browse.Discount;
 import com.staples.mobile.common.access.easyopen.model.cart.Image;
 import com.staples.mobile.common.access.easyopen.model.cart.Pricing;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
@@ -98,6 +99,21 @@ public class CartItem {
             return pricing.getListPrice();
         }
         return 0.0f;
+    }
+
+    public float getRebate() {
+        float rebate = 0;
+        Pricing pricing = getPricing();
+        if (pricing != null) {
+            if (pricing.getDiscount() != null) {
+                for (Discount discount : pricing.getDiscount()) {
+                    if ("rebate".equals(discount.getName()) && discount.getAmount() != 0) {
+                        rebate += discount.getAmount();
+                    }
+                }
+            }
+        }
+        return rebate;
     }
 
     public String getPriceUnitOfMeasure() {
