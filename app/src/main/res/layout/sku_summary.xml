@@ -16,7 +16,8 @@
         android:layout_weight="1"
         android:scrollbarStyle="outsideOverlay"
         android:background="@color/staples_off_white"
-        android:padding="@dimen/sku_padding_10">
+        android:paddingLeft="@dimen/sku_padding_10"
+        android:paddingRight="@dimen/sku_padding_10">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
