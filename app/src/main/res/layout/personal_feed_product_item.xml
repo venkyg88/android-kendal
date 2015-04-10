@@ -46,7 +46,6 @@
         android:id="@+id/arrow"
         android:layout_width="@dimen/personal_feed_arrow"
         android:layout_height="@dimen/personal_feed_arrow"
-        android:padding="@dimen/sku_info_padding"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:adjustViewBounds="true"

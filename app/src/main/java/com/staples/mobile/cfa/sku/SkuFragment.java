@@ -23,10 +23,10 @@ import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
 
-import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.common.access.easyopen.model.browse.Discount;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.cart.CartApiManager;
@@ -55,10 +55,6 @@ import com.staples.mobile.common.access.easyopen2.model.review.Review;
 import com.staples.mobile.common.access.easyopen2.model.review.YotpoResponse;
 
 import java.lang.reflect.Type;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -67,8 +63,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener,
-Callback,
-        View.OnClickListener, FragmentManager.OnBackStackChangedListener{
+Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
     private static final String TAG = "SkuFragment";
 
     private static final String TITLE = "title";
@@ -81,7 +76,7 @@ Callback,
 
     private static final int MAXFETCH = 50;
 
-    private static SimpleDateFormat iso8601;
+    //private static SimpleDateFormat iso8601;
 
     public enum Availability {
         NOTHING      (R.string.avail_nothing),
@@ -135,9 +130,6 @@ Callback,
 
     // Accessory Container
     private LinearLayout accessoryContainer;
-
-    // Spec Table Container
-    private TableLayout specContainer;
 
     // Shipping Logic Container
     private LinearLayout overweightLayout;
@@ -215,8 +207,8 @@ Callback,
         details.setOnTabChangedListener(this);
         tabPager.setOnPageChangeListener(this);
         summary.findViewById(R.id.description_detail).setOnClickListener(this);
-        summary.findViewById(R.id.specification_detail).setOnClickListener(this);
-        summary.findViewById(R.id.review_detail).setOnClickListener(this);
+        summary.findViewById(R.id.specifications_detail).setOnClickListener(this);
+        summary.findViewById(R.id.reviews_detail).setOnClickListener(this);
         wrapper.findViewById(R.id.add_to_cart).setOnClickListener(this);
 
         // Initiate API calls
@@ -324,7 +316,6 @@ Callback,
     }
 
     // Formatters and builders
-
     private String formatNumbers(Product product) {
         // Safety check
         if (product == null) return (null);
@@ -412,9 +403,9 @@ Callback,
                     table.addView(skuSpecRow);
 
                     // set dark color for even table rows
-                    if ((rowCount % 2) == 0) {
-                        skuSpecRow.setBackgroundColor(parent.getContext().getResources().getColor(R.color.staples_middle_gray));
-                    }
+//                    if ((rowCount % 2) == 0) {
+//                        skuSpecRow.setBackgroundColor(parent.getContext().getResources().getColor(R.color.staples_middle_gray));
+//                    }
 
                     // Set specification
                     ((TextView) skuSpecRow.findViewById(R.id.specName)).setText(specName);
@@ -447,13 +438,13 @@ Callback,
                 @Override
                 public void onClick(View v) {
                     Tracker.getInstance().trackActionForProductAccessories(sku, product, false); // analytics
-                    activity.selectSkuItem(accessoryTitle, sku, false);
+                    activity.selectSkuItem(Html.fromHtml(accessoryTitle).toString(), sku, false);
                 }
             });
 
             // Set accessory title
             TextView accessoryTitleTextView = (TextView) skuAccessoryRow.findViewById(R.id.accessory_title);
-            accessoryTitleTextView.setText(accessoryTitle);
+            accessoryTitleTextView.setText(Html.fromHtml(accessoryTitle).toString());
 
             // Set listener for accessory title
             accessoryTitleTextView.setOnClickListener(new View.OnClickListener() {
@@ -694,8 +685,9 @@ Callback,
             // Add info
             productName = Html.fromHtml(product.getProductName()).toString();
             ((TextView) summary.findViewById(R.id.title)).setText(productName);
-            ((TextView) summary.findViewById(R.id.numbers)).setText(formatNumbers(product));
+            ((TextView) summary.findViewById(R.id.model)).setText(formatNumbers(product));
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
+            ((RatingStars) summary.findViewById(R.id.review_rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
 
             // Add pricing
             PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
@@ -704,18 +696,16 @@ Callback,
 
             // Add description
             LayoutInflater inflater = activity.getLayoutInflater();
-            if (!buildDescription(inflater, (ViewGroup) summary.findViewById(R.id.description), product, 3))
-                summary.findViewById(R.id.description_detail).setVisibility(View.GONE);
+            if (!buildDescription(inflater, (ViewGroup) summary.findViewById(R.id.description), product, 3)) {
+                summary.findViewById(R.id.description).setVisibility(View.GONE);
+            }
 
             // Check if the product has specifications
             if (product.getSpecification() != null) {
                 // Add specifications
                 addSpecifications(inflater, (ViewGroup) summary.findViewById(R.id.specifications), product, 3);
-                // Log.d(TAG, "Product has specification.");
             } else {
-                summary.findViewById(R.id.specifications).setVisibility(View.GONE);
-                summary.findViewById(R.id.specification_detail).setVisibility(View.GONE);
-                // Log.d(TAG, "Product has no specification.");
+                summary.findViewById(R.id.specifications_layout).setVisibility(View.GONE);
             }
 
             // Check if the product has accessories
@@ -724,7 +714,7 @@ Callback,
                 addAccessory(product);
                 // Log.d(TAG, "Product has accessories.");
             } else {
-                summary.findViewById(R.id.accessory_title).setVisibility(View.GONE);
+                summary.findViewById(R.id.accessory_layout).setVisibility(View.GONE);
                 // Log.d(TAG, "Product has no accessories.");
             }
 
@@ -745,55 +735,79 @@ Callback,
                 }
             }
 
+            if(addonLayout.getVisibility() == View.VISIBLE || overweightLayout.getVisibility() == View.VISIBLE){
+                summary.findViewById(R.id.shipping_logic_layout).setVisibility(View.VISIBLE);
+            }
+            else{
+                summary.findViewById(R.id.shipping_logic_layout).setVisibility(View.GONE);
+            }
+
+            // check if the product has discount
+            List<Discount> discount = product.getPricing().get(0).getDiscount();
+            if(discount != null && discount.size() > 0
+                    && discount.get(0).getName().equals("rebate")
+                    && discount.get(0).getAmount() > 0){
+                summary.findViewById(R.id.rebate_layout).setVisibility(View.VISIBLE);
+
+                Button rebateButton = (Button) summary.findViewById(R.id.rebate_button);
+                rebateButton.setText(String.valueOf("$ " + discount.get(0).getAmount())
+                + " " + getResources().getString(R.string.rebate));
+
+                Log.d(TAG, "The product has rebate. sku:" + product.getSku()
+                        + ", rebate:" + discount.get(0).getAmount());
+            }
+            else{
+                summary.findViewById(R.id.rebate_layout).setVisibility(View.GONE);
+            }
+
             // Save seen products detail for personal feed
             saveSeenProduct(product);
-
         }
     }
 
-    public static String formatTimestamp(String raw) {
-        if (raw == null) return (null);
+//    public static String formatTimestamp(String raw) {
+//        if (raw == null) return (null);
+//
+//        if (iso8601 == null)
+//            iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+//
+//        try {
+//            Date date = iso8601.parse(raw);
+//            String text = DateFormat.getDateInstance().format(date);
+//            return (text);
+//        } catch (ParseException e) {
+//            Crittercism.logHandledException(e);
+//            return (null);
+//        }
+//    }
 
-        if (iso8601 == null)
-            iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
-        try {
-            Date date = iso8601.parse(raw);
-            String text = DateFormat.getDateInstance().format(date);
-            return (text);
-        } catch (ParseException e) {
-            Crittercism.logHandledException(e);
-            return (null);
-        }
-    }
-
-    private void processReviewSet(ReviewSet reviews) {
-        if (reviews == null) return;
-        List<Data> datas = reviews.getData();
-        if (datas == null || datas.size() < 1) return;
-        tabAdapter.setReviews(datas);
-
-        Data item = datas.get(0);
-        if (item != null) {
-            // Inflate review block
-            LayoutInflater inflater = activity.getLayoutInflater();
-            ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
-            View view = inflater.inflate(R.layout.sku_review_brief_item, parent, false);
-            parent.addView(view);
-
-            // Set items
-            String created = formatTimestamp(item.getCreatedDatetime());
-            if (created != null)
-                ((TextView) view.findViewById(R.id.sku_review_date)).setText(created);
-            else ((TextView) view.findViewById(R.id.sku_review_date)).setVisibility(View.GONE);
-
-            ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(item.getRating(), null);
-
-            String comments = item.getComments();
-            if (comments != null)
-                ((TextView) view.findViewById(R.id.sku_review_comments)).setText(comments);
-            else ((TextView) view.findViewById(R.id.sku_review_comments)).setVisibility(View.GONE);
-        }
+//    private void processReviewSet(ReviewSet reviews) {
+//        if (reviews == null) return;
+//        List<Data> datas = reviews.getData();
+//        if (datas == null || datas.size() < 1) return;
+//        tabAdapter.setReviews(datas);
+//
+//        Data item = datas.get(0);
+//        if (item != null) {
+//            // Inflate review block
+//            LayoutInflater inflater = activity.getLayoutInflater();
+//            ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
+//            View view = inflater.inflate(R.layout.sku_review_brief_item, parent, false);
+//            parent.addView(view);
+//
+//            // Set items
+//            String created = formatTimestamp(item.getCreatedDatetime());
+//            if (created != null)
+//                ((TextView) view.findViewById(R.id.sku_review_date)).setText(created);
+//            else ((TextView) view.findViewById(R.id.sku_review_date)).setVisibility(View.GONE);
+//
+//            ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(item.getRating(), null);
+//
+//            String comments = item.getComments();
+//            if (comments != null)
+//                ((TextView) view.findViewById(R.id.sku_review_comments)).setText(comments);
+//            else ((TextView) view.findViewById(R.id.sku_review_comments)).setVisibility(View.GONE);
+//        }
 
 //  TODO Review tags
 //            List<HashMap<String, List<String>>> tags = data.getReview_tags();
@@ -805,7 +819,7 @@ Callback,
 //                    }
 //                }
 //            }
-    }
+//    }
 
     private void processYotpoReview(YotpoResponse yotpoResponse) {
         if (yotpoResponse == null) return;
@@ -832,18 +846,37 @@ Callback,
             View view = inflater.inflate(R.layout.sku_review_brief_item, parent, false);
             parent.addView(view);
 
+            // Rating
+            ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(briefReview.getScore(), null);
+
+            // Title
+            String title = briefReview.getTitle();
+            if (title != null) {
+                ((TextView) view.findViewById(R.id.sku_review_title)).setText(title);
+            }
+            else {
+                view.findViewById(R.id.sku_review_title).setVisibility(View.GONE);
+            }
+
+            // Author
+            String author = briefReview.getUser().getDisplayName();
+            if (author != null) {
+                ((TextView) view.findViewById(R.id.sku_review_author)).setText("By " + author + " - ");
+            }
+            else {
+                view.findViewById(R.id.sku_review_author).setVisibility(View.GONE);
+            }
+
             // Created date
             String[] createdDateTime = briefReview.getCreatedAt().split("T");
             String createdDate = createdDateTime[0];
+
             if (createdDate != null) {
                 ((TextView) view.findViewById(R.id.sku_review_date)).setText(createdDate);
             }
             else {
                 view.findViewById(R.id.sku_review_date).setVisibility(View.GONE);
             }
-
-            // Rating
-            ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(briefReview.getScore(), null);
 
             // Comment
             String comments = briefReview.getContent();
@@ -854,23 +887,23 @@ Callback,
                 view.findViewById(R.id.sku_review_comments).setVisibility(View.GONE);
             }
 
-            for(int i = 0; i < yotpoReviews.size(); i++) {
+            for(int i = 0; i < Math.min(yotpoReviews.size(), 10); i++) {
                 Review review = yotpoReviews.get(i);
-                Log.d(TAG, "YOTPO review " + i + " - score: " + review.getScore() + ", content:" + review.getContent()
+                Log.d(TAG, yotpoReviews.size() + " total YOTPO reviews. "
+                        + (i+1) + " - score: " + review.getScore()
+                        + ", content:" + review.getContent()
                         + ", title:" + review.getTitle() + ", user:" + review.getUser().getDisplayName()
                         + ", Time:" + review.getCreatedAt());
             }
         }
         else{
-            summary.findViewById(R.id.reviews).setVisibility(View.GONE);
-            summary.findViewById(R.id.review_detail).setVisibility(View.GONE);
+            summary.findViewById(R.id.reviews_layout).setVisibility(View.GONE);
 
             Log.d(TAG, "This product has no YOTPO review. SKU:" + identifier);
         }
     }
 
     // TabHost notifications
-
     public void onTabChanged(String tag) {
         int index;
 
@@ -887,7 +920,6 @@ Callback,
     }
 
     // ViewPager notifications
-
     public void onPageScrollStateChanged(int state) {
     }
 
@@ -899,7 +931,6 @@ Callback,
     }
 
     // Detail and add-to-cart clicks
-
     private void shiftToDetail(int position) {
         if (isShiftedTab) return;
         wrapper.setState(DataWrapper.State.GONE);
@@ -967,10 +998,10 @@ Callback,
             case R.id.description_detail:
                 shiftToDetail(0);
                 break;
-            case R.id.specification_detail:
+            case R.id.specifications_detail:
                 shiftToDetail(1);
                 break;
-            case R.id.review_detail:
+            case R.id.reviews_detail:
                 shiftToDetail(2);
                 break;
             case R.id.add_to_cart:

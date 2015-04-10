@@ -62,17 +62,17 @@ public class ReviewAdapter extends BaseAdapter {
         Data item = reviews.get(position);
 
         // Set items
-        String created = SkuFragment.formatTimestamp(item.getCreatedDatetime());
-        setTextView((TextView) view.findViewById(R.id.sku_review_date), created);
+//        String created = SkuFragment.formatTimestamp(item.getCreatedDatetime());
+//        setTextView((TextView) view.findViewById(R.id.sku_review_date), created);
 
-        ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(item.getRating(), null);
+//        ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(item.getRating(), null);
+//
+//        setTextView((TextView) view.findViewById(R.id.sku_review_title), item.getHeadline());
+//        setTextView((TextView) view.findViewById(R.id.sku_review_comments), item.getComments());
 
-        setTextView((TextView) view.findViewById(R.id.sku_review_title), item.getHeadline());
-        setTextView((TextView) view.findViewById(R.id.sku_review_comments), item.getComments());
-
-        String verdict = item.getBottomline();
-        if (verdict!=null) verdict = context.getResources().getString(R.string.would_you)+" "+verdict;
-        setTextView((TextView) view.findViewById(R.id.sku_review_verdict), verdict);
+//        String verdict = item.getBottomline();
+//        if (verdict!=null) verdict = context.getResources().getString(R.string.would_you)+" "+verdict;
+//        setTextView((TextView) view.findViewById(R.id.sku_review_verdict), verdict);
 
         return(view);
     }
