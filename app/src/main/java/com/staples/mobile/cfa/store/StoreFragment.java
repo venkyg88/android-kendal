@@ -610,7 +610,9 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
             case R.id.call_store2:
                 obj = view.getTag();
                 if (obj instanceof StoreItem) {
-                    dialStorePhone((StoreItem) obj);
+                    StoreItem storeItem = (StoreItem) obj;
+                    Tracker.getInstance().trackActionForCallStore(storeItem.storeNumber); // analytics
+                    dialStorePhone(storeItem);
                 }
                 break;
             case R.id.weekly_ad_link:
@@ -618,13 +620,16 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                 obj = view.getTag();
                 if (obj instanceof StoreItem) {
                     StoreItem storeItem = (StoreItem) obj;
+                    Tracker.getInstance().trackActionForStoreLocatorWeeklyAd(storeItem.storeNumber); // analytics
                     ((MainActivity)getActivity()).selectWeeklyAd(storeItem.storeNumber);
                 }
                 break;
             case R.id.directions:
                 obj = view.getTag();
                 if (obj instanceof StoreItem) {
-                    getStoreDirections((StoreItem) obj);
+                    StoreItem storeItem = (StoreItem) obj;
+                    Tracker.getInstance().trackActionForStoreDirections(storeItem.storeNumber); // analytics
+                    getStoreDirections(storeItem);
                 }
                 break;
         }

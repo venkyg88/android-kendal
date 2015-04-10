@@ -88,6 +88,17 @@ public class CartApiManager {
                 });
     }
 
+    public static Product getCartProduct(String sku) {
+        if (cart != null) {
+            for (Product product : cart.getProduct()) {
+                if (product.getSku().equals(sku)) {
+                    return product;
+                }
+            }
+        }
+        return null;
+    }
+
     public static void resetCart() {
         cart = null;
         manuallyAddedCouponCodes.clear();

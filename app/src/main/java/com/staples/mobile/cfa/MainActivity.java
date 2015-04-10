@@ -14,6 +14,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -171,6 +172,15 @@ public class MainActivity extends Activity
     @Override
     public void onNewIntent(Intent intent) {
         String action = intent.getAction();
+
+        // analytics
+        String userMessage = intent.getStringExtra(NotifyReceiver.EXTRA_MESSAGE);
+        if (!TextUtils.isEmpty(userMessage)) {
+            Tracker tracker = Tracker.getInstance();
+            if (tracker.isInitialized()) {
+                Tracker.getInstance().trackActionForPushMessaging(userMessage);
+            }
+        }
 
         if (NotifyReceiver.ACTION_OPEN_SKU.equals(action)) {
             String sku = intent.getStringExtra(NotifyReceiver.EXTRA_SKU);

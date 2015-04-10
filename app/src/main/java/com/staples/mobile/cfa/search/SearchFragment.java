@@ -241,7 +241,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
             if (errMsg == null) {
                 ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
                 activity.showNotificationBanner(R.string.cart_updated_msg);
-                Tracker.getInstance().trackActionForAddToCartFromSearchResults(item.identifier, item.finalPrice, 1);
+                Tracker.getInstance().trackActionForAddToCartFromSearchResults(CartApiManager.getCartProduct(item.identifier), 1); // analytics
             } else {
                 // if non-grammatical out-of-stock message from api, provide a nicer message
                 if (errMsg.contains("items is out of stock")) {

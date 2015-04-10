@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -56,11 +57,10 @@ public class PersonalFeedFragment extends Fragment {
 
     private static final int MAXFETCH = 50;
 
-    private MainActivity mainActivity;
-
     private LinearLayout dailyDealLayout;
     private LinearLayout clearanceLayout;
     private LinearLayout seenProductsLayout;
+    private LinearLayout emptyFeedLayout;
 
     private DataWrapper dailyDealWrapper;
     private DataWrapper clearanceWrapper;
@@ -73,17 +73,23 @@ public class PersonalFeedFragment extends Fragment {
     private TextView seenProductClearTV;
     private RelativeLayout seenProductsLoading;
 
+    private String dailyDealTitle;
+    private String clearanceTitle;
+    private String seenProductsTitle;
+    private boolean isDailyEmpty = true;
+
     private class SkuDetailsCallback implements Callback<SkuDetails> {
         @Override
         public void success(final SkuDetails sku, Response response) {
             seenProductClearTV.setVisibility(View.VISIBLE);
             seenProductsWrapper.setState(DataWrapper.State.DONE);
 
-            if (mainActivity == null) {
+            Activity activity = getActivity();
+            if (activity == null) {
                 return;
             }
 
-            LayoutInflater inflater = mainActivity.getLayoutInflater();
+            LayoutInflater inflater = getActivity().getLayoutInflater();
 
             Product seenProduct = sku.getProduct().get(0);
 
@@ -104,7 +110,7 @@ public class PersonalFeedFragment extends Fragment {
 
             // API safety check
             if(seenProduct.getImage() != null && seenProduct.getImage().size() > 0){
-                Picasso.with(mainActivity).load(seenProduct.getImage().get(0).getUrl()).error(R.drawable.no_photo).into(imageView);
+                Picasso.with(getActivity()).load(seenProduct.getImage().get(0).getUrl()).error(R.drawable.no_photo).into(imageView);
             }
             else{
                 Log.d(TAG, "API returned empty image url!");
@@ -118,19 +124,21 @@ public class PersonalFeedFragment extends Fragment {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mainActivity.selectSkuItem(productName, skuId, false);
+                    Tracker.getInstance().trackActionForPersonalFeed(seenProductsTitle);
+                    ((MainActivity) getActivity()).selectSkuItem(productName, skuId, false);
                 }
             });
 
             title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mainActivity.selectSkuItem(productName, skuId, false);
+                    Tracker.getInstance().trackActionForPersonalFeed(seenProductsTitle);
+                    ((MainActivity) getActivity()).selectSkuItem(productName, skuId, false);
                 }
             });
 
-            PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(mainActivity);
-            HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(mainActivity);
+            PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(getActivity());
+            HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(getActivity());
             if(seenProductsContainer.getChildCount() < savedSkuSet.size()) {
                 // still loading other items' data
                 seenProductsLoading.setVisibility(View.VISIBLE);
@@ -146,24 +154,32 @@ public class PersonalFeedFragment extends Fragment {
         public void failure(RetrofitError retrofitError) {
             seenProductsWrapper.setState(DataWrapper.State.EMPTY);
 
-            if (mainActivity == null) {
+            Activity activity = getActivity();
+            if (activity == null) {
                 return;
             }
 
             String message = ApiError.getErrorMessage(retrofitError);
-            mainActivity.showErrorDialog(message);
+            ((MainActivity)activity).showErrorDialog(message);
             Log.d(TAG, message);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        mainActivity = (MainActivity) getActivity();
         LinearLayout personalFeedLayout = (LinearLayout) inflater.inflate(R.layout.personal_feed, container, false);
+
+        // get section titles for the sake of analytics
+        Resources r = getResources();
+        dailyDealTitle = r.getString(R.string.feed_daily_deal_title);
+        clearanceTitle = r.getString(R.string.feed_clearance_title);
+        seenProductsTitle = r.getString(R.string.feed_seen_products_title);
+
 
         dailyDealLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.daily_deal_layout);
         clearanceLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.clearance_layout);
         seenProductsLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.seen_products_layout);
+        emptyFeedLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.empty_feed_layout);
 
         dailyDealWrapper = (DataWrapper) personalFeedLayout.findViewById(R.id.daily_deal_wrapper);
         clearanceWrapper = (DataWrapper) personalFeedLayout.findViewById(R.id.clearance_wrapper);
@@ -183,10 +199,16 @@ public class PersonalFeedFragment extends Fragment {
                 seenProductClearTV.setVisibility(View.GONE);
                 seenProductsLoading.setVisibility(View.GONE);
 
+                if(dailyDealContainer.getChildCount() == 0 && clearanceContainer.getChildCount() ==0) {
+                    emptyFeedLayout.setVisibility(View.VISIBLE);
+                }
+                else {
+                    emptyFeedLayout.setVisibility(View.GONE);
+                }
 
                 removeSavedSeenProducts();
 
-                PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(mainActivity);
+                PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(getActivity());
                 feedSingleton.setSavedSkus(new HashSet<String>());
                 feedSingleton.setSavedSeenProducts(
                         new PersistentSizedArrayList<String>(PersonalFeedSingleton.SEEN_PRODUCTS_AMOUNT));
@@ -220,16 +242,17 @@ public class PersonalFeedFragment extends Fragment {
                             if (productContainer.getProducts() != null) {
                                 for (Product p : productContainer.getProducts()) {
                                     dailyDealSkuSet.add(p.getSku());
-                                    //fillContainer(p, dailyDealContainer);
+                                    //fillContainer(p, dailyDealContainer, dailyDealTitle);
                                     //Log.d(TAG, "Daily Deal Products: " + p.getProductName() + "-" + p.getSku());
                                 }
                             }
 
                             if (cartItems != null) {
                                 for (com.staples.mobile.common.access.easyopen.model.cart.Product cartItem : cartItems) {
+                                    dailyDealLayout.setVisibility(View.VISIBLE);
                                     String cartItemSku = cartItem.getSku();
                                     if (dailyDealSkuSet.contains(cartItemSku)) {
-                                        fillContainer(cartItem, dailyDealContainer);
+                                        fillContainer(cartItem, dailyDealContainer, dailyDealTitle);
                                         Log.d(TAG, "Daily deal products in cart: " + cartItem.getProductName());
                                     }
                                 }
@@ -240,6 +263,7 @@ public class PersonalFeedFragment extends Fragment {
                                 dailyDealLayout.setVisibility(View.GONE);
                             } else {
                                 dailyDealWrapper.setState(DataWrapper.State.DONE);
+                                emptyFeedLayout.setVisibility(View.GONE);
                             }
                         }
                     }); // ProductCollection CallBack
@@ -256,7 +280,7 @@ public class PersonalFeedFragment extends Fragment {
                             if (productContainer.getProducts() != null) {
                                 for (Product p : productContainer.getProducts()) {
                                     clearanceSkuSet.add(p.getSku());
-                                    //fillContainer(p, clearanceContainer);
+                                    //fillContainer(p, clearanceContainer, clearanceTitle);
                                     //Log.d(TAG, "Clearance Products: " + p.getProductName() + "-" + p.getSku());
                                 }
 
@@ -264,9 +288,10 @@ public class PersonalFeedFragment extends Fragment {
 
                             if (cartItems != null) {
                                 for (com.staples.mobile.common.access.easyopen.model.cart.Product cartItem : cartItems) {
+                                    clearanceLayout.setVisibility(View.VISIBLE);
                                     String cartItemSku = cartItem.getSku();
                                     if (clearanceSkuSet.contains(cartItemSku)) {
-                                        fillContainer(cartItem, clearanceContainer);
+                                        fillContainer(cartItem, clearanceContainer, clearanceTitle);
                                         Log.d(TAG, "Clearance products in cart: " + cartItem.getProductName());
                                     }
                                 }
@@ -277,6 +302,7 @@ public class PersonalFeedFragment extends Fragment {
                                 clearanceLayout.setVisibility(View.GONE);
                             } else {
                                 clearanceWrapper.setState(DataWrapper.State.DONE);
+                                emptyFeedLayout.setVisibility(View.GONE);
                             }
                         }
                     }); // ProductCollection CallBack
@@ -301,15 +327,18 @@ public class PersonalFeedFragment extends Fragment {
     private void setSeenProductsAdapter(){
         // set seen products list
         HashSet<String> saveSeenSkus =
-                PersonalFeedSingleton.getInstance(mainActivity).getSavedSkus(mainActivity);
+                PersonalFeedSingleton.getInstance(getActivity()).getSavedSkus(getActivity());
 
         // display "nothing found" if no saved seen products
         if(saveSeenSkus.isEmpty()){
             seenProductsLayout.setVisibility(View.GONE);
+            if(dailyDealContainer.getChildCount() == 0 && clearanceContainer.getChildCount() ==0) {
+                emptyFeedLayout.setVisibility(View.VISIBLE);
+            }
         }
         else{
             seenProductsWrapper.setState(DataWrapper.State.LOADING);
-
+            emptyFeedLayout.setVisibility(View.GONE);
             for(String sku : saveSeenSkus){
                 // Initiate SKU API call
                 EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
@@ -319,10 +348,10 @@ public class PersonalFeedFragment extends Fragment {
     }
 
     private void fillContainer(com.staples.mobile.common.access.easyopen.model.cart.Product cartItem,
-                               LinearLayout container){
+                               LinearLayout container, final String containerTitle){
         final String productName = Html.fromHtml(cartItem.getProductName()).toString();
 
-        LayoutInflater inflater = mainActivity.getLayoutInflater();
+        LayoutInflater inflater = getActivity().getLayoutInflater();
         View row = inflater.inflate(R.layout.personal_feed_product_item, null);
 
         TextView title = (TextView) row.findViewById(R.id.title);
@@ -339,7 +368,7 @@ public class PersonalFeedFragment extends Fragment {
         if(cartItem.getImage() != null && cartItem.getImage().size() > 0){
             imageUrl = cartItem.getImage().get(0).getUrl();
         }
-        Picasso.with(mainActivity).load(imageUrl).error(R.drawable.no_photo).into(imageView);
+        Picasso.with(getActivity()).load(imageUrl).error(R.drawable.no_photo).into(imageView);
 
         container.addView(row);
 
@@ -348,20 +377,22 @@ public class PersonalFeedFragment extends Fragment {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainActivity.selectSkuItem(productName, sku, false);
+                Tracker.getInstance().trackActionForPersonalFeed(containerTitle);
+                ((MainActivity) getActivity()).selectSkuItem(productName, sku, false);
             }
         });
 
         title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainActivity.selectSkuItem(productName, sku, false);
+                Tracker.getInstance().trackActionForPersonalFeed(containerTitle);
+                ((MainActivity) getActivity()).selectSkuItem(productName, sku, false);
             }
         });
     }
 
     private void removeSavedSeenProducts() {
-        SharedPreferences sp = mainActivity.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
+        SharedPreferences sp = getActivity().getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(SEEN_PRODUCT_SKU_LIST, "");
         editor.putString(SEEN_PRODUCT_LIST, "");

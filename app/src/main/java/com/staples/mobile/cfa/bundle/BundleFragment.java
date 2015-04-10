@@ -240,7 +240,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Bundle
             if (errMsg == null) {
                 ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
                 activity.showNotificationBanner(R.string.cart_updated_msg);
-                Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
+                Tracker.getInstance().trackActionForAddToCartFromClass(CartApiManager.getCartProduct(item.identifier), 1);
             } else {
                 // if non-grammatical out-of-stock message from api, provide a nicer message
                 if (errMsg.contains("items is out of stock")) {

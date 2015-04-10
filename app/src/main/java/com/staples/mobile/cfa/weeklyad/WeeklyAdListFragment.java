@@ -255,15 +255,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                             if (errMsg == null) {
                                 buttonVw.setImageDrawable(r.getDrawable(R.drawable.ic_android));
                                 activity.showNotificationBanner(R.string.cart_updated_msg);
-
-                                // if price is parseable, send analytics
-                                if (data.getPrice().startsWith("$")) {
-                                    String price = data.getPrice().substring(1);
-                                    try {
-                                        float priceValue = Float.parseFloat(price);
-                                        Tracker.getInstance().trackActionForAddToCartFromWeeklyAd(data.getRetailerproductcode(), priceValue, 1);
-                                    } catch (NumberFormatException e) {}
-                                }
+                                Tracker.getInstance().trackActionForAddToCartFromWeeklyAd(CartApiManager.getCartProduct(data.getRetailerproductcode()), 1);
                             } else {
                                 buttonVw.setImageDrawable(r.getDrawable(R.drawable.ic_add_shopping_cart_black));
                                 // if non-grammatical out-of-stock message from api, provide a nicer message
