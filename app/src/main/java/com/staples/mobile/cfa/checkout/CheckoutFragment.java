@@ -141,7 +141,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         initEntryArea(view);
 
         // initiate Kount collection
-        KountManager.getInstance().collect(CartApiManager.getCart().getOrderId());
+        if (CartApiManager.getCart() != null) { // don't know how this could be null, but a Crittercism report showed that it happened
+            KountManager.getInstance().collect(CartApiManager.getCart().getOrderId());
+        }
 
         return view;
     }
