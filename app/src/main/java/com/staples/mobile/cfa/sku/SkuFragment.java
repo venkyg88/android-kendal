@@ -26,6 +26,7 @@ import com.apptentive.android.sdk.Apptentive;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.common.access.easyopen.model.browse.Discount;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.cart.CartApiManager;
@@ -742,18 +743,18 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
             }
 
             // check if the product has discount
-            if(product.getPricing().get(0).getDiscount() != null
-                    && product.getPricing().get(0).getDiscount().size() > 0
-                    && product.getPricing().get(0).getDiscount().get(0).getName().equals("rebate")
-                    && product.getPricing().get(0).getDiscount().get(0).getAmount() > 0){
+            List<Discount> discount = product.getPricing().get(0).getDiscount();
+            if(discount != null && discount.size() > 0
+                    && discount.get(0).getName().equals("rebate")
+                    && discount.get(0).getAmount() > 0){
                 summary.findViewById(R.id.rebate_layout).setVisibility(View.VISIBLE);
 
                 Button rebateButton = (Button) summary.findViewById(R.id.rebate_button);
-                rebateButton.setText(String.valueOf("$ " + product.getPricing().get(0).getDiscount().get(0).getAmount())
+                rebateButton.setText(String.valueOf("$ " + discount.get(0).getAmount())
                 + " " + getResources().getString(R.string.rebate));
 
-                Log.d(TAG, "The product has rebate. sku:" + product.getSku() + ", rebate:" +
-                        product.getPricing().get(0).getDiscount().get(0).getAmount());
+                Log.d(TAG, "The product has rebate. sku:" + product.getSku()
+                        + ", rebate:" + discount.get(0).getAmount());
             }
             else{
                 summary.findViewById(R.id.rebate_layout).setVisibility(View.GONE);
