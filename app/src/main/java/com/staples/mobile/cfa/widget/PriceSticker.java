@@ -34,6 +34,9 @@ public class PriceSticker extends View {
     private int gravity;
     private int baseline;
     private int majorHeight;
+    private int wasGap;
+    private int unitGap;
+
     private int[] widths;
 
     private float finalPrice;
@@ -107,6 +110,9 @@ public class PriceSticker extends View {
         // Get metrics
         baseline = (int) -majorPaint.ascent();
         majorHeight = baseline + (int) majorPaint.descent();
+        wasGap = (int) wasPaint.measureText(" ");
+        unitGap = (int) unitPaint.measureText(" ");
+
         widths = new int[3];
     }
 
@@ -146,7 +152,7 @@ public class PriceSticker extends View {
         for(com.staples.mobile.common.access.easyopen.model.cart.Pricing pricing : pricings) {
             if (setPricing(pricing)) return (true);
         }
-        return (false);
+        return(false);
     }
 
     public boolean setPricing(com.staples.mobile.common.access.easyopen.model.cart.Pricing pricing) {
@@ -158,8 +164,9 @@ public class PriceSticker extends View {
         invalidate();
         return(true);
     }
+
     public float getFinalPrice() {
-        return finalPrice;
+        return(finalPrice);
     }
 
     private void measureWidths() {
@@ -169,17 +176,18 @@ public class PriceSticker extends View {
             if (rebateIndicator!=null) {
                 text += rebateIndicator;
             }
-            width += majorPaint.measureText(text, 0, text.length());
+            width += majorPaint.measureText(text);
         }
-        widths[0] = width;
         if (wasPrice>0.0f && wasPrice!=finalPrice) {
-            String text = " " + format.format(wasPrice);
-            width += unitPaint.measureText(text, 0, text.length());
+            width += wasGap;
+            widths[0] = width;
+            String text = format.format(wasPrice);
+            width += wasPaint.measureText(text);
         }
-        widths[1] = width;
         if (unit!=null) {
-            String text = " " + unit;
-            width += unitPaint.measureText(text, 0, text.length());
+            width += unitGap;
+            widths[1] = width;
+            width += unitPaint.measureText(unit);
         }
         widths[2] = width;
     }
@@ -211,12 +219,11 @@ public class PriceSticker extends View {
             canvas.drawText(text, x, y, majorPaint);
         }
         if (wasPrice>0.0f && wasPrice!=finalPrice) {
-            String text = " " + format.format(wasPrice);
+            String text = format.format(wasPrice);
             canvas.drawText(text, x+widths[0], y, wasPaint);
         }
         if (unit!=null) {
-            String text = " " + unit;
-            canvas.drawText(text, x+widths[1], y, unitPaint);
+            canvas.drawText(unit, x+widths[1], y, unitPaint);
         }
     }
 }
