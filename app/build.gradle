@@ -13,12 +13,12 @@ android {
     }
 
     ext {
-        versionPrefix = 'Kendall'
+        versionPrefix = '4.0.0.1'
     }
 
     defaultConfig {
         applicationId 'com.staples.mobile.cfa'
-        versionCode 8
+        versionCode 19
     }
 
 
