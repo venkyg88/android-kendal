@@ -83,7 +83,7 @@ public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener,
         LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback, UAirship.OnReadyCallback {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final boolean LOGGING = false;
+    private static final boolean LOGGING = true;
 
     public static final String PREFS_FILENAME = "com.staples.mobile.cfa";
 
@@ -639,7 +639,6 @@ public class MainActivity extends Activity
     public void swallowTouchEvents(boolean swallow) {
         mainLayout.swallowTouchEvents(swallow);
     }
-
 
     // Navigation
     public boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
