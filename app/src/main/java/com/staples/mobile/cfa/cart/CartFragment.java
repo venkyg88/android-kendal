@@ -8,12 +8,15 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.Fragment;
 import android.content.res.Resources;
+import android.graphics.Interpolator;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
@@ -93,6 +96,10 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
     CouponWeightAnimator couponUpAnimator;
     CouponWeightAnimator couponDownAnimator;
+    Animation mathStoryFadeInAnimation;
+    Animation mathStoryFadeOutAnimation;
+    FadeInOutListener mathStoryFadeInAnimationListener;
+    FadeInOutListener mathStoryFadeOutAnimationListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -136,6 +143,14 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         couponUpAnimator = new CouponWeightAnimator(true);
         couponDownAnimator = new CouponWeightAnimator(false);
 
+        // set up fade in/out animations
+        mathStoryFadeInAnimation = AnimationUtils.loadAnimation(activity, R.anim.fade_in);
+        mathStoryFadeOutAnimation = AnimationUtils.loadAnimation(activity, R.anim.fade_out);
+        mathStoryFadeInAnimationListener = new FadeInOutListener(true);
+        mathStoryFadeOutAnimationListener = new FadeInOutListener(false);
+        mathStoryFadeInAnimation.setAnimationListener(mathStoryFadeInAnimationListener);
+        mathStoryFadeOutAnimation.setAnimationListener(mathStoryFadeOutAnimationListener);
+
         // Initialize cart listview
         cartAdapter = new CartAdapter(activity, R.layout.cart_item_group, qtyChangeListener,
                 qtyDeleteButtonListener, productImageListener);
@@ -162,15 +177,13 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             }
 
             private void onScrollUp() {
-                if (cartShippingLayout.getVisibility() != View.VISIBLE) {
-                    cartShippingLayout.setVisibility(View.VISIBLE); // show math story
-                    couponsRewardsLayout.setVisibility(View.VISIBLE);
+                if (couponsRewardsLayout.getVisibility() != View.VISIBLE && !mathStoryFadeInAnimationListener.isInProcess()) {
+                    couponsRewardsLayout.startAnimation(mathStoryFadeInAnimation); // fade in
                 }
             }
             private void onScrollDown() {
-                if (cartShippingLayout.getVisibility() != View.GONE) {
-                    cartShippingLayout.setVisibility(View.GONE); // hide math story
-                    couponsRewardsLayout.setVisibility(View.GONE);
+                if (couponsRewardsLayout.getVisibility() == View.VISIBLE && !mathStoryFadeOutAnimationListener.isInProcess()) {
+                    couponsRewardsLayout.startAnimation(mathStoryFadeOutAnimation); // fade out
                 }
             }
         });
@@ -328,7 +341,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         return false;
     }
 
-    private boolean couponsShowing() {
+    private boolean couponsExpanded() {
         return (((LinearLayout.LayoutParams)couponListVw.getLayoutParams()).weight > 0);
     }
 
@@ -337,7 +350,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         activity.hideSoftKeyboard(view);
         switch(view.getId()) {
             case R.id.coupons_rewards_layout:
-                if (!couponsShowing()) {
+                if (!couponsExpanded()) {
                     couponUpAnimator.start();
                     Tracker.getInstance().trackStateForCartCoupons(); // analytics
                 } else {
@@ -533,7 +546,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
 
             // set text of coupons
-            boolean couponsShowing = couponsShowing();
+            boolean couponsShowing = couponsExpanded();
             couponsRewardsValue.setText(currencyFormat.format(couponsRewardsAmount));
             boolean showCouponsAmount = (couponsRewardsAmount != 0 || couponsShowing);
             couponsRewardsValue.setVisibility(showCouponsAmount ? View.VISIBLE : View.GONE);
@@ -585,6 +598,29 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         cartListItems = cartItems;
         cartItemGroups = itemGroups;
         setAdapterListItems();
+    }
+
+    class FadeInOutListener implements Animation.AnimationListener {
+
+        private boolean fadeIn;
+        private boolean inProcess = false;
+
+        FadeInOutListener(boolean fadeIn) {
+            this.fadeIn = fadeIn;
+        }
+
+        public boolean isInProcess() {
+            return inProcess;
+        }
+
+        @Override public void onAnimationStart(Animation animation) {
+            inProcess = true;
+        }
+        @Override public void onAnimationEnd(Animation animation) {
+            couponsRewardsLayout.setVisibility(fadeIn? View.VISIBLE : View.GONE); // show/hide after animation finished
+            inProcess = false;
+        }
+        @Override public void onAnimationRepeat(Animation animation) { }
     }
 
     class CouponWeightAnimator {
