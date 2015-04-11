@@ -114,8 +114,8 @@ public class UpgradeManager {
 
             force = update.getForce();
             thresholdForceStr = force.getThreshold();
-            // @TODO Remove line below once MCS dev and prod Update section changed.
-            // thresholdForceStr = "9";
+            // @TODO Line below is for testing purposes.
+            // thresholdForceStr = "20";
             int thresholdForceInt = 0;
 
             try {
@@ -141,8 +141,8 @@ public class UpgradeManager {
 
             suggest = update.getSuggest();
             thresholdSuggestStr = suggest.getThreshold();
-            // @TODO Remove line below once MCS dev and prod Update section changed.
-            // thresholdSuggestStr = "8";
+            // @TODO Line below is for testing purposes.
+            // thresholdSuggestStr = "20";
             int thresholdSuggestInt = 0;
 
             try {
