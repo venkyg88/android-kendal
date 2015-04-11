@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
@@ -102,6 +103,7 @@ public class MainActivity extends Activity
     private boolean initialLoginComplete;
 
     private AppConfigurator appConfigurator;
+    private AlertDialog upgradeDialog;
 
     public enum Transition {
         NONE (0, 0, 0, 0, 0),
@@ -429,32 +431,146 @@ public class MainActivity extends Activity
         // if configurator successfully retrieved (from network OR persisted file)
         if (success) {
 
-            loginHelper = new LoginHelper(this);
-            loginHelper.registerLoginCompleteListener(this);
+            UpgradeManager upgradeManager = new UpgradeManager(this);
+            UpgradeManager.UPGRADE_STATUS upgradeStatus = upgradeManager.getUpgradeStatus();
 
-            // do login based on persisted cache if available
-            loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
-                @Override public void onProfileRefresh(Member member, String errMsg) {
-                    initialLoginComplete = true;
-                    showMainScreen();
+            switch (upgradeStatus) {
+
+            case SUGGEST_UPGRADE:
+            {
+                String upgradeMsg = upgradeManager.getUpgradeMsg();
+                String upgradeUrl = upgradeManager.getUpgradeUrl();
+                doOptionalUpgrade(upgradeMsg, upgradeUrl);
+
+                // If the user declines the upgrade, control should fall thru
+                // here and continue initialization.
+
+                // If the user does the upgrade, a new activity will be spawned
+                // which should ultimately caused the app to be terminated by
+                // the upgrade process.
+
+            }
+            case NOT_NECESSARY:
+            // This will occur if we were unable to process application version
+            // info or MCS version info.
+            case NO_UPGRADE_INFO:
+            case EXCEPTION:
+            {
+                loginHelper = new LoginHelper(this);
+                loginHelper.registerLoginCompleteListener(this);
+
+                // do login based on persisted cache if available
+                loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
+                    @Override public void onProfileRefresh(Member member, String errMsg) {
+                        initialLoginComplete = true;
+                        showMainScreen();
+                    }
+                });
+
+                // initialize analytics
+                new AdobeTracker(this.getApplicationContext(), configurator.getAppContext().getDev()); // allow logging only for dev environment
+                // The call in onResume to enable tracking will be ignored during application creation
+                // because the configurator object is not yet available. Therefore, enable here.
+                AdobeTracker.enableTracking(true);
+
+                // set default zip code for now, update it as it changes
+                Tracker.getInstance().setZipCode("02139");
+
+                // initialize Kount fraud detection
+                KountManager.getInstance(this);
+
+                break; // switch
+            }
+            case FORCE_UPGRADE:
+            {
+                String upgradeMsg = upgradeManager.getUpgradeMsg();
+                String upgradeUrl = upgradeManager.getUpgradeUrl();
+                doForcedUpgrade(upgradeMsg, upgradeUrl);
+                break; // switch
+            }
+            default:
+            {
+                // << This should not occur. SNOCCUR >>>
+                throw new IllegalArgumentException();
+            }
+            } // switch (upgradeStatus)
+
+        } else { // can't get configurator from network or from persisted file
+
+            showErrorDialog(R.string.error_server_connection, true); // setting fatal=true which will close the app
+        }
+    }
+
+    private void doOptionalUpgrade(String upgradeMsg, final String upgradeUrl) {
+
+        if (LOGGING) {
+            Log.v(TAG, "MainActivity:doOptionalUpgrade(): Entry.");
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(upgradeMsg);
+
+        // Upgrade Button
+
+        builder.setPositiveButton(R.string.upgrade_btn,
+
+            new DialogInterface.OnClickListener() {
+                @Override public void onClick(DialogInterface dialog, int which) {
+                    // Initiate upgrade and terminate app.
+                    launchUpgrade(upgradeUrl);
                 }
             });
 
-            // initialize analytics
-            new AdobeTracker(this.getApplicationContext(), configurator.getAppContext().getDev()); // allow logging only for dev environment
-            // The call in onResume to enable tracking will be ignored during application creation
-            // because the configurator object is not yet available. Therefore, enable here.
-            AdobeTracker.enableTracking(true);
+        // Ignore Button
 
-            // set default zip code for now, update it as it changes
-            Tracker.getInstance().setZipCode("02139");
+        builder.setNegativeButton(R.string.ignore_btn,
 
-            // initialize Kount fraud detection
-            KountManager.getInstance(this);
+            new DialogInterface.OnClickListener() {
 
-        } else { // can't get configurator from network or from persisted file
-            showErrorDialog(R.string.error_server_connection, true); // setting fatal=true which will close the app
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Ignore and allow user to continue.
+                }
+            });
+
+        upgradeDialog = builder.create();
+        upgradeDialog.show();
+    }
+
+    private void doForcedUpgrade(String upgradeMsg, final String upgradeUrl) {
+
+        if (LOGGING) {
+            Log.v(TAG, "MainActivity:doForcedUpgrade(): Entry.");
         }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(upgradeMsg);
+
+        // Upgrade Button
+
+        builder.setPositiveButton(R.string.upgrade_btn,
+
+            new DialogInterface.OnClickListener() {
+                @Override public void onClick(DialogInterface dialog, int which) {
+                    // Initiate upgrade and terminate app.
+                    launchUpgrade(upgradeUrl);
+                }
+            });
+
+        upgradeDialog = builder.create();
+        upgradeDialog.show();
+    }
+
+    private void launchUpgrade(String upgradeUrl) {
+
+        if (LOGGING) {
+            Log.v(TAG, "MainActivity:launchUpgrade(): Entry.");
+        }
+
+        upgradeDialog.dismiss();
+
+        Uri uriUrl = Uri.parse(upgradeUrl);
+        Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+        startActivity(launchBrowser);
+        MainActivity.this.finish();
     }
 
     @Override
