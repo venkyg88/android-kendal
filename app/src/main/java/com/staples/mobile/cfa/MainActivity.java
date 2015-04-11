@@ -83,7 +83,7 @@ public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener,
         LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback, UAirship.OnReadyCallback {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final boolean LOGGING = true;
+    private static final boolean LOGGING = false;
 
     public static final String PREFS_FILENAME = "com.staples.mobile.cfa";
 
