@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder> {
-    private static final String TAG = "SkuSetAdapter";
+    private static final String TAG = SkuSetAdapter.class.getSimpleName();
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView image;

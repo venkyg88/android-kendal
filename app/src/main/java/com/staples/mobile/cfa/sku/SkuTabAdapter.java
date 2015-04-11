@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SkuTabAdapter extends PagerAdapter {
-    private static final String TAG = "SkuPageAdapter";
+    private static final String TAG = SkuTabAdapter.class.getSimpleName();
 
     private Activity activity;
     private ArrayList<SkuPageItem> array;

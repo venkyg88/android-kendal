@@ -6,7 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 public class FixedSizeLayoutManager extends LinearLayoutManager {
-    private static final String TAG = "FixedSizeLayoutManager";
+    private static final String TAG = FixedSizeLayoutManager.class.getSimpleName();
     private int unitHeight;
 
     public FixedSizeLayoutManager(Context context) {

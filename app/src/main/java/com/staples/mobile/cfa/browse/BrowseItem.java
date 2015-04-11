@@ -3,7 +3,7 @@ package com.staples.mobile.cfa.browse;
 import com.staples.mobile.cfa.R;
 
 public class BrowseItem {
-    private static final String TAG = "BrowseItem";
+    private static final String TAG = BrowseItem.class.getSimpleName();
 
     public enum Type {
         STACK    (0, R.layout.browse_stack),

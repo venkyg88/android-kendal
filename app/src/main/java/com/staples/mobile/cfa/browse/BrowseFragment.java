@@ -33,7 +33,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class BrowseFragment extends Fragment  implements Callback<Browse>, View.OnClickListener {
-    private static final String TAG = "BrowseFragment";
+    private static final String TAG = BrowseFragment.class.getSimpleName();
 
     private static final int MAXFETCH = 50;
 
@@ -100,7 +100,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
     @Override
     public void success(Browse browse, Response response) {
         Activity activity = getActivity();
-        if (activity==null) return;
+        if (!(activity instanceof MainActivity)) return;
 
         int count = processCategories(browse);
         if (count==0) state = DataWrapper.State.NOMORE;
@@ -111,10 +111,10 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
     @Override
     public void failure(RetrofitError retrofitError) {
         Activity activity = getActivity();
-        if (activity == null) return;
+        if (!(activity instanceof MainActivity)) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
-        ((MainActivity)activity).showErrorDialog(msg);
+        ((MainActivity) activity).showErrorDialog(msg);
         Log.d(TAG, msg);
         state = DataWrapper.State.NOMORE;
         applyState(null);

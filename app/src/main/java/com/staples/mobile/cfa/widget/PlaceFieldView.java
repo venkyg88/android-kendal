@@ -30,7 +30,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextView.OnEditorActionListener, AdapterView.OnItemClickListener, Callback {
-    private static final String TAG = "PlaceFieldView";
+    private static final String TAG = PlaceFieldView.class.getSimpleName();
 
     private static final int KEYDELAY = 250; // milliseconds
 

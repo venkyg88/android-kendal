@@ -13,7 +13,7 @@ import java.util.GregorianCalendar;
 
 public class DateUtils {
 
-    private static final String TAG = "DateUtils";
+    private static final String TAG = DateUtils.class.getSimpleName();
 
     private static final String TWO_DIGIT_MONTH_YEAR = "MM/yy";
 

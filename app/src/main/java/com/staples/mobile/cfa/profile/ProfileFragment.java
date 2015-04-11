@@ -22,7 +22,7 @@ import com.staples.mobile.common.analytics.Tracker;
 import java.util.List;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener{
-    public static final String TAG = "ProfileFragment";
+    private static final String TAG = ProfileFragment.class.getSimpleName();
 
     private EasyOpenApi easyOpenApi;
     TextView shippingBtn;

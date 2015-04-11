@@ -35,7 +35,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class AboutFragment extends Fragment {
-    private static final String TAG = "AboutFragment";
+    private static final String TAG = AboutFragment.class.getSimpleName();
 
     private SimpleDateFormat dateFormat;
     private DecimalFormat coordFormat;

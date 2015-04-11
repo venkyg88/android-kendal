@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class NotifyPrefsFragment extends Fragment implements CompoundButton.OnCheckedChangeListener {
-    private static final String TAG = "NotifyPrefsFragment";
+    private static final String TAG = NotifyPrefsFragment.class.getSimpleName();
 
     private EditText aliasText;
     private TagItemAdapter adapter;

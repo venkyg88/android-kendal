@@ -29,7 +29,7 @@ import retrofit.client.Response;
  */
 public class AddressFragment extends Fragment implements Callback<AddressId>, View.OnClickListener
 {
-    private static final String TAG = "AddressFragment";
+    private static final String TAG = AddressFragment.class.getSimpleName();
 
     private AddressBlock addressBlock;
     private String addressId;

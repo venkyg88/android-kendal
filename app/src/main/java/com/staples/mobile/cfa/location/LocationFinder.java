@@ -20,7 +20,7 @@ import com.staples.mobile.common.analytics.Tracker;
 import java.util.List;
 
 public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    private static final String TAG = "LocationFinder";
+    private static final String TAG = LocationFinder.class.getSimpleName();
 
     private static final String PREFS_PROVIDER = "locationProvider";
     private static final String PREFS_LATITUDE = "locationLatitude";

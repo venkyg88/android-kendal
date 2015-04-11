@@ -13,7 +13,7 @@ import com.staples.mobile.cfa.R;
 import java.util.ArrayList;
 
 public class BrowseAdapter extends RecyclerView.Adapter<BrowseAdapter.ViewHolder> {
-    private static final String TAG = "BrowseAdapter";
+    private static final String TAG = BrowseAdapter.class.getSimpleName();
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView title;

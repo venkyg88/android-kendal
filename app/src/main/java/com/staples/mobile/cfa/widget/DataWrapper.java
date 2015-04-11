@@ -18,7 +18,7 @@ import com.staples.mobile.cfa.R;
  * Usage: setState(DataWrapper.State state)
  */
 public class DataWrapper extends LinearLayout {
-    private static final String TAG = "DataWrapper";
+    private static final String TAG = DataWrapper.class.getSimpleName();
 
     public enum State {
         // Used for initial loading of adapters
