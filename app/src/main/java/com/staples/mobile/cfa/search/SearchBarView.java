@@ -35,7 +35,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SearchBarView extends LinearLayout implements View.OnClickListener, TextWatcher, TextView.OnEditorActionListener, AdapterView.OnItemClickListener, Callback<ArrayList<String>> {
-    private static final String TAG = "SearchBarView";
+    private static final String TAG = SearchBarView.class.getSimpleName();
 
     private static final int KEYDELAY = 250; // milliseconds
 

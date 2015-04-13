@@ -14,7 +14,7 @@ import android.view.View;
 import com.staples.mobile.cfa.R;
 
 public class PagerStripe extends View implements ViewPager.OnPageChangeListener {
-    private static final String TAG = "PagerStripe";
+    private static final String TAG = PagerStripe.class.getSimpleName();
 
     private Paint stripePaint;
     private Paint trackPaint;

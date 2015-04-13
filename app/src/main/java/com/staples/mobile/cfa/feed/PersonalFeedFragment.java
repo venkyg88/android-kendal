@@ -47,7 +47,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class PersonalFeedFragment extends Fragment {
-    private static final String TAG = "PersonalFeedFragment";
+    private static final String TAG = PersonalFeedFragment.class.getSimpleName();
 
     public static final String SEEN_PRODUCT_SKU_LIST = "seenProductSkuList";
     public static final String SEEN_PRODUCT_LIST = "seenProductList";

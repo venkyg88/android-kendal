@@ -1,10 +1,7 @@
 package com.staples.mobile.cfa.feed;
 
-import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
-
-import com.staples.mobile.cfa.login.LoginHelper;
 
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -23,12 +20,9 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class ProductCollection {
-
-    private static final String TAG = "ProductCollection";
+    private static final String TAG = ProductCollection.class.getSimpleName();
 
     private static final boolean LOGGING = false;
-
-    // Instance Variables
 
     public interface ProductCollectionCallBack {
 
@@ -97,13 +91,12 @@ public class ProductCollection {
 
     public static class ProductContainer implements Callback<Browse> {
 
-        private static final String TAG = "ProductContainer";
+        private static final String TAG = ProductContainer.class.getSimpleName();
 
         private static final String DEFAULT_FILTER_LIST = "";
         private static final String DEFAULT_LIMIT = "50";
         private static final String DEFAULT_OFFSET = "1";
 
-        private static final String AMPERSAND = "&";
         private static final String QUESTION_MARK = "?";
 
         private static final String IDENTIFIER_ARG = "identifier/";

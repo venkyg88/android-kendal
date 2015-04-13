@@ -59,7 +59,7 @@ import retrofit.client.Response;
 
 public class ConfiguratorFragment extends Fragment {
 
-    private static final String TAG = "ConfiguratorFragment";
+    private static final String TAG = ConfiguratorFragment.class.getSimpleName();
 
     private static final boolean LOGGING = false;
 
@@ -1072,6 +1072,9 @@ public class ConfiguratorFragment extends Fragment {
     private class StoreInfoCallback implements Callback<StoreQuery> {
         @Override
         public void success(StoreQuery storeQuery, Response response) {
+            Activity activity = getActivity();
+            if (!(activity instanceof MainActivity)) return;
+
             List<StoreData> storeData = storeQuery.getStoreData();
             // if there are any nearby stores
             if(storeData != null) {
@@ -1091,7 +1094,7 @@ public class ConfiguratorFragment extends Fragment {
                         TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
                         if (span != null) spans.add(span);
                     }
-                    String status = TimeSpan.formatStatus(getActivity(), spans, System.currentTimeMillis());
+                    String status = TimeSpan.formatStatus(activity, spans, System.currentTimeMillis());
                     int i = status.indexOf(' ');
                     if (i > 0) status = status.substring(0, i);
                     storeStatusTextView.setText(status);

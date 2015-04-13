@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.checkout;
 
 import android.app.Fragment;
@@ -16,6 +12,7 @@ import android.widget.TextView;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.kount.KountManager;
+import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.cart.CartApiManager;
@@ -24,7 +21,6 @@ import com.staples.mobile.cfa.widget.ActionBar;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-
 
 public abstract class CheckoutFragment extends Fragment implements View.OnClickListener {
     public static final String TAG = CheckoutFragment.class.getSimpleName();
@@ -141,13 +137,16 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         initEntryArea(view);
 
         // initiate Kount collection
-        if (CartApiManager.getCart() != null) { // don't know how this could be null, but a Crittercism report showed that it happened
-            KountManager.getInstance().collect(CartApiManager.getCart().getOrderId());
+        Cart cart = CartApiManager.getCart();
+        if (cart!=null) {
+            String orderId = cart.getOrderId();
+            if (orderId!=null) {
+                KountManager.getInstance().collect(orderId);
+            }
         }
 
         return view;
     }
-
 
     /** override this to handle other clicks, but call this super method */
     @Override

@@ -16,7 +16,7 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18, qualifiers = "land")
 public class LandscapeActivityTest {
-    private static final String TAG = "LandscapeActivityTest";
+    private static final String TAG = LandscapeActivityTest.class.getSimpleName();
 
     @Before
     public void setUp() {

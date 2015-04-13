@@ -19,7 +19,7 @@ import com.urbanairship.push.notifications.NotificationFactory;
 import com.urbanairship.util.NotificationIDGenerator;
 
 public class NotifyReceiver extends BaseIntentReceiver {
-    private static final String TAG = "NotifyReceiver";
+    private static final String TAG = NotifyReceiver.class.getSimpleName();
 
     private static final String APPLICATION = "com.staples.mobile.cfa";
 

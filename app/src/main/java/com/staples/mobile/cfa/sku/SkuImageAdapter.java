@@ -12,7 +12,7 @@ import com.staples.mobile.cfa.R;
 import java.util.ArrayList;
 
 public class SkuImageAdapter extends PagerAdapter {
-    private static final String TAG = "SkuImageAdapter";
+    private static final String TAG = SkuImageAdapter.class.getSimpleName();
 
     private Activity activity;
     private ArrayList<SkuImageItem> array;

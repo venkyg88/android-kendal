@@ -103,7 +103,6 @@ public class MainActivity extends Activity
 
     private AppConfigurator appConfigurator;
 
-
     public enum Transition {
         NONE (0, 0, 0, 0, 0),
         RIGHT(0, R.animator.right_push_enter, R.animator.right_push_exit, R.animator.right_pop_enter, R.animator.right_pop_exit),
@@ -542,9 +541,8 @@ public class MainActivity extends Activity
         if (transition != null) transition.setAnimation(transaction);
         transaction.replace(R.id.content, fragment, tag);
         if (push)
-            transaction.addToBackStack(fragment.getClass().getName());
+            transaction.addToBackStack(fragment.getClass().getSimpleName());
         transaction.commitAllowingStateLoss();
-
         return(true);
     }
 
@@ -574,7 +572,7 @@ public class MainActivity extends Activity
                 fragment = GuestCheckoutFragment.newInstance(couponsRewardsAmount,
                         CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal(), deliveryRange);
             }
-            return selectFragment(fragment, Transition.RIGHT, true, CheckoutFragment.TAG);
+            return selectFragment(fragment, Transition.RIGHT, false, CheckoutFragment.TAG);
         }
         return false;
     }
@@ -646,7 +644,7 @@ public class MainActivity extends Activity
 
     public boolean selectLoginFragment() {
         Fragment fragment = new LoginFragment();
-        return(selectFragment(fragment, Transition.UP, true));
+        return(selectFragment(fragment, Transition.UP, false));
     }
 
     public boolean selectFeedFragment() {
@@ -697,17 +695,7 @@ public class MainActivity extends Activity
     @Override
     public void onBackPressed () {
         hideProgressIndicator();
-
-        // if on order confirmation fragment, don't go back to any of the checkout related pages, go to Home page
-        FragmentManager manager = getFragmentManager();
-        Fragment confirmationFragment = manager.findFragmentByTag(ConfirmationFragment.TAG);
-
-        if (confirmationFragment != null && confirmationFragment.isVisible()) {
-            selectDrawerItem(homeDrawerItem, Transition.RIGHT, true);
-        } else {
-            super.onBackPressed();
-        }
-
+        super.onBackPressed();
     }
 
     // Action bar & button clicks

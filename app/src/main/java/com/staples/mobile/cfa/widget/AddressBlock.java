@@ -20,7 +20,7 @@ import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.UpdateAddress;
 
 public class AddressBlock extends LinearLayout implements TextView.OnEditorActionListener, PlaceFieldView.OnPlaceDoneListener {
-    public static final String TAG = "AddressBlock";
+    private static final String TAG = AddressBlock.class.getSimpleName();
 
     private static final int[] addressFields = {R.id.firstName, R.id.lastName, R.id.phoneNumber, R.id.emailAddr,
                                                 R.id.apartment, R.id.city, R.id.state, R.id.zipCode};

@@ -14,7 +14,8 @@ import java.util.HashSet;
  */
 
 public class PersonalFeedSingleton {
-    private static final String TAG = "PersonalFeedSingleton";
+    private static final String TAG = PersonalFeedSingleton.class.getSimpleName();
+
     public static final int SEEN_PRODUCTS_AMOUNT = 3;
 
     private static PersonalFeedSingleton personalFeedSingleton = null;
@@ -44,7 +45,6 @@ public class PersonalFeedSingleton {
 
         String savedProductsString = sp.getString(PersonalFeedFragment.SEEN_PRODUCT_LIST, "");
 
-        // initialize SeenProductsRowItem list
         PersistentSizedArrayList<String> savedProductsList
                 = new PersistentSizedArrayList<String>(SEEN_PRODUCTS_AMOUNT);;
 

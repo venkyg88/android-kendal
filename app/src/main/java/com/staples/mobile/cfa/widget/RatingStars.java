@@ -26,7 +26,7 @@ import com.staples.mobile.cfa.R;
  * reviews is the integer count or null for nothing to display
  */
 public class RatingStars extends View {
-    private static final String TAG = "RatingStars";
+    private static final String TAG = RatingStars.class.getSimpleName();
 
     private static final int NSTARS = 5;
     private static final double DELTA = Math.PI/5.0; // I love geometry

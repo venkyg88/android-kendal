@@ -66,7 +66,7 @@ import retrofit.client.Response;
 
 public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, View.OnClickListener, EditText.OnEditorActionListener {
-    private static final String TAG = "StoreFragment";
+    private static final String TAG = StoreFragment.class.getSimpleName();
 
     private static int FITSTORES = 5; // Number of stores to fit in initial view
     private static double EARTHRADIUS = 6371.0; // kilometers
@@ -382,7 +382,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     @Override
     public void success(StoreQuery storeQuery, Response response) {
         Activity activity = getActivity();
-        if (activity==null) return;
+        if (!(activity instanceof MainActivity)) return;
 
         int n = processStoreQuery(storeQuery);
         if (n==0) showFailureDialog();
@@ -391,7 +391,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     @Override
     public void failure(RetrofitError retrofitError) {
         Activity activity = getActivity();
-        if (activity==null) return;
+        if (!(activity instanceof MainActivity)) return;
 
         showFailureDialog();
         String msg = ApiError.getErrorMessage(retrofitError);

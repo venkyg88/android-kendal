@@ -11,7 +11,7 @@ import android.view.View;
 import com.staples.mobile.cfa.R;
 
 public class HorizontalDivider extends RecyclerView.ItemDecoration {
-    private static final String TAG = "HorizontalDivider";
+    private static final String TAG = HorizontalDivider.class.getSimpleName();
 
     private int thick;
     private int gap;

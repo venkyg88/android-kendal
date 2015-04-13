@@ -14,7 +14,7 @@ import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.search.SearchBarView;
 
 public class ActionBar extends LinearLayout {
-    private static final String TAG = "ActionBar";
+    private static final String TAG = ActionBar.class.getSimpleName();
 
     public enum Config {
 

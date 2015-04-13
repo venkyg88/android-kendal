@@ -33,7 +33,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class BundleFragment extends Fragment implements Callback<Browse>, BundleAdapter.OnFetchMoreData, View.OnClickListener {
-    private static final String TAG = "BundleFragment";
+    private static final String TAG = BundleFragment.class.getSimpleName();
 
     private static final String TITLE = "title";
     private static final String IDENTIFIER = "identifier";
@@ -127,7 +127,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Bundle
     @Override
     public void success(Browse browse, Response response) {
         Activity activity = getActivity();
-        if (activity==null) return;
+        if (!(activity instanceof MainActivity)) return;
 
         int count = processBrowse(browse);
         if (count==0) state = DataWrapper.State.EMPTY;
@@ -140,7 +140,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Bundle
     @Override
     public void failure(RetrofitError retrofitError) {
         Activity activity = getActivity();
-        if (activity==null) return;
+        if (!(activity instanceof MainActivity)) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
         ((MainActivity) activity).showErrorDialog(msg);
@@ -230,23 +230,24 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Bundle
 
         @Override
         public void onCartRefreshComplete(String errMsg) {
-            MainActivity activity = (MainActivity) getActivity();
-            if (activity == null) return;
-            activity.swallowTouchEvents(false);
+            Activity activity = getActivity();
+            if (!(activity instanceof MainActivity)) return;
+
+            ((MainActivity) activity).swallowTouchEvents(false);
             item.busy = false;
             adapter.notifyDataSetChanged();
 
             // if success
             if (errMsg == null) {
                 ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
-                activity.showNotificationBanner(R.string.cart_updated_msg);
+                ((MainActivity) activity).showNotificationBanner(R.string.cart_updated_msg);
                 Tracker.getInstance().trackActionForAddToCartFromClass(CartApiManager.getCartProduct(item.identifier), 1);
             } else {
                 // if non-grammatical out-of-stock message from api, provide a nicer message
                 if (errMsg.contains("items is out of stock")) {
                     errMsg = activity.getResources().getString(R.string.avail_outofstock);
                 }
-                activity.showErrorDialog(errMsg);
+                ((MainActivity) activity).showErrorDialog(errMsg);
             }
         }
     }

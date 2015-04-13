@@ -25,7 +25,7 @@ public class MainApplication
         implements AppConfigurator.AppConfiguratorCallback,
         Thread.UncaughtExceptionHandler {
 
-    private static final String TAG = "MainApplication";
+    private static final String TAG = MainApplication.class.getSimpleName();
 
     private static final boolean LOGGING = false;
 

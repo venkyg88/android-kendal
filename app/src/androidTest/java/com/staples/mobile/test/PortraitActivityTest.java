@@ -16,7 +16,7 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18, qualifiers = "port")
 public class PortraitActivityTest {
-    private static final String TAG = "PortraitActivityTest";
+    private static final String TAG = PortraitActivityTest.class.getSimpleName();
 
     @Before
     public void setUp() {
