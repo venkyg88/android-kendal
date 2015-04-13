@@ -26,7 +26,7 @@ import retrofit.client.Response;
 
 //These are tested against LIVE sapi calls
 @RunWith(RobolectricTestRunner.class)
-@Config(emulateSdk = 18, qualifiers = "port")
+@Config(emulateSdk = 21, qualifiers = "port")
 public class CartModelTest {
 
     private EasyOpenApi easyOpenApi;
@@ -49,14 +49,14 @@ public class CartModelTest {
                         success = true;
 
                         List<Cart> cartItems = cartContents.getCart();
-                        if(cartItems.size()==0){
+                        if (cartItems.size() == 0) {
                             System.err.println("Empty Cart");
                             return;
                         }
 
                         List<Product> products = cartItems.get(0).getProduct();
-                        for(Product item: products){
-                            System.out.println("Product:" + item.getProductName()+", qty: "+item.getQuantity());
+                        for(Product item : products) {
+                            System.out.println("Product:" + item.getProductName() + ", qty: " + item.getQuantity());
                         }
 
                     }
@@ -68,8 +68,9 @@ public class CartModelTest {
                     }
                 });
 
-        Thread.sleep(5000);
-        Robolectric.runUiThreadTasksIncludingDelayedTasks();
+        Thread.sleep(10000);
+        Robolectric.flushBackgroundScheduler();
+        Robolectric.flushForegroundScheduler();
 
         Assert.assertFalse("Api call should not have failed", failure);
         Assert.assertTrue("Api call should have succeeded", success);
@@ -102,8 +103,10 @@ public class CartModelTest {
                         error.printStackTrace();
                     }
                 });
+
         Thread.sleep(10000);
-        Robolectric.runUiThreadTasksIncludingDelayedTasks();
+        Robolectric.flushBackgroundScheduler();
+        Robolectric.flushForegroundScheduler();
 
         Assert.assertFalse("Api call should not have failed", failure);
         Assert.assertTrue("Api call should have succeeded", success);
