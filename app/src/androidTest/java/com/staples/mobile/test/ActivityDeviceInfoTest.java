@@ -11,7 +11,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(emulateSdk = 18, qualifiers = "port" )
+@Config(emulateSdk = 21, qualifiers = "port" )
 public class ActivityDeviceInfoTest {
     private static final String TAG = ActivityDeviceInfoTest.class.getSimpleName();
 
