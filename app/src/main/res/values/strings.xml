@@ -267,8 +267,10 @@
 
     <string name="save_btn">Save</string>
     <string name="cancel_btn">Cancel</string>
+	<string name="ignore_btn">Ignore</string>
     <string name="okay_btn">OK</string>
     <string name="searching">Searching…</string>
+	<string name="upgrade_btn">Upgrade</string>
 
     <string name="network_settings">NETWORK SETTINGS</string>
 
