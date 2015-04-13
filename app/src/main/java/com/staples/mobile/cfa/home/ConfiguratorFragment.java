@@ -1185,9 +1185,9 @@ public class ConfiguratorFragment extends Fragment {
                 login_layout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Tracker.getInstance().trackActionForPersonalizedMessaging("Reward"); // Analytics
+                        Tracker.getInstance().trackActionForPersonalizedMessaging("Profile"); // Analytics
                         MainActivity mainActivity = (MainActivity) getActivity();
-                        mainActivity.selectRewardsFragment();
+                        mainActivity.selectProfileFragment();
                     }
                 });
             }
