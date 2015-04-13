@@ -5,7 +5,7 @@ import android.widget.ListView;
 
 public class ConfigItem {
 
-    public static final String TAG = "ConfigItem";
+    private static final String TAG = ConfigItem.class.getSimpleName();
 
     public String title;
     public String bannerUrl;

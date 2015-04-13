@@ -30,7 +30,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder> implements DataWrapper.Layoutable {
-    private static final String TAG = "BundleAdapter";
+    private static final String TAG = BundleAdapter.class.getSimpleName();
     private static final NumberFormat format = NumberFormat.getCurrencyInstance();
 
     public interface OnFetchMoreData {

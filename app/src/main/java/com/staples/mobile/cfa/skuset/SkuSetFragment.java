@@ -30,7 +30,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, View.OnClickListener {
-    public static final String TAG = "SkuSetFragment";
+    private static final String TAG = SkuSetFragment.class.getSimpleName();
 
     private static final String TITLE = "title";
     private static final String IDENTIFIER = "identifier";
@@ -95,7 +95,7 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
     @Override
     public void success(SkuDetails details, Response response) {
         Activity activity = getActivity();
-        if (activity==null) return;
+        if (!(activity instanceof MainActivity)) return;
 
         int count = processDetails(details);
         if (count==0) wrapper.setState(DataWrapper.State.EMPTY);
@@ -106,7 +106,7 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
     @Override
     public void failure(RetrofitError retrofitError) {
         Activity activity = getActivity();
-        if (activity==null) return;
+        if (!(activity instanceof MainActivity)) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
         ((MainActivity)activity).showErrorDialog(msg);

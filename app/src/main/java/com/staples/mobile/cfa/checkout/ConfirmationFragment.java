@@ -1,30 +1,21 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.checkout;
 
 import android.app.Dialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
-
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.profile.ProfileDetails;

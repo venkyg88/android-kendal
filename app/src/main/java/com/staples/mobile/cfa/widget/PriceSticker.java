@@ -23,7 +23,7 @@ import java.util.List;
  * android:gravity
  */
 public class PriceSticker extends View {
-    private static final String TAG = "PriceSticker";
+    private static final String TAG = PriceSticker.class.getSimpleName();
 
     private static final NumberFormat format = NumberFormat.getCurrencyInstance();
 

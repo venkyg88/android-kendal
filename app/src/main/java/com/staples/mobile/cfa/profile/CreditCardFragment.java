@@ -45,7 +45,7 @@ import retrofit.client.Response;
  */
 public class CreditCardFragment extends Fragment implements View.OnClickListener{
 
-    private static final String TAG = "CreditCardFragment";
+    private static final String TAG = CreditCardFragment.class.getSimpleName();
 
     Button addCCBtn;
     String creditCardNumber;

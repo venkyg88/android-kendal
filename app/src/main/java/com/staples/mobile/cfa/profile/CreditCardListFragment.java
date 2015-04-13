@@ -22,7 +22,7 @@ import java.util.List;
  * Created by Avinash Dodda.
  */
 public class CreditCardListFragment extends Fragment implements View.OnClickListener {
-    private static final String TAG = "CreditCardListFragment";
+    private static final String TAG = CreditCardListFragment.class.getSimpleName();
     ListView listview;
     ImageButton addBtn;
     List<CCDetails> cardList;

@@ -1,5 +1,6 @@
 package com.staples.mobile.cfa.sku;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -22,12 +23,10 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
-
+import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.access.easyopen.model.browse.Discount;
-import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.feed.PersistentSizedArrayList;
@@ -45,26 +44,31 @@ import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.BulletDescription;
 import com.staples.mobile.common.access.easyopen.model.browse.Description;
+import com.staples.mobile.common.access.easyopen.model.browse.Discount;
 import com.staples.mobile.common.access.easyopen.model.browse.Image;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
-import com.staples.mobile.common.access.easyopen.model.reviews.Data;
-import com.staples.mobile.common.access.easyopen.model.reviews.ReviewSet;
 import com.staples.mobile.common.access.easyopen2.api.EasyOpenApi2;
 import com.staples.mobile.common.access.easyopen2.model.review.Review;
 import com.staples.mobile.common.access.easyopen2.model.review.YotpoResponse;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TimeZone;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener,
-Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
-    private static final String TAG = "SkuFragment";
+public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener, Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener {
+    private static final String TAG = SkuFragment.class.getSimpleName();
+    private static final String PSEUDOCLASS = "SkuDetail";
 
     private static final String TITLE = "title";
     private static final String IDENTIFIER = "identifier";
@@ -76,7 +80,7 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
 
     private static final int MAXFETCH = 50;
 
-    //private static SimpleDateFormat iso8601;
+    private static SimpleDateFormat iso8601;
 
     public enum Availability {
         NOTHING      (R.string.avail_nothing),
@@ -105,9 +109,6 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
             return(resid);
         }
     }
-
-    private MainActivity activity;
-    private Resources resources;
 
     private String title;
     private String identifier;
@@ -148,8 +149,8 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
 
-        activity = (MainActivity) getActivity();
-        resources = activity.getResources();
+        MainActivity activity = (MainActivity) getActivity();
+        Resources res = activity.getResources();
 
         Bundle args = getArguments();
         if (args != null) {
@@ -160,9 +161,6 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
 
         wrapper = (DataWrapper) inflater.inflate(R.layout.sku_summary, container, false);
         summary = (ScrollView) wrapper.findViewById(R.id.summary);
-
-        // Init animated scroll bar callback
-//        summary.setAnimatedScrollCallback(new AnimatedBarScrollViewListener()) ;
 
         // Init image pager
         imagePager = (ViewPager) summary.findViewById(R.id.images);
@@ -177,9 +175,9 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
         tabPager.setAdapter(tabAdapter);
 
         // Fill detail (View Pager)
-        tabAdapter.add(resources.getString(R.string.description));
-        tabAdapter.add(resources.getString(R.string.specs));
-        tabAdapter.add(resources.getString(R.string.reviews));
+        tabAdapter.add(res.getString(R.string.description));
+        tabAdapter.add(res.getString(R.string.specs));
+        tabAdapter.add(res.getString(R.string.reviews));
         tabAdapter.notifyDataSetChanged();
 
         // Init details (TabHost)
@@ -195,9 +193,9 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
 
         // Fill details (TabHost)
         DummyFactory dummy = new DummyFactory(activity);
-        addTab(dummy, resources, R.string.description, DESCRIPTION);
-        addTab(dummy, resources, R.string.specs, SPECIFICATIONS);
-        addTab(dummy, resources, R.string.reviews, REVIEWS);
+        addTab(dummy, res, R.string.description, DESCRIPTION);
+        addTab(dummy, res, R.string.specs, SPECIFICATIONS);
+        addTab(dummy, res, R.string.reviews, REVIEWS);
 
         // Set initial visibility
         wrapper.setState(DataWrapper.State.LOADING);
@@ -228,20 +226,7 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.SKU, title);
-
-        // set the left drawer position
-//        MainActivity mainActivity = (MainActivity) getActivity();
-//        mainActivity.setLeftDrawerOffset();
     }
-
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//
-//        // change back the left drawer position
-//        MainActivity mainActivity = (MainActivity) getActivity();
-//        mainActivity.restoreDefaultLeftDrawer();
-//    }
 
     @Override
     public void onDestroy() {
@@ -249,51 +234,6 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
         FragmentManager manager = getFragmentManager();
         manager.removeOnBackStackChangedListener(this);
     }
-
-//    private class AnimatedBarScrollViewListener implements AnimatedBarScrollView.OnAnimatedScrollListener{
-//
-//        @Override
-//        public void initAnimatedActionBar(){
-//            MainActivity mainActivity = (MainActivity) getActivity();
-//            mainActivity.setContainFrameOffset();
-//
-//            // hide action bar title at first
-//            if(AnimatedBarScrollView.isFirstLoad) {
-//                mainActivity.setActionBarAlpha(0);
-//                mainActivity.setActionBarTitleAlpha(0);
-//            }
-//            else{
-//                mainActivity.setActionBarAlpha(AnimatedBarScrollView.currentAlpha);
-//                mainActivity.setActionBarTitleAlpha(AnimatedBarScrollView.currentAlpha);
-//            }
-//
-//            AnimatedBarScrollView.isFirstLoad = false;
-//        }
-//
-//        @Override
-//        public void setAnimatedActionBarOnScroll (float scrollY) {
-//            MainActivity mainActivity = (MainActivity) getActivity();
-//            mainActivity.setActionBarTitle(productName);
-//            mainActivity.setActionBarColor(R.color.staples_light);
-//
-//            Float screenHeightDp = convertPixelsToDp(mainActivity.getScreenHeight(), mainActivity);
-//            Float currentPositionDp = convertPixelsToDp(scrollY, mainActivity);
-//            Float scrollThreshold = screenHeightDp / 4;
-//
-//            if(currentPositionDp <= scrollThreshold){
-//                AnimatedBarScrollView.currentAlpha = (int) Math.ceil(currentPositionDp * AnimatedBarScrollView.MAX_ALPHA / scrollThreshold);
-//                mainActivity.setActionBarTitleAlpha(AnimatedBarScrollView.currentAlpha);
-//                mainActivity.setActionBarAlpha(AnimatedBarScrollView.currentAlpha);
-//            };
-//        }
-//
-//        private float convertPixelsToDp(float px, Context context){
-//            Resources resources = context.getResources();
-//            DisplayMetrics metrics = resources.getDisplayMetrics();
-//            float dp = px / (metrics.densityDpi / 160f);
-//            return dp;
-//        }
-//    }
 
     public static class DummyFactory implements TabHost.TabContentFactory {
         private View view;
@@ -316,7 +256,7 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
     }
 
     // Formatters and builders
-    private String formatNumbers(Product product) {
+    private String formatNumbers(Resources res, Product product) {
         // Safety check
         if (product == null) return (null);
         String skuNumber = product.getSku();
@@ -330,15 +270,15 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
         StringBuilder sb = new StringBuilder();
 
         if (skuNumber != null) {
-            sb.append(resources.getString(R.string.item));
-            sb.append(":\u00a0");
+            sb.append(res.getString(R.string.item));
+            sb.append(":\u00a0"); // nbsp
             sb.append(skuNumber);
         }
 
         if (modelNumber != null) {
             if (sb.length() > 0) sb.append("   ");
-            sb.append(resources.getString(R.string.model));
-            sb.append(":\u00a0");
+            sb.append(res.getString(R.string.model));
+            sb.append(":\u00a0"); // nbsp
             sb.append(modelNumber);
         }
         return (sb.toString());
@@ -418,6 +358,7 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
     }
 
     private void addAccessory(final Product product) {
+        final MainActivity activity = (MainActivity) getActivity();
         List<Product> accessories = product.getAccessory();
 
         LayoutInflater inflater = activity.getLayoutInflater();
@@ -466,6 +407,7 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
     }
 
     private void saveSeenProduct(Product product){
+        MainActivity activity = (MainActivity) getActivity();
         PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(activity);
         HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(activity);
         PersistentSizedArrayList<String> savedSeenProductList
@@ -551,22 +493,16 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
 
     @Override
     public void success(Object obj, Response response) {
+        Activity activity = getActivity();
+        if (!(activity instanceof MainActivity)) return;
+
         if (obj instanceof SkuDetails) {
             SkuDetails details = (SkuDetails) obj;
             processSkuDetails(details);
             wrapper.setState(DataWrapper.State.DONE);
         }
 
-//        else if (obj instanceof ReviewSet) {
-//            ReviewSet reviews = (ReviewSet) obj;
-//            processReviewSet(reviews);
-//        }
-
         else if (obj instanceof YotpoResponse) {
-//            Log.d(TAG, "Yotpo Api http status:" + response.getStatus()
-//                    + ", reason:" + response.getReason()
-//                    + ", body: " +response.toString());
-
             YotpoResponse yotpoResponse = (YotpoResponse) obj;
             processYotpoReview(yotpoResponse);
         }
@@ -574,29 +510,28 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
 
     @Override
     public void failure(RetrofitError retrofitError) {
+        Activity activity = getActivity();
+        if (!(activity instanceof MainActivity)) return;
+
         Type type = retrofitError.getSuccessType();
 
         if (type==SkuDetails.class) {
             wrapper.setState(DataWrapper.State.EMPTY);
             String msg = ApiError.getErrorMessage(retrofitError);
-            activity.showErrorDialog(msg);
+            ((MainActivity) activity).showErrorDialog(msg);
             Log.d(TAG, msg);
         }
 
-//        else if (type==ReviewSet.class) {
-//            String msg = ApiError.getErrorMessage(retrofitError);
-//            ((MainActivity) activity).showErrorDialog(msg);
-//            Log.d(TAG, msg);
-//        }
-
-        else if (type == YotpoResponse.class) {
+        else if (type==YotpoResponse.class) {
             String msg = ApiError.getErrorMessage(retrofitError);
-            activity.showErrorDialog(msg);
+            ((MainActivity) activity).showErrorDialog(msg);
             Log.d(TAG, msg);
         }
     }
 
     private void processSkuDetails(SkuDetails sku) {
+        final MainActivity activity = (MainActivity) getActivity();
+        Resources res = activity.getResources();
         List<Product> products = sku.getProduct();
         if (products != null && products.size() > 0) {
             // Use the first product in the list
@@ -607,11 +542,11 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
             // Handle availability
             QuantityEditor qtyEditor = (QuantityEditor) wrapper.findViewById(R.id.quantity);
             Button addToCartButton = (Button) wrapper.findViewById(R.id.add_to_cart);
-            TextView footerMsg = (TextView)wrapper.findViewById(R.id.footer_msg);
+            TextView footerMsg = (TextView) wrapper.findViewById(R.id.footer_msg);
             Availability availability = Availability.getProductAvailability(product);
-            TextView skuText = (TextView)wrapper.findViewById(R.id.select_sku);
+            TextView skuText = (TextView) wrapper.findViewById(R.id.select_sku);
 
-            if(isSkuSetOriginated == true) {
+            if (isSkuSetOriginated == true) {
                 skuText.setVisibility(View.VISIBLE);
                 skuText.setText(product.getProductName());
                 skuText.setOnClickListener(new View.OnClickListener() {
@@ -623,7 +558,6 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
                         }
                     }
                 });
-
             }
 
             // Analytics
@@ -635,7 +569,7 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
 
             Apptentive.engage(activity, ApptentiveSdk.PRODUCT_DETAIL_SHOWN_EVENT);
 
-            switch (availability) {
+            switch(availability) {
                 case NOTHING:
                 case SKUSET:
                     qtyEditor.setVisibility(View.VISIBLE);
@@ -685,7 +619,7 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
             // Add info
             productName = Html.fromHtml(product.getProductName()).toString();
             ((TextView) summary.findViewById(R.id.title)).setText(productName);
-            ((TextView) summary.findViewById(R.id.model)).setText(formatNumbers(product));
+            ((TextView) summary.findViewById(R.id.model)).setText(formatNumbers(res, product));
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
             ((RatingStars) summary.findViewById(R.id.review_rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
 
@@ -751,7 +685,7 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
 
                 Button rebateButton = (Button) summary.findViewById(R.id.rebate_button);
                 rebateButton.setText(String.valueOf("$ " + discount.get(0).getAmount())
-                + " " + getResources().getString(R.string.rebate));
+                + " " + res.getString(R.string.rebate));
 
                 Log.d(TAG, "The product has rebate. sku:" + product.getSku()
                         + ", rebate:" + discount.get(0).getAmount());
@@ -765,73 +699,27 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
         }
     }
 
-//    public static String formatTimestamp(String raw) {
-//        if (raw == null) return (null);
-//
-//        if (iso8601 == null)
-//            iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-//
-//        try {
-//            Date date = iso8601.parse(raw);
-//            String text = DateFormat.getDateInstance().format(date);
-//            return (text);
-//        } catch (ParseException e) {
-//            Crittercism.logHandledException(e);
-//            return (null);
-//        }
-//    }
+    public static String formatTimestamp(String raw) {
+        if (raw == null) return (null);
 
-//    private void processReviewSet(ReviewSet reviews) {
-//        if (reviews == null) return;
-//        List<Data> datas = reviews.getData();
-//        if (datas == null || datas.size() < 1) return;
-//        tabAdapter.setReviews(datas);
-//
-//        Data item = datas.get(0);
-//        if (item != null) {
-//            // Inflate review block
-//            LayoutInflater inflater = activity.getLayoutInflater();
-//            ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
-//            View view = inflater.inflate(R.layout.sku_review_brief_item, parent, false);
-//            parent.addView(view);
-//
-//            // Set items
-//            String created = formatTimestamp(item.getCreatedDatetime());
-//            if (created != null)
-//                ((TextView) view.findViewById(R.id.sku_review_date)).setText(created);
-//            else ((TextView) view.findViewById(R.id.sku_review_date)).setVisibility(View.GONE);
-//
-//            ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(item.getRating(), null);
-//
-//            String comments = item.getComments();
-//            if (comments != null)
-//                ((TextView) view.findViewById(R.id.sku_review_comments)).setText(comments);
-//            else ((TextView) view.findViewById(R.id.sku_review_comments)).setVisibility(View.GONE);
-//        }
+        if (iso8601 == null)
+            iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            iso8601.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-//  TODO Review tags
-//            List<HashMap<String, List<String>>> tags = data.getReview_tags();
-//            if (tags!=null) {
-//                for(HashMap<String, List<String>> map : tags) {
-//                    Set<Map.Entry<String, List<String>>> set = map.entrySet();
-//                    for(Map.Entry entry : set) {
-//                        Log.d(TAG, entry.getKey() + " " + entry.getValue());
-//                    }
-//                }
-//            }
-//    }
+        try {
+            Date date = iso8601.parse(raw);
+            String text = DateFormat.getDateInstance().format(date);
+            return (text);
+        } catch (ParseException e) {
+            Crittercism.logHandledException(e);
+            return (null);
+        }
+    }
 
     private void processYotpoReview(YotpoResponse yotpoResponse) {
         if (yotpoResponse == null) return;
 
         com.staples.mobile.common.access.easyopen2.model.review.Response response = yotpoResponse.getResponse();
-
-        //Status yotpoStatus = yotpoResponse.getStatus();
-        //Log.d(TAG, "YOTPO status code:" + yotpoStatus.getCode() + ", message:" + yotpoStatus.getMessage());
-
-        // List<Product> yotpoResponseProducts = response.getProducts();
-        //Product product = yotpoResponseProducts.get(0);
-        //Log.d(TAG, "YOTPO product:" + product.getName());
 
         List<Review> yotpoReviews = response.getReviews();
         if (yotpoReviews != null && yotpoReviews.size() > 0) {
@@ -841,7 +729,7 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
             Review briefReview = yotpoReviews.get(0);
 
             // Inflate review block
-            LayoutInflater inflater = activity.getLayoutInflater();
+            LayoutInflater inflater = getActivity().getLayoutInflater();
             ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
             View view = inflater.inflate(R.layout.sku_review_brief_item, parent, false);
             parent.addView(view);
@@ -868,9 +756,7 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
             }
 
             // Created date
-            String[] createdDateTime = briefReview.getCreatedAt().split("T");
-            String createdDate = createdDateTime[0];
-
+            String createdDate = formatTimestamp(briefReview.getCreatedAt());
             if (createdDate != null) {
                 ((TextView) view.findViewById(R.id.sku_review_date)).setText(createdDate);
             }
@@ -889,17 +775,10 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
 
             for(int i = 0; i < Math.min(yotpoReviews.size(), 10); i++) {
                 Review review = yotpoReviews.get(i);
-                Log.d(TAG, yotpoReviews.size() + " total YOTPO reviews. "
-                        + (i+1) + " - score: " + review.getScore()
-                        + ", content:" + review.getContent()
-                        + ", title:" + review.getTitle() + ", user:" + review.getUser().getDisplayName()
-                        + ", Time:" + review.getCreatedAt());
             }
         }
         else{
             summary.findViewById(R.id.reviews_layout).setVisibility(View.GONE);
-
-            Log.d(TAG, "This product has no YOTPO review. SKU:" + identifier);
         }
     }
 
@@ -938,51 +817,23 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
         isShiftedTab = true;
         tabPager.setCurrentItem(position);
 
+        // Add pseudo fragment to back stack
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.addToBackStack("SkuDetail");
+        transaction.addToBackStack(PSEUDOCLASS);
         transaction.commit();
         manager.addOnBackStackChangedListener(this);
-
-        // set sku action bar on spec page
-//        MainActivity mainActivity = (MainActivity) getActivity();
-//        mainActivity.setActionBarAlpha(255);
-//        mainActivity.setActionBarTitleAlpha(255);
-//        mainActivity.setActionBarTitle(productName);
-//
-//        mainActivity.restoreDefaultLeftDrawer();
-//
-//        // restore contain offset
-//        mainActivity.restoreContainFrame();
     }
 
     @Override
     public void onBackStackChanged() {
         FragmentManager manager = getFragmentManager();
-        for(int entry = 0; entry < manager.getBackStackEntryCount(); entry++){
-            Log.d(TAG, "Found fragments: " + manager.getBackStackEntryAt(entry).getName());
-
-        }
-
         int fragmentEntryCount = manager.getBackStackEntryCount();
-        if(fragmentEntryCount < 1) {
-            return;
-        }
+        if(fragmentEntryCount < 1) return;
 
-        String currentFragmentName = manager.getBackStackEntryAt(fragmentEntryCount - 1).getName();
-        if(currentFragmentName != null &&
-                currentFragmentName.equals("com.staples.mobile.cfa.sku.SkuFragment")){
-            // restore last seen state for sku action bar after sku spec
-//            mainActivity.setActionBarAlpha(AnimatedBarScrollView.currentAlpha);
-//            mainActivity.setActionBarTitleAlpha(AnimatedBarScrollView.currentAlpha);
-//            mainActivity.setLeftDrawerOffset();
-        }
-        else{
-            if(currentFragmentName != null && !currentFragmentName.equals("SkuDetail")) {
-                isShiftedTab = false;
-            }
-            // restore original contain offset
-//            mainActivity.restoreContainFrame();
+        String name = manager.getBackStackEntryAt(fragmentEntryCount - 1).getName();
+        if (PSEUDOCLASS.equals(name)) {
+            isShiftedTab = false;
             return;
         }
 
@@ -990,6 +841,39 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
         wrapper.setState(DataWrapper.State.DONE);
         details.setVisibility(View.GONE);
         isShiftedTab = false;
+    }
+
+    private class AddToCart implements CartApiManager.CartRefreshCallback {
+        private int quantity;
+
+        private AddToCart(String identifier, int quantity) {
+            this.quantity = quantity;
+            MainActivity activity = (MainActivity) getActivity();
+            activity.showProgressIndicator();
+            CartApiManager.addItemToCart(identifier, quantity, this);
+        }
+
+        @Override
+        public void onCartRefreshComplete(String errMsg) {
+            Activity activity = getActivity();
+            if (!(activity instanceof MainActivity)) return;
+
+            ((MainActivity) activity).hideProgressIndicator();
+
+            // if success
+            if (errMsg == null) {
+                ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
+                ((Button) wrapper.findViewById(R.id.add_to_cart)).setText(R.string.add_another);
+                ((MainActivity) activity).showNotificationBanner(R.string.cart_updated_msg);
+                Tracker.getInstance().trackActionForAddToCartFromProductDetails(CartApiManager.getCartProduct(identifier), quantity);
+            } else {
+                // if non-grammatical out-of-stock message from api, provide a nicer message
+                if (errMsg.contains("items is out of stock")) {
+                    errMsg = activity.getResources().getString(R.string.avail_outofstock);
+                }
+                ((MainActivity) activity) .showErrorDialog(errMsg);
+            }
+        }
     }
 
     @Override
@@ -1006,26 +890,8 @@ Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener{
                 break;
             case R.id.add_to_cart:
                 QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
-                final int qty = edit.getQuantity();
-                activity.showProgressIndicator();
-                CartApiManager.addItemToCart(identifier, qty, new CartApiManager.CartRefreshCallback() {
-                    @Override
-                    public void onCartRefreshComplete(String errMsg) {
-                        activity.hideProgressIndicator();
-                        ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
-                        if (errMsg == null) {
-                            ((Button) wrapper.findViewById(R.id.add_to_cart)).setText(R.string.add_another);
-                            activity.showNotificationBanner(R.string.cart_updated_msg);
-                            Tracker.getInstance().trackActionForAddToCartFromProductDetails(CartApiManager.getCartProduct(identifier), qty);
-                        } else {
-                            // if non-grammatical out-of-stock message from api, provide a nicer message
-                            if (errMsg.contains("items is out of stock")) {
-                                errMsg = activity.getResources().getString(R.string.avail_outofstock);
-                            }
-                            activity.showErrorDialog(errMsg);
-                        }
-                    }
-                });
+                int quantity = edit.getQuantity();
+                new AddToCart(identifier, quantity);
                 break;
         }
     }

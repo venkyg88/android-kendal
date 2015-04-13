@@ -22,7 +22,7 @@ import com.staples.mobile.cfa.weeklyad.WeeklyAdByCategoryFragment;
 import java.util.ArrayList;
 
 public class    DrawerAdapter extends BaseAdapter {
-    private static final String TAG = "DrawerAdapter";
+    private static final String TAG = DrawerAdapter.class.getSimpleName();
 
     private MainActivity activity;
     private LayoutInflater inflater;

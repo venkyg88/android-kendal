@@ -22,7 +22,7 @@ import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
-    private static final String TAG = "LoginFragment";
+    private static final String TAG = LoginFragment.class.getSimpleName();
     private static final String TABID_SIGNIN = "Sign In Tab";
     private static final String TABID_REGISTER = "Register Tab";
     Button signInBtn;

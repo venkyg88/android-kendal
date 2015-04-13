@@ -48,7 +48,7 @@ import retrofit.client.Response;
  */
 
 public class OrderFragment extends Fragment implements View.OnClickListener {
-    private static final String TAG = "OrderFragment";
+    private static final String TAG = OrderFragment.class.getSimpleName();
     MainActivity activity;
     EasyOpenApi easyOpenApi;
     private RecyclerView mRecyclerView;
