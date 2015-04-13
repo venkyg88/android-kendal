@@ -115,7 +115,7 @@ public class UpgradeManager {
             force = update.getForce();
             thresholdForceStr = force.getThreshold();
             // @TODO Line below is for testing purposes.
-            thresholdForceStr = "20";   // @TODO Debug
+            // thresholdForceStr = "20";   // @TODO Debug
             int thresholdForceInt = 0;
 
             try {
