@@ -148,7 +148,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         ShippingAddress addr =new ShippingAddress();
         addr.setDeliveryFirstName(extractField(R.id.firstName));
         addr.setDeliveryLastName(extractField(R.id.lastName));
-        addr.setDeliveryPhone(extractField(R.id.phoneNumber).replaceAll("[^0-9]", "")); // remove characters added by input mask
+        addr.setDeliveryPhone(stripPhoneNumber(extractField(R.id.phoneNumber))); // remove characters added by input mask
         addr.setEmailAddress(extractField(R.id.emailAddr));
         addr.setReenterEmailAddress(extractField(R.id.emailAddr));
         addr.setDeliveryAddress1(extractField(R.id.address));
@@ -157,6 +157,13 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         addr.setDeliveryState(extractField(R.id.state));
         addr.setDeliveryZipCode(extractField(R.id.zipCode));
         return(addr);
+    }
+
+    private String stripPhoneNumber(String phoneNumber) {
+        if (!TextUtils.isEmpty(phoneNumber)) {
+            return phoneNumber.replaceAll("[^0-9]", "");
+        }
+        return phoneNumber;
     }
 
     public String getEmailAddress() {
@@ -181,7 +188,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         UpdateAddress addr = new UpdateAddress();
         addr.setFirstName(extractField(R.id.firstName));
         addr.setLastName(extractField(R.id.lastName));
-        addr.setPhoneNumber(extractField(R.id.phoneNumber).replaceAll("[^0-9]", "")); // remove characters added by input mask
+        addr.setPhoneNumber(stripPhoneNumber(extractField(R.id.phoneNumber))); // remove characters added by input mask
         addr.setAddressLine1(extractField(R.id.address));
         addr.setAddressLine2(extractField(R.id.apartment));
         addr.setCity(extractField(R.id.city));
