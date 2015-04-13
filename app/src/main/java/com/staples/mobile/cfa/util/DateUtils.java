@@ -17,7 +17,7 @@ public class DateUtils {
 
     private static final String TWO_DIGIT_MONTH_YEAR = "MM/yy";
 
-    private static final boolean LOGGING = true;
+    private static final boolean LOGGING = false;
 
     public static boolean validateCreditCardExpDate(TextView expDateView) {
 
