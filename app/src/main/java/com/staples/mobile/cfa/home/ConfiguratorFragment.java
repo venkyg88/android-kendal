@@ -1061,9 +1061,7 @@ public class ConfiguratorFragment extends Fragment {
         if (TextUtils.isEmpty(postalCode)) {
             // display "no store nearby"
             storeWrapper.setState(DataWrapper.State.EMPTY);
-            String errorMessage = (String) getResources().getText(R.string.error_no_location_service);
-            Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
-            //activity.showErrorDialog(errorMessage, false);
+            Log.d(TAG, (String) getResources().getText(R.string.error_no_location_service));
         }
         else{
             Log.d(TAG, "Store zipcode:" + postalCode);
@@ -1164,7 +1162,16 @@ public class ConfiguratorFragment extends Fragment {
                 login_layout.setVisibility(View.GONE);
                 reward_layout.setVisibility(View.VISIBLE);
                 rewardTextView.setText("$" + (int) rewards);
-                Log.d(TAG, "Rewards: " + rewards);
+                Log.d(TAG, "Rewards from message bar: " + rewards);
+
+                reward_layout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Tracker.getInstance().trackActionForPersonalizedMessaging("Reward"); // Analytics
+                        MainActivity mainActivity = (MainActivity) getActivity();
+                        mainActivity.selectRewardsFragment();
+                    }
+                });
             }
             else{
                 loginMessageTextView.setText(R.string.welcome);
@@ -1174,6 +1181,15 @@ public class ConfiguratorFragment extends Fragment {
 
                 login_layout.setVisibility(View.VISIBLE);
                 reward_layout.setVisibility(View.GONE);
+
+                login_layout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Tracker.getInstance().trackActionForPersonalizedMessaging("Reward"); // Analytics
+                        MainActivity mainActivity = (MainActivity) getActivity();
+                        mainActivity.selectRewardsFragment();
+                    }
+                });
             }
         }
         // Not Logged In
