@@ -20,7 +20,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(emulateSdk = 18, qualifiers = "port")
+@Config(emulateSdk = 21, qualifiers = "port")
 public class InventoryModelTest {
     private ActivityController controller;
     private MainActivity activity;
@@ -72,8 +72,9 @@ public class InventoryModelTest {
                 }
         );
 
-        Thread.sleep(5000);
-        Robolectric.runUiThreadTasksIncludingDelayedTasks();
+        Thread.sleep(10000);
+        Robolectric.flushBackgroundScheduler();
+        Robolectric.flushForegroundScheduler();
 
         Assert.assertFalse("Model creation should not have failed", failure);
         Assert.assertTrue("Model creation should have succeeded", success);
@@ -100,7 +101,8 @@ public class InventoryModelTest {
         });
 
         Thread.sleep(5000);
-        Robolectric.runUiThreadTasksIncludingDelayedTasks();
+        Robolectric.flushBackgroundScheduler();
+        Robolectric.flushForegroundScheduler();
 
         Assert.assertFalse("Model creation should not have failed", failure);
         Assert.assertTrue("Model creation should have succeeded", success);

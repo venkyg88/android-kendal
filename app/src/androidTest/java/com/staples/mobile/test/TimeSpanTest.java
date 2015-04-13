@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.TimeZone;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(emulateSdk = 18, qualifiers = "port")
+@Config(emulateSdk = 21, qualifiers = "port")
 public class TimeSpanTest {
     private static final int ONEWEEK = 7*24*60*60*1000;
     private static final int ONEDAY = 24*60*60*1000;
