@@ -132,7 +132,13 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             // Set price
             float rebate = cartItem.getRebate();
             boolean rebatePresent = (rebate != 0);
-            ciVh.priceSticker.setPricing(cartItem.getOrderItemPrice(), cartItem.getListPrice(),
+            float wasPrice = cartItem.getListPrice();
+            // when quantity > 1, and no list price, use final price as the was price so the unit
+            // makes sense (sort of) - as per Tim and Product management
+            if (wasPrice == 0 && cartItem.getQuantity() > 1) {
+                wasPrice = cartItem.getFinalPrice();
+            }
+            ciVh.priceSticker.setPricing(cartItem.getTotalOrderItemPrice(), wasPrice,
                     cartItem.getPriceUnitOfMeasure(), rebatePresent? "*":null);
             ciVh.rebateLayout.setVisibility(rebatePresent? View.VISIBLE : View.GONE);
             ciVh.rebateText.setText(currencyFormat.format(rebate) + " Rebate");

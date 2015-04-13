@@ -79,10 +79,6 @@ public class CartItem {
         return 0.0f;
     }
 
-    public float getOrderItemPrice() {
-        float totalOrderItemPrice = getTotalOrderItemPrice();
-        return totalOrderItemPrice / getQuantity();
-    }
 
     public float getTotalOrderItemPrice() {
         Pricing pricing = getPricing();
