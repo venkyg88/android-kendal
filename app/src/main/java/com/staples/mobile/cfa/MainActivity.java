@@ -55,6 +55,7 @@ import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.skuset.SkuSetFragment;
 import com.staples.mobile.cfa.store.StoreFragment;
+import com.staples.mobile.cfa.UpgradeManager.UPGRADE_STATUS;
 import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.weeklyad.WeeklyAdByCategoryFragment;
 import com.staples.mobile.cfa.weeklyad.WeeklyAdInStoreFragment;
@@ -433,29 +434,15 @@ public class MainActivity extends Activity
 
             UpgradeManager upgradeManager = new UpgradeManager(this);
             UpgradeManager.UPGRADE_STATUS upgradeStatus = upgradeManager.getUpgradeStatus();
+            String upgradeMsg = upgradeManager.getUpgradeMsg();
+            String upgradeUrl = upgradeManager.getUpgradeUrl();
 
-            switch (upgradeStatus) {
+            if (upgradeStatus == UPGRADE_STATUS.FORCE_UPGRADE) {
 
-            case SUGGEST_UPGRADE:
-            {
-                String upgradeMsg = upgradeManager.getUpgradeMsg();
-                String upgradeUrl = upgradeManager.getUpgradeUrl();
-                doOptionalUpgrade(upgradeMsg, upgradeUrl);
+                doForcedUpgrade(upgradeMsg, upgradeUrl);
 
-                // If the user declines the upgrade, control should fall thru
-                // here and continue initialization.
+            } else {
 
-                // If the user does the upgrade, a new activity will be spawned
-                // which should ultimately caused the app to be terminated by
-                // the upgrade process.
-
-            }
-            case NOT_NECESSARY:
-            // This will occur if we were unable to process application version
-            // info or MCS version info.
-            case NO_UPGRADE_INFO:
-            case EXCEPTION:
-            {
                 loginHelper = new LoginHelper(this);
                 loginHelper.registerLoginCompleteListener(this);
 
@@ -479,22 +466,10 @@ public class MainActivity extends Activity
                 // initialize Kount fraud detection
                 KountManager.getInstance(this);
 
-                break; // switch
+                if (upgradeStatus == UPGRADE_STATUS.SUGGEST_UPGRADE) {
+                    doOptionalUpgrade(upgradeMsg, upgradeUrl);
+                }
             }
-            case FORCE_UPGRADE:
-            {
-                String upgradeMsg = upgradeManager.getUpgradeMsg();
-                String upgradeUrl = upgradeManager.getUpgradeUrl();
-                doForcedUpgrade(upgradeMsg, upgradeUrl);
-                break; // switch
-            }
-            default:
-            {
-                // << This should not occur. SNOCCUR >>>
-                throw new IllegalArgumentException();
-            }
-            } // switch (upgradeStatus)
-
         } else { // can't get configurator from network or from persisted file
 
             showErrorDialog(R.string.error_server_connection, true); // setting fatal=true which will close the app
@@ -515,8 +490,8 @@ public class MainActivity extends Activity
 
             new DialogInterface.OnClickListener() {
                 @Override public void onClick(DialogInterface dialog, int which) {
-                    // Initiate upgrade and terminate app.
-                    launchUpgrade(upgradeUrl);
+                    // Initiate upgrade and DO NOT finish the activity.
+                    launchUpgrade(upgradeUrl, false);
                 }
             });
 
@@ -550,8 +525,8 @@ public class MainActivity extends Activity
 
             new DialogInterface.OnClickListener() {
                 @Override public void onClick(DialogInterface dialog, int which) {
-                    // Initiate upgrade and terminate app.
-                    launchUpgrade(upgradeUrl);
+                    // Initiate upgrade and finish the activity.
+                    launchUpgrade(upgradeUrl, true);
                 }
             });
 
@@ -559,7 +534,7 @@ public class MainActivity extends Activity
         upgradeDialog.show();
     }
 
-    private void launchUpgrade(String upgradeUrl) {
+    private void launchUpgrade(String upgradeUrl, boolean finishActivity) {
 
         if (LOGGING) {
             Log.v(TAG, "MainActivity:launchUpgrade(): Entry.");
@@ -570,7 +545,10 @@ public class MainActivity extends Activity
         Uri uriUrl = Uri.parse(upgradeUrl);
         Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
         startActivity(launchBrowser);
-        MainActivity.this.finish();
+
+        if (finishActivity) {
+            MainActivity.this.finish();
+        }
     }
 
     @Override

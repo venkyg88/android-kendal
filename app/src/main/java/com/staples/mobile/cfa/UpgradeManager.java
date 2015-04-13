@@ -115,7 +115,7 @@ public class UpgradeManager {
             force = update.getForce();
             thresholdForceStr = force.getThreshold();
             // @TODO Line below is for testing purposes.
-            // thresholdForceStr = "20";
+            thresholdForceStr = "20";   // @TODO Debug
             int thresholdForceInt = 0;
 
             try {
@@ -142,7 +142,7 @@ public class UpgradeManager {
             suggest = update.getSuggest();
             thresholdSuggestStr = suggest.getThreshold();
             // @TODO Line below is for testing purposes.
-            // thresholdSuggestStr = "20";
+            // thresholdSuggestStr = "20";   // @TODO Debug
             int thresholdSuggestInt = 0;
 
             try {
