@@ -65,7 +65,6 @@ public class RatingStars extends View {
         GRAYSTAR = r.getColor(R.color.staples_middle_gray);
         TEXTCOLOR = r.getColor(R.color.staples_dark_gray);
 
-
         // Preset default attributes
         int textSize = 10;
         gravity = Gravity.LEFT;
