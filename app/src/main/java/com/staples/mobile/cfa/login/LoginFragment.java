@@ -162,7 +162,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                         if (member != null) {
                             activity.selectProfileFragment();
                         } else if (errMsg != null) {
-                            activity.showErrorDialog(errMsg);
+                            activity.showErrorDialog(R.string.login_error_msg);
                         }
                     }
                 });
