@@ -61,7 +61,7 @@
                     android:paddingTop="@dimen/verticalspacing_24dp"
                     android:textColor="@color/staples_dark_gray"
                     android:textSize="@dimen/fontsize_18sp"
-                    android:text="@string/feed_clearance_title" />
+                    android:text="@string/feed_empty_clearence" />
 
                 <!--items on daily deal-->
                 <TextView
@@ -70,7 +70,7 @@
                     android:paddingTop="@dimen/verticalspacing_24dp"
                     android:textColor="@color/staples_dark_gray"
                     android:textSize="@dimen/fontsize_18sp"
-                    android:text="@string/feed_daily_deal_title" />
+                    android:text="@string/feed_empty_sale" />
             </LinearLayout>
 
             <!-- Last Seen Products -->
