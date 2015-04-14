@@ -3,11 +3,9 @@ package com.staples.mobile.cfa.profile;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
@@ -31,7 +29,9 @@ public class CreditCardListFragment extends Fragment implements View.OnClickList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         View view = inflater.inflate(R.layout.profile_list_fragment, container, false);
-        listview = (ListView) view.findViewById(R.id.profileListView);
+        listview = (ListView) view.findViewById(R.id.profile_list_view);
+        listview.setDivider(null);
+        listview.setDividerHeight(0);
         activity = getActivity();
         addBtn = (ImageButton) view.findViewById(R.id.listAddButton);
         addBtn.setOnClickListener(this);

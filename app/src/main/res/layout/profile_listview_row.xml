@@ -1,61 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.CardView
+        android:id="@+id/profile_list_cardview"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:padding="10dp"
-        android:visibility="gone"
-        android:id="@+id/selectionImage"
-        android:tint="@color/staples_green"
-        android:src="@drawable/ic_check_white_24dp"
-        />
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="@dimen/verticalspacing_8dp"
+        android:layout_marginBottom="0dp"
+        card_view:contentPadding="0dp"
+        card_view:cardBackgroundColor="@color/staples_white"
+        card_view:cardCornerRadius="2dp"
+        card_view:cardElevation="2dp">
 
-    <LinearLayout
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_toRightOf="@id/selectionImage"
-        android:orientation="vertical">
-        <TextView
-            android:paddingTop="5dp"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="New Text"
-            android:textSize="@dimen/fontsize_20sp"
-			android:textColor="@color/staples_black"
-            android:id="@+id/rowItemText" />
+            android:paddingLeft="@dimen/margin_16dp"
+            android:paddingBottom="@dimen/verticalspacing_8dp"
+            android:paddingTop="@dimen/verticalspacing_8dp"
+            android:paddingRight="@dimen/verticalspacing_8dp">
 
-        <TextView
-            android:paddingTop="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New Text"
-            android:textSize="@dimen/fontsize_20sp"
-            android:textColor="@color/staples_middle_gray"
-            android:id="@+id/secondItemText"
-            android:paddingBottom="5dp"/>
-    </LinearLayout>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:padding="10dp"
+                android:visibility="gone"
+                android:id="@+id/selectionImage"
+                android:tint="@color/staples_green"
+                android:src="@drawable/ic_check_white_24dp"
+                />
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_toRightOf="@id/selectionImage"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/fontsize_20sp"
+                    android:paddingTop="@dimen/verticalspacing_8dp"
+                    android:textColor="@color/staples_black"
+                    android:id="@+id/rowItemText" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/fontsize_20sp"
+                    android:paddingTop="@dimen/verticalspacing_8dp"
+                    android:paddingBottom="@dimen/verticalspacing_8dp"
+                    android:textColor="@color/staples_middle_gray"
+                    android:id="@+id/secondItemText"/>
+            </LinearLayout>
 
 
-    <ImageButton
-        android:layout_width="30dip"
-        android:layout_height="wrap_content"
-        android:id="@+id/listOptions"
-        android:layout_alignParentRight="true"
-        android:src="@drawable/ic_more_vert_black"/>
+            <ImageButton
+                android:layout_width="30dip"
+                android:layout_height="wrap_content"
+                android:id="@+id/listOptions"
+                android:layout_alignParentRight="true"
+                android:background="@color/staples_white"
+                android:src="@drawable/ic_more_vert_black"/>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/cardTypeImg"
-        android:layout_centerVertical="true"
-        android:layout_below="@+id/selectionImage"
-        android:layout_toLeftOf="@+id/listOptions"
-        android:layout_toStartOf="@+id/listOptions" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/cardTypeImg"
+                android:paddingTop="@dimen/verticalspacing_8dp"
+                android:paddingRight="@dimen/margin_16dp"
+                android:layout_below="@+id/selectionImage"
+                android:layout_toLeftOf="@+id/listOptions"
+                android:layout_toStartOf="@+id/listOptions" />
 
-</RelativeLayout>
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
