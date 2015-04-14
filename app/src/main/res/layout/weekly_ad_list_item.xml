@@ -23,7 +23,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/inStoreTV"
+                android:id="@+id/availability"
                 android:textSize="@dimen/fontsize_14sp"
                 android:textColor="@color/staples_red"
                 android:gravity="center"
@@ -31,14 +31,14 @@
                 android:textStyle="bold"
                 android:text="@string/avail_retailonly"/>
             <ImageView
-                android:id="@+id/weekly_ad_list_image"
+                android:id="@+id/image"
                 android:layout_width="@dimen/weekly_ad_list_item_image_width"
                 android:layout_height="@dimen/weekly_ad_list_item_image_height"
                 android:layout_gravity="center_horizontal"
                 android:paddingTop="@dimen/verticalspacing_8dp"
                 />
             <TextView
-                android:id="@+id/weekly_ad_list_title_text"
+                android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/fontsize_14sp"
@@ -46,38 +46,28 @@
                 android:maxLines="2"
                 android:ellipsize="end"
                 android:textColor="@color/staples_black"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/verticalspacing_8dp"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/weekly_ad_list_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/fontsize_12sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/staples_red"/>
-                <TextView
-                    android:id="@+id/weekly_ad_price_extension"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/fontsize_10sp"
-                    android:paddingLeft="3dp"
-                    android:textColor="@color/staples_middle_gray"
-                    android:text="@string/each"
-                    android:visibility="gone"/>
-            </LinearLayout>
+            <com.staples.mobile.cfa.widget.PriceSticker
+                android:id="@+id/pricing"
+                style="@style/SmallPriceSticker"/>
         </LinearLayout>
         <ImageView
-            android:id="@+id/weeklyad_sku_action"
+            android:id="@+id/action"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:src="@drawable/ic_add_shopping_cart_black"
             android:visibility="gone"/>
-
+        <ProgressBar
+            android:id="@+id/whirlie"
+            android:layout_width="@dimen/verticalspacing_48dp"
+            android:layout_height="@dimen/verticalspacing_48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:paddingRight="@dimen/action_bar_half_margin"
+            android:paddingBottom="@dimen/action_bar_half_margin"
+            android:paddingLeft="@dimen/action_bar_half_margin"
+            android:visibility="gone"/>
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

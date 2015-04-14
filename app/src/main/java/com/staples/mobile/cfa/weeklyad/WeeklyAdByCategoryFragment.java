@@ -1,8 +1,7 @@
 package com.staples.mobile.cfa.weeklyad;
 
-
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -15,18 +14,18 @@ import android.widget.TextView;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.location.LocationFinder;
+import com.staples.mobile.cfa.widget.ActionBar;
+import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.channel.model.store.Obj;
 import com.staples.mobile.common.access.channel.model.store.StoreData;
 import com.staples.mobile.common.access.channel.model.store.StoreQuery;
-import com.staples.mobile.common.access.easyopen.model.weeklyadpromo.WeeklyAdPromo;
-import com.staples.mobile.common.access.easyopen.model.weeklyadstore.WeeklyAdStore;
-import com.staples.mobile.common.analytics.Tracker;
-import com.staples.mobile.cfa.widget.ActionBar;
-import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.weeklyadbycategory.Data;
-import com.staples.mobile.common.access.easyopen.model.weeklyadbycategory.WeeklyAdCategories;
+import com.staples.mobile.common.access.easyopen.model.weeklyad.Collection;
+import com.staples.mobile.common.access.easyopen.model.weeklyad.Content;
+import com.staples.mobile.common.access.easyopen.model.weeklyad.Data;
+import com.staples.mobile.common.access.easyopen.model.weeklyad.WeeklyAd;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -122,26 +121,32 @@ public class WeeklyAdByCategoryFragment extends Fragment {
         Tracker.getInstance().trackStateForWeeklyAdClass(); // Analytics
     }
 
-
     private void getWeeklyAdStoreAndData() {
         activity.showProgressIndicator();
         final EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.getWeeklyAdStore(Integer.parseInt(storeNo), new Callback<WeeklyAdStore>() {
+        easyOpenApi.getWeeklyAdStore(Integer.parseInt(storeNo), new Callback<WeeklyAd>() {
             @Override
-            public void success(WeeklyAdStore weeklyAdStore, Response response) {
+            public void success(WeeklyAd weeklyAdStore, Response response) {
                 if (weeklyAdStore.getContent().getCollection() != null) {
-                    com.staples.mobile.common.access.easyopen.model.weeklyadstore.Data data =
-                            weeklyAdStore.getContent().getCollection().getData();
-                    storeId = String.valueOf(data.getStoreid());
-                    address = data.getAddress1();
-                    city = data.getCity();
-                    storeInfoVw.setText(address + "\n" + city);
-                    getWeeklyAdData();
-                    getWeeklyAdDates();
-                } else {
-                    activity.hideProgressIndicator();
-                    activity.showErrorDialog(R.string.empty);
+                    Content content = weeklyAdStore.getContent();
+                    if (content != null) {
+                        Collection collection = content.getCollection();
+                        List<Data> datas = collection.getData();
+                        if (datas != null && datas.size() > 0) {
+                            Data data = datas.get(0);
+                            storeId = String.valueOf(data.getStoreid());
+                            address = data.getAddress1();
+                            city = data.getCity();
+                            storeInfoVw.setText(address + "\n" + city);
+                            getWeeklyAdData();
+                            getWeeklyAdDates();
+                            return;
+                        }
+                    }
                 }
+
+                activity.hideProgressIndicator();
+                activity.showErrorDialog(R.string.empty);
             }
 
             @Override
@@ -155,21 +160,27 @@ public class WeeklyAdByCategoryFragment extends Fragment {
     private void getWeeklyAdDates() {
         // don't bother with progress indicator for this less important call made in parallel,
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.getWeeklyAdPromotions(storeId, new Callback<WeeklyAdPromo>() {
+        easyOpenApi.getWeeklyAdPromotions(storeId, new Callback<WeeklyAd>() {
             @Override
-            public void success(WeeklyAdPromo weeklyAdPromo, Response response) {
+            public void success(WeeklyAd weeklyAdPromo, Response response) {
                 if (weeklyAdPromo.getContent().getCollection() != null) {
-                    com.staples.mobile.common.access.easyopen.model.weeklyadpromo.Data data =
-                            weeklyAdPromo.getContent().getCollection().getData();
-                    // example: "3/21/2015 12:00:00 AM",
-                    SimpleDateFormat parserFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa", Locale.ENGLISH);
-                    SimpleDateFormat displayFormat = new SimpleDateFormat("MMM d", Locale.ENGLISH);
-                    try {
-                        Date startDate = parserFormat.parse(data.getSalestartdate());
-                        Date endDate = parserFormat.parse(data.getSaleenddate());
-                        dateRangeVw.setText(displayFormat.format(startDate) + " - " + displayFormat.format(endDate));
-                    } catch (ParseException e) {
-                        Log.d(TAG, e.getMessage());
+                    Content content = weeklyAdPromo.getContent();
+                    if (content != null) {
+                        Collection collection = content.getCollection();
+                        List<Data> datas = collection.getData();
+                        if (datas != null && datas.size() > 0) {
+                            Data data = datas.get(0);
+                            // example: "3/21/2015 12:00:00 AM",
+                            SimpleDateFormat parserFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa", Locale.ENGLISH);
+                            SimpleDateFormat displayFormat = new SimpleDateFormat("MMM d", Locale.ENGLISH);
+                            try {
+                                Date startDate = parserFormat.parse(data.getSalestartdate());
+                                Date endDate = parserFormat.parse(data.getSaleenddate());
+                                dateRangeVw.setText(displayFormat.format(startDate) + " - " + displayFormat.format(endDate));
+                            } catch(ParseException e) {
+                                Log.d(TAG, e.getMessage());
+                            }
+                        }
                     }
                 }
             }
@@ -186,9 +197,9 @@ public class WeeklyAdByCategoryFragment extends Fragment {
     private void getWeeklyAdData(){
         activity.showProgressIndicator();
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.getWeeklyAdByCategories(storeId, new Callback<WeeklyAdCategories>() {
+        easyOpenApi.getWeeklyAdByCategories(storeId, new Callback<WeeklyAd>() {
             @Override
-            public void success(WeeklyAdCategories weeklyAdCategories, Response response) {
+            public void success(WeeklyAd weeklyAdCategories, Response response) {
                 activity.hideProgressIndicator();
                 if (weeklyAdCategories.getContent().getCollection() != null) {
                     weeklyAdItems = weeklyAdCategories.getContent().getCollection().getData();
@@ -205,7 +216,6 @@ public class WeeklyAdByCategoryFragment extends Fragment {
             }
         });
     }
-
 
     private class StoreInfoCallback implements Callback<StoreQuery> {
         @Override
@@ -232,5 +242,4 @@ public class WeeklyAdByCategoryFragment extends Fragment {
             activity.showErrorDialog(ApiError.getErrorMessage(retrofitError));
         }
     }
-
 }

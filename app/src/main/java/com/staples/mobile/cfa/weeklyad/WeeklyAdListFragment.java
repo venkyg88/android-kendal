@@ -1,19 +1,18 @@
 package com.staples.mobile.cfa.weeklyad;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
 import android.widget.TabHost;
 
 import com.staples.mobile.cfa.MainActivity;
@@ -26,8 +25,7 @@ import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.weeklyad.Data;
 import com.staples.mobile.common.access.easyopen.model.weeklyad.WeeklyAd;
-import com.staples.mobile.common.access.easyopen.model.weeklyadlisting.Collection;
-import com.staples.mobile.common.access.easyopen.model.weeklyadlisting.WeeklyAdListing;
+import com.staples.mobile.common.access.easyopen.model.weeklyad.Collection;
 import com.staples.mobile.common.access.easyopen.util.WeeklyAdImageUrlHelper;
 import com.staples.mobile.common.analytics.Tracker;
 
@@ -91,7 +89,8 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new GridLayoutManager(activity, 2));
         mRecyclerView.addItemDecoration(new HorizontalDivider(activity));
-        adapter = new WeeklyAdListAdapter(activity, this);
+        adapter = new WeeklyAdListAdapter(activity);
+        adapter.setOnClickListener(this);
         mRecyclerView.setAdapter(adapter);
 
         // set up tabs
@@ -177,101 +176,84 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
 
             @Override
             public void failure(RetrofitError error) {
-
-                // DLS: The getWeeklyAdCategoryListing API call sadly returns a different format when count=1
-                // and therefore our retrofit code throws a deserialization error. As a workaround,
-                // check for the deserialization error, and if present call a special version of
-                // getWeeklyAdCategoryListing.
-                boolean deserializationError = error.getMessage().contains("not deserialize instance of java.util.ArrayList");
-                if (deserializationError) {
-                    easyOpenApi.getWeeklyAdCategoryListingSingle(storeId, categoryTreeIds.get(currentTabIndex),
-                            imageWidth, //1, 1,
-                            new Callback<WeeklyAdListing>() {
-                                @Override
-                                public void success(WeeklyAdListing weeklyAdListing, Response response) {
-//                                    activity.hideProgressIndicator();
-                                    weeklyAdItems = new ArrayList<Data>();
-                                    Collection collection = weeklyAdListing.getContent().getCollection();
-                                    if (collection != null && collection.getData() != null) {
-                                        weeklyAdItems.add(collection.getData());
-                                    }
-                                    adapter.fill(weeklyAdItems);
-                                }
-
-                                @Override
-                                public void failure(RetrofitError error) {
-//                                    activity.hideProgressIndicator();
-                                    activity.showErrorDialog(ApiError.getErrorMessage(error));
-                                }
-                            });
-                } else {
 //                    activity.hideProgressIndicator();
                     activity.showErrorDialog(ApiError.getErrorMessage(error));
-                }
             }
         });
     }
 
+    private class AddToCart implements CartApiManager.CartRefreshCallback {
+        private WeeklyAdListAdapter.Item item;
+
+        private AddToCart(WeeklyAdListAdapter.Item item) {
+            MainActivity activity = (MainActivity) getActivity();
+
+            this.item = item;
+            item.busy = true;
+            activity.swallowTouchEvents(true);
+
+            adapter.notifyDataSetChanged();
+            CartApiManager.addItemToCart(item.identifier, 1, this);
+        }
+
+        @Override
+        public void onCartRefreshComplete(String errMsg) {
+            Activity activity = getActivity();
+            if (!(activity instanceof MainActivity)) return;
+
+            ((MainActivity) activity).swallowTouchEvents(false);
+            item.busy = false;
+            adapter.notifyDataSetChanged();
+
+            // if success
+            if (errMsg == null) {
+                ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
+                ((MainActivity) activity).showNotificationBanner(R.string.cart_updated_msg);
+                Tracker.getInstance().trackActionForAddToCartFromWeeklyAd(CartApiManager.getCartProduct(item.identifier), 1);
+            } else {
+                // if non-grammatical out-of-stock message from api, provide a nicer message
+                if (errMsg.contains("items is out of stock")) {
+                    errMsg = activity.getResources().getString(R.string.avail_outofstock);
+                }
+                ((MainActivity) activity).showErrorDialog(errMsg);
+            }
+        }
+    }
+
     @Override
     public void onClick(View view) {
-        final Resources r = activity.getResources();
+        final Resources res = activity.getResources();
         Object tag;
         switch(view.getId()) {
-            case R.id.weekly_ad_list_image: // go to sku page
+            case R.id.weekly_ad_list_cardview: // go to sku page
                 tag = view.getTag();
-                if (tag instanceof Data) {
-                    Data data = (Data) tag;
+                if (tag instanceof WeeklyAdListAdapter.Item) {
+                    WeeklyAdListAdapter.Item item = (WeeklyAdListAdapter.Item) tag;
 
                     // if in-store item, open expanded image of the ad, otherwise open sku page
-                    if (data.getFineprint().contains("In store only") ||
-                            TextUtils.isEmpty(data.getRetailerproductcode())) {
+                    if (item.inStoreOnly || item.identifier==null) {
                         String imageUrl = WeeklyAdImageUrlHelper.getUrl(
-                                (int)r.getDimension(R.dimen.weekly_ad_image_height),
-                                (int)r.getDimension(R.dimen.weekly_ad_image_width),
-                                data.getImage());
-                        ((MainActivity) getActivity()).selectInStoreWeeklyAd(imageUrl,
-                                data.getProductdescription(), data.getPrice());
+                                (int) res.getDimension(R.dimen.weekly_ad_image_height),
+                                (int) res.getDimension(R.dimen.weekly_ad_image_width),
+                                item.imageUrl);
+                        ((MainActivity) getActivity()).selectInStoreWeeklyAd(imageUrl, item.description, item.finalPrice);
                     } else {
                         // open SKU page
-                        ((MainActivity) getActivity()).selectSkuItem(data.getProductdescription(), data.getRetailerproductcode(), false);
+                        ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier, false);
                         // TODO: the following hasn't been specified, but I expect it's coming
                         // Tracker.getInstance().trackActionForWeeklyAdSelection(adapter.getItemPosition(item), 1); // analytics
                     }
                 }
                 break;
-            case R.id.weeklyad_sku_action: // add to cart
+            case R.id.action: // add to cart
                 tag = view.getTag();
-                if (tag instanceof Data) {
-                    final Data data = (Data) tag;
-                    final ImageView buttonVw = (ImageView)view;
-                    activity.showProgressIndicator();
-                    buttonVw.setImageDrawable(r.getDrawable(R.drawable.ic_android));
-                    CartApiManager.addItemToCart(data.getRetailerproductcode(), 1, new CartApiManager.CartRefreshCallback() {
-                        @Override
-                        public void onCartRefreshComplete(String errMsg) {
-                            activity.hideProgressIndicator();
-                            ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
-                            // if success
-                            if (errMsg == null) {
-                                buttonVw.setImageDrawable(r.getDrawable(R.drawable.ic_android));
-                                activity.showNotificationBanner(R.string.cart_updated_msg);
-                                Tracker.getInstance().trackActionForAddToCartFromWeeklyAd(CartApiManager.getCartProduct(data.getRetailerproductcode()), 1);
-                            } else {
-                                buttonVw.setImageDrawable(r.getDrawable(R.drawable.ic_add_shopping_cart_black));
-                                // if non-grammatical out-of-stock message from api, provide a nicer message
-                                if (errMsg.contains("items is out of stock")) {
-                                    errMsg = r.getString(R.string.avail_outofstock);
-                                }
-                                activity.showErrorDialog(errMsg);
-                            }
-                        }
-                    });
+                if (tag instanceof WeeklyAdListAdapter.Item) {
+                    WeeklyAdListAdapter.Item item = (WeeklyAdListAdapter.Item) tag;
+                    new AddToCart(item);
                 }
                 break;
         }
     }
-
-//    GestureDetectorCompat swipeListener = new GestureDetectorCompat(activity, new GestureDetector.SimpleOnGestureListener() {
 
     private class LeftRightFlingListener extends GestureDetector.SimpleOnGestureListener {
 
