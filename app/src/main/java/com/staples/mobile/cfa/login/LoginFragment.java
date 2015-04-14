@@ -16,15 +16,17 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
+import com.staples.mobile.common.analytics.Tracker;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = LoginFragment.class.getSimpleName();
     private static final String TABID_SIGNIN = "Sign In Tab";
     private static final String TABID_REGISTER = "Register Tab";
+    private static final String AUTH_ERROR = "_ERR_AUTHENTICATION_ERROR";
+
     Button signInBtn;
     Button registerBtn;
     LoginHelper loginHelper;
@@ -162,7 +164,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                         if (member != null) {
                             activity.selectProfileFragment();
                         } else if (errMsg != null) {
-                            activity.showErrorDialog(R.string.login_error_msg);
+                            if(errMsg.contains(AUTH_ERROR)) {
+                                activity.showErrorDialog(R.string.login_error_msg);
+                            } else {
+                                activity.showErrorDialog(errMsg);
+                            }
                         }
                     }
                 });
