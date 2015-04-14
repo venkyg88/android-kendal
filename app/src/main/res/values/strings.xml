@@ -60,8 +60,8 @@
     <string name="feed_clearance_title">Cart Items On Clearance</string>
     <string name="feed_daily_deal_title">Cart Items On Daily Deal</string>
     <string name="feed_seen_products_title">Your Recently Viewed Items</string>
-    <string name="feed_empty_message">Your personal feed is empty</string>
-    <string name="feed_empty_interact_message">Build your personal feed</string>
+    <string name="feed_empty_message">Your Personal Feed is Empty</string>
+    <string name="feed_empty_interact_message">Build your Personal Feed</string>
 
 
     <!-- Personalized Message -->

@@ -23,7 +23,6 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -35,6 +34,7 @@ import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +45,7 @@ import java.util.Map;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+
 
 public class PersonalFeedFragment extends Fragment {
     private static final String TAG = PersonalFeedFragment.class.getSimpleName();
@@ -76,7 +77,6 @@ public class PersonalFeedFragment extends Fragment {
     private String dailyDealTitle;
     private String clearanceTitle;
     private String seenProductsTitle;
-    private boolean isDailyEmpty = true;
 
     private class SkuDetailsCallback implements Callback<SkuDetails> {
         @Override
@@ -199,13 +199,6 @@ public class PersonalFeedFragment extends Fragment {
                 seenProductClearTV.setVisibility(View.GONE);
                 seenProductsLoading.setVisibility(View.GONE);
 
-                if(dailyDealContainer.getChildCount() == 0 && clearanceContainer.getChildCount() ==0) {
-                    emptyFeedLayout.setVisibility(View.VISIBLE);
-                }
-                else {
-                    emptyFeedLayout.setVisibility(View.GONE);
-                }
-
                 removeSavedSeenProducts();
 
                 PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(getActivity());
@@ -213,6 +206,10 @@ public class PersonalFeedFragment extends Fragment {
                 feedSingleton.setSavedSeenProducts(
                         new PersistentSizedArrayList<String>(PersonalFeedSingleton.SEEN_PRODUCTS_AMOUNT));
                 seenProductsLayout.setVisibility(View.GONE);
+
+                if(dailyDealContainer.getChildCount() == 0 && clearanceContainer.getChildCount() == 0) {
+                    emptyFeedLayout.setVisibility(View.VISIBLE);
+                }
             }
         });
 
@@ -220,13 +217,44 @@ public class PersonalFeedFragment extends Fragment {
 
         seenProductsWrapper.setState(DataWrapper.State.LOADING);
 
-        // get cart items without going to CartFragment first
+        setSeenProductsAdapter();
+        setDailyDealAdapter();
+        setClearenceAdapter();
+
+        return (personalFeedLayout);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ActionBar.getInstance().setConfig(ActionBar.Config.FEED);
+        Tracker.getInstance().trackStateForPersonalFeed(); // Analytics
+    }
+
+    private void setSeenProductsAdapter(){
+        // set seen products list
+        HashSet<String> saveSeenSkus =
+                PersonalFeedSingleton.getInstance(getActivity()).getSavedSkus(getActivity());
+
+        // display "nothing found" if no saved seen products
+        if(saveSeenSkus.isEmpty()){
+            seenProductsLayout.setVisibility(View.GONE);
+        }
+        else{
+            seenProductsWrapper.setState(DataWrapper.State.LOADING);
+            for(String sku : saveSeenSkus){
+                // Initiate SKU API call
+                EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
+                api.getSkuDetails(sku, 1, MAXFETCH, new SkuDetailsCallback());
+            }
+        }
+    }
+
+    private void setDailyDealAdapter() {
         final List<com.staples.mobile.common.access.easyopen.model.cart.Product> cartItems
                 = getCartItems(CartApiManager.getCart());
-
         if(cartItems != null) {
             dailyDealWrapper.setState(DataWrapper.State.LOADING);
-            clearanceWrapper.setState(DataWrapper.State.LOADING);
 
             String bundleUrl = "category/identifier/";
             Map collectionMap = new HashMap<String, String>();
@@ -249,7 +277,6 @@ public class PersonalFeedFragment extends Fragment {
 
                             if (cartItems != null) {
                                 for (com.staples.mobile.common.access.easyopen.model.cart.Product cartItem : cartItems) {
-                                    dailyDealLayout.setVisibility(View.VISIBLE);
                                     String cartItemSku = cartItem.getSku();
                                     if (dailyDealSkuSet.contains(cartItemSku)) {
                                         fillContainer(cartItem, dailyDealContainer, dailyDealTitle);
@@ -260,91 +287,68 @@ public class PersonalFeedFragment extends Fragment {
 
                             // display "nothing found" if no daily deal products
                             if (dailyDealContainer.getChildCount() == 0) {
-                                dailyDealLayout.setVisibility(View.GONE);
+                                if(seenProductsContainer.getChildCount() == 0 && clearanceContainer.getChildCount() == 0) {
+                                    emptyFeedLayout.setVisibility(View.VISIBLE);
+                                }
                             } else {
                                 dailyDealWrapper.setState(DataWrapper.State.DONE);
-                                emptyFeedLayout.setVisibility(View.GONE);
-                            }
-                        }
-                    }); // ProductCollection CallBack
-
-            ProductCollection.getProducts(bundleUrl + CLEARANCE_IDENTIFIER,
-                    "50", // limit (may be null)
-                    "1", // offset (may be null)
-                    collectionMap, // currently not used
-                    new ProductCollection.ProductCollectionCallBack() {
-                        @Override
-                        public void onProductCollectionResult(ProductCollection.ProductContainer productContainer,
-                                                              List<ProductCollection.ProductContainer.ERROR_CODES> errorCodes) {
-                            HashSet<String> clearanceSkuSet = new HashSet<String>();
-                            if (productContainer.getProducts() != null) {
-                                for (Product p : productContainer.getProducts()) {
-                                    clearanceSkuSet.add(p.getSku());
-                                    //fillContainer(p, clearanceContainer, clearanceTitle);
-                                    //Log.d(TAG, "Clearance Products: " + p.getProductName() + "-" + p.getSku());
-                                }
-
-                            }
-
-                            if (cartItems != null) {
-                                for (com.staples.mobile.common.access.easyopen.model.cart.Product cartItem : cartItems) {
-                                    clearanceLayout.setVisibility(View.VISIBLE);
-                                    String cartItemSku = cartItem.getSku();
-                                    if (clearanceSkuSet.contains(cartItemSku)) {
-                                        fillContainer(cartItem, clearanceContainer, clearanceTitle);
-                                        Log.d(TAG, "Clearance products in cart: " + cartItem.getProductName());
-                                    }
-                                }
-                            }
-
-                            // display "nothing found" if no clearance products
-                            if (clearanceContainer.getChildCount() == 0) {
-                                clearanceLayout.setVisibility(View.GONE);
-                            } else {
-                                clearanceWrapper.setState(DataWrapper.State.DONE);
-                                emptyFeedLayout.setVisibility(View.GONE);
+                                dailyDealLayout.setVisibility(View.VISIBLE);
                             }
                         }
                     }); // ProductCollection CallBack
         }
-        else{
+        else {
             dailyDealWrapper.setState(DataWrapper.State.EMPTY);
-            clearanceWrapper.setState(DataWrapper.State.EMPTY);
         }
-
-        setSeenProductsAdapter();
-
-        return (personalFeedLayout);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ActionBar.getInstance().setConfig(ActionBar.Config.FEED);
-        Tracker.getInstance().trackStateForPersonalFeed(); // Analytics
-    }
+    private void setClearenceAdapter() {
 
-    private void setSeenProductsAdapter(){
-        // set seen products list
-        HashSet<String> saveSeenSkus =
-                PersonalFeedSingleton.getInstance(getActivity()).getSavedSkus(getActivity());
+        final List<com.staples.mobile.common.access.easyopen.model.cart.Product> cartItems
+                = getCartItems(CartApiManager.getCart());
 
-        // display "nothing found" if no saved seen products
-        if(saveSeenSkus.isEmpty()){
-            seenProductsLayout.setVisibility(View.GONE);
-            if(dailyDealContainer.getChildCount() == 0 && clearanceContainer.getChildCount() ==0) {
-                emptyFeedLayout.setVisibility(View.VISIBLE);
-            }
-        }
-        else{
-            seenProductsWrapper.setState(DataWrapper.State.LOADING);
-            emptyFeedLayout.setVisibility(View.GONE);
-            for(String sku : saveSeenSkus){
-                // Initiate SKU API call
-                EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
-                api.getSkuDetails(sku, 1, MAXFETCH, new SkuDetailsCallback());
-            }
-        }
+        String bundleUrl = "category/identifier/";
+        Map collectionMap = new HashMap<String, String>();
+
+        ProductCollection.getProducts(bundleUrl + CLEARANCE_IDENTIFIER,
+                "50", // limit (may be null)
+                "1", // offset (may be null)
+                collectionMap, // currently not used
+                new ProductCollection.ProductCollectionCallBack() {
+                    @Override
+                    public void onProductCollectionResult(ProductCollection.ProductContainer productContainer,
+                                                          List<ProductCollection.ProductContainer.ERROR_CODES> errorCodes) {
+                        HashSet<String> clearanceSkuSet = new HashSet<String>();
+                        if (productContainer.getProducts() != null) {
+                            for (Product p : productContainer.getProducts()) {
+                                clearanceSkuSet.add(p.getSku());
+                                //fillContainer(p, clearanceContainer, clearanceTitle);
+                                //Log.d(TAG, "Clearance Products: " + p.getProductName() + "-" + p.getSku());
+                            }
+
+                        }
+
+                        if (cartItems != null) {
+                            clearanceWrapper.setState(DataWrapper.State.LOADING);
+                            for (com.staples.mobile.common.access.easyopen.model.cart.Product cartItem : cartItems) {
+                                String cartItemSku = cartItem.getSku();
+                                if (clearanceSkuSet.contains(cartItemSku)) {
+                                    fillContainer(cartItem, clearanceContainer, clearanceTitle);
+                                    Log.d(TAG, "Clearance products in cart: " + cartItem.getProductName());
+                                }
+                            }
+                        } else{
+                            clearanceWrapper.setState(DataWrapper.State.EMPTY);
+                        }
+
+                        // display "nothing found" if no clearance products
+                        if (clearanceContainer.getChildCount() == 0) {
+                        } else {
+                            clearanceWrapper.setState(DataWrapper.State.DONE);
+                            clearanceLayout.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }); // ProductCollection CallBack
     }
 
     private void fillContainer(com.staples.mobile.common.access.easyopen.model.cart.Product cartItem,
