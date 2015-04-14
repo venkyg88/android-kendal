@@ -1,9 +1,5 @@
 package com.staples.mobile.cfa.widget;
 
-/**
- * Created by dodav001 on 4/10/15.
- */
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ScrollView;
