@@ -3,7 +3,6 @@ package com.staples.mobile.cfa.profile;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +31,9 @@ public class AddressListFragment extends Fragment implements View.OnClickListene
         activity = getActivity();
 
         View view = inflater.inflate(R.layout.profile_list_fragment, container, false);
-        listview = (ListView) view.findViewById(R.id.profileListView);
+        listview = (ListView) view.findViewById(R.id.profile_list_view);
+        listview.setDivider(null);
+        listview.setDividerHeight(0);
         addButton =(ImageButton) view.findViewById(R.id.listAddButton);
         addButton.setOnClickListener(this);
         addressList = ProfileDetails.getMember().getAddress();
