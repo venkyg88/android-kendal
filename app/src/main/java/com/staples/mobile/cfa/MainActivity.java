@@ -658,7 +658,7 @@ public class MainActivity extends Activity
         if (loginHelper.isLoggedIn()) {
             CheckoutFragment fragment;
             // if logged in and have at least an address or a payment method, then use registered flow, otherwise use guest flow
-            if (!loginHelper.isGuestLogin() /* && (ProfileDetails.hasAddress() || ProfileDetails.hasPaymentMethod()) */) {
+            if (!loginHelper.isGuestLogin()) {
                 fragment = RegisteredCheckoutFragment.newInstance();
             } else {
                 fragment = GuestCheckoutFragment.newInstance();

@@ -4,7 +4,6 @@
 
 package com.staples.mobile.cfa.checkout;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;

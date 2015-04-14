@@ -84,8 +84,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private static List<CartItem> cartListItems;
     private static List<CartItemGroup> cartItemGroups;
 
-//    private int minExpectedBusinessDays;
-//    private int maxExpectedBusinessDays;
     private float couponsRewardsAmount;
 
     // widget listeners
@@ -392,15 +390,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         return cartListItems;
     }
 
-    public String getExpectedDeliveryRange() {
-        String deliveryRange = CartApiManager.getExpectedDeliveryRange();
-        if (deliveryRange != null) {
-            deliveryRange += " " + getResources().getQuantityText(R.plurals.business_days,
-                    deliveryRange.equals("1")? 1 : 2);
-            return deliveryRange;
-        }
-        return null;
-    }
 
     /** updates item quantity */
     private void updateItemQty(final CartItem cartItem) {
@@ -485,8 +474,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 // calculate expected delivery times
                 String leadTimeDescription = null;
                 CartItemGroup itemGroup = null;
-//                    minExpectedBusinessDays = -1;
-//                    maxExpectedBusinessDays = -1;
                 for (int i = 0; i < cartItems.size(); i++) {
                     CartItem cartItem = cartItems.get(i);
                     // if lead time different from previous item's lead time, set expected delivery info
@@ -501,15 +488,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                         itemGroup.setExpectedDeliveryItemQty(itemGroup.getExpectedDeliveryItemQty() + cartItem.getQuantity());
                     }
                     itemGroup.addItem(cartItem);
-
-//                    if (minExpectedBusinessDays == -1 ||
-//                            cartItem.getMinExpectedBusinessDays() < minExpectedBusinessDays) {
-//                        minExpectedBusinessDays = cartItem.getMinExpectedBusinessDays();
-//                    }
-//                    if (maxExpectedBusinessDays == -1 ||
-//                            cartItem.getMaxExpectedBusinessDays() > maxExpectedBusinessDays) {
-//                        maxExpectedBusinessDays = cartItem.getMaxExpectedBusinessDays();
-//                    }
                 }
             }
 

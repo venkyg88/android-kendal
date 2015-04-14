@@ -26,10 +26,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     public static final String TAG = CheckoutFragment.class.getSimpleName();
 
     // bundle param keys
-//    public static final String BUNDLE_PARAM_COUPONSREWARDS = "couponsRewards";
-//    public static final String BUNDLE_PARAM_ITEMSUBTOTAL = "itemSubtotal";
-//    public static final String BUNDLE_PARAM_PRETAXSUBTOTAL = "preTaxSubtotal";
-//    public static final String BUNDLE_PARAM_DELIVERY_RANGE = "deliveryRange";
     public static final String BUNDLE_PARAM_TOTAL_HANDLING_COST = "totalHandlingCost";
     public static final String BUNDLE_PARAM_SHIPPING_CHARGE = "shippingCharge";
     public static final String BUNDLE_PARAM_TAX = "tax";
