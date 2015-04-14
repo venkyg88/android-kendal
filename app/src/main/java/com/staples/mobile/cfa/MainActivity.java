@@ -665,7 +665,7 @@ public class MainActivity extends Activity
                 fragment = GuestCheckoutFragment.newInstance(couponsRewardsAmount,
                         CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal(), deliveryRange);
             }
-            return selectFragment(fragment, Transition.RIGHT, false, CheckoutFragment.TAG);
+            return selectFragment(fragment, Transition.RIGHT, true, CheckoutFragment.TAG);
         }
         return false;
     }
@@ -788,7 +788,16 @@ public class MainActivity extends Activity
     @Override
     public void onBackPressed () {
         hideProgressIndicator();
-        super.onBackPressed();
+
+        // if on order confirmation fragment, don't go back to any of the checkout related pages, go to Home page
+        FragmentManager manager = getFragmentManager();
+        Fragment confirmationFragment = manager.findFragmentByTag(ConfirmationFragment.TAG);
+
+        if (confirmationFragment != null && confirmationFragment.isVisible()) {
+            selectDrawerItem(homeDrawerItem, Transition.RIGHT, true);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     // Action bar & button clicks
