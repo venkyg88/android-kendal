@@ -133,9 +133,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             float rebate = cartItem.getRebate();
             boolean rebatePresent = (rebate != 0);
             float wasPrice = cartItem.getListPrice();
-            // when quantity > 1, and no list price, use final price as the was price so the unit
-            // makes sense (sort of) - as per Tim and Product management
-            if (wasPrice == 0 && cartItem.getQuantity() > 1) {
+            // if no list price, use final price as the was price. this handles the case when qty>1
+            // and also when there's an employee discount
+            if (wasPrice == 0) {
                 wasPrice = cartItem.getFinalPrice();
             }
             ciVh.priceSticker.setPricing(cartItem.getTotalOrderItemPrice(), wasPrice,
