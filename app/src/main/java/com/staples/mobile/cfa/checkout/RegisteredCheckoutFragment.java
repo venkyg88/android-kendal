@@ -4,6 +4,7 @@
 
 package com.staples.mobile.cfa.checkout;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -49,13 +50,11 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
     String billingAddressId;
 
     /**
-     * Create a new instance of RegisteredCheckoutFragment that will be initialized
-     * with the given arguments. Used when opening a fresh checkout session from the cart.
+     * Create a new instance of RegisteredCheckoutFragment. Used when opening a fresh checkout session from the cart.
      */
-    public static CheckoutFragment newInstance(float couponsRewardsAmount, float itemSubtotal, float preTaxSubtotal, String deliveryRange) {
+    public static CheckoutFragment newInstance() {
         CheckoutFragment f = new RegisteredCheckoutFragment();
-        createInitialBundle(couponsRewardsAmount, itemSubtotal, preTaxSubtotal, deliveryRange);
-        f.setArguments(createInitialBundle(couponsRewardsAmount, itemSubtotal, preTaxSubtotal, deliveryRange));
+        f.setArguments(new Bundle());
         return f;
     }
 
@@ -89,7 +88,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         frame.findViewById(R.id.payment_methods).setOnClickListener(this);
         frame.findViewById(R.id.billing_addresses).setOnClickListener(this);
 
-        // get additional checkout info from bundle (tax, shipping, and subtotals retrieved by super class)
+        // get checkout info from bundle
         Bundle checkoutBundle = this.getArguments();
         shippingAddressId = checkoutBundle.getString(BUNDLE_PARAM_SHIPPING_ADDR_ID);
         paymentMethodId = checkoutBundle.getString(BUNDLE_PARAM_PAYMENT_METHOD_ID);

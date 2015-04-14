@@ -27,6 +27,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private static final String TABID_REGISTER = "Register Tab";
     private static final String AUTH_ERROR = "_ERR_AUTHENTICATION_ERROR";
 
+    public static final String BUNDLE_PARAM_RETURNTOCHECKOUT = "returnToCheckout";
+
     Button signInBtn;
     Button registerBtn;
     LoginHelper loginHelper;
@@ -38,6 +40,20 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     TextView showPassword;
     TextView passwordTxt;
     TextView forgotPassword;
+
+    boolean returnToCheckout;
+
+    /**
+     * Create a new instance of ConfirmationFragment that will be initialized
+     * with the given arguments.
+     */
+    public static LoginFragment newInstance(boolean returnToCheckout) {
+        LoginFragment f = new LoginFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(LoginFragment.BUNDLE_PARAM_RETURNTOCHECKOUT, returnToCheckout);
+        f.setArguments(args);
+        return f;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -76,6 +92,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                     }
                 }
             });
+
+            Bundle checkoutBundle = this.getArguments();
+            returnToCheckout = checkoutBundle.getBoolean(BUNDLE_PARAM_RETURNTOCHECKOUT);
 
             signInBtn = (Button) view.findViewById(R.id.submit_button);
             signInBtn.setOnClickListener(this);
@@ -162,7 +181,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                     public void onProfileRefresh(Member member, String errMsg) {
                         activity.hideProgressIndicator();
                         if (member != null) {
-                            activity.selectProfileFragment();
+                            if (returnToCheckout) {
+                                activity.selectOrderCheckout();
+                            } else {
+                                activity.selectProfileFragment();
+                            }
                         } else if (errMsg != null) {
                             if(errMsg.contains(AUTH_ERROR)) {
                                 activity.showErrorDialog(R.string.login_error_msg);
@@ -191,7 +214,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                     public void onProfileRefresh(Member member, String errMsg) {
                         activity.hideProgressIndicator();
                         if (member != null) {
-                            activity.selectProfileFragment();
+                            if (returnToCheckout) {
+                                activity.selectOrderCheckout();
+                            } else {
+                                activity.selectProfileFragment();
+                            }
                         } else if (errMsg != null) {
                             activity.showErrorDialog(errMsg);
                         }

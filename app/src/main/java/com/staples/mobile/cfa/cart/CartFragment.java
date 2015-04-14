@@ -84,8 +84,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private static List<CartItem> cartListItems;
     private static List<CartItemGroup> cartItemGroups;
 
-    private int minExpectedBusinessDays;
-    private int maxExpectedBusinessDays;
+//    private int minExpectedBusinessDays;
+//    private int maxExpectedBusinessDays;
     private float couponsRewardsAmount;
 
     // widget listeners
@@ -217,23 +217,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         cartAdapter = null;
     }
 
-    /** returns sum of adjusted amounts for rewards and coupons applied to cart */
-    private float getCouponsRewardsAdjustedAmount() {
-        float totalAdjustedAmount = 0;
-        Cart cart = CartApiManager.getCart();
-        // cart-level coupons & rewards
-        if (cart != null && cart.getCoupon() != null) {
-            for (Coupon coupon : cart.getCoupon()) {
-                totalAdjustedAmount += coupon.getAdjustedAmount();
-            }
-        }
-        // sku-level
-        List<Coupon> manualSkuLevelCoupons = CartApiManager.getManualSkuLevelCoupons();
-        for (Coupon coupon : manualSkuLevelCoupons) {
-            totalAdjustedAmount += coupon.getAdjustedAmount();
-        }
-        return totalAdjustedAmount;
-    }
 
     /** Sets item count indicator on cart icon and cart drawer title */
     private void updateCartFields() {
@@ -370,7 +353,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 CartApiManager.deleteCoupon(couponAdapter.getItem((Integer) view.getTag()).getCoupon().getCode(), this);
                 break;
             case R.id.action_checkout:
-                activity.selectOrderCheckout(getExpectedDeliveryRange(), couponsRewardsAmount);
+                activity.selectOrderCheckout();
                 break;
             case R.id.rewards_link_acct_button:
                 String rewardsNumber = ((EditText)getView().findViewById(R.id.rewards_card_number)).getText().toString();
@@ -409,25 +392,12 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         return cartListItems;
     }
 
-    public int getMinExpectedBusinessDays() {
-        return minExpectedBusinessDays;
-    }
-
-    public int getMaxExpectedBusinessDays() {
-        return maxExpectedBusinessDays;
-    }
-
     public String getExpectedDeliveryRange() {
-        if (minExpectedBusinessDays > -1) {
-            StringBuilder deliveryRange = new StringBuilder();
-            if (maxExpectedBusinessDays > minExpectedBusinessDays) {
-                deliveryRange.append(minExpectedBusinessDays).append(" - ").append(maxExpectedBusinessDays);
-            } else {
-                deliveryRange.append(minExpectedBusinessDays);
-            }
-            deliveryRange.append(" ").append(getResources().getQuantityText(R.plurals.business_days,
-                    Math.max(minExpectedBusinessDays, maxExpectedBusinessDays)));
-            return deliveryRange.toString();
+        String deliveryRange = CartApiManager.getExpectedDeliveryRange();
+        if (deliveryRange != null) {
+            deliveryRange += " " + getResources().getQuantityText(R.plurals.business_days,
+                    deliveryRange.equals("1")? 1 : 2);
+            return deliveryRange;
         }
         return null;
     }
@@ -488,7 +458,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             // rather than call the api to refresh the profile, use the info from the cart to update coupon info in the profile
             ProfileDetails.updateRewardsFromCart(cart);
 
-            couponsRewardsAmount = getCouponsRewardsAdjustedAmount();
+            couponsRewardsAmount = CartApiManager.getCouponsRewardsAdjustedAmount();
 
             List<Product> products = cart.getProduct();
             if (products != null) {
@@ -515,8 +485,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 // calculate expected delivery times
                 String leadTimeDescription = null;
                 CartItemGroup itemGroup = null;
-                    minExpectedBusinessDays = -1;
-                    maxExpectedBusinessDays = -1;
+//                    minExpectedBusinessDays = -1;
+//                    maxExpectedBusinessDays = -1;
                 for (int i = 0; i < cartItems.size(); i++) {
                     CartItem cartItem = cartItems.get(i);
                     // if lead time different from previous item's lead time, set expected delivery info
@@ -532,14 +502,14 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                     }
                     itemGroup.addItem(cartItem);
 
-                    if (minExpectedBusinessDays == -1 ||
-                            cartItem.getMinExpectedBusinessDays() < minExpectedBusinessDays) {
-                        minExpectedBusinessDays = cartItem.getMinExpectedBusinessDays();
-                    }
-                    if (maxExpectedBusinessDays == -1 ||
-                            cartItem.getMaxExpectedBusinessDays() > maxExpectedBusinessDays) {
-                        maxExpectedBusinessDays = cartItem.getMaxExpectedBusinessDays();
-                    }
+//                    if (minExpectedBusinessDays == -1 ||
+//                            cartItem.getMinExpectedBusinessDays() < minExpectedBusinessDays) {
+//                        minExpectedBusinessDays = cartItem.getMinExpectedBusinessDays();
+//                    }
+//                    if (maxExpectedBusinessDays == -1 ||
+//                            cartItem.getMaxExpectedBusinessDays() > maxExpectedBusinessDays) {
+//                        maxExpectedBusinessDays = cartItem.getMaxExpectedBusinessDays();
+//                    }
                 }
             }
 
