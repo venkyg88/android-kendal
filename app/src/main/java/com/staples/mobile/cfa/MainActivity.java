@@ -724,7 +724,7 @@ public class MainActivity extends Activity
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
-    public boolean selectInStoreWeeklyAd(String imageUrl, String title, String price) {
+    public boolean selectInStoreWeeklyAd(String imageUrl, String title, float price) {
         WeeklyAdInStoreFragment fragment = new WeeklyAdInStoreFragment();
         fragment.setArguments(imageUrl, title, price);
         return(selectFragment(fragment, Transition.RIGHT, true));

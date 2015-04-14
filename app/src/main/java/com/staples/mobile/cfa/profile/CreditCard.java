@@ -12,7 +12,7 @@ public class CreditCard {
         VISA("^4[0-9]{12}(?:[0-9]{3})?$", "Visa", R.drawable.visa, true),
         MASTERCARD("^5[1-5][0-9]{14}$", "Mastercard", R.drawable.mastercard, true),
         DISCOVER("^6(?:011|5[0-9]{2})[0-9]{12}$", "Discover", R.drawable.discover, true),
-        STAPLES("^7972[0-9]{12}$", "Staples", R.drawable.ic_android, false);
+        STAPLES("^7972[0-9]{12}$", "Staples", R.drawable.ic_staples_card, false);
 
         private Pattern pattern;
         private String name;
