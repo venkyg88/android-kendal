@@ -46,6 +46,7 @@ import com.staples.mobile.common.access.easyopen.model.browse.BulletDescription;
 import com.staples.mobile.common.access.easyopen.model.browse.Description;
 import com.staples.mobile.common.access.easyopen.model.browse.Discount;
 import com.staples.mobile.common.access.easyopen.model.browse.Image;
+import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
 import com.staples.mobile.common.access.easyopen2.api.EasyOpenApi2;
@@ -623,11 +624,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
             ((RatingStars) summary.findViewById(R.id.review_rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
 
-            // Add pricing
-            PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
-            priceSticker.setBrowsePricing(product.getPricing());
-            finalPrice = priceSticker.getFinalPrice();
-
             // Add description
             LayoutInflater inflater = activity.getLayoutInflater();
             if (!buildDescription(inflater, (ViewGroup) summary.findViewById(R.id.description), product, 3)) {
@@ -677,6 +673,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             }
 
             // check if the product has discount
+            Pricing priceAfterRebate = product.getPricing().get(0);
+
             List<Discount> discount = product.getPricing().get(0).getDiscount();
             if(discount != null && discount.size() > 0
                     && discount.get(0).getName().equals("rebate")
@@ -684,13 +682,23 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 summary.findViewById(R.id.rebate_layout).setVisibility(View.VISIBLE);
 
                 Button rebateButton = (Button) summary.findViewById(R.id.rebate_button);
-                rebateButton.setText(String.valueOf("$ " + discount.get(0).getAmount())
-                + " " + res.getString(R.string.rebate));
+                float rebate = discount.get(0).getAmount();
+                String rebateString = String.format("%.2f", rebate);
+                rebateButton.setText(String.valueOf("$" + rebateString + " " + res.getString(R.string.rebate)));
 
                 Log.d(TAG, "The product has rebate. sku:" + product.getSku()
                         + ", rebate:" + discount.get(0).getAmount());
+
+                // Add pricing with rebate
+                PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
+                priceAfterRebate.setPriceAfterRebate(priceAfterRebate.getFinalPrice() + rebate);
+                priceSticker.setPricing(priceAfterRebate);
             }
             else{
+                // Add pricing without rebate
+                PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
+                priceSticker.setPricing(priceAfterRebate);
+
                 summary.findViewById(R.id.rebate_layout).setVisibility(View.GONE);
             }
 
