@@ -268,6 +268,61 @@ public class CartApiManager {
     }
 
 
+    /** returns sum of adjusted amounts for rewards and coupons applied to cart */
+    public static float getCouponsRewardsAdjustedAmount() {
+        float totalAdjustedAmount = 0;
+        // cart-level coupons & rewards
+        if (cart != null && cart.getCoupon() != null) {
+            for (Coupon coupon : cart.getCoupon()) {
+                totalAdjustedAmount += coupon.getAdjustedAmount();
+            }
+        }
+        // sku-level
+        List<Coupon> manualSkuLevelCoupons = getManualSkuLevelCoupons();
+        for (Coupon coupon : manualSkuLevelCoupons) {
+            totalAdjustedAmount += coupon.getAdjustedAmount();
+        }
+        return totalAdjustedAmount;
+    }
+
+    public static String getExpectedDeliveryRange() {
+        int overallMinDays = -1;
+        int overallMaxDays = -1;
+        if (cart != null) {
+            for (Product product : cart.getProduct()) {
+                int minDays = 0;
+                int maxDays = 0;
+                String leadTimeDesc = product.getLeadTimeDescription();
+                int indexOfDash = leadTimeDesc.indexOf(" - ");
+                int indexOfText = leadTimeDesc.indexOf(" Business");
+                if (indexOfDash > 0) {
+                    minDays = Integer.parseInt(leadTimeDesc.substring(0, indexOfDash));
+                    maxDays = Integer.parseInt(leadTimeDesc.substring(indexOfDash+3, indexOfText));
+                } else {
+                    minDays = Integer.parseInt(leadTimeDesc.substring(0, indexOfText));
+                    maxDays = minDays;
+                }
+                if (overallMinDays == -1 || minDays < overallMinDays) {
+                    overallMinDays = minDays;
+                }
+                if (maxDays > overallMaxDays) {
+                    overallMaxDays = maxDays;
+                }
+            }
+        }
+
+        if (overallMinDays > -1) {
+            StringBuilder deliveryRange = new StringBuilder();
+            if (overallMaxDays > overallMinDays) {
+                deliveryRange.append(overallMinDays).append(" - ").append(overallMaxDays);
+            } else {
+                deliveryRange.append(overallMinDays);
+            }
+            return deliveryRange.toString();
+        }
+        return null;
+    }
+
     //set orderItemId to null when adding new items
     private static TypedJsonString createCartRequestBody(String orderItemId, String sku, int qty) {
         OrderItem orderItem = new OrderItem(orderItemId, sku, qty);

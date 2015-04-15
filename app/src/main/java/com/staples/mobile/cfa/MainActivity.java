@@ -653,17 +653,15 @@ public class MainActivity extends Activity
         return selectFragment(cartFragment, Transition.RIGHT, true);
     }
 
-    public boolean selectOrderCheckout(String deliveryRange, float couponsRewardsAmount) {
+    public boolean selectOrderCheckout(/*String deliveryRange, float couponsRewardsAmount*/) {
         LoginHelper loginHelper = new LoginHelper(this);
         if (loginHelper.isLoggedIn()) {
             CheckoutFragment fragment;
             // if logged in and have at least an address or a payment method, then use registered flow, otherwise use guest flow
-            if (!loginHelper.isGuestLogin() && (ProfileDetails.hasAddress() || ProfileDetails.hasPaymentMethod())) {
-                fragment = RegisteredCheckoutFragment.newInstance(couponsRewardsAmount,
-                        CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal(), deliveryRange);
+            if (!loginHelper.isGuestLogin()) {
+                fragment = RegisteredCheckoutFragment.newInstance();
             } else {
-                fragment = GuestCheckoutFragment.newInstance(couponsRewardsAmount,
-                        CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal(), deliveryRange);
+                fragment = GuestCheckoutFragment.newInstance();
             }
             return selectFragment(fragment, Transition.RIGHT, true, CheckoutFragment.TAG);
         }
@@ -724,7 +722,7 @@ public class MainActivity extends Activity
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
-    public boolean selectInStoreWeeklyAd(String imageUrl, String title, String price) {
+    public boolean selectInStoreWeeklyAd(String imageUrl, String title, float price) {
         WeeklyAdInStoreFragment fragment = new WeeklyAdInStoreFragment();
         fragment.setArguments(imageUrl, title, price);
         return(selectFragment(fragment, Transition.RIGHT, true));
@@ -736,8 +734,16 @@ public class MainActivity extends Activity
     }
 
     public boolean selectLoginFragment() {
-        Fragment fragment = new LoginFragment();
-        return(selectFragment(fragment, Transition.UP, false));
+        return selectLoginFragment(false);
+    }
+
+    /**
+     * @param returnToCheckout set to true when login page is called from guest checkout page
+     * @return
+     */
+    public boolean selectLoginFragment(boolean returnToCheckout) {
+        Fragment fragment = LoginFragment.newInstance(returnToCheckout);
+        return(selectFragment(fragment, Transition.UP, true));
     }
 
     public boolean selectFeedFragment() {
@@ -823,7 +829,7 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.checkout_login_button:
-                selectLoginFragment();
+                selectLoginFragment(true);
                 break;
 
             case R.id.close_button:

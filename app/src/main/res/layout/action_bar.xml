@@ -55,7 +55,7 @@
         android:id="@+id/action_logo"
         style="@style/ActionBarIconStyle"
         android:layout_gravity="center_vertical|left"
-        android:src="@drawable/ic_staples"/>
+        android:src="@drawable/ic_staples_logo"/>
     <TextView
         android:id="@+id/action_title"
         style="@style/ActionBarTextStyle"

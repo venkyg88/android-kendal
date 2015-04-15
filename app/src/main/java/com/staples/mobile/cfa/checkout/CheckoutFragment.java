@@ -26,10 +26,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     public static final String TAG = CheckoutFragment.class.getSimpleName();
 
     // bundle param keys
-    public static final String BUNDLE_PARAM_COUPONSREWARDS = "couponsRewards";
-    public static final String BUNDLE_PARAM_ITEMSUBTOTAL = "itemSubtotal";
-    public static final String BUNDLE_PARAM_PRETAXSUBTOTAL = "preTaxSubtotal";
-    public static final String BUNDLE_PARAM_DELIVERY_RANGE = "deliveryRange";
     public static final String BUNDLE_PARAM_TOTAL_HANDLING_COST = "totalHandlingCost";
     public static final String BUNDLE_PARAM_SHIPPING_CHARGE = "shippingCharge";
     public static final String BUNDLE_PARAM_TAX = "tax";
@@ -41,7 +37,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     private View submissionLayout;
     private ViewGroup checkoutEntryLayout;
     private TextView itemSubtotalVw;
-    private TextView couponsRewardsVw;
+//    private TextView couponsRewardsVw;
     private TextView oversizedShippingVw;
     private TextView oversizedShippingLabelVw;
     private TextView shippingChargeVw;
@@ -60,24 +56,11 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
 
     // data initialized from cart drawer
-    private Float couponsRewardsAmount;
+//    private Float couponsRewardsAmount;
     private Float itemSubtotal;
     private Float pretaxSubtotal;
     private String deliveryRange;
 
-
-    /**
-     * Create a new instance of RegisteredCheckoutFragment that will be initialized
-     * with the given arguments. Used when opening a fresh checkout session from the cart.
-     */
-    public static Bundle createInitialBundle(float couponsRewardsAmount, float itemSubtotal, float preTaxSubtotal, String deliveryRange) {
-        Bundle args = new Bundle();
-        args.putFloat(CheckoutFragment.BUNDLE_PARAM_COUPONSREWARDS, couponsRewardsAmount);
-        args.putFloat(CheckoutFragment.BUNDLE_PARAM_ITEMSUBTOTAL, itemSubtotal);
-        args.putFloat(CheckoutFragment.BUNDLE_PARAM_PRETAXSUBTOTAL, preTaxSubtotal);
-        args.putString(CheckoutFragment.BUNDLE_PARAM_DELIVERY_RANGE, deliveryRange);
-        return args;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -111,14 +94,19 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         // Set click listeners
         submissionLayout.setOnClickListener(this);
 
+//        couponsRewardsAmount = CartApiManager.getCouponsRewardsAdjustedAmount();
+        itemSubtotal = CartApiManager.getSubTotal();
+        pretaxSubtotal = CartApiManager.getPreTaxTotal();
+        deliveryRange = CartApiManager.getExpectedDeliveryRange();
+
         // get checkout info from bundle
         Bundle checkoutBundle = this.getArguments();
-        couponsRewardsAmount = checkoutBundle.getFloat(BUNDLE_PARAM_COUPONSREWARDS);
-        itemSubtotal = checkoutBundle.getFloat(BUNDLE_PARAM_ITEMSUBTOTAL);
-        pretaxSubtotal = checkoutBundle.getFloat(BUNDLE_PARAM_PRETAXSUBTOTAL);
         totalHandlingCost = checkoutBundle.getFloat(BUNDLE_PARAM_TOTAL_HANDLING_COST);
         shippingCharge = checkoutBundle.getString(BUNDLE_PARAM_SHIPPING_CHARGE);
-        deliveryRange = checkoutBundle.getString(BUNDLE_PARAM_DELIVERY_RANGE);
+        if (deliveryRange != null) {
+            deliveryRange += " " + getResources().getQuantityText(R.plurals.business_days,
+                    deliveryRange.equals("1")? 1 : 2);
+        }
         tax = checkoutBundle.getFloat(BUNDLE_PARAM_TAX, -1);
         if (tax == -1) {
             tax = null;

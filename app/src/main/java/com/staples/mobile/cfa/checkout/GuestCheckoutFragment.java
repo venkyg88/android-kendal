@@ -4,16 +4,13 @@
 
 package com.staples.mobile.cfa.checkout;
 
-import android.text.Editable;
+import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.inputmethod.EditorInfo;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -49,12 +46,11 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     private boolean billingAddrNeedsApplying = true;
 
     /**
-     * Create a new instance of GuestCheckoutFragment that will be initialized
-     * with the given arguments.
+     * Create a new instance of GuestCheckoutFragment
      */
-    public static CheckoutFragment newInstance(float couponsRewardsAmount, float itemSubtotal, float preTaxSubtotal, String deliveryRange) {
+    public static CheckoutFragment newInstance() {
         CheckoutFragment f = new GuestCheckoutFragment();
-        f.setArguments(createInitialBundle(couponsRewardsAmount, itemSubtotal, preTaxSubtotal, deliveryRange));
+        f.setArguments(new Bundle());
         return f;
     }
 
