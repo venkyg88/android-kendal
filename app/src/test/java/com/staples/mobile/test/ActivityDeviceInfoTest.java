@@ -1,5 +1,6 @@
 package com.staples.mobile.test;
 
+import com.staples.mobile.cfa.BuildConfig;
 import com.staples.mobile.common.device.DeviceInfo;
 
 import org.junit.After;
@@ -7,11 +8,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(emulateSdk = 21, qualifiers = "port" )
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(constants = BuildConfig.class, emulateSdk = 21, qualifiers = "port" )
 public class ActivityDeviceInfoTest {
     private static final String TAG = ActivityDeviceInfoTest.class.getSimpleName();
 

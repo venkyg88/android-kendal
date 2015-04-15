@@ -2,7 +2,6 @@ package com.staples.mobile.cfa.weeklyad;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,7 @@ import java.util.List;
 public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapter.ViewHolder> {
     private static String TAG = WeeklyAdListAdapter.class.getSimpleName();
 
-    public class Item {
+    public static class Item {
         public String title;
         public String identifier;
         public String imageUrl;
@@ -28,6 +27,7 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
         public boolean inStoreOnly;
         public float finalPrice;
         public String unit;
+        public String literal;
         public boolean busy;
     }
 
@@ -53,12 +53,14 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
     private Context context;
     private LayoutInflater inflater;
     private ArrayList<Item> array;
-    View.OnClickListener listener;
+    private View.OnClickListener listener;
+    private String each;
 
     public WeeklyAdListAdapter(Context context) {
         this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         array = new ArrayList<Item>();
+        each = context.getResources().getString(R.string.each);
     }
 
     public void setOnClickListener(View.OnClickListener listener) {
@@ -89,10 +91,18 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
         vh.action.setTag(item);
 
         vh.title.setText(item.title);
-        vh.priceSticker.setPricing(item.finalPrice, 0.0f, item.unit, null);
+        if (item.literal!=null) {
+            vh.priceSticker.setLiterals(item.literal, null, null);
+        } else {
+            vh.priceSticker.setPricing(item.finalPrice, 0.0f, item.unit, null);
+        }
 
-        if (item.inStoreOnly || item.identifier==null) {
+        if (item.inStoreOnly) {
             vh.availability.setVisibility(View.VISIBLE);
+            vh.action.setVisibility(View.GONE);
+            vh.whirlie.setVisibility(View.GONE);
+        } else if (item.identifier==null) {
+            vh.availability.setVisibility(View.GONE);
             vh.action.setVisibility(View.GONE);
             vh.whirlie.setVisibility(View.GONE);
         } else if (item.busy) {
@@ -113,21 +123,29 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
         for(Data data : datas) {
             Item item = new Item();
             item.title = data.getTitle();
-            item.identifier = data.getRetailerproductcode();
+            item.description = data.getDescription();
+            if (item.description==null || item.description.isEmpty()) {
+                item.description = item.title;
+            }
+            String sku = data.getRetailerproductcode();
+            if (sku!=null && !sku.isEmpty()) {
+                item.identifier = sku;
+            }
             String text = data.getPrice();
             if (text!=null) {
-                if (text.startsWith("$"))
-                    text = text.substring(1);
-                try {
-                    item.finalPrice = Float.parseFloat(text);
-                } catch(NumberFormatException e) {
-                    item.finalPrice = 6.66f;
+                if (text.startsWith("$")) {
+                    try {
+                        item.finalPrice = Float.parseFloat(text.substring(1));
+                        item.unit = each;
+                    } catch(NumberFormatException e) {
+                        item.literal = text;
+                    }
+                } else {
+                    item.literal = text;
                 }
             }
-Log.d(TAG, "Qual#"+data.getPricequalifier()+"#");
-            item.unit = data.getPricequalifier();
-            item.inStoreOnly = data.getFineprint().contains("In store only");
             item.imageUrl = data.getImage();
+            item.inStoreOnly = data.getFineprint().contains("In store only");
             array.add(item);
         }
         notifyDataSetChanged();

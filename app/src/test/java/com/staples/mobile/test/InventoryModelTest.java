@@ -1,5 +1,6 @@
 package com.staples.mobile.test;
 
+import com.staples.mobile.cfa.BuildConfig;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -10,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
 import org.robolectric.util.ActivityController;
@@ -19,8 +20,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(emulateSdk = 21, qualifiers = "port")
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(constants = BuildConfig.class, emulateSdk = 21, qualifiers = "port")
 public class InventoryModelTest {
     private ActivityController controller;
     private MainActivity activity;
