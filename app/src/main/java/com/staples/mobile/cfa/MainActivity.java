@@ -709,10 +709,6 @@ public class MainActivity extends Activity
     public boolean selectSkuItem(String title, String identifier, boolean isSkuSetOriginated) {
         SkuFragment fragment = new SkuFragment();
         fragment.setArguments(title, identifier, isSkuSetOriginated);
-
-        // set animated bar in sku page
-//        initAnimatedBar();
-
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
@@ -722,9 +718,9 @@ public class MainActivity extends Activity
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
-    public boolean selectInStoreWeeklyAd(String imageUrl, String title, float price) {
+    public boolean selectInStoreWeeklyAd(String title, float price, String unit, String literal, String imageUrl, boolean inStoreOnly) {
         WeeklyAdInStoreFragment fragment = new WeeklyAdInStoreFragment();
-        fragment.setArguments(imageUrl, title, price);
+        fragment.setArguments(title, price, unit, literal, imageUrl, inStoreOnly);
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 

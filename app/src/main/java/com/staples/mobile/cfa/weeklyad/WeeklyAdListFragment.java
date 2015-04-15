@@ -47,9 +47,6 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
     private static final String TITLES = "titles";
     private static final String TABINDEX = "tabIndex";
 
-    MainActivity activity;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager mLayoutManager;
     WeeklyAdListAdapter adapter;
     String storeId;
     EasyOpenApi easyOpenApi;
@@ -73,7 +70,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        activity = (MainActivity)getActivity();
+        Activity activity = getActivity();
         View view = inflater.inflate(R.layout.weekly_ad_list, container, false);
 
         Bundle args = getArguments();
@@ -85,20 +82,20 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
         }
 
         // set up recycler view
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.weekly_ad_list_items);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(activity, 2));
-        mRecyclerView.addItemDecoration(new HorizontalDivider(activity));
+        final RecyclerView list = (RecyclerView) view.findViewById(R.id.weekly_ad_list_items);
+        list.setHasFixedSize(true);
+        list.setLayoutManager(new GridLayoutManager(activity, 2));
+        list.addItemDecoration(new HorizontalDivider(activity));
         adapter = new WeeklyAdListAdapter(activity);
         adapter.setOnClickListener(this);
-        mRecyclerView.setAdapter(adapter);
+        list.setAdapter(adapter);
 
         // set up tabs
         tabHost = (TabHost) view.findViewById(android.R.id.tabhost);
         tabScrollView = (HorizontalScrollView)view.findViewById(R.id.tabs_scrollview);
         tabHost.setup();
         TabHost.TabContentFactory tabContentFactory = new TabHost.TabContentFactory() {
-            @Override public View createTabContent(String tag) { return mRecyclerView; }
+            @Override public View createTabContent(String tag) { return list; }
         };
         for (int i = 0; i < titles.size(); i++) {
             TabHost.TabSpec tab = tabHost.newTabSpec(String.valueOf(i)); // this is the tabId supplied in onTabChanged
@@ -161,6 +158,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
     }
 
     private void getWeeklyAdListing() {
+        Activity activity = getActivity();
       //  activity.showProgressIndicator();
         final int imageWidth = (int) activity.getResources().getDimension(R.dimen.weekly_ad_list_item_image_width);
         easyOpenApi = Access.getInstance().getEasyOpenApi(false);
@@ -169,6 +167,9 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                 new Callback<WeeklyAd>() {
             @Override
             public void success(WeeklyAd weeklyAd, Response response) {
+                Activity activity = getActivity();
+                if (!(activity instanceof MainActivity)) return;
+
 //                activity.hideProgressIndicator();
                 weeklyAdItems = weeklyAd.getContent().getCollection().getData();
                 adapter.fill(weeklyAdItems);
@@ -176,8 +177,11 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
 
             @Override
             public void failure(RetrofitError error) {
+                Activity activity = getActivity();
+                if (!(activity instanceof MainActivity)) return;
+
 //                    activity.hideProgressIndicator();
-                    activity.showErrorDialog(ApiError.getErrorMessage(error));
+                ((MainActivity) activity).showErrorDialog(ApiError.getErrorMessage(error));
             }
         });
     }
@@ -222,6 +226,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
+        Activity activity = getActivity();
         final Resources res = activity.getResources();
         Object tag;
         switch(view.getId()) {
@@ -236,7 +241,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                                 (int) res.getDimension(R.dimen.weekly_ad_image_height),
                                 (int) res.getDimension(R.dimen.weekly_ad_image_width),
                                 item.imageUrl);
-                        ((MainActivity) getActivity()).selectInStoreWeeklyAd(imageUrl, item.description, item.finalPrice);
+                        ((MainActivity) getActivity()).selectInStoreWeeklyAd(item.description, item.finalPrice, item.unit, item.literal, imageUrl, item.inStoreOnly);
                     } else {
                         // open SKU page
                         ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier, false);

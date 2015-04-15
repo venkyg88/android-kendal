@@ -2,6 +2,7 @@ package com.staples.mobile.test;
 
 import android.util.Log;
 
+import com.staples.mobile.cfa.BuildConfig;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
@@ -14,7 +15,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.List;
@@ -25,8 +26,8 @@ import retrofit.client.Response;
 
 
 //These are tested against LIVE sapi calls
-@RunWith(RobolectricTestRunner.class)
-@Config(emulateSdk = 21, qualifiers = "port")
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(constants = BuildConfig.class, emulateSdk = 21, qualifiers = "port")
 public class CartModelTest {
 
     private EasyOpenApi easyOpenApi;
