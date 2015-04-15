@@ -864,7 +864,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             if (errMsg == null) {
                 ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
                 ((Button) wrapper.findViewById(R.id.add_to_cart)).setText(R.string.add_another);
-                ((MainActivity) activity).showNotificationBanner(R.string.cart_updated_msg);
                 Tracker.getInstance().trackActionForAddToCartFromProductDetails(CartApiManager.getCartProduct(identifier), quantity);
             } else {
                 // if non-grammatical out-of-stock message from api, provide a nicer message

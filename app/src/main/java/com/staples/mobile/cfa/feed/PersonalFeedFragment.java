@@ -241,6 +241,7 @@ public class PersonalFeedFragment extends Fragment {
             seenProductsLayout.setVisibility(View.GONE);
         }
         else{
+            emptyFeedLayout.setVisibility(View.GONE);
             seenProductsWrapper.setState(DataWrapper.State.LOADING);
             for(String sku : saveSeenSkus){
                 // Initiate SKU API call
@@ -291,6 +292,7 @@ public class PersonalFeedFragment extends Fragment {
                                     emptyFeedLayout.setVisibility(View.VISIBLE);
                                 }
                             } else {
+                                emptyFeedLayout.setVisibility(View.GONE);
                                 dailyDealWrapper.setState(DataWrapper.State.DONE);
                                 dailyDealLayout.setVisibility(View.VISIBLE);
                             }
@@ -344,6 +346,7 @@ public class PersonalFeedFragment extends Fragment {
                         // display "nothing found" if no clearance products
                         if (clearanceContainer.getChildCount() == 0) {
                         } else {
+                            emptyFeedLayout.setVisibility(View.GONE);
                             clearanceWrapper.setState(DataWrapper.State.DONE);
                             clearanceLayout.setVisibility(View.VISIBLE);
                         }
