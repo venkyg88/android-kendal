@@ -183,7 +183,7 @@ public class RatingStars extends View {
     public void setRating(float rating, Integer reviews) {
         this.rating = rating;
         this.reviews = reviews;
-        invalidate();
+        requestLayout();
     }
 
     private String getText() {
