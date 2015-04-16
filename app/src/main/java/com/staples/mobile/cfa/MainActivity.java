@@ -670,6 +670,9 @@ public class MainActivity extends Activity
 
     public boolean selectOrderConfirmation(String orderNumber, String emailAddress,
                                            String deliveryRange, String total) {
+        // clear the back stack immediately (not asynchronously)
+        getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
         // open order confirmation fragment
         Fragment fragment = ConfirmationFragment.newInstance(orderNumber, emailAddress, deliveryRange, total);
         return selectFragment(fragment, Transition.RIGHT, true, ConfirmationFragment.TAG);
@@ -790,16 +793,7 @@ public class MainActivity extends Activity
     @Override
     public void onBackPressed () {
         hideProgressIndicator();
-
-        // if on order confirmation fragment, don't go back to any of the checkout related pages, go to Home page
-        FragmentManager manager = getFragmentManager();
-        Fragment confirmationFragment = manager.findFragmentByTag(ConfirmationFragment.TAG);
-
-        if (confirmationFragment != null && confirmationFragment.isVisible()) {
-            selectDrawerItem(homeDrawerItem, Transition.RIGHT, true);
-        } else {
-            super.onBackPressed();
-        }
+        super.onBackPressed();
     }
 
     // Action bar & button clicks
