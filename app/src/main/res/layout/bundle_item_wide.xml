@@ -17,6 +17,60 @@
         style="@style/SmallProductTitle"
         android:layout_toRightOf="@+id/image"
         android:layout_marginTop="@dimen/margin_16dp"/>
+    <!-- Shipping Logic -->
+    <LinearLayout
+        android:id="@+id/shipping_logic_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title"
+        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/overweight_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/elevation_high"
+            android:visibility="gone">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/staples_green">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/fontsize_12sp"
+                    android:paddingLeft="@dimen/left_margin"
+                    android:paddingRight="@dimen/right_margin"
+                    android:gravity="left"
+                    android:text="@string/overweight"
+                    android:textColor="@color/staples_white"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/add_on_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/elevation_high"
+            android:visibility="gone">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/staples_green">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/fontsize_12sp"
+                    android:paddingLeft="@dimen/left_margin"
+                    android:paddingRight="@dimen/right_margin"
+                    android:gravity="left"
+                    android:text="@string/add_on"
+                    android:textColor="@color/staples_white"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
     <com.staples.mobile.cfa.widget.PriceSticker
         android:id="@+id/pricing"
         style="@style/SmallPriceSticker"

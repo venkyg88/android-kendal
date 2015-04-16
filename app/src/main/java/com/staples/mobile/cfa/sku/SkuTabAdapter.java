@@ -1,15 +1,16 @@
 package com.staples.mobile.cfa.sku;
 
-import android.app.Activity;
+import android.content.Context;
 import android.support.v4.view.PagerAdapter;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.widget.HorizontalDivider;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
-import com.staples.mobile.common.access.easyopen.model.reviews.Data;
 import com.staples.mobile.common.access.easyopen2.model.review.Review;
 
 import java.util.ArrayList;
@@ -18,23 +19,22 @@ import java.util.List;
 public class SkuTabAdapter extends PagerAdapter {
     private static final String TAG = SkuTabAdapter.class.getSimpleName();
 
-    private Activity activity;
+    private Context context;
     private ArrayList<SkuPageItem> array;
     private LayoutInflater inflater;
     private Product product;
-    private List<Data> reviews;
-    private List<Review> yotpoReviews;
+    private List<Review> reviews;
 
     private static class SkuPageItem {
         View view;
         String title;
     }
 
-    public SkuTabAdapter(Activity activity) {
+    public SkuTabAdapter(Context context) {
         super();
-        this.activity = activity;
+        this.context = context;
         array = new ArrayList<SkuPageItem>();
-        inflater = activity.getLayoutInflater();
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public Product getProduct() {
@@ -44,12 +44,8 @@ public class SkuTabAdapter extends PagerAdapter {
         this.product = product;
     }
 
-    public void setReviews(List<Data> reviews) {
+    public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
-    }
-
-    public void setYotpoReviews(List<Review> yotpoReviews) {
-        this.yotpoReviews = yotpoReviews;
     }
 
     @Override
@@ -82,13 +78,13 @@ public class SkuTabAdapter extends PagerAdapter {
                 break;
             case 2:
                 item.view = inflater.inflate(R.layout.sku_detail_list, container, false);
-                //ReviewAdapter adapter = new ReviewAdapter(activity);
-                //((ListView) item.view).setAdapter(adapter);
-                //adapter.setReviews(reviews);
-
-                YotpoReviewAdapter adapter = new YotpoReviewAdapter(activity);
-                ((ListView) item.view).setAdapter(adapter);
-                adapter.setYotpoReviews(yotpoReviews);
+                RecyclerView list = (RecyclerView) item.view.findViewById(R.id.list);
+                SkuReviewAdapter adapter = new SkuReviewAdapter(context);
+                list.setLayoutManager(new GridLayoutManager(context, 1));
+                list.addItemDecoration(new HorizontalDivider(context));
+                list.setAdapter(adapter);
+                adapter.fill(reviews);
+                adapter.notifyDataSetChanged();
                 break;
         }
 

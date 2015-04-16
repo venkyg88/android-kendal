@@ -75,11 +75,12 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private static final String IDENTIFIER = "identifier";
     private static final String SKUSET = "skuset";
 
-    private static final String DESCRIPTION = " Description";
-    private static final String SPECIFICATIONS = " Specifications";
+    private static final String DESCRIPTION = "Description";
+    private static final String SPECIFICATIONS = "Specifications";
     private static final String REVIEWS = "Reviews";
 
     private static final int MAXFETCH = 50;
+    private static final int LOOKAHEAD = 10;
 
     private static SimpleDateFormat iso8601;
 
@@ -113,7 +114,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     private String title;
     private String identifier;
-    private String productName;
     private boolean isSkuSetOriginated;
 
     private DataWrapper wrapper;
@@ -617,7 +617,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             }
 
             // Add info
-            productName = Html.fromHtml(product.getProductName()).toString();
+            String productName = Html.fromHtml(product.getProductName()).toString();
             ((TextView) summary.findViewById(R.id.title)).setText(productName);
             ((TextView) summary.findViewById(R.id.model)).setText(formatNumbers(res, product));
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
@@ -713,7 +713,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         if (raw == null) return (null);
 
         if (iso8601 == null)
-            iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
             iso8601.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         try {
@@ -731,12 +731,12 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         com.staples.mobile.common.access.easyopen2.model.review.Response response = yotpoResponse.getResponse();
 
-        List<Review> yotpoReviews = response.getReviews();
-        if (yotpoReviews != null && yotpoReviews.size() > 0) {
-            tabAdapter.setYotpoReviews(yotpoReviews);
+        List<Review> reviews = response.getReviews();
+        if (reviews != null && reviews.size() > 0) {
+            tabAdapter.setReviews(reviews);
 
             // brief review on sku page
-            Review briefReview = yotpoReviews.get(0);
+            Review briefReview = reviews.get(0);
 
             // Inflate review block
             LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -783,8 +783,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 view.findViewById(R.id.sku_review_comments).setVisibility(View.GONE);
             }
 
-            for(int i = 0; i < Math.min(yotpoReviews.size(), 10); i++) {
-                Review review = yotpoReviews.get(i);
+            for(int i = 0; i < Math.min(reviews.size(), 10); i++) {
+                Review review = reviews.get(i);
             }
         }
         else{

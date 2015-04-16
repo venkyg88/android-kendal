@@ -39,7 +39,7 @@
     <!-- Bundle/class/search -->
     <string name="sort_refine">Refine</string>
     <string name="sort_best_match">Best Match</string>
-    <string name="sort_highest_rated">Highest Rated</string>
+    <string name="sort_highest_rated">Rating</string>
     <string name="sort_price_ascending">Price</string>
     <string name="sort_price_descending">Price</string>
     <string name="sort_title_ascending">Name A–Z</string>

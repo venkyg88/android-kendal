@@ -23,7 +23,8 @@
 
     <dimen name="action_bar_half_margin">8dp</dimen>
     <dimen name="action_bar_quarter_margin">4dp</dimen>
-    <dimen name="min_grid_width">180dp</dimen>
+    <dimen name="bundle_min_grid_width">240dp</dimen>
+    <dimen name="review_min_grid_width">480dp</dimen>
     <dimen name="fixed_grid_tall_height">260dp</dimen>
     <dimen name="fixed_grid_wide_height">120dp</dimen>
     <dimen name="image_square_size">80dp</dimen>
