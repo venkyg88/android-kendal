@@ -78,6 +78,8 @@ public class PersonalFeedFragment extends Fragment {
     private String clearanceTitle;
     private String seenProductsTitle;
 
+    private List<com.staples.mobile.common.access.easyopen.model.cart.Product> cartItems;
+
     private class SkuDetailsCallback implements Callback<SkuDetails> {
         @Override
         public void success(final SkuDetails sku, Response response) {
@@ -213,6 +215,8 @@ public class PersonalFeedFragment extends Fragment {
             }
         });
 
+        setCartItems();
+
         seenProductsLoading = (RelativeLayout) personalFeedLayout.findViewById(R.id.seen_products_loading_footer);
 
         seenProductsWrapper.setState(DataWrapper.State.LOADING);
@@ -229,6 +233,10 @@ public class PersonalFeedFragment extends Fragment {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.FEED);
         Tracker.getInstance().trackStateForPersonalFeed(); // Analytics
+    }
+
+    private void setCartItems() {
+        this.cartItems = getCartItems(CartApiManager.getCart());
     }
 
     private void setSeenProductsAdapter(){
@@ -252,8 +260,6 @@ public class PersonalFeedFragment extends Fragment {
     }
 
     private void setDailyDealAdapter() {
-        final List<com.staples.mobile.common.access.easyopen.model.cart.Product> cartItems
-                = getCartItems(CartApiManager.getCart());
         if(cartItems != null) {
             dailyDealWrapper.setState(DataWrapper.State.LOADING);
 
@@ -305,10 +311,6 @@ public class PersonalFeedFragment extends Fragment {
     }
 
     private void setClearenceAdapter() {
-
-        final List<com.staples.mobile.common.access.easyopen.model.cart.Product> cartItems
-                = getCartItems(CartApiManager.getCart());
-
         String bundleUrl = "category/identifier/";
         Map collectionMap = new HashMap<String, String>();
 
