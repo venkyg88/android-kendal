@@ -46,6 +46,7 @@ import com.staples.mobile.common.access.easyopen.model.browse.BulletDescription;
 import com.staples.mobile.common.access.easyopen.model.browse.Description;
 import com.staples.mobile.common.access.easyopen.model.browse.Discount;
 import com.staples.mobile.common.access.easyopen.model.browse.Image;
+import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
 import com.staples.mobile.common.access.easyopen2.api.EasyOpenApi2;
@@ -113,7 +114,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private String title;
     private String identifier;
     private String productName;
-    private float finalPrice;
     private boolean isSkuSetOriginated;
 
     private DataWrapper wrapper;
@@ -623,11 +623,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
             ((RatingStars) summary.findViewById(R.id.review_rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
 
-            // Add pricing
-            PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
-            priceSticker.setBrowsePricing(product.getPricing());
-            finalPrice = priceSticker.getFinalPrice();
-
             // Add description
             LayoutInflater inflater = activity.getLayoutInflater();
             if (!buildDescription(inflater, (ViewGroup) summary.findViewById(R.id.description), product, 3)) {
@@ -677,20 +672,35 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             }
 
             // check if the product has discount
-            List<Discount> discount = product.getPricing().get(0).getDiscount();
-            if(discount != null && discount.size() > 0
-                    && discount.get(0).getName().equals("rebate")
-                    && discount.get(0).getAmount() > 0){
-                summary.findViewById(R.id.rebate_layout).setVisibility(View.VISIBLE);
+            Pricing pricing = product.getPricing().get(0);
+            List<Discount> discounts = pricing.getDiscount();
+            // Add pricing with rebate
+            if (discounts != null && discounts.size() > 0) {
+                for (Discount discount : discounts) {
+                    if (discount.getName().equals("rebate") && discount.getAmount() > 0) {
+                        summary.findViewById(R.id.rebate_layout).setVisibility(View.VISIBLE);
 
-                Button rebateButton = (Button) summary.findViewById(R.id.rebate_button);
-                rebateButton.setText(String.valueOf("$ " + discount.get(0).getAmount())
-                + " " + res.getString(R.string.rebate));
+                        Button rebateButton = (Button) summary.findViewById(R.id.rebate_button);
+                        float rebate = discount.getAmount();
+                        String rebateString = String.format("%.2f", rebate);
+                        rebateButton.setText(String.valueOf("$" + rebateString + " " + res.getString(R.string.rebate)));
 
-                Log.d(TAG, "The product has rebate. sku:" + product.getSku()
-                        + ", rebate:" + discount.get(0).getAmount());
+                        float finalPrice = pricing.getFinalPrice();
+                        float wasPrice = pricing.getListPrice();
+                        String unit = pricing.getUnitOfMeasure();
+                        PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
+                        priceSticker.setPricing(finalPrice + rebate, wasPrice, unit, "");
+
+                        Log.d(TAG, "The product has rebate. sku:" + product.getSku() + ", rebate:" + rebate);
+                        break;
+                    }
+                }
             }
-            else{
+            // Add pricing without rebate
+            else {
+                PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
+                priceSticker.setPricing(pricing);
+
                 summary.findViewById(R.id.rebate_layout).setVisibility(View.GONE);
             }
 
