@@ -22,7 +22,7 @@
                 android:id="@+id/empty_feed_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:gravity="center_horizontal"
                 android:padding="@dimen/margin_16dp"
                 android:visibility="gone"
                 android:orientation="vertical"
@@ -40,37 +40,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/verticalspacing_56dp"
+                    android:paddingTop="@dimen/verticalspacing_24dp"
                     android:textColor="@color/staples_dark_gray"
-                    android:textSize="@dimen/fontsize_18sp"
+                    android:textSize="@dimen/fontsize_16sp"
+                    android:gravity="center_horizontal"
                     android:text="@string/feed_empty_interact_message"/>
-
-                <!--items looked before-->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/verticalspacing_24dp"
-                    android:textColor="@color/staples_dark_gray"
-                    android:textSize="@dimen/fontsize_18sp"
-                    android:text="@string/feed_seen_products_title"/>
-
-                <!--items on sale and clearance-->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/verticalspacing_24dp"
-                    android:textColor="@color/staples_dark_gray"
-                    android:textSize="@dimen/fontsize_18sp"
-                    android:text="@string/feed_clearance_title" />
-
-                <!--items on daily deal-->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/verticalspacing_24dp"
-                    android:textColor="@color/staples_dark_gray"
-                    android:textSize="@dimen/fontsize_18sp"
-                    android:text="@string/feed_daily_deal_title" />
             </LinearLayout>
 
             <!-- Last Seen Products -->

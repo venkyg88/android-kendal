@@ -41,14 +41,5 @@
                 android:layout_marginTop="@dimen/elevation_high"/>
         </LinearLayout>
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/arrow"
-        android:layout_width="@dimen/personal_feed_arrow"
-        android:layout_height="@dimen/personal_feed_arrow"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:adjustViewBounds="true"
-        android:src="@drawable/ic_chevron_right_black"/>
 </RelativeLayout>
 
