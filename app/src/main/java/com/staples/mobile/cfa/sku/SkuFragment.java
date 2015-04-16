@@ -114,7 +114,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private String title;
     private String identifier;
     private String productName;
-    private float finalPrice;
     private boolean isSkuSetOriginated;
 
     private DataWrapper wrapper;
@@ -673,31 +672,34 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             }
 
             // check if the product has discount
-            Pricing priceAfterRebate = product.getPricing().get(0);
+            Pricing pricing = product.getPricing().get(0);
+            List<Discount> discounts = pricing.getDiscount();
+            // Add pricing with rebate
+            if (discounts != null && discounts.size() > 0) {
+                for (Discount discount : discounts) {
+                    if (discount.getName().equals("rebate") && discount.getAmount() > 0) {
+                        summary.findViewById(R.id.rebate_layout).setVisibility(View.VISIBLE);
 
-            List<Discount> discount = product.getPricing().get(0).getDiscount();
-            if(discount != null && discount.size() > 0
-                    && discount.get(0).getName().equals("rebate")
-                    && discount.get(0).getAmount() > 0){
-                summary.findViewById(R.id.rebate_layout).setVisibility(View.VISIBLE);
+                        Button rebateButton = (Button) summary.findViewById(R.id.rebate_button);
+                        float rebate = discount.getAmount();
+                        String rebateString = String.format("%.2f", rebate);
+                        rebateButton.setText(String.valueOf("$" + rebateString + " " + res.getString(R.string.rebate)));
 
-                Button rebateButton = (Button) summary.findViewById(R.id.rebate_button);
-                float rebate = discount.get(0).getAmount();
-                String rebateString = String.format("%.2f", rebate);
-                rebateButton.setText(String.valueOf("$" + rebateString + " " + res.getString(R.string.rebate)));
+                        float finalPrice = pricing.getFinalPrice();
+                        float wasPrice = pricing.getListPrice();
+                        String unit = pricing.getUnitOfMeasure();
+                        PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
+                        priceSticker.setPricing(finalPrice + rebate, wasPrice, unit, "");
 
-                Log.d(TAG, "The product has rebate. sku:" + product.getSku()
-                        + ", rebate:" + discount.get(0).getAmount());
-
-                // Add pricing with rebate
-                PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
-                priceAfterRebate.setPriceAfterRebate(priceAfterRebate.getFinalPrice() + rebate);
-                priceSticker.setPricing(priceAfterRebate);
+                        Log.d(TAG, "The product has rebate. sku:" + product.getSku() + ", rebate:" + rebate);
+                        break;
+                    }
+                }
             }
-            else{
-                // Add pricing without rebate
+            // Add pricing without rebate
+            else {
                 PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
-                priceSticker.setPricing(priceAfterRebate);
+                priceSticker.setPricing(pricing);
 
                 summary.findViewById(R.id.rebate_layout).setVisibility(View.GONE);
             }
