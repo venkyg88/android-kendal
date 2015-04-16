@@ -26,14 +26,20 @@ import com.staples.mobile.common.analytics.Tracker;
 public class WeeklyAdInStoreFragment extends Fragment {
 
     private static final String TITLE = "title";
-    private static final String IMAGEURL = "imageUrl";
     private static final String PRICE = "price";
+    private static final String UNIT = "unit";
+    private static final String LITERAL = "literal";
+    private static final String IMAGEURL = "imageUrl";
+    private static final String INSTOREONLY = "inStoreOnly";
 
-    public void setArguments(String title, String imageUrl, float price) {
+    public void setArguments(String title, float price, String unit, String literal, String imageUrl, boolean inStoreOnly) {
         Bundle args = new Bundle();
         args.putString(TITLE, title);
-        args.putString(IMAGEURL, imageUrl);
         args.putFloat(PRICE, price);
+        args.putString(UNIT, unit);
+        args.putString(LITERAL, literal);
+        args.putString(IMAGEURL, imageUrl);
+        args.putBoolean(INSTOREONLY, inStoreOnly);
         setArguments(args);
     }
 
@@ -42,25 +48,36 @@ public class WeeklyAdInStoreFragment extends Fragment {
         View view = inflater.inflate(R.layout.weekly_ad_in_store, container, false);
 
         String title = null;
-        String imageUrl = null;
         Float price = 0.0f;
+        String unit = null;
+        String literal = null;
+        String imageUrl = null;
+        boolean inStoreOnly = false;
         Bundle args = getArguments();
         if (args != null) {
             title = args.getString(TITLE);
-            imageUrl = args.getString(IMAGEURL);
             price = args.getFloat(PRICE);
+            unit = args.getString(UNIT);
+            literal = args.getString(LITERAL);
+            imageUrl = args.getString(IMAGEURL);
+            inStoreOnly = args.getBoolean(INSTOREONLY);
         }
 
-        ImageView imageView = (ImageView) view.findViewById(R.id.image);
         TextView titleView = (TextView) view.findViewById(R.id.title);
         PriceSticker priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
+        ImageView imageView = (ImageView) view.findViewById(R.id.image);
+        View availability = view.findViewById(R.id.availability);
 
         titleView.setText(title);
-        priceSticker.setPricing(price, 0.0f, null, null);
-
+        if (literal!=null) {
+            priceSticker.setLiterals(literal, null, null);
+        } else {
+            priceSticker.setPricing(price, 0.0f, unit, null);
+        }
         if (imageUrl!=null) {
             Picasso.with(getActivity()).load(imageUrl).error(R.drawable.no_photo).into(imageView);
         }
+        availability.setVisibility(inStoreOnly ? View.VISIBLE : View.GONE);
 
         return view;
     }

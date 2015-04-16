@@ -1,5 +1,6 @@
 package com.staples.mobile.test;
 
+import com.staples.mobile.cfa.BuildConfig;
 import com.staples.mobile.cfa.store.TimeSpan;
 
 import org.junit.After;
@@ -7,14 +8,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.TimeZone;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(emulateSdk = 21, qualifiers = "port")
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(constants = BuildConfig.class, emulateSdk = 21, qualifiers = "port")
 public class TimeSpanTest {
     private static final int ONEWEEK = 7*24*60*60*1000;
     private static final int ONEDAY = 24*60*60*1000;

@@ -2,6 +2,7 @@ package com.staples.mobile.test;
 
 import android.widget.ListView;
 
+import com.staples.mobile.cfa.BuildConfig;
 import com.staples.mobile.cfa.DrawerAdapter;
 import com.staples.mobile.cfa.R;
 
@@ -10,11 +11,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(emulateSdk = 21, qualifiers = "port")
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(constants = BuildConfig.class, emulateSdk = 21, qualifiers = "port")
 public class PortraitActivityTest {
     private static final String TAG = PortraitActivityTest.class.getSimpleName();
 

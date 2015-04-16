@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/bundle_item"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/fixed_grid_tall_height"
     android:paddingLeft="@dimen/verticalspacing_8dp"
     android:paddingRight="@dimen/verticalspacing_8dp"
     android:paddingBottom="@dimen/verticalspacing_8dp"
