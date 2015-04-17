@@ -15,15 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TabHost;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
-import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -39,8 +36,8 @@ import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.channel.api.ChannelApi;
-import com.staples.mobile.common.access.config.StaplesAppContext;
-import com.staples.mobile.common.access.configurator.model.Api;
+import com.staples.mobile.common.access.channel.model.review.Review;
+import com.staples.mobile.common.access.channel.model.review.YotpoResponse;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.BulletDescription;
@@ -50,19 +47,11 @@ import com.staples.mobile.common.access.easyopen.model.browse.Image;
 import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
-import com.staples.mobile.common.access.easyopen2.api.EasyOpenApi2;
-import com.staples.mobile.common.access.channel.model.review.Review;
-import com.staples.mobile.common.access.channel.model.review.YotpoResponse;
 import com.staples.mobile.common.analytics.Tracker;
 
 import java.lang.reflect.Type;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.TimeZone;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -82,8 +71,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     private static final int MAXFETCH = 50;
     private static final int LOOKAHEAD = 10;
-
-    private static SimpleDateFormat iso8601;
 
     public enum Availability {
         NOTHING      (R.string.avail_nothing),
@@ -118,7 +105,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private boolean isSkuSetOriginated;
 
     private DataWrapper wrapper;
-    private ScrollView summary;
+    private View summary;
 
     // Image ViewPager
     private ViewPager imagePager;
@@ -129,15 +116,18 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private TabHost details;
     private ViewPager tabPager;
     private SkuTabAdapter tabAdapter;
+    private boolean isShiftedTab;
 
     // Accessory Container
-    private LinearLayout accessoryContainer;
+    private ViewGroup accessoryContainer;
 
     // Shipping Logic Container
-    private LinearLayout overweightLayout;
-    private LinearLayout addonLayout;
+    private ViewGroup overweightLayout;
+    private ViewGroup addonLayout;
 
-    private boolean isShiftedTab;
+    // Reviews
+    private SkuReviewAdapter reviewAdapter;
+    private int reviewPage;
 
     public void setArguments(String title, String identifier, boolean isSkuSetRedirected) {
         Bundle args = new Bundle();
@@ -161,7 +151,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         }
 
         wrapper = (DataWrapper) inflater.inflate(R.layout.sku_summary, container, false);
-        summary = (ScrollView) wrapper.findViewById(R.id.summary);
+        summary = wrapper.findViewById(R.id.summary);
 
         // Init image pager
         imagePager = (ViewPager) summary.findViewById(R.id.images);
@@ -186,11 +176,11 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         details.setup();
 
         // Init accessory
-        accessoryContainer = (LinearLayout) wrapper.findViewById(R.id.accessoryContainer);
+        accessoryContainer = (ViewGroup) wrapper.findViewById(R.id.accessoryContainer);
 
         // Init shipping logic
-        overweightLayout = (LinearLayout) wrapper.findViewById(R.id.overweight_layout);
-        addonLayout = (LinearLayout) wrapper.findViewById(R.id.add_on_layout);
+        overweightLayout = (ViewGroup) wrapper.findViewById(R.id.overweight_layout);
+        addonLayout = (ViewGroup) wrapper.findViewById(R.id.add_on_layout);
 
         // Fill details (TabHost)
         DummyFactory dummy = new DummyFactory(activity);
@@ -213,12 +203,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         // Initiate API calls
         EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
         api.getSkuDetails(identifier, null, MAXFETCH, this);
-        //api.getReviews(identifier, this);
-
-//        EasyOpenApi2 easyOpenApi2 = Access.getInstance().getEasyOpenApi2(false);
-//        Api easy2API = StaplesAppContext.getInstance().getApiByName(StaplesAppContext.EASYOPEN2);
-//        String version = easy2API.getVersion();
-//        easyOpenApi2.getYotpoReviews(version, identifier, this);
 
         ChannelApi channelApi = Access.getInstance().getChannelApi(false);
         channelApi.getYotpoReviews(identifier, 1, 50, this);
@@ -713,87 +697,24 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         }
     }
 
-    public static String formatTimestamp(String raw) {
-        if (raw == null) return (null);
-
-        if (iso8601 == null)
-            iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-            iso8601.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-        try {
-            Date date = iso8601.parse(raw);
-            String text = DateFormat.getDateInstance().format(date);
-            return (text);
-        } catch (ParseException e) {
-            Crittercism.logHandledException(e);
-            return (null);
-        }
-    }
-
     private void processYotpoReview(YotpoResponse yotpoResponse) {
-        if (yotpoResponse == null) return;
-
+        if (yotpoResponse==null) return;
         com.staples.mobile.common.access.channel.model.review.Response response = yotpoResponse.getResponse();
-
+        if (response==null) return;
         List<Review> reviews = response.getReviews();
-        if (reviews != null && reviews.size() > 0) {
-            tabAdapter.setReviews(reviews);
+        if (reviews==null || reviews.size()==0) return;
 
-            // brief review on sku page
-            Review briefReview = reviews.get(0);
-
-            // Inflate review block
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
-            View view = inflater.inflate(R.layout.sku_review_brief_item, parent, false);
-            parent.addView(view);
-
-            // Rating
-            ((RatingStars) view.findViewById(R.id.sku_review_rating)).setRating(briefReview.getScore(), null);
-
-            // Title
-            String title = briefReview.getTitle();
-            if (title != null) {
-                ((TextView) view.findViewById(R.id.sku_review_title)).setText(title);
-            }
-            else {
-                view.findViewById(R.id.sku_review_title).setVisibility(View.GONE);
-            }
-
-            // Author
-            String author = briefReview.getUser().getDisplayName();
-            if (author != null) {
-                ((TextView) view.findViewById(R.id.sku_review_author)).setText("By " + author + " - ");
-            }
-            else {
-                view.findViewById(R.id.sku_review_author).setVisibility(View.GONE);
-            }
-
-            // Created date
-            String createdDate = formatTimestamp(briefReview.getCreatedAt());
-            if (createdDate != null) {
-                ((TextView) view.findViewById(R.id.sku_review_date)).setText(createdDate);
-            }
-            else {
-                view.findViewById(R.id.sku_review_date).setVisibility(View.GONE);
-            }
-
-            // Comment
-            String comments = briefReview.getContent();
-            if (comments != null) {
-                ((TextView) view.findViewById(R.id.sku_review_comments)).setText(comments);
-            }
-            else {
-                view.findViewById(R.id.sku_review_comments).setVisibility(View.GONE);
-            }
-
-            for(int i = 0; i < Math.min(reviews.size(), 10); i++) {
-                Review review = reviews.get(i);
-            }
+        if (reviewAdapter==null) {
+            reviewAdapter = new SkuReviewAdapter(getActivity());
+            tabAdapter.setReviewAdapter(reviewAdapter);
         }
-        else{
-            summary.findViewById(R.id.reviews_layout).setVisibility(View.GONE);
-        }
+        reviewAdapter.fill(reviews);
+        reviewAdapter.notifyDataSetChanged();
+
+        ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
+        SkuReviewAdapter.ViewHolder vh = reviewAdapter.onCreateViewHolder(parent, 0);
+        reviewAdapter.onBindViewHolder(vh, 0);
+        parent.addView(vh.itemView);
     }
 
     // TabHost notifications

@@ -445,32 +445,16 @@
             android:gravity="center_horizontal"
             android:paddingLeft="@dimen/sku_padding_10"
             android:paddingRight="@dimen/sku_padding_10">
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <com.staples.mobile.cfa.widget.QuantityEditor
+                android:id="@+id/quantity"
+                style="@style/QtyEditorStyle"
+                android:layout_width="@dimen/sku_add_cart_editor_width"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_gravity="center_vertical"
+                android:visibility="gone"
                 android:paddingLeft="@dimen/sku_padding_10"
-                android:paddingRight="@dimen/sku_padding_10"
-                android:layout_gravity="center">
-                <com.staples.mobile.cfa.widget.QuantityEditor
-                    android:id="@+id/quantity"
-                    style="@style/QtyEditorStyle"
-                    android:layout_width="@dimen/sku_add_cart_editor_width"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:visibility="gone"
-                    android:hint="1"
-                    android:maxLength="4"
-                    android:drawableRight="@drawable/ic_arrow_drop_down"
-                    app:maxQuantity="10"
-                    app:popupWidth="120dp"
-                    android:paddingLeft="@dimen/sku_padding_10"/>
-                <View
-                    android:layout_width="@dimen/sku_add_cart_editor_width"
-                    android:layout_height="1dp"
-                    android:background="@color/staples_dark_gray"
-                    android:paddingTop="@dimen/sku_padding_5"/>
-            </LinearLayout>
+                app:maxQuantity="10"
+                app:popupWidth="120dp"/>
             <Button
                 android:id="@+id/add_to_cart"
                 android:layout_width="match_parent"
@@ -489,8 +473,7 @@
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/staples_black"
                 android:textSize="@dimen/fontsize_16sp"
-                android:visibility="gone"
-                />
+                android:visibility="gone"/>
         </LinearLayout>
     </LinearLayout>
 </com.staples.mobile.cfa.widget.DataWrapper>
