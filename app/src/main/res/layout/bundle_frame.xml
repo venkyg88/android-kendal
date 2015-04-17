@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.staples.mobile.cfa.widget.AnimatorFrame xmlns:android="http://schemas.android.com/apk/res/android"
+<com.staples.mobile.cfa.widget.AnimatorFrame xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <com.staples.mobile.cfa.widget.DataWrapper
         android:id="@+id/wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:minGridWidth="@dimen/bundle_min_grid_width">
         <android.support.v7.widget.RecyclerView
             android:id="@+id/products"
             android:layout_width="match_parent"
