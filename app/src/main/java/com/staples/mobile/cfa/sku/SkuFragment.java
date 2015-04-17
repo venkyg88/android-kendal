@@ -38,6 +38,7 @@ import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.channel.api.ChannelApi;
 import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Api;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -50,8 +51,8 @@ import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
 import com.staples.mobile.common.access.easyopen2.api.EasyOpenApi2;
-import com.staples.mobile.common.access.easyopen2.model.review.Review;
-import com.staples.mobile.common.access.easyopen2.model.review.YotpoResponse;
+import com.staples.mobile.common.access.channel.model.review.Review;
+import com.staples.mobile.common.access.channel.model.review.YotpoResponse;
 import com.staples.mobile.common.analytics.Tracker;
 
 import java.lang.reflect.Type;
@@ -214,10 +215,13 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         api.getSkuDetails(identifier, null, MAXFETCH, this);
         //api.getReviews(identifier, this);
 
-        EasyOpenApi2 easyOpenApi2 = Access.getInstance().getEasyOpenApi2(false);
-        Api easy2API = StaplesAppContext.getInstance().getApiByName(StaplesAppContext.EASYOPEN2);
-        String version = easy2API.getVersion();
-        easyOpenApi2.getYotpoReviews(version, identifier, this);
+//        EasyOpenApi2 easyOpenApi2 = Access.getInstance().getEasyOpenApi2(false);
+//        Api easy2API = StaplesAppContext.getInstance().getApiByName(StaplesAppContext.EASYOPEN2);
+//        String version = easy2API.getVersion();
+//        easyOpenApi2.getYotpoReviews(version, identifier, this);
+
+        ChannelApi channelApi = Access.getInstance().getChannelApi(false);
+        channelApi.getYotpoReviews(identifier, 1, 50, this);
 
         return (wrapper);
     }
@@ -729,7 +733,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private void processYotpoReview(YotpoResponse yotpoResponse) {
         if (yotpoResponse == null) return;
 
-        com.staples.mobile.common.access.easyopen2.model.review.Response response = yotpoResponse.getResponse();
+        com.staples.mobile.common.access.channel.model.review.Response response = yotpoResponse.getResponse();
 
         List<Review> reviews = response.getReviews();
         if (reviews != null && reviews.size() > 0) {
