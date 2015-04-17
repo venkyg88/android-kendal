@@ -53,6 +53,7 @@ public class SortPanel extends Dialog implements View.OnClickListener, CompoundB
 
         appendIcon(activity, (TextView) findViewById(R.id.sort_price_ascending), R.drawable.ic_sort_invert_white);
         appendIcon(activity, (TextView) findViewById(R.id.sort_price_descending), R.drawable.ic_sort_white);
+        appendIcon(activity, (TextView) findViewById(R.id.sort_highest_rated), R.drawable.ic_sort_white);
     }
 
     @SuppressLint("NewApi")

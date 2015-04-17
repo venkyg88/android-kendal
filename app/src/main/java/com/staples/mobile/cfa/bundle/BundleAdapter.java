@@ -10,12 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.IdentifierType;
-import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.PriceSticker;
@@ -84,9 +82,9 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         this.listener = listener;
     }
 
-    public void setLayout(DataWrapper.Layout layout) {
-        if (layout==DataWrapper.Layout.TALL) this.layout = R.layout.bundle_item_tall;
-        else this.layout = R.layout.bundle_item_wide;
+    public void setLayout(DataWrapper.LayoutMode mode) {
+        if (mode==DataWrapper.LayoutMode.TALL) layout = R.layout.bundle_item_tall;
+        else layout = R.layout.bundle_item_wide;
     }
 
     public void setOnFetchMoreData(OnFetchMoreData fetcher, int threshold) {
@@ -102,6 +100,11 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
     @Override
     public int getItemCount() {
         return(array.size());
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return(layout);
     }
 
     @Override

@@ -337,6 +337,11 @@ public class MainActivity extends Activity
         keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    public void showSoftKeyboard(View view) {
+        InputMethodManager keyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        keyboard.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+    }
+
     public void showErrorDialog(int msgId) {
         showErrorDialog(msgId, false);
     }
@@ -749,7 +754,7 @@ public class MainActivity extends Activity
      */
     public boolean selectLoginFragment(boolean returnToCheckout) {
         Fragment fragment = LoginFragment.newInstance(returnToCheckout);
-        return(selectFragment(fragment, Transition.UP, true));
+        return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
     public boolean selectFeedFragment() {
@@ -844,6 +849,7 @@ public class MainActivity extends Activity
 
             case R.id.back_button:
                 if (!ActionBar.getInstance().closeSearch()) {
+                    hideSoftKeyboard(view);
                     onBackPressed();
                 }
                 break;

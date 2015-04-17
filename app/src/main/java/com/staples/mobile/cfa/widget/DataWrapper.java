@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -16,6 +17,8 @@ import com.staples.mobile.cfa.R;
  * <li>A View for when the list is empty (possibly a simple TextView)</li></ol>
  * The child Views are identified by their order in the child View tree.
  * Usage: setState(DataWrapper.State state)
+ * <b>XML attributes</b>
+ * minGridWidth
  */
 public class DataWrapper extends LinearLayout {
     private static final String TAG = DataWrapper.class.getSimpleName();
@@ -43,22 +46,29 @@ public class DataWrapper extends LinearLayout {
         }
     }
 
-    public enum Layout {WIDE, TALL}
+    public enum LayoutMode {WIDE, TALL}
 
     public interface Layoutable {
-        public void setLayout(Layout layout);
+        void setLayout(LayoutMode mode);
     }
 
+    private int minGridWidth;
+
     public DataWrapper(Context context) {
-        super(context, null, 0);
+        this(context, null, 0);
     }
 
     public DataWrapper(Context context, AttributeSet attrs) {
-        super(context, attrs, 0);
+        this(context, attrs, 0);
     }
 
     public DataWrapper(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
+        // Get styled attributes
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.DataWrapper);
+        minGridWidth = a.getDimensionPixelSize(R.styleable.DataWrapper_minGridWidth, 0);
+        a.recycle();
     }
 
     // Property modifiers for animation
@@ -96,17 +106,19 @@ public class DataWrapper extends LinearLayout {
             // When it has a GridLayout
             RecyclerView.LayoutManager manager = recycle.getLayoutManager();
             if (manager instanceof GridLayoutManager) {
-                int viewWidth = View.MeasureSpec.getSize(widthSpec);
-                int colWidth = getResources().getDimensionPixelSize(R.dimen.min_grid_width);
-                int n = viewWidth/colWidth;
-                if (n<=0) n = 1;
+                int n = 1;
+                if (minGridWidth>0) {
+                    int viewWidth = View.MeasureSpec.getSize(widthSpec);
+                    n = viewWidth / minGridWidth;
+                    if (n<1) n = 1;
+                }
                 ((GridLayoutManager) manager).setSpanCount(n);
 
                 // Special handling for Layoutable
                 RecyclerView.Adapter adapter = recycle.getAdapter();
                 if (adapter instanceof Layoutable) {
-                    if (n>1) ((Layoutable) adapter).setLayout(Layout.TALL);
-                    else ((Layoutable) adapter).setLayout(Layout.WIDE);
+                    if (n>1) ((Layoutable) adapter).setLayout(LayoutMode.TALL);
+                    else ((Layoutable) adapter).setLayout(LayoutMode.WIDE);
                 }
             }
         }
