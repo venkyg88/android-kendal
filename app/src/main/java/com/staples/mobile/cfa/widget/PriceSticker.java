@@ -209,9 +209,7 @@ public class PriceSticker extends View {
         return(true);
     }
 
-    public float getFinalPrice() {
-        return(finalPrice);
-    }
+    // Measurement & drawing
 
     private void measureWidths() {
         int width = 0;
