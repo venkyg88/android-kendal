@@ -125,6 +125,16 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 }
             });
 
+            signInEmail.postDelayed(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    signInEmail.requestFocus();
+                    activity.showSoftKeyboard(signInEmail);
+                }
+            }, 100);
+
             forgotPassword = (TextView)view.findViewById(R.id.forgotPwdTV);
             forgotPassword.setOnClickListener(new View.OnClickListener() {
                 @Override
