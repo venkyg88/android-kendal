@@ -274,7 +274,14 @@ public class MainActivity extends Activity
         builder.setMessage(R.string.error_network_connectivity);
         builder.setPositiveButton(R.string.network_settings, new DialogInterface.OnClickListener() {
             @Override public void onClick(DialogInterface dialog, int which) {
-                startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+                // if wifi-only device, go to wifi settings, otherwise go to more general wireless settings
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfoMobile = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+                if (networkInfoMobile == null) {
+                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                } else {
+                    startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+                }
                 MainActivity.this.finish();
             }
         });
