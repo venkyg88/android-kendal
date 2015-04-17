@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.RatingStars;
-import com.staples.mobile.common.access.easyopen2.model.review.Review;
+import com.staples.mobile.common.access.channel.model.review.Review;
 
 import java.util.ArrayList;
 import java.util.List;
