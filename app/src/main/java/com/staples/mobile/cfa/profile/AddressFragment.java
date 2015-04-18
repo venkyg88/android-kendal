@@ -24,9 +24,6 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by Avinash Raja Dodda.
- */
 public class AddressFragment extends Fragment implements Callback<AddressId>, View.OnClickListener
 {
     private static final String TAG = AddressFragment.class.getSimpleName();

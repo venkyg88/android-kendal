@@ -47,12 +47,10 @@ public class LoginHelper {
     // single static synchronized list of login complete listeners
     private static List<OnLoginCompleteListener> loginCompleteListeners = new Vector<OnLoginCompleteListener>();
 
-
     public LoginHelper(MainActivity activity) {
         this.activity = activity;
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
     }
-
 
     /** adds listener to be notified following successful login */
     public void registerLoginCompleteListener(OnLoginCompleteListener loginCompleteListener) {
@@ -164,8 +162,6 @@ public class LoginHelper {
             }
         }
     }
-
-
 
     public void getGuestTokens() {
         getGuestTokens(false);
@@ -338,7 +334,6 @@ public class LoginHelper {
             persistLoginInfo(cachedUsername, cachedPassword, wcToken, wcTrustedToken);
         }
     }
-
 
     /** persists cached username and encrypted password */
     private void persistLoginInfo(String username, String password, String wcToken, String wcTrustedToken) {

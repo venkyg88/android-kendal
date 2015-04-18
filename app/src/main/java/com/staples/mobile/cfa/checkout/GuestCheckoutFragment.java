@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.checkout;
 
 import android.os.Bundle;
@@ -111,7 +107,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         cardNumberVw.setFilters(new InputFilter[]{new CcNumberInputFilter()});
         expirationDateVw.setFilters(new InputFilter[]{new ExpiryDateInputFilter()});
 
-
         // add listener to billing addr toggle button switch
         useShipAddrAsBillingAddrSwitch = (Switch) frame.findViewById(R.id.useShipAddrAsBillingAddr_switch);
         useShipAddrAsBillingAddrSwitch.setChecked(true);
@@ -219,7 +214,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         }
         return true;
     }
-
 
     /** gets payment method from user's entries */
     private PaymentMethod getPaymentMethod() {

@@ -1,15 +1,8 @@
-/*
- * Copyright (c) 2015 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.util;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-/**
- * Created by sutdi001 on 2/11/15.
- */
 public class CurrencyFormat {
     private static DecimalFormat currencyFormat;
 

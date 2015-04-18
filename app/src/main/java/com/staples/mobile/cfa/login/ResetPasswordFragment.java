@@ -27,9 +27,6 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by Avinash Dodda.
- */
 public class ResetPasswordFragment extends Fragment implements View.OnClickListener{
     private static final String TAG = ResetPasswordFragment.class.getSimpleName();
     private MainActivity activity;

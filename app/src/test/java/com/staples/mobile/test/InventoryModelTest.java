@@ -109,5 +109,4 @@ public class InventoryModelTest {
         Assert.assertTrue("Model creation should have succeeded", success);
     }
 
-
 }

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.cart;
 
 import android.content.Context;

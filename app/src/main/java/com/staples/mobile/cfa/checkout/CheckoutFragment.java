@@ -54,13 +54,11 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     private Float totalHandlingCost;
     private String shippingCharge;
 
-
     // data initialized from cart drawer
 //    private Float couponsRewardsAmount;
     private Float itemSubtotal;
     private Float pretaxSubtotal;
     private String deliveryRange;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -155,7 +153,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     /** initializes variable entry area of checkout screen */
     protected abstract void initEntryArea(View frame);
 
-
     protected void startPrecheckout() {
         showProgressIndicator();
         CheckoutApiManager.precheckout(new CheckoutApiManager.PrecheckoutCallback() {
@@ -184,7 +181,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
             }
         });
     }
-
 
     protected void submitOrder(final PaymentMethod paymentMethod, final String emailAddress) {
         showProgressIndicator();
@@ -244,7 +240,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     protected void hideProgressIndicator() {
         activity.hideProgressIndicator();
     }
-
 
     /** updates the shipping charge and tax values (may be result of api response or a call from the subclass) */
     protected void setShippingAndTax(float totalHandlingCost, String shippingCharge, float tax){

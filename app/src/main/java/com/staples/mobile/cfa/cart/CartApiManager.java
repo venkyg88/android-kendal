@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.cart;
 
 import android.text.TextUtils;
@@ -26,9 +22,6 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by sutdi001 on 12/30/14.
- */
 public class CartApiManager {
 
     public interface CartRefreshCallback {
@@ -56,7 +49,6 @@ public class CartApiManager {
     // special logic around these associate coupon codes
     private final static String ASSOCIATE_REWARDS_DISCOUNT_CODE = "52797";
     private final static String ASSOCIATE_REWARDS_STAPLES_DISCOUNT_CODE = "52798";
-
 
     /** gets cart  */
     public static void loadCart(final CartRefreshCallback cartRefreshCallback) {
@@ -138,7 +130,6 @@ public class CartApiManager {
         });
     }
 
-
     /** update an item in the cart */
     public static void updateItemQty(String orderItemId, String sku, int qty, final CartRefreshCallback cartRefreshCallback) {
 
@@ -170,8 +161,6 @@ public class CartApiManager {
             }
         });
     }
-
-
 
     /** deletes an item from the cart */
     public static void deleteItem(String orderItemId, final CartRefreshCallback cartRefreshCallback) {
@@ -266,7 +255,6 @@ public class CartApiManager {
         }
         return coupons;
     }
-
 
     /** returns sum of adjusted amounts for rewards and coupons applied to cart */
     public static float getCouponsRewardsAdjustedAmount() {

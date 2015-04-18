@@ -43,10 +43,6 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by Avinash Dodda.
- */
-
 public class OrderFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = OrderFragment.class.getSimpleName();
     MainActivity activity;
@@ -62,7 +58,6 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     ArrayList<OrderShipmentListItem> orderShipmentListItems;
     OrderStatusDetailCallback orderStatusDetailCallback;
     int numOrdersToRetrieve;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {

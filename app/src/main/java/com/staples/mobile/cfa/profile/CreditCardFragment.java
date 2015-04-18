@@ -40,9 +40,6 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by Avinash Dodda.
- */
 public class CreditCardFragment extends Fragment implements View.OnClickListener{
 
     private static final String TAG = CreditCardFragment.class.getSimpleName();
@@ -72,7 +69,6 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         cardNumberET = (EditText) view.findViewById(R.id.cardNumber);
         expDateET = (EditText) view.findViewById(R.id.expirationDate);
         cardImage = (ImageView) view.findViewById(R.id.card_image);
-
 
         Bundle args = getArguments();
         if(args != null) {
@@ -139,7 +135,6 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.ADDCARD);
     }
-
 
     @Override
     public void onClick(View view) {

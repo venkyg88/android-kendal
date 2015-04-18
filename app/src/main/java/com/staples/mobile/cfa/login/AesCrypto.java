@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2015 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.login;
 
 import android.util.Base64;
@@ -16,13 +12,10 @@ import java.util.Arrays;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
-
 /**
- * Created by sutdi001 on 1/22/15.
  * Code borrowed from:
  *   https://www.owasp.org/index.php/Using_the_Java_Cryptographic_Extensions
  *   http://stackoverflow.com/questions/3451670/java-aes-and-using-my-own-key
- *   and from Stephen Dow
  */
 public class AesCrypto {
 
@@ -64,7 +57,6 @@ public class AesCrypto {
         return null;
     }
 
-
     /**
      * create and initialize a cipher
      * @param mode Cipher.ENCRYPT_MODE or Cipher.DECRYPT_MODE
@@ -102,7 +94,6 @@ public class AesCrypto {
         }
         return null;
     }
-
 
     // The android version of the javadocs for SecureRandom recommends not using this.
 //    /**

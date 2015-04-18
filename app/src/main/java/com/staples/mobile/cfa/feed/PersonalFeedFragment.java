@@ -46,7 +46,6 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-
 public class PersonalFeedFragment extends Fragment {
     private static final String TAG = PersonalFeedFragment.class.getSimpleName();
 
@@ -176,7 +175,6 @@ public class PersonalFeedFragment extends Fragment {
         dailyDealTitle = r.getString(R.string.feed_daily_deal_title);
         clearanceTitle = r.getString(R.string.feed_clearance_title);
         seenProductsTitle = r.getString(R.string.feed_seen_products_title);
-
 
         dailyDealLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.daily_deal_layout);
         clearanceLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.clearance_layout);

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2015 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.kount;
 
 import android.app.Activity;
@@ -9,9 +5,6 @@ import android.util.Log;
 
 import com.devicecollector.DeviceCollector;
 
-/**
- * Created by sutdi001 on 4/6/15.
- */
 public class KountManager implements DeviceCollector.StatusListener {
     public static final String TAG = KountManager.class.getSimpleName();
 
@@ -52,7 +45,6 @@ public class KountManager implements DeviceCollector.StatusListener {
         }
     }
 
-
     /**
      * @param sessionId use order id
      */
@@ -67,7 +59,6 @@ public class KountManager implements DeviceCollector.StatusListener {
             }
         }
     }
-
 
     /* methods implementing Kount's DeviceCollector.StatusListener interface */
 

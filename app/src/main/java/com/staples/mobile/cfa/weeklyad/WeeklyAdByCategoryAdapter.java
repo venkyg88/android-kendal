@@ -16,10 +16,6 @@ import com.staples.mobile.common.access.easyopen.model.weeklyad.Data;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Avinash Dodda.
- */
-
 public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCategoryAdapter.ViewHolder>{
     private ArrayList<Data> array;
     private Activity activity;

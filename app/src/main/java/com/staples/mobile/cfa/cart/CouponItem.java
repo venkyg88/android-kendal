@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.cart;
 
 import com.staples.mobile.cfa.util.CurrencyFormat;
@@ -10,9 +6,6 @@ import com.staples.mobile.common.access.easyopen.model.member.Reward;
 
 import java.text.NumberFormat;
 
-/**
- * Created by sutdi001 on 12/9/14.
- */
 public class CouponItem {
 
     public static final int TYPE_COUPON_TO_ADD = 0;
@@ -25,7 +18,6 @@ public class CouponItem {
     private Reward reward;
     private int itemType;
     private String couponCodeToAdd;
-
 
     public CouponItem(Coupon coupon, Reward reward, int itemType) {
         this.coupon = coupon;
@@ -51,8 +43,6 @@ public class CouponItem {
         }
         return "";
     }
-
-
 
     public Coupon getCoupon() {
         return coupon;
