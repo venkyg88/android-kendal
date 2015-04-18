@@ -141,7 +141,12 @@ public class MainActivity extends Activity
 
     @Override
     public void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
+        // DLS: do NOT pass in bundle to super.onCreate!!! if super tries to restore from previous
+        // state, it will try to attach fragments before our app configurator initialization completes
+        // and all kinds of errors will get thrown. I'm able to cause this to happen on my API 15 HTC
+        // Evo phone by turning the phone completely off while the Staples app is open, then turning
+        // it back on and re-opening the Staples app.
+        super.onCreate(null);
         if (LOGGING) {
             Log.v(TAG, "MainActivity:onCreate():"
                     + " bundle[" + bundle + "]");
@@ -257,7 +262,7 @@ public class MainActivity extends Activity
         // if we got past configurator initialization (otherwise LoginHelper constructor throws NPE)
         if (AppConfigurator.getInstance().getConfigurator() != null) {
             // unregister loginCompleteListener
-            new LoginHelper(this).unregisterLoginCompleteListener(this);
+            loginHelper.unregisterLoginCompleteListener(this);
             StaplesAppContext.getInstance().resetConfigurator(); // need to reset so a fresh network attempt is made, to enable correct handling of redirect error
         }
     }
@@ -319,7 +324,7 @@ public class MainActivity extends Activity
                             ApiError apiError = ApiError.getApiError(error);
                             if (apiError.isAuthenticationError()) {
                                 // reestablish session
-                                new LoginHelper(MainActivity.this).refreshSession();
+                                loginHelper.refreshSession();
                             } else if (apiError.isRedirectionError()) {
                                 showErrorDialog(R.string.error_redirect, true); // setting fatal=true which will close the app
                             }
@@ -666,7 +671,6 @@ public class MainActivity extends Activity
     }
 
     public boolean selectOrderCheckout(/*String deliveryRange, float couponsRewardsAmount*/) {
-        LoginHelper loginHelper = new LoginHelper(this);
         if (loginHelper.isLoggedIn()) {
             CheckoutFragment fragment;
             // if logged in and have at least an address or a payment method, then use registered flow, otherwise use guest flow
