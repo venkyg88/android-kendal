@@ -136,8 +136,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             }
             ciVh.priceSticker.setPricing(cartItem.getTotalOrderItemPrice(), wasPrice,
                     cartItem.getPriceUnitOfMeasure(), rebatePresent? "*":null);
-            ciVh.rebateLayout.setVisibility(rebatePresent? View.VISIBLE : View.GONE);
-            ciVh.rebateText.setText(currencyFormat.format(rebate) + " Rebate");
+            if (rebatePresent) {
+                ciVh.rebateNote.setVisibility(View.VISIBLE);
+                ciVh.rebateText.setVisibility(View.VISIBLE);
+                ciVh.rebateText.setText(currencyFormat.format(rebate) + " Rebate");
+            } else {
+                ciVh.rebateNote.setVisibility(View.GONE);
+                ciVh.rebateText.setVisibility(View.GONE);
+            }
 
             // associate position with each widget (position of card, and position within group)
             CartItemPosition pos = new CartItemPosition(position, i);
@@ -233,7 +239,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         ImageView imageView;
         TextView titleTextView;
         PriceSticker priceSticker;
-        LinearLayout rebateLayout;
+        TextView rebateNote;
         TextView rebateText;
         QuantityEditor qtyWidget;
         View deleteButton;
@@ -245,11 +251,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         CartItemViewHolder(View convertView) {
             imageView = (ImageView) convertView.findViewById(R.id.cartitem_image);
             titleTextView = (TextView) convertView.findViewById(R.id.cartitem_title);
-            overweightWarning = (TextView) convertView.findViewById(R.id.overweight_warning);
-            addOnWarning = (TextView) convertView.findViewById(R.id.add_on_warning);
+            overweightWarning = (TextView) convertView.findViewById(R.id.overweight);
+            addOnWarning = (TextView) convertView.findViewById(R.id.addon);
             priceSticker = (PriceSticker) convertView.findViewById(R.id.cartitem_price);
+            rebateNote = (TextView)convertView.findViewById(R.id.rebate_note);
             rebateText = (TextView)convertView.findViewById(R.id.rebate_text);
-            rebateLayout = (LinearLayout) convertView.findViewById(R.id.rebate_layout);
             qtyWidget = (QuantityEditor) convertView.findViewById(R.id.cartitem_qty);
             deleteButton = convertView.findViewById(R.id.cartitem_delete);
 //            updateButton = (Button) convertView.findViewById(R.id.cartitem_update);
