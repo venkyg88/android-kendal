@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<inset xmlns:android="http://schemas.android.com/apk/res/android"
-    android:insetRight="-1dp"
-    android:insetLeft="-1dp"
-    android:insetTop="-1dp">
-    <shape android:shape="rectangle">
-        <stroke android:width="1dp" android:color="@color/staples_dark_gray"/>
-    </shape>
-</inset>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item >
+        <shape android:shape="rectangle">
+            <solid android:color="@color/staples_dark_gray"/>
+        </shape>
+    </item>
+    <item android:bottom="1dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/staples_white"/>
+        </shape>
+    </item>
+</layer-list>
