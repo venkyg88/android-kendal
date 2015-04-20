@@ -88,7 +88,6 @@ public class ProductCollection {
         @@@ STUBBED */
     }
 
-
     public static class ProductContainer implements Callback<Browse> {
 
         private static final String TAG = ProductContainer.class.getSimpleName();

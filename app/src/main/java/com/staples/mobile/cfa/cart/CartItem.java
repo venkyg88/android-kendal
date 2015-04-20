@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.cart;
 
 import android.text.Html;
@@ -79,7 +75,6 @@ public class CartItem {
         return 0.0f;
     }
 
-
     public float getTotalOrderItemPrice() {
         Pricing pricing = getPricing();
         if (pricing != null) {
@@ -87,7 +82,6 @@ public class CartItem {
         }
         return 0.0f;
     }
-
 
     public float getListPrice() {
         Pricing pricing = getPricing();
@@ -143,7 +137,6 @@ public class CartItem {
         }
         return null;
     }
-
 
     public String getLeadTimeDescription() {
         // CartFragment logic requires this to be non null

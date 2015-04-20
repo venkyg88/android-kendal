@@ -27,9 +27,6 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by Avinash Dodda.
- */
 public class ProfileDetails implements Callback<MemberDetail> {
     private static final String TAG = ProfileDetails.class.getSimpleName();
 
@@ -44,7 +41,6 @@ public class ProfileDetails implements Callback<MemberDetail> {
     public interface AddressSelectionListener {
         public void onAddressSelected(String id);
     }
-
 
     // static cached member variable
     private static Member member;
@@ -62,7 +58,6 @@ public class ProfileDetails implements Callback<MemberDetail> {
     public static AddressSelectionListener addressSelectionListener;
     public static String currentAddressId;
     public static String currentPaymentMethodId;
-
 
     // non-static instance data
     private EasyOpenApi easyOpenApi;

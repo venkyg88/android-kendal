@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.rewards;
 
 import android.app.Fragment;
@@ -116,7 +112,6 @@ public class RewardsLinkingFragment extends Fragment {
             });
         }
     }
-
 
     private void showProgressIndicator() {
         if (activity != null) {

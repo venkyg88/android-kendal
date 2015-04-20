@@ -147,7 +147,6 @@ public class SortPanel extends Dialog implements View.OnClickListener, CompoundB
             listener.onClick(button);
         }
 
-
         Animation slideDown = AnimationUtils.loadAnimation(activity, R.anim.bottomsheet_delay_down);
         slideDown.setAnimationListener(this);
         findViewById(R.id.sort_options).startAnimation(slideDown);

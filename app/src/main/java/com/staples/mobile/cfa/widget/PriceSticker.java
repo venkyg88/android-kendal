@@ -118,7 +118,6 @@ public class PriceSticker extends View {
         widths = new int[3];
     }
 
-
     public void setLiterals(String finalLiteral, String wasLiteral, String unit) {
         if (finalLiteral!=null && !finalLiteral.isEmpty()) {
             this.finalLiteral = finalLiteral;

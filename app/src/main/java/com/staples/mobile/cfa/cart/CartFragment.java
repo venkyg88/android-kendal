@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.cart;
 
 import android.animation.Animator;
@@ -215,7 +211,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         cartAdapter = null;
     }
 
-
     /** Sets item count indicator on cart icon and cart drawer title */
     private void updateCartFields() {
         Resources r = getResources();
@@ -389,7 +384,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     public static List<CartItem> getListItems() {
         return cartListItems;
     }
-
 
     /** updates item quantity */
     private void updateItemQty(final CartItem cartItem) {

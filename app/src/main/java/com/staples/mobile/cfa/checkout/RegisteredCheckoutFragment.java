@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.checkout;
 
 import android.os.Bundle;
@@ -25,16 +21,13 @@ import com.staples.mobile.common.access.easyopen.model.member.Member;
 
 import java.util.List;
 
-
 public class RegisteredCheckoutFragment extends CheckoutFragment implements View.OnClickListener {
     private static final String TAG = RegisteredCheckoutFragment.class.getSimpleName();
-
 
     // additional bundle param keys
     public static final String BUNDLE_PARAM_SHIPPING_ADDR_ID = "shippingAddrId";
     public static final String BUNDLE_PARAM_BILLING_ADDR_ID = "billingAddrId";
     public static final String BUNDLE_PARAM_PAYMENT_METHOD_ID = "paymentMethodId";
-
 
     private TextView shippingNameVw;
     private TextView shippingAddrVw;

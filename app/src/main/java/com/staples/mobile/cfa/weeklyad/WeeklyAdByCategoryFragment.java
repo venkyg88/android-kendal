@@ -37,10 +37,6 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by Avinash Dodda.
- */
-
 public class WeeklyAdByCategoryFragment extends Fragment {
     private static final String TAG = WeeklyAdByCategoryFragment.class.getSimpleName();
 
@@ -59,7 +55,6 @@ public class WeeklyAdByCategoryFragment extends Fragment {
     private TextView dateRangeVw;
     private WeeklyAdByCategoryAdapter adapter;
     private List<Data> weeklyAdItems;
-
 
     public void setArguments(String storeNo /*, String city, String address*/) {
         Bundle args = new Bundle();
