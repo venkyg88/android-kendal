@@ -214,6 +214,7 @@
     <string name="description_detail">FULL DESCRIPTION</string>
     <string name="specifications_detail">FULL SPECIFICATIONS</string>
     <string name="reviews_detail">ALL REVIEWS</string>
+    <string name="author_prefix">By</string>
     <string name="rebate">Rebate</string>
     <string name="rebate_hint">* Price before rebate</string>
 
