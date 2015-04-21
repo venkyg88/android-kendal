@@ -75,6 +75,7 @@ import com.urbanairship.UAirship;
 import com.urbanairship.push.PushManager;
 
 import java.util.Date;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -505,24 +506,25 @@ public class MainActivity extends Activity
 
         builder.setPositiveButton(R.string.upgrade_btn,
 
-            new DialogInterface.OnClickListener() {
-                @Override public void onClick(DialogInterface dialog, int which) {
-                    // Initiate upgrade and DO NOT finish the activity.
-                    launchUpgrade(upgradeUrl, false);
-                }
-            });
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Initiate upgrade and DO NOT finish the activity.
+                        launchUpgrade(upgradeUrl, false);
+                    }
+                });
 
         // Ignore Button
 
         builder.setNegativeButton(R.string.ignore_btn,
 
-            new DialogInterface.OnClickListener() {
+                new DialogInterface.OnClickListener() {
 
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // Ignore and allow user to continue.
-                }
-            });
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Ignore and allow user to continue.
+                    }
+                });
 
         upgradeDialog = builder.create();
         upgradeDialog.show();
@@ -540,12 +542,13 @@ public class MainActivity extends Activity
 
         builder.setPositiveButton(R.string.upgrade_btn,
 
-            new DialogInterface.OnClickListener() {
-                @Override public void onClick(DialogInterface dialog, int which) {
-                    // Initiate upgrade and finish the activity.
-                    launchUpgrade(upgradeUrl, true);
-                }
-            });
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Initiate upgrade and finish the activity.
+                        launchUpgrade(upgradeUrl, true);
+                    }
+                });
 
         upgradeDialog = builder.create();
         upgradeDialog.show();
@@ -637,21 +640,19 @@ public class MainActivity extends Activity
 
     // Navigation
     public boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
-        return selectFragment(fragment, transition, push, null);
-    }
-
-    public boolean selectFragment(Fragment fragment, Transition transition, boolean push, String tag) {
         // Make sure all drawers are closed
         drawerLayout.closeDrawers();
         ActionBar.getInstance().closeSearch();
+
+        String fragmentName = fragment.getClass().getSimpleName();
 
         // Swap Fragments
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         if (transition != null) transition.setAnimation(transaction);
-        transaction.replace(R.id.content, fragment, tag);
+        transaction.replace(R.id.content, fragment, fragmentName);
         if (push)
-            transaction.addToBackStack(fragment.getClass().getSimpleName());
+            transaction.addToBackStack(fragmentName);
         transaction.commitAllowingStateLoss();
         return(true);
     }
@@ -679,7 +680,7 @@ public class MainActivity extends Activity
             } else {
                 fragment = GuestCheckoutFragment.newInstance();
             }
-            return selectFragment(fragment, Transition.RIGHT, true, CheckoutFragment.TAG);
+            return selectFragment(fragment, Transition.RIGHT, true);
         }
         return false;
     }
@@ -691,11 +692,11 @@ public class MainActivity extends Activity
 
         // open order confirmation fragment
         Fragment fragment = ConfirmationFragment.newInstance(orderNumber, emailAddress, deliveryRange, total);
-        return selectFragment(fragment, Transition.RIGHT, true, ConfirmationFragment.TAG);
+        return selectFragment(fragment, Transition.RIGHT, true);
     }
 
     public boolean selectStoreFinder() {
-        DrawerItem drawerItem = leftMenuAdapter.findItemByClass(StoreFragment.class);
+        DrawerItem drawerItem = leftMenuAdapter.findItemByClassName(StoreFragment.class.getSimpleName());
         return selectDrawerItem(drawerItem, Transition.RIGHT, true);
     }
 
@@ -762,7 +763,7 @@ public class MainActivity extends Activity
     }
 
     public boolean selectFeedFragment() {
-        DrawerItem item = leftMenuAdapter.findItemByClass(PersonalFeedFragment.class);
+        DrawerItem item = leftMenuAdapter.findItemByClassName(PersonalFeedFragment.class.getSimpleName());
         return(selectDrawerItem(item, Transition.RIGHT, true));
     }
 
@@ -815,6 +816,15 @@ public class MainActivity extends Activity
     // Action bar & button clicks
     @Override
     public void onClick(View view) {
+
+        // get current fragment name
+        FragmentManager fragmentManager = getFragmentManager();
+        String currentFragmentName = null;
+        int currentBackStackIndex = fragmentManager.getBackStackEntryCount()-1;
+        if (currentBackStackIndex >= 0) {
+            currentFragmentName = fragmentManager.getBackStackEntryAt(currentBackStackIndex).getName();
+        }
+
         switch(view.getId()) {
             case R.id.action_left_drawer:
                 if (!drawerLayout.isDrawerOpen(leftMenu)) {
@@ -839,22 +849,49 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.close_button:
-                FragmentManager manager = getFragmentManager();
-                Fragment checkOutFragment = manager.findFragmentByTag(CheckoutFragment.TAG);
-
-                if (checkOutFragment != null && checkOutFragment.isVisible()) {
-                    selectShoppingCart();
+                hideSoftKeyboard(view);
+                if (currentFragmentName != null && (currentFragmentName.equals(GuestCheckoutFragment.class.getSimpleName()) ||
+                        currentFragmentName.equals(RegisteredCheckoutFragment.class.getSimpleName()))) {
+                    fragmentManager.popBackStack(CartFragment.class.getSimpleName(), 0);
                 } else {
-                    if (manager != null) {
-                        manager.popBackStack(); // this will take us back to one of the many places that could have opened this page
-                    }
+                    // at the moment order confirmation is the only other fragment that uses the Close button
+                    // and it has the backstack cleared upon opening, so going back one is appropriate.
+                    fragmentManager.popBackStack();
                 }
                 break;
 
-            case R.id.back_button:
+            case R.id.up_button:
+                hideSoftKeyboard(view);
                 if (!ActionBar.getInstance().closeSearch()) {
-                    hideSoftKeyboard(view);
-                    onBackPressed();
+
+                    // Note that checkout page is handled by the close button above. If checkout had an Up
+                    // button, we'd need to check for that case and have it go to Cart.
+
+                    // see if current fragment is from the drawer menu
+                    DrawerItem drawerItem = null;
+                    if (currentFragmentName != null) {
+                        drawerItem = leftMenuAdapter.findItemByClassName(currentFragmentName);
+                    }
+
+                    // if on page reached via drawer-menu then go to first Home fragment found in backstack
+                    if (drawerItem != null) {
+                        int backstackIndex = currentBackStackIndex - 1;
+                        while (backstackIndex >= 0) {
+                            if (currentBackStackIndex >= 0) {
+                                if (ConfiguratorFragment.class.getSimpleName().equals(fragmentManager.getBackStackEntryAt(backstackIndex).getName())) {
+                                    fragmentManager.popBackStack(ConfiguratorFragment.class.getSimpleName(), 0);
+                                    break;
+                                }
+                            }
+                            backstackIndex--;
+                        }
+                        // if no Home found in backstack, clear the backstack all the way up to landing page
+                        if (backstackIndex < 0) {
+                            fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        }
+                    } else { // otherwise Up = Back
+                        fragmentManager.popBackStack();
+                    }
                 }
                 break;
 
@@ -868,6 +905,7 @@ public class MainActivity extends Activity
                 break;
         }
     }
+
 
     // Left drawer listview clicks
     @Override
