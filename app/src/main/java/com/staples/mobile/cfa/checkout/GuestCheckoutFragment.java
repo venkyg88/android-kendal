@@ -76,7 +76,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         paymentMethodLayoutVw = frame.findViewById(R.id.payment_method_layout);
         cardNumberVw = (EditText) paymentMethodLayoutVw.findViewById(R.id.cardNumber);
         cardImage = (ImageView) paymentMethodLayoutVw.findViewById(R.id.card_image);
-        expirationDateVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationDate);
+//        expirationDateVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.expirationDate);
         cidVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cid);
         cidVw.setVisibility(View.VISIBLE); // set initially visible, hide later if not applicable to card type (as per Joe Raffone)
         expirationDateVw.setImeOptions(EditorInfo.IME_ACTION_NEXT);
@@ -121,10 +121,11 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                         Tracker.getInstance().trackActionForCheckoutEnterAddress(); // analytics
                     } else if (v.getId() == R.id.cardNumber) {
                         Tracker.getInstance().trackActionForCheckoutEnterPayment(); // analytics
-                    } else if (v.getId() == R.id.expirationDate) {
-                        // loss of focus on CC number isn't consistent, so handle gain of focus on exp date too
-                        handleCardNumberChange();
                     }
+//                    else if (v.getId() == R.id.expirationDate) {
+//                        // loss of focus on CC number isn't consistent, so handle gain of focus on exp date too
+//                        handleCardNumberChange();
+//                    }
                 } else  {
                     // when CC number loses focus, evaluate card type and show/hide CID
                     if (v.getId() == R.id.cardNumber) {

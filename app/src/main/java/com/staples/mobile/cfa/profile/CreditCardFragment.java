@@ -4,8 +4,10 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -19,7 +21,6 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.util.DateUtils;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -34,6 +35,7 @@ import com.staples.mobile.common.access.easyopen.model.member.POWResponse;
 import com.staples.mobile.common.access.easyopen.model.member.UpdateCreditCard;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import retrofit.Callback;
@@ -50,10 +52,13 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
     String expirationMonth;
     String expirationYear;
     String encryptedPacket;
+    String expDate;
+
     EditText cardNumberET;
-    EditText expDateET;
     ImageView cardImage;
     Button cancelCCBtn;
+    EditText expirationMonthET;
+    EditText expirationYearET;
 
     CCDetails creditCard;
     EasyOpenApi easyOpenApi;
@@ -67,7 +72,67 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
 
         View view = inflater.inflate(R.layout.add_creditcard_fragment, container, false);
         cardNumberET = (EditText) view.findViewById(R.id.cardNumber);
-        expDateET = (EditText) view.findViewById(R.id.expirationDate);
+        expirationMonthET = (EditText) view.findViewById(R.id.expiration_month);
+        expirationYearET = (EditText) view.findViewById(R.id.expiration_year);
+
+        expirationMonthET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String input = editable.toString();
+                if (editable.length() == 1) {
+                    int month = Integer.parseInt(input);
+                    if (month > 1) {
+                        expirationMonthET.setText("0" + expirationMonthET.getText().toString());
+                        expirationYearET.requestFocus();
+                    }
+
+                }
+                else if (editable.length() == 2) {
+                    int month = Integer.parseInt(input);
+                    if (month <= 12) {
+                    }
+                    else {
+                        activity.showErrorDialog("Please check the expiration month");
+                    }
+                }
+                else {
+                }
+
+            }
+        });
+
+        expirationYearET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String input = editable.toString();
+                if (editable.length() == 2) {
+                    Calendar calendar = Calendar.getInstance();
+                    int currentYear = calendar.get(Calendar.YEAR)%100;
+                    int year = Integer.parseInt(input);
+
+                    if(year < currentYear) {
+                        activity.showErrorDialog("Please check the expiration year");
+                    }
+                }
+            }
+        });
+
         cardImage = (ImageView) view.findViewById(R.id.card_image);
 
         Bundle args = getArguments();
@@ -77,8 +142,14 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                 cardNumberET.setHint(r.getString(R.string.card_ending_in) + " " + creditCard.getCardNumber());
                 cardType = creditCard.getCardType();
                 cardImage.setImageResource(CreditCard.Type.matchOnApiName(cardType).getImageResource());
-                expDateET.setVisibility(View.VISIBLE);
-                expDateET.setText(creditCard.getExpirationMonth() + "/" +creditCard.getExpirationYear().substring(2,4));
+
+                if(creditCard.getExpirationMonth().length() == 1) {
+                    expirationMonthET.setText("0" + creditCard.getExpirationMonth());
+                }else{
+                    expirationMonthET.setText(creditCard.getExpirationMonth());
+                }
+
+                expirationYearET.setText(creditCard.getExpirationYear().substring(2, 4));
                 creditCardId = creditCard.getCreditCardId();
             }
         }
@@ -101,8 +172,6 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         });
         cardNumberET.setFilters(new InputFilter[] { new CcNumberInputFilter()});
 
-        expDateET.setFilters(new InputFilter[]{new ExpiryDateInputFilter()});
-
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
 
         addCCBtn = (Button) view.findViewById(R.id.addCCBtn);
@@ -119,8 +188,6 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
     }
 
     private boolean validate() {
-        expDateET.setVisibility(View.VISIBLE);
-        expDateET.requestFocus();
         CreditCard.Type ccType = CreditCard.Type.detect(cardNumberET.getText().toString().replaceAll(" ", ""));
         if (ccType != CreditCard.Type.UNKNOWN) {
             cardImage.setImageResource(ccType.getImageResource());
@@ -147,15 +214,8 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
             return;
         }
 
-        // validate date
-        if (!DateUtils.validateCreditCardExpDate(expDateET)) {
-            expDateET.setError(activity.getResources().getString(R.string.expiration_date_error));
-            activity.showErrorDialog(R.string.check_exp_date);
-            return;
-        }
-        String expirationDate = expDateET.getText().toString();
-        expirationMonth = expirationDate.substring(0,2);
-        expirationYear = "20" + expirationDate.substring(3,5);
+        expirationMonth = expirationMonthET.getText().toString();
+        expirationYear = "20" + expirationYearET.getText().toString();
 
         // validate card type
         cardType = CreditCard.Type.detect(creditCardNumber).getName();
@@ -214,10 +274,10 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                     easyOpenApi.addMemberCreditCard(addCC, new Callback<CreditCardId>() {
                         @Override
                         public void success(CreditCardId creditCardID, Response response) {
-                            Log.i(TAG, "Success " + creditCardID.getCreditCardId());
-                            activity.hideProgressIndicator();
                             (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
                                 @Override public void onProfileRefresh(Member member, String errMsg) {
+                                    activity.hideProgressIndicator();
+                                    activity.showNotificationBanner(R.string.cc_added);
                                     FragmentManager fm = getFragmentManager();
                                     if (fm != null) {
                                         fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
