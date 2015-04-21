@@ -13,12 +13,14 @@
 
     <!-- Shipping address -->
     <RelativeLayout
+        android:id="@+id/shipping_select_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/verticalspacing_8dp"
         android:paddingBottom="@dimen/verticalspacing_8dp"
         android:paddingLeft="@dimen/margin_16dp"
-        android:paddingRight="@dimen/margin_16dp" >
+        android:paddingRight="@dimen/margin_16dp"
+        android:clickable="true">
         <TextView
             android:id="@+id/checkout_shipping_addr_label"
             android:layout_alignParentTop="true"
@@ -58,6 +60,7 @@
 
     <!-- Payment Method -->
     <RelativeLayout
+        android:id="@+id/payment_select_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/verticalspacing_8dp"
@@ -106,6 +109,7 @@
 
     <!-- Billing address -->
     <RelativeLayout
+        android:id="@+id/billing_select_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/verticalspacing_8dp"

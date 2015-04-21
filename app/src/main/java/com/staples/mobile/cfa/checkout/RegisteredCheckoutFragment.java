@@ -7,9 +7,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.common.analytics.Tracker;
+import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.profile.CreditCard;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -18,6 +17,7 @@ import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.List;
 
@@ -76,9 +76,9 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         billingAddrVw = (TextView) frame.findViewById(R.id.checkout_billing_addr);
 
         // Set click listeners
-        frame.findViewById(R.id.shipping_addresses).setOnClickListener(this);
-        frame.findViewById(R.id.payment_methods).setOnClickListener(this);
-        frame.findViewById(R.id.billing_addresses).setOnClickListener(this);
+        frame.findViewById(R.id.shipping_select_layout).setOnClickListener(this);
+        frame.findViewById(R.id.payment_select_layout).setOnClickListener(this);
+        frame.findViewById(R.id.billing_select_layout).setOnClickListener(this);
 
         // get checkout info from bundle
         Bundle checkoutBundle = this.getArguments();
@@ -241,7 +241,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         super.onClick(view);
 
         switch(view.getId()) {
-            case R.id.shipping_addresses:
+            case R.id.shipping_select_layout:
                 activity.selectProfileAddressesFragment(new ProfileDetails.AddressSelectionListener() {
                     public void onAddressSelected(String id) {
                         Bundle args = RegisteredCheckoutFragment.this.getArguments();
@@ -252,7 +252,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                     }
                 }, shippingAddressId);
                 break;
-            case R.id.payment_methods:
+            case R.id.payment_select_layout:
                 activity.selectProfileCreditCardsFragment(new ProfileDetails.PaymentMethodSelectionListener() {
                     public void onPaymentMethodSelected(String id) {
                         Bundle args = RegisteredCheckoutFragment.this.getArguments();
@@ -261,7 +261,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                     }
                 }, paymentMethodId);
                 break;
-            case R.id.billing_addresses:
+            case R.id.billing_select_layout:
                 activity.selectProfileAddressesFragment(new ProfileDetails.AddressSelectionListener() {
                     public void onAddressSelected(String id) {
                         Bundle args = RegisteredCheckoutFragment.this.getArguments();
