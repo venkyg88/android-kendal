@@ -138,10 +138,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-
-        MainActivity activity = (MainActivity) getActivity();
-        Resources res = activity.getResources();
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
 
         Bundle args = getArguments();
         if (args != null) {
@@ -149,6 +147,21 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             identifier = args.getString(IDENTIFIER);
             isSkuSetOriginated = args.getBoolean(SKUSET);
         }
+
+        // Initiate API calls
+        EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
+        api.getSkuDetails(identifier, null, MAXFETCH, this);
+
+        reviewPage = 1;
+        ChannelApi channelApi = Access.getInstance().getChannelApi(false);
+        channelApi.getYotpoReviews(identifier, reviewPage, MAXFETCH, this);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+
+        MainActivity activity = (MainActivity) getActivity();
+        Resources res = activity.getResources();
 
         wrapper = (DataWrapper) inflater.inflate(R.layout.sku_summary, container, false);
         summary = wrapper.findViewById(R.id.summary);
@@ -199,13 +212,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         summary.findViewById(R.id.specifications_detail).setOnClickListener(this);
         summary.findViewById(R.id.reviews_detail).setOnClickListener(this);
         wrapper.findViewById(R.id.add_to_cart).setOnClickListener(this);
-
-        // Initiate API calls
-        EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
-        api.getSkuDetails(identifier, null, MAXFETCH, this);
-
-        ChannelApi channelApi = Access.getInstance().getChannelApi(false);
-        channelApi.getYotpoReviews(identifier, 1, 50, this);
 
         return (wrapper);
     }
@@ -281,7 +287,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         if (paragraphs != null) {
             for (Description paragraph : paragraphs) {
                 String text = Html.fromHtml(paragraph.getText()).toString();
-                if (text != null) {
+                if (!text.isEmpty()) {
                     TextView item = (TextView) inflater.inflate(R.layout.sku_paragraph_item, parent, false);
                     parent.addView(item);
                     item.setText(text);
@@ -297,7 +303,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             for (BulletDescription bullet : bullets) {
                 if (count >= limit) break;
                 String text = Html.fromHtml(bullet.getText()).toString();
-                if (text != null) {
+                if (!text.isEmpty()) {
                     View item = inflater.inflate(R.layout.sku_bullet_item, parent, false);
                     parent.addView(item);
                     ((TextView) item.findViewById(R.id.bullet)).setText(text);
@@ -326,7 +332,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 String specName = Html.fromHtml(spec.getName()).toString();
                 String specValue = Html.fromHtml(spec.getText()).toString();
 
-                if (specName != null && specValue != null) {
+                if (!specName.isEmpty() && !specValue.isEmpty()) {
                     TableRow skuSpecRow = (TableRow) inflater.inflate(R.layout.sku_spec_item, table, false);
                     table.addView(skuSpecRow);
 
@@ -517,6 +523,14 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         }
     }
 
+    // This method handles bad JSON boolean fields
+    private boolean isJsonTrue(String text) {
+        if (text==null) return(false);
+        if (text.equalsIgnoreCase("Y") ||
+            text.equalsIgnoreCase("true")) return(true);
+        return(false);
+    }
+
     private void processSkuDetails(SkuDetails sku) {
         final MainActivity activity = (MainActivity) getActivity();
         Resources res = activity.getResources();
@@ -534,7 +548,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             Availability availability = Availability.getProductAvailability(product);
             TextView skuText = (TextView) wrapper.findViewById(R.id.select_sku);
 
-            if (isSkuSetOriginated == true) {
+            if (isSkuSetOriginated) {
                 skuText.setVisibility(View.VISIBLE);
                 skuText.setText(product.getProductName());
                 skuText.setOnClickListener(new View.OnClickListener() {
@@ -632,31 +646,19 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 // Log.d(TAG, "Product has accessories.");
             } else {
                 summary.findViewById(R.id.accessory_layout).setVisibility(View.GONE);
-                // Log.d(TAG, "Product has no accessories.");
             }
 
             // check if the product is an add-on product
-            if(product.getAddOnSku() != null && product.getAddOnSku().equals("Y")){
+            if (isJsonTrue(product.getAddOnSku())) {
                 addonLayout.setVisibility(View.VISIBLE);
-
-                Log.d(TAG, "The product is an add-on product. sku:" + product.getSku());
             }
 
             // check if the product is an overweight product, example sku:650465
-            if(product.getHeavyWeightSku() != null && product.getHeavyWeightSku().equals("Y")){
+            if (isJsonTrue(product.getHeavyWeightSku())) {
                 if(product.getPricing() != null){
                     overweightLayout.setVisibility(View.VISIBLE);
                     float heavyWeightShipCharge = product.getPricing().get(0).getHeavyWeightShipCharge();
-                    Log.d(TAG, "The product is an overweight product. sku:" + product.getSku() +
-                            ", HeavyWeightShipCharge:" + heavyWeightShipCharge);
                 }
-            }
-
-            if(addonLayout.getVisibility() == View.VISIBLE || overweightLayout.getVisibility() == View.VISIBLE){
-                summary.findViewById(R.id.shipping_logic_layout).setVisibility(View.VISIBLE);
-            }
-            else{
-                summary.findViewById(R.id.shipping_logic_layout).setVisibility(View.GONE);
             }
 
             // check if the product has discount

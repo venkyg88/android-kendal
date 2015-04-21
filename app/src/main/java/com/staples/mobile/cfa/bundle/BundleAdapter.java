@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -40,9 +39,9 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         private TextView title;
         private RatingStars ratingStars;
         private PriceSticker priceSticker;
-        private LinearLayout overweightLayout;
-        private LinearLayout addonLayout;
-        private LinearLayout rebateLayout;
+        private TextView overweight;
+        private TextView addon;
+        private TextView rebateNote;
         private TextView rebateText;
         private ImageView action;
         private View whirlie;
@@ -53,9 +52,9 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             title = (TextView) view.findViewById(R.id.title);
             ratingStars = (RatingStars) view.findViewById(R.id.rating);
             priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
-            overweightLayout = (LinearLayout) view.findViewById(R.id.overweight_layout);
-            addonLayout = (LinearLayout) view.findViewById(R.id.add_on_layout);
-            rebateLayout = (LinearLayout) view.findViewById(R.id.rebate_layout);
+            overweight = (TextView) view.findViewById(R.id.overweight);
+            addon = (TextView) view.findViewById(R.id.addon);
+            rebateNote = (TextView) view.findViewById(R.id.rebate_note);
             rebateText = (TextView)view.findViewById(R.id.rebate_text);
             action = (ImageView) view.findViewById(R.id.bundle_action);
             whirlie = view.findViewById(R.id.bundle_whirlie);
@@ -132,14 +131,16 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         vh.title.setText(item.title);
         vh.ratingStars.setRating(item.customerRating, item.customerCount);
         vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, item.rebateIndicator);
-        if(item.rebatePrice != 0.0f) {
-            vh.rebateLayout.setVisibility(View.VISIBLE);
+        if(item.rebateIndicator!=null) {
+            vh.rebateNote.setVisibility(View.VISIBLE);
+            vh.rebateText.setVisibility(View.VISIBLE);
             vh.rebateText.setText(format.format(item.rebatePrice) + " Rebate");
         } else {
-            vh.rebateLayout.setVisibility(View.GONE);
+            vh.rebateNote.setVisibility(View.GONE);
+            vh.rebateText.setVisibility(View.GONE);
         }
-        vh.addonLayout.setVisibility((item.isAddOnItem) ? View.VISIBLE : View.GONE);
-        vh.overweightLayout.setVisibility((item.isOverSized) ? View.VISIBLE : View.GONE);
+        vh.addon.setVisibility((item.isAddOnItem) ? View.VISIBLE : View.GONE);
+        vh.overweight.setVisibility((item.isOverSized) ? View.VISIBLE : View.GONE);
         if (item.busy) {
             vh.action.setVisibility(View.GONE);
             vh.whirlie.setVisibility(View.VISIBLE);
