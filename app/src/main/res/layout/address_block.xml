@@ -73,6 +73,7 @@
         android:id="@+id/phoneNumber"
         style="@style/InputField"
         android:inputType="phone"
+        android:maxLength="14"
         android:hint="@string/phone_label"/>
     <com.staples.mobile.cfa.widget.DualHintEdit
         android:id="@+id/emailAddr"
