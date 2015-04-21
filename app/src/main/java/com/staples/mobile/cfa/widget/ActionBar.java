@@ -25,9 +25,9 @@ public class ActionBar extends LinearLayout {
         BROWSE   (true,  false, false, true,  true,  false, true,  false, false, R.string.browse_title),
         BUNDLE   (true,  false, false, true,  true,  false, true,  false, false, 0),
         CART     (true,  false, false, false, false, true,  false, false, false, R.string.cart_title),
-        COGUEST  (true,  false, false, false, false, false, false, true,  false, R.string.guest_checkout_title),
-        CONFIRM  (true,  false, false, false, false, false, true,  false, false, R.string.order_confirm_title),
-        COREG    (true,  false, false, false, false, false, false, false, false, R.string.checkout_title),
+        COGUEST  (false, false, false, false, false, false, false, true,  true,  R.string.guest_checkout_title),
+        COREG    (false, false, false, false, false, false, false, false, true,  R.string.checkout_title),
+        CONFIRM  (false, false, false, false, false, false, true,  false, true,  R.string.order_confirm_title),
         DEFAULT  (false, true,  true,  true,  true,  false, true,  false, false, 0),
         FEED     (true,  false, false, false, true,  false, true,  false, false, R.string.personal_feed_title),
         LINK     (true,  false, false, false, true,  false, true,  false, false, R.string.link_rewards_title),
@@ -123,7 +123,7 @@ public class ActionBar extends LinearLayout {
 
     public void init(OnClickListener listener) {
         // Find elements
-        backButton = (ImageView) findViewById(R.id.back_button);
+        backButton = (ImageView) findViewById(R.id.up_button);
         leftDrawerAction = (ImageView) findViewById(R.id.action_left_drawer);
         logoView = (ImageView) findViewById(R.id.action_logo);
         feedIcon = (ImageView) findViewById(R.id.action_feed);

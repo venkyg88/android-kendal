@@ -9,7 +9,7 @@
     android:background="@color/staples_white">
     <!-- ActionBar, these must be kept in priority order -->
     <ImageView
-        android:id="@+id/back_button"
+        android:id="@+id/up_button"
         style="@style/ActionBarIconStyle"
         android:layout_gravity="center_vertical|left"
         android:src="@drawable/ic_arrow_back_black"/>
@@ -21,7 +21,7 @@
     <ImageView
         android:id="@+id/close_button"
         style="@style/ActionBarIconStyle"
-        android:layout_gravity="center_vertical|right"
+        android:layout_gravity="center_vertical|left"
         android:src="@drawable/ic_close_black"/>
     <com.staples.mobile.cfa.widget.BadgeImageView
         android:id="@+id/action_show_cart"

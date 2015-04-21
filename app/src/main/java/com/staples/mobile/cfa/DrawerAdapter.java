@@ -52,9 +52,9 @@ public class    DrawerAdapter extends BaseAdapter {
         return(array.get(position));
     }
 
-    public DrawerItem findItemByClass(Class fragmentClass) {
+    public DrawerItem findItemByClassName(String fragmentClassName) {
         for (DrawerItem item : array) {
-            if (item.fragmentClass.equals(fragmentClass)) {
+            if (item.fragmentClass.getSimpleName().equals(fragmentClassName)) {
                 return item;
             }
         }
