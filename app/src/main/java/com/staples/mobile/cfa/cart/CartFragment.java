@@ -296,26 +296,25 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 cartSubtotalLayout.setVisibility(View.GONE);
                 cartProceedToCheckout.setVisibility(View.GONE);
             } else {
-
-                if (isTopOfFirstItemVisible(cartListVw)) {
-                    couponsRewardsLayout.setVisibility(View.VISIBLE);
-                    cartShippingLayout.setVisibility(View.VISIBLE);
-                }
+//                if (isTopOfFirstItemVisible(cartListVw)) {
+                couponsRewardsLayout.setVisibility(View.VISIBLE);
+                cartShippingLayout.setVisibility(View.VISIBLE);
+//                }
                 cartSubtotalLayout.setVisibility(View.VISIBLE);
                 cartProceedToCheckout.setVisibility(View.VISIBLE);
             }
         }
     }
 
-    /** returns true if list view is scrolled to the very top */
-    private boolean isTopOfFirstItemVisible(RecyclerView listView) {
-        if (cartListLayoutMgr.findFirstVisibleItemPosition() == 0) {
-//            View view = listView.getChildAt(0); // might not get first child
-            View view = cartListLayoutMgr.findViewByPosition(0); // lesser performance
-            return view != null && view.getTop() >= -200; // giving it some margin since i've seen as low as -110 when top still visible after a scroll (e.g. when just enough content to allow scrolling)
-        }
-        return false;
-    }
+//    /** returns true if list view is scrolled to the very top */
+//    private boolean isTopOfFirstItemVisible(RecyclerView listView) {
+//        if (cartListLayoutMgr.findFirstVisibleItemPosition() == 0) {
+////            View view = listView.getChildAt(0); // might not get first child
+//            View view = cartListLayoutMgr.findViewByPosition(0); // lesser performance
+//            return view != null && view.getTop() >= -200; // giving it some margin since i've seen as low as -110 when top still visible after a scroll (e.g. when just enough content to allow scrolling)
+//        }
+//        return false;
+//    }
 
     private boolean couponsExpanded() {
         return (((LinearLayout.LayoutParams)couponListVw.getLayoutParams()).weight > 0);
