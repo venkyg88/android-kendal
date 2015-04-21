@@ -19,8 +19,7 @@
         android:paddingTop="@dimen/verticalspacing_8dp"
         android:paddingBottom="@dimen/verticalspacing_8dp"
         android:paddingLeft="@dimen/margin_16dp"
-        android:paddingRight="@dimen/margin_16dp"
-        android:clickable="true">
+        android:paddingRight="@dimen/margin_16dp">
         <TextView
             android:id="@+id/checkout_shipping_addr_label"
             android:layout_alignParentTop="true"
