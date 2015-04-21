@@ -1,15 +1,8 @@
-/*
- * Copyright (c) 2015 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.profile;
 
 import android.text.InputFilter;
 import android.text.Spanned;
 
-/**
- * Created by sutdi001 on 3/25/15.
- */
 public class ExpiryDateInputFilter implements InputFilter {
 
     @Override

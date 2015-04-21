@@ -16,9 +16,6 @@ import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 
 import java.util.List;
 
-/**
- * Created by Avinash Dodda.
- */
 public class CreditCardListFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = CreditCardListFragment.class.getSimpleName();
     ListView listview;
@@ -36,7 +33,6 @@ public class CreditCardListFragment extends Fragment implements View.OnClickList
         addBtn = (ImageButton) view.findViewById(R.id.listAddButton);
         addBtn.setOnClickListener(this);
         cardList = ProfileDetails.getMember().getCreditCard();
-
 
         final CreditCardArrayAdapter adapter = new CreditCardArrayAdapter(activity,
                 cardList, ProfileDetails.currentPaymentMethodId);

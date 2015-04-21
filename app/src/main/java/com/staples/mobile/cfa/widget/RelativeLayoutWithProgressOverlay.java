@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2015 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
@@ -12,8 +8,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 /**
- * Created by sutdi001 on 10/17/14.
- *
  * Class to swallow touch events of cart container and its children while progress indicator is visible
  */
 public class RelativeLayoutWithProgressOverlay extends RelativeLayout {
@@ -33,7 +27,6 @@ public class RelativeLayoutWithProgressOverlay extends RelativeLayout {
         super(context, attrs, defStyle);
     }
 
-
     public void showProgressIndicator(boolean showIndicator) {
         if (progressOverlay != null) {
             progressOverlay.setVisibility(showIndicator ? View.VISIBLE : View.GONE);
@@ -46,7 +39,6 @@ public class RelativeLayoutWithProgressOverlay extends RelativeLayout {
         // returning true disables touch events on view and its children
         return swallowTouchEvents;
     }
-
 
     /** sets overlay view to display when operation in progress */
     public void setProgressOverlay(View progressOverlay) {

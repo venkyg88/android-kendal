@@ -30,11 +30,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by Avinash Dodda.
- */
 public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.OnClickListener{
-
 
     private final Context context;
     private final List<Address> values;
@@ -185,5 +181,4 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
         });
     }
 }
-
 

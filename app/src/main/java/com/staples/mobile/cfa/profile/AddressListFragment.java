@@ -16,9 +16,6 @@ import com.staples.mobile.common.access.easyopen.model.member.Address;
 
 import java.util.List;
 
-/**
- * Created by Avinash Dodda.
- */
 public class AddressListFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "Address List Fragment";
     ListView listview;

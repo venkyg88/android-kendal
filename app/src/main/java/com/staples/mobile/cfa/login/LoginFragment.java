@@ -173,7 +173,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         Tracker.getInstance().trackStateForLogin(); // Analytics
     }
 
-
     @Override
     public void onClick(View view) {
 

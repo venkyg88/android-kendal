@@ -29,12 +29,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by Avinash Dodda.
- */
-
 public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements View.OnClickListener{
-
 
     private final Context context;
     private final List<CCDetails> values;
@@ -85,7 +80,6 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
         ccText.setOnClickListener(this);
         expText.setTag(position);
         expText.setOnClickListener(this);
-
 
         cardTypeImg = (ImageView)rowView.findViewById(R.id.cardTypeImg);
         cardTypeImg.setImageResource(CreditCard.Type.matchOnApiName(creditCard.getCardType()).getImageResource());
@@ -176,6 +170,4 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
         });
     }
 }
-
-
 

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.rewards;
 
 import android.app.Activity;
@@ -18,7 +14,6 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
 
 import java.util.List;
-
 
 public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.ViewHolder> {
 
@@ -92,7 +87,6 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.ViewHolder
         return rewards.size();
     }
 
-
     public List<Reward> getRewards() {
         return rewards;
     }
@@ -100,7 +94,6 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.ViewHolder
     public void setRewards(List<Reward> rewards) {
         this.rewards = rewards;
     }
-
 
     //---------------------------------------//
     //------------ inner classes ------------//

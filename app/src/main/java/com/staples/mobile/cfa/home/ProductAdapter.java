@@ -33,9 +33,6 @@ public class ProductAdapter
     private static final int VIEW_BANNER = 0;
     private static final int VIEW_PRODUCT = 1;
 
-
-
-
     private static final int MAXFETCH = 50;
 
     private Activity activity;

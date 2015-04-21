@@ -11,10 +11,8 @@ import android.view.ViewGroup;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
-import com.staples.mobile.common.access.channel.model.review.Review;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SkuTabAdapter extends PagerAdapter {
     private static final String TAG = SkuTabAdapter.class.getSimpleName();
@@ -23,7 +21,7 @@ public class SkuTabAdapter extends PagerAdapter {
     private ArrayList<SkuPageItem> array;
     private LayoutInflater inflater;
     private Product product;
-    private List<Review> reviews;
+    private SkuReviewAdapter reviewAdapter;
 
     private static class SkuPageItem {
         View view;
@@ -44,8 +42,8 @@ public class SkuTabAdapter extends PagerAdapter {
         this.product = product;
     }
 
-    public void setReviews(List<Review> reviews) {
-        this.reviews = reviews;
+    public void setReviewAdapter(SkuReviewAdapter adapter) {
+        reviewAdapter = adapter;
     }
 
     @Override
@@ -79,12 +77,9 @@ public class SkuTabAdapter extends PagerAdapter {
             case 2:
                 item.view = inflater.inflate(R.layout.sku_detail_list, container, false);
                 RecyclerView list = (RecyclerView) item.view.findViewById(R.id.list);
-                SkuReviewAdapter adapter = new SkuReviewAdapter(context);
                 list.setLayoutManager(new GridLayoutManager(context, 1));
                 list.addItemDecoration(new HorizontalDivider(context));
-                list.setAdapter(adapter);
-                adapter.fill(reviews);
-                adapter.notifyDataSetChanged();
+                list.setAdapter(reviewAdapter);
                 break;
         }
 

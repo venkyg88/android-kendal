@@ -44,7 +44,6 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
     String emailAddress;
     String orderNumber;
 
-
     /**
      * Create a new instance of ConfirmationFragment that will be initialized
      * with the given arguments.

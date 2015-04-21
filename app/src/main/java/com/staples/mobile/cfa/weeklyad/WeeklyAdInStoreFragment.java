@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2015 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.weeklyad;
 
 import android.app.Fragment;
@@ -17,11 +13,6 @@ import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.analytics.Tracker;
-
-
-/**
- * Created by diana sutlief.
- */
 
 public class WeeklyAdInStoreFragment extends Fragment {
 

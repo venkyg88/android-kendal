@@ -135,9 +135,9 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
     }
 
     private int processCategories(Browse browse) {
-        if (browse==null) return(0);
+        if (browse==null || browse.getRecordSetTotal()==0) return(0);
         List<Category> categories = browse.getCategory();
-        if (categories==null || categories.size()<1) return(0);
+        if (categories==null || categories.size()==0) return(0);
         int count = 0;
 
         for(Category category : categories) {
