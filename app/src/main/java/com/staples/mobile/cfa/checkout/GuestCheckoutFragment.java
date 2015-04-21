@@ -107,12 +107,25 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                 } else if (editable.length() == 2) {
                     int month = Integer.parseInt(input);
                     if (month <= 12) {
+                        expirationYearVw.requestFocus();
                     } else {
                         activity.showErrorDialog("Please check the expiration month");
                     }
                 } else {
                 }
 
+            }
+        });
+
+        expirationMonthVw.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString().replaceAll(" ", ""));
+                    if (ccType != CreditCard.Type.UNKNOWN) {
+                        cardImage.setImageResource(ccType.getImageResource());
+                    }
+                }
             }
         });
 

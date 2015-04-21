@@ -98,6 +98,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                 else if (editable.length() == 2) {
                     int month = Integer.parseInt(input);
                     if (month <= 12) {
+                        expirationYearET.requestFocus();
                     }
                     else {
                         activity.showErrorDialog("Please check the expiration month");
@@ -106,6 +107,18 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                 else {
                 }
 
+            }
+        });
+
+        expirationMonthET.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    CreditCard.Type ccType = CreditCard.Type.detect(cardNumberET.getText().toString().replaceAll(" ", ""));
+                    if (ccType != CreditCard.Type.UNKNOWN) {
+                        cardImage.setImageResource(ccType.getImageResource());
+                    }
+                }
             }
         });
 
@@ -159,6 +172,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                 switch(actionId) {
                     case EditorInfo.IME_ACTION_NEXT:
                         validate();
+                        expirationMonthET.requestFocus();
                         return(true);
                     case EditorInfo.IME_NULL:
                         Log.d(TAG, "Got an enter key");
@@ -191,7 +205,6 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         CreditCard.Type ccType = CreditCard.Type.detect(cardNumberET.getText().toString().replaceAll(" ", ""));
         if (ccType != CreditCard.Type.UNKNOWN) {
             cardImage.setImageResource(ccType.getImageResource());
-            cardType = ccType.getName();
             return (true);
         }
         return(false);
