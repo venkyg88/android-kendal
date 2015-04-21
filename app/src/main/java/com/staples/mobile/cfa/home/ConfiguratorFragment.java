@@ -6,27 +6,20 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-//import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.store.StoreFragment;
@@ -77,8 +70,6 @@ public class ConfiguratorFragment extends Fragment {
     private DeviceInfo deviceInfo;
 
     private int lastOrientation = Configuration.ORIENTATION_UNDEFINED;
-    private LayoutInflater layoutInflater;
-    private ViewGroup container;
     private View configFrameView;
     private LinearLayout configScrollLayout;
     private LinearLayout.LayoutParams subLayoutContainerLayoutParms;
@@ -119,14 +110,11 @@ public class ConfiguratorFragment extends Fragment {
     private LinearLayout login_info_layout;
     private LinearLayout login_layout;
     private LinearLayout reward_layout;
-    private FrameLayout message_layout;
+    private LinearLayout store_wrapper;
     private TextView rewardTextView;
     private TextView loginMessageTextView;
-    private TextView signInTextView;
-    private TextView signUpTextView;
     private TextView storeNameTextView;
     private TextView storeStatusTextView;
-    private TextView storeErrorInfoTextView;
     private TextView usernameTextView;
     private DataWrapper storeWrapper;
 
@@ -1137,15 +1125,12 @@ public class ConfiguratorFragment extends Fragment {
         login_layout = (LinearLayout) configFrameView.findViewById(R.id.login_layout);
         login_info_layout = (LinearLayout) configFrameView.findViewById(R.id.login_info_layout);
         reward_layout = (LinearLayout) configFrameView.findViewById(R.id.reward_layout);
-        message_layout = (FrameLayout) configFrameView.findViewById(R.id.message_layout);
+        store_wrapper = (LinearLayout) configFrameView.findViewById(R.id.store_wrapper);
         rewardTextView = (TextView) configFrameView.findViewById(R.id.reward);
         loginMessageTextView = (TextView) configFrameView.findViewById(R.id.login_message);
-        signInTextView = (TextView) configFrameView.findViewById(R.id.login_sign_in);
-        signUpTextView = (TextView) configFrameView.findViewById(R.id.login_sign_up);
         usernameTextView = (TextView) configFrameView.findViewById(R.id.login_username);
         storeNameTextView = (TextView) configFrameView.findViewById(R.id.store_name);
         storeStatusTextView = (TextView) configFrameView.findViewById(R.id.store_status);
-        storeErrorInfoTextView = (TextView) configFrameView.findViewById(R.id.error_info);
     }
 
     private void updateMessageBar(){
@@ -1166,15 +1151,6 @@ public class ConfiguratorFragment extends Fragment {
                 reward_layout.setVisibility(View.VISIBLE);
                 rewardTextView.setText("$" + (int) rewards);
                 Log.d(TAG, "Rewards from message bar: " + rewards);
-
-                reward_layout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Tracker.getInstance().trackActionForPersonalizedMessaging("Reward"); // Analytics
-                        MainActivity mainActivity = (MainActivity) getActivity();
-                        mainActivity.selectRewardsFragment();
-                    }
-                });
             }
             else{
                 loginMessageTextView.setText(R.string.welcome);
@@ -1205,7 +1181,7 @@ public class ConfiguratorFragment extends Fragment {
     }
 
     private void setMessageListeners(){
-        signInTextView.setOnClickListener(new View.OnClickListener() {
+        login_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Tracker.getInstance().trackActionForPersonalizedMessaging("Login"); // Analytics
@@ -1214,25 +1190,16 @@ public class ConfiguratorFragment extends Fragment {
             }
         });
 
-        signUpTextView.setOnClickListener(new View.OnClickListener() {
+        reward_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Tracker.getInstance().trackActionForPersonalizedMessaging("Register"); // Analytics
+                Tracker.getInstance().trackActionForPersonalizedMessaging("Reward"); // Analytics
                 MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.selectLoginFragment();
+                mainActivity.selectRewardsFragment();
             }
         });
 
-        storeNameTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Tracker.getInstance().trackActionForPersonalizedMessaging("Store"); // Analytics
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.selectFragment(new StoreFragment(), MainActivity.Transition.NONE, true);
-            }
-        });
-
-        storeErrorInfoTextView.setOnClickListener(new View.OnClickListener() {
+        store_wrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Tracker.getInstance().trackActionForPersonalizedMessaging("Store"); // Analytics
