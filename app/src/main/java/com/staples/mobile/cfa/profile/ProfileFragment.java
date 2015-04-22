@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -130,25 +129,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.address_layout:
-                shippingBtn = (TextView) view.findViewById(R.id.addShippingBtn);
-                if (shippingBtn.getText().equals("+")) {
-                    Fragment addressFragment = Fragment.instantiate(activity, AddressFragment.class.getName());
-                    activity.navigateToFragment(addressFragment);
-                    break;
-                } else {
-                    activity.selectProfileAddressesFragment();
-                    break;
-                }
+                activity.selectProfileAddressesFragment();
+                break;
             case R.id.credit_card_layout:
-                ccBtn = (TextView)view.findViewById(R.id.addCCBtn);
-                if(ccBtn.getText().equals("+")){
-                    Fragment creditFragment = Fragment.instantiate(activity, CreditCardFragment.class.getName());
-                    activity.navigateToFragment(creditFragment);
-                    break;
-                } else {
-                    activity.selectProfileCreditCardsFragment();
-                    break;
-                }
+                activity.selectProfileCreditCardsFragment();
+                break;
         }
     }
 }
