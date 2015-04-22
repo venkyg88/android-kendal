@@ -224,7 +224,7 @@
     <string name="oversized_shipping_fee">Oversized shipping fee</string>
     <string name="minimum_all_caps">MINIMUM</string>
     <string name="add_on">$25 MINIMUM</string>
-    <string name="overweight_warming">Additional shipping fees apply</string>
+    <string name="overweight_warning">Additional shipping fees apply</string>
     <string name="add_on_warming">$25 minimum to ship</string>
 
     <!-- Availability -->

@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.sku;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,11 +32,11 @@ public class SkuReviewAdapter extends RecyclerView.Adapter<SkuReviewAdapter.View
     }
 
     private static class Item {
-        float rating;
-        String title;
-        String author;
-        String date;
-        String comments;
+        private float rating;
+        private String title;
+        private String author;
+        private String date;
+        private String comments;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -50,6 +51,10 @@ public class SkuReviewAdapter extends RecyclerView.Adapter<SkuReviewAdapter.View
             title = (TextView) view.findViewById(R.id.sku_review_title);
             attribution = (TextView) view.findViewById(R.id.sku_review_attribution);
             comments = (TextView) view.findViewById(R.id.sku_review_comments);
+        }
+
+        public void limitComments(int n) {
+            comments.setMaxLines(n);
         }
     }
 
@@ -149,13 +154,13 @@ public class SkuReviewAdapter extends RecyclerView.Adapter<SkuReviewAdapter.View
         for(Review review : reviews) {
             Item item = new Item();
             item.rating = review.getScore();
-            item.title = review.getTitle();
+            item.title = Html.fromHtml(review.getTitle()).toString();
             User user = review.getUser();
             if (user!=null) {
                 item.author = user.getDisplayName();
             }
             item.date = formatTimestamp(review.getCreatedAt());
-            item.comments = review.getContent();
+            item.comments = Html.fromHtml(review.getContent()).toString();
             array.add(item);
         }
     }
