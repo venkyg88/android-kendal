@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.location.LocationFinder;
@@ -65,6 +66,7 @@ public class WeeklyAdByCategoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Crittercism.leaveBreadcrumb("WeeklyAdByCategoryFragment:onCreateView(): Entry.");
         activity = (MainActivity)getActivity();
 
         Bundle args = getArguments();

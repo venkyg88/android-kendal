@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -33,6 +34,7 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("AddressFragment:onCreateView(): Entry.");
         View view = inflater.inflate(R.layout.address_fragment, container, false);
         addressBlock = (AddressBlock) view.findViewById(R.id.shipping_address);
 

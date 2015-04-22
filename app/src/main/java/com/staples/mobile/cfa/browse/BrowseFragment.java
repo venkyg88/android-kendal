@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -51,6 +52,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("BrowseFragment:onCreateView(): Entry.");
         Activity activity = getActivity();
         View view = inflater.inflate(R.layout.browse_frame, container, false);
         RecyclerView list = (RecyclerView) view.findViewById(R.id.products);

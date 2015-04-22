@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.analytics.Tracker;
@@ -59,6 +60,7 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("RewardsFragment:onCreateView(): Entry.");
         Resources r = getResources();
         activity = (MainActivity)getActivity();
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.rewards_fragment, container, false);
