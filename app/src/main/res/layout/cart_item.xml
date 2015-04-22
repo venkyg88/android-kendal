@@ -86,7 +86,7 @@
             android:paddingRight="@dimen/right_margin"
             android:paddingBottom="@dimen/action_bar_quarter_margin"
             android:textColor="@color/staples_white"
-            android:background="@drawable/rounded_corner"
+            android:background="@drawable/rounded_corner_red"
             android:visibility="gone"/>
 
         <ImageView
