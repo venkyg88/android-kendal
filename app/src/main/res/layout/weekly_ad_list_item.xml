@@ -1,62 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/weekly_ad_list_cardview"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/weekly_ad_list_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    card_view:cardBackgroundColor="@color/staples_white"
-    card_view:cardCornerRadius="2dp"
-    card_view:cardElevation="2dp"
-    card_view:contentPadding="@dimen/margin_16dp"
-    android:layout_marginLeft="4dp"
-    android:layout_marginRight="4dp"
-    android:layout_marginTop="@dimen/verticalspacing_8dp">
+    android:layout_height="wrap_content"
+    android:padding="@dimen/margin_16dp"
+    android:orientation="vertical"
+    android:background="@color/staples_white">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/availability"
+        android:textSize="@dimen/fontsize_14sp"
+        android:textColor="@color/staples_red"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textStyle="bold"
+        android:text="@string/avail_retailonly"/>
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="@dimen/weekly_ad_list_item_image_width"
+        android:layout_height="@dimen/weekly_ad_list_item_image_height"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="@dimen/verticalspacing_8dp"
+        />
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/fontsize_14sp"
+        android:paddingTop="@dimen/verticalspacing_8dp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:textColor="@color/staples_black"/>
+    <com.staples.mobile.cfa.widget.PriceSticker
+        android:id="@+id/pricing"
+        style="@style/SmallPriceSticker"/>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/availability"
-                android:textSize="@dimen/fontsize_14sp"
-                android:textColor="@color/staples_red"
-                android:gravity="center"
-                android:visibility="gone"
-                android:textStyle="bold"
-                android:text="@string/avail_retailonly"/>
-            <ImageView
-                android:id="@+id/image"
-                android:layout_width="@dimen/weekly_ad_list_item_image_width"
-                android:layout_height="@dimen/weekly_ad_list_item_image_height"
-                android:layout_gravity="center_horizontal"
-                android:paddingTop="@dimen/verticalspacing_8dp"
-                />
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/fontsize_14sp"
-                android:paddingTop="@dimen/verticalspacing_8dp"
-                android:maxLines="2"
-                android:ellipsize="end"
-                android:textColor="@color/staples_black"/>
-            <com.staples.mobile.cfa.widget.PriceSticker
-                android:id="@+id/pricing"
-                style="@style/SmallPriceSticker"/>
-        </LinearLayout>
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/action_bar_half_margin">
         <ImageView
             android:id="@+id/action"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:src="@drawable/ic_add_shopping_cart_black"
+            android:src="@drawable/ic_add_black"
             android:visibility="gone"/>
         <ProgressBar
             android:id="@+id/whirlie"
@@ -69,5 +58,4 @@
             android:paddingLeft="@dimen/action_bar_half_margin"
             android:visibility="gone"/>
     </RelativeLayout>
-
-</android.support.v7.widget.CardView>
+</LinearLayout>
