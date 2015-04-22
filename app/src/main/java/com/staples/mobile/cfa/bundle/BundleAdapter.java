@@ -150,7 +150,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         }
 
         if (item.type==IdentifierType.SKUSET) vh.action.setImageResource(R.drawable.ic_more_vert_black);
-        else vh.action.setImageResource(R.drawable.ic_add_shopping_cart_black);
+        else vh.action.setImageResource(R.drawable.ic_add_black);
 
         // Need to get more data?
         if (fetcher!=null && position>threshold) {

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -25,6 +26,7 @@ public class CreditCardListFragment extends Fragment implements View.OnClickList
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("CreditCardListFragment:onCreateView(): Entry.");
         View view = inflater.inflate(R.layout.profile_list_fragment, container, false);
         listview = (ListView) view.findViewById(R.id.profile_list_view);
         listview.setDivider(null);

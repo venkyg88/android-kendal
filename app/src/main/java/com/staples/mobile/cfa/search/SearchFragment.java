@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.apptentive.android.sdk.Apptentive;
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
@@ -81,6 +82,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("SearchFragment:onCreateView(): Entry.");
         Activity activity = getActivity();
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
 

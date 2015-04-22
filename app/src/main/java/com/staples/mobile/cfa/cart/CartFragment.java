@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.analytics.Tracker;
@@ -98,6 +99,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("CartFragment:onCreateView(): Entry.");
         activity = (MainActivity) getActivity();
 
         // inflate and get child views

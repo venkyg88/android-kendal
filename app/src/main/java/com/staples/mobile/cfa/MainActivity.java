@@ -26,6 +26,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.analytics.AdobeTracker;
 import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.bundle.BundleFragment;
@@ -148,6 +149,7 @@ public class MainActivity extends Activity
         // Evo phone by turning the phone completely off while the Staples app is open, then turning
         // it back on and re-opening the Staples app.
         super.onCreate(null);
+        Crittercism.leaveBreadcrumb("MainActivity:onCreate(): Entry.");
         if (LOGGING) {
             Log.v(TAG, "MainActivity:onCreate():"
                     + " bundle[" + bundle + "]");
@@ -709,36 +711,59 @@ public class MainActivity extends Activity
     }
 
     public boolean selectBundle(String title, String identifier) {
+        Crittercism.leaveBreadcrumb("MainActivity:selectBundle():"
+            + " identifier[" + identifier + "]"
+            + " title[" + title + "]"
+        );
         BundleFragment fragment = new BundleFragment();
         fragment.setArguments(title, identifier);
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
     public boolean selectSearch(String title, String keyword) {
+        Crittercism.leaveBreadcrumb("MainActivity:selectSearch():"
+            + " keyword[" + keyword + "]"
+            + " title[" + title + "]"
+        );
         SearchFragment fragment = new SearchFragment();
         fragment.setArguments(title, keyword);
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
     public boolean selectSkuSet(String title, String identifier, String imageUrl) {
+        Crittercism.leaveBreadcrumb("MainActivity:selectSkuSet():"
+            + " identifier[" + identifier + "]"
+            + " title[" + title + "]"
+        );
         SkuSetFragment fragment = new SkuSetFragment();
         fragment.setArguments(title, identifier, imageUrl);
         return(selectFragment(fragment, Transition.UP, true));
     }
 
     public boolean selectSkuItem(String title, String identifier, boolean isSkuSetOriginated) {
+        Crittercism.leaveBreadcrumb("MainActivity:selectSkuItem():"
+            + " identifier[" + identifier + "]"
+            + " title[" + title + "]"
+        );
         SkuFragment fragment = new SkuFragment();
         fragment.setArguments(title, identifier, isSkuSetOriginated);
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
     public boolean selectWeeklyAd(String storeNo) {
+        Crittercism.leaveBreadcrumb("MainActivity:selectWeeklyAd():"
+            + " storeNo[" + storeNo + "]"
+        );
         WeeklyAdByCategoryFragment fragment = new WeeklyAdByCategoryFragment();
         fragment.setArguments(storeNo);
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
     public boolean selectInStoreWeeklyAd(String title, float price, String unit, String literal, String imageUrl, boolean inStoreOnly) {
+        Crittercism.leaveBreadcrumb("MainActivity:selectBundle():"
+            + " title[" + title + "]"
+            + " unit[" + unit + "]"
+        );
         WeeklyAdInStoreFragment fragment = new WeeklyAdInStoreFragment();
         fragment.setArguments(title, price, unit, literal, imageUrl, inStoreOnly);
         return(selectFragment(fragment, Transition.RIGHT, true));
