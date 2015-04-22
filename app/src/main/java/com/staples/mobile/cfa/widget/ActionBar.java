@@ -4,14 +4,13 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.search.SearchBarView;
+import com.staples.mobile.common.analytics.Tracker;
 
 public class ActionBar extends LinearLayout {
     private static final String TAG = ActionBar.class.getSimpleName();
@@ -98,7 +97,7 @@ public class ActionBar extends LinearLayout {
     private SearchBarView searchBar;
     private TextView cartQtyView;
     private BadgeImageView cartIconAction;
-    private Button checkoutSigninButton;
+    private TextView checkoutSigninButton;
     private ImageView optionIcon;
     private ImageView closeButton;
     private TextView titleView;
@@ -130,7 +129,7 @@ public class ActionBar extends LinearLayout {
         searchBar = (SearchBarView) findViewById(R.id.search_view);
         cartQtyView = (TextView) findViewById(R.id.cart_item_qty);
         cartIconAction = (BadgeImageView) findViewById(R.id.action_show_cart);
-        checkoutSigninButton = (Button) findViewById(R.id.checkout_login_button);
+        checkoutSigninButton = (TextView) findViewById(R.id.checkout_login_button);
         optionIcon = (ImageView) findViewById(R.id.option_icon);
         closeButton = (ImageView) findViewById(R.id.close_button);
         titleView = (TextView) findViewById(R.id.action_title);
