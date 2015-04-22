@@ -11,13 +11,13 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.cfa.kount.KountManager;
+import com.staples.mobile.cfa.util.CurrencyFormat;
+import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.analytics.Tracker;
-import com.staples.mobile.cfa.cart.CartApiManager;
-import com.staples.mobile.cfa.util.CurrencyFormat;
-import com.staples.mobile.cfa.widget.ActionBar;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
