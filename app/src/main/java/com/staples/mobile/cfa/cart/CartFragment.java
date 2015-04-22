@@ -8,6 +8,7 @@ import android.graphics.Interpolator;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -334,8 +335,13 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 }
                 break;
             case R.id.coupon_add_button:
-                showProgressIndicator();
-                CartApiManager.addCoupon(couponAdapter.getItem((Integer) view.getTag()).getCouponCodeToAdd(), this);
+                String couponCode = couponAdapter.getItem((Integer)view.getTag()).getCouponCodeToAdd();
+                if (TextUtils.isEmpty(couponCode)) {
+                    activity.showErrorDialog(R.string.missing_coupon_code);
+                } else {
+                    showProgressIndicator();
+                    CartApiManager.addCoupon(couponCode, this);
+                }
                 break;
             case R.id.reward_add_button:
                 showProgressIndicator();
