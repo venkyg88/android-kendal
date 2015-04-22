@@ -27,11 +27,12 @@
         android:id="@+id/action_show_cart"
         style="@style/ActionBarBadgeStyle"
         android:layout_gravity="center_vertical|right"/>
-    <Button
+    <TextView
         android:id="@+id/checkout_login_button"
-        style="@style/ActionBarButtonStyle"
+        style="@style/ActionBarTextStyle"
         android:layout_gravity="center_vertical|right"
-        android:text="@string/login_title"/>
+        android:text="@string/login_title"
+        android:textColor="@color/staples_red"/>
     <TextView
         android:id="@+id/cart_item_qty"
         style="@style/ActionBarTextStyle"
