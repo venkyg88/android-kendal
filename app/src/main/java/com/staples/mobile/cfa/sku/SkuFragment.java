@@ -21,6 +21,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
+import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -159,6 +160,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("SkuFragment:onCreateView(): Entry.");
 
         MainActivity activity = (MainActivity) getActivity();
         Resources res = activity.getResources();

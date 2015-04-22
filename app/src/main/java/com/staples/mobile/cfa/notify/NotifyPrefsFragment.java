@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.analytics.Tracker;
@@ -29,6 +30,7 @@ public class NotifyPrefsFragment extends Fragment implements CompoundButton.OnCh
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("NotifyPrefsFragment:onCreateView(): Entry.");
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.notify_prefs_fragment, container, false);
 
         RecyclerView list = (RecyclerView) view.findViewById(R.id.list);
