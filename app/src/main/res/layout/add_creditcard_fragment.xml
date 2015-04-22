@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/margin_16dp"
     android:paddingRight="@dimen/margin_16dp"
-    android:paddingTop="@dimen/verticalspacing_8dp">
+    android:paddingTop="@dimen/margin_16dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -73,7 +73,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/action_bar_half_margin">
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -86,8 +87,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/cancel_btn"
-            android:id="@+id/cancelCCBtn"
+            android:id="@+id/address_cancel"
             android:imeOptions="actionDone"
+            android:layout_marginRight="@dimen/margin_16dp"
 			android:textColor="@color/staples_black"
             android:layout_toLeftOf="@+id/addCCBtn"/>
         </RelativeLayout>
