@@ -5,9 +5,11 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -108,6 +110,8 @@ public class MainActivity extends Activity
     private AppConfigurator appConfigurator;
     private AlertDialog upgradeDialog;
 
+    private NetworkConnectivityBroadCastReceiver networkConnectivityBroadCastReceiver;
+
     public enum Transition {
         NONE (0, 0, 0, 0, 0),
         RIGHT(0, R.animator.right_push_enter, R.animator.right_push_exit, R.animator.right_pop_enter, R.animator.right_pop_exit),
@@ -171,6 +175,8 @@ public class MainActivity extends Activity
         // Support for Urban Airship
         AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(this);
         UAirship.takeOff(getApplication(), options, this);
+
+        networkConnectivityBroadCastReceiver = new NetworkConnectivityBroadCastReceiver();
     }
 
     public void onAirshipReady(UAirship airship) {
@@ -232,7 +238,8 @@ public class MainActivity extends Activity
     @Override
     protected void onResume() {
         super.onResume();
-        ensureActiveSession();
+        registerReceiver(networkConnectivityBroadCastReceiver,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         //@TODO So what happens ensure errors out! REach next line?
         //Analytics
         AdobeTracker.enableTracking(true); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
@@ -241,6 +248,7 @@ public class MainActivity extends Activity
     @Override
     protected void onPause() {
         super.onPause();
+        unregisterReceiver(networkConnectivityBroadCastReceiver);
         LocationFinder locationFinder = LocationFinder.getInstance(this);
         if (locationFinder != null) {
             locationFinder.saveRecentLocation();
@@ -301,6 +309,25 @@ public class MainActivity extends Activity
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        ensureActiveSession(); // this ensures active tokens (ignored unless 5 minutes has passed)
+        super.onAttachFragment(fragment);
+    }
+
+    // this receives notifications when network connectivity changes
+    public class NetworkConnectivityBroadCastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, true)) {
+                if (!isNetworkAvailable()) {
+                    showNetworkSettingsDialog();
+                }
+            }
+        }
+    }
+
 
     public void ensureActiveSession() {
         // if interval has passed since last check
