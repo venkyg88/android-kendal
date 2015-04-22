@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -76,6 +77,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Bundle
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("BundleFragment:onCreateView(): Entry.");
         Activity activity = getActivity();
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
 
