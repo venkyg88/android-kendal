@@ -91,6 +91,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("StoreFragment:onCreateView(): Entry.");
         View view;
 
         // Supports Google Play Services?

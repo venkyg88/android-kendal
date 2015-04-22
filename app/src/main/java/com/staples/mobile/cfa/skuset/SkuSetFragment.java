@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -52,6 +53,7 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("SkuSetFragment:onCreateView(): Entry.");
         String identifier = null;
         String imageUrl = null;
 

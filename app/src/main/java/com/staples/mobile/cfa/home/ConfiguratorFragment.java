@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.cfa.MainActivity;
@@ -145,6 +146,8 @@ public class ConfiguratorFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup container, Bundle bundle) {
 
+        Crittercism.leaveBreadcrumb("ConfiguratorFragment:onCreateView(): Entry.");
+
         if (LOGGING) Log.v(TAG, "ConfiguratorFragment:onCreateView():"
                         + " this[" + this + "]"
         );
@@ -180,6 +183,7 @@ public class ConfiguratorFragment extends Fragment {
 
                 ConfigItem configItem = (ConfigItem) view.getTag();
                 if (configItem != null) {
+                    Crittercism.leaveBreadcrumb("ConfiguratorFragment:OnClickListener.onClick(): configItem.title[" + configItem.title + "]");
                     Tracker.getInstance().trackActionForHomePage(configItem.title); // Analytics
                 }
                 activity.selectBundle(configItem.title, configItem.identifier);

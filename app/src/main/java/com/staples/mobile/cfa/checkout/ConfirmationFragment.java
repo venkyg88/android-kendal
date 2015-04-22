@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
@@ -62,6 +63,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("ConfirmationFragment:onCreateView(): Entry.");
         activity = (MainActivity) getActivity();
 
         // inflate and get child views

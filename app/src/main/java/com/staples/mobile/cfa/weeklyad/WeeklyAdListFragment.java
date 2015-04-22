@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.TabHost;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.cart.CartApiManager;
@@ -65,6 +66,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Crittercism.leaveBreadcrumb("WeeklyAdListFragment:onCreateView(): Entry.");
 
         Activity activity = getActivity();
         View view = inflater.inflate(R.layout.weekly_ad_list, container, false);

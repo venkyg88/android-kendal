@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -36,6 +37,7 @@ public class WeeklyAdInStoreFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Crittercism.leaveBreadcrumb("WeeklyAdInStoreFragment:onCreateView(): Entry.");
         View view = inflater.inflate(R.layout.weekly_ad_in_store, container, false);
 
         String title = null;
