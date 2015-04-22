@@ -26,7 +26,6 @@ import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.weeklyad.Data;
 import com.staples.mobile.common.access.easyopen.model.weeklyad.WeeklyAd;
-import com.staples.mobile.common.access.easyopen.model.weeklyad.Collection;
 import com.staples.mobile.common.access.easyopen.util.WeeklyAdImageUrlHelper;
 import com.staples.mobile.common.analytics.Tracker;
 
@@ -228,7 +227,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
         final Resources res = activity.getResources();
         Object tag;
         switch(view.getId()) {
-            case R.id.weekly_ad_list_cardview: // go to sku page
+            case R.id.weekly_ad_list_view: // go to sku page
                 tag = view.getTag();
                 if (tag instanceof WeeklyAdListAdapter.Item) {
                     WeeklyAdListAdapter.Item item = (WeeklyAdListAdapter.Item) tag;

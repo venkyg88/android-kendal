@@ -10,13 +10,12 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.easyopen.model.weeklyad.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapter.ViewHolder> {
+public class  WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapter.ViewHolder> {
     private static String TAG = WeeklyAdListAdapter.class.getSimpleName();
 
     public static class Item {
@@ -33,8 +32,9 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         public TextView title;
-        public PriceSticker priceSticker;
+        public TextView priceSticker;
         public TextView availability;
+        public TextView pricingUnit;
         ImageView image;
         View action;
         View whirlie;
@@ -42,7 +42,8 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
         public ViewHolder(View view) {
             super(view);
             title = (TextView)view.findViewById(R.id.title);
-            priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
+            priceSticker = (TextView) view.findViewById(R.id.pricing);
+            pricingUnit = (TextView) view.findViewById(R.id.pricing_unit);
             availability = (TextView)view.findViewById(R.id.availability);
             image = (ImageView)view.findViewById(R.id.image);
             action = view.findViewById(R.id.action);
@@ -92,9 +93,11 @@ public class WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapte
 
         vh.title.setText(item.title);
         if (item.literal!=null) {
-            vh.priceSticker.setLiterals(item.literal, null, null);
+            vh.priceSticker.setText(item.literal);
         } else {
-            vh.priceSticker.setPricing(item.finalPrice, 0.0f, item.unit, null);
+            vh.priceSticker.setText("$" + item.finalPrice);
+            vh.pricingUnit.setText(R.string.each);
+
         }
 
         if (item.inStoreOnly) {
