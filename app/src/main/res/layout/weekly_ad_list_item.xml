@@ -3,7 +3,7 @@
     android:id="@+id/weekly_ad_list_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/margin_16dp"
+    android:padding="@dimen/action_bar_half_margin"
     android:orientation="vertical"
     android:background="@color/staples_white">
     <TextView
@@ -21,8 +21,7 @@
         android:layout_width="@dimen/weekly_ad_list_item_image_width"
         android:layout_height="@dimen/weekly_ad_list_item_image_height"
         android:layout_gravity="center_horizontal"
-        android:paddingTop="@dimen/verticalspacing_8dp"
-        />
+        android:paddingTop="@dimen/verticalspacing_8dp" />
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
@@ -32,30 +31,44 @@
         android:maxLines="2"
         android:ellipsize="end"
         android:textColor="@color/staples_black"/>
-    <com.staples.mobile.cfa.widget.PriceSticker
-        android:id="@+id/pricing"
-        style="@style/SmallPriceSticker"/>
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/action_bar_half_margin">
-        <ImageView
-            android:id="@+id/action"
+        android:paddingTop="@dimen/action_bar_half_margin"
+        android:orientation="horizontal">
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/ic_add_black"
-            android:visibility="gone"/>
-        <ProgressBar
-            android:id="@+id/whirlie"
-            android:layout_width="@dimen/verticalspacing_48dp"
-            android:layout_height="@dimen/verticalspacing_48dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:paddingRight="@dimen/action_bar_half_margin"
-            android:paddingBottom="@dimen/action_bar_half_margin"
-            android:paddingLeft="@dimen/action_bar_half_margin"
-            android:visibility="gone"/>
-    </RelativeLayout>
+            android:id="@+id/pricing"
+            android:textSize="@dimen/fontsize_16sp"
+            android:textColor="@color/staples_red"
+            android:maxLines="2"
+            android:ellipsize="end"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/pricing_unit"
+            android:textSize="@dimen/fontsize_12sp"
+            android:textColor="@color/staples_dark_gray"
+            android:paddingLeft="@dimen/action_bar_quarter_margin"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/progress_bar_width"
+            android:layout_gravity="bottom"
+            android:paddingRight="@dimen/margin_16dp">
+            <ImageView
+                android:id="@+id/action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_add_black"
+                android:visibility="gone"/>
+            <ProgressBar
+                android:id="@+id/whirlie"
+                android:layout_width="@dimen/progress_bar_width"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:visibility="gone"/>
+        </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

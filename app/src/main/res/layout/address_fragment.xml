@@ -16,9 +16,27 @@
         android:id="@+id/shipping_address"
         layout="@layout/address_block" />
 
-    <Button
-        android:id="@+id/address_save"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/save_btn"/>
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/margin_16dp">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save_btn"
+            android:id="@+id/address_save"
+            android:imeOptions="actionDone"
+            android:textColor="@color/staples_black"
+            android:layout_alignParentRight="true"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel_btn"
+            android:id="@+id/address_cancel"
+            android:imeOptions="actionDone"
+            android:layout_marginRight="@dimen/margin_16dp"
+            android:textColor="@color/staples_black"
+            android:layout_toLeftOf="@+id/address_save"/>
+    </RelativeLayout>
 </com.staples.mobile.cfa.widget.AnimatorLayout>

@@ -3,7 +3,6 @@ package com.staples.mobile.cfa.profile;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,9 +48,10 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
         }
 
         addressBlock.init(false);
-        addressBlock.selectMode(address==null);
+        addressBlock.selectMode(address == null);
 
         view.findViewById(R.id.address_save).setOnClickListener(this);
+        view.findViewById(R.id.address_cancel).setOnClickListener(this);
         return (view);
     }
 
@@ -65,18 +65,25 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
         MainActivity activity = (MainActivity) getActivity();
         activity.hideSoftKeyboard(view);
 
-        if (addressBlock.validate()) {
-
-            activity.showProgressIndicator();
-            EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
-            UpdateAddress addr = addressBlock.getUpdateAddress();
-            if (addressId != null) {
-                addr.setAddressId(addressId);
-                easyOpenApi.updateMemberAddress(addr, this);
-            } else {
-                easyOpenApi.addMemberAddress(addr, this);
-            }
+        switch(view.getId()) {
+            case R.id.address_save:
+                if (addressBlock.validate()) {
+                    activity.showProgressIndicator();
+                    EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
+                    UpdateAddress addr = addressBlock.getUpdateAddress();
+                    if (addressId != null) {
+                        addr.setAddressId(addressId);
+                        easyOpenApi.updateMemberAddress(addr, this);
+                    } else {
+                        easyOpenApi.addMemberAddress(addr, this);
+                    }
+                }
+                break;
+            case R.id.address_cancel:
+                getFragmentManager().popBackStack();
+                break;
         }
+
     }
 
     @Override
