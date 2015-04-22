@@ -1,7 +1,8 @@
 -	ic_account_black		32	32	#333333	staples/account
 -	ic_add_shopping_cart_black	32	32	#333333	material/action/ic_add_shopping_cart_48px
--	ic_add_white			32	32	#ffffff	material/content/ic_add_48px
+-	ic_add_black			32	32	#333333	material/content/ic_add_48px
 -	ic_add_green			32	32	#6fab04	material/content/ic_add_48px
+-	ic_add_white			32	32	#ffffff	material/content/ic_add_48px
 -	ic_app				48	48	-	staples/app
 -	ic_arrow_back_black		32	32	#333333	material/navigation/ic_arrow_back_48px
 -	ic_arrow_drop_down		32	32	#333333	material/navigation/ic_arrow_drop_down_48px
