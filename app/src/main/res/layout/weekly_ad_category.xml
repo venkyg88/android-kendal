@@ -5,45 +5,56 @@
     android:background="@color/staples_off_white">
 
     <!--store info-->
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|bottom"
-        android:gravity="right"
-        android:padding="@dimen/margin_16dp"
-        android:orientation="vertical"
-        android:background="@color/staples_green"
-        >
+        android:padding="@dimen/verticalspacing_8dp">
+
+        <!--store image-->
+        <ImageView
+            android:id="@+id/store_locator_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_store_locator_black"
+            />
+
+        <!--store address-->
         <TextView
             android:id="@+id/store_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="right"
-            android:textColor="@color/staples_white"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/store_locator_image"
+            android:textColor="@color/staples_black"
             android:textStyle="bold"
-            android:textSize="@dimen/fontsize_20sp"
-            />
+            android:textSize="@dimen/fontsize_20sp" />
 
         <!-- "change store" link: including a little padding to increase touch area-->
         <TextView
             android:id="@+id/change_store"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:textColor="@color/staples_white"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:padding="8dp"
+            android:textColor="@color/staples_green"
             android:textSize="@dimen/fontsize_16sp"
-            android:text="@string/change_store"
+            android:text="@string/change_store" />
+
+    </RelativeLayout>
+
+    <!--date range-->
+    <TextView
+        android:id="@+id/date_range"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/staples_black"
+        android:textSize="@dimen/fontsize_18sp"
         />
-        <TextView
-            android:id="@+id/date_range"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/verticalspacing_8dp"
-            android:textColor="@color/staples_white"
-            android:textSize="@dimen/fontsize_20sp"
-            />
-    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/weekly_ad_categories_list"

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -120,7 +119,7 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
         removeCallbacks(startSuggest);
         if (autoMode) {
             String address = s.toString().trim();
-            if (address.length() > 3)
+            if (address.length() >= 3)
                 postDelayed(startSuggest, KEYDELAY);
         }
     }

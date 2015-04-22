@@ -4,14 +4,13 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.search.SearchBarView;
+import com.staples.mobile.common.analytics.Tracker;
 
 public class ActionBar extends LinearLayout {
     private static final String TAG = ActionBar.class.getSimpleName();
@@ -25,9 +24,9 @@ public class ActionBar extends LinearLayout {
         BROWSE   (true,  false, false, true,  true,  false, true,  false, false, R.string.browse_title),
         BUNDLE   (true,  false, false, true,  true,  false, true,  false, false, 0),
         CART     (true,  false, false, false, false, true,  false, false, false, R.string.cart_title),
-        COGUEST  (true,  false, false, false, false, false, false, true,  false, R.string.guest_checkout_title),
-        CONFIRM  (true,  false, false, false, false, false, true,  false, false, R.string.order_confirm_title),
-        COREG    (true,  false, false, false, false, false, false, false, false, R.string.checkout_title),
+        COGUEST  (false, false, false, false, false, false, false, true,  true,  R.string.guest_checkout_title),
+        COREG    (false, false, false, false, false, false, false, false, true,  R.string.checkout_title),
+        CONFIRM  (false, false, false, false, false, false, true,  false, true,  R.string.order_confirm_title),
         DEFAULT  (false, true,  true,  true,  true,  false, true,  false, false, 0),
         FEED     (true,  false, false, false, true,  false, true,  false, false, R.string.personal_feed_title),
         LINK     (true,  false, false, false, true,  false, true,  false, false, R.string.link_rewards_title),
@@ -98,7 +97,7 @@ public class ActionBar extends LinearLayout {
     private SearchBarView searchBar;
     private TextView cartQtyView;
     private BadgeImageView cartIconAction;
-    private Button checkoutSigninButton;
+    private TextView checkoutSigninButton;
     private ImageView optionIcon;
     private ImageView closeButton;
     private TextView titleView;
@@ -123,14 +122,14 @@ public class ActionBar extends LinearLayout {
 
     public void init(OnClickListener listener) {
         // Find elements
-        backButton = (ImageView) findViewById(R.id.back_button);
+        backButton = (ImageView) findViewById(R.id.up_button);
         leftDrawerAction = (ImageView) findViewById(R.id.action_left_drawer);
         logoView = (ImageView) findViewById(R.id.action_logo);
         feedIcon = (ImageView) findViewById(R.id.action_feed);
         searchBar = (SearchBarView) findViewById(R.id.search_view);
         cartQtyView = (TextView) findViewById(R.id.cart_item_qty);
         cartIconAction = (BadgeImageView) findViewById(R.id.action_show_cart);
-        checkoutSigninButton = (Button) findViewById(R.id.checkout_login_button);
+        checkoutSigninButton = (TextView) findViewById(R.id.checkout_login_button);
         optionIcon = (ImageView) findViewById(R.id.option_icon);
         closeButton = (ImageView) findViewById(R.id.close_button);
         titleView = (TextView) findViewById(R.id.action_title);
