@@ -13,10 +13,10 @@
         android:hint="@string/coupon_code_hint"
         android:inputType="number"
         android:imeOptions="actionDone"
-        android:maxLength="10"/>
+        android:maxLength="16"/>
     <Button
         android:id="@+id/coupon_add_button"
-        android:layout_width="80dp"
+        android:layout_width="85dp"
         android:layout_height="36dp"
         android:layout_alignParentRight="true"
         android:layout_gravity="center_vertical"
