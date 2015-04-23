@@ -96,17 +96,14 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                         expirationYearET.requestFocus();
                     }
 
-                }
-                else if (editable.length() == 2) {
+                } else if (editable.length() == 2) {
                     int month = Integer.parseInt(input);
                     if (month <= 12) {
                         expirationYearET.requestFocus();
-                    }
-                    else {
+                    } else {
                         activity.showErrorDialog("Please check the expiration month");
                     }
-                }
-                else {
+                } else {
                 }
 
             }
@@ -119,30 +116,6 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                     CreditCard.Type ccType = CreditCard.Type.detect(cardNumberET.getText().toString().replaceAll(" ", ""));
                     if (ccType != CreditCard.Type.UNKNOWN) {
                         cardImage.setImageResource(ccType.getImageResource());
-                    }
-                }
-            }
-        });
-
-        expirationYearET.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String input = editable.toString();
-                if (editable.length() == 2) {
-                    Calendar calendar = Calendar.getInstance();
-                    int currentYear = calendar.get(Calendar.YEAR)%100;
-                    int year = Integer.parseInt(input);
-
-                    if(year < currentYear) {
-                        activity.showErrorDialog("Please check the expiration year");
                     }
                 }
             }
@@ -218,24 +191,54 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         ActionBar.getInstance().setConfig(ActionBar.Config.ADDCARD);
     }
 
+    private boolean validateCC (String creditCardNumber, String expirationMonth, String expirationYear) {
+        CreditCard card = new CreditCard(null, creditCardNumber);
+        if(!card.isChecksumValid()) {
+            activity.showErrorDialog(R.string.checksum_validation);
+            return false;
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        int currentYear = calendar.get(Calendar.YEAR);
+        int currentMonth = calendar.get(Calendar.MONTH);
+
+        if(Integer.parseInt(expirationYear) <= currentYear && Integer.parseInt(expirationMonth) < currentMonth) {
+            activity.showErrorDialog("Please check the expiration month & year");
+            return false;
+        }
+
+        // validate card type
+        cardType = CreditCard.Type.detect(creditCardNumber).getName();
+        if (TextUtils.isEmpty(cardType)) {
+            activity.showErrorDialog(R.string.cc_number_unrecognized);
+            return false;
+        }
+
+        return true;
+    }
+
     @Override
     public void onClick(View view) {
         activity.hideSoftKeyboard(view);
 
         // ensure credit card number entered
         creditCardNumber = cardNumberET.getText().toString().replaceAll(" ", "");
+        expirationMonth = expirationMonthET.getText().toString();
+        expirationYear = expirationYearET.getText().toString();
+
         if (TextUtils.isEmpty(creditCardNumber)) {
             activity.showErrorDialog(R.string.all_fields_required);
             return;
         }
 
-        expirationMonth = expirationMonthET.getText().toString();
-        expirationYear = "20" + expirationYearET.getText().toString();
+        if(TextUtils.isEmpty(expirationMonth) && TextUtils.isEmpty(expirationYear)) {
+            activity.showErrorDialog(R.string.all_fields_required);
+            return;
+        }
 
-        // validate card type
-        cardType = CreditCard.Type.detect(creditCardNumber).getName();
-        if (TextUtils.isEmpty(cardType)) {
-            activity.showErrorDialog(R.string.cc_number_unrecognized);
+        expirationYear = "20" + expirationYear;
+
+        if(!validateCC(creditCardNumber, expirationMonth, expirationYear)) {
             return;
         }
 

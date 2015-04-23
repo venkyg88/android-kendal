@@ -3,7 +3,6 @@ package com.staples.mobile.cfa.profile;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,7 +64,7 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
         MainActivity activity = (MainActivity) getActivity();
         activity.hideSoftKeyboard(view);
 
-        if (addressBlock.validate()) {
+        if (addressBlock.validateAddress()) {
 
             activity.showProgressIndicator();
             EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
@@ -76,6 +75,9 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
             } else {
                 easyOpenApi.addMemberAddress(addr, this);
             }
+        } else {
+            activity.showErrorDialog(R.string.address_error_msg);
+            addressBlock.selectMode(false);
         }
     }
 

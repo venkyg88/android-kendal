@@ -191,9 +191,11 @@
     <string name="cc_number_unrecognized">Credit card number not recognized</string>
     <string name="cc_encryption_failure">Credit card encryption failed</string>
     <string name="all_fields_required">All fields are required. Please fill and try again</string>
+    <string name="checksum_validation">Credit card number invalid</string>
     <string name="card_ending_in">Card ending in</string>
     <string name="shipping_billing_text">Shipping/Billing</string>
     <string name="login_error_msg">The specified user name or password is not correct. Verify the information provided and log in again.</string>
+    <string name="address_error_msg">Please enter a valid address</string>
 
     <!-- Orders -->
     <string name="order">Order</string>
