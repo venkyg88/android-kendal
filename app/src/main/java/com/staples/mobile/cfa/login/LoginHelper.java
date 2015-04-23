@@ -312,7 +312,9 @@ public class LoginHelper {
             }
 
             private void handleSigningOut() {
-                setTokens(null, null, false); //set these to null since they're definitely unusable now
+                //set these to null since they're definitely unusable now. we have given false for guest login because we will call getGuestTokens later.
+                setTokens(null, null, true);
+
                 ProfileDetails.resetMember();
                 notifyListeners(false, false); // signing OUT
                 getGuestTokens(); // re-establish a guest login since user may try to add to cart after signing out

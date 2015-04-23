@@ -23,6 +23,7 @@ import com.staples.mobile.common.access.easyopen.model.member.UpdateAddress;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import retrofit.http.HEAD;
 
 public class AddressFragment extends Fragment implements Callback<AddressId>, View.OnClickListener
 {
@@ -67,18 +68,21 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
 
         switch(view.getId()) {
             case R.id.address_save:
-                if (addressBlock.validate()) {
-                    activity.showProgressIndicator();
-                    EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
-                    UpdateAddress addr = addressBlock.getUpdateAddress();
-                    if (addressId != null) {
-                        addr.setAddressId(addressId);
-                        easyOpenApi.updateMemberAddress(addr, this);
-                    } else {
-                        easyOpenApi.addMemberAddress(addr, this);
-                    }
+                if (addressBlock.validateAddress()) {
+
+                activity.showProgressIndicator();
+                EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
+                UpdateAddress addr = addressBlock.getUpdateAddress();
+                if (addressId != null) {
+                    addr.setAddressId(addressId);
+                    easyOpenApi.updateMemberAddress(addr, this);
+                } else {
+                    easyOpenApi.addMemberAddress(addr, this); }
+                } else {
+                    activity.showErrorDialog(R.string.address_error_msg);
+                    addressBlock.selectMode(false);
+                    break;
                 }
-                break;
             case R.id.address_cancel:
                 getFragmentManager().popBackStack();
                 break;

@@ -1,8 +1,6 @@
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -84,7 +82,6 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
 
     private boolean validateRequired(int id) {
         TextView view = (TextView) findViewById(id);
-        if (view==null || view.getVisibility()!=View.VISIBLE) return(true);
 
         String text = view.getText().toString().trim();
         if (text.length()==0) {
@@ -118,6 +115,18 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         valid &= validateRequired(R.id.lastName);
         valid &= validateRequired(R.id.phoneNumber);
         valid &= validateRequired(R.id.emailAddr);
+        valid &= validateRequired(R.id.address);
+        valid &= validateRequired(R.id.city);
+        valid &= validateUsState(R.id.state);
+        valid &= validateRequired(R.id.zipCode);
+        return (valid);
+    }
+
+    public boolean validateAddress() {
+        boolean valid = true;
+        valid &= validateRequired(R.id.firstName);
+        valid &= validateRequired(R.id.lastName);
+        valid &= validateRequired(R.id.phoneNumber);
         valid &= validateRequired(R.id.address);
         valid &= validateRequired(R.id.city);
         valid &= validateUsState(R.id.state);
