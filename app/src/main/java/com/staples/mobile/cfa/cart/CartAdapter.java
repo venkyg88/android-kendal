@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -38,7 +37,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     // widget listeners
     private View.OnClickListener qtyDeleteButtonListener;
-    private View.OnClickListener productImageListener;
+    private View.OnClickListener productClickListener;
     private QuantityEditor.OnQtyChangeListener qtyChangeListener;
 
     /** constructor */
@@ -46,11 +45,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                        int cartItemGroupLayoutResId,
                        QuantityEditor.OnQtyChangeListener qtyChangeListener,
                        View.OnClickListener qtyDeleteButtonListener,
-                       View.OnClickListener productImageListener) {
+                       View.OnClickListener productClickListener) {
         this.cartItemGroupLayoutResId = cartItemGroupLayoutResId;
         this.qtyChangeListener = qtyChangeListener;
         this.qtyDeleteButtonListener = qtyDeleteButtonListener;
-        this.productImageListener = productImageListener;
+        this.productClickListener = productClickListener;
         this.noPhoto = context.getResources().getDrawable(R.drawable.no_photo);
         this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -150,6 +149,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             ciVh.qtyWidget.setTag(pos);
             ciVh.deleteButton.setTag(pos);
             ciVh.imageView.setTag(pos);
+            ciVh.titleTextView.setTag(pos);
 //        ciVh.updateButton.setTag(pos);
 
             // associate qty widget with cart item
@@ -158,7 +158,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             // set widget listeners
             ciVh.qtyWidget.setOnQtyChangeListener(qtyChangeListener);
             ciVh.deleteButton.setOnClickListener(qtyDeleteButtonListener);
-            ciVh.imageView.setOnClickListener(productImageListener);
+            ciVh.imageView.setOnClickListener(productClickListener);
+            ciVh.titleTextView.setOnClickListener(productClickListener);
 //        ciVh.updateButton.setOnClickListener(qtyUpdateButtonListener);
 
             // set quantity (AFTER listeners set up above)
