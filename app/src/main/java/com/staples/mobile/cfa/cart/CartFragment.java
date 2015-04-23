@@ -187,9 +187,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         couponsRewardsLayout.setOnClickListener(this);
         rewardsLinkAcctButton.setOnClickListener(this);
 
-        // since cart/checkout calls require active session, this is a good time to refresh it if stale
-        activity.ensureActiveSession();
-
         return view;
     }
 
