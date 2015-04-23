@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -105,14 +106,19 @@ public class DataWrapper extends LinearLayout {
 
             // When it has a GridLayout
             RecyclerView.LayoutManager manager = recycle.getLayoutManager();
-            if (manager instanceof GridLayoutManager) {
+            if (manager instanceof GridLayoutManager ||
+                manager instanceof StaggeredGridLayoutManager) {
                 int n = 1;
                 if (minGridWidth>0) {
                     int viewWidth = View.MeasureSpec.getSize(widthSpec);
                     n = viewWidth / minGridWidth;
                     if (n<1) n = 1;
                 }
-                ((GridLayoutManager) manager).setSpanCount(n);
+                if (manager instanceof GridLayoutManager) {
+                    ((GridLayoutManager) manager).setSpanCount(n);
+                } else {
+                    ((StaggeredGridLayoutManager) manager).setSpanCount(n);
+                }
 
                 // Special handling for Layoutable
                 RecyclerView.Adapter adapter = recycle.getAdapter();
