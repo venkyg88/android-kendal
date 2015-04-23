@@ -21,7 +21,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/sku_padding_10">
 
             <!-- SKU Photos -->
             <LinearLayout
@@ -67,40 +68,46 @@
                 android:id="@+id/price_rating_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="@dimen/sku_padding_10">
+                android:orientation="horizontal">
                 <com.staples.mobile.cfa.widget.PriceSticker
                     android:id="@+id/pricing"
                     style="@style/LargePriceSticker"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:layout_marginLeft="@dimen/sku_padding_10"
+                    android:gravity="center_vertical|left"/>
                 <com.staples.mobile.cfa.widget.RatingStars
                     android:id="@+id/rating"
-                    style="@style/SmallRatingStars"/>
+                    style="@style/LargeRatingStars"
+                    android:layout_marginRight="@dimen/sku_padding_10"
+                    android:gravity="center_vertical|right"/>
             </LinearLayout>
 
             <!-- Sku Rebate -->
-            <TextView
-                android:id="@+id/rebate_note"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/rebate_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/action_bar_quarter_margin"
-                android:textSize="@dimen/fontsize_10sp"
-                android:text="@string/rebate_text"
-                android:textColor="@color/staples_dark_gray"
-                android:visibility="gone"/>
-            <TextView
-                android:id="@+id/rebate_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/sku_padding_10"
-                android:paddingTop="@dimen/action_bar_quarter_margin"
-                android:paddingLeft="@dimen/left_margin"
-                android:paddingRight="@dimen/right_margin"
-                android:paddingBottom="@dimen/action_bar_quarter_margin"
-                android:textColor="@color/staples_white"
-                android:background="@drawable/rounded_corner_red"
-                android:visibility="gone"/>
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="@dimen/sku_padding_10"
+                    android:textSize="@dimen/fontsize_10sp"
+                    android:text="@string/rebate_text"
+                    android:textColor="@color/staples_dark_gray"/>
+                <TextView
+                    android:id="@+id/rebate_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/sku_padding_10"
+                    android:paddingTop="@dimen/action_bar_quarter_margin"
+                    android:paddingLeft="@dimen/left_margin"
+                    android:paddingRight="@dimen/right_margin"
+                    android:paddingBottom="@dimen/action_bar_quarter_margin"
+                    android:textColor="@color/staples_white"
+                    android:background="@drawable/rounded_corner_red"/>
+            </LinearLayout>
 
             <!-- Shipping Logic Info -->
             <TextView
@@ -108,21 +115,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/fontsize_16sp"
-                android:gravity="center_vertical|left"
                 android:text="@string/overweight_warning"
-                android:paddingLeft="@dimen/sku_padding_5"
-                android:paddingTop="@dimen/sku_padding_2"
-                android:paddingBottom="@dimen/sku_padding_2"/>
-
+                android:layout_marginLeft="@dimen/sku_padding_10"
+                android:layout_marginRight="@dimen/sku_padding_10"
+                android:visibility="gone"/>
             <LinearLayout
                 android:id="@+id/add_on_layout"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:visibility="gone">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/sku_padding_10"
                     android:paddingLeft="@dimen/elevation_high"
                     android:paddingRight="@dimen/elevation_high"
                     android:paddingTop="@dimen/sku_padding_2"
@@ -135,6 +141,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/sku_padding_10"
                     android:textSize="@dimen/fontsize_16sp"
                     android:gravity="center_vertical|left"
                     android:text="@string/add_on_warming"
@@ -147,8 +154,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/sku_round_layout"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/sku_padding_10"
+                android:background="@drawable/sku_round_layout">
                 <TextView
                     style="@style/SkuSummaryHeader"
                     android:text="@string/description"/>
@@ -168,13 +176,11 @@
                     android:id="@+id/description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/sku_padding_10"
                     android:orientation="vertical"/>
                 <TextView
                     android:id="@+id/description_detail"
                     style="@style/SkuDetailHeader"
-                    android:text="@string/description_detail"
-                    android:background="@drawable/sku_divider"/>
+                    android:text="@string/description_detail"/>
             </LinearLayout>
 
             <!-- Specifications -->
@@ -188,20 +194,20 @@
                 <TextView
                     style="@style/SkuSummaryHeader"
                     android:text="@string/specifications"/>
-                <FrameLayout
+                <LinearLayout
                     android:id="@+id/specifications"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/sku_divider"/>
                 <TextView
                     android:id="@+id/specifications_detail"
                     style="@style/SkuDetailHeader"
-                    android:text="@string/specifications_detail"
-                    android:layout_gravity="bottom"/>
+                    android:text="@string/specifications_detail"/>
             </LinearLayout>
 
             <!-- Customer reviews -->
             <LinearLayout
-                android:id="@+id/reviews_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -233,7 +239,6 @@
                     android:id="@+id/reviews_detail"
                     style="@style/SkuDetailHeader"
                     android:text="@string/reviews_detail"
-                    android:background="@drawable/sku_divider"
                     android:visibility="gone"/>
             </LinearLayout>
 

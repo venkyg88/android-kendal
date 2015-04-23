@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,7 +78,7 @@ public class SkuTabAdapter extends PagerAdapter {
             case 2:
                 item.view = inflater.inflate(R.layout.sku_detail_list, container, false);
                 RecyclerView list = (RecyclerView) item.view.findViewById(R.id.list);
-                list.setLayoutManager(new GridLayoutManager(context, 1));
+                list.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
                 list.addItemDecoration(new HorizontalDivider(context));
                 list.setAdapter(reviewAdapter);
                 break;
