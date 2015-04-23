@@ -247,6 +247,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 reviews.addView(vh.itemView);
                 reviews.setVisibility(View.VISIBLE);
                 summary.findViewById(R.id.reviews_detail).setVisibility(View.VISIBLE);
+                summary.findViewById(R.id.rating).setOnClickListener(this);
             }
         }
 
@@ -285,13 +286,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         }
     }
 
-    private void addTab(TabHost.TabContentFactory dummy, Resources res, int resid, String tag) {
-        TabHost.TabSpec tab = details.newTabSpec(tag);
-        tab.setIndicator(res.getString(resid));
-        tab.setContent(dummy);
-        details.addTab(tab);
-    }
-
     // Formatters and builders
     private String formatNumbers(Resources res, Product product) {
         // Safety check
@@ -322,6 +316,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     }
 
     public static boolean buildDescription(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
+        if (parent.getChildCount()>0) return(true);
+
         boolean described = false;
         int count = 0;
 
@@ -359,32 +355,29 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     }
 
     protected static void addSpecifications(LayoutInflater inflater, ViewGroup parent, Product product, int limit) {
-        int rowCount = 0;
+        if (parent.getChildCount()>0) return; // Don't double fill!
 
-        // Add specification
         List<Description> specs = product.getSpecification();
-        if (specs != null) {
-            TableLayout table = (TableLayout) inflater.inflate(R.layout.sku_spec_table, parent, false);
-            parent.addView(table);
+        if (specs==null) return;
 
-            for (Description spec : specs) {
-                if (rowCount >= limit) {
-                    break;
+        int count = 0;
+        for (Description spec : specs) {
+            if (count >= limit) {
+                break;
+            }
+
+            String specName = Html.fromHtml(spec.getName()).toString();
+            String specValue = Html.fromHtml(spec.getText()).toString();
+
+            if (!specName.isEmpty() && !specValue.isEmpty()) {
+                View row = inflater.inflate(R.layout.sku_spec_item, parent, false);
+                if (count==0) {
+                    row.setBackground(null);
                 }
-
-                String specName = Html.fromHtml(spec.getName()).toString();
-                String specValue = Html.fromHtml(spec.getText()).toString();
-
-                if (!specName.isEmpty() && !specValue.isEmpty()) {
-                    TableRow skuSpecRow = (TableRow) inflater.inflate(R.layout.sku_spec_item, table, false);
-                    table.addView(skuSpecRow);
-
-                    // Set specification
-                    ((TextView) skuSpecRow.findViewById(R.id.specName)).setText(specName);
-                    ((TextView) skuSpecRow.findViewById(R.id.specValue)).setText(specValue);
-
-                    rowCount++;
-                }
+                parent.addView(row);
+                ((TextView) row.findViewById(R.id.specName)).setText(specName);
+                ((TextView) row.findViewById(R.id.specValue)).setText(specValue);
+                count++;
             }
         }
     }
@@ -585,6 +578,22 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         }
     }
 
+    private float findRebate(Pricing pricing) {
+        if (pricing==null) return(0.0f);
+        List<Discount> discounts = pricing.getDiscount();
+        if (discounts==null) return(0.0f);
+
+        float rebate = 0.0f;
+        for(Discount discount : discounts) {
+            String name = discount.getName();
+            if ("rebate".equals(name)) {
+                float amount = discount.getAmount();
+                if (amount > rebate) rebate = amount;
+            }
+        }
+        return(rebate);
+    }
+
     private void applyProduct(final Product product) {
         final MainActivity activity = (MainActivity) getActivity();
         if (activity==null) return;
@@ -711,35 +720,24 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         }
 
         // check if the product has discount
-        PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
-        Pricing pricing = product.getPricing().get(0);
-        List<Discount> discounts = pricing.getDiscount();
-        // Add pricing with rebate
-        if (discounts != null && discounts.size() > 0) {
-            for(Discount discount : discounts) {
-                if (discount.getAmount() > 0) {
-                    // Add pricing with rebate
-                    if (discount.getName().equals("rebate")) {
-                        summary.findViewById(R.id.rebate_note).setVisibility(View.VISIBLE);
-                        TextView rebateText = (TextView) summary.findViewById(R.id.rebate_text);
-                        rebateText.setVisibility(View.VISIBLE);
-                        float rebate = discount.getAmount();
-                        String rebateString = String.format("%.2f", rebate);
-                        rebateText.setText(String.valueOf("$" + rebateString + " " + res.getString(R.string.rebate)));
+        List<Pricing> pricings = product.getPricing();
+        if (pricings!=null && pricings.size()>0) {
+            Pricing pricing = pricings.get(0);
+            PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
+            float rebate = findRebate(pricing);
+            if (rebate>0.0f) {
+                summary.findViewById(R.id.rebate_layout).setVisibility(View.VISIBLE);
+                TextView rebateText = (TextView) summary.findViewById(R.id.rebate_text);
+                String text = String.format("$%.2f %s", rebate, res.getString(R.string.rebate));
+                rebateText.setText(text);
 
-                        float finalPrice = pricing.getFinalPrice();
-                        float wasPrice = pricing.getListPrice();
-                        String unit = pricing.getUnitOfMeasure();
-                        priceSticker.setPricing(finalPrice + rebate, wasPrice, unit, "");
-                        Log.d(TAG, "The product has rebate. sku:" + product.getSku() + ", rebate:" + rebate);
-                    }
-                    // Add pricing without rebate
-                    else {
-                        summary.findViewById(R.id.rebate_note).setVisibility(View.GONE);
-                        summary.findViewById(R.id.rebate_text).setVisibility(View.GONE);
-                        priceSticker.setPricing(pricing);
-                    }
-                }
+                float finalPrice = pricing.getFinalPrice();
+                float wasPrice = pricing.getListPrice();
+                String unit = pricing.getUnitOfMeasure();
+                priceSticker.setPricing(finalPrice + rebate, wasPrice, unit, "*");
+            } else {
+                summary.findViewById(R.id.rebate_layout).setVisibility(View.GONE);
+                priceSticker.setPricing(pricing);
             }
         }
 
@@ -772,7 +770,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         }
 
         createAdapters();
-                    reviewAdapter.fill(reviews);
+        reviewAdapter.fill(reviews);
         reviewAdapter.notifyDataSetChanged();
 
         int count = reviewAdapter.getItemCount();
@@ -885,6 +883,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 shiftToDetail(1);
                 break;
             case R.id.reviews_detail:
+            case R.id.rating:
                 shiftToDetail(2);
                 break;
             case R.id.add_to_cart:
