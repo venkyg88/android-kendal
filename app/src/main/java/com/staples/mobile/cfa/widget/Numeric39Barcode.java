@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2015 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
@@ -17,9 +13,6 @@ import com.staples.mobile.cfa.R;
 
 import java.util.HashMap;
 
-/**
- * Created by sutdi001 on 2/13/15.
- */
 public class Numeric39Barcode extends View {
 
     private static final String TAG = TextView.class.getSimpleName();

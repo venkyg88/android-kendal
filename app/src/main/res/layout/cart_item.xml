@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
-  -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="0dp">
@@ -40,89 +36,83 @@
             android:paddingBottom="0dp"/>
 
 		<!-- Shipping Logic -->
-		<RelativeLayout
-			android:id="@+id/shipping_and_price_layout"
-			android:layout_below="@id/cartitem_title"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-		>
+        <TextView
+            android:id="@+id/overweight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cartitem_title"
+            android:textSize="@dimen/fontsize_12sp"
+            android:paddingLeft="@dimen/left_margin"
+            android:paddingRight="@dimen/right_margin"
+            android:text="@string/overweight"
+            android:textColor="@color/staples_white"
+            android:background="@color/staples_green"/>
+        <TextView
+            android:id="@+id/addon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/overweight"
+            android:textSize="@dimen/fontsize_12sp"
+            android:paddingLeft="@dimen/left_margin"
+            android:paddingRight="@dimen/right_margin"
+            android:text="@string/add_on"
+            android:textColor="@color/staples_white"
+            android:background="@color/staples_green"/>
 
-			<TextView
-				android:id="@+id/overweight_warning"
-				android:background="@color/staples_green"
-				android:layout_alignParentLeft="true"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="5dp"
-				android:layout_marginTop="3dp"
-				android:layout_width="wrap_content"
-				android:paddingBottom="2dp"
-				android:paddingLeft="5dp"
-				android:paddingRight="5dp"
-				android:paddingTop="2dp"
-				android:text="@string/overweight"
-				android:textAllCaps="true"
-				android:textColor="@color/staples_white"
-				android:textSize="@dimen/fontsize_10sp"
-				android:textStyle="bold"
-				android:visibility="gone"
-			/>
-
-			<TextView
-				android:id="@+id/add_on_warning"
-				android:background="@color/staples_green"
-				android:layout_alignParentLeft="true"
-				android:layout_below="@id/overweight_warning"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="5dp"
-				android:layout_marginTop="3dp"
-				android:layout_width="wrap_content"
-				android:paddingBottom="2dp"
-				android:paddingLeft="5dp"
-				android:paddingRight="5dp"
-				android:paddingTop="2dp"
-				android:textAllCaps="true"
-				android:textColor="@color/staples_white"
-				android:textSize="@dimen/fontsize_10sp"
-				android:textStyle="bold"
-				android:visibility="gone"
-			/>
-
-		</RelativeLayout>
-
+        <!--price-->
 		<com.staples.mobile.cfa.widget.PriceSticker
 			android:id="@+id/cartitem_price"
-			android:layout_below="@id/shipping_and_price_layout"
+			android:layout_below="@id/overweight"
 			style="@style/SmallPriceSticker"
-			android:layout_marginBottom="11dp"
 			android:padding="0dp"/>
+
+        <TextView
+            android:id="@+id/rebate_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/action_bar_quarter_margin"
+            android:layout_below="@id/cartitem_price"
+            android:textSize="@dimen/fontsize_10sp"
+            android:text="@string/rebate_text"
+            android:textColor="@color/staples_dark_gray"
+            android:visibility="gone"/>
+        <TextView
+            android:id="@+id/rebate_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rebate_note"
+            android:paddingTop="@dimen/action_bar_quarter_margin"
+            android:paddingLeft="@dimen/left_margin"
+            android:paddingRight="@dimen/right_margin"
+            android:paddingBottom="@dimen/action_bar_quarter_margin"
+            android:textColor="@color/staples_white"
+            android:background="@drawable/rounded_corner_red"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/cartitem_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-			android:layout_below="@id/cartitem_price"
+			android:layout_below="@id/rebate_text"
             android:layout_alignParentLeft="true"
             android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/verticalspacing_8dp"
             android:padding="3dp"
             android:background="@color/staples_light_gray"
-            android:src="@drawable/ic_close_black_18dp"
-            />
+            android:src="@drawable/ic_close_black_18dp"/>
 
         <com.staples.mobile.cfa.widget.QuantityEditor
             android:id="@+id/cartitem_qty"
             style="@style/QtyEditorStyle"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-			android:layout_below="@id/shipping_and_price_layout"
+			android:layout_alignTop="@id/cartitem_delete"
             android:layout_alignParentRight="true"
             android:layout_gravity="center_vertical"
-            android:drawableRight="@drawable/ic_arrow_drop_down"
             android:textSize="@dimen/fontsize_14sp"
             android:textColor="@color/staples_black"
-            android:maxLength="4"
             app:maxQuantity="10"
             app:popupWidth="120dp"/>
-
     </RelativeLayout>
 
     <!--horizontal rule-->
@@ -137,5 +127,3 @@
         android:visibility="gone"/>
 
 </RelativeLayout>
-
-<!--</LinearLayout>-->

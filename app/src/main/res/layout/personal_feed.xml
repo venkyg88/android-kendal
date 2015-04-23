@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/staples_light_gray">
+    android:background="@color/staples_off_white">
 
     <ScrollView
         android:layout_width="wrap_content"
@@ -16,6 +16,36 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <!--empty cart messages-->
+            <LinearLayout
+                android:id="@+id/empty_feed_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/margin_16dp"
+                android:visibility="gone"
+                android:orientation="vertical"
+                >
+                <!--your feed is empty-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/verticalspacing_48dp"
+                    android:textColor="@color/staples_black"
+                    android:textSize="@dimen/fontsize_20sp"
+                    android:text="@string/feed_empty_message" />
+
+                <!--build your personal feed-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/verticalspacing_24dp"
+                    android:textColor="@color/staples_dark_gray"
+                    android:textSize="@dimen/fontsize_16sp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/feed_empty_interact_message"/>
+            </LinearLayout>
 
             <!-- Last Seen Products -->
             <LinearLayout
@@ -110,7 +140,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/staples_white"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
                 <TextView
                     android:id="@+id/clearance_title"
                     android:layout_width="wrap_content"
@@ -172,7 +203,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/staples_white"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
                 <TextView
                     android:id="@+id/daily_deal_title"
                     android:layout_width="wrap_content"

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.cart;
 
 import android.app.Activity;
@@ -24,7 +20,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder> {
 
     private static final String TAG = CouponAdapter.class.getSimpleName();
@@ -34,7 +29,6 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
     // widget listeners
     private View.OnClickListener addButtonListener;
     private View.OnClickListener deleteButtonListener;
-
 
     public CouponAdapter(View.OnClickListener addButtonListener, View.OnClickListener deleteButtonListener) {
         this.addButtonListener = addButtonListener;
@@ -68,7 +62,6 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
         return getItem(position).getItemType();
     }
 
-
     public CouponItem getItem(int position) {
         return couponItems.get(position);
     }
@@ -88,7 +81,6 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
         ViewHolder vh = new ViewHolder(v, viewType);
         return vh;
     }
-
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
@@ -139,7 +131,6 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
             vh.couponAddButton.setOnClickListener(addButtonListener);
         }
     }
-
 
     private void retrieveCouponCodeFromEditText(TextView v) {
         CouponItem couponItem = getItem((Integer) v.getTag());

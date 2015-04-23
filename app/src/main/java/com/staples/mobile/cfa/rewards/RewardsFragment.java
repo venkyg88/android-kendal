@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.rewards;
 
 import android.app.Fragment;
@@ -19,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.analytics.Tracker;
@@ -36,7 +33,6 @@ import com.staples.mobile.common.access.easyopen.model.member.YearToDateSpend;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
-
 
 public class RewardsFragment extends Fragment implements View.OnClickListener, CartApiManager.CartRefreshCallback {
     private static final String TAG = RewardsFragment.class.getSimpleName();
@@ -64,6 +60,7 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("RewardsFragment:onCreateView(): Entry.");
         Resources r = getResources();
         activity = (MainActivity)getActivity();
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.rewards_fragment, container, false);
@@ -112,7 +109,6 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
         ytdProgressBar = (ProgressBar) view.findViewById(R.id.ytd_progress);
         ytdMessageVw = (TextView) view.findViewById(R.id.ytd_message);
 
-
         // ink recycling fields
         int cartridgesRecycled = 0;
         int cartridgesLimit = 0;
@@ -124,7 +120,6 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
         float ytdSpendGoal = 0;
         float ytdProgress = 0;
         String ytdMessage = "";
-
 
         // if profile info available
         Member m = ProfileDetails.getMember();
@@ -140,7 +135,6 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
 //            rewardsNumberBarcodeVw.setText("*"+m.getRewardsNumber()+"*");
 //            rewardsNumberBarcodeVw.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/3of9_new.ttf"));
             rewardsNumberVw.setText(m.getRewardsNumber());
-
 
             // if ink recycling info
             if (m.getInkRecyclingDetails() != null && m.getInkRecyclingDetails().size() > 0) {
@@ -244,6 +238,5 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
             activity.hideProgressIndicator();
         }
     }
-
 
 }

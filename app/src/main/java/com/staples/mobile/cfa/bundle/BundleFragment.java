@@ -9,8 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -33,21 +33,24 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class BundleFragment extends Fragment implements Callback<Browse>, View.OnClickListener {
-    private static final String TAG = "BundleFragment";
+public class BundleFragment extends Fragment implements Callback<Browse>, BundleAdapter.OnFetchMoreData, View.OnClickListener {
+    private static final String TAG = BundleFragment.class.getSimpleName();
 
     private static final String TITLE = "title";
     private static final String IDENTIFIER = "identifier";
 
     private static final int MAXFETCH = 50;
+    private static final int LOOKAHEAD = 12;
 
+    private String title;
     private String identifier;
+    private RecyclerView list;
     private BundleAdapter adapter;
-    private boolean complete;
     private DataWrapper.State state;
+    private boolean complete;
+    private int page;
     private BundleItem.SortType fetchSort;
     private BundleItem.SortType displaySort;
-    private String title;
 
     public void setArguments(String title, String identifier) {
         Bundle args = new Bundle();
@@ -66,6 +69,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
             identifier = args.getString(IDENTIFIER);
         }
 
+        page = 1;
         displaySort = BundleItem.SortType.BESTMATCH;
         query();
         state = DataWrapper.State.LOADING;
@@ -73,13 +77,21 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("BundleFragment:onCreateView(): Entry.");
         Activity activity = getActivity();
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
-        RecyclerView list = (RecyclerView) view.findViewById(R.id.products);
+
+        list = (RecyclerView) view.findViewById(R.id.products);
         list.setLayoutManager(new GridLayoutManager(activity, 1));
         list.addItemDecoration(new HorizontalDivider(activity));
 
-        view.findViewById(R.id.open_sort).setOnClickListener(this);
+        // Disable sort on bundles
+        IdentifierType type = IdentifierType.detect(identifier);
+        if (type==IdentifierType.BUNDLE) {
+            view.findViewById(R.id.open_sort).setVisibility(View.GONE);
+        } else {
+            view.findViewById(R.id.open_sort).setOnClickListener(this);
+        }
 
         applyState(view);
         return(view);
@@ -89,8 +101,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         if (view==null) view = getView();
         if (view==null) return;
         DataWrapper wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
-        if (adapter!=null) {
-            RecyclerView list = (RecyclerView) wrapper.findViewById(R.id.products);
+        if (list!=null && list.getAdapter()==null && adapter!=null) {
             list.setAdapter(adapter);
         }
         wrapper.setState(state);
@@ -100,20 +111,25 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.BUNDLE, title);
-        Tracker.getInstance().trackStateForShopByCategory(); // Analytics
+    }
+
+    @Override
+    public void onFetchMoreData() {
+        page++;
+        query();
     }
 
     private void query() {
         fetchSort = displaySort;
-        complete = false;
+
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.getCategory(identifier, null, MAXFETCH, null, fetchSort.stringParam, this);
+        easyOpenApi.getCategory(identifier, page, MAXFETCH, null, fetchSort.stringParam, this);
     }
 
     @Override
     public void success(Browse browse, Response response) {
         Activity activity = getActivity();
-        if (activity==null) return;
+        if (!(activity instanceof MainActivity)) return;
 
         int count = processBrowse(browse);
         if (count==0) state = DataWrapper.State.EMPTY;
@@ -126,7 +142,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
     @Override
     public void failure(RetrofitError retrofitError) {
         Activity activity = getActivity();
-        if (activity==null) return;
+        if (!(activity instanceof MainActivity)) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
         ((MainActivity) activity).showErrorDialog(msg);
@@ -137,14 +153,14 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
 
     private int processBrowse(Browse browse) {
         if (browse==null) return(0);
-        complete = browse.isRecordSetComplete();
+        complete = (browse.getRecordSetTotal()<=page*MAXFETCH);
 
         List<Category> categories = browse.getCategory();
         if (categories==null || categories.size()<1) return(0);
         Category category = categories.get(0);
         if (category==null) return(0);
 
-        // Create adapter
+        // Create adaptor
         if (adapter==null) {
             adapter = new BundleAdapter(getActivity());
             adapter.setOnClickListener(this);
@@ -161,11 +177,16 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
         }
 
         adapter.notifyDataSetChanged();
-        return(adapter.getItemCount());
+
+        int count = adapter.getItemCount();
+        if (!complete && count>=MAXFETCH)
+            adapter.setOnFetchMoreData(this, count-LOOKAHEAD);
+        return(count);
     }
 
     private void performSort() {
         if (adapter==null) return;
+
         // If complete, a local sort will do
         if (complete) {
             // Can sort locally
@@ -178,8 +199,10 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
             if (comparator!=null) {
                 adapter.sort(comparator);
                 adapter.notifyDataSetChanged();
+                list.scrollToPosition(0);
                 return;
             }
+            else; // Best match desired, but fetch was on other criteria
         }
 
         // Need to perform a server re-query
@@ -187,9 +210,47 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
             adapter.clear();
             adapter.notifyDataSetChanged();
         }
+        page = 1;
         query();
         state = DataWrapper.State.LOADING;
         applyState(null);
+    }
+
+    private class AddToCart implements CartApiManager.CartRefreshCallback {
+        private BundleItem item;
+
+        private AddToCart(BundleItem item) {
+            MainActivity activity = (MainActivity) getActivity();
+
+            this.item = item;
+            item.busy = true;
+            activity.swallowTouchEvents(true);
+
+            adapter.notifyDataSetChanged();
+            CartApiManager.addItemToCart(item.identifier, 1, this);
+        }
+
+        @Override
+        public void onCartRefreshComplete(String errMsg) {
+            Activity activity = getActivity();
+            if (!(activity instanceof MainActivity)) return;
+
+            ((MainActivity) activity).swallowTouchEvents(false);
+            item.busy = false;
+            adapter.notifyDataSetChanged();
+
+            // if success
+            if (errMsg == null) {
+                ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
+                Tracker.getInstance().trackActionForAddToCartFromClass(CartApiManager.getCartProduct(item.identifier), 1);
+            } else {
+                // if non-grammatical out-of-stock message from api, provide a nicer message
+                if (errMsg.contains("items is out of stock")) {
+                    errMsg = activity.getResources().getString(R.string.avail_outofstock);
+                }
+                ((MainActivity) activity).showErrorDialog(errMsg);
+            }
+        }
     }
 
     @Override
@@ -200,43 +261,20 @@ public class BundleFragment extends Fragment implements Callback<Browse>, View.O
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
                     BundleItem item = (BundleItem) tag;
-                    ((MainActivity)getActivity()).selectSkuItem(item.title, item.identifier, false);
+                    ((MainActivity) getActivity()).selectSkuItem(item.title, item.identifier, false);
                     Tracker.getInstance().trackActionForClassItemSelection(adapter.getItemPosition(item), 1); // analytics
                 }
                 break;
             case R.id.bundle_action:
                 tag = view.getTag();
                 if (tag instanceof BundleItem) {
-                    final BundleItem item = (BundleItem) tag;
+                    BundleItem item = (BundleItem) tag;
                     Tracker.getInstance().trackActionForClassItemSelection(adapter.getItemPosition(item), 1); // analytics
                     if (item.type==IdentifierType.SKUSET) {
-                        final MainActivity activity = (MainActivity) getActivity();
+                        MainActivity activity = (MainActivity) getActivity();
                         activity.selectSkuItem(item.title, item.identifier, false);
                     } else {
-                        final MainActivity activity = (MainActivity) getActivity();
-                        final ImageView buttonVw = (ImageView)view;
-                        activity.showProgressIndicator();
-                        buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.ic_android));
-                        CartApiManager.addItemToCart(item.identifier, 1, new CartApiManager.CartRefreshCallback() {
-                            @Override
-                            public void onCartRefreshComplete(String errMsg) {
-                                activity.hideProgressIndicator();
-                                ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
-                                // if success
-                                if (errMsg == null) {
-                                    buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.added_to_cart));
-                                    activity.showNotificationBanner(R.string.cart_updated_msg);
-                                    Tracker.getInstance().trackActionForAddToCartFromClass(item.identifier, item.finalPrice, 1);
-                                } else {
-                                    buttonVw.setImageDrawable(buttonVw.getResources().getDrawable(R.drawable.ic_add_shopping_cart_black));
-                                    // if non-grammatical out-of-stock message from api, provide a nicer message
-                                    if (errMsg.contains("items is out of stock")) {
-                                        errMsg = activity.getResources().getString(R.string.avail_outofstock);
-                                    }
-                                    activity.showErrorDialog(errMsg);
-                                }
-                            }
-                        });
+                        new AddToCart(item);
                     }
                 }
                 break;

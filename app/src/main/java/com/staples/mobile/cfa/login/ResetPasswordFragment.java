@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.analytics.Tracker;
@@ -27,11 +28,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by Avinash Dodda.
- */
 public class ResetPasswordFragment extends Fragment implements View.OnClickListener{
-    private static final String TAG = "ResetPasswordFragment";
+    private static final String TAG = ResetPasswordFragment.class.getSimpleName();
     private MainActivity activity;
     EditText recoveryEmail;
     Button resetPasswordBtn;
@@ -39,6 +37,7 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("ResetPasswordFragment:onCreateView(): Entry.");
         activity = (MainActivity)getActivity();
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.reset_password_fragment, container, false);
         recoveryEmail = (EditText)view.findViewById(R.id.emailTV);

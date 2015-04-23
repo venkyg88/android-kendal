@@ -9,7 +9,7 @@
     android:background="@color/staples_white">
     <!-- ActionBar, these must be kept in priority order -->
     <ImageView
-        android:id="@+id/back_button"
+        android:id="@+id/up_button"
         style="@style/ActionBarIconStyle"
         android:layout_gravity="center_vertical|left"
         android:src="@drawable/ic_arrow_back_black"/>
@@ -21,17 +21,18 @@
     <ImageView
         android:id="@+id/close_button"
         style="@style/ActionBarIconStyle"
-        android:layout_gravity="center_vertical|right"
+        android:layout_gravity="center_vertical|left"
         android:src="@drawable/ic_close_black"/>
     <com.staples.mobile.cfa.widget.BadgeImageView
         android:id="@+id/action_show_cart"
         style="@style/ActionBarBadgeStyle"
         android:layout_gravity="center_vertical|right"/>
-    <Button
+    <TextView
         android:id="@+id/checkout_login_button"
-        style="@style/ActionBarButtonStyle"
+        style="@style/ActionBarTextStyle"
         android:layout_gravity="center_vertical|right"
-        android:text="@string/login_title"/>
+        android:text="@string/login_title"
+        android:textColor="@color/staples_red"/>
     <TextView
         android:id="@+id/cart_item_qty"
         style="@style/ActionBarTextStyle"
@@ -55,7 +56,7 @@
         android:id="@+id/action_logo"
         style="@style/ActionBarIconStyle"
         android:layout_gravity="center_vertical|left"
-        android:src="@drawable/ic_staples"/>
+        android:src="@drawable/ic_staples_logo"/>
     <TextView
         android:id="@+id/action_title"
         style="@style/ActionBarTextStyle"

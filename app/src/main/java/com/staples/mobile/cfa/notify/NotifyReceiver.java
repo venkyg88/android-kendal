@@ -19,7 +19,7 @@ import com.urbanairship.push.notifications.NotificationFactory;
 import com.urbanairship.util.NotificationIDGenerator;
 
 public class NotifyReceiver extends BaseIntentReceiver {
-    private static final String TAG = "NotifyReceiver";
+    private static final String TAG = NotifyReceiver.class.getSimpleName();
 
     private static final String APPLICATION = "com.staples.mobile.cfa";
 
@@ -31,6 +31,7 @@ public class NotifyReceiver extends BaseIntentReceiver {
     public static final String EXTRA_IDENTIFIER = APPLICATION +".IDENTIFIER";
     public static final String EXTRA_KEYWORD = APPLICATION +".KEYWORD";
     public static final String EXTRA_TITLE = APPLICATION +".TITLE";
+    public static final String EXTRA_MESSAGE = APPLICATION +".MESSAGE";
 
     private static final String URBAN_AIRSHIP_CHANNEL = "urbanAirshipChannel";
 
@@ -93,6 +94,7 @@ public class NotifyReceiver extends BaseIntentReceiver {
         if (savedId==null || !savedId.equals(channelId)) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString(URBAN_AIRSHIP_CHANNEL, channelId);
+            editor.apply();
             Log.d(TAG, "New Urban Airship channel " + channelId);
         }
     }
@@ -117,6 +119,7 @@ public class NotifyReceiver extends BaseIntentReceiver {
         Log.i(TAG, "User clicked notification. Alert: " + message.getAlert());
 
         // Parse payload
+        String userMessage = message.getAlert();
         String payload = message.getActionsPayload();
         Action note;
         try {
@@ -141,6 +144,7 @@ public class NotifyReceiver extends BaseIntentReceiver {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(EXTRA_SKU, content);
             if (title!=null) intent.putExtra(EXTRA_TITLE, title);
+            if (userMessage!=null) intent.putExtra(EXTRA_MESSAGE, userMessage);
             context.startActivity(intent);
             return(false);
         }
@@ -151,6 +155,7 @@ public class NotifyReceiver extends BaseIntentReceiver {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(EXTRA_IDENTIFIER, content);
             if (title!=null) intent.putExtra(EXTRA_TITLE, title);
+            if (userMessage!=null) intent.putExtra(EXTRA_MESSAGE, userMessage);
             context.startActivity(intent);
             return(false);
         }
@@ -161,6 +166,7 @@ public class NotifyReceiver extends BaseIntentReceiver {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(EXTRA_KEYWORD, content);
             if (title!=null) intent.putExtra(EXTRA_TITLE, title);
+            if (userMessage!=null) intent.putExtra(EXTRA_MESSAGE, userMessage);
             context.startActivity(intent);
             return(false);
         }

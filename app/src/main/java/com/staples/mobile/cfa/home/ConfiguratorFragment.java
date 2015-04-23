@@ -6,27 +6,21 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-//import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.cfa.store.StoreFragment;
@@ -59,7 +53,7 @@ import retrofit.client.Response;
 
 public class ConfiguratorFragment extends Fragment {
 
-    private static final String TAG = "ConfiguratorFragment";
+    private static final String TAG = ConfiguratorFragment.class.getSimpleName();
 
     private static final boolean LOGGING = false;
 
@@ -77,7 +71,6 @@ public class ConfiguratorFragment extends Fragment {
     private DeviceInfo deviceInfo;
 
     private int lastOrientation = Configuration.ORIENTATION_UNDEFINED;
-
     private View configFrameView;
     private LinearLayout configScrollLayout;
     private LinearLayout.LayoutParams subLayoutContainerLayoutParms;
@@ -114,20 +107,15 @@ public class ConfiguratorFragment extends Fragment {
 
     private View.OnClickListener itemOnClickListener;
 
-    private boolean retryGetConfig = true;
-
     // Personalized Message Bar UI Elements
     private LinearLayout login_info_layout;
     private LinearLayout login_layout;
     private LinearLayout reward_layout;
-    private FrameLayout message_layout;
+    private LinearLayout store_wrapper;
     private TextView rewardTextView;
     private TextView loginMessageTextView;
-    private TextView signInTextView;
-    private TextView signUpTextView;
     private TextView storeNameTextView;
     private TextView storeStatusTextView;
-    private TextView storeErrorInfoTextView;
     private TextView usernameTextView;
     private DataWrapper storeWrapper;
 
@@ -158,6 +146,8 @@ public class ConfiguratorFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup container, Bundle bundle) {
 
+        Crittercism.leaveBreadcrumb("ConfiguratorFragment:onCreateView(): Entry.");
+
         if (LOGGING) Log.v(TAG, "ConfiguratorFragment:onCreateView():"
                         + " this[" + this + "]"
         );
@@ -172,6 +162,8 @@ public class ConfiguratorFragment extends Fragment {
         configFrameView = layoutInflater.inflate(R.layout.config_frame, container, false);
 
         configScrollLayout = (LinearLayout) configFrameView.findViewById(R.id.configScrollLayout);
+
+        storeWrapper = (DataWrapper) configFrameView.findViewById(R.id.store_wrapper);
 
         subLayoutContainerLayoutParms =
                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, // width
@@ -191,6 +183,7 @@ public class ConfiguratorFragment extends Fragment {
 
                 ConfigItem configItem = (ConfigItem) view.getTag();
                 if (configItem != null) {
+                    Crittercism.leaveBreadcrumb("ConfiguratorFragment:OnClickListener.onClick(): configItem.title[" + configItem.title + "]");
                     Tracker.getInstance().trackActionForHomePage(configItem.title); // Analytics
                 }
                 activity.selectBundle(configItem.title, configItem.identifier);
@@ -1051,7 +1044,6 @@ public class ConfiguratorFragment extends Fragment {
     //////////////////////////////////////////////////////////////////////////////
     // Personalized Message Bar Methods created by Yongnan Zhou:
     private void getStoreInfo(){
-        storeWrapper = (DataWrapper) configFrameView.findViewById(R.id.store_wrapper);
         storeWrapper.setState(DataWrapper.State.LOADING);
 
         // Get current postal code
@@ -1061,9 +1053,7 @@ public class ConfiguratorFragment extends Fragment {
         if (TextUtils.isEmpty(postalCode)) {
             // display "no store nearby"
             storeWrapper.setState(DataWrapper.State.EMPTY);
-            String errorMessage = (String) getResources().getText(R.string.error_no_location_service);
-            Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
-            //activity.showErrorDialog(errorMessage, false);
+            Log.d(TAG, (String) getResources().getText(R.string.error_no_location_service));
         }
         else{
             Log.d(TAG, "Store zipcode:" + postalCode);
@@ -1074,6 +1064,9 @@ public class ConfiguratorFragment extends Fragment {
     private class StoreInfoCallback implements Callback<StoreQuery> {
         @Override
         public void success(StoreQuery storeQuery, Response response) {
+            Activity activity = getActivity();
+            if (!(activity instanceof MainActivity)) return;
+
             List<StoreData> storeData = storeQuery.getStoreData();
             // if there are any nearby stores
             if(storeData != null) {
@@ -1093,7 +1086,7 @@ public class ConfiguratorFragment extends Fragment {
                         TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
                         if (span != null) spans.add(span);
                     }
-                    String status = TimeSpan.formatStatus(getActivity(), spans, System.currentTimeMillis());
+                    String status = TimeSpan.formatStatus(activity, spans, System.currentTimeMillis());
                     int i = status.indexOf(' ');
                     if (i > 0) status = status.substring(0, i);
                     storeStatusTextView.setText(status);
@@ -1136,15 +1129,12 @@ public class ConfiguratorFragment extends Fragment {
         login_layout = (LinearLayout) configFrameView.findViewById(R.id.login_layout);
         login_info_layout = (LinearLayout) configFrameView.findViewById(R.id.login_info_layout);
         reward_layout = (LinearLayout) configFrameView.findViewById(R.id.reward_layout);
-        message_layout = (FrameLayout) configFrameView.findViewById(R.id.message_layout);
+        store_wrapper = (LinearLayout) configFrameView.findViewById(R.id.store_wrapper);
         rewardTextView = (TextView) configFrameView.findViewById(R.id.reward);
         loginMessageTextView = (TextView) configFrameView.findViewById(R.id.login_message);
-        signInTextView = (TextView) configFrameView.findViewById(R.id.login_sign_in);
-        signUpTextView = (TextView) configFrameView.findViewById(R.id.login_sign_up);
         usernameTextView = (TextView) configFrameView.findViewById(R.id.login_username);
         storeNameTextView = (TextView) configFrameView.findViewById(R.id.store_name);
         storeStatusTextView = (TextView) configFrameView.findViewById(R.id.store_status);
-        storeErrorInfoTextView = (TextView) configFrameView.findViewById(R.id.error_info);
     }
 
     private void updateMessageBar(){
@@ -1164,7 +1154,7 @@ public class ConfiguratorFragment extends Fragment {
                 login_layout.setVisibility(View.GONE);
                 reward_layout.setVisibility(View.VISIBLE);
                 rewardTextView.setText("$" + (int) rewards);
-                Log.d(TAG, "Rewards: " + rewards);
+                Log.d(TAG, "Rewards from message bar: " + rewards);
             }
             else{
                 loginMessageTextView.setText(R.string.welcome);
@@ -1174,6 +1164,15 @@ public class ConfiguratorFragment extends Fragment {
 
                 login_layout.setVisibility(View.VISIBLE);
                 reward_layout.setVisibility(View.GONE);
+
+                login_layout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Tracker.getInstance().trackActionForPersonalizedMessaging("Profile"); // Analytics
+                        MainActivity mainActivity = (MainActivity) getActivity();
+                        mainActivity.selectProfileFragment();
+                    }
+                });
             }
         }
         // Not Logged In
@@ -1186,7 +1185,7 @@ public class ConfiguratorFragment extends Fragment {
     }
 
     private void setMessageListeners(){
-        signInTextView.setOnClickListener(new View.OnClickListener() {
+        login_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Tracker.getInstance().trackActionForPersonalizedMessaging("Login"); // Analytics
@@ -1195,25 +1194,16 @@ public class ConfiguratorFragment extends Fragment {
             }
         });
 
-        signUpTextView.setOnClickListener(new View.OnClickListener() {
+        reward_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Tracker.getInstance().trackActionForPersonalizedMessaging("Register"); // Analytics
+                Tracker.getInstance().trackActionForPersonalizedMessaging("Reward"); // Analytics
                 MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.selectLoginFragment();
+                mainActivity.selectRewardsFragment();
             }
         });
 
-        storeNameTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Tracker.getInstance().trackActionForPersonalizedMessaging("Store"); // Analytics
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.selectFragment(new StoreFragment(), MainActivity.Transition.NONE, true);
-            }
-        });
-
-        storeErrorInfoTextView.setOnClickListener(new View.OnClickListener() {
+        store_wrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Tracker.getInstance().trackActionForPersonalizedMessaging("Store"); // Analytics

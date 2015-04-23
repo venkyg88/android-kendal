@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.checkout;
 
 import android.app.Fragment;
@@ -13,26 +9,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
-import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.cart.CartApiManager;
+import com.staples.mobile.cfa.kount.KountManager;
 import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.widget.ActionBar;
+import com.staples.mobile.common.access.easyopen.model.cart.Cart;
+import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-
 
 public abstract class CheckoutFragment extends Fragment implements View.OnClickListener {
     public static final String TAG = CheckoutFragment.class.getSimpleName();
 
     // bundle param keys
-    public static final String BUNDLE_PARAM_COUPONSREWARDS = "couponsRewards";
-    public static final String BUNDLE_PARAM_ITEMSUBTOTAL = "itemSubtotal";
-    public static final String BUNDLE_PARAM_PRETAXSUBTOTAL = "preTaxSubtotal";
-    public static final String BUNDLE_PARAM_DELIVERY_RANGE = "deliveryRange";
     public static final String BUNDLE_PARAM_TOTAL_HANDLING_COST = "totalHandlingCost";
     public static final String BUNDLE_PARAM_SHIPPING_CHARGE = "shippingCharge";
     public static final String BUNDLE_PARAM_TAX = "tax";
@@ -44,7 +38,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     private View submissionLayout;
     private ViewGroup checkoutEntryLayout;
     private TextView itemSubtotalVw;
-    private TextView couponsRewardsVw;
+//    private TextView couponsRewardsVw;
     private TextView oversizedShippingVw;
     private TextView oversizedShippingLabelVw;
     private TextView shippingChargeVw;
@@ -61,29 +55,15 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     private Float totalHandlingCost;
     private String shippingCharge;
 
-
     // data initialized from cart drawer
-    private Float couponsRewardsAmount;
+//    private Float couponsRewardsAmount;
     private Float itemSubtotal;
     private Float pretaxSubtotal;
     private String deliveryRange;
 
-
-    /**
-     * Create a new instance of RegisteredCheckoutFragment that will be initialized
-     * with the given arguments. Used when opening a fresh checkout session from the cart.
-     */
-    public static Bundle createInitialBundle(float couponsRewardsAmount, float itemSubtotal, float preTaxSubtotal, String deliveryRange) {
-        Bundle args = new Bundle();
-        args.putFloat(CheckoutFragment.BUNDLE_PARAM_COUPONSREWARDS, couponsRewardsAmount);
-        args.putFloat(CheckoutFragment.BUNDLE_PARAM_ITEMSUBTOTAL, itemSubtotal);
-        args.putFloat(CheckoutFragment.BUNDLE_PARAM_PRETAXSUBTOTAL, preTaxSubtotal);
-        args.putString(CheckoutFragment.BUNDLE_PARAM_DELIVERY_RANGE, deliveryRange);
-        return args;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("CheckoutFragment:onCreateView(): Entry.");
         Resources r = getResources();
 
         activity = (MainActivity)getActivity();
@@ -96,7 +76,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         submissionLayout = view.findViewById(R.id.co_submission_layout);
 //        taxLayout = view.findViewById(R.id.co_tax_layout);
         itemSubtotalVw = (TextView) view.findViewById(R.id.checkout_item_subtotal);
-        couponsRewardsVw = (TextView) view.findViewById(R.id.checkout_coupons_rewards);
+//        couponsRewardsVw = (TextView) view.findViewById(R.id.checkout_coupons_rewards);
 
         oversizedShippingVw = (TextView) view.findViewById(R.id.oversized_shipping);
         oversizedShippingLabelVw = (TextView) view.findViewById(R.id.oversized_shipping_label);
@@ -114,14 +94,19 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         // Set click listeners
         submissionLayout.setOnClickListener(this);
 
+//        couponsRewardsAmount = CartApiManager.getCouponsRewardsAdjustedAmount();
+        itemSubtotal = CartApiManager.getSubTotal();
+        pretaxSubtotal = CartApiManager.getPreTaxTotal();
+        deliveryRange = CartApiManager.getExpectedDeliveryRange();
+
         // get checkout info from bundle
         Bundle checkoutBundle = this.getArguments();
-        couponsRewardsAmount = checkoutBundle.getFloat(BUNDLE_PARAM_COUPONSREWARDS);
-        itemSubtotal = checkoutBundle.getFloat(BUNDLE_PARAM_ITEMSUBTOTAL);
-        pretaxSubtotal = checkoutBundle.getFloat(BUNDLE_PARAM_PRETAXSUBTOTAL);
         totalHandlingCost = checkoutBundle.getFloat(BUNDLE_PARAM_TOTAL_HANDLING_COST);
         shippingCharge = checkoutBundle.getString(BUNDLE_PARAM_SHIPPING_CHARGE);
-        deliveryRange = checkoutBundle.getString(BUNDLE_PARAM_DELIVERY_RANGE);
+        if (deliveryRange != null) {
+            deliveryRange += " " + getResources().getQuantityText(R.plurals.business_days,
+                    deliveryRange.equals("1")? 1 : 2);
+        }
         tax = checkoutBundle.getFloat(BUNDLE_PARAM_TAX, -1);
         if (tax == -1) {
             tax = null;
@@ -129,8 +114,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
         DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
 
+        // DLS: taking this out as per Tim (commenting-out for now just in case they ask for it back)
         // set coupons/rewards adjusted amount
-        couponsRewardsVw.setText(currencyFormat.format(couponsRewardsAmount));
+//        couponsRewardsVw.setText(currencyFormat.format(couponsRewardsAmount));
 
         // set the item subtotal
         itemSubtotalVw.setText(currencyFormat.format(itemSubtotal));
@@ -138,9 +124,17 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         // allow sub-classes to do their initialization
         initEntryArea(view);
 
+        // initiate Kount collection
+        Cart cart = CartApiManager.getCart();
+        if (cart!=null) {
+            String orderId = cart.getOrderId();
+            if (orderId!=null) {
+                KountManager.getInstance().collect(orderId);
+            }
+        }
+
         return view;
     }
-
 
     /** override this to handle other clicks, but call this super method */
     @Override
@@ -160,7 +154,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
     /** initializes variable entry area of checkout screen */
     protected abstract void initEntryArea(View frame);
-
 
     protected void startPrecheckout() {
         showProgressIndicator();
@@ -191,7 +184,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         });
     }
 
-
     protected void submitOrder(final PaymentMethod paymentMethod, final String emailAddress) {
         showProgressIndicator();
         CheckoutApiManager.submitOrder(paymentMethod.getCardVerificationCode(), new CheckoutApiManager.OrderSubmissionCallback() {
@@ -204,10 +196,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                 // if success
                 if (errMsg == null) {
 
-                    // analytics
+                    // analytics (do this before resetting cart below!)
                     Tracker.getInstance().trackStateForOrderConfirmation(orderNumber,
-                            CartApiManager.getCart(), couponsRewardsAmount, paymentMethod,
-                            Tracker.ShipType.SHIPTOHOME);
+                            CartApiManager.getCart(), paymentMethod, Tracker.ShipType.SHIPTOHOME);
 
                     // reset cart since empty after successful order submission
                     CartApiManager.resetCart(); // reset cart since empty after successful order submission
@@ -251,7 +242,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     protected void hideProgressIndicator() {
         activity.hideProgressIndicator();
     }
-
 
     /** updates the shipping charge and tax values (may be result of api response or a call from the subclass) */
     protected void setShippingAndTax(float totalHandlingCost, String shippingCharge, float tax){

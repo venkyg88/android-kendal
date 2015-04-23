@@ -20,7 +20,7 @@ import com.staples.mobile.common.analytics.Tracker;
 import java.util.List;
 
 public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    private static final String TAG = "LocationFinder";
+    private static final String TAG = LocationFinder.class.getSimpleName();
 
     private static final String PREFS_PROVIDER = "locationProvider";
     private static final String PREFS_LATITUDE = "locationLatitude";
@@ -108,6 +108,7 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
         if (client!=null) {
             Location latest = LocationServices.FusedLocationApi.getLastLocation(client);
             if ((latest != null) && latest != location) {
+                Tracker.getInstance().trackLocation(latest); // analytics
                 location = latest;
                 if (geocoder != null) {
                     new Resolver().start();

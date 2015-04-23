@@ -5,15 +5,19 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -24,6 +28,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.analytics.AdobeTracker;
 import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.bundle.BundleFragment;
@@ -35,6 +40,7 @@ import com.staples.mobile.cfa.checkout.GuestCheckoutFragment;
 import com.staples.mobile.cfa.checkout.RegisteredCheckoutFragment;
 import com.staples.mobile.cfa.feed.PersonalFeedFragment;
 import com.staples.mobile.cfa.home.ConfiguratorFragment;
+import com.staples.mobile.cfa.kount.KountManager;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
@@ -52,6 +58,7 @@ import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.skuset.SkuSetFragment;
 import com.staples.mobile.cfa.store.StoreFragment;
+import com.staples.mobile.cfa.UpgradeManager.UPGRADE_STATUS;
 import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.weeklyad.WeeklyAdByCategoryFragment;
 import com.staples.mobile.cfa.weeklyad.WeeklyAdInStoreFragment;
@@ -71,6 +78,7 @@ import com.urbanairship.UAirship;
 import com.urbanairship.push.PushManager;
 
 import java.util.Date;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -100,6 +108,9 @@ public class MainActivity extends Activity
     private boolean initialLoginComplete;
 
     private AppConfigurator appConfigurator;
+    private AlertDialog upgradeDialog;
+
+    private NetworkConnectivityBroadCastReceiver networkConnectivityBroadCastReceiver;
 
     public enum Transition {
         NONE (0, 0, 0, 0, 0),
@@ -136,7 +147,13 @@ public class MainActivity extends Activity
 
     @Override
     public void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
+        // DLS: do NOT pass in bundle to super.onCreate!!! if super tries to restore from previous
+        // state, it will try to attach fragments before our app configurator initialization completes
+        // and all kinds of errors will get thrown. I'm able to cause this to happen on my API 15 HTC
+        // Evo phone by turning the phone completely off while the Staples app is open, then turning
+        // it back on and re-opening the Staples app.
+        super.onCreate(null);
+        Crittercism.leaveBreadcrumb("MainActivity:onCreate(): Entry.");
         if (LOGGING) {
             Log.v(TAG, "MainActivity:onCreate():"
                     + " bundle[" + bundle + "]");
@@ -158,6 +175,8 @@ public class MainActivity extends Activity
         // Support for Urban Airship
         AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(this);
         UAirship.takeOff(getApplication(), options, this);
+
+        networkConnectivityBroadCastReceiver = new NetworkConnectivityBroadCastReceiver();
     }
 
     public void onAirshipReady(UAirship airship) {
@@ -169,6 +188,15 @@ public class MainActivity extends Activity
     @Override
     public void onNewIntent(Intent intent) {
         String action = intent.getAction();
+
+        // analytics
+        String userMessage = intent.getStringExtra(NotifyReceiver.EXTRA_MESSAGE);
+        if (!TextUtils.isEmpty(userMessage)) {
+            Tracker tracker = Tracker.getInstance();
+            if (tracker.isInitialized()) {
+                Tracker.getInstance().trackActionForPushMessaging(userMessage);
+            }
+        }
 
         if (NotifyReceiver.ACTION_OPEN_SKU.equals(action)) {
             String sku = intent.getStringExtra(NotifyReceiver.EXTRA_SKU);
@@ -195,7 +223,7 @@ public class MainActivity extends Activity
             if (keyword!=null) {
                 String title = intent.getStringExtra(NotifyReceiver.EXTRA_TITLE);
                 if (title==null) title = getResources().getString(R.string.sku_notification_title);
-                selectSearch(keyword);
+                selectSearch(title, keyword);
             }
             return;
         }
@@ -210,7 +238,8 @@ public class MainActivity extends Activity
     @Override
     protected void onResume() {
         super.onResume();
-        ensureActiveSession();
+        registerReceiver(networkConnectivityBroadCastReceiver,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         //@TODO So what happens ensure errors out! REach next line?
         //Analytics
         AdobeTracker.enableTracking(true); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
@@ -219,6 +248,7 @@ public class MainActivity extends Activity
     @Override
     protected void onPause() {
         super.onPause();
+        unregisterReceiver(networkConnectivityBroadCastReceiver);
         LocationFinder locationFinder = LocationFinder.getInstance(this);
         if (locationFinder != null) {
             locationFinder.saveRecentLocation();
@@ -243,7 +273,7 @@ public class MainActivity extends Activity
         // if we got past configurator initialization (otherwise LoginHelper constructor throws NPE)
         if (AppConfigurator.getInstance().getConfigurator() != null) {
             // unregister loginCompleteListener
-            new LoginHelper(this).unregisterLoginCompleteListener(this);
+            loginHelper.unregisterLoginCompleteListener(this);
             StaplesAppContext.getInstance().resetConfigurator(); // need to reset so a fresh network attempt is made, to enable correct handling of redirect error
         }
     }
@@ -260,7 +290,14 @@ public class MainActivity extends Activity
         builder.setMessage(R.string.error_network_connectivity);
         builder.setPositiveButton(R.string.network_settings, new DialogInterface.OnClickListener() {
             @Override public void onClick(DialogInterface dialog, int which) {
-                startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+                // if wifi-only device, go to wifi settings, otherwise go to more general wireless settings
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfoMobile = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+                if (networkInfoMobile == null) {
+                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                } else {
+                    startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+                }
                 MainActivity.this.finish();
             }
         });
@@ -272,6 +309,25 @@ public class MainActivity extends Activity
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        ensureActiveSession(); // this ensures active tokens (ignored unless 5 minutes has passed)
+        super.onAttachFragment(fragment);
+    }
+
+    // this receives notifications when network connectivity changes
+    public class NetworkConnectivityBroadCastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, true)) {
+                if (!isNetworkAvailable()) {
+                    showNetworkSettingsDialog();
+                }
+            }
+        }
+    }
+
 
     public void ensureActiveSession() {
         // if interval has passed since last check
@@ -298,7 +354,7 @@ public class MainActivity extends Activity
                             ApiError apiError = ApiError.getApiError(error);
                             if (apiError.isAuthenticationError()) {
                                 // reestablish session
-                                new LoginHelper(MainActivity.this).refreshSession();
+                                loginHelper.refreshSession();
                             } else if (apiError.isRedirectionError()) {
                                 showErrorDialog(R.string.error_redirect, true); // setting fatal=true which will close the app
                             }
@@ -314,6 +370,11 @@ public class MainActivity extends Activity
     public void hideSoftKeyboard(View view) {
         InputMethodManager keyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public void showSoftKeyboard(View view) {
+        InputMethodManager keyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        keyboard.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
     }
 
     public void showErrorDialog(int msgId) {
@@ -418,28 +479,124 @@ public class MainActivity extends Activity
         // if configurator successfully retrieved (from network OR persisted file)
         if (success) {
 
-            loginHelper = new LoginHelper(this);
-            loginHelper.registerLoginCompleteListener(this);
+            UpgradeManager upgradeManager = new UpgradeManager(this);
+            UpgradeManager.UPGRADE_STATUS upgradeStatus = upgradeManager.getUpgradeStatus();
+            String upgradeMsg = upgradeManager.getUpgradeMsg();
+            String upgradeUrl = upgradeManager.getUpgradeUrl();
 
-            // do login based on persisted cache if available
-            loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
-                @Override public void onProfileRefresh(Member member, String errMsg) {
-                    initialLoginComplete = true;
-                    showMainScreen();
+            if (upgradeStatus == UPGRADE_STATUS.FORCE_UPGRADE) {
+
+                doForcedUpgrade(upgradeMsg, upgradeUrl);
+
+            } else {
+
+                loginHelper = new LoginHelper(this);
+                loginHelper.registerLoginCompleteListener(this);
+
+                // do login based on persisted cache if available
+                loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
+                    @Override public void onProfileRefresh(Member member, String errMsg) {
+                        initialLoginComplete = true;
+                        showMainScreen();
+                    }
+                });
+
+                // initialize analytics
+                new AdobeTracker(this.getApplicationContext(), configurator.getAppContext().getDev()); // allow logging only for dev environment
+                // The call in onResume to enable tracking will be ignored during application creation
+                // because the configurator object is not yet available. Therefore, enable here.
+                AdobeTracker.enableTracking(true);
+
+                // set default zip code for now, update it as it changes
+                Tracker.getInstance().setZipCode("02139");
+
+                // initialize Kount fraud detection
+                KountManager.getInstance(this);
+
+                if (upgradeStatus == UPGRADE_STATUS.SUGGEST_UPGRADE) {
+                    doOptionalUpgrade(upgradeMsg, upgradeUrl);
                 }
-            });
-
-            // initialize analytics
-            new AdobeTracker(this.getApplicationContext(), configurator.getAppContext().getDev()); // allow logging only for dev environment
-            // The call in onResume to enable tracking will be ignored during application creation
-            // because the configurator object is not yet available. Therefore, enable here.
-            AdobeTracker.enableTracking(true);
-
-            // set default zip code for now, update it as it changes
-            Tracker.getInstance().setZipCode("02139");
-
+            }
         } else { // can't get configurator from network or from persisted file
+
             showErrorDialog(R.string.error_server_connection, true); // setting fatal=true which will close the app
+        }
+    }
+
+    private void doOptionalUpgrade(String upgradeMsg, final String upgradeUrl) {
+
+        if (LOGGING) {
+            Log.v(TAG, "MainActivity:doOptionalUpgrade(): Entry.");
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(upgradeMsg);
+
+        // Upgrade Button
+
+        builder.setPositiveButton(R.string.upgrade_btn,
+
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Initiate upgrade and DO NOT finish the activity.
+                        launchUpgrade(upgradeUrl, false);
+                    }
+                });
+
+        // Ignore Button
+
+        builder.setNegativeButton(R.string.ignore_btn,
+
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Ignore and allow user to continue.
+                    }
+                });
+
+        upgradeDialog = builder.create();
+        upgradeDialog.show();
+    }
+
+    private void doForcedUpgrade(String upgradeMsg, final String upgradeUrl) {
+
+        if (LOGGING) {
+            Log.v(TAG, "MainActivity:doForcedUpgrade(): Entry.");
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(upgradeMsg);
+
+        // Upgrade Button
+
+        builder.setPositiveButton(R.string.upgrade_btn,
+
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Initiate upgrade and finish the activity.
+                        launchUpgrade(upgradeUrl, true);
+                    }
+                });
+
+        upgradeDialog = builder.create();
+        upgradeDialog.show();
+    }
+
+    private void launchUpgrade(String upgradeUrl, boolean finishActivity) {
+
+        if (LOGGING) {
+            Log.v(TAG, "MainActivity:launchUpgrade(): Entry.");
+        }
+
+        upgradeDialog.dismiss();
+
+        Uri uriUrl = Uri.parse(upgradeUrl);
+        Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+        startActivity(launchBrowser);
+
+        if (finishActivity) {
+            MainActivity.this.finish();
         }
     }
 
@@ -506,25 +663,26 @@ public class MainActivity extends Activity
         mainLayout.showOverlay(false);
     }
 
-    // Navigation
-    public boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
-        return selectFragment(fragment, transition, push, null);
+    public void swallowTouchEvents(boolean swallow) {
+        mainLayout.swallowTouchEvents(swallow);
     }
 
-    public boolean selectFragment(Fragment fragment, Transition transition, boolean push, String tag) {
+    // Navigation
+    public boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
         // Make sure all drawers are closed
         drawerLayout.closeDrawers();
         ActionBar.getInstance().closeSearch();
+
+        String fragmentName = fragment.getClass().getSimpleName();
 
         // Swap Fragments
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         if (transition != null) transition.setAnimation(transaction);
-        transaction.replace(R.id.content, fragment, tag);
+        transaction.replace(R.id.content, fragment, fragmentName);
         if (push)
-            transaction.addToBackStack(fragment.getClass().getName());
+            transaction.addToBackStack(fragmentName);
         transaction.commitAllowingStateLoss();
-
         return(true);
     }
 
@@ -542,32 +700,32 @@ public class MainActivity extends Activity
         return selectFragment(cartFragment, Transition.RIGHT, true);
     }
 
-    public boolean selectOrderCheckout(String deliveryRange, float couponsRewardsAmount) {
-        LoginHelper loginHelper = new LoginHelper(this);
+    public boolean selectOrderCheckout(/*String deliveryRange, float couponsRewardsAmount*/) {
         if (loginHelper.isLoggedIn()) {
             CheckoutFragment fragment;
             // if logged in and have at least an address or a payment method, then use registered flow, otherwise use guest flow
-            if (!loginHelper.isGuestLogin() && (ProfileDetails.hasAddress() || ProfileDetails.hasPaymentMethod())) {
-                fragment = RegisteredCheckoutFragment.newInstance(couponsRewardsAmount,
-                        CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal(), deliveryRange);
+            if (!loginHelper.isGuestLogin()) {
+                fragment = RegisteredCheckoutFragment.newInstance();
             } else {
-                fragment = GuestCheckoutFragment.newInstance(couponsRewardsAmount,
-                        CartApiManager.getSubTotal(), CartApiManager.getPreTaxTotal(), deliveryRange);
+                fragment = GuestCheckoutFragment.newInstance();
             }
-            return selectFragment(fragment, Transition.RIGHT, true, CheckoutFragment.TAG);
+            return selectFragment(fragment, Transition.RIGHT, true);
         }
         return false;
     }
 
     public boolean selectOrderConfirmation(String orderNumber, String emailAddress,
                                            String deliveryRange, String total) {
+        // clear the back stack immediately (not asynchronously)
+        getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
         // open order confirmation fragment
         Fragment fragment = ConfirmationFragment.newInstance(orderNumber, emailAddress, deliveryRange, total);
-        return selectFragment(fragment, Transition.RIGHT, true, ConfirmationFragment.TAG);
+        return selectFragment(fragment, Transition.RIGHT, true);
     }
 
     public boolean selectStoreFinder() {
-        DrawerItem drawerItem = leftMenuAdapter.findItemByClass(StoreFragment.class);
+        DrawerItem drawerItem = leftMenuAdapter.findItemByClassName(StoreFragment.class.getSimpleName());
         return selectDrawerItem(drawerItem, Transition.RIGHT, true);
     }
 
@@ -580,42 +738,61 @@ public class MainActivity extends Activity
     }
 
     public boolean selectBundle(String title, String identifier) {
+        Crittercism.leaveBreadcrumb("MainActivity:selectBundle():"
+            + " identifier[" + identifier + "]"
+            + " title[" + title + "]"
+        );
         BundleFragment fragment = new BundleFragment();
         fragment.setArguments(title, identifier);
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
-    public boolean selectSearch(String keyword) {
+    public boolean selectSearch(String title, String keyword) {
+        Crittercism.leaveBreadcrumb("MainActivity:selectSearch():"
+            + " keyword[" + keyword + "]"
+            + " title[" + title + "]"
+        );
         SearchFragment fragment = new SearchFragment();
-        fragment.setArguments(keyword, keyword);
+        fragment.setArguments(title, keyword);
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
     public boolean selectSkuSet(String title, String identifier, String imageUrl) {
+        Crittercism.leaveBreadcrumb("MainActivity:selectSkuSet():"
+            + " identifier[" + identifier + "]"
+            + " title[" + title + "]"
+        );
         SkuSetFragment fragment = new SkuSetFragment();
         fragment.setArguments(title, identifier, imageUrl);
         return(selectFragment(fragment, Transition.UP, true));
     }
 
     public boolean selectSkuItem(String title, String identifier, boolean isSkuSetOriginated) {
+        Crittercism.leaveBreadcrumb("MainActivity:selectSkuItem():"
+            + " identifier[" + identifier + "]"
+            + " title[" + title + "]"
+        );
         SkuFragment fragment = new SkuFragment();
         fragment.setArguments(title, identifier, isSkuSetOriginated);
-
-        // set animated bar in sku page
-//        initAnimatedBar();
-
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
     public boolean selectWeeklyAd(String storeNo) {
+        Crittercism.leaveBreadcrumb("MainActivity:selectWeeklyAd():"
+            + " storeNo[" + storeNo + "]"
+        );
         WeeklyAdByCategoryFragment fragment = new WeeklyAdByCategoryFragment();
         fragment.setArguments(storeNo);
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
-    public boolean selectInStoreWeeklyAd(String imageUrl, String title, String price) {
+    public boolean selectInStoreWeeklyAd(String title, float price, String unit, String literal, String imageUrl, boolean inStoreOnly) {
+        Crittercism.leaveBreadcrumb("MainActivity:selectBundle():"
+            + " title[" + title + "]"
+            + " unit[" + unit + "]"
+        );
         WeeklyAdInStoreFragment fragment = new WeeklyAdInStoreFragment();
-        fragment.setArguments(imageUrl, title, price);
+        fragment.setArguments(title, price, unit, literal, imageUrl, inStoreOnly);
         return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
@@ -625,12 +802,20 @@ public class MainActivity extends Activity
     }
 
     public boolean selectLoginFragment() {
-        Fragment fragment = new LoginFragment();
-        return(selectFragment(fragment, Transition.UP, true));
+        return selectLoginFragment(false);
+    }
+
+    /**
+     * @param returnToCheckout set to true when login page is called from guest checkout page
+     * @return
+     */
+    public boolean selectLoginFragment(boolean returnToCheckout) {
+        Fragment fragment = LoginFragment.newInstance(returnToCheckout);
+        return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
     public boolean selectFeedFragment() {
-        DrawerItem item = leftMenuAdapter.findItemByClass(PersonalFeedFragment.class);
+        DrawerItem item = leftMenuAdapter.findItemByClassName(PersonalFeedFragment.class.getSimpleName());
         return(selectDrawerItem(item, Transition.RIGHT, true));
     }
 
@@ -677,22 +862,21 @@ public class MainActivity extends Activity
     @Override
     public void onBackPressed () {
         hideProgressIndicator();
-
-        // if on order confirmation fragment, don't go back to any of the checkout related pages, go to Home page
-        FragmentManager manager = getFragmentManager();
-        Fragment confirmationFragment = manager.findFragmentByTag(ConfirmationFragment.TAG);
-
-        if (confirmationFragment != null && confirmationFragment.isVisible()) {
-            selectDrawerItem(homeDrawerItem, Transition.RIGHT, true);
-        } else {
-            super.onBackPressed();
-        }
-
+        super.onBackPressed();
     }
 
     // Action bar & button clicks
     @Override
     public void onClick(View view) {
+
+        // get current fragment name
+        FragmentManager fragmentManager = getFragmentManager();
+        String currentFragmentName = null;
+        int currentBackStackIndex = fragmentManager.getBackStackEntryCount()-1;
+        if (currentBackStackIndex >= 0) {
+            currentFragmentName = fragmentManager.getBackStackEntryAt(currentBackStackIndex).getName();
+        }
+
         switch(view.getId()) {
             case R.id.action_left_drawer:
                 if (!drawerLayout.isDrawerOpen(leftMenu)) {
@@ -713,25 +897,53 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.checkout_login_button:
-                selectLoginFragment();
+                selectLoginFragment(true);
                 break;
 
             case R.id.close_button:
-                FragmentManager manager = getFragmentManager();
-                Fragment checkOutFragment = manager.findFragmentByTag(CheckoutFragment.TAG);
-
-                if (checkOutFragment != null && checkOutFragment.isVisible()) {
-                    selectShoppingCart();
+                hideSoftKeyboard(view);
+                if (currentFragmentName != null && (currentFragmentName.equals(GuestCheckoutFragment.class.getSimpleName()) ||
+                        currentFragmentName.equals(RegisteredCheckoutFragment.class.getSimpleName()))) {
+                    fragmentManager.popBackStack(CartFragment.class.getSimpleName(), 0);
                 } else {
-                    if (manager != null) {
-                        manager.popBackStack(); // this will take us back to one of the many places that could have opened this page
-                    }
+                    // at the moment order confirmation is the only other fragment that uses the Close button
+                    // and it has the backstack cleared upon opening, so going back one is appropriate.
+                    fragmentManager.popBackStack();
                 }
                 break;
 
-            case R.id.back_button:
+            case R.id.up_button:
+                hideSoftKeyboard(view);
                 if (!ActionBar.getInstance().closeSearch()) {
-                    onBackPressed();
+
+                    // Note that checkout page is handled by the close button above. If checkout had an Up
+                    // button, we'd need to check for that case and have it go to Cart.
+
+                    // see if current fragment is from the drawer menu
+                    DrawerItem drawerItem = null;
+                    if (currentFragmentName != null) {
+                        drawerItem = leftMenuAdapter.findItemByClassName(currentFragmentName);
+                    }
+
+                    // if on page reached via drawer-menu then go to first Home fragment found in backstack
+                    if (drawerItem != null) {
+                        int backstackIndex = currentBackStackIndex - 1;
+                        while (backstackIndex >= 0) {
+                            if (currentBackStackIndex >= 0) {
+                                if (ConfiguratorFragment.class.getSimpleName().equals(fragmentManager.getBackStackEntryAt(backstackIndex).getName())) {
+                                    fragmentManager.popBackStack(ConfiguratorFragment.class.getSimpleName(), 0);
+                                    break;
+                                }
+                            }
+                            backstackIndex--;
+                        }
+                        // if no Home found in backstack, clear the backstack all the way up to landing page
+                        if (backstackIndex < 0) {
+                            fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        }
+                    } else { // otherwise Up = Back
+                        fragmentManager.popBackStack();
+                    }
                 }
                 break;
 
@@ -745,6 +957,7 @@ public class MainActivity extends Activity
                 break;
         }
     }
+
 
     // Left drawer listview clicks
     @Override

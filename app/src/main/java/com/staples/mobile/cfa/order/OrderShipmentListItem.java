@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2015 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.order;
 
 import com.staples.mobile.common.access.easyopen.model.member.OrderStatus;
@@ -14,9 +10,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Created by sutdi001 on 3/3/15.
- */
 public class OrderShipmentListItem implements Serializable, Comparable<OrderShipmentListItem> {
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
 

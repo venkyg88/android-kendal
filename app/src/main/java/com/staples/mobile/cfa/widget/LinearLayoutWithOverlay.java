@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
@@ -11,8 +7,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 /**
- * Created by sutdi001 on 10/17/14.
- *
  * Class to swallow touch events of container and its children while overlay is visible
  */
 public class LinearLayoutWithOverlay extends LinearLayout {
@@ -33,12 +27,15 @@ public class LinearLayoutWithOverlay extends LinearLayout {
         super(context, attrs, defStyle);
     }
 
-
     public void showOverlay(boolean showIndicator) {
         if (overlayView != null) {
             overlayView.setVisibility(showIndicator ? View.VISIBLE : View.GONE);
         }
         this.swallowTouchEvents = showIndicator;
+    }
+
+    public void swallowTouchEvents(boolean swallow) {
+        this.swallowTouchEvents = swallow;
     }
 
     @Override
@@ -50,7 +47,6 @@ public class LinearLayoutWithOverlay extends LinearLayout {
         // returning true disables touch events on view and its children
         return swallowTouchEvents;
     }
-
 
     /** sets overlay view to use when showOverlay is called. this view must be contained
      * in the same FrameLayout as the layout defined by this class. */

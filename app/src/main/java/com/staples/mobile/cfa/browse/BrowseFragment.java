@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -33,7 +34,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class BrowseFragment extends Fragment  implements Callback<Browse>, View.OnClickListener {
-    private static final String TAG = "BrowseFragment";
+    private static final String TAG = BrowseFragment.class.getSimpleName();
 
     private static final int MAXFETCH = 50;
 
@@ -51,6 +52,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("BrowseFragment:onCreateView(): Entry.");
         Activity activity = getActivity();
         View view = inflater.inflate(R.layout.browse_frame, container, false);
         RecyclerView list = (RecyclerView) view.findViewById(R.id.products);
@@ -100,7 +102,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
     @Override
     public void success(Browse browse, Response response) {
         Activity activity = getActivity();
-        if (activity==null) return;
+        if (!(activity instanceof MainActivity)) return;
 
         int count = processCategories(browse);
         if (count==0) state = DataWrapper.State.NOMORE;
@@ -111,10 +113,10 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
     @Override
     public void failure(RetrofitError retrofitError) {
         Activity activity = getActivity();
-        if (activity == null) return;
+        if (!(activity instanceof MainActivity)) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
-        ((MainActivity)activity).showErrorDialog(msg);
+        ((MainActivity) activity).showErrorDialog(msg);
         Log.d(TAG, msg);
         state = DataWrapper.State.NOMORE;
         applyState(null);
@@ -135,9 +137,9 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
     }
 
     private int processCategories(Browse browse) {
-        if (browse==null) return(0);
+        if (browse==null || browse.getRecordSetTotal()==0) return(0);
         List<Category> categories = browse.getCategory();
-        if (categories==null || categories.size()<1) return(0);
+        if (categories==null || categories.size()==0) return(0);
         int count = 0;
 
         for(Category category : categories) {
@@ -187,7 +189,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
                             adapter.selectItem(item);
                             MainActivity activity = (MainActivity) getActivity();
                             if (activity != null) {
-                                Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy() + ":" + item.identifier); // analytics
+                                Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy() + ":" + item.title); // analytics
                                 activity.selectBundle(item.title, identifier);
                             }
                             break;

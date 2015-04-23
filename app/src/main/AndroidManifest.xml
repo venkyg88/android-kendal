@@ -1,13 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.staples.mobile.cfa"
-    android:versionCode="7"
-    android:versionName="Kendall">
+    package="com.staples.mobile.cfa">
     <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="22"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- This is will enhance the device ID for Kount -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -28,7 +28,7 @@
         <activity
             android:name=".MainActivity"
             android:launchMode="singleInstance"
-            android:windowSoftInputMode="adjustPan"
+            android:windowSoftInputMode="adjustResize"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -80,7 +80,6 @@
                 <category android:name="${applicationId}"/>
             </intent-filter>
         </receiver>
-
         <service android:name="com.urbanairship.push.PushService" android:label="Push Notification Service"/>
         <service android:name="com.urbanairship.richpush.RichPushUpdateService" android:label="Rich Push Update Service"/>
         <service android:name="com.urbanairship.actions.ActionService" android:label="Action Service"/>

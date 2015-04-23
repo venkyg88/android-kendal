@@ -1,8 +1,7 @@
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.os.Parcelable;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -19,19 +18,21 @@ import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.UpdateAddress;
 
 public class AddressBlock extends LinearLayout implements TextView.OnEditorActionListener, PlaceFieldView.OnPlaceDoneListener {
-    public static final String TAG = "AddressBlock";
+    private static final String TAG = AddressBlock.class.getSimpleName();
 
     private static final int[] addressFields = {R.id.firstName, R.id.lastName, R.id.phoneNumber, R.id.emailAddr,
                                                 R.id.apartment, R.id.city, R.id.state, R.id.zipCode};
     private static final int[] manualFields = {R.id.apartment, R.id.city, R.id.state, R.id.zipCode};
 
     public interface OnDoneListener {
-        public void onDone(AddressBlock addressBlock, boolean valid);
-        public void onNext(AddressBlock addressBlock);
+        void onDone(AddressBlock addressBlock, boolean valid);
+        void onNext(AddressBlock addressBlock);
     }
 
     private PlaceFieldView placeFieldView;
     private OnDoneListener listener;
+    EditText phoneNumberView;
+    PhoneNumberFormattingTextWatcher phoneNumberFormattingTextWatcher;
 
     public AddressBlock(Context context) {
         this(context, null, 0);
@@ -55,6 +56,13 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
             ((EditText) findViewById(id)).setOnEditorActionListener(this);
         }
 
+        // set up phone input mask
+        phoneNumberView = (EditText) findViewById(R.id.phoneNumber);
+        phoneNumberFormattingTextWatcher = new PhoneNumberFormattingTextWatcher();
+        phoneNumberView.addTextChangedListener(phoneNumberFormattingTextWatcher);
+        // profile calls init() after setting value, so need to call this here
+        phoneNumberFormattingTextWatcher.afterTextChanged(phoneNumberView.getEditableText()); // fake a text change to initialize format
+
         selectMode(true);
     }
 
@@ -74,7 +82,6 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
 
     private boolean validateRequired(int id) {
         TextView view = (TextView) findViewById(id);
-        if (view==null || view.getVisibility()!=View.VISIBLE) return(true);
 
         String text = view.getText().toString().trim();
         if (text.length()==0) {
@@ -115,6 +122,18 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         return (valid);
     }
 
+    public boolean validateAddress() {
+        boolean valid = true;
+        valid &= validateRequired(R.id.firstName);
+        valid &= validateRequired(R.id.lastName);
+        valid &= validateRequired(R.id.phoneNumber);
+        valid &= validateRequired(R.id.address);
+        valid &= validateRequired(R.id.city);
+        valid &= validateUsState(R.id.state);
+        valid &= validateRequired(R.id.zipCode);
+        return (valid);
+    }
+
     // Lower level methods
 
     private String extractField(int id) {
@@ -138,7 +157,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         ShippingAddress addr =new ShippingAddress();
         addr.setDeliveryFirstName(extractField(R.id.firstName));
         addr.setDeliveryLastName(extractField(R.id.lastName));
-        addr.setDeliveryPhone(extractField(R.id.phoneNumber));
+        addr.setDeliveryPhone(stripPhoneNumber(extractField(R.id.phoneNumber))); // remove characters added by input mask
         addr.setEmailAddress(extractField(R.id.emailAddr));
         addr.setReenterEmailAddress(extractField(R.id.emailAddr));
         addr.setDeliveryAddress1(extractField(R.id.address));
@@ -149,6 +168,13 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         return(addr);
     }
 
+    private String stripPhoneNumber(String phoneNumber) {
+        if (!TextUtils.isEmpty(phoneNumber)) {
+            return phoneNumber.replaceAll("[^0-9]", "");
+        }
+        return phoneNumber;
+    }
+
     public String getEmailAddress() {
         return(extractField(R.id.emailAddr));
     }
@@ -157,6 +183,9 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         injectField(R.id.firstName, addr.getFirstName());
         injectField(R.id.lastName, addr.getLastName());
         injectField(R.id.phoneNumber, addr.getPhone1());
+        if (phoneNumberFormattingTextWatcher != null) { // profile calls init() later
+            phoneNumberFormattingTextWatcher.afterTextChanged(phoneNumberView.getEditableText()); // fake a text change to initialize format
+        }
         injectField(R.id.address, addr.getAddress1());
         injectField(R.id.apartment, addr.getAddress2());
         injectField(R.id.city, addr.getCity());
@@ -168,7 +197,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         UpdateAddress addr = new UpdateAddress();
         addr.setFirstName(extractField(R.id.firstName));
         addr.setLastName(extractField(R.id.lastName));
-        addr.setPhoneNumber(extractField(R.id.phoneNumber));
+        addr.setPhoneNumber(stripPhoneNumber(extractField(R.id.phoneNumber))); // remove characters added by input mask
         addr.setAddressLine1(extractField(R.id.address));
         addr.setAddressLine2(extractField(R.id.apartment));
         addr.setCity(extractField(R.id.city));
@@ -181,7 +210,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
 
     @Override
     public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-        boolean valid = false;
+        boolean valid;
         switch(actionId) {
             case EditorInfo.IME_ACTION_NEXT:
                 if (listener!=null) {

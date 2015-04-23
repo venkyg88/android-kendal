@@ -66,7 +66,7 @@ import retrofit.client.Response;
 
 public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, View.OnClickListener, EditText.OnEditorActionListener {
-    private static final String TAG = "StoreFragment";
+    private static final String TAG = StoreFragment.class.getSimpleName();
 
     private static int FITSTORES = 5; // Number of stores to fit in initial view
     private static double EARTHRADIUS = 6371.0; // kilometers
@@ -91,6 +91,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("StoreFragment:onCreateView(): Entry.");
         View view;
 
         // Supports Google Play Services?
@@ -382,7 +383,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     @Override
     public void success(StoreQuery storeQuery, Response response) {
         Activity activity = getActivity();
-        if (activity==null) return;
+        if (!(activity instanceof MainActivity)) return;
 
         int n = processStoreQuery(storeQuery);
         if (n==0) showFailureDialog();
@@ -391,7 +392,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     @Override
     public void failure(RetrofitError retrofitError) {
         Activity activity = getActivity();
-        if (activity==null) return;
+        if (!(activity instanceof MainActivity)) return;
 
         showFailureDialog();
         String msg = ApiError.getErrorMessage(retrofitError);
@@ -610,7 +611,9 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
             case R.id.call_store2:
                 obj = view.getTag();
                 if (obj instanceof StoreItem) {
-                    dialStorePhone((StoreItem) obj);
+                    StoreItem storeItem = (StoreItem) obj;
+                    Tracker.getInstance().trackActionForCallStore(storeItem.storeNumber); // analytics
+                    dialStorePhone(storeItem);
                 }
                 break;
             case R.id.weekly_ad_link:
@@ -618,13 +621,16 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                 obj = view.getTag();
                 if (obj instanceof StoreItem) {
                     StoreItem storeItem = (StoreItem) obj;
+                    Tracker.getInstance().trackActionForStoreLocatorWeeklyAd(storeItem.storeNumber); // analytics
                     ((MainActivity)getActivity()).selectWeeklyAd(storeItem.storeNumber);
                 }
                 break;
             case R.id.directions:
                 obj = view.getTag();
                 if (obj instanceof StoreItem) {
-                    getStoreDirections((StoreItem) obj);
+                    StoreItem storeItem = (StoreItem) obj;
+                    Tracker.getInstance().trackActionForStoreDirections(storeItem.storeNumber); // analytics
+                    getStoreDirections(storeItem);
                 }
                 break;
         }

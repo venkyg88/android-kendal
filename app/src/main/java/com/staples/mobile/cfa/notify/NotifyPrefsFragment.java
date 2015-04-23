@@ -12,8 +12,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
+import com.staples.mobile.common.analytics.Tracker;
 import com.urbanairship.UAirship;
 import com.urbanairship.push.PushManager;
 
@@ -21,13 +23,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class NotifyPrefsFragment extends Fragment implements CompoundButton.OnCheckedChangeListener {
-    private static final String TAG = "NotifyPrefsFragment";
+    private static final String TAG = NotifyPrefsFragment.class.getSimpleName();
 
     private EditText aliasText;
     private TagItemAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("NotifyPrefsFragment:onCreateView(): Entry.");
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.notify_prefs_fragment, container, false);
 
         RecyclerView list = (RecyclerView) view.findViewById(R.id.list);
@@ -48,6 +51,7 @@ public class NotifyPrefsFragment extends Fragment implements CompoundButton.OnCh
     public void onResume() {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.NOTIFY);
+        Tracker.getInstance().trackStateForNotifPreferences(); // analytics
     }
 
     private void getTags() {

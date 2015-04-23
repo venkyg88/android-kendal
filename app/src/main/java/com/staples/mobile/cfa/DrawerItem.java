@@ -7,7 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 public class DrawerItem {
-    private static final String TAG = "DrawerItem";
+    private static final String TAG = DrawerItem.class.getSimpleName();
 
     public enum Type {
         FRAGMENT  (0, R.layout.drawer_fragment),

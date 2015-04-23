@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.rewards;
 
 import android.app.Fragment;
@@ -17,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.profile.ProfileDetails;
@@ -46,6 +43,7 @@ public class RewardsLinkingFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("RewardsLinkingFragment:onCreateView(): Entry.");
         activity = (MainActivity)getActivity();
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.rewards_linking_fragment, container, false);
         rewardsNumberVw = ((EditText)view.findViewById(R.id.rewards_card_number));
@@ -116,7 +114,6 @@ public class RewardsLinkingFragment extends Fragment {
             });
         }
     }
-
 
     private void showProgressIndicator() {
         if (activity != null) {

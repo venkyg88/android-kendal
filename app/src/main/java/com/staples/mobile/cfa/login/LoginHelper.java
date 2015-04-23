@@ -47,12 +47,10 @@ public class LoginHelper {
     // single static synchronized list of login complete listeners
     private static List<OnLoginCompleteListener> loginCompleteListeners = new Vector<OnLoginCompleteListener>();
 
-
     public LoginHelper(MainActivity activity) {
         this.activity = activity;
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
     }
-
 
     /** adds listener to be notified following successful login */
     public void registerLoginCompleteListener(OnLoginCompleteListener loginCompleteListener) {
@@ -164,8 +162,6 @@ public class LoginHelper {
             }
         }
     }
-
-
 
     public void getGuestTokens() {
         getGuestTokens(false);
@@ -316,7 +312,9 @@ public class LoginHelper {
             }
 
             private void handleSigningOut() {
-                setTokens(null, null, true); //set these to null since they're definitely unusable now
+                //set these to null since they're definitely unusable now. we have given false for guest login because we will call getGuestTokens later.
+                setTokens(null, null, true);
+
                 ProfileDetails.resetMember();
                 notifyListeners(false, false); // signing OUT
                 getGuestTokens(); // re-establish a guest login since user may try to add to cart after signing out
@@ -338,7 +336,6 @@ public class LoginHelper {
             persistLoginInfo(cachedUsername, cachedPassword, wcToken, wcTrustedToken);
         }
     }
-
 
     /** persists cached username and encrypted password */
     private void persistLoginInfo(String username, String password, String wcToken, String wcTrustedToken) {

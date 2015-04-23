@@ -6,28 +6,34 @@
 <com.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="@dimen/margin_16dp">
+    android:orientation="vertical">
 
-	<TextView android:id="@+id/autoCompleteAnchor"
-		android:layout_centerHorizontal="true"
-		android:layout_height="wrap_content"
-		android:layout_width="match_parent"
-		android:visibility="invisible"
-	/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/margin_16dp">
+        <!--shipping address-->
+        <TextView
+            style="@style/GraySubheading"
+            android:text="@string/shipping_addr"/>
+        <include layout="@layout/address_block" android:id="@+id/shipping_addr_layout" />
 
-    <!--shipping address-->
-    <TextView
-        style="@style/GraySubheading"
-        android:text="@string/shipping_addr"/>
-    <include layout="@layout/address_block" android:id="@+id/shipping_addr_layout" />
+    </LinearLayout>
 
     <!--payment method-->
     <TextView
         style="@style/GraySubheading"
         android:layout_marginTop="@dimen/verticalspacing_24dp"
-        android:text="@string/payment_method"/>
-    <include layout="@layout/add_creditcard_fragment" android:id="@+id/payment_method_layout" />
+        android:text="@string/payment_method"
+        android:padding="@dimen/margin_16dp"/>
+    <include layout="@layout/add_creditcard_fragment" android:id="@+id/payment_method_layout"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/margin_16dp">
 
     <!--widget for choosing billing addr to match shipping addr-->
     <LinearLayout
@@ -54,4 +60,6 @@
         style="@style/GraySubheading"
         android:text="@string/billing_addr"/>
     <include layout="@layout/address_block" android:id="@+id/billing_addr_layout" />
+
+    </LinearLayout>
 </com.staples.mobile.cfa.widget.AnimatorLayout>

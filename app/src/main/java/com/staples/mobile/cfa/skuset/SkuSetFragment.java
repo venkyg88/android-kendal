@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -30,7 +31,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, View.OnClickListener {
-    public static final String TAG = "SkuSetFragment";
+    private static final String TAG = SkuSetFragment.class.getSimpleName();
 
     private static final String TITLE = "title";
     private static final String IDENTIFIER = "identifier";
@@ -52,6 +53,7 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("SkuSetFragment:onCreateView(): Entry.");
         String identifier = null;
         String imageUrl = null;
 
@@ -95,7 +97,7 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
     @Override
     public void success(SkuDetails details, Response response) {
         Activity activity = getActivity();
-        if (activity==null) return;
+        if (!(activity instanceof MainActivity)) return;
 
         int count = processDetails(details);
         if (count==0) wrapper.setState(DataWrapper.State.EMPTY);
@@ -106,7 +108,7 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
     @Override
     public void failure(RetrofitError retrofitError) {
         Activity activity = getActivity();
-        if (activity==null) return;
+        if (!(activity instanceof MainActivity)) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
         ((MainActivity)activity).showErrorDialog(msg);

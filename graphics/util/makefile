@@ -2,10 +2,9 @@
 
 INKSCAPE='/Applications/Inkscape.app/Contents/Resources/bin/inkscape'
 TEMPFILE='../../temp.svg'
+ICON='../../app/src/main/res/drawable-hdpi/ic_app.png'
 
 all: $(ICON) splash
-
-ICON=../../app/src/main/res/drawable-hdpi/ic_app.png
 
 $(ICON): icons.txt
 	./convert

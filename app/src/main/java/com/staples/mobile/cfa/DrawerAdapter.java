@@ -11,9 +11,8 @@ import android.widget.TextView;
 import com.staples.mobile.cfa.browse.BrowseFragment;
 import com.staples.mobile.cfa.feed.PersonalFeedFragment;
 import com.staples.mobile.cfa.home.ConfiguratorFragment;
-import com.staples.mobile.cfa.login.LoginFragment;
-import com.staples.mobile.cfa.order.OrderFragment;
 import com.staples.mobile.cfa.notify.NotifyPrefsFragment;
+import com.staples.mobile.cfa.order.OrderFragment;
 import com.staples.mobile.cfa.profile.ProfileFragment;
 import com.staples.mobile.cfa.rewards.RewardsFragment;
 import com.staples.mobile.cfa.store.StoreFragment;
@@ -22,7 +21,7 @@ import com.staples.mobile.cfa.weeklyad.WeeklyAdByCategoryFragment;
 import java.util.ArrayList;
 
 public class    DrawerAdapter extends BaseAdapter {
-    private static final String TAG = "DrawerAdapter";
+    private static final String TAG = DrawerAdapter.class.getSimpleName();
 
     private MainActivity activity;
     private LayoutInflater inflater;
@@ -52,9 +51,9 @@ public class    DrawerAdapter extends BaseAdapter {
         return(array.get(position));
     }
 
-    public DrawerItem findItemByClass(Class fragmentClass) {
+    public DrawerItem findItemByClassName(String fragmentClassName) {
         for (DrawerItem item : array) {
-            if (item.fragmentClass.equals(fragmentClass)) {
+            if (item.fragmentClass.getSimpleName().equals(fragmentClassName)) {
                 return item;
             }
         }
@@ -118,7 +117,7 @@ public class    DrawerAdapter extends BaseAdapter {
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_browse_black, R.string.browse_title, BrowseFragment.class));
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_store_locator_black, R.string.store_locator_title, StoreFragment.class));
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_weekly_ad_black, R.string.weekly_ad_title, WeeklyAdByCategoryFragment.class));
-        array.add(new DrawerItem(DrawerItem.Type.ACCOUNT, activity, R.drawable.ic_account_black, R.string.account_title, LoginFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.ACCOUNT, activity, R.drawable.ic_account_black, R.string.account_title, ProfileFragment.class, false));
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_rewards_black, R.string.rewards_title, RewardsFragment.class, false)); // set initially disabled
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_orders_black, R.string.order_title, OrderFragment.class, false)); // set initially disabled
         array.add(new DrawerItem(DrawerItem.Type.PROFILE, activity, R.drawable.ic_profile_black, R.string.profile_title, ProfileFragment.class, false)); // set initially disabled

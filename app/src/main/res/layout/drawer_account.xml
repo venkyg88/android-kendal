@@ -17,5 +17,9 @@
         android:layout_weight="1"/>
     <TextView
         android:id="@+id/account_option"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:gravity="right"
+        android:padding="@dimen/action_bar_half_margin"
         style="@style/DrawerStyle"/>
 </LinearLayout>

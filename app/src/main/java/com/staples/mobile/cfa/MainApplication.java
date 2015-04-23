@@ -25,7 +25,7 @@ public class MainApplication
         implements AppConfigurator.AppConfiguratorCallback,
         Thread.UncaughtExceptionHandler {
 
-    private static final String TAG = "MainApplication";
+    private static final String TAG = MainApplication.class.getSimpleName();
 
     private static final boolean LOGGING = false;
 
@@ -50,6 +50,7 @@ public class MainApplication
 
         try {
             Crittercism.initialize(this, FlavorSpecific.CRITTERCISM_ID);
+            Crittercism.leaveBreadcrumb("MainApplication:onCreate(): Crittercism initialized.");
         } catch (Exception exception) {
 
             if (LOGGING) Log.e(TAG, "MainApplication:onCreate(): EXCEPTION[Exception]: Crittercism.initialize()"

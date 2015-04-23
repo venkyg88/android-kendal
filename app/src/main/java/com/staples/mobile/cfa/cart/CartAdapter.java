@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.cart;
 
 import android.content.Context;
@@ -41,7 +37,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     // widget listeners
     private View.OnClickListener qtyDeleteButtonListener;
-    private View.OnClickListener productImageListener;
+    private View.OnClickListener productClickListener;
     private QuantityEditor.OnQtyChangeListener qtyChangeListener;
 
     /** constructor */
@@ -49,11 +45,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                        int cartItemGroupLayoutResId,
                        QuantityEditor.OnQtyChangeListener qtyChangeListener,
                        View.OnClickListener qtyDeleteButtonListener,
-                       View.OnClickListener productImageListener) {
+                       View.OnClickListener productClickListener) {
         this.cartItemGroupLayoutResId = cartItemGroupLayoutResId;
         this.qtyChangeListener = qtyChangeListener;
         this.qtyDeleteButtonListener = qtyDeleteButtonListener;
-        this.productImageListener = productImageListener;
+        this.productClickListener = productClickListener;
         this.noPhoto = context.getResources().getDrawable(R.drawable.no_photo);
         this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -129,13 +125,31 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             ciVh.titleTextView.setText(cartItem.getDescription());
 
             // Set price
-            ciVh.priceSticker.setPricing(cartItem.getOrderItemPrice(), cartItem.getListPrice(), cartItem.getPriceUnitOfMeasure());
+            float rebate = cartItem.getRebate();
+            boolean rebatePresent = (rebate != 0);
+            float wasPrice = cartItem.getListPrice();
+            // if no list price, use final price as the was price. this handles the case when qty>1
+            // and also when there's an employee discount
+            if (wasPrice == 0) {
+                wasPrice = cartItem.getFinalPrice();
+            }
+            ciVh.priceSticker.setPricing(cartItem.getTotalOrderItemPrice(), wasPrice,
+                    cartItem.getPriceUnitOfMeasure(), rebatePresent? "*":null);
+            if (rebatePresent) {
+                ciVh.rebateNote.setVisibility(View.VISIBLE);
+                ciVh.rebateText.setVisibility(View.VISIBLE);
+                ciVh.rebateText.setText(currencyFormat.format(rebate) + " Rebate");
+            } else {
+                ciVh.rebateNote.setVisibility(View.GONE);
+                ciVh.rebateText.setVisibility(View.GONE);
+            }
 
             // associate position with each widget (position of card, and position within group)
             CartItemPosition pos = new CartItemPosition(position, i);
             ciVh.qtyWidget.setTag(pos);
             ciVh.deleteButton.setTag(pos);
             ciVh.imageView.setTag(pos);
+            ciVh.titleTextView.setTag(pos);
 //        ciVh.updateButton.setTag(pos);
 
             // associate qty widget with cart item
@@ -144,7 +158,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             // set widget listeners
             ciVh.qtyWidget.setOnQtyChangeListener(qtyChangeListener);
             ciVh.deleteButton.setOnClickListener(qtyDeleteButtonListener);
-            ciVh.imageView.setOnClickListener(productImageListener);
+            ciVh.imageView.setOnClickListener(productClickListener);
+            ciVh.titleTextView.setOnClickListener(productClickListener);
 //        ciVh.updateButton.setOnClickListener(qtyUpdateButtonListener);
 
             // set quantity (AFTER listeners set up above)
@@ -225,6 +240,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         ImageView imageView;
         TextView titleTextView;
         PriceSticker priceSticker;
+        TextView rebateNote;
+        TextView rebateText;
         QuantityEditor qtyWidget;
         View deleteButton;
 //        Button updateButton;
@@ -235,9 +252,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         CartItemViewHolder(View convertView) {
             imageView = (ImageView) convertView.findViewById(R.id.cartitem_image);
             titleTextView = (TextView) convertView.findViewById(R.id.cartitem_title);
-            overweightWarning = (TextView) convertView.findViewById(R.id.overweight_warning);
-            addOnWarning = (TextView) convertView.findViewById(R.id.add_on_warning);
+            overweightWarning = (TextView) convertView.findViewById(R.id.overweight);
+            addOnWarning = (TextView) convertView.findViewById(R.id.addon);
             priceSticker = (PriceSticker) convertView.findViewById(R.id.cartitem_price);
+            rebateNote = (TextView)convertView.findViewById(R.id.rebate_note);
+            rebateText = (TextView)convertView.findViewById(R.id.rebate_text);
             qtyWidget = (QuantityEditor) convertView.findViewById(R.id.cartitem_qty);
             deleteButton = convertView.findViewById(R.id.cartitem_delete);
 //            updateButton = (Button) convertView.findViewById(R.id.cartitem_update);

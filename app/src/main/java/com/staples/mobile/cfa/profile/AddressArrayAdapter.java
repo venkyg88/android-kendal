@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -29,11 +30,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by Avinash Dodda.
- */
 public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.OnClickListener{
-
 
     private final Context context;
     private final List<Address> values;
@@ -67,13 +64,22 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
 //                Character.toUpperCase(address.getCity().charAt(0)) +  address.getCity().substring(1) + ", " + address.getState().toUpperCase() + " " + address.getZipcode().substring(0,5) + "\n" +
 //                address.getPhone1();
         String tmpName = address.getFirstName()+" "+address.getLastName();
+
+        String formattedPhoneNumber;
+        if(address.getPhone1() != null && address.getPhone1().length() == 10){
+            formattedPhoneNumber = PhoneNumberUtils.formatNumber(address.getPhone1());
+        } else {
+            formattedPhoneNumber = address.getPhone1();
+        }
+
         StringBuilder addressBuf = new StringBuilder();
         addressBuf.append(address.getAddress1());
         if (!TextUtils.isEmpty(address.getAddress2())) { // conditionally append line 2 which may be an apt #
             addressBuf.append(" ").append(address.getAddress2());
         }
+
         addressBuf.append("\n").append(address.getCity()).append(", ").append(address.getState())
-                .append(" ").append(address.getZipCode()).append("\n").append(address.getPhone1());
+                .append(" ").append(address.getZipCode()).append("\n").append(formattedPhoneNumber);
 
         optionButton = (ImageButton) rowView.findViewById(R.id.listOptions);
         optionButton.setTag(position);
@@ -175,5 +181,4 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
         });
     }
 }
-
 

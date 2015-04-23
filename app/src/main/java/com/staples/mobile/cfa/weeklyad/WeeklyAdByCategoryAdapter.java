@@ -11,14 +11,10 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.access.easyopen.model.weeklyadbycategory.Data;
+import com.staples.mobile.common.access.easyopen.model.weeklyad.Data;
 
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * Created by Avinash Dodda.
- */
 
 public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCategoryAdapter.ViewHolder>{
     private ArrayList<Data> array;

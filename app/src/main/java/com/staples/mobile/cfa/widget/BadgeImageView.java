@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
@@ -18,8 +14,6 @@ import android.widget.ImageView;
 import com.staples.mobile.cfa.R;
 
 /**
- * Created by sutdi001 on 10/10/14.
- *
  * Custom image view that draws text on top of image
  * (code borrowed from SDK's LabelView example)
  */
@@ -52,7 +46,6 @@ public class BadgeImageView extends ImageView {
         circlePaint = new Paint();
         circlePaint.setStyle(Paint.Style.FILL);
         circlePaint.setColor(r.getColor(R.color.staples_white));
-
 
         // get params specified in layout
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BadgeImageView);
@@ -108,7 +101,6 @@ public class BadgeImageView extends ImageView {
         }
     }
 
-
     /**
      * Sets the text to display as the badge
      * @param text The text to display. This will be drawn as one line.
@@ -128,7 +120,6 @@ public class BadgeImageView extends ImageView {
         requestLayout();
         invalidate();
     }
-
 
     /**
      * Sets the text color for the badge

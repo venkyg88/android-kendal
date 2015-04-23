@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.cart;
 
 import android.text.TextUtils;
@@ -26,9 +22,6 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by sutdi001 on 12/30/14.
- */
 public class CartApiManager {
 
     public interface CartRefreshCallback {
@@ -56,7 +49,6 @@ public class CartApiManager {
     // special logic around these associate coupon codes
     private final static String ASSOCIATE_REWARDS_DISCOUNT_CODE = "52797";
     private final static String ASSOCIATE_REWARDS_STAPLES_DISCOUNT_CODE = "52798";
-
 
     /** gets cart  */
     public static void loadCart(final CartRefreshCallback cartRefreshCallback) {
@@ -86,6 +78,17 @@ public class CartApiManager {
                         }
                     }
                 });
+    }
+
+    public static Product getCartProduct(String sku) {
+        if (cart != null) {
+            for (Product product : cart.getProduct()) {
+                if (product.getSku().equals(sku)) {
+                    return product;
+                }
+            }
+        }
+        return null;
     }
 
     public static void resetCart() {
@@ -127,7 +130,6 @@ public class CartApiManager {
         });
     }
 
-
     /** update an item in the cart */
     public static void updateItemQty(String orderItemId, String sku, int qty, final CartRefreshCallback cartRefreshCallback) {
 
@@ -159,8 +161,6 @@ public class CartApiManager {
             }
         });
     }
-
-
 
     /** deletes an item from the cart */
     public static void deleteItem(String orderItemId, final CartRefreshCallback cartRefreshCallback) {
@@ -256,6 +256,60 @@ public class CartApiManager {
         return coupons;
     }
 
+    /** returns sum of adjusted amounts for rewards and coupons applied to cart */
+    public static float getCouponsRewardsAdjustedAmount() {
+        float totalAdjustedAmount = 0;
+        // cart-level coupons & rewards
+        if (cart != null && cart.getCoupon() != null) {
+            for (Coupon coupon : cart.getCoupon()) {
+                totalAdjustedAmount += coupon.getAdjustedAmount();
+            }
+        }
+        // sku-level
+        List<Coupon> manualSkuLevelCoupons = getManualSkuLevelCoupons();
+        for (Coupon coupon : manualSkuLevelCoupons) {
+            totalAdjustedAmount += coupon.getAdjustedAmount();
+        }
+        return totalAdjustedAmount;
+    }
+
+    public static String getExpectedDeliveryRange() {
+        int overallMinDays = -1;
+        int overallMaxDays = -1;
+        if (cart != null) {
+            for (Product product : cart.getProduct()) {
+                int minDays = 0;
+                int maxDays = 0;
+                String leadTimeDesc = product.getLeadTimeDescription();
+                int indexOfDash = leadTimeDesc.indexOf(" - ");
+                int indexOfText = leadTimeDesc.indexOf(" Business");
+                if (indexOfDash > 0) {
+                    minDays = Integer.parseInt(leadTimeDesc.substring(0, indexOfDash));
+                    maxDays = Integer.parseInt(leadTimeDesc.substring(indexOfDash+3, indexOfText));
+                } else {
+                    minDays = Integer.parseInt(leadTimeDesc.substring(0, indexOfText));
+                    maxDays = minDays;
+                }
+                if (overallMinDays == -1 || minDays < overallMinDays) {
+                    overallMinDays = minDays;
+                }
+                if (maxDays > overallMaxDays) {
+                    overallMaxDays = maxDays;
+                }
+            }
+        }
+
+        if (overallMinDays > -1) {
+            StringBuilder deliveryRange = new StringBuilder();
+            if (overallMaxDays > overallMinDays) {
+                deliveryRange.append(overallMinDays).append(" - ").append(overallMaxDays);
+            } else {
+                deliveryRange.append(overallMinDays);
+            }
+            return deliveryRange.toString();
+        }
+        return null;
+    }
 
     //set orderItemId to null when adding new items
     private static TypedJsonString createCartRequestBody(String orderItemId, String sku, int qty) {

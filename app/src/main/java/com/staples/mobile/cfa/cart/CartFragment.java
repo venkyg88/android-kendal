@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.cart;
 
 import android.animation.Animator;
@@ -11,6 +7,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +19,7 @@ import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.analytics.Tracker;
@@ -81,21 +79,24 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private static List<CartItem> cartListItems;
     private static List<CartItemGroup> cartItemGroups;
 
-    private int minExpectedBusinessDays;
-    private int maxExpectedBusinessDays;
     private float couponsRewardsAmount;
 
     // widget listeners
     private QtyDeleteButtonListener qtyDeleteButtonListener;
     private QtyChangeListener qtyChangeListener;
-    private ProductImageListener productImageListener;
+    private ProductClickListener productClickListener;
     //private QtyUpdateButtonListener qtyUpdateButtonListener;
 
     CouponWeightAnimator couponUpAnimator;
     CouponWeightAnimator couponDownAnimator;
+//    Animation mathStoryFadeInAnimation;
+//    Animation mathStoryFadeOutAnimation;
+//    FadeInOutListener mathStoryFadeInAnimationListener;
+//    FadeInOutListener mathStoryFadeOutAnimationListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("CartFragment:onCreateView(): Entry.");
         activity = (MainActivity) getActivity();
 
         // inflate and get child views
@@ -123,7 +124,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         // create widget listeners
         qtyChangeListener = new QtyChangeListener();
         qtyDeleteButtonListener = new QtyDeleteButtonListener();
-        productImageListener = new ProductImageListener();
+        productClickListener = new ProductClickListener();
 //        qtyUpdateButtonListener = new QtyUpdateButtonListener();
 
         // Initialize coupon listview
@@ -136,9 +137,17 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         couponUpAnimator = new CouponWeightAnimator(true);
         couponDownAnimator = new CouponWeightAnimator(false);
 
+//        // set up fade in/out animations
+//        mathStoryFadeInAnimation = AnimationUtils.loadAnimation(activity, R.anim.fade_in);
+//        mathStoryFadeOutAnimation = AnimationUtils.loadAnimation(activity, R.anim.fade_out);
+//        mathStoryFadeInAnimationListener = new FadeInOutListener(true);
+//        mathStoryFadeOutAnimationListener = new FadeInOutListener(false);
+//        mathStoryFadeInAnimation.setAnimationListener(mathStoryFadeInAnimationListener);
+//        mathStoryFadeOutAnimation.setAnimationListener(mathStoryFadeOutAnimationListener);
+
         // Initialize cart listview
         cartAdapter = new CartAdapter(activity, R.layout.cart_item_group, qtyChangeListener,
-                qtyDeleteButtonListener, productImageListener);
+                qtyDeleteButtonListener, productClickListener);
         cartAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
@@ -150,38 +159,33 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         cartListLayoutMgr = new LinearLayoutManager(activity);
         cartListVw.setLayoutManager(cartListLayoutMgr);
         cartListVw.setAdapter(cartAdapter);
-        cartListVw.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (dy > 5 && !isTopOfFirstItemVisible(recyclerView)) {
-                    onScrollDown();
-                } else if (dy < -5 || (dy < 0 && isTopOfFirstItemVisible(recyclerView))) {
-                    onScrollUp();
-                }
-            }
-
-            private void onScrollUp() {
-                if (cartShippingLayout.getVisibility() != View.VISIBLE) {
-                    cartShippingLayout.setVisibility(View.VISIBLE); // show math story
-                    couponsRewardsLayout.setVisibility(View.VISIBLE);
-                }
-            }
-            private void onScrollDown() {
-                if (cartShippingLayout.getVisibility() != View.GONE) {
-                    cartShippingLayout.setVisibility(View.GONE); // hide math story
-                    couponsRewardsLayout.setVisibility(View.GONE);
-                }
-            }
-        });
+//        cartListVw.setOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                if (dy > 5 && !isTopOfFirstItemVisible(recyclerView)) {
+//                    onScrollDown();
+//                } else if (dy < -5 || (dy < 0 && isTopOfFirstItemVisible(recyclerView))) {
+//                    onScrollUp();
+//                }
+//            }
+//
+//            private void onScrollUp() {
+//                if (couponsRewardsLayout.getVisibility() != View.VISIBLE && !mathStoryFadeInAnimationListener.isInProcess()) {
+//                    couponsRewardsLayout.startAnimation(mathStoryFadeInAnimation); // fade in
+//                }
+//            }
+//            private void onScrollDown() {
+//                if (couponsRewardsLayout.getVisibility() == View.VISIBLE && !mathStoryFadeOutAnimationListener.isInProcess()) {
+//                    couponsRewardsLayout.startAnimation(mathStoryFadeOutAnimation); // fade out
+//                }
+//            }
+//        });
 
         // Set click listeners
         cartProceedToCheckout.setOnClickListener(this);
         couponsRewardsLayout.setOnClickListener(this);
         rewardsLinkAcctButton.setOnClickListener(this);
-
-        // since cart/checkout calls require active session, this is a good time to refresh it if stale
-        activity.ensureActiveSession();
 
         return view;
     }
@@ -202,24 +206,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     public void onPause() {
         super.onPause();
         cartAdapter = null;
-    }
-
-    /** returns sum of adjusted amounts for rewards and coupons applied to cart */
-    private float getCouponsRewardsAdjustedAmount() {
-        float totalAdjustedAmount = 0;
-        Cart cart = CartApiManager.getCart();
-        // cart-level coupons & rewards
-        if (cart != null && cart.getCoupon() != null) {
-            for (Coupon coupon : cart.getCoupon()) {
-                totalAdjustedAmount += coupon.getAdjustedAmount();
-            }
-        }
-        // sku-level
-        List<Coupon> manualSkuLevelCoupons = CartApiManager.getManualSkuLevelCoupons();
-        for (Coupon coupon : manualSkuLevelCoupons) {
-            totalAdjustedAmount += coupon.getAdjustedAmount();
-        }
-        return totalAdjustedAmount;
     }
 
     /** Sets item count indicator on cart icon and cart drawer title */
@@ -307,28 +293,27 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 cartSubtotalLayout.setVisibility(View.GONE);
                 cartProceedToCheckout.setVisibility(View.GONE);
             } else {
-
-                if (isTopOfFirstItemVisible(cartListVw)) {
-                    couponsRewardsLayout.setVisibility(View.VISIBLE);
-                    cartShippingLayout.setVisibility(View.VISIBLE);
-                }
+//                if (isTopOfFirstItemVisible(cartListVw)) {
+                couponsRewardsLayout.setVisibility(View.VISIBLE);
+                cartShippingLayout.setVisibility(View.VISIBLE);
+//                }
                 cartSubtotalLayout.setVisibility(View.VISIBLE);
                 cartProceedToCheckout.setVisibility(View.VISIBLE);
             }
         }
     }
 
-    /** returns true if list view is scrolled to the very top */
-    private boolean isTopOfFirstItemVisible(RecyclerView listView) {
-        if (cartListLayoutMgr.findFirstVisibleItemPosition() == 0) {
-//            View view = listView.getChildAt(0); // might not get first child
-            View view = cartListLayoutMgr.findViewByPosition(0); // lesser performance
-            return view != null && view.getTop() >= -200; // giving it some margin since i've seen as low as -110 when top still visible after a scroll (e.g. when just enough content to allow scrolling)
-        }
-        return false;
-    }
+//    /** returns true if list view is scrolled to the very top */
+//    private boolean isTopOfFirstItemVisible(RecyclerView listView) {
+//        if (cartListLayoutMgr.findFirstVisibleItemPosition() == 0) {
+////            View view = listView.getChildAt(0); // might not get first child
+//            View view = cartListLayoutMgr.findViewByPosition(0); // lesser performance
+//            return view != null && view.getTop() >= -200; // giving it some margin since i've seen as low as -110 when top still visible after a scroll (e.g. when just enough content to allow scrolling)
+//        }
+//        return false;
+//    }
 
-    private boolean couponsShowing() {
+    private boolean couponsExpanded() {
         return (((LinearLayout.LayoutParams)couponListVw.getLayoutParams()).weight > 0);
     }
 
@@ -337,7 +322,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         activity.hideSoftKeyboard(view);
         switch(view.getId()) {
             case R.id.coupons_rewards_layout:
-                if (!couponsShowing()) {
+                if (!couponsExpanded()) {
                     couponUpAnimator.start();
                     Tracker.getInstance().trackStateForCartCoupons(); // analytics
                 } else {
@@ -345,8 +330,13 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 }
                 break;
             case R.id.coupon_add_button:
-                showProgressIndicator();
-                CartApiManager.addCoupon(couponAdapter.getItem((Integer) view.getTag()).getCouponCodeToAdd(), this);
+                String couponCode = couponAdapter.getItem((Integer)view.getTag()).getCouponCodeToAdd();
+                if (TextUtils.isEmpty(couponCode)) {
+                    activity.showErrorDialog(R.string.missing_coupon_code);
+                } else {
+                    showProgressIndicator();
+                    CartApiManager.addCoupon(couponCode, this);
+                }
                 break;
             case R.id.reward_add_button:
                 showProgressIndicator();
@@ -357,7 +347,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 CartApiManager.deleteCoupon(couponAdapter.getItem((Integer) view.getTag()).getCoupon().getCode(), this);
                 break;
             case R.id.action_checkout:
-                activity.selectOrderCheckout(getExpectedDeliveryRange(), couponsRewardsAmount);
+                activity.selectOrderCheckout();
                 break;
             case R.id.rewards_link_acct_button:
                 String rewardsNumber = ((EditText)getView().findViewById(R.id.rewards_card_number)).getText().toString();
@@ -396,29 +386,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         return cartListItems;
     }
 
-    public int getMinExpectedBusinessDays() {
-        return minExpectedBusinessDays;
-    }
-
-    public int getMaxExpectedBusinessDays() {
-        return maxExpectedBusinessDays;
-    }
-
-    public String getExpectedDeliveryRange() {
-        if (minExpectedBusinessDays > -1) {
-            StringBuilder deliveryRange = new StringBuilder();
-            if (maxExpectedBusinessDays > minExpectedBusinessDays) {
-                deliveryRange.append(minExpectedBusinessDays).append(" - ").append(maxExpectedBusinessDays);
-            } else {
-                deliveryRange.append(minExpectedBusinessDays);
-            }
-            deliveryRange.append(" ").append(getResources().getQuantityText(R.plurals.business_days,
-                    Math.max(minExpectedBusinessDays, maxExpectedBusinessDays)));
-            return deliveryRange.toString();
-        }
-        return null;
-    }
-
     /** updates item quantity */
     private void updateItemQty(final CartItem cartItem) {
         if (cartItem.isProposedQtyDifferent()) {
@@ -431,6 +398,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                     }
                 });
             } else {
+                Tracker.getInstance().trackActionForUpdateQtyFromCart(cartItem.getSku());
                 CartApiManager.updateItemQty(cartItem.getOrderItemId(), cartItem.getSku(), cartItem.getProposedQty(), this);
             }
         }
@@ -474,7 +442,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             // rather than call the api to refresh the profile, use the info from the cart to update coupon info in the profile
             ProfileDetails.updateRewardsFromCart(cart);
 
-            couponsRewardsAmount = getCouponsRewardsAdjustedAmount();
+            couponsRewardsAmount = CartApiManager.getCouponsRewardsAdjustedAmount();
 
             List<Product> products = cart.getProduct();
             if (products != null) {
@@ -501,8 +469,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 // calculate expected delivery times
                 String leadTimeDescription = null;
                 CartItemGroup itemGroup = null;
-                    minExpectedBusinessDays = -1;
-                    maxExpectedBusinessDays = -1;
                 for (int i = 0; i < cartItems.size(); i++) {
                     CartItem cartItem = cartItems.get(i);
                     // if lead time different from previous item's lead time, set expected delivery info
@@ -517,22 +483,13 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                         itemGroup.setExpectedDeliveryItemQty(itemGroup.getExpectedDeliveryItemQty() + cartItem.getQuantity());
                     }
                     itemGroup.addItem(cartItem);
-
-                    if (minExpectedBusinessDays == -1 ||
-                            cartItem.getMinExpectedBusinessDays() < minExpectedBusinessDays) {
-                        minExpectedBusinessDays = cartItem.getMinExpectedBusinessDays();
-                    }
-                    if (maxExpectedBusinessDays == -1 ||
-                            cartItem.getMaxExpectedBusinessDays() > maxExpectedBusinessDays) {
-                        maxExpectedBusinessDays = cartItem.getMaxExpectedBusinessDays();
-                    }
                 }
             }
 
             DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
 
             // set text of coupons
-            boolean couponsShowing = couponsShowing();
+            boolean couponsShowing = couponsExpanded();
             couponsRewardsValue.setText(currencyFormat.format(couponsRewardsAmount));
             boolean showCouponsAmount = (couponsRewardsAmount != 0 || couponsShowing);
             couponsRewardsValue.setVisibility(showCouponsAmount ? View.VISIBLE : View.GONE);
@@ -585,6 +542,29 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         cartItemGroups = itemGroups;
         setAdapterListItems();
     }
+
+//    class FadeInOutListener implements Animation.AnimationListener {
+//
+//        private boolean fadeIn;
+//        private boolean inProcess = false;
+//
+//        FadeInOutListener(boolean fadeIn) {
+//            this.fadeIn = fadeIn;
+//        }
+//
+//        public boolean isInProcess() {
+//            return inProcess;
+//        }
+//
+//        @Override public void onAnimationStart(Animation animation) {
+//            inProcess = true;
+//        }
+//        @Override public void onAnimationEnd(Animation animation) {
+//            couponsRewardsLayout.setVisibility(fadeIn? View.VISIBLE : View.GONE); // show/hide after animation finished
+//            inProcess = false;
+//        }
+//        @Override public void onAnimationRepeat(Animation animation) { }
+//    }
 
     class CouponWeightAnimator {
         ValueAnimator valueAnimator;
@@ -680,11 +660,13 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     }
 
     /** listener class for item deletion button */
-    class ProductImageListener implements View.OnClickListener {
+    class ProductClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition)view.getTag());
-            activity.selectSkuItem(cartItem.getDescription(), cartItem.getSku(), false);
+            if (cartAdapter != null && view.getTag() != null && view.getTag() instanceof CartAdapter.CartItemPosition) {
+                CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition) view.getTag());
+                activity.selectSkuItem(cartItem.getDescription(), cartItem.getSku(), false);
+            }
         }
     }
 

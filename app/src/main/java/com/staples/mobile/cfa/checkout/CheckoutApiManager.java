@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.checkout;
 
 import android.text.TextUtils;
@@ -30,27 +26,23 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by sutdi001 on 12/31/14.
- */
 public class CheckoutApiManager {
 
     public interface ApplyAddressCallback {
-        public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg);
+        void onApplyAddressComplete(String addressId, String errMsg, String infoMsg);
     }
 
     public interface ApplyPaymentMethodCallback {
-        public void onApplyPaymentMethodComplete(String paymentMethodId, String authorized, String errMsg);
+        void onApplyPaymentMethodComplete(String paymentMethodId, String authorized, String errMsg);
     }
 
     public interface PrecheckoutCallback {
-        public void onPrecheckoutComplete(Float totalHandlingCost, String shippingCharge, Float tax, String errMsg, String infoMsg);
+        void onPrecheckoutComplete(Float totalHandlingCost, String shippingCharge, Float tax, String errMsg, String infoMsg);
     }
 
     public interface OrderSubmissionCallback {
-        public void onOrderSubmissionComplete(String orderId, String orderNumber, String errMsg);
+        void onOrderSubmissionComplete(String orderId, String orderNumber, String errMsg);
     }
-
 
     /** applies shipping address to cart  */
     public static void applyShippingAddress(ShippingAddress shippingAddress, final ApplyAddressCallback applyAddressCallback) {
@@ -225,14 +217,12 @@ public class CheckoutApiManager {
                     }
                 });
 
-
             }
 
             @Override
             public void failure(RetrofitError retrofitError) {
                 doCallback(precheckoutCallback, null, null, null, ApiError.getErrorMessage(retrofitError), null);
             }
-
 
             private void doCallback(PrecheckoutCallback precheckoutCallback, Float totalHandlingCost, String shippingCharge, Float tax, String errMsg, String infoMsg) {
                 if (precheckoutCallback != null) {

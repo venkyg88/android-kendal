@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -30,7 +29,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextView.OnEditorActionListener, AdapterView.OnItemClickListener, Callback {
-    private static final String TAG = "PlaceFieldView";
+    private static final String TAG = PlaceFieldView.class.getSimpleName();
 
     private static final int KEYDELAY = 250; // milliseconds
 
@@ -85,7 +84,7 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
     private void init(Context context, AttributeSet attrs) {
         // Add popup & adapter
         popup = new ListPopupWindow(context);
-        adapter = new ArrayAdapter<Item>(context, R.layout.search_suggest_item);
+        adapter = new ArrayAdapter<Item>(context, R.layout.place_suggest_item);
         popup.setAdapter(adapter);
         popup.setAnchorView(this);
 
@@ -120,7 +119,7 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
         removeCallbacks(startSuggest);
         if (autoMode) {
             String address = s.toString().trim();
-            if (address.length() > 3)
+            if (address.length() >= 3)
                 postDelayed(startSuggest, KEYDELAY);
         }
     }

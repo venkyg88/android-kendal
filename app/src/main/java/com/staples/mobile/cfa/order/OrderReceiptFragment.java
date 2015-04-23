@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
@@ -34,11 +35,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by Avinash Dodda.
- */
 public class OrderReceiptFragment extends Fragment implements View.OnClickListener {
-    private static final String TAG = "OrderDetailsFragment";
+    private static final String TAG = OrderReceiptFragment.class.getSimpleName();
     MainActivity activity;
     EasyOpenApi easyOpenApi;
     OrderShipmentListItem order;
@@ -58,6 +56,7 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("OrderReceiptFragment:onCreateView(): Entry.");
         activity = (MainActivity) getActivity();
 
         Resources r = getResources();

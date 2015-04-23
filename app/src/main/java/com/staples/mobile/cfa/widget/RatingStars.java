@@ -26,7 +26,7 @@ import com.staples.mobile.cfa.R;
  * reviews is the integer count or null for nothing to display
  */
 public class RatingStars extends View {
-    private static final String TAG = "RatingStars";
+    private static final String TAG = RatingStars.class.getSimpleName();
 
     private static final int NSTARS = 5;
     private static final double DELTA = Math.PI/5.0; // I love geometry
@@ -64,7 +64,6 @@ public class RatingStars extends View {
         REDSTAR = r.getColor(R.color.staples_red);
         GRAYSTAR = r.getColor(R.color.staples_middle_gray);
         TEXTCOLOR = r.getColor(R.color.staples_dark_gray);
-
 
         // Preset default attributes
         int textSize = 10;
@@ -184,7 +183,7 @@ public class RatingStars extends View {
     public void setRating(float rating, Integer reviews) {
         this.rating = rating;
         this.reviews = reviews;
-        invalidate();
+        requestLayout();
     }
 
     private String getText() {

@@ -16,6 +16,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.analytics.Tracker;
@@ -43,12 +44,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by Avinash Dodda.
- */
-
 public class OrderFragment extends Fragment implements View.OnClickListener {
-    private static final String TAG = "OrderFragment";
+    private static final String TAG = OrderFragment.class.getSimpleName();
     MainActivity activity;
     EasyOpenApi easyOpenApi;
     private RecyclerView mRecyclerView;
@@ -63,9 +60,9 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     OrderStatusDetailCallback orderStatusDetailCallback;
     int numOrdersToRetrieve;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("OrderFragment:onCreateView(): Entry.");
         activity = (MainActivity) getActivity();
         orderShipmentListItems = new ArrayList<OrderShipmentListItem>();
         View view = inflater.inflate(R.layout.order_fragment, container, false);

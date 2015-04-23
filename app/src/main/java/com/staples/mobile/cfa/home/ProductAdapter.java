@@ -28,13 +28,10 @@ public class ProductAdapter
     extends ArrayAdapter<ProductItem>
     implements Callback<Browse> {
 
-    private static final String TAG = "ProductAdapter";
+    private static final String TAG = ProductAdapter.class.getSimpleName();
 
     private static final int VIEW_BANNER = 0;
     private static final int VIEW_PRODUCT = 1;
-
-
-
 
     private static final int MAXFETCH = 50;
 

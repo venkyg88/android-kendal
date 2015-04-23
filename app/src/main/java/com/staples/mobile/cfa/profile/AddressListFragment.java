@@ -3,13 +3,13 @@ package com.staples.mobile.cfa.profile;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -17,9 +17,6 @@ import com.staples.mobile.common.access.easyopen.model.member.Address;
 
 import java.util.List;
 
-/**
- * Created by Avinash Dodda.
- */
 public class AddressListFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "Address List Fragment";
     ListView listview;
@@ -29,10 +26,13 @@ public class AddressListFragment extends Fragment implements View.OnClickListene
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("AddressListFragment:onCreateView(): Entry.");
         activity = getActivity();
 
         View view = inflater.inflate(R.layout.profile_list_fragment, container, false);
-        listview = (ListView) view.findViewById(R.id.profileListView);
+        listview = (ListView) view.findViewById(R.id.profile_list_view);
+        listview.setDivider(null);
+        listview.setDividerHeight(0);
         addButton =(ImageButton) view.findViewById(R.id.listAddButton);
         addButton.setOnClickListener(this);
         addressList = ProfileDetails.getMember().getAddress();

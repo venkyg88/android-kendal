@@ -27,7 +27,7 @@ import android.widget.TextView;
 import com.staples.mobile.cfa.R;
 
 public class SortPanel extends Dialog implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, Animation.AnimationListener {
-    public static final String TAG = "SortPanel";
+    private static final String TAG = SortPanel.class.getSimpleName();
 
     private static final int[] RADIOBUTTONS = {R.id.sort_best_match, R.id.sort_title_ascending, R.id.sort_title_descending,
                                                R.id.sort_price_ascending, R.id.sort_price_descending, R.id.sort_highest_rated};
@@ -53,6 +53,7 @@ public class SortPanel extends Dialog implements View.OnClickListener, CompoundB
 
         appendIcon(activity, (TextView) findViewById(R.id.sort_price_ascending), R.drawable.ic_sort_invert_white);
         appendIcon(activity, (TextView) findViewById(R.id.sort_price_descending), R.drawable.ic_sort_white);
+        appendIcon(activity, (TextView) findViewById(R.id.sort_highest_rated), R.drawable.ic_sort_white);
     }
 
     @SuppressLint("NewApi")
@@ -145,7 +146,6 @@ public class SortPanel extends Dialog implements View.OnClickListener, CompoundB
         if (listener!=null) {
             listener.onClick(button);
         }
-
 
         Animation slideDown = AnimationUtils.loadAnimation(activity, R.anim.bottomsheet_delay_down);
         slideDown.setAnimationListener(this);

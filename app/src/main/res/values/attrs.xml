@@ -6,10 +6,17 @@
         <attr name="android:textColor"/>
         <attr name="circleColor" format="color"/>
     </declare-styleable>
-    <declare-styleable name="QuantityEditor">
-        <attr name="minQuantity" format="integer"/>
-        <attr name="maxQuantity" format="integer"/>
-        <attr name="popupWidth" format="dimension"/>
+    <declare-styleable name="DataWrapper">
+        <attr name="minGridWidth" format="dimension"/>
+    </declare-styleable>
+    <declare-styleable name="DualHintEdit">
+        <attr name="textDualSize" format="dimension"/>
+        <attr name="textDualGap" format="dimension"/>
+        <attr name="textDualColor" format="color"/>
+    </declare-styleable>
+    <declare-styleable name="Numeric39Barcode">
+        <attr name="barcodeHeight" format="dimension"/>
+        <attr name="barcodeColor" format="color"/>
     </declare-styleable>
     <declare-styleable name="PagerStripe">
         <attr name="stripeThickness" format="dimension"/>
@@ -22,18 +29,14 @@
         <attr name="minorTextColor" format="color"/>
         <attr name="android:gravity"/>
     </declare-styleable>
+    <declare-styleable name="QuantityEditor">
+        <attr name="minQuantity" format="integer"/>
+        <attr name="maxQuantity" format="integer"/>
+        <attr name="popupWidth" format="dimension"/>
+    </declare-styleable>
     <declare-styleable name="RatingStars">
         <attr name="android:textSize"/>
         <attr name="android:gravity"/>
         <attr name="noReviews" format="string"/>
-    </declare-styleable>
-    <declare-styleable name="DualHintEdit">
-        <attr name="textDualSize" format="dimension"/>
-        <attr name="textDualGap" format="dimension"/>
-        <attr name="textDualColor" format="color"/>
-    </declare-styleable>
-    <declare-styleable name="Numeric39Barcode">
-        <attr name="barcodeHeight" format="dimension"/>
-        <attr name="barcodeColor" format="color"/>
     </declare-styleable>
 </resources>

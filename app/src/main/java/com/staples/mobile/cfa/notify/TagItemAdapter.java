@@ -13,7 +13,7 @@ import com.staples.mobile.cfa.R;
 import java.util.ArrayList;
 
 public class TagItemAdapter extends RecyclerView.Adapter<TagItemAdapter.ViewHolder> {
-    private static final String TAG = "TagItemAdapter";
+    private static final String TAG = TagItemAdapter.class.getSimpleName();
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView title;

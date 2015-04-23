@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2015 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.analytics;
 
 import android.content.Context;
@@ -13,9 +9,6 @@ import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.Map;
 
-/**
- * Created by sutdi001 on 3/12/15.
- */
 public class AdobeTracker implements Tracker.AnalyticsService {
 
     /** initialize analytics */

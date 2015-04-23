@@ -1,50 +1,57 @@
 package com.staples.mobile.cfa.profile;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.analytics.Tracker;
-import com.staples.mobile.cfa.checkout.ConfirmationFragment;
-import com.staples.mobile.cfa.home.ConfiguratorFragment;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.List;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener{
-    public static final String TAG = "ProfileFragment";
+    private static final String TAG = ProfileFragment.class.getSimpleName();
 
     private EasyOpenApi easyOpenApi;
-    Button shippingBtn;
-    Button ccBtn;
+    TextView shippingBtn;
+    TextView ccBtn;
     TextView addressTV;
     TextView creditCardTv;
+    ImageView cardImage;
+    RelativeLayout addressLayout;
+    RelativeLayout creditcardLayout;
     MainActivity activity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Crittercism.leaveBreadcrumb("ProfileFragment:onCreateView(): Entry.");
         activity = (MainActivity) getActivity();
 
         View view = inflater.inflate(R.layout.profile_fragment, container, false);
 
-        shippingBtn = (Button) view.findViewById(R.id.addShippingBtn);
-        ccBtn = (Button) view.findViewById(R.id.addCCBtn);
+        shippingBtn = (TextView) view.findViewById(R.id.addShippingBtn);
+        ccBtn = (TextView) view.findViewById(R.id.addCCBtn);
         addressTV = (TextView) view.findViewById(R.id.addressET);
         creditCardTv = (TextView) view.findViewById(R.id.ccET);
-        shippingBtn.setOnClickListener(this);
-        ccBtn.setOnClickListener(this);
+        cardImage = (ImageView) view.findViewById(R.id.card_image_profile);
+        addressLayout = (RelativeLayout) view.findViewById(R.id.address_layout);
+        creditcardLayout = (RelativeLayout) view.findViewById(R.id.credit_card_layout);
+
+        addressLayout.setOnClickListener(this);
+        creditcardLayout.setOnClickListener(this);
+
         loadProfile(ProfileDetails.getMember(), view);
 
         return (view);
@@ -80,16 +87,16 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 String tmpAddress = address.getAddress1() + "\n" + address.getCity() + ", " + address.getState() + " " + address.getZipCode();
                 addressTV.setText(tmpAddress);
                 if(addressCount > 1) {
-                    shippingBtn.setText(addressCount-1 + " more");
+                    shippingBtn.setText(addressCount-1 + "+");
                 }
                 else {
                     addressTV.setText(tmpAddress);
-                    shippingBtn.setText("+ Add");
+                    shippingBtn.setText("+");
                 }
             }
         }else {
             addressTV.setText("Shipping Addresses");
-            shippingBtn.setText("+ Add");
+            shippingBtn.setText("+");
         }
 
         List<CCDetails> creditCards = member.getCreditCard();
@@ -103,47 +110,32 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 } else {
                     cardNumber = creditCard.getCardNumber();
                 }
-                String tmpCreditCard =  cardNumber + " " + creditCard.getCardType();
-                creditCardTv.setText(tmpCreditCard);
+                cardImage.setVisibility(View.VISIBLE);
+                cardImage.setImageResource(CreditCard.Type.matchOnApiName(creditCard.getCardType()).getImageResource());
+                creditCardTv.setText("*"+cardNumber);
                 if(creditCardCount > 1) {
-                    ccBtn.setText(creditCardCount-1 + " more");
+                    ccBtn.setText(creditCardCount-1 + "+");
                 }
                 else {
-                    creditCardTv.setText(tmpCreditCard);
-                    ccBtn.setText("+ Add");
+                    ccBtn.setText("+");
                 }
               }
         }else {
+            cardImage.setVisibility(View.GONE);
             creditCardTv.setText("Credit Cards");
-            ccBtn.setText("+ Add");
+            ccBtn.setText("+");
         }
     }
-
-
 
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.addShippingBtn:
-                shippingBtn = (Button) view;
-                if (shippingBtn.getText().equals("Add")) {
-                    Fragment addressFragment = Fragment.instantiate(activity, AddressFragment.class.getName());
-                    activity.navigateToFragment(addressFragment);
-                    break;
-                } else {
-                    activity.selectProfileAddressesFragment();
-                    break;
-                }
-            case R.id.addCCBtn:
-                ccBtn = (Button)view;
-                if(ccBtn.getText().equals("Add")){
-                    Fragment creditFragment = Fragment.instantiate(activity, CreditCardFragment.class.getName());
-                    activity.navigateToFragment(creditFragment);
-                    break;
-                } else {
-                    activity.selectProfileCreditCardsFragment();
-                    break;
-                }
+            case R.id.address_layout:
+                activity.selectProfileAddressesFragment();
+                break;
+            case R.id.credit_card_layout:
+                activity.selectProfileCreditCardsFragment();
+                break;
         }
     }
 }

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2014 Staples, Inc. All rights reserved.
- */
-
 package com.staples.mobile.cfa.widget;
 
 import android.content.Context;
@@ -11,8 +7,6 @@ import android.widget.EditText;
 
 /**
  * Extension of EditText that allows listener of soft keyboard BACK event
- *
- * Created by sutdi001 on 10/22/14.
  * (code taken from http://stackoverflow.com/questions/3425932/detecting-when-user-has-dismissed-the-soft-keyboard)
  */
 public class EditTextWithImeBackEvent extends EditText {
@@ -53,5 +47,4 @@ public class EditTextWithImeBackEvent extends EditText {
     }
 
 }
-
 

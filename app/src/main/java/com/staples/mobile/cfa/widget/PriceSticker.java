@@ -23,22 +23,28 @@ import java.util.List;
  * android:gravity
  */
 public class PriceSticker extends View {
-    private static final String TAG = "PriceSticker";
+    private static final String TAG = PriceSticker.class.getSimpleName();
 
     private static final NumberFormat format = NumberFormat.getCurrencyInstance();
 
     private Paint majorPaint;
-    private Paint unitPaint;
     private Paint wasPaint;
+    private Paint unitPaint;
 
     private int gravity;
     private int baseline;
     private int majorHeight;
+    private int wasGap;
+    private int unitGap;
+
     private int[] widths;
 
     private float finalPrice;
+    private String finalLiteral;
     private float wasPrice;
+    private String wasLiteral;
     private String unit;
+    private String rebateIndicator;
 
     public PriceSticker(Context context) {
         this(context, null, 0);
@@ -90,12 +96,6 @@ public class PriceSticker extends View {
         majorPaint.setTextSize(majorTextSize);
         majorPaint.setColor(majorTextColor);
 
-        unitPaint = new Paint();
-        unitPaint.setAntiAlias(true);
-        unitPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-        unitPaint.setTextSize(minorTextSize);
-        unitPaint.setColor(minorTextColor);
-
         wasPaint = new Paint();
         wasPaint.setAntiAlias(true);
         wasPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
@@ -103,18 +103,71 @@ public class PriceSticker extends View {
         wasPaint.setColor(minorTextColor);
         wasPaint.setFlags(wasPaint.getFlags()|Paint.STRIKE_THRU_TEXT_FLAG);
 
+        unitPaint = new Paint();
+        unitPaint.setAntiAlias(true);
+        unitPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        unitPaint.setTextSize(minorTextSize);
+        unitPaint.setColor(minorTextColor);
+
         // Get metrics
         baseline = (int) -majorPaint.ascent();
         majorHeight = baseline + (int) majorPaint.descent();
+        wasGap = (int) wasPaint.measureText(" ");
+        unitGap = (int) unitPaint.measureText(" ");
+
         widths = new int[3];
     }
 
-    public void setPricing(float finalPrice, float wasPrice, String unit) { // TODO old code
+    public void setLiterals(String finalLiteral, String wasLiteral, String unit) {
+        if (finalLiteral!=null && !finalLiteral.isEmpty()) {
+            this.finalLiteral = finalLiteral;
+        } else {
+            finalLiteral = null;
+        }
+
+        if (wasLiteral!=null && !wasLiteral.isEmpty()) {
+            this.wasLiteral = wasLiteral;
+        } else {
+            wasLiteral = null;
+        }
+
+        if (unit!=null && !unit.isEmpty()) {
+            this.unit = unit;
+        } else {
+            unit = null;
+        }
+
+        requestLayout();
+    }
+    private void formatAll() {
+        if (finalPrice>0f) {
+            finalLiteral = format.format(finalPrice);
+            if (rebateIndicator!=null && !rebateIndicator.isEmpty()) {
+                finalLiteral = finalLiteral + rebateIndicator;
+            }
+        } else {
+            finalLiteral = null;
+        }
+
+        if (wasPrice>0f && wasPrice!=finalPrice) {
+            wasLiteral = format.format(wasPrice);
+        } else {
+            wasLiteral = null;
+        }
+
+        if (unit==null || unit.isEmpty()) {
+            unit = null;
+        }
+
+        requestLayout();
+    }
+
+    public void setPricing(float finalPrice, float wasPrice, String unit, String rebateIndicator) { // TODO old code
         this.finalPrice = finalPrice;
         this.wasPrice = wasPrice;
         this.unit = unit;
-        if (this.unit!=null && this.unit.isEmpty()) this.unit = null;
-        invalidate();
+        this.rebateIndicator = rebateIndicator;
+        formatAll();
     }
 
     // Browse pricing
@@ -132,8 +185,7 @@ public class PriceSticker extends View {
         finalPrice = pricing.getFinalPrice();
         wasPrice = pricing.getListPrice();
         unit = pricing.getUnitOfMeasure();
-        if (unit!=null && unit.isEmpty()) unit = null;
-        invalidate();
+        formatAll();
         return(true);
     }
 
@@ -144,7 +196,7 @@ public class PriceSticker extends View {
         for(com.staples.mobile.common.access.easyopen.model.cart.Pricing pricing : pricings) {
             if (setPricing(pricing)) return (true);
         }
-        return (false);
+        return(false);
     }
 
     public boolean setPricing(com.staples.mobile.common.access.easyopen.model.cart.Pricing pricing) {
@@ -152,29 +204,26 @@ public class PriceSticker extends View {
         finalPrice = pricing.getFinalPrice();
         wasPrice = pricing.getListPrice();
         unit = pricing.getUnitOfMeasure();
-        if (unit!=null && unit.isEmpty()) unit = null;
-        invalidate();
+        formatAll();
         return(true);
     }
-    public float getFinalPrice() {
-        return finalPrice;
-    }
+
+    // Measurement & drawing
 
     private void measureWidths() {
         int width = 0;
-        if (wasPrice>0.0f) {
-            String text = format.format(wasPrice) + " ";
-            width += unitPaint.measureText(text, 0, text.length());
+        if (finalLiteral!=null) {
+            width += majorPaint.measureText(finalLiteral);
         }
-        widths[0] = width;
-        if (finalPrice>0.0f) {
-            String text = format.format(finalPrice);
-            width += majorPaint.measureText(text, 0, text.length());
+        if (wasLiteral!=null) {
+            width += wasGap;
+            widths[0] = width;
+            width += wasPaint.measureText(wasLiteral);
         }
-        widths[1] = width;
         if (unit!=null) {
-            String text = " " + unit;
-            width += unitPaint.measureText(text, 0, text.length());
+            width += unitGap;
+            widths[1] = width;
+            width += unitPaint.measureText(unit);
         }
         widths[2] = width;
     }
@@ -198,17 +247,14 @@ public class PriceSticker extends View {
         float y = getPaddingTop()+baseline;
 
         // Draw texts
-        if (wasPrice>0.0f) {
-            String text = format.format(wasPrice);
-            canvas.drawText(text, x, y, wasPaint);
+        if (finalLiteral!=null) {
+            canvas.drawText(finalLiteral, x, y, majorPaint);
         }
-        if (finalPrice>0.0f) {
-            String text = format.format(finalPrice);
-            canvas.drawText(text, x+widths[0], y, majorPaint);
+        if (wasLiteral!=null) {
+            canvas.drawText(wasLiteral, x+widths[0], y, wasPaint);
         }
         if (unit!=null) {
-            String text = " " + unit;
-            canvas.drawText(text, x+widths[1], y, unitPaint);
+            canvas.drawText(unit, x+widths[1], y, unitPaint);
         }
     }
 }
