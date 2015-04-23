@@ -60,7 +60,7 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("RewardsFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("RewardsFragment:onCreateView(): Displaying the Rewards screen.");
         Resources r = getResources();
         activity = (MainActivity)getActivity();
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.rewards_fragment, container, false);

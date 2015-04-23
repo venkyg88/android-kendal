@@ -63,7 +63,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("CheckoutFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("CheckoutFragment:onCreateView(): Displaying the Checkout screen.");
         Resources r = getResources();
 
         activity = (MainActivity)getActivity();

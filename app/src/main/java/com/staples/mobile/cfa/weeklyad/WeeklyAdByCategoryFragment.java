@@ -66,7 +66,7 @@ public class WeeklyAdByCategoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Crittercism.leaveBreadcrumb("WeeklyAdByCategoryFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("WeeklyAdByCategoryFragment:onCreateView(): Displaying the Weekly Ad by Category screen.");
         activity = (MainActivity)getActivity();
 
         Bundle args = getArguments();

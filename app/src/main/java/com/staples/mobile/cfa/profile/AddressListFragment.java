@@ -26,7 +26,7 @@ public class AddressListFragment extends Fragment implements View.OnClickListene
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("AddressListFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("AddressListFragment:onCreateView(): Displaying the Address List screen.");
         activity = getActivity();
 
         View view = inflater.inflate(R.layout.profile_list_fragment, container, false);

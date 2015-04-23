@@ -53,7 +53,7 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("SkuSetFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("SkuSetFragment:onCreateView(): Displaying the SKU Set screen.");
         String identifier = null;
         String imageUrl = null;
 

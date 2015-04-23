@@ -26,7 +26,7 @@ public class CreditCardListFragment extends Fragment implements View.OnClickList
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("CreditCardListFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("CreditCardListFragment:onCreateView(): Displaying the Credit Card List screen.");
         View view = inflater.inflate(R.layout.profile_list_fragment, container, false);
         listview = (ListView) view.findViewById(R.id.profile_list_view);
         listview.setDivider(null);
