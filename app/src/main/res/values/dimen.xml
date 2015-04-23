@@ -47,6 +47,7 @@
     <dimen name="personal_feed_arrow">28dp</dimen>
 
     <!--SKU-->
+    <dimen name="sku_border_width">1dp</dimen>
     <dimen name="sku_padding_2">2dp</dimen>
     <dimen name="sku_padding_5">5dp</dimen>
     <dimen name="sku_padding_10">10dp</dimen>

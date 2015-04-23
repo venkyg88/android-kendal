@@ -144,19 +144,19 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         cardNumberET.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                switch(actionId) {
+                switch (actionId) {
                     case EditorInfo.IME_ACTION_NEXT:
                         validate();
                         expirationMonthET.requestFocus();
-                        return(true);
+                        return (true);
                     case EditorInfo.IME_NULL:
                         Log.d(TAG, "Got an enter key");
-                        if (event.getAction()==KeyEvent.ACTION_DOWN) {
+                        if (event.getAction() == KeyEvent.ACTION_DOWN) {
                             validate();
                         }
-                        return(true);
+                        return (true);
                 }
-                return(false);
+                return (false);
             }
         });
         cardNumberET.setFilters(new InputFilter[] { new CcNumberInputFilter()});
@@ -165,7 +165,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
 
         addCCBtn = (Button) view.findViewById(R.id.addCCBtn);
         addCCBtn.setOnClickListener(this);
-        cancelCCBtn = (Button) view.findViewById(R.id.cancelCCBtn);
+        cancelCCBtn = (Button) view.findViewById(R.id.address_cancel);
         cancelCCBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

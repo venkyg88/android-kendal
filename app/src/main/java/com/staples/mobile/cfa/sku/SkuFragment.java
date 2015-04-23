@@ -37,6 +37,7 @@ import com.staples.mobile.cfa.widget.QuantityEditor;
 import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.channel.api.ChannelApi;
+import com.staples.mobile.common.access.channel.model.review.Pagination;
 import com.staples.mobile.common.access.channel.model.review.Review;
 import com.staples.mobile.common.access.channel.model.review.YotpoResponse;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -58,7 +59,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener, Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener {
+public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener, Callback, View.OnClickListener, FragmentManager.OnBackStackChangedListener, SkuReviewAdapter.OnFetchMoreData {
     private static final String TAG = SkuFragment.class.getSimpleName();
     private static final String PSEUDOCLASS = "SkuDetail";
 
@@ -71,6 +72,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private static final String REVIEWS = "Reviews";
 
     private static final int MAXFETCH = 50;
+    private static final int LOOKAHEAD = 10;
 
     public enum Availability {
         NOTHING      (R.string.avail_nothing),
@@ -82,7 +84,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         private int resid;
 
-        private Availability(int resid) {
+        Availability(int resid) {
             this.resid = resid;
         }
 
@@ -105,6 +107,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     private boolean isSkuSetOriginated;
 
     private DataWrapper wrapper;
+    private DataWrapper.State state;
     private View summary;
 
     // Image ViewPager
@@ -114,20 +117,17 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     // Tab ViewPager
     private TabHost details;
+    private TabHost.TabSpec[] detailTabs;
     private ViewPager tabPager;
     private SkuTabAdapter tabAdapter;
     private boolean isShiftedTab;
 
-    // Accessory Container
-    private ViewGroup accessoryContainer;
-
-    // Shipping Logic Container
-    private ViewGroup overweightLayout;
-    private ViewGroup addonLayout;
-
     // Reviews
     private SkuReviewAdapter reviewAdapter;
     private int reviewPage;
+
+    // Cached values
+    private Product cached;
 
     public void setArguments(String title, String identifier, boolean isSkuSetRedirected) {
         Bundle args = new Bundle();
@@ -148,62 +148,29 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             isSkuSetOriginated = args.getBoolean(SKUSET);
         }
 
-        // Initiate API calls
+        // Get product details & reviews
         EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
         api.getSkuDetails(identifier, null, MAXFETCH, this);
 
         reviewPage = 1;
-        ChannelApi channelApi = Access.getInstance().getChannelApi(false);
-        channelApi.getYotpoReviews(identifier, reviewPage, MAXFETCH, this);
+        queryReviews();
+        state = DataWrapper.State.LOADING;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Crittercism.leaveBreadcrumb("SkuFragment:onCreateView(): Entry.");
 
-        MainActivity activity = (MainActivity) getActivity();
-        Resources res = activity.getResources();
-
         wrapper = (DataWrapper) inflater.inflate(R.layout.sku_summary, container, false);
         summary = wrapper.findViewById(R.id.summary);
 
-        // Init image pager
         imagePager = (ViewPager) summary.findViewById(R.id.images);
-        imageAdapter = new SkuImageAdapter(activity);
-        imagePager.setAdapter(imageAdapter);
         stripe = (PagerStripe) summary.findViewById(R.id.stripe);
         imagePager.setOnPageChangeListener(stripe);
 
-        // Init details (ViewPager)
         tabPager = (ViewPager) wrapper.findViewById(R.id.pager);
-        tabAdapter = new SkuTabAdapter(activity);
-        tabPager.setAdapter(tabAdapter);
-
-        // Fill detail (View Pager)
-        tabAdapter.add(res.getString(R.string.description));
-        tabAdapter.add(res.getString(R.string.specs));
-        tabAdapter.add(res.getString(R.string.reviews));
-        tabAdapter.notifyDataSetChanged();
-
-        // Init details (TabHost)
         details = (TabHost) wrapper.findViewById(R.id.details);
         details.setup();
-
-        // Init accessory
-        accessoryContainer = (ViewGroup) wrapper.findViewById(R.id.accessoryContainer);
-
-        // Init shipping logic
-        overweightLayout = (ViewGroup) wrapper.findViewById(R.id.overweight_layout);
-        addonLayout = (ViewGroup) wrapper.findViewById(R.id.add_on_layout);
-
-        // Fill details (TabHost)
-        DummyFactory dummy = new DummyFactory(activity);
-        addTab(dummy, res, R.string.description, DESCRIPTION);
-        addTab(dummy, res, R.string.specs, SPECIFICATIONS);
-        addTab(dummy, res, R.string.reviews, REVIEWS);
-
-        // Set initial visibility
-        wrapper.setState(DataWrapper.State.LOADING);
         details.setVisibility(View.GONE);
 
         // Set listeners
@@ -214,7 +181,82 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         summary.findViewById(R.id.reviews_detail).setOnClickListener(this);
         wrapper.findViewById(R.id.add_to_cart).setOnClickListener(this);
 
+        applyState(wrapper);
         return (wrapper);
+    }
+
+    private void createAdapters() {
+        Activity activity = getActivity();
+        if (activity==null) return;
+        Resources res = activity.getResources();
+
+        if (imageAdapter==null) {
+            imageAdapter = new SkuImageAdapter(activity);
+        }
+
+        if (tabAdapter==null) {
+            tabAdapter = new SkuTabAdapter(activity);
+            tabAdapter.add(res.getString(R.string.description));
+            tabAdapter.add(res.getString(R.string.specs));
+            tabAdapter.add(res.getString(R.string.reviews));
+            tabAdapter.notifyDataSetChanged();
+
+            detailTabs = new TabHost.TabSpec[3];
+            DummyFactory dummy = new DummyFactory(activity);
+            detailTabs[0] = details.newTabSpec(DESCRIPTION);
+            detailTabs[0].setIndicator(res.getString(R.string.description));
+            detailTabs[0].setContent(dummy);
+            detailTabs[1] = details.newTabSpec(SPECIFICATIONS);
+            detailTabs[1].setIndicator(res.getString(R.string.specifications));
+            detailTabs[1].setContent(dummy);
+            detailTabs[2] = details.newTabSpec(REVIEWS);
+            detailTabs[2].setIndicator(res.getString(R.string.reviews));
+            detailTabs[2].setContent(dummy);
+        }
+
+        if (reviewAdapter==null) {
+            reviewAdapter = new SkuReviewAdapter(activity);
+        }
+
+        tabAdapter.setReviewAdapter(reviewAdapter);
+    }
+
+    private void applyState(View view) {
+        if (view==null) view = getView();
+        if (view==null) return;
+
+        if (imagePager!=null && imagePager.getAdapter()==null && imageAdapter!=null) {
+            imagePager.setAdapter(imageAdapter);
+        }
+
+        if (tabPager!=null && tabPager.getAdapter()==null && tabAdapter!=null) {
+            tabPager.setAdapter(tabAdapter);
+            details = (TabHost) wrapper.findViewById(R.id.details);
+            details.setup();
+            for(int i=0;i<3;i++) {
+                details.addTab(detailTabs[i]);
+            }
+        }
+
+        if (reviewAdapter!=null && reviewAdapter.getItemCount()>0) {
+            ViewGroup reviews = (ViewGroup) summary.findViewById(R.id.reviews);
+            if (reviews.getChildCount()==0) {
+                SkuReviewAdapter.ViewHolder vh = reviewAdapter.onCreateViewHolder(reviews, 0);
+                reviewAdapter.onBindViewHolder(vh, 0);
+                vh.limitComments(3);
+                reviews.addView(vh.itemView);
+                reviews.setVisibility(View.VISIBLE);
+                summary.findViewById(R.id.reviews_detail).setVisibility(View.VISIBLE);
+            }
+        }
+
+        if (cached!=null) {
+           applyProduct(cached);
+        }
+
+        if (view instanceof DataWrapper) {
+            ((DataWrapper) view).setState(state);
+        }
     }
 
     @Override
@@ -337,11 +379,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                     TableRow skuSpecRow = (TableRow) inflater.inflate(R.layout.sku_spec_item, table, false);
                     table.addView(skuSpecRow);
 
-                    // set dark color for even table rows
-//                    if ((rowCount % 2) == 0) {
-//                        skuSpecRow.setBackgroundColor(parent.getContext().getResources().getColor(R.color.staples_middle_gray));
-//                    }
-
                     // Set specification
                     ((TextView) skuSpecRow.findViewById(R.id.specName)).setText(specName);
                     ((TextView) skuSpecRow.findViewById(R.id.specValue)).setText(specValue);
@@ -357,6 +394,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         List<Product> accessories = product.getAccessory();
 
         LayoutInflater inflater = activity.getLayoutInflater();
+        ViewGroup parent = (ViewGroup) summary.findViewById(R.id.accessory_container);
+        if (parent.getChildCount()>0) return;
 
         for (final Product accessory : accessories) {
             String accessoryImageUrl = accessory.getImage().get(0).getUrl();
@@ -397,7 +436,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             // Set accessory price
             ((PriceSticker) skuAccessoryRow.findViewById(R.id.accessory_price)).setBrowsePricing(accessory.getPricing());
 
-            accessoryContainer.addView(skuAccessoryRow);
+            parent.addView(skuAccessoryRow);
         }
     }
 
@@ -494,12 +533,14 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         if (obj instanceof SkuDetails) {
             SkuDetails details = (SkuDetails) obj;
             processSkuDetails(details);
-            wrapper.setState(DataWrapper.State.DONE);
+            state = DataWrapper.State.DONE;
+            applyState(null);
         }
 
         else if (obj instanceof YotpoResponse) {
             YotpoResponse yotpoResponse = (YotpoResponse) obj;
-            processYotpoReview(yotpoResponse);
+            processReviews(yotpoResponse);
+            applyState(null);
         }
     }
 
@@ -538,189 +579,207 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         List<Product> products = sku.getProduct();
         if (products != null && products.size() > 0) {
             // Use the first product in the list
-            final Product product = products.get(0);
-
-            tabAdapter.setProduct(product);
-
-            // Handle availability
-            QuantityEditor qtyEditor = (QuantityEditor) wrapper.findViewById(R.id.quantity);
-            Button addToCartButton = (Button) wrapper.findViewById(R.id.add_to_cart);
-            TextView footerMsg = (TextView) wrapper.findViewById(R.id.footer_msg);
-            Availability availability = Availability.getProductAvailability(product);
-            TextView skuText = (TextView) wrapper.findViewById(R.id.select_sku);
-
-            if (isSkuSetOriginated) {
-                skuText.setVisibility(View.VISIBLE);
-                skuText.setText(product.getProductName());
-                skuText.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        FragmentManager fm = getFragmentManager();
-                        if (fm != null) {
-                            fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
-                        }
-                    }
-                });
-            }
-
-            // Analytics
-            if (availability == Availability.SKUSET) {
-                Tracker.getInstance().trackStateForSkuSet(product); // Analytics
-            } else {
-                Tracker.getInstance().trackStateForProduct(product); // Analytics
-            }
-
-            Apptentive.engage(activity, ApptentiveSdk.PRODUCT_DETAIL_SHOWN_EVENT);
-
-            switch(availability) {
-                case NOTHING:
-                case SKUSET:
-                    qtyEditor.setVisibility(View.VISIBLE);
-                    addToCartButton.setVisibility(View.VISIBLE);
-                    skuText.setVisibility(View.VISIBLE);
-                    addToCartButton.setEnabled(false);
-                    qtyEditor.setEnabled(false);
-                    skuText.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            activity.selectSkuSet(product.getProductName(), product.getSku(), product.getThumbnailImage().get(0).getUrl());
-                        }
-                    });
-                    break;
-                case RETAILONLY:
-                case SPECIALORDER:
-                case OUTOFSTOCK:
-                    // for all of the above cases, hide qty editor and ADD button, and show message
-                    footerMsg.setVisibility(View.VISIBLE);
-                    footerMsg.setText(availability.getTextResId());
-                    break;
-                case INSTOCK:
-                    // show add-to-cart widgets
-                    qtyEditor.setVisibility(View.VISIBLE);
-                    addToCartButton.setVisibility(View.VISIBLE);
-                    break;
-            }
-
-            // Add images
-            List<Image> images = product.getImage();
-            if (images != null && images.size() > 0) {
-                for (Image image : images) {
-                    String url = image.getUrl();
-                    if (url != null) imageAdapter.add(url);
-                }
-            }
-
-            // Handle 0, 1, many images
-            int n = imageAdapter.getCount();
-            if (n == 0) imagePager.setVisibility(View.GONE);
-            else {
-                if (n > 1) stripe.setCount(imageAdapter.getCount());
-                else stripe.setVisibility(View.GONE);
-                imageAdapter.notifyDataSetChanged();
-            }
-
-            // Add info
-            String productName = Html.fromHtml(product.getProductName()).toString();
-            ((TextView) summary.findViewById(R.id.title)).setText(productName);
-            ((TextView) summary.findViewById(R.id.model)).setText(formatNumbers(res, product));
-            ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
-            ((RatingStars) summary.findViewById(R.id.review_rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
-
-            // Add description
-            LayoutInflater inflater = activity.getLayoutInflater();
-            if (!buildDescription(inflater, (ViewGroup) summary.findViewById(R.id.description), product, 3)) {
-                summary.findViewById(R.id.description).setVisibility(View.GONE);
-            }
-
-            // Check if the product has specifications
-            if (product.getSpecification() != null) {
-                // Add specifications
-                addSpecifications(inflater, (ViewGroup) summary.findViewById(R.id.specifications), product, 3);
-            } else {
-                summary.findViewById(R.id.specifications_layout).setVisibility(View.GONE);
-            }
-
-            // Check if the product has accessories
-            if (product.getAccessory() != null) {
-                // Add accessories
-                addAccessory(product);
-                // Log.d(TAG, "Product has accessories.");
-            } else {
-                summary.findViewById(R.id.accessory_layout).setVisibility(View.GONE);
-            }
-
-            // check if the product is an add-on product
-            if (isJsonTrue(product.getAddOnSku())) {
-                addonLayout.setVisibility(View.VISIBLE);
-            }
-
-            // check if the product is an overweight product, example sku:650465
-            if (isJsonTrue(product.getHeavyWeightSku())) {
-                if(product.getPricing() != null){
-                    overweightLayout.setVisibility(View.VISIBLE);
-                    float heavyWeightShipCharge = product.getPricing().get(0).getHeavyWeightShipCharge();
-                }
-            }
-
-            // check if the product has discount
-            PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
-
-            Pricing pricing = product.getPricing().get(0);
-            List<Discount> discounts = pricing.getDiscount();
-            if (discounts != null && discounts.size() > 0) {
-                for (Discount discount : discounts) {
-                    if (discount.getAmount() > 0) {
-                        // Add pricing with rebate
-                        if (discount.getName().equals("rebate")){
-                            summary.findViewById(R.id.rebate_layout).setVisibility(View.VISIBLE);
-                            Button rebateButton = (Button) summary.findViewById(R.id.rebate_button);
-                            float rebate = discount.getAmount();
-                            String rebateString = String.format("%.2f", rebate);
-                            rebateButton.setText(String.valueOf("$" + rebateString + " " + res.getString(R.string.rebate)));
-
-                            float finalPrice = pricing.getFinalPrice();
-                            float wasPrice = pricing.getListPrice();
-                            String unit = pricing.getUnitOfMeasure();
-                            priceSticker.setPricing(finalPrice + rebate, wasPrice, unit, "");
-                            Log.d(TAG, "The product has rebate. sku:" + product.getSku() + ", rebate:" + rebate);
-                        }
-                        // Add pricing without rebate
-                        else{
-                            summary.findViewById(R.id.rebate_layout).setVisibility(View.GONE);
-                            priceSticker.setPricing(pricing);
-                        }
-                    }
-                }
-            }
-            else {
-                priceSticker.setPricing(pricing);
-
-                summary.findViewById(R.id.rebate_layout).setVisibility(View.GONE);
-            }
-
-            // Save seen products detail for personal feed
-            saveSeenProduct(product);
+            createAdapters();
+            cached = products.get(0);
+            tabAdapter.setProduct(cached);
         }
     }
 
-    private void processYotpoReview(YotpoResponse yotpoResponse) {
-        if (yotpoResponse==null) return;
-        com.staples.mobile.common.access.channel.model.review.Response response = yotpoResponse.getResponse();
-        if (response==null) return;
-        List<Review> reviews = response.getReviews();
-        if (reviews==null || reviews.size()==0) return;
+    private void applyProduct(final Product product) {
+        final MainActivity activity = (MainActivity) getActivity();
+        if (activity==null) return;
+        Resources res = activity.getResources();
 
-        if (reviewAdapter==null) {
-            reviewAdapter = new SkuReviewAdapter(getActivity());
-            tabAdapter.setReviewAdapter(reviewAdapter);
+        // Handle availability
+        QuantityEditor qtyEditor = (QuantityEditor) wrapper.findViewById(R.id.quantity);
+        Button addToCartButton = (Button) wrapper.findViewById(R.id.add_to_cart);
+        TextView footerMsg = (TextView) wrapper.findViewById(R.id.footer_msg);
+        Availability availability = Availability.getProductAvailability(product);
+        TextView skuText = (TextView) wrapper.findViewById(R.id.select_sku);
+
+        if (isSkuSetOriginated) {
+            skuText.setVisibility(View.VISIBLE);
+            skuText.setText(product.getProductName());
+            skuText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FragmentManager fm = getFragmentManager();
+                    if (fm != null) {
+                        fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
+                    }
+                }
+            });
         }
-        reviewAdapter.fill(reviews);
+
+        // Analytics
+        if (availability == Availability.SKUSET) {
+            Tracker.getInstance().trackStateForSkuSet(product); // Analytics
+        } else {
+            Tracker.getInstance().trackStateForProduct(product); // Analytics
+        }
+
+        Apptentive.engage(activity, ApptentiveSdk.PRODUCT_DETAIL_SHOWN_EVENT);
+
+        switch(availability) {
+            case NOTHING:
+            case SKUSET:
+                qtyEditor.setVisibility(View.VISIBLE);
+                addToCartButton.setVisibility(View.VISIBLE);
+                skuText.setVisibility(View.VISIBLE);
+                addToCartButton.setEnabled(false);
+                qtyEditor.setEnabled(false);
+                skuText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        activity.selectSkuSet(product.getProductName(), product.getSku(), product.getThumbnailImage().get(0).getUrl());
+                    }
+                });
+                break;
+            case RETAILONLY:
+            case SPECIALORDER:
+            case OUTOFSTOCK:
+                // for all of the above cases, hide qty editor and ADD button, and show message
+                footerMsg.setVisibility(View.VISIBLE);
+                footerMsg.setText(availability.getTextResId());
+                break;
+            case INSTOCK:
+                // show add-to-cart widgets
+                qtyEditor.setVisibility(View.VISIBLE);
+                addToCartButton.setVisibility(View.VISIBLE);
+                break;
+        }
+
+        // Add images
+        List<Image> images = product.getImage();
+        if (images != null && images.size() > 0) {
+            for (Image image : images) {
+                String url = image.getUrl();
+                if (url != null) imageAdapter.add(url);
+            }
+        }
+
+        // Handle 0, 1, many images
+        int n = imageAdapter.getCount();
+        if (n == 0) imagePager.setVisibility(View.GONE);
+        else {
+            if (n > 1) stripe.setCount(imageAdapter.getCount());
+            else stripe.setVisibility(View.GONE);
+            imageAdapter.notifyDataSetChanged();
+        }
+
+        // Add info
+        String productName = Html.fromHtml(product.getProductName()).toString();
+        ((TextView) summary.findViewById(R.id.title)).setText(productName);
+        ((TextView) summary.findViewById(R.id.model)).setText(formatNumbers(res, product));
+        ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
+        ((RatingStars) summary.findViewById(R.id.review_rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());
+
+        // Add description
+        LayoutInflater inflater = activity.getLayoutInflater();
+        if (!buildDescription(inflater, (ViewGroup) summary.findViewById(R.id.description), product, 3)) {
+            summary.findViewById(R.id.description).setVisibility(View.GONE);
+        }
+
+        // Check if the product has specifications
+        if (product.getSpecification() != null) {
+            // Add specifications
+            addSpecifications(inflater, (ViewGroup) summary.findViewById(R.id.specifications), product, 3);
+        } else {
+            summary.findViewById(R.id.specifications_layout).setVisibility(View.GONE);
+        }
+
+        // Check if the product has accessories
+        if (product.getAccessory() != null) {
+            // Add accessories
+            addAccessory(product);
+            // Log.d(TAG, "Product has accessories.");
+        } else {
+            summary.findViewById(R.id.accessory_layout).setVisibility(View.GONE);
+        }
+
+        // check if the product is an add-on product
+        if (isJsonTrue(product.getAddOnSku())) {
+            summary.findViewById(R.id.add_on_layout).setVisibility(View.VISIBLE);
+        }
+
+        // check if the product is an overweight product, example sku:650465
+        if (isJsonTrue(product.getHeavyWeightSku())) {
+            if (product.getPricing()!=null){
+                summary.findViewById(R.id.overweight_warning).setVisibility(View.VISIBLE);
+                float heavyWeightShipCharge = product.getPricing().get(0).getHeavyWeightShipCharge();
+            }
+        }
+
+        // check if the product has discount
+        PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
+        Pricing pricing = product.getPricing().get(0);
+        List<Discount> discounts = pricing.getDiscount();
+        // Add pricing with rebate
+        if (discounts != null && discounts.size() > 0) {
+            for(Discount discount : discounts) {
+                if (discount.getAmount() > 0) {
+                    // Add pricing with rebate
+                    if (discount.getName().equals("rebate")) {
+                        summary.findViewById(R.id.rebate_note).setVisibility(View.VISIBLE);
+                        TextView rebateText = (TextView) summary.findViewById(R.id.rebate_text);
+                        rebateText.setVisibility(View.VISIBLE);
+                        float rebate = discount.getAmount();
+                        String rebateString = String.format("%.2f", rebate);
+                        rebateText.setText(String.valueOf("$" + rebateString + " " + res.getString(R.string.rebate)));
+
+                        float finalPrice = pricing.getFinalPrice();
+                        float wasPrice = pricing.getListPrice();
+                        String unit = pricing.getUnitOfMeasure();
+                        priceSticker.setPricing(finalPrice + rebate, wasPrice, unit, "");
+                        Log.d(TAG, "The product has rebate. sku:" + product.getSku() + ", rebate:" + rebate);
+                    }
+                    // Add pricing without rebate
+                    else {
+                        summary.findViewById(R.id.rebate_note).setVisibility(View.GONE);
+                        summary.findViewById(R.id.rebate_text).setVisibility(View.GONE);
+                        priceSticker.setPricing(pricing);
+                    }
+                }
+            }
+        }
+
+        // Save seen products detail for personal feed
+        saveSeenProduct(product);
+    }
+
+    private void queryReviews() {
+        ChannelApi channelApi = Access.getInstance().getChannelApi(false);
+        channelApi.getYotpoReviews(identifier, reviewPage, MAXFETCH, this);
+    }
+
+    @Override
+    public void onFetchMoreData() {
+        reviewPage++;
+        queryReviews();
+    }
+
+    private int processReviews(YotpoResponse yotpoResponse) {
+        if (yotpoResponse==null) return(0);
+        com.staples.mobile.common.access.channel.model.review.Response response = yotpoResponse.getResponse();
+        if (response==null) return(0);
+        List<Review> reviews = response.getReviews();
+        if (reviews==null || reviews.size()==0) return(0);
+
+        boolean complete = false;
+        Pagination pagination = response.getPagination();
+        if (pagination!=null) {
+            complete = (pagination.getTotal()<=reviewPage*MAXFETCH);
+        }
+
+        createAdapters();
+                    reviewAdapter.fill(reviews);
         reviewAdapter.notifyDataSetChanged();
 
-        ViewGroup parent = (ViewGroup) summary.findViewById(R.id.reviews);
-        SkuReviewAdapter.ViewHolder vh = reviewAdapter.onCreateViewHolder(parent, 0);
-        reviewAdapter.onBindViewHolder(vh, 0);
-        parent.addView(vh.itemView);
+        int count = reviewAdapter.getItemCount();
+        if (!complete) {
+            reviewAdapter.setOnFetchMoreData(this, count-LOOKAHEAD);
+        }
+        return(count);
     }
 
     // TabHost notifications
@@ -731,7 +790,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
         if (tag.equals(DESCRIPTION)) index = 0;
         else if (tag.equals(SPECIFICATIONS)) index = 1;
         else if (tag.equals(REVIEWS)) index = 2;
-        else throw (new RuntimeException("Unknown tag from TabHost"));
+        else return;
 
         // analytics
         Tracker.getInstance().trackActionForProductTabs(tabAdapter.getPageTitle(index), tabAdapter.getProduct());

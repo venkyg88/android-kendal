@@ -162,7 +162,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 
         // hide imported views' Save buttons
         paymentMethodLayoutVw.findViewById(R.id.addCCBtn).setVisibility(View.GONE);
-        paymentMethodLayoutVw.findViewById(R.id.cancelCCBtn).setVisibility(View.GONE);
+        paymentMethodLayoutVw.findViewById(R.id.address_cancel).setVisibility(View.GONE);
 
         TextView.OnEditorActionListener paymentMethodCompletionListener = new TextView.OnEditorActionListener() {
             @Override

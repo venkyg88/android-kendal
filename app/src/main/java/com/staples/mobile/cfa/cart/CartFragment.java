@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.Fragment;
 import android.content.res.Resources;
-import android.graphics.Interpolator;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,8 +11,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
@@ -87,7 +84,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     // widget listeners
     private QtyDeleteButtonListener qtyDeleteButtonListener;
     private QtyChangeListener qtyChangeListener;
-    private ProductImageListener productImageListener;
+    private ProductClickListener productClickListener;
     //private QtyUpdateButtonListener qtyUpdateButtonListener;
 
     CouponWeightAnimator couponUpAnimator;
@@ -127,7 +124,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         // create widget listeners
         qtyChangeListener = new QtyChangeListener();
         qtyDeleteButtonListener = new QtyDeleteButtonListener();
-        productImageListener = new ProductImageListener();
+        productClickListener = new ProductClickListener();
 //        qtyUpdateButtonListener = new QtyUpdateButtonListener();
 
         // Initialize coupon listview
@@ -150,7 +147,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
         // Initialize cart listview
         cartAdapter = new CartAdapter(activity, R.layout.cart_item_group, qtyChangeListener,
-                qtyDeleteButtonListener, productImageListener);
+                qtyDeleteButtonListener, productClickListener);
         cartAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
@@ -189,9 +186,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         cartProceedToCheckout.setOnClickListener(this);
         couponsRewardsLayout.setOnClickListener(this);
         rewardsLinkAcctButton.setOnClickListener(this);
-
-        // since cart/checkout calls require active session, this is a good time to refresh it if stale
-        activity.ensureActiveSession();
 
         return view;
     }
@@ -666,7 +660,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     }
 
     /** listener class for item deletion button */
-    class ProductImageListener implements View.OnClickListener {
+    class ProductClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
             if (cartAdapter != null && view.getTag() != null && view.getTag() instanceof CartAdapter.CartItemPosition) {

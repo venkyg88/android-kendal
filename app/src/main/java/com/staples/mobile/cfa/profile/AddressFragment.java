@@ -23,6 +23,7 @@ import com.staples.mobile.common.access.easyopen.model.member.UpdateAddress;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import retrofit.http.HEAD;
 
 public class AddressFragment extends Fragment implements Callback<AddressId>, View.OnClickListener
 {
@@ -48,9 +49,10 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
         }
 
         addressBlock.init(false);
-        addressBlock.selectMode(address==null);
+        addressBlock.selectMode(address == null);
 
         view.findViewById(R.id.address_save).setOnClickListener(this);
+        view.findViewById(R.id.address_cancel).setOnClickListener(this);
         return (view);
     }
 
@@ -64,21 +66,28 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
         MainActivity activity = (MainActivity) getActivity();
         activity.hideSoftKeyboard(view);
 
-        if (addressBlock.validateAddress()) {
+        switch(view.getId()) {
+            case R.id.address_save:
+                if (addressBlock.validateAddress()) {
 
-            activity.showProgressIndicator();
-            EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
-            UpdateAddress addr = addressBlock.getUpdateAddress();
-            if (addressId != null) {
-                addr.setAddressId(addressId);
-                easyOpenApi.updateMemberAddress(addr, this);
-            } else {
-                easyOpenApi.addMemberAddress(addr, this);
-            }
-        } else {
-            activity.showErrorDialog(R.string.address_error_msg);
-            addressBlock.selectMode(false);
+                activity.showProgressIndicator();
+                EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
+                UpdateAddress addr = addressBlock.getUpdateAddress();
+                if (addressId != null) {
+                    addr.setAddressId(addressId);
+                    easyOpenApi.updateMemberAddress(addr, this);
+                } else {
+                    easyOpenApi.addMemberAddress(addr, this); }
+                } else {
+                    activity.showErrorDialog(R.string.address_error_msg);
+                    addressBlock.selectMode(false);
+                    break;
+                }
+            case R.id.address_cancel:
+                getFragmentManager().popBackStack();
+                break;
         }
+
     }
 
     @Override
