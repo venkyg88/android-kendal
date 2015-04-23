@@ -72,130 +72,75 @@
                 <com.staples.mobile.cfa.widget.PriceSticker
                     android:id="@+id/pricing"
                     style="@style/LargePriceSticker"
-                    android:layout_gravity="center_vertical|left"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.1"/>
+                    android:layout_width="0dp"
+                    android:layout_weight="1"/>
                 <com.staples.mobile.cfa.widget.RatingStars
                     android:id="@+id/rating"
-                    style="@style/SmallRatingStars"
-                    android:layout_gravity="center_vertical|right"/>
+                    style="@style/SmallRatingStars"/>
             </LinearLayout>
 
             <!-- Sku Rebate -->
+            <TextView
+                android:id="@+id/rebate_note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/action_bar_quarter_margin"
+                android:textSize="@dimen/fontsize_10sp"
+                android:text="@string/rebate_text"
+                android:textColor="@color/staples_dark_gray"
+                android:visibility="gone"/>
+            <TextView
+                android:id="@+id/rebate_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/sku_padding_10"
+                android:paddingTop="@dimen/action_bar_quarter_margin"
+                android:paddingLeft="@dimen/left_margin"
+                android:paddingRight="@dimen/right_margin"
+                android:paddingBottom="@dimen/action_bar_quarter_margin"
+                android:textColor="@color/staples_white"
+                android:background="@drawable/rounded_corner_red"
+                android:visibility="gone"/>
+
+            <!-- Shipping Logic Info -->
+            <TextView
+                android:id="@+id/overweight_warning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/fontsize_16sp"
+                android:gravity="center_vertical|left"
+                android:text="@string/overweight_warning"
+                android:paddingLeft="@dimen/sku_padding_5"
+                android:paddingTop="@dimen/sku_padding_2"
+                android:paddingBottom="@dimen/sku_padding_2"/>
+
             <LinearLayout
-                android:id="@+id/rebate_layout"
-                android:layout_width="match_parent"
+                android:id="@+id/add_on_layout"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingLeft="@dimen/sku_padding_10"
-                android:paddingRight="@dimen/sku_padding_10"
-                android:paddingBottom="@dimen/sku_padding_10"
                 android:visibility="gone">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/fontsize_12sp"
-                    android:textColor="@color/staples_dark_gray"
-                    android:gravity="top|left"
-                    android:layout_gravity="top|left"
-                    android:text="@string/rebate_hint"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.6"/>
-                <Button
-                    android:id="@+id/rebate_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/sku_rebate_height"
+                    android:paddingLeft="@dimen/elevation_high"
+                    android:paddingRight="@dimen/elevation_high"
+                    android:paddingTop="@dimen/sku_padding_2"
+                    android:paddingBottom="@dimen/sku_padding_2"
+                    android:gravity="left"
                     android:textSize="@dimen/fontsize_16sp"
-                    android:text="@string/rebate"
-                    android:background="@drawable/sku_add_cart_round_layout"
+                    android:text="@string/add_on"
                     android:textColor="@color/staples_white"
-                    android:layout_margin="@dimen/sku_padding_5"
-                    android:gravity="center"
-                    android:layout_gravity="center_vertical|right"
-                    android:paddingLeft="@dimen/sku_padding_10"
-                    android:paddingRight="@dimen/sku_padding_10"/>
-            </LinearLayout>
-
-            <!-- Shipping Logic Info -->
-            <LinearLayout
-                android:id="@+id/shipping_logic_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="@dimen/sku_padding_10"
-                android:paddingLeft="@dimen/sku_padding_10"
-                android:visibility="gone">
-                <LinearLayout
-                    android:id="@+id/overweight_layout"
+                    android:background="@drawable/rounded_corner_green"/>
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:background="@color/staples_green">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="@dimen/elevation_high"
-                            android:paddingRight="@dimen/elevation_high"
-                            android:paddingTop="@dimen/sku_padding_2"
-                            android:paddingBottom="@dimen/sku_padding_2"
-                            android:gravity="left"
-                            android:textSize="@dimen/fontsize_16sp"
-                            android:text="@string/overweight"
-                            android:textColor="@color/staples_white"/>
-                    </LinearLayout>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/fontsize_16sp"
-                        android:gravity="center_vertical|left"
-                        android:text="@string/overweight_warming"
-                        android:paddingLeft="@dimen/sku_padding_5"
-                        android:paddingTop="@dimen/sku_padding_2"
-                        android:paddingBottom="@dimen/sku_padding_2"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/add_on_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:background="@color/staples_green">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="@dimen/elevation_high"
-                            android:paddingRight="@dimen/elevation_high"
-                            android:paddingTop="@dimen/sku_padding_2"
-                            android:paddingBottom="@dimen/sku_padding_2"
-                            android:gravity="left"
-                            android:textSize="@dimen/fontsize_16sp"
-                            android:text="@string/add_on"
-                            android:textColor="@color/staples_white"/>
-                    </LinearLayout>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/fontsize_16sp"
-                        android:gravity="center_vertical|left"
-                        android:text="@string/add_on_warming"
-                        android:paddingLeft="@dimen/sku_padding_5"
-                        android:paddingTop="@dimen/sku_padding_2"
-                        android:paddingBottom="@dimen/sku_padding_2"/>
-                </LinearLayout>
+                    android:textSize="@dimen/fontsize_16sp"
+                    android:gravity="center_vertical|left"
+                    android:text="@string/add_on_warming"
+                    android:paddingLeft="@dimen/sku_padding_5"
+                    android:paddingTop="@dimen/sku_padding_2"
+                    android:paddingBottom="@dimen/sku_padding_2"/>
             </LinearLayout>
 
             <!-- Description -->
@@ -204,17 +149,9 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/sku_round_layout"
                 android:orientation="vertical">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        style="@style/SkuSummaryHeader"
-                        android:text="@string/description"/>
-                </LinearLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/staples_middle_gray"/>
+                <TextView
+                    style="@style/SkuSummaryHeader"
+                    android:text="@string/description"/>
                 <TextView
                     android:id="@+id/model"
                     android:layout_width="match_parent"
@@ -225,22 +162,19 @@
                     android:paddingLeft="@dimen/sku_padding_10"
                     android:paddingRight="@dimen/sku_padding_10"
                     android:textSize="@dimen/fontsize_12sp"
-                    android:textColor="@color/staples_dark_gray"/>
+                    android:textColor="@color/staples_dark_gray"
+                    android:background="@drawable/sku_divider"/>
                 <LinearLayout
+                    android:id="@+id/description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <LinearLayout
-                        android:id="@+id/description"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"/>
-                </LinearLayout>
+                    android:paddingBottom="@dimen/sku_padding_10"
+                    android:orientation="vertical"/>
                 <TextView
                     android:id="@+id/description_detail"
                     style="@style/SkuDetailHeader"
-                    android:text="@string/description_detail"/>
+                    android:text="@string/description_detail"
+                    android:background="@drawable/sku_divider"/>
             </LinearLayout>
 
             <!-- Specifications -->
@@ -248,37 +182,21 @@
                 android:id="@+id/specifications_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <View
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/sku_padding_10"
+                android:background="@drawable/sku_round_layout">
+                <TextView
+                    style="@style/SkuSummaryHeader"
+                    android:text="@string/specifications"/>
+                <FrameLayout
+                    android:id="@+id/specifications"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/sku_padding_10"
-                    android:background="@color/staples_off_white"/>
-                <LinearLayout
-                    android:id="@+id/specifications_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/sku_round_layout">
-                    <LinearLayout
-                        android:id="@+id/specifications"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            style="@style/SkuSummaryHeader"
-                            android:text="@string/specifications"/>
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/staples_middle_gray"/>
-                    </LinearLayout>
-                    <TextView
-                        android:id="@+id/specifications_detail"
-                        style="@style/SkuDetailHeader"
-                        android:text="@string/specifications_detail"
-                        android:layout_gravity="bottom"/>
-                </LinearLayout>
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/specifications_detail"
+                    style="@style/SkuDetailHeader"
+                    android:text="@string/specifications_detail"
+                    android:layout_gravity="bottom"/>
             </LinearLayout>
 
             <!-- Customer reviews -->
@@ -286,52 +204,37 @@
                 android:id="@+id/reviews_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/sku_padding_10"
-                    android:background="@color/staples_off_white"/>
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/sku_padding_10"
+                android:padding="@dimen/sku_border_width"
+                android:background="@drawable/sku_round_layout">
                 <LinearLayout
-                    android:id="@+id/reviews_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/sku_round_layout">
-                    <LinearLayout
-                        android:id="@+id/reviews"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <TextView
-                                style="@style/SkuSummaryHeader"
-                                android:text="@string/reviews"/>
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.1"/>
-                            <com.staples.mobile.cfa.widget.RatingStars
-                                android:id="@+id/review_rating"
-                                style="@style/SmallRatingStars"
-                                android:layout_gravity="left|center_vertical"
-                                android:gravity="left|center_vertical"
-                                android:paddingRight="@dimen/sku_padding_10"/>
-                        </LinearLayout>
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/staples_middle_gray"/>
-                    </LinearLayout>
+                    android:orientation="horizontal">
                     <TextView
-                        android:id="@+id/reviews_detail"
-                        style="@style/SkuDetailHeader"
-                        android:text="@string/reviews_detail"
-                        android:layout_gravity="bottom"/>
-                    </LinearLayout>
+                        style="@style/SkuSummaryHeader"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/reviews"/>
+                    <com.staples.mobile.cfa.widget.RatingStars
+                        android:id="@+id/review_rating"
+                        style="@style/SmallRatingStars"
+                        android:layout_gravity="center_vertical"
+                        android:paddingRight="@dimen/sku_padding_10"/>
+                </LinearLayout>
+                <FrameLayout
+                    android:id="@+id/reviews"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/sku_divider"
+                    android:visibility="gone"/>
+                <TextView
+                    android:id="@+id/reviews_detail"
+                    style="@style/SkuDetailHeader"
+                    android:text="@string/reviews_detail"
+                    android:background="@drawable/sku_divider"
+                    android:visibility="gone"/>
             </LinearLayout>
 
             <!-- Accessory List -->
@@ -339,37 +242,26 @@
                 android:id="@+id/accessory_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/sku_padding_10"
-                    android:background="@color/staples_off_white"/>
-                <LinearLayout
-                    android:id="@+id/accessory_container"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/sku_padding_10"
+                android:padding="@dimen/sku_border_width"
+                android:background="@drawable/sku_round_layout">
+                <TextView
+                    android:id="@+id/accessory_title"
+                    style="@style/SkuSummaryHeader"
+                    android:text="@string/accessories"/>
+                <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/sku_round_layout">
-                    <TextView
-                        android:id="@+id/accessory_title"
-                        style="@style/SkuSummaryHeader"
-                        android:text="@string/accessories"/>
-                    <View
-                        android:layout_width="fill_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/staples_middle_gray"/>
-                    <HorizontalScrollView
+                    android:padding="@dimen/sku_padding_2"
+                    android:background="@drawable/sku_divider">
+                    <LinearLayout
+                        android:id="@+id/accessory_container"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/sku_padding_2">
-                        <LinearLayout
-                            android:id="@+id/accessoryContainer"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                        </LinearLayout>
-                    </HorizontalScrollView>
-                </LinearLayout>
+                        android:orientation="horizontal">
+                    </LinearLayout>
+                </HorizontalScrollView>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
