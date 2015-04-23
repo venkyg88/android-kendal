@@ -23,6 +23,7 @@ public class  WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapt
         public String identifier;
         public String imageUrl;
         public String description;
+        public String buyNow;
         public boolean inStoreOnly;
         public float finalPrice;
         public String unit;
@@ -96,11 +97,11 @@ public class  WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapt
             vh.priceSticker.setText(item.literal);
         } else {
             vh.priceSticker.setText("$" + item.finalPrice);
-            vh.pricingUnit.setText(R.string.each);
+            vh.pricingUnit.setText(item.unit);
 
         }
 
-        if (item.inStoreOnly) {
+        if (item.inStoreOnly || item.buyNow == "") {
             vh.availability.setVisibility(View.VISIBLE);
             vh.action.setVisibility(View.GONE);
             vh.whirlie.setVisibility(View.GONE);
@@ -127,6 +128,7 @@ public class  WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapt
             Item item = new Item();
             item.title = data.getTitle();
             item.description = data.getDescription();
+            item.buyNow = data.getBuynow();
             if (item.description==null || item.description.isEmpty()) {
                 item.description = item.title;
             }

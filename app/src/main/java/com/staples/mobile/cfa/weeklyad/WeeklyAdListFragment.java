@@ -233,7 +233,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                     WeeklyAdListAdapter.Item item = (WeeklyAdListAdapter.Item) tag;
 
                     // if in-store item, open expanded image of the ad, otherwise open sku page
-                    if (item.inStoreOnly || item.identifier==null) {
+                    if (item.inStoreOnly || item.buyNow == "") {
                         String imageUrl = WeeklyAdImageUrlHelper.getUrl(
                                 (int) res.getDimension(R.dimen.weekly_ad_image_height),
                                 (int) res.getDimension(R.dimen.weekly_ad_image_width),
