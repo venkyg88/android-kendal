@@ -65,7 +65,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Crittercism.leaveBreadcrumb("WeeklyAdListFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("WeeklyAdListFragment:onCreateView(): Displaying the Weekly Ad List screen.");
 
         Activity activity = getActivity();
         View view = inflater.inflate(R.layout.weekly_ad_list, container, false);

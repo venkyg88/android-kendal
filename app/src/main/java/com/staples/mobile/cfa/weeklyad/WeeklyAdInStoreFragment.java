@@ -37,7 +37,7 @@ public class WeeklyAdInStoreFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Crittercism.leaveBreadcrumb("WeeklyAdInStoreFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("WeeklyAdInStoreFragment:onCreateView(): Displaying the Weekly Ad In Store screen.");
         View view = inflater.inflate(R.layout.weekly_ad_in_store, container, false);
 
         String title = null;

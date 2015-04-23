@@ -36,7 +36,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("ProfileFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("ProfileFragment:onCreateView(): Displaying the User Profile screen.");
         activity = (MainActivity) getActivity();
 
         View view = inflater.inflate(R.layout.profile_fragment, container, false);

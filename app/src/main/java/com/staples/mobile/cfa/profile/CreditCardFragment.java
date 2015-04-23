@@ -68,7 +68,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("CreditCardFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("CreditCardFragment:onCreateView(): Displaying the Credit Card screen.");
         activity = (MainActivity)getActivity();
         Resources r = getResources();
 

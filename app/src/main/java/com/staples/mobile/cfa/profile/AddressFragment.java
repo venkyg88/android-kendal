@@ -34,7 +34,7 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("AddressFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("AddressFragment:onCreateView(): Displaying the Address screen.");
         View view = inflater.inflate(R.layout.address_fragment, container, false);
         addressBlock = (AddressBlock) view.findViewById(R.id.shipping_address);
 

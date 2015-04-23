@@ -77,7 +77,7 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Bundle
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("BundleFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("BundleFragment:onCreateView(): Displaying the Bundle screen.");
         Activity activity = getActivity();
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
 

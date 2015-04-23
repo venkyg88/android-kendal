@@ -43,7 +43,7 @@ public class RewardsLinkingFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("RewardsLinkingFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("RewardsLinkingFragment:onCreateView(): Displaying the Rewards Linking screen.");
         activity = (MainActivity)getActivity();
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.rewards_linking_fragment, container, false);
         rewardsNumberVw = ((EditText)view.findViewById(R.id.rewards_card_number));
