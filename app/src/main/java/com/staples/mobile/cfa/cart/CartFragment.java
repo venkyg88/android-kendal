@@ -96,7 +96,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("CartFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("CartFragment:onCreateView(): Displaying the cart.");
         activity = (MainActivity) getActivity();
 
         // inflate and get child views

@@ -62,7 +62,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("OrderFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("OrderFragment:onCreateView(): Displaying the Order screen.");
         activity = (MainActivity) getActivity();
         orderShipmentListItems = new ArrayList<OrderShipmentListItem>();
         View view = inflater.inflate(R.layout.order_fragment, container, false);

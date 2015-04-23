@@ -159,7 +159,7 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("SkuFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("SkuFragment:onCreateView(): Displaying the SKU screen.");
 
         wrapper = (DataWrapper) inflater.inflate(R.layout.sku_summary, container, false);
         summary = wrapper.findViewById(R.id.summary);

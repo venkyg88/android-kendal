@@ -30,7 +30,7 @@ public class NotifyPrefsFragment extends Fragment implements CompoundButton.OnCh
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("NotifyPrefsFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("NotifyPrefsFragment:onCreateView(): Displaying the Notification Preferences screen.");
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.notify_prefs_fragment, container, false);
 
         RecyclerView list = (RecyclerView) view.findViewById(R.id.list);

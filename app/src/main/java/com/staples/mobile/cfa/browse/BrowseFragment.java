@@ -52,7 +52,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("BrowseFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("BrowseFragment:onCreateView(): Displaying the Browse screen.");
         Activity activity = getActivity();
         View view = inflater.inflate(R.layout.browse_frame, container, false);
         RecyclerView list = (RecyclerView) view.findViewById(R.id.products);

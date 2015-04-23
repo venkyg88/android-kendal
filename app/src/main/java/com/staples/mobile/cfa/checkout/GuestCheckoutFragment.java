@@ -319,8 +319,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
             paymentMethod.setSaveCardIndicator("Y");
             paymentMethod.setCardNumber(cardNumberVw.getText().toString().replaceAll(" ", ""));
             paymentMethod.setCardType(ccType.getName());
-            paymentMethod.setCardExpirationMonth(expirationMonthVw.getText().toString().substring(0,2));
-            paymentMethod.setCardExpirationYear("20" +expirationYearVw.getText().toString().substring(3,5));
+            paymentMethod.setCardExpirationMonth(expirationMonthVw.getText().toString());
+            paymentMethod.setCardExpirationYear("20" +expirationYearVw.getText().toString());
             if (ccType.isCidUsed()) {
                 paymentMethod.setCardVerificationCode(cidVw.getText().toString());
             }
