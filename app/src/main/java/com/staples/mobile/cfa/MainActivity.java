@@ -979,7 +979,7 @@ public class MainActivity extends Activity
                     }
                     break;
                 case ACCOUNT:
-                    selectDrawerItem(item, Transition.RIGHT, true);
+                    selectProfileFragment();
                     break;
                 case PROFILE:
                     if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
