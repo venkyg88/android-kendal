@@ -633,12 +633,15 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     class QtyChangeListener implements QuantityEditor.OnQtyChangeListener {
         @Override
         public void onQtyChange(View view, int value) {
-            CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition)view.getTag());
+            Object tag = view.getTag();
+            if (cartAdapter != null && tag != null && tag instanceof CartAdapter.CartItemPosition) {
+                CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition) tag);
 
-            // default proposed qty to orig in case new value not parseable;
-            cartItem.setProposedQty(value);
+                // default proposed qty to orig in case new value not parseable;
+                cartItem.setProposedQty(value);
 
-            updateItemQty(cartItem);
+                updateItemQty(cartItem);
+            }
         }
     }
 
