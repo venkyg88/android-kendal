@@ -764,7 +764,7 @@ public class MainActivity extends Activity
         );
         SkuSetFragment fragment = new SkuSetFragment();
         fragment.setArguments(title, identifier, imageUrl);
-        return(selectFragment(fragment, Transition.UP, true));
+        return(selectFragment(fragment, Transition.RIGHT, true));
     }
 
     public boolean selectSkuItem(String title, String identifier, boolean isSkuSetOriginated) {
