@@ -22,7 +22,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/sku_padding_10">
+            android:paddingBottom="@dimen/verticalspacing_24dp"
+            android:clipToPadding="false">
 
             <!-- SKU Photos -->
             <LinearLayout
@@ -327,21 +328,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:onClick="onClick"
-            android:clickable="true"
+            android:layout_marginTop="@dimen/margin_16dp"
+            android:layout_marginRight="@dimen/margin_16dp"
+            android:ellipsize="end"
             android:textColor="@color/staples_green"
             android:visibility="gone"/>
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:background="@color/staples_middle_gray"/>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/sku_add_cart_height"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_horizontal"
-            android:paddingLeft="@dimen/sku_padding_10"
-            android:paddingRight="@dimen/sku_padding_10">
+            android:layout_margin="@dimen/margin_16dp">
             <com.staples.mobile.cfa.widget.QuantityEditor
                 android:id="@+id/quantity"
                 style="@style/QtyEditorStyle"
@@ -349,20 +346,19 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:visibility="gone"
-                android:paddingLeft="@dimen/sku_padding_10"
                 app:maxQuantity="10"
                 app:popupWidth="120dp"/>
             <Button
                 android:id="@+id/add_to_cart"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/verticalspacing_48dp"
                 android:layout_gravity="center_vertical"
                 android:visibility="gone"
                 android:textSize="@dimen/fontsize_18sp"
                 android:text="@string/add_to_cart"
-                android:background="@drawable/sku_add_cart_round_layout"
-                android:textColor="@color/staples_white"
-                android:layout_margin="@dimen/sku_padding_5"/>
+                android:layout_marginLeft="@dimen/margin_16dp"
+                android:background="@drawable/add_to_cart"
+                android:textColor="@color/staples_white"/>
             <TextView
                 android:id="@+id/footer_msg"
                 android:layout_width="wrap_content"

@@ -2,7 +2,6 @@ package com.staples.mobile.cfa.skuset;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,14 +9,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.crittercism.app.Crittercism;
-import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.bundle.BundleItem;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
+import com.staples.mobile.cfa.widget.HorizontalDivider;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -69,18 +68,14 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
         View frame = inflater.inflate(R.layout.skuset_frame, container, false);
         wrapper = (DataWrapper) frame.findViewById(R.id.wrapper);
         RecyclerView list = (RecyclerView) wrapper.findViewById(R.id.list);
-        adapter = new SkuSetAdapter(getActivity());
-        list.setAdapter(adapter);
+        list.addItemDecoration(new HorizontalDivider(getActivity()));
+        list.setHasFixedSize(true);
         list.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        adapter = new SkuSetAdapter(getActivity());
         adapter.setOnClickListener(this);
+        list.setAdapter(adapter);
 
-//        // Set main image
-//        ImageView image = (ImageView) frame.findViewById(R.id.image);
-//        Drawable noPhoto = getActivity().getResources().getDrawable(R.drawable.no_photo);
-//        if (imageUrl == null) image.setImageDrawable(noPhoto);
-//        else Picasso.with(getActivity()).load(imageUrl).error(noPhoto).into(image);
-
-        // Start item query
         wrapper.setState(DataWrapper.State.LOADING);
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         easyOpenApi.getSkuSummary(identifier, null, MAXFETCH, this);
@@ -127,8 +122,8 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
     @Override
     public void onClick(View view) {
         Object tag = view.getTag();
-        if (tag instanceof SkuSetAdapter.Item) {
-            SkuSetAdapter.Item item = (SkuSetAdapter.Item) tag;
+        if (tag instanceof BundleItem) {
+            BundleItem item = (BundleItem) tag;
             ((MainActivity)getActivity()).selectSkuItem(item.title, item.identifier, true);
         }
     }

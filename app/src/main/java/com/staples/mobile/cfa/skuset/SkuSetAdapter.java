@@ -12,7 +12,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.access.easyopen.model.browse.Image;
+import com.staples.mobile.cfa.bundle.BundleItem;
+import com.staples.mobile.cfa.widget.PriceSticker;
+import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 
 import java.util.ArrayList;
@@ -24,47 +26,28 @@ public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView image;
         private TextView title;
+        private PriceSticker priceSticker;
+        private RatingStars ratingStars;
 
         private ViewHolder(View view) {
             super(view);
             image = (ImageView) view.findViewById(R.id.image);
             title = (TextView) view.findViewById(R.id.title);
-        }
-    }
-
-    public static class Item
-    {
-        public String title;
-        public String identifier;
-        public String imageUrl;
-
-        private Item(String title, String identifier) {
-            this.title = title;
-            this.identifier = identifier;
-        }
-        public String setImageUrl(List<Image> images) {
-            if (images==null) return(null);
-            for(Image image : images) {
-                String url = image.getUrl();
-                if (url!=null) {
-                    imageUrl = url;
-                    return(imageUrl);
-                }
-            }
-            return(null);
+            priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
+            ratingStars = (RatingStars) view.findViewById(R.id.rating);
         }
     }
 
     private Context context;
     private LayoutInflater inflater;
-    private ArrayList<Item> array;
+    private ArrayList<BundleItem> array;
     private View.OnClickListener listener;
     private Drawable noPhoto;
 
     public SkuSetAdapter(Context context) {
         this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        array = new ArrayList<Item>();
+        array = new ArrayList<BundleItem>();
         noPhoto = context.getResources().getDrawable(R.drawable.no_photo);
     }
 
@@ -89,7 +72,7 @@ public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(ViewHolder vh, int position) {
-        Item item = array.get(position);
+        BundleItem item = array.get(position);
 
         // Set tag for onClickListeners
         vh.itemView.setTag(item);
@@ -98,6 +81,8 @@ public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder
         if (item.imageUrl == null) vh.image.setImageDrawable(noPhoto);
         else Picasso.with(context).load(item.imageUrl).error(noPhoto).into(vh.image);
         vh.title.setText(item.title);
+        vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, item.rebateIndicator);
+        vh.ratingStars.setRating(item.customerRating, item.customerCount);
     }
 
     public int fill(List<Product> products) {
@@ -105,7 +90,8 @@ public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder
         int count = 0;
         for (Product product : products) {
             String name = Html.fromHtml(product.getProductName()).toString();
-            Item item = new Item(name, product.getSku());
+            BundleItem item = new BundleItem(products.size(), name, product.getSku());
+            item.setPrice(product.getPricing());
             item.setImageUrl(product.getImage());
             array.add(item);
             count++;

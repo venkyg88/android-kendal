@@ -254,6 +254,9 @@
                         android:padding="@dimen/verticalspacing_8dp"/>
                 </com.staples.mobile.cfa.widget.DataWrapper>
             </LinearLayout>
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/verticalspacing_8dp"/>
         </LinearLayout>
     </ScrollView>
 </com.staples.mobile.cfa.widget.AnimatorLayout>
