@@ -22,7 +22,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/sku_padding_10">
+            android:paddingBottom="@dimen/verticalspacing_24dp"
+            android:clipToPadding="false">
 
             <!-- SKU Photos -->
             <LinearLayout

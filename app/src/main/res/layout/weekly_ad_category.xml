@@ -60,6 +60,7 @@
         android:id="@+id/weekly_ad_categories_list"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:paddingBottom="@dimen/verticalspacing_8dp"/>
+        android:paddingBottom="@dimen/verticalspacing_24dp"
+        android:clipToPadding="false"/>
 
 </com.staples.mobile.cfa.widget.AnimatorLayout>
