@@ -738,7 +738,7 @@ public class MainActivity extends Activity
     }
 
     public boolean selectBundle(String title, String identifier) {
-        Crittercism.leaveBreadcrumb("MainActivity:selectBundle():"
+        Crittercism.leaveBreadcrumb("MainActivity:selectBundle(): Selecting a bundle by id."
             + " identifier[" + identifier + "]"
             + " title[" + title + "]"
         );
@@ -748,7 +748,7 @@ public class MainActivity extends Activity
     }
 
     public boolean selectSearch(String title, String keyword) {
-        Crittercism.leaveBreadcrumb("MainActivity:selectSearch():"
+        Crittercism.leaveBreadcrumb("MainActivity:selectSearch(): Searching by keyword."
             + " keyword[" + keyword + "]"
             + " title[" + title + "]"
         );
@@ -758,7 +758,7 @@ public class MainActivity extends Activity
     }
 
     public boolean selectSkuSet(String title, String identifier, String imageUrl) {
-        Crittercism.leaveBreadcrumb("MainActivity:selectSkuSet():"
+        Crittercism.leaveBreadcrumb("MainActivity:selectSkuSet(): Selecting a SKU set by identifier."
             + " identifier[" + identifier + "]"
             + " title[" + title + "]"
         );
@@ -768,7 +768,7 @@ public class MainActivity extends Activity
     }
 
     public boolean selectSkuItem(String title, String identifier, boolean isSkuSetOriginated) {
-        Crittercism.leaveBreadcrumb("MainActivity:selectSkuItem():"
+        Crittercism.leaveBreadcrumb("MainActivity:selectSkuItem(): Selecting a SKU item by identifier."
             + " identifier[" + identifier + "]"
             + " title[" + title + "]"
         );
@@ -778,7 +778,7 @@ public class MainActivity extends Activity
     }
 
     public boolean selectWeeklyAd(String storeNo) {
-        Crittercism.leaveBreadcrumb("MainActivity:selectWeeklyAd():"
+        Crittercism.leaveBreadcrumb("MainActivity:selectWeeklyAd(): Selecting a weekly ad with store number."
             + " storeNo[" + storeNo + "]"
         );
         WeeklyAdByCategoryFragment fragment = new WeeklyAdByCategoryFragment();
@@ -787,9 +787,9 @@ public class MainActivity extends Activity
     }
 
     public boolean selectInStoreWeeklyAd(String title, float price, String unit, String literal, String imageUrl, boolean inStoreOnly) {
-        Crittercism.leaveBreadcrumb("MainActivity:selectBundle():"
-            + " title[" + title + "]"
+        Crittercism.leaveBreadcrumb("MainActivity:selectInStoreWeeklyAd(): Selecting an in-store weekly ad."
             + " unit[" + unit + "]"
+            + " title[" + title + "]"
         );
         WeeklyAdInStoreFragment fragment = new WeeklyAdInStoreFragment();
         fragment.setArguments(title, price, unit, literal, imageUrl, inStoreOnly);
@@ -979,7 +979,7 @@ public class MainActivity extends Activity
                     }
                     break;
                 case ACCOUNT:
-                    selectDrawerItem(item, Transition.RIGHT, true);
+                    selectProfileFragment();
                     break;
                 case PROFILE:
                     if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {

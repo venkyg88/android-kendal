@@ -82,7 +82,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("SearchFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("SearchFragment:onCreateView(): Displaying the Search screen.");
         Activity activity = getActivity();
         View view = inflater.inflate(R.layout.bundle_frame, container, false);
 

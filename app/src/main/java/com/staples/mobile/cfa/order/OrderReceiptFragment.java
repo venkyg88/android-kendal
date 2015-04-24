@@ -56,7 +56,7 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("OrderReceiptFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("OrderReceiptFragment:onCreateView(): Displaying the Order Receipt screen.");
         activity = (MainActivity) getActivity();
 
         Resources r = getResources();

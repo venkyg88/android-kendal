@@ -23,7 +23,6 @@ import com.staples.mobile.common.access.easyopen.model.member.UpdateAddress;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import retrofit.http.HEAD;
 
 public class AddressFragment extends Fragment implements Callback<AddressId>, View.OnClickListener
 {
@@ -34,7 +33,7 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("AddressFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("AddressFragment:onCreateView(): Displaying the Address screen.");
         View view = inflater.inflate(R.layout.address_fragment, container, false);
         addressBlock = (AddressBlock) view.findViewById(R.id.shipping_address);
 
@@ -76,8 +75,11 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
                 if (addressId != null) {
                     addr.setAddressId(addressId);
                     easyOpenApi.updateMemberAddress(addr, this);
+                    break;
                 } else {
-                    easyOpenApi.addMemberAddress(addr, this); }
+                    easyOpenApi.addMemberAddress(addr, this);
+                    break;
+                }
                 } else {
                     activity.showErrorDialog(R.string.address_error_msg);
                     addressBlock.selectMode(false);

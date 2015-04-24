@@ -79,7 +79,7 @@ public class MainApplication
 
         causeThrowable.printStackTrace();
 
-        Crittercism.leaveBreadcrumb("MainApplication:uncaughtException():");
+        Crittercism.leaveBreadcrumb("MainApplication:uncaughtException(): Application has caught an exception that was not handled.");
         Crittercism.logHandledException(causeThrowable);
 
         return;

@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -146,7 +147,7 @@ public class ConfiguratorFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup container, Bundle bundle) {
 
-        Crittercism.leaveBreadcrumb("ConfiguratorFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("ConfiguratorFragment:onCreateView(): Displaying the home/landing screen.");
 
         if (LOGGING) Log.v(TAG, "ConfiguratorFragment:onCreateView():"
                         + " this[" + this + "]"
@@ -183,7 +184,7 @@ public class ConfiguratorFragment extends Fragment {
 
                 ConfigItem configItem = (ConfigItem) view.getTag();
                 if (configItem != null) {
-                    Crittercism.leaveBreadcrumb("ConfiguratorFragment:OnClickListener.onClick(): configItem.title[" + configItem.title + "]");
+                    Crittercism.leaveBreadcrumb("ConfiguratorFragment:OnClickListener.onClick(): User has selected an item with the following title: configItem.title[" + configItem.title + "]");
                     Tracker.getInstance().trackActionForHomePage(configItem.title); // Analytics
                 }
                 activity.selectBundle(configItem.title, configItem.identifier);
@@ -221,7 +222,11 @@ public class ConfiguratorFragment extends Fragment {
         if (configuration.orientation != lastOrientation) {
 
             lastOrientation = configuration.orientation;
+
+            FrameLayout messageLayout = (FrameLayout) configScrollLayout.getChildAt(0);
             configScrollLayout.removeAllViews();
+            configScrollLayout.addView(messageLayout);
+
             initFromConfiguratorResult();
         }
     }

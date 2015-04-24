@@ -37,7 +37,7 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Crittercism.leaveBreadcrumb("ResetPasswordFragment:onCreateView(): Entry.");
+        Crittercism.leaveBreadcrumb("ResetPasswordFragment:onCreateView(): Displaying the Reset Password screen.");
         activity = (MainActivity)getActivity();
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.reset_password_fragment, container, false);
         recoveryEmail = (EditText)view.findViewById(R.id.emailTV);
