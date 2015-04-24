@@ -13,12 +13,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TabHost;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
@@ -396,41 +393,26 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             final String accessoryTitle = accessory.getProductName();
             final String sku = accessory.getSku();
 
-            View skuAccessoryRow = inflater.inflate(R.layout.sku_accessory_item, null);
+            View row = inflater.inflate(R.layout.sku_accessory_item, parent, false);
+            row.setOnClickListener(this);
+            row.setTag(accessory);
 
             // Set accessory image
-            ImageView accessoryImageView = (ImageView) skuAccessoryRow.findViewById(R.id.accessory_image);
+            ImageView accessoryImageView = (ImageView) row.findViewById(R.id.accessory_image);
             Picasso.with(activity).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
 
-            // Set listener for accessory image
-            accessoryImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Tracker.getInstance().trackActionForProductAccessories(sku, product, false); // analytics
-                    activity.selectSkuItem(Html.fromHtml(accessoryTitle).toString(), sku, false);
-                }
-            });
-
             // Set accessory title
-            TextView accessoryTitleTextView = (TextView) skuAccessoryRow.findViewById(R.id.accessory_title);
+            TextView accessoryTitleTextView = (TextView) row.findViewById(R.id.accessory_title);
             accessoryTitleTextView.setText(Html.fromHtml(accessoryTitle).toString());
 
-            // Set listener for accessory title
-            accessoryTitleTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    activity.selectSkuItem(accessoryTitle, sku, false);
-                }
-            });
+            // Set accessory price
+            ((PriceSticker) row.findViewById(R.id.accessory_price)).setBrowsePricing(accessory.getPricing());
 
             // Set accessory rating
-            ((RatingStars) skuAccessoryRow.findViewById(R.id.accessory_rating))
+            ((RatingStars) row.findViewById(R.id.accessory_rating))
                     .setRating(accessory.getCustomerReviewRating(), accessory.getCustomerReviewCount());
 
-            // Set accessory price
-            ((PriceSticker) skuAccessoryRow.findViewById(R.id.accessory_price)).setBrowsePricing(accessory.getPricing());
-
-            parent.addView(skuAccessoryRow);
+            parent.addView(row);
         }
     }
 
@@ -518,7 +500,6 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
     }
 
     // Retrofit callbacks
-
     @Override
     public void success(Object obj, Response response) {
         Activity activity = getActivity();
@@ -609,16 +590,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
 
         if (isSkuSetOriginated) {
             skuText.setVisibility(View.VISIBLE);
-            skuText.setText(product.getProductName());
-            skuText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    FragmentManager fm = getFragmentManager();
-                    if (fm != null) {
-                        fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
-                    }
-                }
-            });
+            skuText.setText(R.string.skuset_change);
+            skuText.setOnClickListener(this);
         }
 
         // Analytics
@@ -638,12 +611,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 skuText.setVisibility(View.VISIBLE);
                 addToCartButton.setEnabled(false);
                 qtyEditor.setEnabled(false);
-                skuText.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        activity.selectSkuSet(product.getProductName(), product.getSku(), product.getThumbnailImage().get(0).getUrl());
-                    }
-                });
+                skuText.setOnClickListener(this);
+                skuText.setTag(product);
                 break;
             case RETAILONLY:
             case SPECIALORDER:
@@ -893,6 +862,27 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
                 QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
                 int quantity = edit.getQuantity();
                 new AddToCart(identifier, quantity);
+                break;
+            case R.id.select_sku:
+                Object skuSetTag = view.getTag();
+                if(skuSetTag instanceof Product) {
+                    Product product = (Product)skuSetTag;
+                    ((MainActivity)getActivity()).selectSkuSet(product.getProductName(), product.getSku(), product.getThumbnailImage().get(0).getUrl());
+                }
+                if(isSkuSetOriginated) {
+                    FragmentManager fm = getFragmentManager();
+                    if (fm != null) {
+                        fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
+                    }
+                }
+                break;
+            case R.id.accessory_layout:
+                Object accessoryTag = view.getTag();
+                if(accessoryTag instanceof Product) {
+                    Product product = (Product)accessoryTag;
+                    ((MainActivity)getActivity()).selectSkuItem(product.getProductName(), product.getSku(), false);
+                }
+
                 break;
         }
     }

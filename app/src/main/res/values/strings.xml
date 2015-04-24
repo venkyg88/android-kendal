@@ -168,8 +168,9 @@
     <string name="order_confirmation_with_error">An error occurred, but your order appears to have gone through."</string>
     <string name="password_reset">Reset Password</string>
     <string name="continue_shopping">Continue Shopping</string>
-    <string name="sku_set_message">Select product options</string>
-    <string name="sku_title">Select items</string>
+    <string name="sku_set_message">Select product option</string>
+    <string name="sku_title">Select an Option</string>
+    <string name="skuset_change">Change product option</string>
 
     <!--profile-->
     <string name="username">User name</string>
@@ -283,10 +284,5 @@
     <string name="error_server_connection">Unable to contact server at this time. Please try again later.</string>
     <string name="error_redirect">Please sign in to guest network and then try again.</string>
     <string name="error_no_location_service">Can\'t find nearby stores because location service is not available.</string>
-
-    <string-array name="skuset_detail">
-        <item>Select product options</item>
-    </string-array>
-
 
 </resources>
