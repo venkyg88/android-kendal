@@ -273,7 +273,9 @@ public class MainActivity extends Activity
         // if we got past configurator initialization (otherwise LoginHelper constructor throws NPE)
         if (AppConfigurator.getInstance().getConfigurator() != null) {
             // unregister loginCompleteListener
-            loginHelper.unregisterLoginCompleteListener(this);
+            if (loginHelper != null) {
+                loginHelper.unregisterLoginCompleteListener(this);
+            }
             StaplesAppContext.getInstance().resetConfigurator(); // need to reset so a fresh network attempt is made, to enable correct handling of redirect error
         }
     }
