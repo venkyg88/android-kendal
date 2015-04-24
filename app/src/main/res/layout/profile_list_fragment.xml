@@ -7,6 +7,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/profile_list_view"
+        android:paddingBottom="@dimen/verticalspacing_24dp"
+        android:clipToPadding="false"
         android:background="@color/staples_off_white"/>
 
     <ImageButton
