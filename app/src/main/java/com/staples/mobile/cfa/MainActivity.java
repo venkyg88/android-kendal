@@ -304,7 +304,8 @@ public class MainActivity extends Activity
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override public void onClick(DialogInterface dialog, int which) {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
                 MainActivity.this.finish();
             }
         });
@@ -658,15 +659,21 @@ public class MainActivity extends Activity
     }
 
     public void showProgressIndicator() {
-        mainLayout.showOverlay(true);
+        if (mainLayout != null) {
+            mainLayout.showOverlay(true);
+        }
     }
 
     public void hideProgressIndicator() {
-        mainLayout.showOverlay(false);
+        if (mainLayout != null) {
+            mainLayout.showOverlay(false);
+        }
     }
 
     public void swallowTouchEvents(boolean swallow) {
-        mainLayout.swallowTouchEvents(swallow);
+        if (mainLayout != null) {
+            mainLayout.swallowTouchEvents(swallow);
+        }
     }
 
     // Navigation
