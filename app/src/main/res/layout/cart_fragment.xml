@@ -130,7 +130,7 @@
             android:layout_gravity="left|center_vertical"
             android:gravity="center_vertical"
             android:text="@string/coupons_rewards"
-            android:textSize="@dimen/fontsize_14sp"
+            android:textSize="@dimen/fontsize_18sp"
             android:textColor="@color/staples_green"
             android:drawableLeft="@drawable/ic_add_green"
             android:drawablePadding="8dp"
@@ -140,7 +140,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="right|center_vertical"
-            android:textSize="@dimen/fontsize_14sp"
+            android:textSize="@dimen/fontsize_18sp"
             android:textColor="@color/staples_green"
             />
     </android.support.v7.widget.CardView>
@@ -180,7 +180,7 @@
 			android:paddingTop="0dp"
 			android:text="@string/oversized_shipping_fee"
             android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_14sp"
+            android:textSize="@dimen/fontsize_24sp"
 			android:visibility="gone"
         />
         <TextView
@@ -190,7 +190,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_14sp"
+            android:textSize="@dimen/fontsize_24sp"
 			android:visibility="gone"
 		/>
 
@@ -203,7 +203,7 @@
 			android:paddingTop="0dp"
 			android:text="@string/shipping"
 			android:textColor="@color/staples_black"
-			android:textSize="@dimen/fontsize_14sp"
+			android:textSize="@dimen/fontsize_24sp"
 		/>
 
 		<TextView
@@ -213,7 +213,7 @@
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:textColor="@color/staples_black"
-			android:textSize="@dimen/fontsize_14sp"
+			android:textSize="@dimen/fontsize_24sp"
 		/>
 
     </RelativeLayout>
@@ -225,8 +225,8 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
 		android:paddingBottom="0dp"
-        android:paddingLeft="@dimen/margin_16dp"
-        android:paddingRight="@dimen/margin_16dp"
+        android:paddingLeft="@dimen/cartmath_half_margin"
+        android:paddingRight="@dimen/cartmath_half_margin"
 		android:paddingTop="0dp">
 
         <TextView
@@ -234,7 +234,9 @@
             android:layout_width="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:textSize="@dimen/fontsize_14sp"
+            android:paddingLeft="@dimen/cartmath_half_margin"
+            android:paddingRight="@dimen/cartmath_half_margin"
+            android:textSize="@dimen/fontsize_24sp"
             android:textStyle="bold"
             android:textColor="@color/staples_black"
             android:text="@string/pretax_subtotal" />
@@ -245,7 +247,9 @@
             android:layout_width="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:textSize="@dimen/fontsize_14sp"
+            android:paddingLeft="@dimen/cartmath_half_margin"
+            android:paddingRight="@dimen/cartmath_half_margin"
+            android:textSize="@dimen/fontsize_24sp"
             android:textStyle="bold"
 			android:textColor="@color/staples_black" />
 
@@ -253,12 +257,12 @@
         <android.support.v7.widget.CardView
             android:id="@+id/action_checkout"
             android:layout_width="match_parent"
-            android:layout_height="36dp"
+            android:layout_height="wrap_content"
             android:layout_below="@id/cart_subtotal"
             android:layout_marginTop="@dimen/verticalspacing_8dp"
             android:layout_marginBottom="@dimen/verticalspacing_8dp"
-            android:padding="0dp"
-            card_view:cardCornerRadius="1dp"
+            card_view:contentPadding="@dimen/cartmath_half_margin"
+            card_view:cardCornerRadius="8dp"
             card_view:cardElevation="0dp"
             card_view:cardBackgroundColor="@color/staples_red" >
 
@@ -268,7 +272,7 @@
                 android:layout_width="match_parent"
                 android:gravity="center"
                 android:text="@string/proceed_to_checkout"
-                android:textSize="@dimen/fontsize_14sp"
+                android:textSize="@dimen/fontsize_34sp"
                 android:textColor="@color/staples_white"
             />
 

@@ -87,7 +87,7 @@
     <string name="expected_delivery">Expected Delivery:</string>
     <string name="pretax_subtotal">Pre-tax subtotal</string>
     <string name="tax">Tax</string>
-    <string name="proceed_to_checkout">SECURE CHECKOUT</string>
+    <string name="proceed_to_checkout">Secure Checkout</string>
     <string name="no_reviews">no reviews</string>
     <string name="shipping_addr">Shipping Address</string>
     <string name="payment_method">Payment Method</string>
@@ -96,7 +96,7 @@
     <string name="required_fields">Please fill in required fields</string>
     <string name="billing_addr">Billing Address</string>
     <string name="use_as_billing_addr">Use above as billing address</string>
-    <string name="item_subtotal">Subtotal (including coupons)</string>
+    <string name="item_subtotal">Product Total (including coupons)</string>
     <string name="coupons_rewards">Coupons &amp; Rewards</string>
     <string name="coupon_code_hint">Add Coupon Code here</string>
     <string name="missing_coupon_code">Please enter a coupon code</string>
@@ -153,7 +153,7 @@
 	<string name="input_manually_allcaps">INPUT MANUALLY</string>
 
     <!--order confirmation-->
-    <string name="submit_order">SUBMIT ORDER</string>
+    <string name="submit_order">Place Order</string>
     <string name="order_confirmation_msg">Thank you for your order!</string>
     <string name="order_confirmation_msg2">An email with complete details has</string>
     <string name="order_confirmation_msg3">been sent to %s.</string>

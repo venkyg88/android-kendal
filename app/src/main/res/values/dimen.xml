@@ -21,6 +21,7 @@
     <dimen name="margin_16dp">16dp</dimen>     <!--part of style guide-->
     <dimen name="margin_72dp">72dp</dimen>     <!--part of style guide-->
 
+    <dimen name="cartmath_half_margin">8dp</dimen>
     <dimen name="action_bar_half_margin">8dp</dimen>
     <dimen name="action_bar_quarter_margin">4dp</dimen>
     <dimen name="bundle_min_grid_width">240dp</dimen>
