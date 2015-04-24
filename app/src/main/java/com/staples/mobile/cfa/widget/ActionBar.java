@@ -18,7 +18,7 @@ public class ActionBar extends LinearLayout {
     public enum Config {
 
         //        back   drawer logo   feed,  search qty    cart   signin close  title
-        ABOUT    (true,  false, true,  false, false, false, true,  false, false, R.string.about_title),
+        ABOUT    (true,  false, false, false, false, false, true,  false, false, R.string.about_title),
         ADDCARD  (true,  false, false, false, false, false, false, false, false, R.string.add_card_title),
         ADDRESS  (true,  false, false, false, true,  false, true,  false, false, R.string.address_title),
         BROWSE   (true,  false, false, true,  true,  false, true,  false, false, R.string.browse_title),
@@ -41,6 +41,7 @@ public class ActionBar extends LinearLayout {
         SKU      (true,  false, false, false, true,  false, true,  false, false, 0),
         SKUSET   (true,  false, false, false, false, false, false, false, false, R.string.sku_title),
         STORE    (true,  false, false, true,  true,  false, true,  false, false, R.string.store_locator_title),
+        TERMS    (true,  false, false, false, false, false, false, false, false, R.string.terms_title),
         VIEWCARD (true,  false, false, false, true,  false, true,  false, false, R.string.credit_card_title),
         WEEKLYAD (true,  false, false, true,  true,  false, true,  false, false, R.string.weekly_ad_title);
 
