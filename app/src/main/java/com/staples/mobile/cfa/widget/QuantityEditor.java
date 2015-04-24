@@ -32,7 +32,6 @@ public class QuantityEditor extends EditText implements View.OnClickListener, Te
     private int maxQuantity;
     private int popupWidth;
 
-    private int quantity;
     private boolean inSpecialNeedOfKeyboard = false;
 
     // Constructors
@@ -53,7 +52,6 @@ public class QuantityEditor extends EditText implements View.OnClickListener, Te
         minQuantity = 1;
         maxQuantity = 10;
         popupWidth = 100;
-        quantity = 1;
 
         // Get styled attributes
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.QuantityEditor);
@@ -79,15 +77,6 @@ public class QuantityEditor extends EditText implements View.OnClickListener, Te
         setOnEditorActionListener(this);
     }
 
-    @Override
-    public void onRestoreInstanceState(Parcelable parcel) {
-        super.onRestoreInstanceState(parcel);
-        quantity = minQuantity;
-        try {
-            quantity = Integer.parseInt(getText().toString());
-        } catch(Exception e) { }
-    }
-
     // Public methods
 
     public void setOnQtyChangeListener(OnQtyChangeListener listener) {
@@ -95,11 +84,15 @@ public class QuantityEditor extends EditText implements View.OnClickListener, Te
     }
 
     public int getQuantity() {
+        int quantity = minQuantity;
+        try {
+            quantity = Integer.parseInt(getText().toString());
+        } catch(Exception e) { }
+        setText(Integer.toString(quantity));
         return(quantity);
     }
 
     public void setQuantity(int quantity) {
-        this.quantity = quantity;
         setText(Integer.toString(quantity));
         setSelection(0);
         inSpecialNeedOfKeyboard = false;
@@ -107,8 +100,8 @@ public class QuantityEditor extends EditText implements View.OnClickListener, Te
 
     @Override
     public void onClick(View view) {
-        // EditText clicks
         if (view == this) {
+            int quantity = getQuantity();
             if (quantity<maxQuantity && !inSpecialNeedOfKeyboard) showPopup();
             else showKeyboard();
             return;
@@ -121,7 +114,7 @@ public class QuantityEditor extends EditText implements View.OnClickListener, Te
                 popup.dismiss();
                 popup = null;
             }
-            quantity = id;
+            int quantity = id;
             setText(Integer.toString(quantity));
             setSelection(0);
             inSpecialNeedOfKeyboard = false;
@@ -158,6 +151,7 @@ public class QuantityEditor extends EditText implements View.OnClickListener, Te
     private class AfterKeyboard implements Runnable {
         @Override
         public void run() {
+            int quantity = getQuantity();
             setText(Integer.toString(quantity));
             setSelection(0);
             setFocusable(false);
@@ -170,14 +164,18 @@ public class QuantityEditor extends EditText implements View.OnClickListener, Te
 
     @Override
     public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-        if (actionId==EditorInfo.IME_ACTION_DONE) {
-            quantity = minQuantity;
-            try {
-                quantity = Integer.parseInt(getText().toString());
-            } catch(Exception e) { }
-            if (listener != null)
-                listener.onQtyChange(this, quantity);
-            post(new AfterKeyboard());
+        int quantity;
+        switch(actionId) {
+            case EditorInfo.IME_ACTION_DONE:
+                quantity = getQuantity();
+                if (listener != null)
+                    listener.onQtyChange(this, quantity);
+                post(new AfterKeyboard());
+                break;
+            case EditorInfo.IME_NULL:
+                quantity = getQuantity();
+                if (listener != null)
+                    listener.onQtyChange(this, quantity);
         }
         return(false);
     }

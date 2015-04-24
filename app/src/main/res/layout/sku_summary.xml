@@ -360,7 +360,7 @@
                 android:visibility="gone"
                 android:textSize="@dimen/fontsize_18sp"
                 android:text="@string/add_to_cart"
-                android:background="@drawable/sku_add_cart_round_layout"
+                android:background="@drawable/add_to_cart"
                 android:textColor="@color/staples_white"
                 android:layout_margin="@dimen/sku_padding_5"/>
             <TextView
