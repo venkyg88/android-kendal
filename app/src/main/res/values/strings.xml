@@ -18,6 +18,7 @@
     <string name="order_detail_title">Order Details</string>
     <string name="profile_title">Profile</string>
     <string name="about_title">About</string>
+    <string name="terms_title">Privacy &amp; Terms</string>
     <string name="credit_card_title">Credit Cards</string>
     <string name="add_card_title">Add Credit Cards</string>
     <string name="address_title">Addresses</string>
