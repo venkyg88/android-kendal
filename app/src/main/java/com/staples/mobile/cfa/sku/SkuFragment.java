@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TabHost;
@@ -857,6 +858,8 @@ public class SkuFragment extends Fragment implements TabHost.OnTabChangeListener
             if (!(activity instanceof MainActivity)) return;
 
             ((MainActivity) activity).hideProgressIndicator();
+            QuantityEditor edit = (QuantityEditor) wrapper.findViewById(R.id.quantity);
+            edit.setQuantity(1);
 
             // if success
             if (errMsg == null) {
