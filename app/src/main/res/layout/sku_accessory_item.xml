@@ -5,32 +5,25 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_margin="@dimen/margin_16dp">
-
     <ImageView
         android:id="@+id/accessory_image"
         android:layout_width="match_parent"
         android:layout_height="@dimen/sku_accessory_image_height"
         android:scaleType="centerInside"/>
-
     <TextView
         android:id="@+id/accessory_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/fontsize_12sp"
         android:textColor="@color/staples_black"/>
-
     <com.staples.mobile.cfa.widget.RatingStars
         android:id="@+id/accessory_rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="@dimen/fontsize_13sp"/>
-
+        style="@style/SmallRatingStars"
+        android:layout_marginTop="@dimen/elevation_high"/>
     <com.staples.mobile.cfa.widget.PriceSticker
         android:id="@+id/accessory_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         style="@style/SmallPriceSticker"/>
-
 </LinearLayout>
