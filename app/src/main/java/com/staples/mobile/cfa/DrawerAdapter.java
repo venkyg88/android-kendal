@@ -124,5 +124,6 @@ public class    DrawerAdapter extends BaseAdapter {
         array.add(new DrawerItem(DrawerItem.Type.PROFILE, activity, R.drawable.ic_profile_black, R.string.profile_title, ProfileFragment.class, false)); // set initially disabled
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_notifications_black, R.string.notify_prefs_title, NotifyPrefsFragment.class));
         array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_info_black, R.string.terms_title, TermsFragment.class));
+        array.add(new DrawerItem(DrawerItem.Type.FRAGMENT, activity, R.drawable.ic_info_black, R.string.about_title, AboutFragment.class));
     }
 }
