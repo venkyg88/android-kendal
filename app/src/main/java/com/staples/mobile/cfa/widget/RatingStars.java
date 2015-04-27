@@ -89,18 +89,20 @@ public class RatingStars extends View {
         a.recycle();
 
         // Find or create compatible configuration
-        for(int i=0;i< MAXCONFIGS;i++) {
-            if (configs[i]==null) {
-                config = new Config(textSize);
-                configs[i] = config;
-                break;
-            }
+        int i;
+        for(i=0;i<MAXCONFIGS;i++) {
+            if (configs[i]==null) break;
             if (configs[i].textSize==textSize) {
                 config = configs[i];
                 break;
             }
         }
-        if (config==null) throw(new RuntimeException("Could not create new RatingStars.Config"));
+        if (config==null) {
+            config = new Config(textSize);
+            if (i<MAXCONFIGS) {
+                configs[i] = config;
+            }
+        }
     }
 
     private static class Config {
