@@ -33,7 +33,8 @@ public class TermsFragment extends Fragment {
         termsWebView.setWebViewClient(new WebViewClient() {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 Crittercism.logHandledException(new Exception());
-                Log.d(TAG, "Loading WebViewClient Error! Error code:" + errorCode);
+                Log.d(TAG, "Loading WebViewClient Error! Error code:" + errorCode +
+                ", Reason:" +  description);
             }
         });
 
