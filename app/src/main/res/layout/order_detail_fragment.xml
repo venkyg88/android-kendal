@@ -1,75 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.staples.mobile.cfa.widget.AnimatorScroll xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/staples_white">
-
-<ScrollView
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/margin_16dp"
-        android:background="@color/staples_white">
-
+        android:padding="@dimen/margin_16dp">
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/orderNumber"
-            android:textSize="@dimen/fontsize_24sp"
-            android:textColor="@color/staples_black"/>
-
+            style="@style/OrderHeading"/>
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/orderDate"
-            android:layout_alignParentRight="true"
-            android:textSize="@dimen/fontsize_16sp"
-            android:textColor="@color/staples_black" />
-
+            style="@style/OrderValue"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/order_item_count"
+                style="@style/OrderValue"
+                android:textColor="@color/staples_dark_gray"
+                android:layout_marginRight="@dimen/margin_32dp"/>
+            <TextView
+                android:id="@+id/order_total"
+                style="@style/OrderValue"/>
+        </LinearLayout>
+        <View
+            style="@style/HorizontalDivLine"/>
 
         <!--dynamically filled list of sku items-->
         <LinearLayout
             android:id="@+id/sku_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/verticalspacing_8dp"
             android:paddingTop="0dp"
             android:orientation="vertical"/>
-
-
         <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="@dimen/verticalspacing_8dp"
-            android:background="@color/staples_middle_gray" />
-
+            style="@style/HorizontalDivLine" />
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Payment Information"
-            android:id="@+id/paymentLbl"
-            android:layout_marginTop="@dimen/verticalspacing_8dp"
-            android:textSize="@dimen/fontsize_24sp"
-            android:textColor="@color/staples_black" />
+            android:text="@string/order_payment"
+            android:paddingTop="@dimen/margin_16dp"
+            style="@style/OrderHeading"/>
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Payment method"
-            android:id="@+id/paymentMethodLbl"
-            android:layout_marginTop="@dimen/verticalspacing_8dp"
-            android:textSize="@dimen/fontsize_16sp"
-            android:textColor="@color/staples_middle_gray" />
-
+            style="@style/OrderValue"
+            android:text="@string/payment_method"
+            android:textColor="@color/staples_dark_gray" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="@dimen/verticalspacing_8dp">
+            android:layout_marginTop="@dimen/verticalspacing_8dp"
+            android:layout_marginBottom="@dimen/verticalspacing_16dp">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -78,164 +62,79 @@
                 android:layout_marginRight="8dp"
                 android:src="@drawable/american_express"/>
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/cardInfoTV"
-                android:textSize="@dimen/fontsize_16sp"
-                android:textColor="@color/staples_black" />
+                style="@style/OrderValue"/>
         </LinearLayout>
-
-        <!--horiz rule-->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="@dimen/verticalspacing_8dp"
-            android:background="@color/staples_middle_gray" />
-
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Billing address"
-            android:id="@+id/addressLbl"
-            android:layout_marginTop="@dimen/verticalspacing_8dp"
-            android:textSize="@dimen/fontsize_16sp"
-            android:textColor="@color/staples_middle_gray" />
+            android:text="@string/billing_addr"
+            style="@style/OrderValue"
+            android:textColor="@color/staples_dark_gray"/>
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/billingNameTV"
-            android:layout_marginTop="@dimen/verticalspacing_8dp"
-            android:textSize="@dimen/fontsize_16sp"
-            android:textColor="@color/staples_black" />
+            style="@style/OrderValue" />
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/addressTV"
-            android:layout_marginTop="@dimen/verticalspacing_8dp"
-            android:textSize="@dimen/fontsize_16sp"
-            android:textColor="@color/staples_black" />
-
+            style="@style/OrderValue"/>
         <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="10dip"
-        android:background="@color/staples_middle_gray" />
-
+            style="@style/HorizontalDivLine" />
         <TextView
-            android:layout_width="wrap_content"
+            android:text="@string/order_total"
+            android:paddingTop="@dimen/margin_16dp"
+            style="@style/OrderHeading"/>
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Order Total"
-            android:id="@+id/orderFinalLbl"
-            android:layout_marginTop="@dimen/verticalspacing_8dp"
-            android:textSize="@dimen/fontsize_24sp"
-            android:textColor="@color/staples_black" />
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:orientation="horizontal">
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Item SubTotal"
-                android:id="@+id/subTotalLbl"
-                android:layout_marginTop="@dimen/verticalspacing_8dp"
-                android:textSize="@dimen/fontsize_16sp"
-                android:textColor="@color/staples_black" />
+                style="@style/OrderLabel"
+                android:text="@string/item_sub_total" />
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/orderSubTotalTV"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="@dimen/verticalspacing_8dp"
-                android:textSize="@dimen/fontsize_16sp"
-                android:textColor="@color/staples_black" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+                style="@style/OrderValue" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Coupons &amp; Rewards"
-                android:id="@+id/couponsLbl"
-                android:layout_marginTop="@dimen/verticalspacing_8dp"
-                android:textSize="@dimen/fontsize_16sp"
-                android:textColor="@color/staples_black" />
+                style="@style/OrderLabel"
+                android:text="@string/coupons_rewards" />
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/couponsTV"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="@dimen/verticalspacing_8dp"
-                android:textSize="@dimen/fontsize_16sp"
+                style="@style/OrderValue"
                 android:textColor="@color/staples_green" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Shipping"
-                android:id="@+id/shippingLbl"
-                android:layout_marginTop="@dimen/verticalspacing_8dp"
-                android:textSize="@dimen/fontsize_16sp"
-                android:textColor="@color/staples_black" />
+                style="@style/OrderLabel"
+                android:text="@string/shipping" />
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/shippingTV"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="@dimen/verticalspacing_8dp"
-                android:textSize="@dimen/fontsize_16sp"
-                android:textColor="@color/staples_green" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
+                style="@style/OrderValue"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tax"
-                android:id="@+id/taxLbl"
-                android:layout_marginTop="@dimen/verticalspacing_8dp"
-                android:textSize="@dimen/fontsize_16sp"
-                android:textColor="@color/staples_black" />
+                style="@style/OrderLabel"
+                android:text="@string/tax" />
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/orderTaxTV"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="@dimen/verticalspacing_8dp"
-                android:textSize="@dimen/fontsize_16sp"
-                android:textColor="@color/staples_black" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+                style="@style/OrderValue"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Total"
-                android:id="@+id/orderGrandTotalLbl"
-                android:layout_marginTop="@dimen/verticalspacing_8dp"
-                android:textSize="@dimen/fontsize_16sp"
-                android:textColor="@color/staples_black" />
+                style="@style/OrderLabel"
+                android:text="@string/order_total_label" />
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/orderGrandTotalTV"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="@dimen/verticalspacing_8dp"
-                android:textSize="@dimen/fontsize_16sp"
-                android:textColor="@color/staples_black" />
-        </RelativeLayout>
-
+                style="@style/OrderValue"
+                android:id="@+id/orderGrandTotalTV" />
+        </LinearLayout>
     </LinearLayout>
-</ScrollView>
-
-</com.staples.mobile.cfa.widget.AnimatorLayout>
+</com.staples.mobile.cfa.widget.AnimatorScroll>

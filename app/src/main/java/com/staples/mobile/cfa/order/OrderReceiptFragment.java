@@ -53,6 +53,8 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
     TextView orderTax;
     TextView orderGrandTotal;
     ImageView cardImage;
+    TextView orderQty;
+    TextView orderTotal;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -75,6 +77,8 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
         orderShipping = (TextView)view.findViewById(R.id.shippingTV);
         orderTax = (TextView)view.findViewById(R.id.orderTaxTV);
         orderGrandTotal = (TextView)view.findViewById(R.id.orderGrandTotalTV);
+        orderQty = (TextView)view.findViewById(R.id.order_item_count);
+        orderTotal = (TextView)view.findViewById(R.id.order_total);
 
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 
@@ -108,7 +112,6 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
                         TextView skuQuantity = (TextView) v.findViewById(R.id.shipmentQty);
                         TextView shipmentNum = (TextView) v.findViewById(R.id.shipmentLbl);
                         TextView deliveryDate = (TextView) v.findViewById(R.id.deliveryDateTV);
-                        View horizRule = v.findViewById(R.id.horizontal_rule);
                         final ImageView skuImage = (ImageView) v.findViewById(R.id.skuImage);
                         skuImage.setTag(sku);
                         skuImage.setOnClickListener(this);
@@ -120,7 +123,6 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
                         } else {
                             shipmentNum.setVisibility(View.GONE);
                             deliveryDate.setVisibility(View.GONE);
-                            horizRule.setVisibility(View.GONE);
                         }
                         skuTitle.setText(sku.getSkuDescription());
                         skuPrice.setText(currencyFormat.format(Float.parseFloat(sku.getLineTotal())));
@@ -158,13 +160,28 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
 
                 orderNumber.setText(r.getString(R.string.order) + " " + orderStatus.getOrderNumber());
                 orderDate.setText(r.getString(R.string.order_date) + ": " + formatter.format(OrderShipmentListItem.parseDate(orderStatus.getOrderDate())));
+
+                // determine item qty of shipment
+                int totalItemQtyOfShipment = 0;
+                for (ShipmentSKU shipmentSku : orderStatus.getShipment().get(0).getShipmentSku()) {
+                    int qtyOrdered = (int)Double.parseDouble(shipmentSku.getQtyOrdered()); // using parseDouble since quantity string is "1.0"
+                    totalItemQtyOfShipment += qtyOrdered;
+                }
+
+                orderQty.setText(r.getQuantityString(R.plurals.cart_qty, totalItemQtyOfShipment, totalItemQtyOfShipment));
+                orderTotal.setText("$"+orderStatus.getGrandTotal());
+
                 cardImage.setImageResource(CreditCard.Type.matchOnApiName(orderStatus.getPayment().get(0)
                         .getPaymentMethodCode()).getImageResource());
                 cardInfo.setText(r.getString(R.string.card_ending_in) + " " + orderStatus.getPayment().get(0).getCcLast4Digits());
                 orderName.setText(orderStatus.getShiptoFirstName() + " " + orderStatus.getShiptoLastName());
+                String zipCode = orderStatus.getShiptoZip();
+                if(zipCode.length() > 5) {
+                    zipCode = zipCode.substring(0,5) + "-" + zipCode.substring(5);
+                }
                 billingAddress.setText(orderStatus.getShiptoAddress1() + ((orderStatus.getShiptoAddress2()!=null) ? " " +
                         orderStatus.getShiptoAddress2() + " " : " ") + orderStatus.getShiptoCity() + ", " +
-                        orderStatus.getShiptoState() + " "+ orderStatus.getShiptoZip());
+                        orderStatus.getShiptoState() + " "+ zipCode);
                 orderSubTotal.setText("$"+orderStatus.getShipmentSkuSubtotal());
                 orderCoupons.setText("-$"+orderStatus.getCouponTotal());
                 String formattedShipping = orderStatus.getShippingAndHandlingTotal();
