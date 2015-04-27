@@ -1,71 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:id="@+id/orderLayout"
-android:layout_marginLeft="@dimen/margin_16dp"
-android:layout_marginRight="@dimen/margin_16dp" >
-<TextView
-    android:id="@+id/orderNumTv"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-	android:textColor="@color/staples_black"
-    android:textSize="@dimen/fontsize_18sp"
-    android:paddingTop="@dimen/verticalspacing_8dp"
-    android:layout_alignParentLeft="true"/>
-<TextView
-    android:id="@+id/numItemsTV"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:textSize="@dimen/fontsize_18sp"
-    android:paddingTop="@dimen/verticalspacing_8dp"
-    android:layout_alignParentRight="true"
-	android:textColor="@color/staples_black" />
-<TextView
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/orderStatusTV"
-    android:textSize="@dimen/fontsize_18sp"
-    android:paddingTop="@dimen/verticalspacing_8dp"
-	android:textColor="@color/staples_green"
-    android:maxLines="1"
-    android:layout_below="@+id/orderNumTv"/>
-<TextView
-    android:id="@+id/orderDeliveryTV"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:textSize="@dimen/fontsize_18sp"
-    android:layout_below="@+id/orderStatusTV"
-	android:textColor="@color/staples_black"
-    android:paddingTop="@dimen/verticalspacing_8dp"/>
-<LinearLayout
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/buttonLayout"
-    android:layout_below="@+id/orderDeliveryTV"
-    android:paddingTop="@dimen/verticalspacing_8dp">
-    <Button
-        android:layout_width="0dp"
+    android:id="@+id/orderLayout">
+    <TextView
+        android:id="@+id/order_date"
+        style="@style/OrderHeading"
+        android:paddingTop="@dimen/verticalspacing_16dp"
+        android:paddingLeft="@dimen/margin_16dp"
+        android:layout_alignParentLeft="true"/>
+    <TextView
+        android:id="@+id/order_status"
+        style="@style/OrderHeading"
+        android:paddingTop="@dimen/verticalspacing_16dp"
+        android:paddingRight="@dimen/margin_16dp"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/staples_green" />
+    <TextView
+        android:id="@+id/order_item_count"
+        style="@style/OrderValue"
+        android:paddingLeft="@dimen/margin_16dp"
+        android:paddingRight="@dimen/margin_32dp"
+        android:textColor="@color/staples_dark_gray"
+        android:layout_below="@+id/order_date"/>
+    <TextView
+        android:id="@+id/order_total"
+        style="@style/OrderValue"
+        android:layout_below="@+id/order_date"
+        android:layout_toRightOf="@+id/order_item_count"
+        android:textColor="@color/staples_black"/>
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
-        android:text="Track shipment"
-        android:id="@+id/trackShipmentBtn"
-        android:layout_gravity="center_vertical|center_horizontal"
-        android:layout_below="@id/orderDeliveryTV"/>
-    <Button
-        android:layout_weight="5"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="View receipt"
-        android:id="@+id/orderReceiptBtn" />
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="@dimen/verticalspacing_8dp"
-        android:layout_below="@+id/buttonLayout"
-        android:background="@color/staples_middle_gray" />
+        android:id="@+id/button_layout"
+        android:padding="@dimen/margin_16dp"
+        android:layout_below="@+id/order_item_count">
+        <Button
+            style="@style/OrderButtonStyle"
+            android:text="@string/track_shipment"
+            android:id="@+id/track_shipment_btn"
+            android:paddingRight="@dimen/verticalspacing_24dp"/>
+        <Button
+            style="@style/OrderButtonStyle"
+            android:text="@string/view_receipt"
+            android:id="@+id/order_reciept_btn" />
+        </LinearLayout>
 </RelativeLayout>
 
 

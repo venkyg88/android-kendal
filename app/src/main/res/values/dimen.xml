@@ -69,6 +69,8 @@
     <dimen name="search_negative_horizontal_offset">-60dp</dimen>
     <dimen name="profile_text_view_height">80dp</dimen>
     <dimen name="progress_bar_width">36dp</dimen>
+    <dimen name="margin_32dp">32dp</dimen>
+    <dimen name="fontsize_32sp">32sp</dimen>
 
     <dimen name="div_line">1px</dimen>
 </resources>

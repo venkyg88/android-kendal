@@ -14,6 +14,7 @@ import com.staples.mobile.common.access.easyopen.model.member.OrderStatus;
 import com.staples.mobile.common.access.easyopen.model.member.Shipment;
 import com.staples.mobile.common.access.easyopen.model.member.ShipmentSKU;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,23 +24,24 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     private ArrayList<OrderShipmentListItem> array;
     private Activity activity;
     View.OnClickListener onClickListener;
+    private static final NumberFormat format = NumberFormat.getCurrencyInstance();
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView orderNumTV;
+        TextView orderTotalTV;
         TextView numItemsTV;
         TextView orderStatusTV;
-        TextView expectedDelivery;
+        TextView orderDateTV;
         Button trackShipmentBtn;
         Button viewRecieptBtn;
 
         public ViewHolder(View v) {
             super(v);
-            orderNumTV = (TextView) v.findViewById(R.id.orderNumTv);
-            numItemsTV = (TextView) v.findViewById(R.id.numItemsTV);
-            orderStatusTV = (TextView) v.findViewById(R.id.orderStatusTV);
-            expectedDelivery = (TextView) v.findViewById(R.id.orderDeliveryTV);
-            trackShipmentBtn = (Button) v.findViewById(R.id.trackShipmentBtn);
-            viewRecieptBtn = (Button) v.findViewById(R.id.orderReceiptBtn);
+            orderDateTV = (TextView) v.findViewById(R.id.order_date);
+            orderStatusTV = (TextView) v.findViewById(R.id.order_status);
+            numItemsTV = (TextView) v.findViewById(R.id.order_item_count);
+            orderTotalTV = (TextView) v.findViewById(R.id.order_total);
+            trackShipmentBtn = (Button) v.findViewById(R.id.track_shipment_btn);
+            viewRecieptBtn = (Button) v.findViewById(R.id.order_reciept_btn);
         }
     }
 
@@ -65,12 +67,6 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
         Resources r = activity.getResources();
 
-        String orderNumberText = "Order# "+ orderStatus.getOrderNumber();
-        if (order.getShipments().size() > 1) {
-            orderNumberText += " - Shipment " + (order.getShipmentIndex() + 1);
-        }
-        holder.orderNumTV.setText(orderNumberText);
-
         // determine item qty of shipment
         int totalItemQtyOfShipment = 0;
         for (ShipmentSKU shipmentSku : shipment.getShipmentSku()) {
@@ -78,16 +74,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             totalItemQtyOfShipment += qtyOrdered;
         }
 
-        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-        boolean delivered = "DLV".equals(shipment.getShipmentStatusCode());
-        String deliveryDate = r.getString(delivered? R.string.delivered_date : R.string.estimated_delivery);
-        deliveryDate += " - " + formatter.format(OrderShipmentListItem.parseDate(delivered?
-                shipment.getActualShipDate() : shipment.getScheduledDeliveryDate()));
-        holder.expectedDelivery.setText(deliveryDate);
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM. dd, yyyy");
+        String orderDate = formatter.format(OrderShipmentListItem.parseDate(order.getOrderStatus().getOrderDate()));
 
+        holder.orderDateTV.setText(orderDate);
         holder.orderStatusTV.setText(shipment.getShipmentStatusDescription());
         holder.numItemsTV.setText(r.getQuantityString(R.plurals.cart_qty, totalItemQtyOfShipment, totalItemQtyOfShipment));
-
+        holder.orderTotalTV.setText(format.format(Float.parseFloat(order.getOrderStatus().getGrandTotal())));
         holder.trackShipmentBtn.setTag(position);
         holder.viewRecieptBtn.setTag(position);
 
