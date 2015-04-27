@@ -302,8 +302,13 @@ public class MainActivity extends Activity
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override public void onClick(DialogInterface dialog, int which) {
-                MainActivity.this.finish();
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // note that user may go fix the network settings and return before hitting this
+                // button, so test again for availability before exiting
+                if (!isNetworkAvailable()) {
+                    MainActivity.this.finish();
+                }
             }
         });
         AlertDialog dialog = builder.create();
