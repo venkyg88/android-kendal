@@ -32,7 +32,8 @@ public class TermsFragment extends Fragment {
 
         termsWebView.setWebViewClient(new WebViewClient() {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                Log.d(TAG, "Loading Privacy & Terms Page Error!");
+                Crittercism.logHandledException(new Exception());
+                Log.d(TAG, "Loading WebViewClient Error!");
             }
         });
 
