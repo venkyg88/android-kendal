@@ -202,7 +202,7 @@
                     android:orientation="vertical"
                     android:background="@drawable/sku_divider"/>
                 <TextView
-                    android:id="@+id/specifications_detail"
+                    android:id="@+id/specification_detail"
                     style="@style/SkuDetailHeader"
                     android:text="@string/specifications_detail"/>
             </LinearLayout>
@@ -237,7 +237,7 @@
                     android:background="@drawable/sku_divider"
                     android:visibility="gone"/>
                 <TextView
-                    android:id="@+id/reviews_detail"
+                    android:id="@+id/review_detail"
                     style="@style/SkuDetailHeader"
                     android:text="@string/reviews_detail"
                     android:visibility="gone"/>
@@ -293,28 +293,33 @@
         android:text="@string/empty"/>
 
     <!-- SKU Detail page -->
-    <TabHost
+    <LinearLayout
         android:id="@+id/details"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <TabWidget
-                android:id="@android:id/tabs"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-            <FrameLayout
-                android:id="@android:id/tabcontent"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"/>
-            <android.support.v4.view.ViewPager
-                android:id="@+id/pager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/description_tab"
+                style="@style/SkuDetailTabStyle"
+                android:text="@string/description"/>
+            <TextView
+                android:id="@+id/specification_tab"
+                style="@style/SkuDetailTabStyle"
+                android:text="@string/specifications"/>
+            <TextView
+                android:id="@+id/review_tab"
+                style="@style/SkuDetailTabStyle"
+                android:text="@string/reviews"/>
         </LinearLayout>
-    </TabHost>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
 
     <!-- Add to cart footer -->
     <LinearLayout

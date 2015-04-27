@@ -216,6 +216,19 @@
         <item name="android:textColor">@color/staples_black</item>
     </style>
 
+    <style name="SkuDetailTabStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingTop">@dimen/sku_padding_10</item>
+        <item name="android:paddingBottom">@dimen/sku_padding_10</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/fontsize_16sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/staples_black</item>
+        <item name="android:background">@drawable/sku_detail_tab</item>
+    </style>
+
     <!-- Store locator styling -->
     <style name="StoreItem">
         <item name="android:layout_width">wrap_content</item>
