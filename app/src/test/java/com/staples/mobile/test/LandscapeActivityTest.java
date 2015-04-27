@@ -38,6 +38,6 @@ public class LandscapeActivityTest {
         Assert.assertNotNull("Left drawer should have adapter", adapter);
 
         int count = adapter.getCount();
-        Assert.assertEquals("Left drawer should have 11 items", 11, count);
+        Assert.assertEquals("Left drawer should have 12 items", 12, count);
     }
 }
