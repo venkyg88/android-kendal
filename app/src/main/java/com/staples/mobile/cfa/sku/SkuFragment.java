@@ -716,9 +716,8 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
         return(count);
     }
 
-//        Tracker.getInstance().trackActionForProductTabs(tabAdapter.getPageTitle(index), tabAdapter.getProduct());
-
     // ViewPager notifications
+
     public void onPageScrollStateChanged(int state) {
     }
 
@@ -726,6 +725,10 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
     }
 
     public void onPageSelected(int position) {
+       selectDetailTab(position);
+    }
+
+    private void selectDetailTab(int position) {
         details.findViewById(R.id.description_tab).setSelected(position==0);
         details.findViewById(R.id.specification_tab).setSelected(position==1);
         details.findViewById(R.id.review_tab).setSelected(position==2);
@@ -747,6 +750,9 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
         }
 
         tabPager.setCurrentItem(position);
+        selectDetailTab(position);
+
+        Tracker.getInstance().trackActionForProductTabs(tabAdapter.getPageTitle(position), tabAdapter.getProduct());
     }
 
     @Override

@@ -173,7 +173,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/fontsize_10sp</item>
-        <item name="noReviews">@string/no_reviews</item>
+        <item name="noReviews">@string/stars_no_reviews</item>
         <item name="minorTextColor">@color/staples_dark_gray</item>
     </style>
 
@@ -241,7 +241,7 @@
         <item name="android:imeOptions">actionDone</item>
         <item name="android:singleLine">true</item>
         <item name="android:hint">1</item>
-        <item name="android:maxLength">4</item>
+        <item name="android:maxLength">3</item>
         <item name="android:gravity">center</item>
         <item name="android:textColorHint">@color/staples_black</item>
         <item name="android:textSize">@dimen/fontsize_18sp</item>
