@@ -76,8 +76,8 @@
                     android:background="@drawable/rounded_corner_red"/>
                 <com.staples.mobile.cfa.widget.RatingStars
                     android:id="@+id/rating"
-                    android:paddingTop="@dimen/action_bar_half_margin"
-                    style="@style/SmallRatingStars"/>
+                    style="@style/SmallRatingStars"
+                    android:layout_marginTop="@dimen/elevation_high"/>
             </LinearLayout>
             <RelativeLayout
                 android:layout_width="wrap_content"
