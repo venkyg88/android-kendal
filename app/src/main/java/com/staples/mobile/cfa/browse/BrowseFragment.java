@@ -120,6 +120,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
         Log.d(TAG, msg);
         state = DataWrapper.State.NOMORE;
         applyState(null);
+        getFragmentManager().popBackStack();
     }
 
     private String getTitleFromDescriptions(List<Description> descriptions) {
