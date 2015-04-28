@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.crittercism.app.Crittercism;
+import com.staples.mobile.cfa.UpgradeManager.UPGRADE_STATUS;
 import com.staples.mobile.cfa.analytics.AdobeTracker;
 import com.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import com.staples.mobile.cfa.bundle.BundleFragment;
@@ -45,7 +46,6 @@ import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.login.LoginFragment;
 import com.staples.mobile.cfa.login.LoginHelper;
 import com.staples.mobile.cfa.notify.NotifyReceiver;
-import com.staples.mobile.cfa.order.OrderFragment;
 import com.staples.mobile.cfa.profile.AddressFragment;
 import com.staples.mobile.cfa.profile.AddressListFragment;
 import com.staples.mobile.cfa.profile.CreditCardFragment;
@@ -58,7 +58,6 @@ import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.skuset.SkuSetFragment;
 import com.staples.mobile.cfa.store.StoreFragment;
-import com.staples.mobile.cfa.UpgradeManager.UPGRADE_STATUS;
 import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.weeklyad.WeeklyAdByCategoryFragment;
 import com.staples.mobile.cfa.weeklyad.WeeklyAdInStoreFragment;
@@ -692,6 +691,10 @@ public class MainActivity extends Activity
     public boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
         // Make sure all drawers are closed
         drawerLayout.closeDrawers();
+
+        // hide keyboard if open
+        hideSoftKeyboard(getCurrentFocus());
+
         ActionBar.getInstance().closeSearch();
 
         String fragmentName = fragment.getClass().getSimpleName();
