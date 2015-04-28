@@ -11,15 +11,14 @@
         android:layout_width="@dimen/personal_feed_item_image_width"
         android:layout_height="@dimen/personal_feed_item_image_height"
         android:layout_marginRight="@dimen/margin_16dp"
-        android:paddingTop="@dimen/verticalspacing_8dp"
-        android:paddingBottom="@dimen/verticalspacing_8dp"/>
+        android:paddingTop="@dimen/verticalspacing_8dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="left|center_vertical"
-        android:paddingTop="@dimen/action_bar_half_margin">
+        android:paddingTop="@dimen/elevation_high">
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -31,13 +30,14 @@
         <com.staples.mobile.cfa.widget.PriceSticker
             android:id="@+id/pricing"
             style="@style/SmallPriceSticker"
-            android:layout_marginTop="@dimen/elevation_high"
-            android:layout_marginBottom="@dimen/elevation_high"/>
+            android:paddingTop="@dimen/elevation_high"/>
         <LinearLayout
             android:id="@+id/rebate_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingTop="@dimen/elevation_high"
+            android:visibility="gone">
             <TextView
                 android:id="@+id/rebate_note"
                 android:layout_width="wrap_content"
@@ -61,6 +61,7 @@
         <com.staples.mobile.cfa.widget.RatingStars
             android:id="@+id/rating"
             style="@style/SmallRatingStars"
-            android:layout_marginTop="@dimen/elevation_high"/>
+            android:paddingTop="@dimen/elevation_high"
+            android:paddingBottom="@dimen/elevation_high"/>
     </LinearLayout>
 </LinearLayout>
