@@ -32,6 +32,8 @@ import com.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.browse.Discount;
+import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
@@ -52,6 +54,7 @@ public class PersonalFeedFragment extends Fragment {
 
     public static final String SEEN_PRODUCT_SKU_LIST = "seenProductSkuList";
     public static final String SEEN_PRODUCT_LIST = "seenProductList";
+
 
     public static final String DAILY_DEAL_IDENTIFIER = "BI739472"; // TODO Needs to be configurable
     public static final String CLEARANCE_IDENTIFIER = "BI642994"; // TODO Needs to be configurable
@@ -105,8 +108,28 @@ public class PersonalFeedFragment extends Fragment {
             ratingStars.setRating(seenProduct.getCustomerReviewRating(),
                     seenProduct.getCustomerReviewCount());
 
-            PriceSticker priceSticker = (PriceSticker) seenSavedProductRow.findViewById(R.id.pricing);
-            priceSticker.setBrowsePricing(seenProduct.getPricing());
+            // check if the product has discount
+            List<Pricing> pricings = seenProduct.getPricing();
+            if (pricings!=null && pricings.size()>0) {
+                Pricing pricing = pricings.get(0);
+                PriceSticker priceSticker = (PriceSticker) seenSavedProductRow.findViewById(R.id.pricing);
+
+                float rebate = findRebate(pricing);
+                if (rebate>0.0f) {
+                    seenSavedProductRow.findViewById(R.id.rebate_layout).setVisibility(View.VISIBLE);
+                    TextView rebateText = (TextView) seenSavedProductRow.findViewById(R.id.rebate_text);
+                    String text = String.format("$%.2f %s", rebate, getResources().getString(R.string.rebate));
+                    rebateText.setText(text);
+
+                    float finalPrice = pricing.getFinalPrice();
+                    float wasPrice = pricing.getListPrice();
+                    String unit = pricing.getUnitOfMeasure();
+                    priceSticker.setPricing(finalPrice + rebate, wasPrice, unit, "*");
+                } else {
+                    seenSavedProductRow.findViewById(R.id.rebate_layout).setVisibility(View.GONE);
+                    priceSticker.setPricing(pricing);
+                }
+            }
 
             ImageView imageView = (ImageView) seenSavedProductRow.findViewById(R.id.image);
 
@@ -398,6 +421,22 @@ public class PersonalFeedFragment extends Fragment {
                 ((MainActivity) getActivity()).selectSkuItem(productName, sku, false);
             }
         });
+    }
+
+    private float findRebate(Pricing pricing) {
+        if (pricing==null) return(0.0f);
+        List<Discount> discounts = pricing.getDiscount();
+        if (discounts==null) return(0.0f);
+
+        float rebate = 0.0f;
+        for(Discount discount : discounts) {
+            String name = discount.getName();
+            if ("rebate".equals(name)) {
+                float amount = discount.getAmount();
+                if (amount > rebate) rebate = amount;
+            }
+        }
+        return(rebate);
     }
 
     private void removeSavedSeenProducts() {

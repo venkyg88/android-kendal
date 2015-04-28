@@ -85,7 +85,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private QtyDeleteButtonListener qtyDeleteButtonListener;
     private QtyChangeListener qtyChangeListener;
     private ProductClickListener productClickListener;
-    //private QtyUpdateButtonListener qtyUpdateButtonListener;
 
     CouponWeightAnimator couponUpAnimator;
     CouponWeightAnimator couponDownAnimator;
@@ -125,7 +124,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         qtyChangeListener = new QtyChangeListener();
         qtyDeleteButtonListener = new QtyDeleteButtonListener();
         productClickListener = new ProductClickListener();
-//        qtyUpdateButtonListener = new QtyUpdateButtonListener();
 
         // Initialize coupon listview
         couponListVw = (RecyclerView) view.findViewById(R.id.coupon_list);
@@ -640,12 +638,15 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     class QtyChangeListener implements QuantityEditor.OnQtyChangeListener {
         @Override
         public void onQtyChange(View view, int value) {
-            CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition)view.getTag());
+            Object tag = view.getTag();
+            if (cartAdapter != null && tag != null && tag instanceof CartAdapter.CartItemPosition) {
+                CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition) tag);
 
-            // default proposed qty to orig in case new value not parseable;
-            cartItem.setProposedQty(value);
+                // default proposed qty to orig in case new value not parseable;
+                cartItem.setProposedQty(value);
 
-            updateItemQty(cartItem);
+                updateItemQty(cartItem);
+            }
         }
     }
 
@@ -654,15 +655,16 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
         @Override
         public void onClick(View view) {
-            CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition)view.getTag());
+            Object tag = view.getTag();
+            if (cartAdapter != null && tag != null && tag instanceof CartAdapter.CartItemPosition) {
+                CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition)tag);
 
-            activity.hideSoftKeyboard(view);
+                activity.hideSoftKeyboard(view);
 
-            // delete from cart via API
-            cartItem.setProposedQty(0);
-            updateItemQty(cartItem);
-
-//            cartItem.getQtyWidget().setQtyValue(0);  // this will trigger selection change which will handle the rest
+                // delete from cart via API
+                cartItem.setProposedQty(0);
+                updateItemQty(cartItem);
+            }
         }
     }
 
@@ -676,25 +678,5 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             }
         }
     }
-
-//    /** listener class for quantity update button */
-//    class QtyUpdateButtonListener implements View.OnClickListener {
-//
-//        @Override
-//        public void onClick(View view) {
-//            CartItem cartItem = cartAdapter.getItem((Integer)view.getTag());
-//
-//            cartItem.getQtyWidget().hideSoftKeyboard();
-//
-//            // default proposed value to orig in case new value not parseable
-//            cartItem.setProposedQty(cartItem.getQtyWidget().getQtyValue(cartItem.getQuantity()));
-//
-//            // update cart via API
-//            updateItemQty(cartItem);
-//
-//            // hide button after clicking
-//            view.setVisibility(View.GONE);
-//        }
-//    }
 
 }
