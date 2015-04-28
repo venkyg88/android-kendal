@@ -65,7 +65,6 @@ public class PersonalFeedFragment extends Fragment {
     private LinearLayout clearanceLayout;
     private LinearLayout seenProductsLayout;
     private LinearLayout emptyFeedLayout;
-    private LinearLayout rebateLayout;
 
     private DataWrapper dailyDealWrapper;
     private DataWrapper clearanceWrapper;
@@ -206,7 +205,6 @@ public class PersonalFeedFragment extends Fragment {
         clearanceLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.clearance_layout);
         seenProductsLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.seen_products_layout);
         emptyFeedLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.empty_feed_layout);
-        rebateLayout = (LinearLayout) personalFeedLayout.findViewById(R.id.rebate_layout);
 
         dailyDealWrapper = (DataWrapper) personalFeedLayout.findViewById(R.id.daily_deal_wrapper);
         clearanceWrapper = (DataWrapper) personalFeedLayout.findViewById(R.id.clearance_wrapper);
