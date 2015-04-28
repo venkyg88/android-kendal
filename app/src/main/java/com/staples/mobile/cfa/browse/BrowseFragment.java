@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.browse;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.home.ConfiguratorFragment;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -120,6 +122,26 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
         Log.d(TAG, msg);
         state = DataWrapper.State.NOMORE;
         applyState(null);
+
+        FragmentManager fragmentManager = getFragmentManager();
+        int backStackEntryCount = fragmentManager.getBackStackEntryCount();
+        int currentBackStackIndex = backStackEntryCount - 1;
+        int backstackIndex = currentBackStackIndex - 1;
+        String configuratorFragmentName = ConfiguratorFragment.class.getSimpleName();
+        String backStackEntryName = "";
+        while (backstackIndex >= 0) {
+            backStackEntryName = fragmentManager.getBackStackEntryAt(backstackIndex).getName();
+            if (configuratorFragmentName.equals(backStackEntryName)) {
+                fragmentManager.popBackStack(configuratorFragmentName, 0);
+                break;
+            }
+            backstackIndex--;
+        }
+        // If no Home found in backstack, clear the backstack all the way up to
+        // landing page.
+        if (backstackIndex < 0) {
+            fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
     }
 
     private String getTitleFromDescriptions(List<Description> descriptions) {

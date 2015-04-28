@@ -78,7 +78,6 @@ import com.urbanairship.UAirship;
 import com.urbanairship.push.PushManager;
 
 import java.util.Date;
-import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -306,7 +305,11 @@ public class MainActivity extends Activity
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                MainActivity.this.finish();
+                // note that user may go fix the network settings and return before hitting this
+                // button, so test again for availability before exiting
+                if (!isNetworkAvailable()) {
+                    MainActivity.this.finish();
+                }
             }
         });
         AlertDialog dialog = builder.create();
@@ -330,7 +333,6 @@ public class MainActivity extends Activity
             }
         }
     }
-
 
     public void ensureActiveSession() {
         // if interval has passed since last check
@@ -447,13 +449,19 @@ public class MainActivity extends Activity
         notificationBanner = (TextView) findViewById(R.id.notification_banner);
         notificationBannerAnimation = AnimationUtils.loadAnimation(this, R.anim.notification_slide_from_bottom);
         notificationBannerAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override public void onAnimationStart(Animation animation) {
+            @Override
+            public void onAnimationStart(Animation animation) {
                 notificationBanner.setVisibility(View.VISIBLE);
             }
-            @Override public void onAnimationEnd(Animation animation) {
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
                 notificationBanner.setVisibility(View.INVISIBLE);
             }
-            @Override public void onAnimationRepeat(Animation animation) { }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
         });
 
         // DLS: wait to show main screen until configurator available. Configurator fragment needs
@@ -614,7 +622,7 @@ public class MainActivity extends Activity
         });
 
         // enable/disable left drawer menu items that depend upon login
-        refreshMenuItemState(!guestLevel);
+        updateMenuItemState();
     }
 
     @Override
@@ -626,36 +634,40 @@ public class MainActivity extends Activity
         }
 
         // disable menu items as appropriate
-        refreshMenuItemState(false);
+        updateMenuItemState();
 
         selectFragment(new ConfiguratorFragment(), Transition.NONE, true);
     }
 
-    private void refreshMenuItemState(boolean registeredUser) {
-        Resources r = getResources();
+    private void updateMenuItemState() {
+        Access access = Access.getInstance();
+        boolean registeredUser = access.isLoggedIn() && !access.isGuestLogin();
+        Resources res = getResources();
         // enable/disable left drawer menu items that depend upon login
         int itemCount = leftMenuAdapter.getCount();
         for (int position = 0; position < itemCount; position++) {
             DrawerItem item = leftMenuAdapter.getItem(position);
-            if (item.fragmentClass == RewardsFragment.class || item.fragmentClass == OrderFragment.class ||
-                item.fragmentClass == ProfileFragment.class) {
-                item.enabled = registeredUser;
-                if (item.fragmentClass == RewardsFragment.class) {
-                    float rewardsTotal = 0;
+            switch(item.id) {
+                case R.string.account_title:
+                    item.enabled = registeredUser;
+                    item.extra = res.getString(registeredUser ? R.string.logout_title : R.string.login_title);
+                    break;
+                case R.string.rewards_title:
+                    item.enabled = registeredUser;
                     if (registeredUser) {
-                        rewardsTotal = ProfileDetails.getRewardsTotal();
-                    }
-                    item.additionalText = (rewardsTotal > 0)? CurrencyFormat.getFormatter().format(rewardsTotal) : null;
-                }
+                        float rewards = ProfileDetails.getRewardsTotal();
+                        if (rewards > 0f)
+                            item.extra = CurrencyFormat.getFormatter().format(rewards);
+                        else item.extra = null;
+                    } else item.extra = null;
+                    break;
+                case R.string.order_title:
+                case R.string.profile_title:
+                    item.enabled = registeredUser;
+                    break;
             }
         }
         leftMenuAdapter.notifyDataSetChanged();
-
-        // update sign-in button text
-        TextView signInButton = (TextView) findViewById(R.id.account_option);
-        if (signInButton != null) { // is null in roboelectric tests
-            signInButton.setText(registeredUser ? R.string.logout_title : R.string.login_title);
-        }
     }
 
     public void showProgressIndicator() {
@@ -956,7 +968,7 @@ public class MainActivity extends Activity
                 }
                 break;
 
-            case R.id.account_option:
+            case R.id.extra:
                 if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
                     loginHelper.userSignOut();
                     selectDrawerItem(homeDrawerItem, Transition.RIGHT, true);
@@ -974,28 +986,26 @@ public class MainActivity extends Activity
         DrawerItem item = (DrawerItem) parent.getItemAtPosition(position);
         if (item.enabled) {
             Tracker.getInstance().trackActionForNavigationDrawer(item.title, ActionBar.getInstance().getPageName()); // analytics
-            switch (item.type) {
-                case FRAGMENT:
-                    // special case of RewardsFragment but not registered user not a rewards member
-                    if (item.fragmentClass == RewardsFragment.class) {
-                        if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin() && !ProfileDetails.isRewardsMember()) {
-                            selectRewardsLinkingFragment();
-                        } else {
-                            selectRewardsFragment();
-                        }
+            switch(item.id) {
+                case R.string.rewards_title:
+                    if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin() && !ProfileDetails.isRewardsMember()) {
+                        selectRewardsLinkingFragment();
                     } else {
-                        selectDrawerItem(item, Transition.RIGHT, true);
+                        selectRewardsFragment();
                     }
                     break;
-                case ACCOUNT:
+                case R.string.account_title:
                     selectProfileFragment();
                     break;
-                case PROFILE:
+                case R.string.profile_title:
                     if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
                         selectProfileFragment();
                     } else {
                         selectLoginFragment();
                     }
+                default:
+                    selectDrawerItem(item, Transition.RIGHT, true);
+                    break;
             }
         }
     }

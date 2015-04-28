@@ -30,15 +30,11 @@ public class TermsFragment extends Fragment {
         termsWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
         termsWebView.setScrollbarFadingEnabled(true);
 
-        termsWebView.setWebChromeClient(new WebChromeClient() {
-            public void onProgressChanged(WebView view, int progress) {
-                getActivity().setProgress(progress * 1000);
-            }
-        });
-
         termsWebView.setWebViewClient(new WebViewClient() {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                Log.d(TAG, "Loading Privacy & Terms Page Error!");
+                Crittercism.logHandledException(new Exception());
+                Log.d(TAG, "Loading WebViewClient Error! Error code:" + errorCode +
+                ", Reason:" +  description);
             }
         });
 

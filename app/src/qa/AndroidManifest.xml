@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application>
-        <meta-data android:name="apptentive_api_key" android:value="ff3b17a9054a72ae3e7c383def7fab967719ac7578b73b56b127abefa6745915"/>
+        <meta-data android:name="apptentive_api_key" android:value="125e7a552a59546da50b7bd593392243b241975811414e0da381e0c0a2bc1fa8"/>
         <meta-data android:name="apptentive_log_level" android:value="ERROR"/>
     </application>
 </manifest>

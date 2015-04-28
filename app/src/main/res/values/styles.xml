@@ -173,7 +173,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/fontsize_10sp</item>
-        <item name="noReviews">@string/no_reviews</item>
+        <item name="noReviews">@string/stars_no_reviews</item>
         <item name="minorTextColor">@color/staples_dark_gray</item>
     </style>
 
@@ -216,6 +216,19 @@
         <item name="android:textColor">@color/staples_black</item>
     </style>
 
+    <style name="SkuDetailTabStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingTop">@dimen/sku_padding_10</item>
+        <item name="android:paddingBottom">@dimen/sku_padding_10</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/fontsize_16sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/staples_black</item>
+        <item name="android:background">@drawable/sku_detail_tab</item>
+    </style>
+
     <!-- Store locator styling -->
     <style name="StoreItem">
         <item name="android:layout_width">wrap_content</item>
@@ -228,11 +241,53 @@
         <item name="android:imeOptions">actionDone</item>
         <item name="android:singleLine">true</item>
         <item name="android:hint">1</item>
-        <item name="android:maxLength">4</item>
+        <item name="android:maxLength">3</item>
         <item name="android:gravity">center</item>
         <item name="android:textColorHint">@color/staples_black</item>
         <item name="android:textSize">@dimen/fontsize_18sp</item>
         <item name="android:drawableRight">@drawable/ic_arrow_drop_down</item>
         <item name="android:background">@drawable/bottom_frame</item>
     </style>
+
+    <style name="OrderButtonStyle">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/fontsize_16sp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:padding">@dimen/margin_16dp</item>
+    </style>
+
+    <style name="OrderHeading">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/fontsize_24sp</item>
+        <item name="android:textColor">@color/staples_black</item>
+    </style>
+
+    <style name="OrderLabel">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textSize">@dimen/fontsize_16sp</item>
+        <item name="android:textColor">@color/staples_black</item>
+        <item name="android:paddingTop">@dimen/verticalspacing_8dp</item>
+    </style>
+
+    <style name="OrderValue">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/fontsize_16sp</item>
+        <item name="android:textColor">@color/staples_black</item>
+        <item name="android:paddingTop">@dimen/verticalspacing_8dp</item>
+    </style>
+
+    <style name="HorizontalDivLine">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/div_line</item>
+        <item name="android:background">@color/staples_dark_gray</item>
+        <item name="android:layout_marginTop">@dimen/margin_16dp</item>
+    </style>
+
 </resources>

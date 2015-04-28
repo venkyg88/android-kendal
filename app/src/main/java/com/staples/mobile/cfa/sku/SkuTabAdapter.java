@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.widget.DataWrapper;
 import com.staples.mobile.cfa.widget.HorizontalDivider;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 
@@ -77,10 +78,14 @@ public class SkuTabAdapter extends PagerAdapter {
                 break;
             case 2:
                 item.view = inflater.inflate(R.layout.sku_detail_list, container, false);
-                RecyclerView list = (RecyclerView) item.view.findViewById(R.id.list);
-                list.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
-                list.addItemDecoration(new HorizontalDivider(context));
-                list.setAdapter(reviewAdapter);
+                if (reviewAdapter.getItemCount()>0) {
+                    RecyclerView list = (RecyclerView) item.view.findViewById(R.id.list);
+                    list.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
+                    list.addItemDecoration(new HorizontalDivider(context));
+                    list.setAdapter(reviewAdapter);
+                } else {
+                    ((DataWrapper) item.view).setState(DataWrapper.State.EMPTY);
+                }
                 break;
         }
 
