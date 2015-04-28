@@ -51,7 +51,7 @@
             android:layout_alignParentLeft="true"
             android:text="@string/item_subtotal"
             android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_18sp"
+            android:textSize="@dimen/fontsize_14sp"
             />
 
         <TextView
@@ -61,7 +61,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_18sp"
+            android:textSize="@dimen/fontsize_14sp"
             />
 
 		<!-- total handling cost/overweight shipping -->
@@ -74,7 +74,7 @@
             android:paddingTop="@dimen/margin_16dp"
 			android:text="@string/oversized_shipping_fee"
 			android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_18sp"
+            android:textSize="@dimen/fontsize_14sp"
             android:visibility="gone"
 		/>
 		<TextView
@@ -85,7 +85,7 @@
 			android:layout_width="wrap_content"
             android:paddingTop="@dimen/margin_16dp"
 			android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_18sp"
+            android:textSize="@dimen/fontsize_14sp"
             android:visibility="gone"
 		/>
 
@@ -99,7 +99,7 @@
             android:paddingTop="@dimen/margin_16dp"
 			android:text="@string/shipping"
 			android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_18sp"
+            android:textSize="@dimen/fontsize_14sp"
             android:visibility="gone"
 			/>
 		<TextView
@@ -110,7 +110,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/margin_16dp"
 			android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_18sp"
+            android:textSize="@dimen/fontsize_14sp"
             android:visibility="gone"
 			/>
 
@@ -124,7 +124,7 @@
             android:paddingTop="@dimen/margin_16dp"
             android:text="@string/tax"
 			android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_18sp"
+            android:textSize="@dimen/fontsize_14sp"
             android:visibility="gone"
 			/>
 
@@ -136,7 +136,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/margin_16dp"
 			android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_18sp"
+            android:textSize="@dimen/fontsize_14sp"
             android:visibility="gone"
 			/>
 

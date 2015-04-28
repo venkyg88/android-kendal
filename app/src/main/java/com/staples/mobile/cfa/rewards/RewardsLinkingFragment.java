@@ -2,6 +2,7 @@ package com.staples.mobile.cfa.rewards;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,7 @@ public class RewardsLinkingFragment extends Fragment implements View.OnClickList
     }
 
     private MainActivity activity;
+    PhoneNumberFormattingTextWatcher phoneNumberFormattingTextWatcher;
 
     EditText rewardsNumberVw;
     EditText phoneNumberVw;
@@ -44,6 +46,8 @@ public class RewardsLinkingFragment extends Fragment implements View.OnClickList
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.rewards_linking_fragment, container, false);
         rewardsNumberVw = ((EditText)view.findViewById(R.id.rewards_card_number));
         phoneNumberVw = ((EditText)view.findViewById(R.id.rewards_phone_number));
+        phoneNumberFormattingTextWatcher = new PhoneNumberFormattingTextWatcher();
+        phoneNumberVw.addTextChangedListener(phoneNumberFormattingTextWatcher);
 
         Button rewardsLinkAcctButton = (Button)view.findViewById(R.id.rewards_link_acct_button);
 
@@ -92,18 +96,6 @@ public class RewardsLinkingFragment extends Fragment implements View.OnClickList
         }
     }
 
-    private void showProgressIndicator() {
-        if (activity != null) {
-            activity.showProgressIndicator();
-        }
-    }
-
-    private void hideProgressIndicator() {
-        if (activity != null) {
-            activity.hideProgressIndicator();
-        }
-    }
-
     private boolean validateFields(String rewardsNumber, String phoneNumber) {
         if(TextUtils.isEmpty(rewardsNumber) || TextUtils.isEmpty(phoneNumber)) {
             return false;
@@ -111,20 +103,33 @@ public class RewardsLinkingFragment extends Fragment implements View.OnClickList
         return true;
     }
 
+    private String stripPhoneNumber(String phoneNumber) {
+        if (!TextUtils.isEmpty(phoneNumber)) {
+            return phoneNumber.replaceAll("[^0-9]", "");
+        }
+        return phoneNumber;
+    }
+
+
 
     @Override
     public void onClick(View v) {
+        if(activity == null) return;
         switch(v.getId()) {
             case R.id.rewards_link_acct_button:
                 activity.hideSoftKeyboard(v);
                 String rewardsNumber = rewardsNumberVw.getText().toString();
-                String phoneNumber = phoneNumberVw.getText().toString();
+                String phoneNumber = stripPhoneNumber(phoneNumberVw.getText().toString());
+                if(phoneNumber.length() < 10) {
+                    activity.showErrorDialog(R.string.invalid_phone_number);
+                    return;
+                }
                 if(validateFields(rewardsNumber, phoneNumber)) {
-                    showProgressIndicator();
+                    activity.showProgressIndicator();
                     linkRewardsAccount(rewardsNumber, phoneNumber, new LinkRewardsCallback() {
                         @Override
                         public void onLinkRewardsComplete(String errMsg) {
-                            hideProgressIndicator();
+                            activity.hideProgressIndicator();
                             if (errMsg != null) {
                                 activity.showErrorDialog(errMsg, false);
                             } else {
@@ -132,8 +137,9 @@ public class RewardsLinkingFragment extends Fragment implements View.OnClickList
                             }
                         }
                     });
+                } else{
+                    activity.showErrorDialog(R.string.empty_rewards_linking_msg);
                 }
-                break;
         }
 
 

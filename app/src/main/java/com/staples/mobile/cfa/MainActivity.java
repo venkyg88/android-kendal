@@ -692,8 +692,8 @@ public class MainActivity extends Activity
         // Make sure all drawers are closed
         drawerLayout.closeDrawers();
 
-        // hide keyboard if open
-        hideSoftKeyboard(getCurrentFocus());
+//        // hide keyboard if open
+//        hideSoftKeyboard(getCurrentFocus());
 
         ActionBar.getInstance().closeSearch();
 
