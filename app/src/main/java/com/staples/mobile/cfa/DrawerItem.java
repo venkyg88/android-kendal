@@ -9,26 +9,10 @@ import android.os.Bundle;
 public class DrawerItem {
     private static final String TAG = DrawerItem.class.getSimpleName();
 
-    public enum Type {
-        FRAGMENT  (0, R.layout.drawer_fragment),
-        ACCOUNT   (1, R.layout.drawer_account),
-        PROFILE   (2, R.layout.drawer_fragment);
-
-        public final int viewType;
-        public final int layoutId;
-
-        Type(int viewType, int layoutId) {
-            this.viewType = viewType;
-            this.layoutId = layoutId;
-        }
-    }
-
-    public static final int NTYPES = Type.values().length;
-
     // Generic info
-    public Type type;
+    public int id;
     public String title;
-    public String additionalText;
+    public String extra;
     public Drawable icon;
     public boolean enabled;
 
@@ -38,12 +22,12 @@ public class DrawerItem {
 
     // Constructor
 
-    public DrawerItem(Type type, Context context, int iconId, int titleId, Class<? extends Fragment> fragmentClass) {
-        this(type, context, iconId, titleId, fragmentClass, true);
+    public DrawerItem(Context context, int iconId, int titleId, Class<? extends Fragment> fragmentClass) {
+        this(context, iconId, titleId, fragmentClass, true);
     }
 
-    public DrawerItem(Type type, Context context, int iconId, int titleId, Class<? extends Fragment> fragmentClass, boolean enabled) {
-        this.type = type;
+    public DrawerItem(Context context, int iconId, int titleId, Class<? extends Fragment> fragmentClass, boolean enabled) {
+        id = titleId;
         if (context!=null) {
             Resources resources = context.getResources();
             if (iconId!=0)

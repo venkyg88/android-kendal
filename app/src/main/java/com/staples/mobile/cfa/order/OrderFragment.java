@@ -19,8 +19,8 @@ import android.widget.TextView;
 import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
+import com.staples.mobile.cfa.widget.HorizontalDivider;
 import com.staples.mobile.cfa.widget.LinearLayoutWithOverlay;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -32,6 +32,7 @@ import com.staples.mobile.common.access.easyopen.model.member.OrderStatus;
 import com.staples.mobile.common.access.easyopen.model.member.OrderStatusDetail;
 import com.staples.mobile.common.access.easyopen.model.member.ScanData;
 import com.staples.mobile.common.access.easyopen.model.member.Shipment;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,21 +45,32 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class OrderFragment extends Fragment implements View.OnClickListener {
+public class OrderFragment extends Fragment implements View.OnClickListener, Callback<OrderDetail> {
     private static final String TAG = OrderFragment.class.getSimpleName();
     MainActivity activity;
-    EasyOpenApi easyOpenApi;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager mLayoutManager;
+
+    private RecyclerView list;
     LinearLayoutWithOverlay overlayableLayout;
-    OrderAdapter adapter;
+    private OrderAdapter adapter;
     TextView orderErrorTV;
     LinearLayout trackingLayout;
+    private EasyOpenApi easyOpenApi;
     Animation bottomSheetSlideUpAnimation;
     Animation bottomSheetSlideDownAnimation;
     ArrayList<OrderShipmentListItem> orderShipmentListItems;
     OrderStatusDetailCallback orderStatusDetailCallback;
     int numOrdersToRetrieve;
+
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        activity = (MainActivity)getActivity();
+        if(activity != null) activity.showProgressIndicator();
+        easyOpenApi = Access.getInstance().getEasyOpenApi(true);
+        easyOpenApi.getMemberOrderHistory("orderDate", "DESC", 1, 30, this);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -66,7 +78,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         activity = (MainActivity) getActivity();
         orderShipmentListItems = new ArrayList<OrderShipmentListItem>();
         View view = inflater.inflate(R.layout.order_fragment, container, false);
-        easyOpenApi = Access.getInstance().getEasyOpenApi(true);
+
 
         // setup overlay
         overlayableLayout = (LinearLayoutWithOverlay)view.findViewById(R.id.overlayable_layout);
@@ -100,14 +112,14 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         });
 
         orderErrorTV = (TextView)view.findViewById(R.id.orderErrorTV);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.orders_list);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        adapter = new OrderAdapter(getActivity(), this);
-        mRecyclerView.setAdapter(adapter);
-        fill();
+        list = (RecyclerView) view.findViewById(R.id.orders_list);
+        list.setHasFixedSize(true);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        list.setLayoutManager(mLayoutManager);
+        list.setItemAnimator(new DefaultItemAnimator());
+        list.addItemDecoration(new HorizontalDivider(activity));
+        if(adapter == null) adapter = new OrderAdapter(getActivity(), this);
+        list.setAdapter(adapter);
 
         return view;
     }
@@ -123,11 +135,11 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         OrderShipmentListItem order;
         switch(view.getId()) {
-            case R.id.trackShipmentBtn:
+            case R.id.track_shipment_btn:
                 order = adapter.getItem((int)view.getTag());
                 showTrackingInfo(order);
                 break;
-            case R.id.orderReceiptBtn:
+            case R.id.order_reciept_btn:
                 order = adapter.getItem((int)view.getTag());
                 Fragment orderDetailsFragment = Fragment.instantiate(activity, OrderReceiptFragment.class.getName());
                 Bundle bundle = new Bundle();
@@ -141,9 +153,9 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     }
 
     private void showTrackingInfo(final OrderShipmentListItem order) {
-        activity.showProgressIndicator();
         final OrderStatus orderStatus = order.getOrderStatus();
         final Shipment shipment = order.getShipment();
+
         easyOpenApi.getMemberOrderTrackingShipment(order.getOrderStatus().getOrderNumber(),
                 shipment.getShipmentNumber(), "000", new Callback<OrderStatusDetail>() {
 
@@ -151,15 +163,15 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                     public void success(OrderStatusDetail orderStatusDetail, Response response) {
                         activity.hideProgressIndicator();
                         Resources r = activity.getResources();
-                        TextView shipmentLabelVw = (TextView)trackingLayout.findViewById(R.id.shipment_label);
-                        TextView trackingNumberVw = (TextView)trackingLayout.findViewById(R.id.tracking_number);
-                        TextView carrierVw = (TextView)trackingLayout.findViewById(R.id.carrier);
-                        TextView deliveryScansVw = (TextView)trackingLayout.findViewById(R.id.delivery_scans);
+                        TextView shipmentLabelVw = (TextView) trackingLayout.findViewById(R.id.shipment_label);
+                        TextView trackingNumberVw = (TextView) trackingLayout.findViewById(R.id.tracking_number);
+                        TextView carrierVw = (TextView) trackingLayout.findViewById(R.id.carrier);
+                        TextView deliveryScansVw = (TextView) trackingLayout.findViewById(R.id.delivery_scans);
                         View closeButton = trackingLayout.findViewById(R.id.close_button);
 
-                        String shipmentLabel = "Order# "+ orderStatus.getOrderNumber();
+                        String shipmentLabel = "Order# " + orderStatus.getOrderNumber();
                         if (order.getShipments().size() > 1) {
-                            shipmentLabel = "Shipment " + (order.getShipmentIndex()+1) + " of " + shipmentLabel;
+                            shipmentLabel = "Shipment " + (order.getShipmentIndex() + 1) + " of " + shipmentLabel;
                         }
                         shipmentLabelVw.setText(shipmentLabel);
 
@@ -215,42 +227,43 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         trackingLayout.startAnimation(bottomSheetSlideDownAnimation);
     }
 
-    private void fill(){
-        activity.showProgressIndicator();
-        // get orders in descending date order up to some maximum
-        easyOpenApi.getMemberOrderHistory("orderDate", "DESC", 1, 30, new Callback<OrderDetail>() {
-            @Override
-            public void success(OrderDetail orderDetail, Response response) {
-                orderStatusDetailCallback = new OrderStatusDetailCallback(); // only need to create one instance of the item detail callback
-                numOrdersToRetrieve = 0;
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR)-2); // 2 years ago
-                long ageLimit = calendar.getTimeInMillis();
-                for (OrderHistory order : orderDetail.getOrderHistory()) {
-                    Date orderDate = OrderShipmentListItem.parseDate(order.getOrderDate());
-                    // when orders are beyond a certain age limit, quit retrieving
-                    if (orderDate.getTime() < ageLimit) {
-                        break;
-                    }
-                    easyOpenApi.getMemberOrderStatus(order.getOrderNumber(), orderStatusDetailCallback);
-                    numOrdersToRetrieve++;
-                }
-                if (numOrdersToRetrieve == 0) {
-                    orderErrorTV.setVisibility(View.VISIBLE);
-                    mRecyclerView.setVisibility(View.GONE);
-                    activity.hideProgressIndicator();
-                }
+    @Override
+    public void success(OrderDetail orderDetail, Response response) {
+        activity = (MainActivity)getActivity();
+        if(activity == null) return;
+        if(adapter == null)  adapter = new OrderAdapter(activity, this);
+
+        orderStatusDetailCallback = new OrderStatusDetailCallback(); // only need to create one instance of the item detail callback
+        numOrdersToRetrieve = 0;
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR)-2); // 2 years ago
+        long ageLimit = calendar.getTimeInMillis();
+        for (OrderHistory order : orderDetail.getOrderHistory()) {
+            Date orderDate = OrderShipmentListItem.parseDate(order.getOrderDate());
+            // when orders are beyond a certain age limit, quit retrieving
+            if (orderDate.getTime() < ageLimit) {
+                break;
             }
 
-            @Override
-            public void failure(RetrofitError error) {
-                orderErrorTV.setVisibility(View.VISIBLE);
-                mRecyclerView.setVisibility(View.GONE);
-                activity.hideProgressIndicator();
-                activity.showErrorDialog(ApiError.getErrorMessage(error));
-                Log.i(TAG, "Fail Response Order History " + error.getUrl() + " " + error.getMessage());
-            }
-        });
+            easyOpenApi.getMemberOrderStatus(order.getOrderNumber(), orderStatusDetailCallback);
+            numOrdersToRetrieve++;
+        }
+        if (numOrdersToRetrieve == 0) {
+            orderErrorTV.setVisibility(View.VISIBLE);
+            list.setVisibility(View.GONE);
+            activity.hideProgressIndicator();
+        }
+    }
+
+    @Override
+    public void failure(RetrofitError error) {
+        activity = (MainActivity)getActivity();
+        if(activity == null) return;
+        orderErrorTV.setVisibility(View.VISIBLE);
+        list.setVisibility(View.GONE);
+        activity.hideProgressIndicator();
+        activity.showErrorDialog(ApiError.getErrorMessage(error));
+        Log.i(TAG, "Fail Response Order History " + error.getUrl() + " " + error.getMessage());
     }
 
     /**
@@ -262,6 +275,8 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public void success(OrderStatusDetail orderStatusDetail, Response response) {
+            activity = (MainActivity)getActivity();
+            if(activity == null) return;
             numOrdersToRetrieve--;
             OrderStatus orderStatus =  orderStatusDetail.getOrderStatus().get(0);
             List<Shipment> shipments = orderStatus.getShipment();
@@ -275,15 +290,15 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public void failure(RetrofitError error) {
+            activity = (MainActivity)getActivity();
+            if(activity == null) return;
             numOrdersToRetrieve--;
             finishOrderDetail(); // since some calls may have succeeded
-            activity.hideProgressIndicator();
             // DLS: do not display error message for order details calls that fail, the order simply won't show up in the list
             Log.i(TAG, "Fail Response Order Status Detail: " + error.getUrl() + " " + error.getMessage());
         }
 
         private void finishOrderDetail() {
-
             // DLS: need to wait until all items retrieved (otherwise the same items get added multiple times)
             if (numOrdersToRetrieve == 0) {
                 if (orderShipmentListItems.size() > 0) {

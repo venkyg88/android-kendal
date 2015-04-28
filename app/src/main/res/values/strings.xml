@@ -33,7 +33,7 @@
     <string name="store_info_title">Store Info</string>
     <string name="tobedone_title">(To be done)</string>
     <string name="search_title">Search</string>
-    <string name="search_hint">Search for a product</string>
+    <string name="search_hint">Search</string>
     <string name="empty">Nothing Found</string>
 
     <!-- Bundle/class/search -->
@@ -89,7 +89,6 @@
     <string name="pretax_subtotal">Pre-tax subtotal</string>
     <string name="tax">Tax</string>
     <string name="proceed_to_checkout">Secure Checkout</string>
-    <string name="no_reviews">no reviews</string>
     <string name="shipping_addr">Shipping Address</string>
     <string name="payment_method">Payment Method</string>
     <string name="payment_method_required">Payment Method is required</string>
@@ -198,6 +197,8 @@
     <string name="shipping_billing_text">Shipping/Billing</string>
     <string name="login_error_msg">The specified user name or password is not correct. Verify the information provided and log in again.</string>
     <string name="address_error_msg">Please enter a valid address</string>
+    <string name="track_shipment">Track shipment</string>
+    <string name="view_receipt">View receipt</string>
 
     <!-- Orders -->
     <string name="order">Order</string>
@@ -208,6 +209,9 @@
     <string name="tracking_number">Tracking #</string>
     <string name="carrier">Carrier</string>
     <string name="no_detailed_tracking">Sorry, detailed tracking information is not available</string>
+    <string name="item_sub_total">Item SubTotal</string>
+    <string name="order_total">Order Total</string>
+    <string name="order_payment">Payment Information</string>
 
     <!--SKU-->
     <string name="description">Description</string>
@@ -222,6 +226,8 @@
     <string name="author_prefix">By</string>
     <string name="rebate">Rebate</string>
     <string name="rebate_hint">* Price before rebate</string>
+    <string name="stars_no_reviews">no reviews</string>
+    <string name="details_no_reviews">No Reviews</string>
 
     <!--Shipping Logic-->
     <string name="overweight">OVERSIZED</string>
