@@ -16,6 +16,7 @@ import com.staples.mobile.common.access.easyopen.model.cart.Product;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import retrofit.Callback;
@@ -43,8 +44,6 @@ public class CartApiManager {
         return cart == null? 0f: cart.getPreTaxTotal();
     }
     public static List<String> manuallyAddedCouponCodes = new ArrayList<String>();
-    public static Coupon assocRewardsDiscountCoupon;
-    public static Coupon assocRewardsStaplesDiscountCoupon;
 
     // special logic around these associate coupon codes
     private final static String ASSOCIATE_REWARDS_DISCOUNT_CODE = "52797";
@@ -65,6 +64,7 @@ public class CartApiManager {
                         List<Cart> cartCollection = cartContents.getCart();
                         if (cartCollection != null && cartCollection.size() > 0) {
                             cart = cartCollection.get(0);
+                            doctorUpAssociateRewardCoupons();
                         }
                         if (cartRefreshCallback != null) {
                             cartRefreshCallback.onCartRefreshComplete(null);
@@ -94,9 +94,8 @@ public class CartApiManager {
     public static void resetCart() {
         cart = null;
         manuallyAddedCouponCodes.clear();
-        assocRewardsDiscountCoupon = null;
-        assocRewardsStaplesDiscountCoupon = null;
     }
+
 
     /** adds item to cart */
     public static void addItemToCart(String sku, int qty, final CartRefreshCallback cartRefreshCallback) {
@@ -168,10 +167,13 @@ public class CartApiManager {
 
         // delete item from cart
         easyOpenApi.deleteFromCart(orderItemId, new Callback<DeleteFromCart>() {
-            @Override public void success (DeleteFromCart cartContents, Response response){
+            @Override
+            public void success(DeleteFromCart cartContents, Response response) {
                 loadCart(cartRefreshCallback);
             }
-            @Override public void failure (RetrofitError retrofitError){
+
+            @Override
+            public void failure(RetrofitError retrofitError) {
                 if (cartRefreshCallback != null) {
                     cartRefreshCallback.onCartRefreshComplete(ApiError.getErrorMessage(retrofitError));
                 }
@@ -223,6 +225,78 @@ public class CartApiManager {
         }
     }
 
+    public static boolean isAssocRewardCoupon(Coupon coupon) {
+        return (coupon != null && (ASSOCIATE_REWARDS_DISCOUNT_CODE.equals(coupon.getCode()) ||
+                ASSOCIATE_REWARDS_STAPLES_DISCOUNT_CODE.equals(coupon.getCode())));
+    }
+
+    public static Coupon getAssocRewardCoupon() {
+        if (cart != null && cart.getCoupon() != null) {
+            for (Coupon coupon : cart.getCoupon()) {
+                if (isAssocRewardCoupon(coupon)) {
+                    return coupon;
+                }
+            }
+        }
+        return null;
+    }
+
+    /** consolidates associate reward coupons into one at the cart level */
+    private static void doctorUpAssociateRewardCoupons() {
+        Coupon assocRewardsCoupon = null;
+        if (cart != null) {
+            if (cart.getCoupon() != null) {
+                // consolidate cart-level associate coupons
+                Iterator<Coupon> couponIterator = cart.getCoupon().iterator();
+                while (couponIterator.hasNext()) {
+                    Coupon coupon = couponIterator.next();
+                    if (isAssocRewardCoupon(coupon)) {
+                        if (coupon.getAdjustedAmount() != 0) {
+                            // if first instance of coupon, set a reference to it, otherwise increment amount of first instance
+                            if (assocRewardsCoupon == null) {
+                                assocRewardsCoupon = coupon;
+                            } else {
+                                assocRewardsCoupon.setAdjustedAmount(assocRewardsCoupon.getAdjustedAmount() + coupon.getAdjustedAmount());
+                            }
+                        }
+                        couponIterator.remove(); // remove all associate coupons for now, will add back consolidated one later
+                    }
+                }
+            }
+            // consolidate product-level associate coupons
+            if (cart.getProduct() != null) {
+                for (Product product : cart.getProduct()) {
+                    if (product.getCoupon() != null) {
+                        Iterator<Coupon> couponIterator = product.getCoupon().iterator();
+                        while (couponIterator.hasNext()) {
+                            Coupon coupon = couponIterator.next();
+                            if (isAssocRewardCoupon(coupon)) {
+                                if (coupon.getAdjustedAmount() != 0) {
+                                    // if first instance of coupon, add to cart-level and set a reference to it, otherwise increment amount of first instance
+                                    if (assocRewardsCoupon == null) {
+                                        assocRewardsCoupon = coupon;
+                                    } else {
+                                        assocRewardsCoupon.setAdjustedAmount(assocRewardsCoupon.getAdjustedAmount() + coupon.getAdjustedAmount());
+                                    }
+                                }
+                                couponIterator.remove(); // remove all associate coupons, will have one consolidated one
+                            }
+                        }
+                    }
+                }
+            }
+            if (assocRewardsCoupon != null) {
+                if (cart.getCoupon() == null) {
+                    cart.setCoupon(new ArrayList<Coupon>());
+                }
+                cart.getCoupon().add(0, assocRewardsCoupon);
+            }
+        }
+    }
+
+
+
+
     /** amongst the sku-level coupons, get the ones that were manually added */
     public static List<Coupon> getManualSkuLevelCoupons() {
         List<Coupon> coupons = new ArrayList<Coupon>();
@@ -230,23 +304,7 @@ public class CartApiManager {
             for (Product product : cart.getProduct()) {
                 if (product.getCoupon() != null) {
                     for (Coupon coupon : product.getCoupon()) {
-                        if (ASSOCIATE_REWARDS_DISCOUNT_CODE.equals(coupon.getCode())) {
-                            // if first instance of coupon, add it to coupon list, otherwise increment amount of first instance
-                            if (assocRewardsDiscountCoupon == null) {
-                                assocRewardsDiscountCoupon = coupon;
-                                coupons.add(coupon);
-                            } else {
-                                assocRewardsDiscountCoupon.setAdjustedAmount(assocRewardsDiscountCoupon.getAdjustedAmount() + coupon.getAdjustedAmount());
-                            }
-                        } else if (ASSOCIATE_REWARDS_STAPLES_DISCOUNT_CODE.equals(coupon.getCode())) {
-                            // if first instance of coupon, add it to coupon list, otherwise increment amount of first instance
-                            if (assocRewardsStaplesDiscountCoupon == null) {
-                                assocRewardsStaplesDiscountCoupon = coupon;
-                                coupons.add(coupon);
-                            } else {
-                                assocRewardsStaplesDiscountCoupon.setAdjustedAmount(assocRewardsStaplesDiscountCoupon.getAdjustedAmount() + coupon.getAdjustedAmount());
-                            }
-                        } else if (manuallyAddedCouponCodes.contains(coupon.getCode())) {
+                        if (manuallyAddedCouponCodes.contains(coupon.getCode())) {
                             coupons.add(coupon);
                         }
                     }
@@ -262,7 +320,9 @@ public class CartApiManager {
         // cart-level coupons & rewards
         if (cart != null && cart.getCoupon() != null) {
             for (Coupon coupon : cart.getCoupon()) {
-                totalAdjustedAmount += coupon.getAdjustedAmount();
+                if (!isAssocRewardCoupon(coupon)) {
+                    totalAdjustedAmount += coupon.getAdjustedAmount();
+                }
             }
         }
         // sku-level

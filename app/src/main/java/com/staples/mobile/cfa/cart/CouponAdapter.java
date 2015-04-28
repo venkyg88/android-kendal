@@ -1,22 +1,16 @@
 package com.staples.mobile.cfa.cart;
 
-import android.app.Activity;
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.EditTextWithImeBackEvent;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +36,7 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
 
     private int getLayoutId(int viewType) {
         switch (viewType) {
+            case CouponItem.TYPE_ASSOC_REWARD_COUPON: return R.layout.coupon_item_associate_reward;
             case CouponItem.TYPE_COUPON_TO_ADD: return R.layout.coupon_item_add;
             case CouponItem.TYPE_APPLIED_COUPON: return R.layout.coupon_item_applied;
             case CouponItem.TYPE_REDEEMABLE_REWARD_HEADING: return R.layout.coupon_item_redeemable_heading;
@@ -89,6 +84,12 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
         // - replace the contents of the view with that element
 
         CouponItem couponItem = getItem(position);
+
+        // if associate reward
+        if (vh.assocRewardDescVw != null) {
+            vh.assocRewardDescVw.setText(couponItem.getCouponShortDescription());
+            vh.assocRewardAmountVw.setText(couponItem.getCouponAmountText());
+        }
 
         // set up coupon code entry view
         if (vh.couponCodeEditVw != null) {
@@ -147,6 +148,8 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
         private EditTextWithImeBackEvent couponCodeEditVw;
         private TextView couponField1Vw;
         private TextView couponField2Vw;
+        private TextView assocRewardDescVw;
+        private TextView assocRewardAmountVw;
         private Button couponDeleteButton;
         private Button couponAddButton;
 
@@ -154,6 +157,10 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
         public ViewHolder(View itemView, int type) {
             super(itemView);
             switch (type) {
+                case CouponItem.TYPE_ASSOC_REWARD_COUPON:
+                    assocRewardDescVw = (TextView) itemView.findViewById(R.id.associate_reward_desc);
+                    assocRewardAmountVw = (TextView) itemView.findViewById(R.id.associate_reward_amount);
+                    break;
                 case CouponItem.TYPE_COUPON_TO_ADD:
                     couponCodeEditVw = (EditTextWithImeBackEvent) itemView.findViewById(R.id.coupon_code);
                     couponAddButton = (Button) itemView.findViewById(R.id.coupon_add_button);
