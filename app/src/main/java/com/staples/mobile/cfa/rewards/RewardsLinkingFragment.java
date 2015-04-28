@@ -1,17 +1,14 @@
 package com.staples.mobile.cfa.rewards;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.os.Bundle;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.MainActivity;
@@ -29,7 +26,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class RewardsLinkingFragment extends Fragment {
+public class RewardsLinkingFragment extends Fragment implements View.OnClickListener{
     private static final String TAG = RewardsLinkingFragment.class.getSimpleName();
 
     public interface LinkRewardsCallback {
@@ -37,6 +34,7 @@ public class RewardsLinkingFragment extends Fragment {
     }
 
     private MainActivity activity;
+    PhoneNumberFormattingTextWatcher phoneNumberFormattingTextWatcher;
 
     EditText rewardsNumberVw;
     EditText phoneNumberVw;
@@ -48,30 +46,12 @@ public class RewardsLinkingFragment extends Fragment {
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.rewards_linking_fragment, container, false);
         rewardsNumberVw = ((EditText)view.findViewById(R.id.rewards_card_number));
         phoneNumberVw = ((EditText)view.findViewById(R.id.rewards_phone_number));
+        phoneNumberFormattingTextWatcher = new PhoneNumberFormattingTextWatcher();
+        phoneNumberVw.addTextChangedListener(phoneNumberFormattingTextWatcher);
 
         Button rewardsLinkAcctButton = (Button)view.findViewById(R.id.rewards_link_acct_button);
 
-        rewardsLinkAcctButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activity.hideSoftKeyboard(v);
-                String rewardsNumber = rewardsNumberVw.getText().toString();
-                String phoneNumber = phoneNumberVw.getText().toString();
-                showProgressIndicator();
-                linkRewardsAccount(rewardsNumber, phoneNumber, new LinkRewardsCallback() {
-                    @Override
-                    public void onLinkRewardsComplete(String errMsg) {
-                        hideProgressIndicator();
-                        if (errMsg != null) {
-                            activity.showErrorDialog(errMsg, false);
-                        } else {
-                            activity.selectRewardsFragment();
-                        }
-                    }
-                });
-            }
-        });
-
+        rewardsLinkAcctButton.setOnClickListener(this);
         return(view);
      }
 
@@ -93,12 +73,13 @@ public class RewardsLinkingFragment extends Fragment {
                 @Override
                 public void success(UpdateProfileResponse updateProfileResponse, Response response) {
                     new ProfileDetails().refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
-                        @Override public void onProfileRefresh(Member member, String errMsg) {
+                        @Override
+                        public void onProfileRefresh(Member member, String errMsg) {
                             if (linkRewardsCallback != null) {
                                 if (ProfileDetails.isRewardsMember()) {
                                     linkRewardsCallback.onLinkRewardsComplete(null);
                                 } else {
-                                    linkRewardsCallback.onLinkRewardsComplete((errMsg != null)? errMsg : "Unknown Error");
+                                    linkRewardsCallback.onLinkRewardsComplete((errMsg != null) ? errMsg : "Unknown Error");
                                 }
                             }
                         }
@@ -115,16 +96,53 @@ public class RewardsLinkingFragment extends Fragment {
         }
     }
 
-    private void showProgressIndicator() {
-        if (activity != null) {
-            activity.showProgressIndicator();
+    private boolean validateFields(String rewardsNumber, String phoneNumber) {
+        if(TextUtils.isEmpty(rewardsNumber) || TextUtils.isEmpty(phoneNumber)) {
+            return false;
         }
+        return true;
     }
 
-    private void hideProgressIndicator() {
-        if (activity != null) {
-            activity.hideProgressIndicator();
+    private String stripPhoneNumber(String phoneNumber) {
+        if (!TextUtils.isEmpty(phoneNumber)) {
+            return phoneNumber.replaceAll("[^0-9]", "");
         }
+        return phoneNumber;
+    }
+
+
+
+    @Override
+    public void onClick(View v) {
+        if(activity == null) return;
+        switch(v.getId()) {
+            case R.id.rewards_link_acct_button:
+                activity.hideSoftKeyboard(v);
+                String rewardsNumber = rewardsNumberVw.getText().toString();
+                String phoneNumber = stripPhoneNumber(phoneNumberVw.getText().toString());
+                if(validateFields(rewardsNumber, phoneNumber)) {
+                    if(phoneNumber.length() < 10) {
+                        activity.showErrorDialog(R.string.invalid_phone_number);
+                        return;
+                    }
+                    activity.showProgressIndicator();
+                    linkRewardsAccount(rewardsNumber, phoneNumber, new LinkRewardsCallback() {
+                        @Override
+                        public void onLinkRewardsComplete(String errMsg) {
+                            activity.hideProgressIndicator();
+                            if (errMsg != null) {
+                                activity.showErrorDialog(errMsg, false);
+                            } else {
+                                activity.selectRewardsFragment();
+                            }
+                        }
+                    });
+                } else{
+                    activity.showErrorDialog(R.string.empty_rewards_linking_msg);
+                }
+        }
+
+
     }
 
 }

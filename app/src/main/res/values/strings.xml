@@ -140,6 +140,8 @@
     </plurals>
     <string name="rewards_ink_limit">Limit of %d per month</string>
     <string name="rewards_earned">Earned</string>
+    <string name="empty_rewards_linking_msg">Check all the fields and try again</string>
+    <string name="invalid_phone_number">Please enter a valid phone number</string>
 
 	<string name="first_name_label">First Name</string>
 	<string name="last_name_label">Last Name</string>
@@ -197,7 +199,7 @@
     <string name="shipping_billing_text">Shipping/Billing</string>
     <string name="login_error_msg">The specified user name or password is not correct. Verify the information provided and log in again.</string>
     <string name="address_error_msg">Please enter a valid address</string>
-    <string name="track_shipment">Track shipment</string>
+    <string name="track_shipment">Track</string>
     <string name="view_receipt">View receipt</string>
 
     <!-- Orders -->
