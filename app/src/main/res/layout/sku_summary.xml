@@ -68,6 +68,7 @@
             <LinearLayout
                 android:id="@+id/price_rating_layout"
                 android:layout_width="match_parent"
+                android:paddingTop="@dimen/action_bar_half_margin"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <com.staples.mobile.cfa.widget.PriceSticker
@@ -80,7 +81,7 @@
                     android:id="@+id/rating"
                     style="@style/LargeRatingStars"
                     android:layout_marginRight="@dimen/sku_padding_10"
-                    android:gravity="center_vertical|right"/>
+                    android:paddingTop="@dimen/action_bar_quarter_margin"/>
             </LinearLayout>
 
             <!-- Sku Rebate -->
