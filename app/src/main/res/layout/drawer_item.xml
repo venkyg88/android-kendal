@@ -16,10 +16,6 @@
         android:layout_width="0dp"
         android:layout_weight="1"/>
     <TextView
-        android:id="@+id/account_option"
-        style="@style/DrawerStyle"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:gravity="right"
-        android:padding="@dimen/action_bar_half_margin"/>
+        android:id="@+id/extra"
+        style="@style/DrawerStyle"/>
 </LinearLayout>
