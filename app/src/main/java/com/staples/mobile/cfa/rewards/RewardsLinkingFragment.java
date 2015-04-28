@@ -120,11 +120,11 @@ public class RewardsLinkingFragment extends Fragment implements View.OnClickList
                 activity.hideSoftKeyboard(v);
                 String rewardsNumber = rewardsNumberVw.getText().toString();
                 String phoneNumber = stripPhoneNumber(phoneNumberVw.getText().toString());
-                if(phoneNumber.length() < 10) {
-                    activity.showErrorDialog(R.string.invalid_phone_number);
-                    return;
-                }
                 if(validateFields(rewardsNumber, phoneNumber)) {
+                    if(phoneNumber.length() < 10) {
+                        activity.showErrorDialog(R.string.invalid_phone_number);
+                        return;
+                    }
                     activity.showProgressIndicator();
                     linkRewardsAccount(rewardsNumber, phoneNumber, new LinkRewardsCallback() {
                         @Override
