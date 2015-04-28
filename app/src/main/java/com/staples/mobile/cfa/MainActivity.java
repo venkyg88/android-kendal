@@ -272,7 +272,9 @@ public class MainActivity extends Activity
         // if we got past configurator initialization (otherwise LoginHelper constructor throws NPE)
         if (AppConfigurator.getInstance().getConfigurator() != null) {
             // unregister loginCompleteListener
-            loginHelper.unregisterLoginCompleteListener(this);
+            if (loginHelper != null) {
+                loginHelper.unregisterLoginCompleteListener(this);
+            }
             StaplesAppContext.getInstance().resetConfigurator(); // need to reset so a fresh network attempt is made, to enable correct handling of redirect error
         }
     }
@@ -669,15 +671,21 @@ public class MainActivity extends Activity
     }
 
     public void showProgressIndicator() {
-        mainLayout.showOverlay(true);
+        if (mainLayout != null) {
+            mainLayout.showOverlay(true);
+        }
     }
 
     public void hideProgressIndicator() {
-        mainLayout.showOverlay(false);
+        if (mainLayout != null) {
+            mainLayout.showOverlay(false);
+        }
     }
 
     public void swallowTouchEvents(boolean swallow) {
-        mainLayout.swallowTouchEvents(swallow);
+        if (mainLayout != null) {
+            mainLayout.swallowTouchEvents(swallow);
+        }
     }
 
     // Navigation
