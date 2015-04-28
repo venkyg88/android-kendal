@@ -1,45 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="horizontal">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:layout_gravity="left|center_vertical">
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="@dimen/personal_feed_item_image_width"
+        android:layout_height="@dimen/personal_feed_item_image_height"
+        android:layout_marginRight="@dimen/margin_16dp"
+        android:paddingTop="@dimen/verticalspacing_8dp"/>
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="left|center_vertical">
-
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="@dimen/personal_feed_item_image_width"
-            android:layout_height="@dimen/personal_feed_item_image_height"
-            android:layout_marginRight="@dimen/margin_16dp"
-            android:paddingTop="@dimen/verticalspacing_8dp"
-            android:paddingBottom="@dimen/verticalspacing_8dp"/>
-
+        android:orientation="vertical"
+        android:layout_gravity="left|center_vertical"
+        android:paddingTop="@dimen/elevation_high">
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:textSize="@dimen/fontsize_16sp"
+            android:layout_marginRight="@dimen/right_margin"
+            android:maxLines="3"/>
+        <com.staples.mobile.cfa.widget.PriceSticker
+            android:id="@+id/pricing"
+            style="@style/SmallPriceSticker"
+            android:paddingTop="@dimen/elevation_high"/>
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:id="@+id/rebate_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_gravity="left|center_vertical">
+            android:paddingTop="@dimen/elevation_high"
+            android:visibility="gone">
             <TextView
-                android:id="@+id/title"
+                android:id="@+id/rebate_note"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:textSize="@dimen/fontsize_16sp"
-                android:maxLines="3"
-                android:paddingRight="@dimen/margin_16dp"/>
-            <com.staples.mobile.cfa.widget.RatingStars
-                android:id="@+id/rating"
-                style="@style/SmallRatingStars"
-                android:layout_marginTop="@dimen/elevation_high"/>
-            <com.staples.mobile.cfa.widget.PriceSticker
-                android:id="@+id/pricing"
-                style="@style/SmallPriceSticker"
-                android:layout_marginTop="@dimen/elevation_high"/>
+                android:paddingBottom="@dimen/action_bar_quarter_margin"
+                android:textSize="@dimen/fontsize_10sp"
+                android:text="@string/rebate_text"
+                android:textColor="@color/staples_dark_gray"/>
+            <TextView
+                android:id="@+id/rebate_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/action_bar_quarter_margin"
+                android:paddingBottom="@dimen/action_bar_quarter_margin"
+                android:paddingLeft="@dimen/left_margin"
+                android:paddingRight="@dimen/right_margin"
+                android:textSize="@dimen/fontsize_12sp"
+                android:textColor="@color/staples_white"
+                android:background="@drawable/rounded_corner_red"/>
         </LinearLayout>
+        <com.staples.mobile.cfa.widget.RatingStars
+            android:id="@+id/rating"
+            style="@style/SmallRatingStars"
+            android:paddingTop="@dimen/elevation_high"
+            android:paddingBottom="@dimen/elevation_high"/>
     </LinearLayout>
-</RelativeLayout>
-
+</LinearLayout>
