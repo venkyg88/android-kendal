@@ -141,8 +141,5 @@ public class RewardsLinkingFragment extends Fragment implements View.OnClickList
                     activity.showErrorDialog(R.string.empty_rewards_linking_msg);
                 }
         }
-
-
     }
-
 }
