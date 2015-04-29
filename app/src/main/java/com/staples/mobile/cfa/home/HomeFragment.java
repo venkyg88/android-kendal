@@ -123,7 +123,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:onAttach():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:onAttach():"
                         + " activity[" + activity + "]"
                         + " this[" + this + "]"
         );
@@ -147,11 +147,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup container, Bundle bundle) {
 
-        Crittercism.leaveBreadcrumb("ConfiguratorFragment:onCreateView(): Displaying the home/landing screen.");
-
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:onCreateView():"
-                        + " this[" + this + "]"
-        );
+        Crittercism.leaveBreadcrumb("HomeFragment:onCreateView(): Displaying the home/landing screen.");
 
         Configuration configuration = resources.getConfiguration();
         lastOrientation = configuration.orientation;
@@ -176,15 +172,11 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onClick(View view) {
-
-                if (LOGGING) Log.v(TAG, "ConfiguratorFragment:OnClickListener.onClick():"
-                                + " view[" + view + "]"
-                                + " this[" + this + "]"
-                );
+                
 
                 ConfigItem configItem = (ConfigItem) view.getTag();
                 if (configItem != null) {
-                    Crittercism.leaveBreadcrumb("ConfiguratorFragment:OnClickListener.onClick(): User has selected an item with the following title: configItem.title[" + configItem.title + "]");
+                    Crittercism.leaveBreadcrumb("HomeFragment:OnClickListener.onClick(): User has selected an item with the following title: configItem.title[" + configItem.title + "]");
                     Tracker.getInstance().trackActionForHomePage(configItem.title); // Analytics
                 }
                 activity.selectBundle(configItem.title, configItem.identifier);
@@ -212,7 +204,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onConfigurationChanged(Configuration configuration) {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:onConfigurationChanged():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:onConfigurationChanged():"
                         + " lastOrientation[" + lastOrientation + "]"
                         + " configuration.orientation[" + configuration.orientation + "]"
                         + " configurator[" + configurator + "]"
@@ -246,7 +238,7 @@ public class HomeFragment extends Fragment {
 
     private void initFromConfiguratorResult() {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:initFromConfiguratorResult():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:initFromConfiguratorResult():"
                         + " this[" + this + "]"
         );
 
@@ -258,7 +250,7 @@ public class HomeFragment extends Fragment {
 
             screens = staplesAppContext.getScreen();
 
-            if (LOGGING) Log.v(TAG, "ConfiguratorFragment:initFromConfiguratorResult():"
+            if (LOGGING) Log.v(TAG, "HomeFragment:initFromConfiguratorResult():"
                             + " screens[" + screens + "]"
                             + " this[" + this + "]"
             );
@@ -278,7 +270,7 @@ public class HomeFragment extends Fragment {
             configItemsC.clear();
             configItemsD.clear();
 
-            if (LOGGING) Log.v(TAG, "ConfiguratorFragment:initFromConfiguratorResult():"
+            if (LOGGING) Log.v(TAG, "HomeFragment:initFromConfiguratorResult():"
                             + " items[" + items + "]"
                             + " this[" + this + "]"
             );
@@ -331,7 +323,7 @@ public class HomeFragment extends Fragment {
 
     private void doPortrait() {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:doPortrait():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:doPortrait():"
                         + " this[" + this + "]"
         );
 
@@ -364,7 +356,7 @@ public class HomeFragment extends Fragment {
 
     private void doConfigItemsABDPort(List<ConfigItem> configItems) {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:doConfigItemsABDPort():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:doConfigItemsABDPort():"
                         + " configItems[" + configItems + "]"
                         + " this[" + this + "]"
         );
@@ -407,7 +399,7 @@ public class HomeFragment extends Fragment {
 
     private void doConfigItemsCPort() {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:doConfigItemsCPort():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:doConfigItemsCPort():"
                         + " this[" + this + "]"
         );
 
@@ -446,7 +438,7 @@ public class HomeFragment extends Fragment {
 
     private void doLandscape() {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:doLandscape():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:doLandscape():"
                         + " this[" + this + "]"
         );
 
@@ -463,7 +455,7 @@ public class HomeFragment extends Fragment {
         dItemWidth = aItemWidth;        // same width as an A item.
         dItemHeight = aItemHeight / 4;  // quarter the height of an A item.
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:doLandscape():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:doLandscape():"
                         + " aItemWidth[" + aItemWidth + "]"
                         + " aItemHeight[" + aItemHeight + "]"
                         + " bItemWidth[" + bItemWidth + "]"
@@ -485,7 +477,7 @@ public class HomeFragment extends Fragment {
 
     private void doConfigItemsALand() {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:doConfigItemsALand():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:doConfigItemsALand():"
                         + " this[" + this + "]"
         );
 
@@ -565,7 +557,7 @@ public class HomeFragment extends Fragment {
 
     private void fillAWithB(LinearLayout configBCDLayout, int maxItems) {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:fillAWithB():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:fillAWithB():"
                         + " this[" + this + "]"
         );
 
@@ -580,7 +572,7 @@ public class HomeFragment extends Fragment {
 
             configItemsB.remove(0);
 
-            if (LOGGING) Log.v(TAG, "ConfiguratorFragment:fillAWithB(): configItem:"
+            if (LOGGING) Log.v(TAG, "HomeFragment:fillAWithB(): configItem:"
                             + " configItem.title[" + configItem.title + "]"
                             + " configItem.bannerUrl[" + configItem.bannerUrl + "]"
                             + " this[" + this + "]"
@@ -606,7 +598,7 @@ public class HomeFragment extends Fragment {
 
     private void fillAWithC(LinearLayout configBCDLayout, int maxItems) {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:fillAWithC():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:fillAWithC():"
                         + " this[" + this + "]"
         );
 
@@ -657,7 +649,7 @@ public class HomeFragment extends Fragment {
 
     private void fillAWithD(LinearLayout configBCDLayout, int maxItems) {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:fillAWithD():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:fillAWithD():"
                         + " this[" + this + "]"
         );
 
@@ -672,7 +664,7 @@ public class HomeFragment extends Fragment {
 
             configItemsD.remove(0);
 
-            if (LOGGING) Log.v(TAG, "ConfiguratorFragment:fillAWithD(): configItem:"
+            if (LOGGING) Log.v(TAG, "HomeFragment:fillAWithD(): configItem:"
                             + " configItem.title[" + configItem.title + "]"
                             + " configItem.bannerUrl[" + configItem.bannerUrl + "]"
                             + " this[" + this + "]"
@@ -698,7 +690,7 @@ public class HomeFragment extends Fragment {
 
     private LinearLayout getWidgetLayout(int layoutWidth, int layoutHeight, int marginBottom, View childView) {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:getWidgetLayout():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:getWidgetLayout():"
                         + " layoutWidth[" + layoutWidth + "]"
                         + " layoutHeight[" + layoutHeight + "]"
                         + " childView[" + childView + "]"
@@ -735,7 +727,7 @@ public class HomeFragment extends Fragment {
 
     private LinearLayout getBCDLayout() {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:getBCDLayout():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:getBCDLayout():"
                         + " this[" + this + "]"
         );
 
@@ -759,7 +751,7 @@ public class HomeFragment extends Fragment {
 
     private LinearLayout getSubLayout(int layoutWidth, int layoutHeight, int orientation) {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:getSubLayout():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:getSubLayout():"
                         + " layoutWidth[" + layoutWidth + "]"
                         + " layoutHeight[" + layoutHeight + "]"
                         + " this[" + this + "]"
@@ -788,7 +780,7 @@ public class HomeFragment extends Fragment {
 
     private LinearLayout getSubLayoutContainer(int orientation) {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:getSubLayoutContainer():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:getSubLayoutContainer():"
                         + " orientation[" + orientation + "]"
                         + " this[" + this + "]"
         );
@@ -806,7 +798,7 @@ public class HomeFragment extends Fragment {
 
     private ImageView getImageView(int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:getImageView():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:getImageView():"
                         + " this[" + this + "]"
         );
 
@@ -823,7 +815,7 @@ public class HomeFragment extends Fragment {
 
     private void setImage(ImageView imageView, String imageUrl) {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:setImage():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:setImage():"
                         + " imageUrl[" + imageUrl + "]"
                         + " imageView[" + imageView + "]"
                         + " this[" + this + "]"
@@ -838,7 +830,7 @@ public class HomeFragment extends Fragment {
 
     private void doConfigItemsLand() {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:doConfigItemsLand():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:doConfigItemsLand():"
                         + " this[" + this + "]"
         );
 
@@ -856,7 +848,7 @@ public class HomeFragment extends Fragment {
 
     private void fillWithBLand() {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:fillWithBLand():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:fillWithBLand():"
                         + " this[" + this + "]"
         );
 
@@ -904,7 +896,7 @@ public class HomeFragment extends Fragment {
 
     private void fillWithCLand() {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:fillWithCLand():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:fillWithCLand():"
                         + " this[" + this + "]"
         );
 
@@ -964,7 +956,7 @@ public class HomeFragment extends Fragment {
 
     private void padWithDLand(LinearLayout subLayoutContainer, int nbrListItems) {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:padWithDLand():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:padWithDLand():"
                         + " nbrListItems[" + nbrListItems + "]"
                         + " this[" + this + "]"
         );
@@ -1000,7 +992,7 @@ public class HomeFragment extends Fragment {
 
     private void fillWithDLand() {
 
-        if (LOGGING) Log.v(TAG, "ConfiguratorFragment:fillWithDLand():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:fillWithDLand():"
                         + " this[" + this + "]"
         );
 
