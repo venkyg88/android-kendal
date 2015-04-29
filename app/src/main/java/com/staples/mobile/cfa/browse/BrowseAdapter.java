@@ -33,7 +33,7 @@ public class BrowseAdapter extends RecyclerView.Adapter<BrowseAdapter.ViewHolder
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         stackList = new ArrayList<BrowseItem>();
         browseList = new ArrayList<BrowseItem>();
-        stackList.add(new BrowseItem(BrowseItem.Type.ACTIVE, context.getResources().getString(R.string.browse_title), null));
+        stackList.add(new BrowseItem(BrowseItem.Type.ACTIVE, context.getResources().getString(R.string.browse_title), null, null));
     }
 
     public void setOnClickListener(View.OnClickListener listener) {
@@ -97,10 +97,10 @@ public class BrowseAdapter extends RecyclerView.Adapter<BrowseAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
-    public String popStack(BrowseItem item) {
+    public boolean popStack(BrowseItem item) {
         // Safety check
         int index = stackList.indexOf(item);
-        if (index < 0) return (null);
+        if (index < 0) return(false);
 
         // Change new active
         item.type = BrowseItem.Type.ACTIVE;
@@ -113,7 +113,7 @@ public class BrowseAdapter extends RecyclerView.Adapter<BrowseAdapter.ViewHolder
         browseList.clear();
 
         notifyDataSetChanged();
-        return (item.identifier);
+        return (true);
     }
 
     public void selectItem(BrowseItem selected) {
@@ -133,7 +133,7 @@ public class BrowseAdapter extends RecyclerView.Adapter<BrowseAdapter.ViewHolder
     public String getCategoryHierarchy() {
         StringBuilder buf = new StringBuilder();
         for (BrowseItem item : stackList) {
-            if (!TextUtils.isEmpty(item.identifier) && Character.isLetter(item.identifier.charAt(0))) {
+            if (!TextUtils.isEmpty(item.childIdentifier) && Character.isLetter(item.childIdentifier.charAt(0))) {
                 if (buf.length() > 0) {
                     buf.append(":");
                 }

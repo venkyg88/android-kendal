@@ -22,11 +22,13 @@ public class BrowseItem {
 
     public Type type;
     public String title;
-    public String identifier;
+    public String parentIdentifier;
+    public String childIdentifier;
 
-    public BrowseItem(Type type, String title, String identifier) {
+    public BrowseItem(Type type, String title, String parentIdentifier, String childIdentifier) {
         this.type = type;
         this.title = title;
-        this.identifier = identifier;
+        this.parentIdentifier = parentIdentifier;
+        this.childIdentifier = childIdentifier;
     }
 }
