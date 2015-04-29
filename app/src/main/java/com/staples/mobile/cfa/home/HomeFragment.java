@@ -52,9 +52,9 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ConfiguratorFragment extends Fragment {
+public class HomeFragment extends Fragment {
 
-    private static final String TAG = ConfiguratorFragment.class.getSimpleName();
+    private static final String TAG = HomeFragment.class.getSimpleName();
 
     private static final boolean LOGGING = false;
 
