@@ -495,17 +495,21 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
             // update coupon list
             List<Reward> profileRewards = ProfileDetails.getAllProfileRewards();
-            // potentially add line for associate reward coupon
+            // potentially add lines for associate reward coupons
             Coupon assocRewardCoupon = CartApiManager.getAssocRewardCoupon();
-            if (assocRewardCoupon != null && assocRewardCoupon.getAdjustedAmount() != 0) {
+            Coupon assocRewardStaplesCoupon = CartApiManager.getAssocRewardStaplesCoupon();
+            if (assocRewardCoupon != null) {
                 couponItems.add(new CouponItem(assocRewardCoupon, null, CouponItem.TYPE_ASSOC_REWARD_COUPON));
+            }
+            if (assocRewardStaplesCoupon != null) {
+                couponItems.add(new CouponItem(assocRewardStaplesCoupon, null, CouponItem.TYPE_ASSOC_REWARD_COUPON));
             }
             // add line to add a coupon
             couponItems.add(new CouponItem(null, null, CouponItem.TYPE_COUPON_TO_ADD));
             // add list of applied cart-level coupons
             if (cart != null && cart.getCoupon() != null && cart.getCoupon().size() > 0) {
                 for (Coupon coupon : cart.getCoupon()) {
-                    if (!CartApiManager.isAssocRewardCoupon(coupon)) {
+                    if (!CartApiManager.isAssocCoupon(coupon)) {
                         // coupon may or may not have a matching reward
                         Reward reward = ProfileDetails.findMatchingReward(profileRewards, coupon.getCode());
                         if (reward != null) {
