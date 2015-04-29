@@ -36,13 +36,13 @@
     <!--ADD button-->
     <Button
         android:id="@+id/reward_add_button"
-        android:layout_width="85dp"
+        android:layout_width="70dp"
         android:layout_height="36dp"
         android:layout_alignParentRight="true"
         android:layout_gravity="center_vertical"
-        android:background="@color/staples_red"
+        android:background="@drawable/rounded_corner_green"
         android:text="@string/add"
-        android:textSize="@dimen/fontsize_14sp"
+        android:textSize="@dimen/fontsize_16sp"
         android:textColor="@color/staples_white"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
@@ -50,20 +50,27 @@
         android:paddingRight="8dp"/>
 
     <!--REMOVE button (only used in rewards dashboard)-->
-    <Button
+    <ImageView
         android:id="@+id/reward_remove_button"
-        android:layout_width="80dp"
-        android:layout_height="36dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_gravity="center_vertical"
-        android:background="@color/staples_light_gray"
-        android:text="@string/remove"
-        android:textSize="@dimen/fontsize_14sp"
-        android:textColor="@color/staples_black"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:visibility="gone"/>
+        android:src="@drawable/ic_close_black"/>
+    <!--<Button-->
+        <!--android:id="@+id/reward_remove_button"-->
+        <!--android:layout_width="85dp"-->
+        <!--android:layout_height="36dp"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_gravity="center_vertical"-->
+        <!--android:background="@color/staples_light_gray"-->
+        <!--android:text="@string/remove"-->
+        <!--android:textSize="@dimen/fontsize_14sp"-->
+        <!--android:textColor="@color/staples_black"-->
+        <!--android:paddingTop="4dp"-->
+        <!--android:paddingBottom="4dp"-->
+        <!--android:paddingLeft="8dp"-->
+        <!--android:paddingRight="8dp"-->
+        <!--android:visibility="gone"/>-->
 
 </RelativeLayout>

@@ -23,7 +23,7 @@
         android:textColor="@color/staples_black"
         android:text="@string/redeemable_rewards"
         android:layout_below="@id/rewards_horizontal_rule"
-        android:paddingTop="@dimen/verticalspacing_8dp"
+        android:paddingTop="@dimen/verticalspacing_24dp"
         android:paddingBottom="6dp"
         />
 
