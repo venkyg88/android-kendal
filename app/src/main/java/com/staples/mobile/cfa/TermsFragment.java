@@ -1,12 +1,13 @@
 package com.staples.mobile.cfa;
 
+import android.annotation.TargetApi;
 import android.app.Fragment;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -18,6 +19,7 @@ public class TermsFragment extends Fragment {
     private static final String TAG = TermsFragment.class.getSimpleName();
     private static final String TERMS_URL = "http://m.staples.com/skmobwidget/sbd/content/help-center/policies-and-legal.html";
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Crittercism.leaveBreadcrumb("TermsFragment:onCreateView(): Displaying the Privacy & Terms screen.");
@@ -29,12 +31,13 @@ public class TermsFragment extends Fragment {
         termsWebView.getSettings().setLoadWithOverviewMode(true);
         termsWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
         termsWebView.setScrollbarFadingEnabled(true);
+        termsWebView.setWebContentsDebuggingEnabled(false);
 
         termsWebView.setWebViewClient(new WebViewClient() {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 Crittercism.logHandledException(new Exception());
                 Log.d(TAG, "Loading WebViewClient Error! Error code:" + errorCode +
-                ", Reason:" +  description);
+                        ", Reason:" + description);
             }
         });
 

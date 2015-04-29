@@ -61,7 +61,6 @@
         <com.staples.mobile.cfa.widget.RatingStars
             android:id="@+id/rating"
             style="@style/SmallRatingStars"
-            android:paddingTop="@dimen/elevation_high"
-            android:paddingBottom="@dimen/elevation_high"/>
+            android:paddingTop="@dimen/elevation_high"/>
     </LinearLayout>
 </LinearLayout>

@@ -246,7 +246,7 @@ public class PersonalFeedFragment extends Fragment {
 
         setSeenProductsAdapter();
         setDailyDealAdapter();
-        setClearenceAdapter();
+        setClearanceAdapter();
 
         return (personalFeedLayout);
     }
@@ -333,7 +333,7 @@ public class PersonalFeedFragment extends Fragment {
         }
     }
 
-    private void setClearenceAdapter() {
+    private void setClearanceAdapter() {
         String bundleUrl = "category/identifier/";
         Map collectionMap = new HashMap<String, String>();
 
