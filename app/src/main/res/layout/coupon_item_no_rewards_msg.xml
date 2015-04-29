@@ -9,4 +9,5 @@
     android:textSize="@dimen/fontsize_14sp"
     android:padding="0dp"
     android:text="@string/no_redeemable_rewards"
+    android:textColor="@color/staples_dark_gray"
 />

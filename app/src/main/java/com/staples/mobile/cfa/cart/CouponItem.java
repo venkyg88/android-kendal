@@ -1,6 +1,7 @@
 package com.staples.mobile.cfa.cart;
 
 import com.staples.mobile.cfa.util.CurrencyFormat;
+import com.staples.mobile.common.access.easyopen.model.cart.Description;
 import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
 
@@ -13,6 +14,7 @@ public class CouponItem {
     public static final int TYPE_REDEEMABLE_REWARD_HEADING = 2;
     public static final int TYPE_REDEEMABLE_REWARD = 3;
     public static final int TYPE_NO_REDEEMABLE_REWARDS_MSG = 4;
+    public static final int TYPE_ASSOC_REWARD_COUPON = 5;
 
     private Coupon coupon;
     private Reward reward;
@@ -30,7 +32,7 @@ public class CouponItem {
             return reward.getAmount();
         } else if (coupon != null) {
             return (reward != null)? reward.getAmount() :
-                    (CurrencyFormat.getFormatter().format(Math.abs(coupon.getAdjustedAmount())) + " off");
+                    (getCouponAmountText() + " off");
         }
         return "";
     }
@@ -42,6 +44,17 @@ public class CouponItem {
             return "code: " + coupon.getCode();
         }
         return "";
+    }
+
+    public String getCouponAmountText() {
+        return CurrencyFormat.getFormatter().format(Math.abs(coupon.getAdjustedAmount()));
+    }
+
+    public String getCouponShortDescription() {
+        if (coupon.getDescription() != null && coupon.getDescription().size() > 0) {
+            return coupon.getDescription().get(0).getShortDescription();
+        }
+        return null;
     }
 
     public Coupon getCoupon() {
