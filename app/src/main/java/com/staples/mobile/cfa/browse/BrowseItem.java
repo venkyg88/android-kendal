@@ -24,6 +24,7 @@ public class BrowseItem {
     public String title;
     public String parentIdentifier;
     public String childIdentifier;
+    public String webLink;
 
     public BrowseItem(Type type, String title, String parentIdentifier, String childIdentifier) {
         this.type = type;
