@@ -695,15 +695,13 @@ public class MainActivity extends Activity
 
         ActionBar.getInstance().closeSearch();
 
-        String fragmentName = fragment.getClass().getSimpleName();
-
         // Swap Fragments
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         if (transition != null) transition.setAnimation(transaction);
-        transaction.replace(R.id.content, fragment, fragmentName);
+        transaction.replace(R.id.content, fragment);
         if (push)
-            transaction.addToBackStack(fragmentName);
+            transaction.addToBackStack(tag);
         transaction.commitAllowingStateLoss();
         return(true);
     }
@@ -946,11 +944,9 @@ public class MainActivity extends Activity
                     if (drawerItem != null) {
                         int backstackIndex = currentBackStackIndex - 1;
                         while (backstackIndex >= 0) {
-                            if (currentBackStackIndex >= 0) {
-                                if (HomeFragment.class.getSimpleName().equals(fragmentManager.getBackStackEntryAt(backstackIndex).getName())) {
-                                    fragmentManager.popBackStack(HomeFragment.class.getSimpleName(), 0);
-                                    break;
-                                }
+                            if (DrawerItem.HOME.equals(fragmentManager.getBackStackEntryAt(backstackIndex).getName())) {
+                                fragmentManager.popBackStack(DrawerItem.HOME, 0);
+                                break;
                             }
                             backstackIndex--;
                         }

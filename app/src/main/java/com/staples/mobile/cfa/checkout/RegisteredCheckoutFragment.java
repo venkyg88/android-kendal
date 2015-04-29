@@ -258,7 +258,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                     public void onPaymentMethodSelected(String id) {
                         Bundle args = RegisteredCheckoutFragment.this.getArguments();
                         args.putString(BUNDLE_PARAM_PAYMENT_METHOD_ID, id);
-                        activity.selectFragment(DrawerItem.CARD, RegisteredCheckoutFragment.this, MainActivity.Transition.NONE, true);
+                        activity.selectFragment(DrawerItem.CHECKOUT, RegisteredCheckoutFragment.this, MainActivity.Transition.NONE, true);
                     }
                 }, paymentMethodId);
                 break;
@@ -267,7 +267,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                     public void onAddressSelected(String id) {
                         Bundle args = RegisteredCheckoutFragment.this.getArguments();
                         args.putString(BUNDLE_PARAM_BILLING_ADDR_ID, id);
-                        activity.selectFragment(DrawerItem.ADDRESS, RegisteredCheckoutFragment.this, MainActivity.Transition.NONE, true);
+                        activity.selectFragment(DrawerItem.CHECKOUT, RegisteredCheckoutFragment.this, MainActivity.Transition.NONE, true);
                     }
                 }, billingAddressId);
                 break;

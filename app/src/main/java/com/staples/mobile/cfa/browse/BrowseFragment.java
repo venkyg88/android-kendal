@@ -13,10 +13,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.crittercism.app.Crittercism;
+import com.staples.mobile.cfa.DrawerItem;
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.home.HomeFragment;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -116,15 +116,11 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
         applyState(null);
 
         FragmentManager fragmentManager = getFragmentManager();
-        int backStackEntryCount = fragmentManager.getBackStackEntryCount();
-        int currentBackStackIndex = backStackEntryCount - 1;
+        int currentBackStackIndex = fragmentManager.getBackStackEntryCount() - 1;
         int backstackIndex = currentBackStackIndex - 1;
-        String configuratorFragmentName = HomeFragment.class.getSimpleName();
-        String backStackEntryName = "";
         while (backstackIndex >= 0) {
-            backStackEntryName = fragmentManager.getBackStackEntryAt(backstackIndex).getName();
-            if (configuratorFragmentName.equals(backStackEntryName)) {
-                fragmentManager.popBackStack(configuratorFragmentName, 0);
+            if (DrawerItem.HOME.equals(fragmentManager.getBackStackEntryAt(backstackIndex).getName())) {
+                fragmentManager.popBackStack(DrawerItem.HOME, 0);
                 break;
             }
             backstackIndex--;
