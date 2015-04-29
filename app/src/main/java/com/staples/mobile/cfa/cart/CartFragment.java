@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +61,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private TextView cartShipping;
     private TextView couponsRewardsLabel;
     private TextView couponsRewardsValue;
+    EditText phoneNumberVw;
     private RecyclerView couponListVw;
     private CouponAdapter couponAdapter;
     private View emptyCartLayout;
@@ -85,6 +87,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private QtyDeleteButtonListener qtyDeleteButtonListener;
     private QtyChangeListener qtyChangeListener;
     private ProductClickListener productClickListener;
+    PhoneNumberFormattingTextWatcher phoneNumberFormattingTextWatcher;
 
     CouponWeightAnimator couponUpAnimator;
     CouponWeightAnimator couponDownAnimator;
@@ -134,6 +137,10 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         // set up coupons & rewards panel animation
         couponUpAnimator = new CouponWeightAnimator(true);
         couponDownAnimator = new CouponWeightAnimator(false);
+
+        phoneNumberFormattingTextWatcher = new PhoneNumberFormattingTextWatcher();
+        phoneNumberVw = (EditText)view.findViewById(R.id.rewards_phone_number);
+        phoneNumberVw.addTextChangedListener(phoneNumberFormattingTextWatcher);
 
 //        // set up fade in/out animations
 //        mathStoryFadeInAnimation = AnimationUtils.loadAnimation(activity, R.anim.fade_in);
@@ -256,12 +263,12 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                     if (!freeShippingMsg.equals(cartFreeShippingMsg.getText().toString())) {
                         cartFreeShippingMsg.setVisibility(View.VISIBLE);
                         cartFreeShippingMsg.setText(freeShippingMsg);
-                        // hide after a delay
-                        cartFreeShippingMsg.postDelayed(new Runnable() {
-                            @Override public void run() {
-                                cartFreeShippingMsg.setVisibility(View.GONE);
-                            }
-                        }, 3000);
+//                        // hide after a delay
+//                        cartFreeShippingMsg.postDelayed(new Runnable() {
+//                            @Override public void run() {
+//                                cartFreeShippingMsg.setVisibility(View.GONE);
+//                            }
+//                        }, 3000);
                     }
                 }
             } else {
@@ -348,23 +355,49 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 activity.selectOrderCheckout();
                 break;
             case R.id.rewards_link_acct_button:
+                activity.hideSoftKeyboard(view);
+
+
                 String rewardsNumber = ((EditText)getView().findViewById(R.id.rewards_card_number)).getText().toString();
-                String phoneNumber = ((EditText)getView().findViewById(R.id.rewards_phone_number)).getText().toString();
-                showProgressIndicator();
-                RewardsLinkingFragment.linkRewardsAccount(rewardsNumber, phoneNumber, new RewardsLinkingFragment.LinkRewardsCallback() {
-                    @Override
-                    public void onLinkRewardsComplete(String errMsg) {
-                        hideProgressIndicator();
-                        if (errMsg != null) {
-                            activity.showErrorDialog(errMsg);
-                        } else {
-                            linkRewardsAcctLayout.setVisibility(View.GONE);
-                            updateCartFields();
-                        }
+                String phoneNumber = stripPhoneNumber(phoneNumberVw.getText().toString());
+
+                if(validateFields(rewardsNumber, phoneNumber)) {
+                    if(phoneNumber.length() < 10) {
+                        activity.showErrorDialog(R.string.invalid_phone_number);
+                        return;
                     }
-                });
+                    activity.showProgressIndicator();
+                    RewardsLinkingFragment.linkRewardsAccount(rewardsNumber, phoneNumber, new RewardsLinkingFragment.LinkRewardsCallback() {
+                        @Override
+                        public void onLinkRewardsComplete(String errMsg) {
+                            hideProgressIndicator();
+                            if (errMsg != null) {
+                                activity.showErrorDialog(errMsg);
+                            } else {
+                                linkRewardsAcctLayout.setVisibility(View.GONE);
+                                updateCartFields();
+                            }
+                        }
+                    });
+                } else{
+                    activity.showErrorDialog(R.string.empty_rewards_linking_msg);
+                }
                 break;
         }
+    }
+
+    private boolean validateFields(String rewardsNumber, String phoneNumber) {
+        if(TextUtils.isEmpty(rewardsNumber) || TextUtils.isEmpty(phoneNumber)) {
+            return false;
+        }
+        return true;
+    }
+
+    private String stripPhoneNumber(String phoneNumber) {
+        if (!TextUtils.isEmpty(phoneNumber)) {
+            return phoneNumber.replaceAll("[^0-9]", "");
+        }
+        return phoneNumber;
     }
 
     private void showProgressIndicator() {

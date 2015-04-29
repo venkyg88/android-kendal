@@ -392,8 +392,31 @@ public class PersonalFeedFragment extends Fragment {
         RatingStars ratingStars = (RatingStars) row.findViewById(R.id.rating);
         ratingStars.setRating(cartItem.getCustomerReviewRating(), cartItem.getCustomerReviewCount());
 
-        PriceSticker priceSticker = (PriceSticker) row.findViewById(R.id.pricing);
-        priceSticker.setCartPricing(cartItem.getPricing());
+//        PriceSticker priceSticker = (PriceSticker) row.findViewById(R.id.pricing);
+//        priceSticker.setCartPricing(cartItem.getPricing());
+
+        // check if the product has discount
+        List<com.staples.mobile.common.access.easyopen.model.cart.Pricing> pricings = cartItem.getPricing();
+        if (pricings!=null && pricings.size()>0) {
+            com.staples.mobile.common.access.easyopen.model.cart.Pricing pricing = pricings.get(0);
+            PriceSticker priceSticker = (PriceSticker) row.findViewById(R.id.pricing);
+
+            float rebate = findRebate(pricing);
+            if (rebate>0.0f) {
+                row.findViewById(R.id.rebate_layout).setVisibility(View.VISIBLE);
+                TextView rebateText = (TextView) row.findViewById(R.id.rebate_text);
+                String text = String.format("$%.2f %s", rebate, getResources().getString(R.string.rebate));
+                rebateText.setText(text);
+
+                float finalPrice = pricing.getFinalPrice();
+                float wasPrice = pricing.getListPrice();
+                String unit = pricing.getUnitOfMeasure();
+                priceSticker.setPricing(finalPrice, wasPrice, unit, "*");
+            } else {
+                row.findViewById(R.id.rebate_layout).setVisibility(View.GONE);
+                priceSticker.setCartPricing(cartItem.getPricing());
+            }
+        }
 
         ImageView imageView = (ImageView) row.findViewById(R.id.image);
         String imageUrl= "";
@@ -424,6 +447,22 @@ public class PersonalFeedFragment extends Fragment {
     }
 
     private float findRebate(Pricing pricing) {
+        if (pricing==null) return(0.0f);
+        List<Discount> discounts = pricing.getDiscount();
+        if (discounts==null) return(0.0f);
+
+        float rebate = 0.0f;
+        for(Discount discount : discounts) {
+            String name = discount.getName();
+            if ("rebate".equals(name)) {
+                float amount = discount.getAmount();
+                if (amount > rebate) rebate = amount;
+            }
+        }
+        return(rebate);
+    }
+
+    private float findRebate(com.staples.mobile.common.access.easyopen.model.cart.Pricing pricing) {
         if (pricing==null) return(0.0f);
         List<Discount> discounts = pricing.getDiscount();
         if (discounts==null) return(0.0f);

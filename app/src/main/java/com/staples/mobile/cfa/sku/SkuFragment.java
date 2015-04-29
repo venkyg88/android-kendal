@@ -244,9 +244,9 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         FragmentManager manager = getFragmentManager();
         manager.removeOnBackStackChangedListener(this);
+        super.onDestroy();
     }
 
     // Formatters and builders
@@ -336,7 +336,7 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
             if (!specName.isEmpty() && !specValue.isEmpty()) {
                 View row = inflater.inflate(R.layout.sku_spec_item, parent, false);
                 if (count==0) {
-                    row.setBackground(null);
+                    row.setBackgroundColor(0x00000000);
                 }
                 parent.addView(row);
                 ((TextView) row.findViewById(R.id.specName)).setText(specName);
