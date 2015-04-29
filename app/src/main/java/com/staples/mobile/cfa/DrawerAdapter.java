@@ -1,7 +1,6 @@
 package com.staples.mobile.cfa;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,7 @@ import android.widget.TextView;
 
 import com.staples.mobile.cfa.browse.BrowseFragment;
 import com.staples.mobile.cfa.feed.PersonalFeedFragment;
-import com.staples.mobile.cfa.home.ConfiguratorFragment;
+import com.staples.mobile.cfa.home.HomeFragment;
 import com.staples.mobile.cfa.notify.NotifyPrefsFragment;
 import com.staples.mobile.cfa.order.OrderFragment;
 import com.staples.mobile.cfa.profile.ProfileFragment;
@@ -117,7 +116,7 @@ public class DrawerAdapter extends BaseAdapter {
     }
 
     public void fill() {
-        array.add(new DrawerItem(activity, R.drawable.ic_home_black, R.string.home_title, ConfiguratorFragment.class));
+        array.add(new DrawerItem(activity, R.drawable.ic_home_black, R.string.home_title, HomeFragment.class));
         array.add(new DrawerItem(activity, R.drawable.ic_chat_black, R.string.personal_feed_title, PersonalFeedFragment.class));
         array.add(new DrawerItem(activity, R.drawable.ic_browse_black, R.string.browse_title, BrowseFragment.class));
         array.add(new DrawerItem(activity, R.drawable.ic_store_locator_black, R.string.store_locator_title, StoreFragment.class));

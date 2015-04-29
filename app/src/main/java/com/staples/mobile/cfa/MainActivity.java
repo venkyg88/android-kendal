@@ -40,7 +40,7 @@ import com.staples.mobile.cfa.checkout.ConfirmationFragment;
 import com.staples.mobile.cfa.checkout.GuestCheckoutFragment;
 import com.staples.mobile.cfa.checkout.RegisteredCheckoutFragment;
 import com.staples.mobile.cfa.feed.PersonalFeedFragment;
-import com.staples.mobile.cfa.home.ConfiguratorFragment;
+import com.staples.mobile.cfa.home.HomeFragment;
 import com.staples.mobile.cfa.kount.KountManager;
 import com.staples.mobile.cfa.location.LocationFinder;
 import com.staples.mobile.cfa.login.LoginFragment;
@@ -267,7 +267,6 @@ public class MainActivity extends Activity
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         // if we got past configurator initialization (otherwise LoginHelper constructor throws NPE)
         if (AppConfigurator.getInstance().getConfigurator() != null) {
             // unregister loginCompleteListener
@@ -276,6 +275,7 @@ public class MainActivity extends Activity
             }
             StaplesAppContext.getInstance().resetConfigurator(); // need to reset so a fresh network attempt is made, to enable correct handling of redirect error
         }
+        super.onDestroy();
     }
 
     private boolean isNetworkAvailable() {
@@ -635,7 +635,7 @@ public class MainActivity extends Activity
         // disable menu items as appropriate
         updateMenuItemState();
 
-        selectFragment(new ConfiguratorFragment(), Transition.NONE, true);
+        selectFragment(new HomeFragment(), Transition.NONE, true);
     }
 
     private void updateMenuItemState() {
@@ -954,8 +954,8 @@ public class MainActivity extends Activity
                         int backstackIndex = currentBackStackIndex - 1;
                         while (backstackIndex >= 0) {
                             if (currentBackStackIndex >= 0) {
-                                if (ConfiguratorFragment.class.getSimpleName().equals(fragmentManager.getBackStackEntryAt(backstackIndex).getName())) {
-                                    fragmentManager.popBackStack(ConfiguratorFragment.class.getSimpleName(), 0);
+                                if (HomeFragment.class.getSimpleName().equals(fragmentManager.getBackStackEntryAt(backstackIndex).getName())) {
+                                    fragmentManager.popBackStack(HomeFragment.class.getSimpleName(), 0);
                                     break;
                                 }
                             }

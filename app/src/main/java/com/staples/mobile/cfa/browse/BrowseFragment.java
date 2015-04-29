@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
@@ -16,7 +15,7 @@ import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.home.ConfiguratorFragment;
+import com.staples.mobile.cfa.home.HomeFragment;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -119,7 +118,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
         int backStackEntryCount = fragmentManager.getBackStackEntryCount();
         int currentBackStackIndex = backStackEntryCount - 1;
         int backstackIndex = currentBackStackIndex - 1;
-        String configuratorFragmentName = ConfiguratorFragment.class.getSimpleName();
+        String configuratorFragmentName = HomeFragment.class.getSimpleName();
         String backStackEntryName = "";
         while (backstackIndex >= 0) {
             backStackEntryName = fragmentManager.getBackStackEntryAt(backstackIndex).getName();
