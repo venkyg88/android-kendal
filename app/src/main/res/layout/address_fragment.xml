@@ -6,37 +6,28 @@
     android:paddingLeft="@dimen/margin_16dp"
     android:paddingRight="@dimen/margin_16dp">
 
-    <TextView android:id="@+id/autoCompleteAnchor"
-        android:layout_centerHorizontal="true"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:visibility="invisible" />
-
     <include
         android:id="@+id/shipping_address"
         layout="@layout/address_block" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingTop="@dimen/margin_16dp">
+        android:paddingTop="@dimen/margin_16dp"
+        android:gravity="right">
         <Button
+            android:id="@+id/address_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/margin_16dp"
+            android:text="@string/cancel_btn"
+            android:textColor="@color/staples_black"/>
+        <Button
+            android:id="@+id/address_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/save_btn"
-            android:id="@+id/address_save"
-            android:imeOptions="actionDone"
-            android:textColor="@color/staples_black"
-            android:layout_alignParentRight="true"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/cancel_btn"
-            android:id="@+id/address_cancel"
-            android:imeOptions="actionDone"
-            android:layout_marginRight="@dimen/margin_16dp"
-            android:textColor="@color/staples_black"
-            android:layout_toLeftOf="@+id/address_save"/>
-    </RelativeLayout>
+            android:textColor="@color/staples_black"/>
+    </LinearLayout>
 </com.staples.mobile.cfa.widget.AnimatorLayout>
