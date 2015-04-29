@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:padding="@dimen/margin_16dp"
+        android:padding="@dimen/action_bar_half_margin"
         android:visibility="gone"
         android:orientation="vertical"
         >
@@ -114,8 +114,6 @@
         android:paddingBottom="@dimen/verticalspacing_24dp"
         android:clipToPadding="false" />
 
-
-
     <!--coupon & rewards heading -->
     <android.support.v7.widget.CardView
         android:id="@+id/coupons_rewards_layout"
@@ -134,7 +132,7 @@
             android:layout_gravity="left|center_vertical"
             android:gravity="center_vertical"
             android:text="@string/coupons_rewards"
-            android:textSize="@dimen/fontsize_18sp"
+            android:textSize="@dimen/fontsize_14sp"
             android:textColor="@color/staples_green"
             android:drawableLeft="@drawable/ic_add_green"
             android:drawablePadding="8dp"
@@ -144,7 +142,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="right|center_vertical"
-            android:textSize="@dimen/fontsize_18sp"
+            android:textSize="@dimen/fontsize_14sp"
             android:textColor="@color/staples_green"
             />
     </android.support.v7.widget.CardView>
@@ -184,7 +182,7 @@
 			android:paddingTop="0dp"
 			android:text="@string/oversized_shipping_fee"
             android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_24sp"
+            android:textSize="@dimen/fontsize_14sp"
 			android:visibility="gone"
         />
         <TextView
@@ -194,7 +192,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_24sp"
+            android:textSize="@dimen/fontsize_14sp"
 			android:visibility="gone"
 		/>
 
@@ -207,7 +205,7 @@
 			android:paddingTop="@dimen/margin_16dp"
 			android:text="@string/shipping"
 			android:textColor="@color/staples_black"
-			android:textSize="@dimen/fontsize_18sp"
+			android:textSize="@dimen/fontsize_14sp"
 		/>
 
 		<TextView
@@ -217,7 +215,7 @@
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:textColor="@color/staples_black"
-			android:textSize="@dimen/fontsize_18sp"
+			android:textSize="@dimen/fontsize_14sp"
 		/>
 
     </RelativeLayout>
@@ -235,7 +233,7 @@
             android:layout_width="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:textSize="@dimen/fontsize_18sp"
+            android:textSize="@dimen/fontsize_14sp"
             android:textColor="@color/staples_black"
             android:text="@string/pretax_subtotal" />
 
@@ -245,7 +243,7 @@
             android:layout_width="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:textSize="@dimen/fontsize_18sp"
+            android:textSize="@dimen/fontsize_14sp"
 			android:textColor="@color/staples_black" />
 
         <!--checkout button-->
