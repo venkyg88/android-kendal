@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.staples.mobile.cfa.DrawerItem;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.profile.CreditCard;
@@ -248,7 +249,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                         args.putString(BUNDLE_PARAM_SHIPPING_ADDR_ID, id);
                         args.putString(BUNDLE_PARAM_SHIPPING_CHARGE, null); // set these to null to force new precheckout step
                         args.putString(BUNDLE_PARAM_TAX, null);             // set these to null to force new precheckout step
-                        activity.selectFragment(RegisteredCheckoutFragment.this, MainActivity.Transition.NONE, true);
+                        activity.selectFragment(DrawerItem.CHECKOUT, RegisteredCheckoutFragment.this, MainActivity.Transition.NONE, true);
                     }
                 }, shippingAddressId);
                 break;
@@ -257,7 +258,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                     public void onPaymentMethodSelected(String id) {
                         Bundle args = RegisteredCheckoutFragment.this.getArguments();
                         args.putString(BUNDLE_PARAM_PAYMENT_METHOD_ID, id);
-                        activity.selectFragment(RegisteredCheckoutFragment.this, MainActivity.Transition.NONE, true);
+                        activity.selectFragment(DrawerItem.CARD, RegisteredCheckoutFragment.this, MainActivity.Transition.NONE, true);
                     }
                 }, paymentMethodId);
                 break;
@@ -266,7 +267,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                     public void onAddressSelected(String id) {
                         Bundle args = RegisteredCheckoutFragment.this.getArguments();
                         args.putString(BUNDLE_PARAM_BILLING_ADDR_ID, id);
-                        activity.selectFragment(RegisteredCheckoutFragment.this, MainActivity.Transition.NONE, true);
+                        activity.selectFragment(DrawerItem.ADDRESS, RegisteredCheckoutFragment.this, MainActivity.Transition.NONE, true);
                     }
                 }, billingAddressId);
                 break;

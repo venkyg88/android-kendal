@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.crittercism.app.Crittercism;
+import com.staples.mobile.cfa.DrawerItem;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -54,6 +55,6 @@ public class AddressListFragment extends Fragment implements View.OnClickListene
     @Override
     public void onClick(View view) {
         Fragment shippingFragment = Fragment.instantiate(activity, AddressFragment.class.getName());
-        ((MainActivity) activity).navigateToFragment(shippingFragment);
+        ((MainActivity) activity).selectFragment(DrawerItem.ADDRESS, shippingFragment, MainActivity.Transition.RIGHT, true);
     }
 }
