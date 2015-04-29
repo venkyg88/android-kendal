@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.crittercism.app.Crittercism;
+import com.staples.mobile.cfa.DrawerItem;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -53,7 +54,6 @@ public class CreditCardListFragment extends Fragment implements View.OnClickList
     @Override
     public void onClick(View view) {
         Fragment cardFragment = Fragment.instantiate(activity, CreditCardFragment.class.getName());
-        ((MainActivity) activity).navigateToFragment(cardFragment);
+        ((MainActivity) activity).selectFragment(DrawerItem.CARD, cardFragment, MainActivity.Transition.RIGHT, true);
         }
     }
-

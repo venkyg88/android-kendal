@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
+import com.staples.mobile.cfa.DrawerItem;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.widget.ActionBar;
@@ -145,7 +146,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("orderData", order);
                 orderDetailsFragment.setArguments(bundle);
-                ((MainActivity) activity).navigateToFragment(orderDetailsFragment);
+                ((MainActivity) activity).selectFragment(DrawerItem.ORDERS, orderDetailsFragment, MainActivity.Transition.RIGHT, true);
                 break;
             default:
                 break;

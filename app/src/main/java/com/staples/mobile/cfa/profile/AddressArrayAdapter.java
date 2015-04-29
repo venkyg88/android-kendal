@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.staples.mobile.cfa.DrawerItem;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.Access;
@@ -153,7 +154,7 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
         Bundle bundle = new Bundle();
         bundle.putSerializable("addressData", values.get(position));
         addressFragment.setArguments(bundle);
-        ((MainActivity)context).navigateToFragment(addressFragment);
+        ((MainActivity)context).selectFragment(DrawerItem.ADDRESS, addressFragment, MainActivity.Transition.RIGHT, true);
     }
 
     public void deleteAddress(final int position){
