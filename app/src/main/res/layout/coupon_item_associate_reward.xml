@@ -6,7 +6,7 @@
     android:layout_marginBottom="@dimen/verticalspacing_8dp">
 <TextView
     android:id="@+id/associate_reward_desc"
-    android:layout_width="220dp"
+    android:layout_width="260dp"
     android:layout_height="wrap_content"
     android:layout_alignParentLeft="true"
     android:textSize="@dimen/fontsize_16sp"
