@@ -150,8 +150,8 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
         private TextView couponField2Vw;
         private TextView assocRewardDescVw;
         private TextView assocRewardAmountVw;
-        private Button couponDeleteButton;
-        private Button couponAddButton;
+        private View couponDeleteButton;
+        private View couponAddButton;
 
         /** constructor */
         public ViewHolder(View itemView, int type) {
@@ -163,19 +163,19 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
                     break;
                 case CouponItem.TYPE_COUPON_TO_ADD:
                     couponCodeEditVw = (EditTextWithImeBackEvent) itemView.findViewById(R.id.coupon_code);
-                    couponAddButton = (Button) itemView.findViewById(R.id.coupon_add_button);
+                    couponAddButton = itemView.findViewById(R.id.coupon_add_button);
                     break;
                 case CouponItem.TYPE_APPLIED_COUPON:
                     couponField1Vw = (TextView) itemView.findViewById(R.id.coupon_item_field1);
                     couponField2Vw = (TextView) itemView.findViewById(R.id.coupon_item_field2);
-                    couponDeleteButton = (Button) itemView.findViewById(R.id.coupon_delete_button);
+                    couponDeleteButton = itemView.findViewById(R.id.coupon_delete_button);
                     break;
                 case CouponItem.TYPE_REDEEMABLE_REWARD_HEADING:
                     break;
                 case CouponItem.TYPE_REDEEMABLE_REWARD:
                     couponField1Vw = (TextView) itemView.findViewById(R.id.coupon_item_field1);
                     couponField2Vw = (TextView) itemView.findViewById(R.id.coupon_item_field2);
-                    couponAddButton = (Button) itemView.findViewById(R.id.reward_add_button);
+                    couponAddButton = itemView.findViewById(R.id.reward_add_button);
                     break;
                 case CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG:
                     break;
