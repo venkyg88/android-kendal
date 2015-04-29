@@ -5,27 +5,56 @@ android {
     buildToolsVersion "22.0.0"
 
     ext {
-        versionPrefix = '4.0.0.1'
+        versionPrefix = '4.0.0.2'
     }
 
     defaultConfig {
         applicationId 'com.staples.mobile.cfa'
-        versionCode 19
+        versionCode 21
     }
+    signingConfigs {
+        release {
+            storeFile file("Staples_Release_KeyStore")
+            storePassword "nae4yobieN"
+            keyAlias "staples"
+            keyPassword "uBeigh8Eng"
+        }
+    }
+
 
     productFlavors {
         qa {
             versionName versionPrefix+'-qa-'+defaultConfig.versionCode
+            buildTypes {
+                debug {
+                    minifyEnabled false
+                }
+                release {
+                    minifyEnabled false
+                }
+            }
         }
         dev {
             versionName versionPrefix+'-dev-'+defaultConfig.versionCode
+            buildTypes {
+                debug {
+                    minifyEnabled false
+                }
+                release {
+                    minifyEnabled false
+                }
+            }
         }
         prod {
             versionName versionPrefix+'-prod-'+defaultConfig.versionCode
             buildTypes {
                 debug {
+                    minifyEnabled false
+                }
+                release {
                     minifyEnabled true
                     proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+                    signingConfig signingConfigs.release
                 }
             }
         }

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
@@ -16,7 +15,7 @@ import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.home.ConfiguratorFragment;
+import com.staples.mobile.cfa.home.HomeFragment;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -49,7 +48,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
 
         adapter = new BrowseAdapter(getActivity());
         adapter.setOnClickListener(this);
-        fill(null);
+        fill(null, null);
     }
 
     @Override
@@ -82,20 +81,12 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
         ActionBar.getInstance().setConfig(ActionBar.Config.BROWSE);
     }
 
-    void fill(String identifier) {
+    void fill(String parentIdentifier, String childIdentifier) {
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-
-        switch(IdentifierType.detect(identifier)) {
-            case EMPTY:
-                easyOpenApi.topCategories(null, null, MAXFETCH, this);
-                break;
-            case TOPCATEGORY:
-            case SKU: // Not really a SKU, a numeric identifier;
-                easyOpenApi.topCategories(identifier, null, MAXFETCH, this);
-                break;
-            default:
-                easyOpenApi.getCategory(identifier, null, MAXFETCH, null, null, this);
-                break;
+        if (parentIdentifier!=null || childIdentifier==null) {
+            easyOpenApi.topCategories(parentIdentifier, childIdentifier, null, MAXFETCH, this);
+        } else {
+            easyOpenApi.getCategory(childIdentifier, null, MAXFETCH, null, null, this);
         }
         state = DataWrapper.State.ADDING;
         applyState(null);
@@ -127,7 +118,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
         int backStackEntryCount = fragmentManager.getBackStackEntryCount();
         int currentBackStackIndex = backStackEntryCount - 1;
         int backstackIndex = currentBackStackIndex - 1;
-        String configuratorFragmentName = ConfiguratorFragment.class.getSimpleName();
+        String configuratorFragmentName = HomeFragment.class.getSimpleName();
         String backStackEntryName = "";
         while (backstackIndex >= 0) {
             backStackEntryName = fragmentManager.getBackStackEntryAt(backstackIndex).getName();
@@ -165,22 +156,15 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
         int count = 0;
 
         for(Category category : categories) {
+            String parentIdentifier = category.getIdentifier();
             List<SubCategory> subCategories = category.getSubCategory();
             if (subCategories!=null) {
-                for(SubCategory subCategory : subCategories) {
-                    List<Description> descriptions = subCategory.getDescription();
-                    String title = getTitleFromDescriptions(descriptions);
-                    if (title!=null) {
-                        BrowseItem item = new BrowseItem(BrowseItem.Type.ITEM, title, subCategory.getIdentifier());
-                        adapter.addItem(item);
-                        count++;
-                    }
-                }
+                count += processSubCategories(parentIdentifier, subCategories);
             } else {
                 List<Description> descriptions = category.getDescription1();
                 String title = getTitleFromDescriptions(descriptions);
                 if (title != null) {
-                    BrowseItem item = new BrowseItem(BrowseItem.Type.ITEM, title, category.getIdentifier());
+                    BrowseItem item = new BrowseItem(BrowseItem.Type.ITEM, title, category.getIdentifier(), null);
                     adapter.addItem(item);
                     count++;
                 }
@@ -191,33 +175,57 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
         return(count);
     }
 
+    private int processSubCategories(String parentIdentifier, List<SubCategory> subCategories) {
+        BrowseItem item;
+
+        int count = 0;
+        for(SubCategory subCategory : subCategories) {
+            List<SubCategory> subSubCategories = subCategory.getSubCategory();
+            if (subSubCategories != null) {
+                count += processSubCategories(parentIdentifier, subSubCategories);
+            } else {
+                List<Description> descriptions = subCategory.getDescription();
+                String title = getTitleFromDescriptions(descriptions);
+                if (title != null) {
+                    if (subCategory.getChildCount()>0) {
+                        item = new BrowseItem(BrowseItem.Type.ITEM, title, parentIdentifier, subCategory.getIdentifier());
+                    } else {
+                        item = new BrowseItem(BrowseItem.Type.ITEM, title, null, subCategory.getIdentifier());
+                    }
+                    adapter.addItem(item);
+                    count++;
+                }
+            }
+        }
+        return(count);
+    }
+
     @Override
     public void onClick(View view) {
-        String identifier;
         Object obj = view.getTag();
         if (obj instanceof BrowseItem) {
             BrowseItem item = (BrowseItem) obj;
             switch(item.type) {
                 case STACK:
-                    identifier = adapter.popStack(item);
-                    fill(identifier);
+                    adapter.popStack(item);
+                    fill(item.parentIdentifier, item.childIdentifier);
                     Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy()); // analytics
                     break;
                 case ITEM:
-                    identifier = item.identifier;
-                    switch(IdentifierType.detect(identifier)) {
+
+                    switch(IdentifierType.detect(item.childIdentifier)) {
                         case CLASS:
                         case BUNDLE:
                             adapter.selectItem(item);
                             MainActivity activity = (MainActivity) getActivity();
                             if (activity != null) {
                                 Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy() + ":" + item.title); // analytics
-                                activity.selectBundle(item.title, identifier);
+                                activity.selectBundle(item.title, item.childIdentifier);
                             }
                             break;
                         default:
                             adapter.pushStack(item);
-                            fill(identifier);
+                            fill(item.parentIdentifier, item.childIdentifier);
                             Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy()); // analytics
                             break;
                     }

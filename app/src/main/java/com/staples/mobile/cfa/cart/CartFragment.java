@@ -256,12 +256,12 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                     if (!freeShippingMsg.equals(cartFreeShippingMsg.getText().toString())) {
                         cartFreeShippingMsg.setVisibility(View.VISIBLE);
                         cartFreeShippingMsg.setText(freeShippingMsg);
-                        // hide after a delay
-                        cartFreeShippingMsg.postDelayed(new Runnable() {
-                            @Override public void run() {
-                                cartFreeShippingMsg.setVisibility(View.GONE);
-                            }
-                        }, 3000);
+//                        // hide after a delay
+//                        cartFreeShippingMsg.postDelayed(new Runnable() {
+//                            @Override public void run() {
+//                                cartFreeShippingMsg.setVisibility(View.GONE);
+//                            }
+//                        }, 3000);
                     }
                 }
             } else {
