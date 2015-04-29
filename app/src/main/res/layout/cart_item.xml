@@ -97,9 +97,7 @@
             android:layout_alignParentLeft="true"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="@dimen/verticalspacing_8dp"
-            android:padding="3dp"
-            android:background="@color/staples_light_gray"
-            android:src="@drawable/ic_close_black_18dp"/>
+            android:src="@drawable/ic_close_black"/>
 
         <com.staples.mobile.cfa.widget.QuantityEditor
             android:id="@+id/cartitem_qty"
