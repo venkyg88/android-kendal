@@ -244,9 +244,9 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         FragmentManager manager = getFragmentManager();
         manager.removeOnBackStackChangedListener(this);
+        super.onDestroy();
     }
 
     // Formatters and builders

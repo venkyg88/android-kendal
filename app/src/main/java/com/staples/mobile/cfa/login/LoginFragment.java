@@ -15,6 +15,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
+import com.staples.mobile.cfa.DrawerItem;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.profile.ProfileDetails;
@@ -142,7 +143,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 @Override
                 public void onClick(View v) {
                     Fragment passwordFragment = Fragment.instantiate(activity, ResetPasswordFragment.class.getName());
-                    activity.navigateToFragment(passwordFragment);
+                    activity.selectFragment(DrawerItem.PASSWORD, passwordFragment, MainActivity.Transition.RIGHT, true);
                 }
             });
 

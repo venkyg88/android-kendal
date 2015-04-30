@@ -39,7 +39,6 @@ import com.staples.mobile.cfa.checkout.CheckoutFragment;
 import com.staples.mobile.cfa.checkout.ConfirmationFragment;
 import com.staples.mobile.cfa.checkout.GuestCheckoutFragment;
 import com.staples.mobile.cfa.checkout.RegisteredCheckoutFragment;
-import com.staples.mobile.cfa.feed.PersonalFeedFragment;
 import com.staples.mobile.cfa.home.HomeFragment;
 import com.staples.mobile.cfa.kount.KountManager;
 import com.staples.mobile.cfa.location.LocationFinder;
@@ -57,7 +56,6 @@ import com.staples.mobile.cfa.rewards.RewardsLinkingFragment;
 import com.staples.mobile.cfa.search.SearchFragment;
 import com.staples.mobile.cfa.sku.SkuFragment;
 import com.staples.mobile.cfa.skuset.SkuSetFragment;
-import com.staples.mobile.cfa.store.StoreFragment;
 import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.cfa.weeklyad.WeeklyAdByCategoryFragment;
 import com.staples.mobile.cfa.weeklyad.WeeklyAdInStoreFragment;
@@ -635,7 +633,7 @@ public class MainActivity extends Activity
         // disable menu items as appropriate
         updateMenuItemState();
 
-        selectFragment(new HomeFragment(), Transition.NONE, true);
+        selectFragment(DrawerItem.HOME, new HomeFragment(), Transition.NONE, true);
     }
 
     private void updateMenuItemState() {
@@ -646,12 +644,12 @@ public class MainActivity extends Activity
         int itemCount = leftMenuAdapter.getCount();
         for (int position = 0; position < itemCount; position++) {
             DrawerItem item = leftMenuAdapter.getItem(position);
-            switch(item.id) {
-                case R.string.account_title:
+            switch(item.tag) {
+                case DrawerItem.ACCOUNT:
                     item.enabled = registeredUser;
                     item.extra = res.getString(registeredUser ? R.string.logout_title : R.string.login_title);
                     break;
-                case R.string.rewards_title:
+                case DrawerItem.REWARDS:
                     item.enabled = registeredUser;
                     if (registeredUser) {
                         float rewards = ProfileDetails.getRewardsTotal();
@@ -660,8 +658,8 @@ public class MainActivity extends Activity
                         else item.extra = null;
                     } else item.extra = null;
                     break;
-                case R.string.order_title:
-                case R.string.profile_title:
+                case DrawerItem.ORDERS:
+                case DrawerItem.PROFILE:
                     item.enabled = registeredUser;
                     break;
             }
@@ -688,7 +686,7 @@ public class MainActivity extends Activity
     }
 
     // Navigation
-    public boolean selectFragment(Fragment fragment, Transition transition, boolean push) {
+    public boolean selectFragment(String tag, Fragment fragment, Transition transition, boolean push) {
         // Make sure all drawers are closed
         drawerLayout.closeDrawers();
 
@@ -697,15 +695,13 @@ public class MainActivity extends Activity
 
         ActionBar.getInstance().closeSearch();
 
-        String fragmentName = fragment.getClass().getSimpleName();
-
         // Swap Fragments
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         if (transition != null) transition.setAnimation(transaction);
-        transaction.replace(R.id.content, fragment, fragmentName);
+        transaction.replace(R.id.content, fragment);
         if (push)
-            transaction.addToBackStack(fragmentName);
+            transaction.addToBackStack(tag);
         transaction.commitAllowingStateLoss();
         return(true);
     }
@@ -717,11 +713,11 @@ public class MainActivity extends Activity
         // Create Fragment if necessary
         if (item.fragment == null)
             item.instantiate(this);
-        return(selectFragment(item.fragment, transition, push));
+        return(selectFragment(item.tag, item.fragment, transition, push));
     }
 
     public boolean selectShoppingCart() {
-        return selectFragment(cartFragment, Transition.RIGHT, true);
+        return selectFragment(DrawerItem.CART, cartFragment, Transition.RIGHT, true);
     }
 
     public boolean selectOrderCheckout(/*String deliveryRange, float couponsRewardsAmount*/) {
@@ -733,7 +729,7 @@ public class MainActivity extends Activity
             } else {
                 fragment = GuestCheckoutFragment.newInstance();
             }
-            return selectFragment(fragment, Transition.RIGHT, true);
+            return selectFragment(DrawerItem.CHECKOUT, fragment, Transition.RIGHT, true);
         }
         return false;
     }
@@ -745,20 +741,20 @@ public class MainActivity extends Activity
 
         // open order confirmation fragment
         Fragment fragment = ConfirmationFragment.newInstance(orderNumber, emailAddress, deliveryRange, total);
-        return selectFragment(fragment, Transition.RIGHT, true);
+        return selectFragment(DrawerItem.CONFIRM, fragment, Transition.RIGHT, true);
     }
 
     public boolean selectStoreFinder() {
-        DrawerItem drawerItem = leftMenuAdapter.findItemByClassName(StoreFragment.class.getSimpleName());
+        DrawerItem drawerItem = leftMenuAdapter.findItemByTag(DrawerItem.STORE);
         return selectDrawerItem(drawerItem, Transition.RIGHT, true);
     }
 
     public boolean selectRewardsFragment() {
-        return selectFragment(new RewardsFragment(), Transition.RIGHT, true);
+        return selectFragment(DrawerItem.REWARDS, new RewardsFragment(), Transition.RIGHT, true);
     }
 
     public boolean selectRewardsLinkingFragment() {
-        return selectFragment(new RewardsLinkingFragment(), Transition.RIGHT, true);
+        return selectFragment(DrawerItem.LINK, new RewardsLinkingFragment(), Transition.RIGHT, true);
     }
 
     public boolean selectBundle(String title, String identifier) {
@@ -768,7 +764,7 @@ public class MainActivity extends Activity
         );
         BundleFragment fragment = new BundleFragment();
         fragment.setArguments(title, identifier);
-        return(selectFragment(fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.BUNDLE, fragment, Transition.RIGHT, true));
     }
 
     public boolean selectSearch(String title, String keyword) {
@@ -778,7 +774,7 @@ public class MainActivity extends Activity
         );
         SearchFragment fragment = new SearchFragment();
         fragment.setArguments(title, keyword);
-        return(selectFragment(fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.SEARCH, fragment, Transition.RIGHT, true));
     }
 
     public boolean selectSkuSet(String title, String identifier, String imageUrl) {
@@ -788,7 +784,7 @@ public class MainActivity extends Activity
         );
         SkuSetFragment fragment = new SkuSetFragment();
         fragment.setArguments(title, identifier, imageUrl);
-        return(selectFragment(fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.SKUSET, fragment, Transition.RIGHT, true));
     }
 
     public boolean selectSkuItem(String title, String identifier, boolean isSkuSetOriginated) {
@@ -798,7 +794,7 @@ public class MainActivity extends Activity
         );
         SkuFragment fragment = new SkuFragment();
         fragment.setArguments(title, identifier, isSkuSetOriginated);
-        return(selectFragment(fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.SKU, fragment, Transition.RIGHT, true));
     }
 
     public boolean selectWeeklyAd(String storeNo) {
@@ -807,7 +803,7 @@ public class MainActivity extends Activity
         );
         WeeklyAdByCategoryFragment fragment = new WeeklyAdByCategoryFragment();
         fragment.setArguments(storeNo);
-        return(selectFragment(fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.WEEKLY, fragment, Transition.RIGHT, true));
     }
 
     public boolean selectInStoreWeeklyAd(String title, float price, String unit, String literal, String imageUrl, boolean inStoreOnly) {
@@ -817,12 +813,12 @@ public class MainActivity extends Activity
         );
         WeeklyAdInStoreFragment fragment = new WeeklyAdInStoreFragment();
         fragment.setArguments(title, price, unit, literal, imageUrl, inStoreOnly);
-        return(selectFragment(fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.SALES, fragment, Transition.RIGHT, true));
     }
 
     public boolean selectProfileFragment() {
         Fragment fragment = new ProfileFragment();
-        return(selectFragment(fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.PROFILE, fragment, Transition.RIGHT, true));
     }
 
     public boolean selectLoginFragment() {
@@ -835,11 +831,11 @@ public class MainActivity extends Activity
      */
     public boolean selectLoginFragment(boolean returnToCheckout) {
         Fragment fragment = LoginFragment.newInstance(returnToCheckout);
-        return(selectFragment(fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.LOGIN, fragment, Transition.RIGHT, true));
     }
 
     public boolean selectFeedFragment() {
-        DrawerItem item = leftMenuAdapter.findItemByClassName(PersonalFeedFragment.class.getSimpleName());
+        DrawerItem item = leftMenuAdapter.findItemByTag(DrawerItem.FEED);
         return(selectDrawerItem(item, Transition.RIGHT, true));
     }
 
@@ -858,7 +854,7 @@ public class MainActivity extends Activity
         } else {
             fragment = Fragment.instantiate(this, AddressFragment.class.getName());
         }
-        return(selectFragment(fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.PROFILE, fragment, Transition.RIGHT, true));
     }
 
     /** opens the profile credit cards fragment */
@@ -876,11 +872,7 @@ public class MainActivity extends Activity
         } else {
             fragment = Fragment.instantiate(this, CreditCardFragment.class.getName());
         }
-        return(selectFragment(fragment, Transition.RIGHT, true));
-    }
-
-    public boolean navigateToFragment(Fragment fragment) {
-        return (selectFragment(fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.CARD, fragment, Transition.RIGHT, true));
     }
 
     @Override
@@ -895,10 +887,10 @@ public class MainActivity extends Activity
 
         // get current fragment name
         FragmentManager fragmentManager = getFragmentManager();
-        String currentFragmentName = null;
+        String currentTag = null;
         int currentBackStackIndex = fragmentManager.getBackStackEntryCount()-1;
         if (currentBackStackIndex >= 0) {
-            currentFragmentName = fragmentManager.getBackStackEntryAt(currentBackStackIndex).getName();
+            currentTag = fragmentManager.getBackStackEntryAt(currentBackStackIndex).getName();
         }
 
         switch(view.getId()) {
@@ -926,9 +918,8 @@ public class MainActivity extends Activity
 
             case R.id.close_button:
                 hideSoftKeyboard(view);
-                if (currentFragmentName != null && (currentFragmentName.equals(GuestCheckoutFragment.class.getSimpleName()) ||
-                        currentFragmentName.equals(RegisteredCheckoutFragment.class.getSimpleName()))) {
-                    fragmentManager.popBackStack(CartFragment.class.getSimpleName(), 0);
+                if (currentTag != null && currentTag.equals(DrawerItem.CHECKOUT)) {
+                    fragmentManager.popBackStack(DrawerItem.CART, 0);
                 } else {
                     // at the moment order confirmation is the only other fragment that uses the Close button
                     // and it has the backstack cleared upon opening, so going back one is appropriate.
@@ -945,19 +936,17 @@ public class MainActivity extends Activity
 
                     // see if current fragment is from the drawer menu
                     DrawerItem drawerItem = null;
-                    if (currentFragmentName != null) {
-                        drawerItem = leftMenuAdapter.findItemByClassName(currentFragmentName);
+                    if (currentTag != null) {
+                        drawerItem = leftMenuAdapter.findItemByTag(currentTag);
                     }
 
                     // if on page reached via drawer-menu then go to first Home fragment found in backstack
                     if (drawerItem != null) {
                         int backstackIndex = currentBackStackIndex - 1;
                         while (backstackIndex >= 0) {
-                            if (currentBackStackIndex >= 0) {
-                                if (HomeFragment.class.getSimpleName().equals(fragmentManager.getBackStackEntryAt(backstackIndex).getName())) {
-                                    fragmentManager.popBackStack(HomeFragment.class.getSimpleName(), 0);
-                                    break;
-                                }
+                            if (DrawerItem.HOME.equals(fragmentManager.getBackStackEntryAt(backstackIndex).getName())) {
+                                fragmentManager.popBackStack(DrawerItem.HOME, 0);
+                                break;
                             }
                             backstackIndex--;
                         }
@@ -982,25 +971,24 @@ public class MainActivity extends Activity
         }
     }
 
-
     // Left drawer listview clicks
     @Override
     public void onItemClick(AdapterView parent, View view, int position, long id) {
         DrawerItem item = (DrawerItem) parent.getItemAtPosition(position);
         if (item.enabled) {
             Tracker.getInstance().trackActionForNavigationDrawer(item.title, ActionBar.getInstance().getPageName()); // analytics
-            switch(item.id) {
-                case R.string.rewards_title:
+            switch(item.tag) {
+                case DrawerItem.ACCOUNT:
+                    selectProfileFragment();
+                    break;
+                case DrawerItem.REWARDS:
                     if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin() && !ProfileDetails.isRewardsMember()) {
                         selectRewardsLinkingFragment();
                     } else {
                         selectRewardsFragment();
                     }
                     break;
-                case R.string.account_title:
-                    selectProfileFragment();
-                    break;
-                case R.string.profile_title:
+                case DrawerItem.PROFILE:
                     if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
                         selectProfileFragment();
                     } else {

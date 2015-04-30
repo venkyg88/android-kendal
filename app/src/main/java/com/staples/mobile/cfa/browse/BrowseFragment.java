@@ -10,12 +10,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.crittercism.app.Crittercism;
+import com.staples.mobile.cfa.DrawerItem;
 import com.staples.mobile.cfa.IdentifierType;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
-import com.staples.mobile.cfa.home.HomeFragment;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.cfa.widget.DataWrapper;
@@ -115,15 +116,11 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
         applyState(null);
 
         FragmentManager fragmentManager = getFragmentManager();
-        int backStackEntryCount = fragmentManager.getBackStackEntryCount();
-        int currentBackStackIndex = backStackEntryCount - 1;
+        int currentBackStackIndex = fragmentManager.getBackStackEntryCount() - 1;
         int backstackIndex = currentBackStackIndex - 1;
-        String configuratorFragmentName = HomeFragment.class.getSimpleName();
-        String backStackEntryName = "";
         while (backstackIndex >= 0) {
-            backStackEntryName = fragmentManager.getBackStackEntryAt(backstackIndex).getName();
-            if (configuratorFragmentName.equals(backStackEntryName)) {
-                fragmentManager.popBackStack(configuratorFragmentName, 0);
+            if (DrawerItem.HOME.equals(fragmentManager.getBackStackEntryAt(backstackIndex).getName())) {
+                fragmentManager.popBackStack(DrawerItem.HOME, 0);
                 break;
             }
             backstackIndex--;
@@ -187,9 +184,18 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
                 List<Description> descriptions = subCategory.getDescription();
                 String title = getTitleFromDescriptions(descriptions);
                 if (title != null) {
-                    if (subCategory.getChildCount()>0) {
+                    Boolean navigable = subCategory.isNavigable();
+                    // Category is only viewable on web
+                    if (navigable!=null && navigable==false) {
+                        item = new BrowseItem(BrowseItem.Type.ITEM, title, null, subCategory.getIdentifier());
+                        item.webLink = subCategory.getIdentifier();
+                    }
+                    // Category is a direct "top" category
+                    else if (subCategory.getChildCount()>0) {
                         item = new BrowseItem(BrowseItem.Type.ITEM, title, parentIdentifier, subCategory.getIdentifier());
-                    } else {
+                    }
+                    // Category is a "non-top" category
+                    else {
                         item = new BrowseItem(BrowseItem.Type.ITEM, title, null, subCategory.getIdentifier());
                     }
                     adapter.addItem(item);
@@ -212,22 +218,26 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
                     Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy()); // analytics
                     break;
                 case ITEM:
-
-                    switch(IdentifierType.detect(item.childIdentifier)) {
-                        case CLASS:
-                        case BUNDLE:
-                            adapter.selectItem(item);
-                            MainActivity activity = (MainActivity) getActivity();
-                            if (activity != null) {
-                                Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy() + ":" + item.title); // analytics
-                                activity.selectBundle(item.title, item.childIdentifier);
-                            }
-                            break;
-                        default:
-                            adapter.pushStack(item);
-                            fill(item.parentIdentifier, item.childIdentifier);
-                            Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy()); // analytics
-                            break;
+                    if (item.webLink!=null) {
+                        // TODO This wants to go to the web?
+                        Toast.makeText(getActivity(), "Sorry, to see this item you will have to go to the web version.", Toast.LENGTH_LONG).show();
+                    } else {
+                        switch(IdentifierType.detect(item.childIdentifier)) {
+                            case CLASS:
+                            case BUNDLE:
+                                adapter.selectItem(item);
+                                MainActivity activity = (MainActivity) getActivity();
+                                if (activity != null) {
+                                    Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy() + ":" + item.title); // analytics
+                                    activity.selectBundle(item.title, item.childIdentifier);
+                                }
+                                break;
+                            default:
+                                adapter.pushStack(item);
+                                fill(item.parentIdentifier, item.childIdentifier);
+                                Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy()); // analytics
+                                break;
+                        }
                     }
                     break;
             }

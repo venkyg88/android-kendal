@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.staples.mobile.cfa.DrawerItem;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.easyopen.model.weeklyad.Data;
@@ -77,7 +78,7 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
 //                Data data = array.get(position);
                 WeeklyAdListFragment weeklyAdFragment = new WeeklyAdListFragment();
                 weeklyAdFragment.setArguments(storeId, position, categoryTreeIds, titles);
-                ((MainActivity)activity).navigateToFragment(weeklyAdFragment);
+                ((MainActivity)activity).selectFragment(DrawerItem.WEEKLY, weeklyAdFragment, MainActivity.Transition.RIGHT, true);
             }
         });
 

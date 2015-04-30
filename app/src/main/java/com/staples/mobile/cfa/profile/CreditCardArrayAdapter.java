@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.staples.mobile.cfa.DrawerItem;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.Access;
@@ -141,7 +142,7 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
         Bundle bundle = new Bundle();
         bundle.putSerializable("creditCardData", values.get(position));
         creditFragment.setArguments(bundle);
-        ((MainActivity)context).navigateToFragment(creditFragment);
+        ((MainActivity)context).selectFragment(DrawerItem.CARD, creditFragment, MainActivity.Transition.RIGHT, true);
     }
 
     public void deleteCreditCard(final int position) {

@@ -225,15 +225,24 @@ public class CartApiManager {
         }
     }
 
-    public static boolean isAssocRewardCoupon(Coupon coupon) {
-        return (coupon != null && (ASSOCIATE_REWARDS_DISCOUNT_CODE.equals(coupon.getCode()) ||
-                ASSOCIATE_REWARDS_STAPLES_DISCOUNT_CODE.equals(coupon.getCode())));
+    public static boolean isAssocCoupon(Coupon coupon) {
+        return isAssocCoupon(coupon, ASSOCIATE_REWARDS_DISCOUNT_CODE) ||
+                isAssocCoupon(coupon, ASSOCIATE_REWARDS_STAPLES_DISCOUNT_CODE);
+    }
+    public static boolean isAssocCoupon(Coupon coupon, String couponCode) {
+        return (coupon != null && couponCode.equals(coupon.getCode()));
     }
 
     public static Coupon getAssocRewardCoupon() {
+        return getAssocCoupon(ASSOCIATE_REWARDS_DISCOUNT_CODE);
+    }
+    public static Coupon getAssocRewardStaplesCoupon() {
+        return getAssocCoupon(ASSOCIATE_REWARDS_STAPLES_DISCOUNT_CODE);
+    }
+    private static Coupon getAssocCoupon(String couponCode) {
         if (cart != null && cart.getCoupon() != null) {
             for (Coupon coupon : cart.getCoupon()) {
-                if (isAssocRewardCoupon(coupon)) {
+                if (isAssocCoupon(coupon, couponCode)) {
                     return coupon;
                 }
             }
@@ -241,59 +250,65 @@ public class CartApiManager {
         return null;
     }
 
+    /** consolidates associate coupons of the specified type into existingCoupon if it exists, or into
+     * a new coupon object if it does not.
+     * @param existingCoupon if non-null, then associate coupons are consolidated into it and it is returned
+     * @param coupons list of coupons from which to remove and consolidate associate coupons
+     * @param couponCode coupon type to consolidate
+     * @return consolidated coupon (either a new one or a modified existingCoupon if it exists)
+     */
+    private static Coupon consolidateAssociateCoupon(Coupon existingCoupon, List<Coupon> coupons, String couponCode) {
+        Coupon resultingCoupon = existingCoupon;
+        Iterator<Coupon> couponIterator = coupons.iterator();
+        while (couponIterator.hasNext()) {
+            Coupon coupon = couponIterator.next();
+            if (isAssocCoupon(coupon, couponCode)) {
+                if (coupon.getAdjustedAmount() != 0) {
+                    // if first instance of coupon, set a reference to it, otherwise increment amount of first instance
+                    if (resultingCoupon == null) {
+                        resultingCoupon = coupon;
+                    } else {
+                        resultingCoupon.setAdjustedAmount(resultingCoupon.getAdjustedAmount() + coupon.getAdjustedAmount());
+                    }
+                }
+                couponIterator.remove(); // remove all associate coupons for now, will add back consolidated one later
+            }
+        }
+        return resultingCoupon;
+    }
+
     /** consolidates associate reward coupons into one at the cart level */
     private static void doctorUpAssociateRewardCoupons() {
         Coupon assocRewardsCoupon = null;
+        Coupon assocRewardsStaplesCoupon = null;
         if (cart != null) {
             if (cart.getCoupon() != null) {
                 // consolidate cart-level associate coupons
-                Iterator<Coupon> couponIterator = cart.getCoupon().iterator();
-                while (couponIterator.hasNext()) {
-                    Coupon coupon = couponIterator.next();
-                    if (isAssocRewardCoupon(coupon)) {
-                        if (coupon.getAdjustedAmount() != 0) {
-                            // if first instance of coupon, set a reference to it, otherwise increment amount of first instance
-                            if (assocRewardsCoupon == null) {
-                                assocRewardsCoupon = coupon;
-                            } else {
-                                assocRewardsCoupon.setAdjustedAmount(assocRewardsCoupon.getAdjustedAmount() + coupon.getAdjustedAmount());
-                            }
-                        }
-                        couponIterator.remove(); // remove all associate coupons for now, will add back consolidated one later
-                    }
-                }
+                assocRewardsCoupon = consolidateAssociateCoupon(assocRewardsCoupon, cart.getCoupon(), ASSOCIATE_REWARDS_DISCOUNT_CODE);
+                assocRewardsStaplesCoupon = consolidateAssociateCoupon(assocRewardsStaplesCoupon, cart.getCoupon(), ASSOCIATE_REWARDS_STAPLES_DISCOUNT_CODE);
             }
             // consolidate product-level associate coupons
             if (cart.getProduct() != null) {
                 for (Product product : cart.getProduct()) {
                     if (product.getCoupon() != null) {
-                        Iterator<Coupon> couponIterator = product.getCoupon().iterator();
-                        while (couponIterator.hasNext()) {
-                            Coupon coupon = couponIterator.next();
-                            if (isAssocRewardCoupon(coupon)) {
-                                if (coupon.getAdjustedAmount() != 0) {
-                                    // if first instance of coupon, add to cart-level and set a reference to it, otherwise increment amount of first instance
-                                    if (assocRewardsCoupon == null) {
-                                        assocRewardsCoupon = coupon;
-                                    } else {
-                                        assocRewardsCoupon.setAdjustedAmount(assocRewardsCoupon.getAdjustedAmount() + coupon.getAdjustedAmount());
-                                    }
-                                }
-                                couponIterator.remove(); // remove all associate coupons, will have one consolidated one
-                            }
-                        }
+                        assocRewardsCoupon = consolidateAssociateCoupon(assocRewardsCoupon, product.getCoupon(), ASSOCIATE_REWARDS_DISCOUNT_CODE);
+                        assocRewardsStaplesCoupon = consolidateAssociateCoupon(assocRewardsStaplesCoupon, product.getCoupon(), ASSOCIATE_REWARDS_STAPLES_DISCOUNT_CODE);
                     }
                 }
             }
-            if (assocRewardsCoupon != null) {
+            if (assocRewardsCoupon != null || assocRewardsStaplesCoupon != null) {
                 if (cart.getCoupon() == null) {
                     cart.setCoupon(new ArrayList<Coupon>());
                 }
-                cart.getCoupon().add(0, assocRewardsCoupon);
+                if (assocRewardsCoupon != null) {
+                    cart.getCoupon().add(0, assocRewardsCoupon);
+                }
+                if (assocRewardsStaplesCoupon != null) {
+                    cart.getCoupon().add(0, assocRewardsStaplesCoupon);
+                }
             }
         }
     }
-
 
 
 
@@ -320,7 +335,7 @@ public class CartApiManager {
         // cart-level coupons & rewards
         if (cart != null && cart.getCoupon() != null) {
             for (Coupon coupon : cart.getCoupon()) {
-                if (!isAssocRewardCoupon(coupon)) {
+                if (!isAssocCoupon(coupon)) {
                     totalAdjustedAmount += coupon.getAdjustedAmount();
                 }
             }

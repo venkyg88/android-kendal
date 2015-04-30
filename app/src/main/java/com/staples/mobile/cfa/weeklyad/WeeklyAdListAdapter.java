@@ -101,11 +101,16 @@ public class  WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapt
 
         }
 
-        if (item.inStoreOnly || item.buyNow == "") {
+        if (item.inStoreOnly) {
             vh.availability.setVisibility(View.VISIBLE);
             vh.action.setVisibility(View.GONE);
             vh.whirlie.setVisibility(View.GONE);
-        } else if (item.identifier==null) {
+        }
+        else if( item.buyNow == ""){
+            vh.availability.setVisibility(View.GONE);
+            vh.action.setVisibility(View.GONE);
+            vh.whirlie.setVisibility(View.GONE);
+        }  else if (item.identifier==null) {
             vh.availability.setVisibility(View.GONE);
             vh.action.setVisibility(View.GONE);
             vh.whirlie.setVisibility(View.GONE);

@@ -105,16 +105,16 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.ViewHolder
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView couponField1Vw;
         private TextView couponField2Vw;
-        private Button couponAddButton;
-        private Button couponRemoveButton;
+        private View couponAddButton;
+        private View couponRemoveButton;
 
         /** constructor */
         public ViewHolder (View itemView) {
             super(itemView);
             couponField1Vw = (TextView) itemView.findViewById(R.id.coupon_item_field1);
             couponField2Vw = (TextView) itemView.findViewById(R.id.coupon_item_field2);
-            couponAddButton = (Button) itemView.findViewById(R.id.reward_add_button);
-            couponRemoveButton = (Button) itemView.findViewById(R.id.reward_remove_button);
+            couponAddButton = itemView.findViewById(R.id.reward_add_button);
+            couponRemoveButton = itemView.findViewById(R.id.reward_remove_button);
         }
     }
 }

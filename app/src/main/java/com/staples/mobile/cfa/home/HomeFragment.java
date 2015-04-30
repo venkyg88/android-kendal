@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
+import com.staples.mobile.cfa.DrawerItem;
 import com.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.cfa.R;
 import com.staples.mobile.cfa.location.LocationFinder;
@@ -1205,7 +1206,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 Tracker.getInstance().trackActionForPersonalizedMessaging("Store"); // Analytics
                 MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.selectFragment(new StoreFragment(), MainActivity.Transition.NONE, true);
+                mainActivity.selectFragment(DrawerItem.STORE, new StoreFragment(), MainActivity.Transition.NONE, true);
             }
         });
     }
