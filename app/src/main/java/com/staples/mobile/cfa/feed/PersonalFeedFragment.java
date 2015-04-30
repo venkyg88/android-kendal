@@ -359,6 +359,9 @@ public class PersonalFeedFragment extends Fragment {
                             // if no daily deal products
                             if (dailyDealContainer.getChildCount() == 0) {
                                 isDailyDealEmpty = true;
+//                                if(seenProductsContainer.getChildCount() == 0 && clearanceContainer.getChildCount() == 0) {
+//                                    emptyFeedLayout.setVisibility(View.VISIBLE);
+//                                }
                             } else {
                                 isDailyDealEmpty = false;
                                 emptyFeedLayout.setVisibility(View.GONE);
@@ -411,6 +414,9 @@ public class PersonalFeedFragment extends Fragment {
                         if (clearanceContainer.getChildCount() == 0) {
                             isClearanceEmpty = true;
                             clearanceSeparator.setVisibility(View.GONE);
+                            if(seenProductsContainer.getChildCount() == 0 && dailyDealContainer.getChildCount() == 0) {
+                                emptyFeedLayout.setVisibility(View.VISIBLE);
+                            }
                         } else {
                             isClearanceEmpty = false;
                             emptyFeedLayout.setVisibility(View.GONE);
