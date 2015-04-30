@@ -44,6 +44,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -54,7 +56,6 @@ public class PersonalFeedFragment extends Fragment {
 
     public static final String SEEN_PRODUCT_SKU_LIST = "seenProductSkuList";
     public static final String SEEN_PRODUCT_LIST = "seenProductList";
-
 
     public static final String DAILY_DEAL_IDENTIFIER = "BI739472"; // TODO Needs to be configurable
     public static final String CLEARANCE_IDENTIFIER = "BI642994"; // TODO Needs to be configurable
@@ -84,9 +85,9 @@ public class PersonalFeedFragment extends Fragment {
     private String clearanceTitle;
     private String seenProductsTitle;
 
-    private static boolean isSeenProductsEmpty;
-    private static boolean isDailyDealEmpty;
-    private static boolean isClearanceEmpty;
+    private boolean isSeenProductsEmpty = true;
+    private boolean isDailyDealEmpty = true;
+    private boolean isClearanceEmpty = true;
 
     private List<com.staples.mobile.common.access.easyopen.model.cart.Product> cartItems;
 
@@ -257,18 +258,22 @@ public class PersonalFeedFragment extends Fragment {
 
         setSeenProductsAdapter();
 
-        setDailyDealAdapter();
+        Thread dailyDealThread = new Thread(new Runnable(){
+            public void run(){
+                setDailyDealAdapter();
+            }
+        });
 
-        setClearanceAdapter();
+        Thread clearanceThread = new Thread(new Runnable(){
+            public void run(){
+                setClearanceAdapter();
+            }
+        });
 
-//        if(seenProductsContainer.getVisibility() == View.GONE
-//                && dailyDealContainer.getVisibility() == View.GONE
-//                && clearanceContainer.getVisibility() == View.GONE) {
-//            emptyFeedLayout.setVisibility(View.VISIBLE);
-//        }
-//        else{
-//            emptyFeedLayout.setVisibility(View.GONE);
-//        }
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(dailyDealThread);
+        executor.submit(clearanceThread);
+        executor.shutdown();
 
         if(isSeenProductsEmpty && isClearanceEmpty && isDailyDealEmpty){
             emptyFeedLayout.setVisibility(View.VISIBLE);
@@ -285,13 +290,6 @@ public class PersonalFeedFragment extends Fragment {
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.FEED);
         Tracker.getInstance().trackStateForPersonalFeed(); // Analytics
-
-        if(isSeenProductsEmpty && isClearanceEmpty && isDailyDealEmpty){
-            emptyFeedLayout.setVisibility(View.VISIBLE);
-        }
-        else {
-            emptyFeedLayout.setVisibility(View.GONE);
-        }
     }
 
     private void setCartItems() {
@@ -361,9 +359,6 @@ public class PersonalFeedFragment extends Fragment {
                             // if no daily deal products
                             if (dailyDealContainer.getChildCount() == 0) {
                                 isDailyDealEmpty = true;
-//                                if(seenProductsContainer.getChildCount() == 0 && clearanceContainer.getChildCount() == 0) {
-//                                    emptyFeedLayout.setVisibility(View.VISIBLE);
-//                                }
                             } else {
                                 isDailyDealEmpty = false;
                                 emptyFeedLayout.setVisibility(View.GONE);
@@ -397,7 +392,6 @@ public class PersonalFeedFragment extends Fragment {
                                 //fillContainer(p, clearanceContainer, clearanceTitle);
                                 //Log.d(TAG, "Clearance Products: " + p.getProductName() + "-" + p.getSku());
                             }
-
                         }
 
                         if (cartItems != null) {
@@ -417,9 +411,6 @@ public class PersonalFeedFragment extends Fragment {
                         if (clearanceContainer.getChildCount() == 0) {
                             isClearanceEmpty = true;
                             clearanceSeparator.setVisibility(View.GONE);
-//                            if(seenProductsContainer.getChildCount() == 0 && dailyDealContainer.getChildCount() == 0) {
-//                                emptyFeedLayout.setVisibility(View.VISIBLE);
-//                            }
                         } else {
                             isClearanceEmpty = false;
                             emptyFeedLayout.setVisibility(View.GONE);
