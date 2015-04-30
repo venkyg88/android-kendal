@@ -179,6 +179,21 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         return(extractField(R.id.emailAddr));
     }
 
+    public void setShippingAddress(ShippingAddress addr) {
+        injectField(R.id.firstName, addr.getDeliveryFirstName());
+        injectField(R.id.lastName, addr.getDeliveryLastName());
+        injectField(R.id.phoneNumber, addr.getDeliveryPhone());
+        if (phoneNumberFormattingTextWatcher != null) { // profile calls init() later
+            phoneNumberFormattingTextWatcher.afterTextChanged(phoneNumberView.getEditableText()); // fake a text change to initialize format
+        }
+        injectField(R.id.emailAddr, addr.getEmailAddress());
+        injectField(R.id.address, addr.getDeliveryAddress1());
+        injectField(R.id.apartment, addr.getDeliveryAddress2());
+        injectField(R.id.city, addr.getDeliveryCity());
+        injectField(R.id.state, addr.getDeliveryState());
+        injectField(R.id.zipCode, addr.getDeliveryZipCode());
+    }
+
     public void setAddress(Address addr) {
         injectField(R.id.firstName, addr.getFirstName());
         injectField(R.id.lastName, addr.getLastName());
