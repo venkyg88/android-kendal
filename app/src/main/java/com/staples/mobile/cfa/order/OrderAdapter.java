@@ -18,13 +18,14 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
 
     private ArrayList<OrderShipmentListItem> array;
     private Activity activity;
     View.OnClickListener onClickListener;
-    private static final NumberFormat format = NumberFormat.getCurrencyInstance();
+    private static final NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.US);
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView orderTotalTV;
@@ -74,13 +75,17 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             totalItemQtyOfShipment += qtyOrdered;
         }
 
-        SimpleDateFormat formatter = new SimpleDateFormat("MMM. dd, yyyy");
-        String orderDate = formatter.format(OrderShipmentListItem.parseDate(order.getOrderStatus().getOrderDate()));
+        if (orderStatus != null) {
+            SimpleDateFormat formatter = new SimpleDateFormat("MMM. dd, yyyy", Locale.US);
+            String orderDate = formatter.format(OrderShipmentListItem.parseDate(orderStatus.getOrderDate()));
+            holder.orderDateTV.setText(orderDate);
+            if (orderStatus.getGrandTotal() != null) {
+                holder.orderTotalTV.setText(currencyFormatter.format(Float.parseFloat(orderStatus.getGrandTotal())));
+            }
+        }
 
-        holder.orderDateTV.setText(orderDate);
         holder.orderStatusTV.setText(shipment.getShipmentStatusDescription());
         holder.numItemsTV.setText(r.getQuantityString(R.plurals.cart_qty, totalItemQtyOfShipment, totalItemQtyOfShipment));
-        holder.orderTotalTV.setText(format.format(Float.parseFloat(order.getOrderStatus().getGrandTotal())));
         holder.trackShipmentBtn.setTag(position);
         holder.viewRecieptBtn.setTag(position);
 
