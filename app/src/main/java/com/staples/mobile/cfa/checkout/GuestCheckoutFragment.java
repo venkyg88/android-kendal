@@ -33,6 +33,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 
     AddressBlock shippingAddrBlock;
     AddressBlock billingAddrBlock;
+    View billingAddrHeadingVw;
     View paymentMethodLayoutVw;
     Switch useShipAddrAsBillingAddrSwitch;
     ImageView cardImage;
@@ -43,6 +44,11 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 
     private boolean shippingAddrNeedsApplying = true;
     private boolean billingAddrNeedsApplying = true;
+
+    // cache guest checkout entries
+    private static ShippingAddress shippingAddressCache;
+    private static ShippingAddress billingAddressCache;
+    private static boolean useShippingAsBillingCache = true;
 
     /**
      * Create a new instance of GuestCheckoutFragment
@@ -60,6 +66,15 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         Tracker.getInstance().trackStateForCheckoutReviewAndPay(false, false); // analytics
     }
 
+    @Override
+    public void onPause() {
+        // cache current address entries
+        shippingAddressCache = shippingAddrBlock.getShippingAddress();
+        billingAddressCache = billingAddrBlock.getShippingAddress();
+        useShippingAsBillingCache = useShipAddrAsBillingAddrSwitch.isChecked();
+        super.onPause();
+    }
+
     /** specifies layout for variable entry area */
     @Override
     protected int getEntryLayoutId() {
@@ -70,22 +85,111 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     @Override
     protected void initEntryArea(View frame) {
         shippingAddrBlock = (AddressBlock) frame.findViewById(R.id.shipping_addr_layout);
-        shippingAddrBlock.init(true);
         shippingAddrBlock.setOnDoneListener(this);
         billingAddrBlock = (AddressBlock) frame.findViewById(R.id.billing_addr_layout);
-        billingAddrBlock.init(false);
         billingAddrBlock.setOnDoneListener(this);
+        billingAddrHeadingVw = frame.findViewById(R.id.billing_addr_heading);
 
         paymentMethodLayoutVw = frame.findViewById(R.id.payment_method_layout);
         cardNumberVw = (EditText) paymentMethodLayoutVw.findViewById(R.id.cardNumber);
         cardImage = (ImageView) paymentMethodLayoutVw.findViewById(R.id.card_image);
         expirationMonthVw = (EditText) paymentMethodLayoutVw.findViewById(R.id.expiration_month);
         expirationYearVw = (EditText) paymentMethodLayoutVw.findViewById(R.id.expiration_year);
+        cidVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cid);
+        useShipAddrAsBillingAddrSwitch = (Switch) frame.findViewById(R.id.useShipAddrAsBillingAddr_switch);
+
+        // initialize from cache
+        if (shippingAddressCache != null) {
+            shippingAddrBlock.setShippingAddress(shippingAddressCache);
+        }
+        if (billingAddressCache != null) {
+            billingAddrBlock.setShippingAddress(billingAddressCache);
+        }
+
+        // initialize address blocks AFTER setting values from cache so that autocomplete is not triggered
+        shippingAddrBlock.init(true);
+        billingAddrBlock.init(false);
+
 
         cidVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cid);
         cidVw.setVisibility(View.VISIBLE); // set initially visible, hide later if not applicable to card type (as per Joe Raffone)
         expirationYearVw.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         frame.findViewById(R.id.billing_addr_heading).setVisibility(View.GONE);
+        // TODO: ideally the expiration date code should be encapsulated in a custom compound view,
+        // but given the end-of-project rush, this will have to do
+
+        expirationMonthVw.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String input = editable.toString();
+                if (editable.length() == 1) {
+                    int month = Integer.parseInt(input);
+                    if (month > 1) {
+                        expirationMonthVw.setText("0" + expirationMonthVw.getText().toString());
+                        expirationYearVw.requestFocus();
+                    }
+
+                } else if (editable.length() == 2) {
+                    int month = Integer.parseInt(input);
+                    if (month <= 12) {
+                        expirationYearVw.requestFocus();
+                    } else {
+                        activity.showErrorDialog("Please check the expiration month");
+                    }
+                } else {
+                }
+
+            }
+        });
+
+        expirationMonthVw.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString().replaceAll(" ", ""));
+                    if (ccType != CreditCard.Type.UNKNOWN) {
+                        cardImage.setImageResource(ccType.getImageResource());
+                    }
+                }
+            }
+        });
+
+        expirationYearVw.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String input = editable.toString();
+                if (editable.length() == 2) {
+                    Calendar calendar = Calendar.getInstance();
+                    int currentYear = calendar.get(Calendar.YEAR) % 100;
+                    int year = Integer.parseInt(input);
+
+                    if (year < currentYear) {
+                        activity.showErrorDialog("Please check the expiration year");
+                    }
+                }
+            }
+        });
+
+        cidVw.setVisibility(View.VISIBLE); // set initially visible, hide later if not applicable to card type (as per Joe Raffone)
+        expirationYearVw.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+
+        billingAddrHeadingVw.setVisibility(View.GONE);
         billingAddrBlock.setVisibility(View.GONE);
 
         // hide imported views' Save buttons
@@ -95,11 +199,16 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         expirationYearVw.setOnEditorActionListener(paymentMethodCompletionListener);
         cidVw.setOnEditorActionListener(paymentMethodCompletionListener);
         cardNumberVw.setFilters(new InputFilter[]{new CcNumberInputFilter()});
-
         // add listener to billing addr toggle button switch
         useShipAddrAsBillingAddrSwitch = (Switch) frame.findViewById(R.id.useShipAddrAsBillingAddr_switch);
         useShipAddrAsBillingAddrSwitch.setChecked(true);
         useShipAddrAsBillingAddrSwitch.setOnCheckedChangeListener(this);
+
+        // if cached value is unchecked, fake a change to initialize state correctly
+        if (!useShippingAsBillingCache) {
+            useShipAddrAsBillingAddrSwitch.setChecked(false);
+            onCheckedChanged(useShipAddrAsBillingAddrSwitch, false);
+        }
 
         // focus listener for CC and shipping addr
         shippingAddrBlock.findViewById(R.id.firstName).setOnFocusChangeListener(this);
@@ -204,6 +313,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 
     public void onNext(AddressBlock addressBlock) {
         ShippingAddress shippingAddress = addressBlock.getShippingAddress();
+        // if zip code filled out, treat this as completing the address
         if (!TextUtils.isEmpty(shippingAddress.getDeliveryZipCode())) {
             onDone(addressBlock, addressBlock.validate());
         }
@@ -229,8 +339,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 
     /** implements CompoundButton.OnCheckedChangeListener */
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        int visibility = isChecked? View.GONE: View.VISIBLE;
-        getView().findViewById(R.id.billing_addr_heading).setVisibility(visibility);
+        int visibility = isChecked ? View.GONE: View.VISIBLE;
+        billingAddrHeadingVw.setVisibility(visibility);
         billingAddrBlock.setVisibility(visibility);
         billingAddrNeedsApplying = true;
         billingAddrBlock.requestFocus();

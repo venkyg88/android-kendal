@@ -122,41 +122,43 @@ public class PriceSticker extends View {
         if (finalLiteral!=null && !finalLiteral.isEmpty()) {
             this.finalLiteral = finalLiteral;
         } else {
-            finalLiteral = null;
+            this.finalLiteral = null;
         }
 
         if (wasLiteral!=null && !wasLiteral.isEmpty()) {
             this.wasLiteral = wasLiteral;
         } else {
-            wasLiteral = null;
+            this.wasLiteral = null;
         }
 
         if (unit!=null && !unit.isEmpty()) {
             this.unit = unit;
         } else {
-            unit = null;
+            this.unit = null;
         }
 
         requestLayout();
     }
     private void formatAll() {
+        finalLiteral = null;
         if (finalPrice>0f) {
             finalLiteral = format.format(finalPrice);
-            if (rebateIndicator!=null && !rebateIndicator.isEmpty()) {
-                finalLiteral = finalLiteral + rebateIndicator;
-            }
-        } else {
-            finalLiteral = null;
         }
 
-        if (wasPrice>0f && wasPrice!=finalPrice) {
+        wasLiteral = null;
+        if (wasPrice>0f) {
             wasLiteral = format.format(wasPrice);
-        } else {
-            wasLiteral = null;
+            if (wasLiteral.equals(finalLiteral)) {
+                wasLiteral = null;
+            }
         }
 
-        if (unit==null || unit.isEmpty()) {
+        if (unit!=null && unit.isEmpty()) {
             unit = null;
+        }
+
+        if (finalLiteral!=null && rebateIndicator!=null && !rebateIndicator.isEmpty()) {
+            finalLiteral = finalLiteral + rebateIndicator;
         }
 
         requestLayout();

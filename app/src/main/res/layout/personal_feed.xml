@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!--empty cart messages-->
+            <!-- Empty Messages-->
             <LinearLayout
                 android:id="@+id/empty_feed_layout"
                 android:layout_width="match_parent"
@@ -25,8 +25,7 @@
                 android:gravity="center_horizontal"
                 android:padding="@dimen/margin_16dp"
                 android:visibility="gone"
-                android:orientation="vertical"
-                >
+                android:orientation="vertical">
                 <!--your feed is empty-->
                 <TextView
                     android:layout_width="wrap_content"
@@ -35,7 +34,6 @@
                     android:textColor="@color/staples_black"
                     android:textSize="@dimen/fontsize_20sp"
                     android:text="@string/feed_empty_message" />
-
                 <!--build your personal feed-->
                 <TextView
                     android:layout_width="wrap_content"

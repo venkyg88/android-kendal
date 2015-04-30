@@ -1,8 +1,12 @@
 package com.staples.mobile.cfa.browse;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -10,6 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crittercism.app.Crittercism;
@@ -38,10 +44,12 @@ import retrofit.client.Response;
 public class BrowseFragment extends Fragment  implements Callback<Browse>, View.OnClickListener {
     private static final String TAG = BrowseFragment.class.getSimpleName();
 
+    private static final String EXTERNALROOT = "http://m.staples.com";
     private static final int MAXFETCH = 50;
 
     private BrowseAdapter adapter;
     private DataWrapper.State state;
+    private Dialog popup;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -188,7 +196,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
                     // Category is only viewable on web
                     if (navigable!=null && navigable==false) {
                         item = new BrowseItem(BrowseItem.Type.ITEM, title, null, subCategory.getIdentifier());
-                        item.webLink = subCategory.getIdentifier();
+                        item.webLink = subCategory.getCategoryUrl();
                     }
                     // Category is a direct "top" category
                     else if (subCategory.getChildCount()>0) {
@@ -206,41 +214,85 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
         return(count);
     }
 
+    private void showPopup() {
+        popup = new Dialog(getActivity());
+        Window window = popup.getWindow();
+        window.requestFeature(Window.FEATURE_NO_TITLE);
+        window.setBackgroundDrawableResource(R.drawable.dialog_frame);
+        popup.setContentView(R.layout.external_dialog);
+        popup.findViewById(R.id.no).setOnClickListener(this);
+        popup.findViewById(R.id.yes).setOnClickListener(this);
+        popup.show();
+    }
+
+    private boolean gotoWeb() {
+        BrowseItem item = adapter.getSelectedItem();
+        if (item==null) return(false);
+        String url = item.webLink;
+        if (url==null || url.isEmpty()) return(false);
+
+        if (!url.startsWith("http:")) {
+            url = EXTERNALROOT + url;
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        try {
+            getActivity().startActivity(intent);
+        } catch(ActivityNotFoundException e) {
+            return(false);
+        }
+        return(true);
+    }
+
+    private void activateItem(BrowseItem item) {
+        switch(item.type) {
+            case STACK:
+                adapter.popStack(item);
+                fill(item.parentIdentifier, item.childIdentifier);
+                Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy()); // analytics
+                break;
+            case ITEM:
+            case SELECTED:
+                if (item.webLink!=null) {
+                    adapter.selectItem(item);
+                    showPopup();
+                } else {
+                    switch(IdentifierType.detect(item.childIdentifier)) {
+                        case CLASS:
+                        case BUNDLE:
+                            adapter.selectItem(item);
+                            MainActivity activity = (MainActivity) getActivity();
+                            if (activity != null) {
+                                Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy() + ":" + item.title); // analytics
+                                activity.selectBundle(item.title, item.childIdentifier);
+                            }
+                            break;
+                        default:
+                            adapter.pushStack(item);
+                            fill(item.parentIdentifier, item.childIdentifier);
+                            Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy()); // analytics
+                            break;
+                    }
+                }
+                break;
+        }
+    }
+
     @Override
     public void onClick(View view) {
-        Object obj = view.getTag();
-        if (obj instanceof BrowseItem) {
-            BrowseItem item = (BrowseItem) obj;
-            switch(item.type) {
-                case STACK:
-                    adapter.popStack(item);
-                    fill(item.parentIdentifier, item.childIdentifier);
-                    Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy()); // analytics
-                    break;
-                case ITEM:
-                    if (item.webLink!=null) {
-                        // TODO This wants to go to the web?
-                        Toast.makeText(getActivity(), "Sorry, to see this item you will have to go to the web version.", Toast.LENGTH_LONG).show();
-                    } else {
-                        switch(IdentifierType.detect(item.childIdentifier)) {
-                            case CLASS:
-                            case BUNDLE:
-                                adapter.selectItem(item);
-                                MainActivity activity = (MainActivity) getActivity();
-                                if (activity != null) {
-                                    Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy() + ":" + item.title); // analytics
-                                    activity.selectBundle(item.title, item.childIdentifier);
-                                }
-                                break;
-                            default:
-                                adapter.pushStack(item);
-                                fill(item.parentIdentifier, item.childIdentifier);
-                                Tracker.getInstance().trackActionForShopByCategory(adapter.getCategoryHierarchy()); // analytics
-                                break;
-                        }
-                    }
-                    break;
-            }
+        switch(view.getId()) {
+            case R.id.no:
+                if (popup != null) popup.dismiss();
+                break;
+            case R.id.yes:
+                if (popup != null) popup.dismiss();
+                gotoWeb();
+                break;
+            default:
+                Object obj = view.getTag();
+                if (obj instanceof BrowseItem) {
+                    activateItem((BrowseItem) obj);
+                }
+                break;
         }
     }
 }

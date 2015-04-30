@@ -275,6 +275,11 @@
         <item quantity="other">%d deals</item>
     </plurals>
 
+    <!-- Browse -->
+    <string name="external_title">External Link</string>
+    <string name="external_prompt">This selection will take you to an\nexternal link in your device\'s browser.\n\nDo you want to go there?</string>
+    <string name="external_no">No</string>
+    <string name="external_yes">Yes</string>
 
     <string name="show">SHOW</string>
     <string name="hide">HIDE</string>
