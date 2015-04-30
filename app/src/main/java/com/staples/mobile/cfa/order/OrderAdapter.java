@@ -56,8 +56,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     public OrderAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.order_item_row, parent, false);
-        ViewHolder viewHolder = new ViewHolder(v);
-        return viewHolder;
+        return new ViewHolder(v);
     }
 
     @Override
@@ -75,11 +74,16 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             totalItemQtyOfShipment += qtyOrdered;
         }
 
-        if (orderStatus != null) {
+        if (orderStatus == null) {
+            holder.orderDateTV.setText("");
+            holder.orderTotalTV.setText("");
+        } else {
             SimpleDateFormat formatter = new SimpleDateFormat("MMM. dd, yyyy", Locale.US);
             String orderDate = formatter.format(OrderShipmentListItem.parseDate(orderStatus.getOrderDate()));
             holder.orderDateTV.setText(orderDate);
-            if (orderStatus.getGrandTotal() != null) {
+            if (orderStatus.getGrandTotal() == null) {
+                holder.orderTotalTV.setText("");
+            } else {
                 holder.orderTotalTV.setText(currencyFormatter.format(Float.parseFloat(orderStatus.getGrandTotal())));
             }
         }
