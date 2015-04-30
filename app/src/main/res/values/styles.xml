@@ -295,10 +295,9 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:gravity">center</item>
-        <item name="android:padding">10dp</item>
+        <item name="android:layout_margin">10dp</item>
         <item name="android:textSize">@dimen/fontsize_16sp</item>
         <item name="android:textColor">@color/staples_black</item>
-        <item name="android:background">@color/staples_white</item>
     </style>
 
 </resources>

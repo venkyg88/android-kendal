@@ -218,6 +218,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
         popup = new Dialog(getActivity());
         Window window = popup.getWindow();
         window.requestFeature(Window.FEATURE_NO_TITLE);
+        window.setBackgroundDrawableResource(R.drawable.dialog_frame);
         popup.setContentView(R.layout.external_dialog);
         popup.findViewById(R.id.no).setOnClickListener(this);
         popup.findViewById(R.id.yes).setOnClickListener(this);
