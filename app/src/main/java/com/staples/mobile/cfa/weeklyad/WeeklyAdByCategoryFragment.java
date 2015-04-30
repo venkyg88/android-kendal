@@ -38,7 +38,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class WeeklyAdByCategoryFragment extends Fragment {
+public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClickListener{
     private static final String TAG = WeeklyAdByCategoryFragment.class.getSimpleName();
 
     private static final String ARG_STORENO = "storeNo";
@@ -54,6 +54,7 @@ public class WeeklyAdByCategoryFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private TextView storeInfoVw;
     private TextView dateRangeVw;
+    TextView changeStoreVw;
     private WeeklyAdByCategoryAdapter adapter;
     private List<Data> weeklyAdItems;
 
@@ -77,7 +78,7 @@ public class WeeklyAdByCategoryFragment extends Fragment {
         View view = inflater.inflate(R.layout.weekly_ad_category, container, false);
         storeInfoVw = (TextView) view.findViewById(R.id.store_address);
         dateRangeVw = (TextView) view.findViewById(R.id.date_range);
-        TextView changeStoreVw = (TextView) view.findViewById(R.id.change_store);
+        changeStoreVw = (TextView) view.findViewById(R.id.change_store);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.weekly_ad_categories_list);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(activity);
@@ -85,12 +86,7 @@ public class WeeklyAdByCategoryFragment extends Fragment {
         adapter = new WeeklyAdByCategoryAdapter(activity);
         mRecyclerView.setAdapter(adapter);
 
-        changeStoreVw.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activity.selectStoreFinder();
-            }
-        });
+        changeStoreVw.setOnClickListener(this);
 
         // if store info avail
         if (!TextUtils.isEmpty(storeNo)) {
@@ -212,6 +208,12 @@ public class WeeklyAdByCategoryFragment extends Fragment {
                 activity.showErrorDialog(ApiError.getErrorMessage(error));
             }
         });
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(activity == null) return;
+         activity.selectStoreFinder();
     }
 
     private class StoreInfoCallback implements Callback<StoreQuery> {
