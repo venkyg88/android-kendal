@@ -99,7 +99,7 @@
 			android:layout_below="@id/checkout_shipping_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/margin_16dp"
+            android:paddingTop="@dimen/action_bar_half_margin"
             android:text="@string/tax"
 			android:textColor="@color/staples_black"
             android:textSize="@dimen/fontsize_14sp"
@@ -111,7 +111,7 @@
 			android:layout_below="@id/checkout_shipping_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/margin_16dp"
+            android:paddingTop="@dimen/action_bar_half_margin"
 			android:textColor="@color/staples_black"
             android:textSize="@dimen/fontsize_14sp"
 			/>

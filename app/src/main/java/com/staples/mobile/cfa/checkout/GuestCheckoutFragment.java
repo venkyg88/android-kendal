@@ -109,7 +109,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         expirationYearVw.addTextChangedListener(this);
     }
 
-
     // grouping event methods together for easier reading and getting rid of anonymous classes
 
     @Override
