@@ -414,7 +414,7 @@ public class PersonalFeedFragment extends Fragment {
                 priceSticker.setPricing(finalPrice, wasPrice, unit, "*");
             } else {
                 row.findViewById(R.id.rebate_layout).setVisibility(View.GONE);
-                priceSticker.setCartPricing(cartItem.getPricing());
+                priceSticker.setPricing(cartItem.getPricing().get(0));
             }
         }
 
