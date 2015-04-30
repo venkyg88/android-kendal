@@ -23,26 +23,6 @@
         android:padding="@dimen/margin_16dp"
         android:background="@color/staples_middle_gray">
 
-        <!-- coupons & rewards -->
-        <!--<TextView-->
-            <!--style="@style/CheckoutFooter"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_alignParentLeft="true"-->
-            <!--android:padding="0dp"-->
-            <!--android:text="@string/coupons_rewards"-->
-            <!--android:textSize="@dimen/fontsize_24sp"-->
-            <!--android:textColor="@color/staples_black" />-->
-        <!--<TextView-->
-            <!--android:id="@+id/checkout_coupons_rewards"-->
-            <!--style="@style/CheckoutFooter"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:textSize="@dimen/fontsize_24sp"-->
-            <!--android:padding="0dp"-->
-            <!--android:textColor="@color/staples_black" />-->
-
         <!-- item subtotal -->
         <TextView
             android:layout_width="wrap_content"
@@ -100,7 +80,6 @@
 			android:text="@string/shipping"
 			android:textColor="@color/staples_black"
             android:textSize="@dimen/fontsize_14sp"
-            android:visibility="gone"
 			/>
 		<TextView
 			android:id="@+id/checkout_shipping"
@@ -111,7 +90,6 @@
             android:paddingTop="@dimen/margin_16dp"
 			android:textColor="@color/staples_black"
             android:textSize="@dimen/fontsize_14sp"
-            android:visibility="gone"
 			/>
 
         <!--tax-->
@@ -125,7 +103,6 @@
             android:text="@string/tax"
 			android:textColor="@color/staples_black"
             android:textSize="@dimen/fontsize_14sp"
-            android:visibility="gone"
 			/>
 
         <TextView
@@ -137,7 +114,6 @@
             android:paddingTop="@dimen/margin_16dp"
 			android:textColor="@color/staples_black"
             android:textSize="@dimen/fontsize_14sp"
-            android:visibility="gone"
 			/>
 
         <!-- submission button -->
@@ -150,10 +126,10 @@
             card_view:contentPadding="@dimen/cartmath_half_margin"
             card_view:cardCornerRadius="8dp"
             card_view:cardElevation="0dp"
-            card_view:cardBackgroundColor="@color/staples_red"
-            android:visibility="gone">
+            card_view:cardBackgroundColor="@color/staples_dark_gray">
 
             <TextView
+                android:id="@+id/checkout_button_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left|center_vertical"
@@ -173,34 +149,5 @@
                 />
 
         </android.support.v7.widget.CardView>
-
-        <!--<RelativeLayout-->
-            <!--android:id="@+id/co_submission_layout"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="36dp"-->
-            <!--android:layout_below="@id/checkout_tax"-->
-            <!--android:layout_marginTop="@dimen/verticalspacing_8dp"-->
-            <!--android:gravity="center"-->
-            <!--android:visibility="gone"-->
-            <!--android:background="@color/background_red_submission">-->
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_alignParentLeft="true"-->
-                <!--android:layout_centerVertical="true"-->
-                <!--android:text="@string/submit_order"-->
-                <!--android:textSize="@dimen/fontsize_14sp"-->
-                <!--android:textColor="@color/staples_white"-->
-                <!--/>-->
-            <!--<TextView-->
-                <!--android:id="@+id/checkout_order_total"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_alignParentRight="true"-->
-                <!--android:layout_centerVertical="true"-->
-                <!--android:textSize="@dimen/fontsize_14sp"-->
-                <!--android:textColor="@color/staples_white"-->
-                <!--/>-->
-        <!--</RelativeLayout>-->
     </RelativeLayout>
 </com.staples.mobile.cfa.widget.AnimatorLayout>

@@ -3,6 +3,7 @@ package com.staples.mobile.cfa.checkout;
 import android.app.Fragment;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,11 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public abstract class CheckoutFragment extends Fragment implements View.OnClickListener {
+
+    public enum ButtonState {
+        CLICKABLE, DISABLED
+    }
+
     public static final String TAG = CheckoutFragment.class.getSimpleName();
 
     // bundle param keys
@@ -35,7 +41,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     // fragment, but api call may still be returning
     protected MainActivity activity;
 
-    private View submissionLayout;
+    private CardView submissionLayout;
     private ViewGroup checkoutEntryLayout;
     private TextView itemSubtotalVw;
 //    private TextView couponsRewardsVw;
@@ -61,6 +67,8 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     private Float pretaxSubtotal;
     private String deliveryRange;
 
+    ButtonState buttonState;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Crittercism.leaveBreadcrumb("CheckoutFragment:onCreateView(): Displaying the Checkout screen.");
@@ -73,7 +81,8 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         checkoutEntryLayout = (ViewGroup)view.findViewById(R.id.checkout_entry_layout);
         inflater.inflate(getEntryLayoutId(), checkoutEntryLayout); // dynamically inflate variable entry area
 //        shippingChargeLayout = view.findViewById(R.id.co_shipping_layout);
-        submissionLayout = view.findViewById(R.id.co_submission_layout);
+        submissionLayout = (CardView)view.findViewById(R.id.co_submission_layout);
+
 //        taxLayout = view.findViewById(R.id.co_tax_layout);
         itemSubtotalVw = (TextView) view.findViewById(R.id.checkout_item_subtotal);
 //        couponsRewardsVw = (TextView) view.findViewById(R.id.checkout_coupons_rewards);
@@ -93,7 +102,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
         // Set click listeners
         submissionLayout.setOnClickListener(this);
-
+        buttonState = ButtonState.DISABLED;
 
 //        couponsRewardsAmount = CartApiManager.getCouponsRewardsAdjustedAmount();
         itemSubtotal = CartApiManager.getSubTotal();
@@ -142,8 +151,10 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.co_submission_layout:
-                onSubmit();
-                break;
+                if(buttonState == ButtonState.CLICKABLE) {
+                    onSubmit();
+                    break;
+                }
         }
     }
 
@@ -173,7 +184,8 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
                     // utilize shipping and tax info
                     setShippingAndTax(totalHandlingCost, shippingCharge, tax);
-
+                    submissionLayout.setCardBackgroundColor(getResources().getColor(R.color.staples_red));
+                    buttonState = ButtonState.CLICKABLE;
                 } else {
                     // if shipping and tax already showing, need to hide them
                     resetShippingAndTax();
@@ -267,8 +279,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         taxVw.setText(taxStr);
 
         checkoutTotalVw.setText(currencyFormat.format(getCheckoutTotal()));
-
-        setShipTaxSubmitVisibility(true, false);
     }
 
     /** updates the shipping charge and tax values (may be result of api response or a call from the subclass) */
@@ -280,28 +290,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
             checkoutBundle.putFloat(BUNDLE_PARAM_TAX, -1);
             this.shippingCharge = null;
             this.tax = null;
-            setShipTaxSubmitVisibility(false, false);
+            submissionLayout.setCardBackgroundColor(getResources().getColor(R.color.staples_dark_gray));
+            submissionLayout.setClickable(false);
         }
-    }
-
-    private void setShipTaxSubmitVisibility(boolean visible, boolean preCheckoutComplete) {
-        if (totalHandlingCost > 0) {
-            oversizedShippingVw.setVisibility(visible? View.VISIBLE : View.GONE);
-            oversizedShippingLabelVw.setVisibility(visible? View.VISIBLE : View.GONE);
-        } else {
-            oversizedShippingVw.setVisibility(View.GONE);
-            oversizedShippingLabelVw.setVisibility(View.GONE);
-        }
-        shippingChargeVw.setVisibility(visible? View.VISIBLE : View.GONE);
-        shippingChargeLabelVw.setVisibility(visible? View.VISIBLE : View.GONE);
-        taxVw.setVisibility(visible? View.VISIBLE : View.GONE);
-        taxLabelVw.setVisibility(visible? View.VISIBLE : View.GONE);
-
-        if(preCheckoutComplete) {
-        submissionLayout.setBackgroundColor(getResources().getColor(R.color.staples_dark_gray));
-        }
-        submissionLayout.setVisibility(visible? View.VISIBLE : View.GONE);
-
     }
 
     private Float getCheckoutTotal() {
