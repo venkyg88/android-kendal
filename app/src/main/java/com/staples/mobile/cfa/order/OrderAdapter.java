@@ -10,10 +10,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.staples.mobile.cfa.R;
+import com.staples.mobile.cfa.util.CurrencyFormat;
 import com.staples.mobile.common.access.easyopen.model.member.OrderStatus;
 import com.staples.mobile.common.access.easyopen.model.member.Shipment;
 import com.staples.mobile.common.access.easyopen.model.member.ShipmentSKU;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,7 +27,6 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     private ArrayList<OrderShipmentListItem> array;
     private Activity activity;
     View.OnClickListener onClickListener;
-    private static final NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.US);
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView orderTotalTV;
@@ -84,6 +85,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             if (orderStatus.getGrandTotal() == null) {
                 holder.orderTotalTV.setText("");
             } else {
+                DecimalFormat currencyFormatter = CurrencyFormat.getFormatter();
                 holder.orderTotalTV.setText(currencyFormatter.format(Float.parseFloat(orderStatus.getGrandTotal())));
             }
         }
