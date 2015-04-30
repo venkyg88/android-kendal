@@ -94,6 +94,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         // Set click listeners
         submissionLayout.setOnClickListener(this);
 
+
 //        couponsRewardsAmount = CartApiManager.getCouponsRewardsAdjustedAmount();
         itemSubtotal = CartApiManager.getSubTotal();
         pretaxSubtotal = CartApiManager.getPreTaxTotal();
@@ -267,7 +268,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
         checkoutTotalVw.setText(currencyFormat.format(getCheckoutTotal()));
 
-        setShipTaxSubmitVisibility(true);
+        setShipTaxSubmitVisibility(true, false);
     }
 
     /** updates the shipping charge and tax values (may be result of api response or a call from the subclass) */
@@ -279,11 +280,11 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
             checkoutBundle.putFloat(BUNDLE_PARAM_TAX, -1);
             this.shippingCharge = null;
             this.tax = null;
-            setShipTaxSubmitVisibility(false);
+            setShipTaxSubmitVisibility(false, false);
         }
     }
 
-    private void setShipTaxSubmitVisibility(boolean visible) {
+    private void setShipTaxSubmitVisibility(boolean visible, boolean preCheckoutComplete) {
         if (totalHandlingCost > 0) {
             oversizedShippingVw.setVisibility(visible? View.VISIBLE : View.GONE);
             oversizedShippingLabelVw.setVisibility(visible? View.VISIBLE : View.GONE);
@@ -295,7 +296,12 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         shippingChargeLabelVw.setVisibility(visible? View.VISIBLE : View.GONE);
         taxVw.setVisibility(visible? View.VISIBLE : View.GONE);
         taxLabelVw.setVisibility(visible? View.VISIBLE : View.GONE);
+
+        if(preCheckoutComplete) {
+        submissionLayout.setBackgroundColor(getResources().getColor(R.color.staples_dark_gray));
+        }
         submissionLayout.setVisibility(visible? View.VISIBLE : View.GONE);
+
     }
 
     private Float getCheckoutTotal() {
