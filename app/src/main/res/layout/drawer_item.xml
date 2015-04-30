@@ -15,7 +15,11 @@
         style="@style/DrawerStyle"
         android:layout_width="0dp"
         android:layout_weight="1"/>
+    <!--override DrawerStyle height to make login/logout button more touchable-->
     <TextView
         android:id="@+id/extra"
-        style="@style/DrawerStyle"/>
+        style="@style/DrawerStyle"
+        android:gravity="center_vertical"
+        android:layout_height="match_parent"
+        />
 </LinearLayout>
