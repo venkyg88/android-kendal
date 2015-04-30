@@ -23,17 +23,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textSize="@dimen/fontsize_20sp"
-            android:text="@string/empty"/>
     </com.staples.mobile.cfa.widget.DataWrapper>
     <ImageButton
         android:id="@+id/open_sort"
         style="@style/RoundButton"
         android:background="@drawable/oval_red"
-        android:src="@drawable/ic_sort_white"/>
+        android:src="@drawable/ic_sort_white"
+        android:visibility="gone"/>
 </com.staples.mobile.cfa.widget.AnimatorFrame>
