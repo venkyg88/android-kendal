@@ -146,7 +146,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("orderData", order);
                 orderDetailsFragment.setArguments(bundle);
-                ((MainActivity) activity).selectFragment(DrawerItem.ORDERS, orderDetailsFragment, MainActivity.Transition.RIGHT, true);
+                ((MainActivity) activity).selectFragment(DrawerItem.ORDERDETAIL, orderDetailsFragment, MainActivity.Transition.RIGHT, true);
                 break;
             default:
                 break;
