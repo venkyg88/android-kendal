@@ -434,7 +434,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     protected void onSubmit() {
         // encrypt and apply payment method
         final PaymentMethod paymentMethod = getPaymentMethod();
-        if(getPaymentMethod() != null) {
+        if(paymentMethod != null) {
             showProgressIndicator();
             CheckoutApiManager.encryptAndApplyPaymentMethod(paymentMethod, new CheckoutApiManager.ApplyPaymentMethodCallback() {
                 @Override
