@@ -6,6 +6,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -46,12 +47,17 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
 
     private Context context;
     private GoogleApiClient client;
-    private Geocoder geocoder;
+    private final Geocoder geocoder;
 
     private boolean connected;
     private Location location;
     private String postalCode;
     private long startTime;
+
+    public interface PostalCodeCallback {
+        void onGetPostalCodeSuccess(String postalCode);
+        void onGetPostalCodeFailure();
+    }
 
     private LocationFinder(Context context) {
         this.context = context;
@@ -78,6 +84,14 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
     }
 
     private class Resolver extends Thread {
+
+        private PostalCodeCallback callback;
+        public Resolver(@Nullable PostalCodeCallback callback) {
+            this.callback = callback;
+        }
+
+        public Resolver() {}
+
         @Override
         public void run() {
             if (location == null) return;
@@ -90,29 +104,29 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
                     Log.d(TAG, msg);
                     Address address = addresses.get(0);
                     postalCode = address.getPostalCode();
+                    if (callback != null) {
+                        this.callback.onGetPostalCodeSuccess(postalCode);
+                    }
                     if (!TextUtils.isEmpty(postalCode)) {
                         Tracker.getInstance().setZipCode(postalCode);
                     }
                 }
             } catch(Exception e) {
-                Log.d(TAG, "Error by Geocoder: "+e.toString());
+                Log.d(TAG, "Error by Geocoder: " + e.toString());
                 Crittercism.logHandledException(e);
             }
         }
     }
 
     // Getters
-
-    public Location getLocation() {
+    public Location getLocation(@Nullable PostalCodeCallback callback) {
         // Try update
         if (client!=null) {
             Location latest = LocationServices.FusedLocationApi.getLastLocation(client);
             if ((latest != null) && latest != location) {
                 Tracker.getInstance().trackLocation(latest); // analytics
                 location = latest;
-                if (geocoder != null) {
-                    new Resolver().start();
-                }
+                new Resolver(callback).start();
 
                 Log.d(TAG, "Current location -> Longitude:" + location.getLongitude()
                         + ", Latitude:" + location.getLatitude());
@@ -121,11 +135,18 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
             else {
                 Log.d(TAG, "Default location -> Longitude:" + getDefaultLocation().getLongitude()
                         + ", Latitude:" + getDefaultLocation().getLatitude());
+                if (callback != null) {
+                    callback.onGetPostalCodeFailure();
+                }
                 return getDefaultLocation();
             }
         }
 
         return(location);
+    }
+
+    public Location getLocation() {
+        return getLocation(null);
     }
 
     // use Framingham as a default location when location service is not available
@@ -151,9 +172,7 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
         Location latest = LocationServices.FusedLocationApi.getLastLocation(client);
         if (latest!=null && latest!=location) {
             location = latest;
-            if (geocoder!=null) {
-                new Resolver().start();
-            }
+            new Resolver().start();
         }
     }
 

@@ -67,7 +67,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class StoreFragment extends Fragment implements Callback<StoreQuery>,
-        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, View.OnClickListener, EditText.OnEditorActionListener {
+        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, View.OnClickListener, EditText.OnEditorActionListener, LocationFinder.PostalCodeCallback {
     private static final String TAG = StoreFragment.class.getSimpleName();
 
     private static int FITSTORES = 5; // Number of stores to fit in initial view
@@ -149,16 +149,16 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     private void gotoHere() {
         // Get location
         LocationFinder finder = LocationFinder.getInstance(getActivity());
-        location = finder.getLocation();
+        location = finder.getLocation(this);
         if (location==null) {
             Log.d(TAG, "LocationFinder.getLocation returned null");
             String errorMessage = (String) getResources().getText(R.string.error_no_location_service);
             Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
-            return;
         }
+    }
 
-        // Get postal code
-        String postalCode = finder.getPostalCode();
+    @Override
+    public void onGetPostalCodeSuccess(String postalCode) {
         if (postalCode==null) {
             // FraminghamZipcode is default
             postalCode = FraminghamZipcode;
@@ -168,6 +168,9 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         // Find nearby stores
         Access.getInstance().getChannelApi(false).storeLocations(postalCode, this);
     }
+
+    @Override
+    public void onGetPostalCodeFailure() {}
 
     private CharSequence getHint() {
         Resources res = getActivity().getResources();
