@@ -98,7 +98,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         expirationMonthVw = (EditText) paymentMethodLayoutVw.findViewById(R.id.expiration_month);
         expirationYearVw = (EditText) paymentMethodLayoutVw.findViewById(R.id.expiration_year);
         cidVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cid);
-        useShipAddrAsBillingAddrSwitch = (Switch) frame.findViewById(R.id.useShipAddrAsBillingAddr_switch);
 
 
         // initialize from cache
