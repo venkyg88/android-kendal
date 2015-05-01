@@ -1,14 +1,15 @@
 package com.staples.mobile.cfa.store;
 
 import android.content.Context;
-import android.text.SpannableStringBuilder;
 
 import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.R;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /** This class represents a span of UTC time within a repeating week.
@@ -22,10 +23,10 @@ public class TimeSpan implements Comparable<TimeSpan> {
     // January 1, 1970 was a Thursday
     private static final String[] DAYNAMES = {"Thursday", "Friday", "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday"};
 
-    private static final SimpleDateFormat parseTimeFormat = new SimpleDateFormat("hh:mma");
-    private static final SimpleDateFormat longDowFormat = new SimpleDateFormat("EEE");
-    private static final SimpleDateFormat shortDowFormat = new SimpleDateFormat("EEE");
-    private static final SimpleDateFormat viewTimeFormat = new SimpleDateFormat("h:mma");
+    private static final DateFormat parseTimeFormat = new SimpleDateFormat("hh:mma", Locale.US);
+    private static final DateFormat longDowFormat = new SimpleDateFormat("EEE");
+    private static final DateFormat shortDowFormat = new SimpleDateFormat("EEE");
+    private static final DateFormat viewTimeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
 
     // Week starts on Monday local time
     private static final int origin = 4*ONEDAY-TimeZone.getDefault().getRawOffset();

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -23,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -113,7 +115,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         adapter.setOnClickListener(this);
-        adapter.setSingleMode(mapView!=null);
+        adapter.setSingleMode(mapView != null);
         adapter.setFullStoreDetail(false); // initially only summary store info is displayed
 
         searchText = (EditText) view.findViewById(R.id.store_search);
@@ -362,12 +364,14 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
         switch(actionId) {
             case EditorInfo.IME_ACTION_SEARCH:
+                ((MainActivity) getActivity()).hideSoftKeyboard();
                 doSearch();
-                break;
+                return(true);
             case EditorInfo.IME_NULL:
                 if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER &&
                     event.getAction()==KeyEvent.ACTION_DOWN) {
                     doSearch();
+                    return(true);
                 }
                 break;
         }
