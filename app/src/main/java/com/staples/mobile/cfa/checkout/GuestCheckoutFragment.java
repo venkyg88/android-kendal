@@ -378,7 +378,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
             return;
         }
 
-        activity.hideSoftKeyboard(cardNumberVw);
+        activity.hideSoftKeyboard();
 
         // add shipping address to cart if necessary, then billing address and precheckout
         if (shippingAddrNeedsApplying) {
