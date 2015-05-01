@@ -98,7 +98,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         expirationMonthVw = (EditText) paymentMethodLayoutVw.findViewById(R.id.expiration_month);
         expirationYearVw = (EditText) paymentMethodLayoutVw.findViewById(R.id.expiration_year);
         cidVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cid);
-
+        useShipAddrAsBillingAddrSwitch = (Switch) frame.findViewById(R.id.useShipAddrAsBillingAddr_switch);
 
         // initialize from cache
         if (shippingAddressCache != null) {
@@ -112,7 +112,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         shippingAddrBlock.init(true);
         billingAddrBlock.init(false);
 
-        frame.findViewById(R.id.billing_addr_heading).setVisibility(View.GONE);
+
         // TODO: ideally the expiration date code should be encapsulated in a custom compound view,
         // but given the end-of-project rush, this will have to do
 
@@ -131,9 +131,14 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 //        cidVw.setOnEditorActionListener(paymentMethodCompletionListener);
         cardNumberVw.setFilters(new InputFilter[]{new CcNumberInputFilter()});
         // add listener to billing addr toggle button switch
-        useShipAddrAsBillingAddrSwitch = (Switch) frame.findViewById(R.id.useShipAddrAsBillingAddr_switch);
         useShipAddrAsBillingAddrSwitch.setChecked(true);
         useShipAddrAsBillingAddrSwitch.setOnCheckedChangeListener(this);
+
+        // if cached value is unchecked, fake a change to initialize state correctly
+        if (!useShippingAsBillingCache) {
+            useShipAddrAsBillingAddrSwitch.setChecked(false);
+            onCheckedChanged(useShipAddrAsBillingAddrSwitch, false);
+        }
 
         // focus listener for CC and shipping addr
         shippingAddrBlock.findViewById(R.id.firstName).setOnFocusChangeListener(this);
