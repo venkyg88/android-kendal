@@ -167,8 +167,8 @@ public class MainActivity extends Activity
         }
 
         // Support for Urban Airship
-        AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(this);
-        UAirship.takeOff(getApplication(), options, this);
+//        AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(this); TODO Enable Urban Airship when we're ready
+//        UAirship.takeOff(getApplication(), options, this);
 
         networkConnectivityBroadCastReceiver = new NetworkConnectivityBroadCastReceiver();
     }

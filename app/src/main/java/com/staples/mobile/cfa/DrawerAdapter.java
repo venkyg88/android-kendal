@@ -125,7 +125,10 @@ public class DrawerAdapter extends BaseAdapter {
         array.add(new DrawerItem(activity, DrawerItem.REWARDS, R.drawable.ic_rewards_black, R.string.rewards_title, RewardsFragment.class, false)); // set initially disabled
         array.add(new DrawerItem(activity, DrawerItem.ORDERS,  R.drawable.ic_orders_black, R.string.order_title, OrderFragment.class, false)); // set initially disabled
         array.add(new DrawerItem(activity, DrawerItem.PROFILE, R.drawable.ic_profile_black, R.string.profile_title, ProfileFragment.class, false)); // set initially disabled
+        /* TODO Enable Urban Airship when we're ready
         array.add(new DrawerItem(activity, DrawerItem.NOTIFY,  R.drawable.ic_notifications_black, R.string.notify_prefs_title, NotifyPrefsFragment.class));
+        */
         array.add(new DrawerItem(activity, DrawerItem.TERMS,   R.drawable.ic_info_black, R.string.terms_title, TermsFragment.class));
+        //array.add(new DrawerItem(activity, DrawerItem.ABOUT,   R.drawable.ic_info_black, R.string.about_title, AboutFragment.class));
     }
 }
