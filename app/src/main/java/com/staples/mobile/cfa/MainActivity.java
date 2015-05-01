@@ -857,7 +857,7 @@ public class MainActivity extends Activity
         } else {
             fragment = Fragment.instantiate(this, AddressFragment.class.getName());
         }
-        return(selectFragment(DrawerItem.PROFILE, fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.ADDRESS, fragment, Transition.RIGHT, true));
     }
 
     /** opens the profile credit cards fragment */
@@ -944,7 +944,7 @@ public class MainActivity extends Activity
                     }
 
                     // if on search results or page reached via drawer-menu then go to first Home fragment found in backstack
-                    if (drawerItem != null || currentTag == DrawerItem.SEARCH) {
+                    if (drawerItem != null || DrawerItem.SEARCH.equals(currentTag)) {
                         int backstackIndex = currentBackStackIndex - 1;
                         while (backstackIndex >= 0) {
                             if (DrawerItem.HOME.equals(fragmentManager.getBackStackEntryAt(backstackIndex).getName())) {

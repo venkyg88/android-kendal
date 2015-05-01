@@ -37,6 +37,8 @@ public class DrawerItem {
     public static final String CONFIRM  = "023";
     public static final String LINK     = "024";
     public static final String SALES    = "025";
+    public static final String ORDERDETAIL = "026";
+    public static final String WEEKLYDETAIL = "027";
 
     // Generic info
     public String tag;
