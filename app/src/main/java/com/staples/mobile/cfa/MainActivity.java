@@ -857,7 +857,7 @@ public class MainActivity extends Activity
         } else {
             fragment = Fragment.instantiate(this, AddressFragment.class.getName());
         }
-        return(selectFragment(DrawerItem.PROFILE, fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.ADDRESS, fragment, Transition.RIGHT, true));
     }
 
     /** opens the profile credit cards fragment */

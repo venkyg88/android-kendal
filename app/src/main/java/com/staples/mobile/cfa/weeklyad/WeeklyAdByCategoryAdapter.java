@@ -78,7 +78,7 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
 //                Data data = array.get(position);
                 WeeklyAdListFragment weeklyAdFragment = new WeeklyAdListFragment();
                 weeklyAdFragment.setArguments(storeId, position, categoryTreeIds, titles);
-                ((MainActivity)activity).selectFragment(DrawerItem.WEEKLY, weeklyAdFragment, MainActivity.Transition.RIGHT, true);
+                ((MainActivity)activity).selectFragment(DrawerItem.WEEKLYDETAIL, weeklyAdFragment, MainActivity.Transition.RIGHT, true);
             }
         });
 
