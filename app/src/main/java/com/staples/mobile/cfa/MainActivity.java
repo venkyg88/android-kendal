@@ -945,8 +945,8 @@ public class MainActivity extends Activity
                         drawerItem = leftMenuAdapter.findItemByTag(currentTag);
                     }
 
-                    // if on page reached via drawer-menu then go to first Home fragment found in backstack
-                    if (drawerItem != null) {
+                    // if on search results or page reached via drawer-menu then go to first Home fragment found in backstack
+                    if (drawerItem != null || currentTag == DrawerItem.SEARCH) {
                         int backstackIndex = currentBackStackIndex - 1;
                         while (backstackIndex >= 0) {
                             if (DrawerItem.HOME.equals(fragmentManager.getBackStackEntryAt(backstackIndex).getName())) {
