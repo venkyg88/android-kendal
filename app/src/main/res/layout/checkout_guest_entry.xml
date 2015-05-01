@@ -3,28 +3,18 @@
   ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
   -->
 
-<com.staples.mobile.cfa.widget.AnimatorScroll xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/margin_16dp"
+    android:paddingBottom="220dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/margin_16dp">
-
-        <!--shipping address-->
-        <TextView
-            style="@style/GraySubheading"
-            android:text="@string/shipping_addr"/>
-        <include layout="@layout/address_block" android:id="@+id/shipping_addr_layout" />
-
-        <!--payment method-->
-        <TextView
-            style="@style/GraySubheading"
-            android:layout_marginTop="@dimen/margin_16dp"
-            android:text="@string/payment_method"/>
-        <include layout="@layout/add_creditcard_fragment" android:id="@+id/payment_method_layout"/>
+    <!--shipping address-->
+    <TextView
+        style="@style/GraySubheading"
+        android:text="@string/shipping_addr"/>
+    <include layout="@layout/address_block" android:id="@+id/shipping_addr_layout" />
 
     <!--widget for choosing billing addr to match shipping addr-->
     <LinearLayout
@@ -53,9 +43,15 @@
         android:text="@string/billing_addr"/>
     <include layout="@layout/address_block" android:id="@+id/billing_addr_layout" />
 
-     <Space
-         android:layout_width="match_parent"
-         android:layout_height="220dp" />
+    <!--payment method-->
+    <TextView
+        style="@style/GraySubheading"
+        android:layout_marginTop="@dimen/margin_16dp"
+        android:text="@string/payment_method"/>
+    <include layout="@layout/add_creditcard_fragment" android:id="@+id/payment_method_layout"/>
 
-    </LinearLayout>
-</com.staples.mobile.cfa.widget.AnimatorScroll>
+ <Space
+     android:layout_width="match_parent"
+     android:layout_height="220dp" />
+
+</LinearLayout>
