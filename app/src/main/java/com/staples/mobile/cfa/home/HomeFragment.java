@@ -53,7 +53,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements LocationFinder.PostalCodeCallback {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -71,6 +71,7 @@ public class HomeFragment extends Fragment {
     private Resources resources;
 
     private DeviceInfo deviceInfo;
+    private String postalCode;
 
     private int lastOrientation = Configuration.ORIENTATION_UNDEFINED;
     private View configFrameView;
@@ -1042,20 +1043,35 @@ public class HomeFragment extends Fragment {
     //////////////////////////////////////////////////////////////////////////////
     // Personalized Message Bar Methods created by Yongnan Zhou:
     private void getStoreInfo(){
-        storeWrapper.setState(DataWrapper.State.LOADING);
-
-        // Get current postal code
         LocationFinder finder = LocationFinder.getInstance(getActivity());
-        finder.getLocation();
         String postalCode = finder.getPostalCode();
         if (TextUtils.isEmpty(postalCode)) {
-            // display "no store nearby"
-            storeWrapper.setState(DataWrapper.State.EMPTY);
-            Log.d(TAG, (String) getResources().getText(R.string.error_no_location_service));
-        }
-        else{
+            storeWrapper.setState(DataWrapper.State.LOADING);
+            finder.getLocation(this);
+        } else {
             Log.d(TAG, "Store zipcode:" + postalCode);
             Access.getInstance().getChannelApi(false).storeLocations(postalCode, new StoreInfoCallback());
+        }
+    }
+
+    @Override
+    public void onGetPostalCodeSuccess(String postalCode) {
+        if (TextUtils.isEmpty(postalCode)) {
+            // display "no store nearby"
+            if (storeWrapper != null) {
+                storeWrapper.setState(DataWrapper.State.EMPTY);
+            }
+            Log.d(TAG, (String) getResources().getText(R.string.error_no_location_service));
+        } else {
+            Log.d(TAG, "Store zipcode:" + postalCode);
+            Access.getInstance().getChannelApi(false).storeLocations(postalCode, new StoreInfoCallback());
+        }
+    }
+
+    @Override
+    public void onGetPostalCodeFailure() {
+        if (storeWrapper != null) {
+            storeWrapper.setState(DataWrapper.State.EMPTY);
         }
     }
 
