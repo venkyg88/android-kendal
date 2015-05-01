@@ -25,7 +25,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/fontsize_18sp"
+            android:textSize="@dimen/fontsize_16sp"
             android:layout_marginRight="8dp"
             android:text="@string/use_as_billing_addr"/>
         <Switch
