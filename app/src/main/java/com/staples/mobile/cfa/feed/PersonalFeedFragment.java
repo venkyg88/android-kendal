@@ -4,7 +4,6 @@ package com.staples.mobile.cfa.feed;
  * Author: Yongnan Zhou
  */
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -80,7 +79,6 @@ public class PersonalFeedFragment extends Fragment {
     private View seenProductsSeparator;
     private View clearanceSeparator;
 
-
     private String dailyDealTitle;
     private String clearanceTitle;
     private String seenProductsTitle;
@@ -88,6 +86,9 @@ public class PersonalFeedFragment extends Fragment {
     private boolean isSeenProductsEmpty = true;
     private boolean isDailyDealEmpty = true;
     private boolean isClearanceEmpty = true;
+
+    private MainActivity mainActivity;
+    private LayoutInflater myInflater;
 
     private List<com.staples.mobile.common.access.easyopen.model.cart.Product> cartItems;
 
@@ -97,16 +98,13 @@ public class PersonalFeedFragment extends Fragment {
             seenProductClearTV.setVisibility(View.VISIBLE);
             seenProductsWrapper.setState(DataWrapper.State.DONE);
 
-            Activity activity = getActivity();
-            if (activity == null) {
+            if (mainActivity == null) {
                 return;
             }
 
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-
             Product seenProduct = sku.getProduct().get(0);
 
-            View seenSavedProductRow = inflater.inflate(R.layout.personal_feed_product_item, null);
+            View seenSavedProductRow = myInflater.inflate(R.layout.personal_feed_product_item, null);
 
             TextView title = (TextView) seenSavedProductRow.findViewById(R.id.title);
             final String productName = Html.fromHtml(seenProduct.getProductName()).toString();
@@ -143,7 +141,7 @@ public class PersonalFeedFragment extends Fragment {
 
             // API safety check
             if(seenProduct.getImage() != null && seenProduct.getImage().size() > 0){
-                Picasso.with(getActivity()).load(seenProduct.getImage().get(0).getUrl()).error(R.drawable.no_photo).into(imageView);
+                Picasso.with(mainActivity).load(seenProduct.getImage().get(0).getUrl()).error(R.drawable.no_photo).into(imageView);
             }
             else{
                 Log.d(TAG, "API returned empty image url!");
@@ -158,7 +156,7 @@ public class PersonalFeedFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Tracker.getInstance().trackActionForPersonalFeed(seenProductsTitle);
-                    ((MainActivity) getActivity()).selectSkuItem(productName, skuId, false);
+                    mainActivity.selectSkuItem(productName, skuId, false);
                 }
             });
 
@@ -166,12 +164,12 @@ public class PersonalFeedFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Tracker.getInstance().trackActionForPersonalFeed(seenProductsTitle);
-                    ((MainActivity) getActivity()).selectSkuItem(productName, skuId, false);
+                    mainActivity.selectSkuItem(productName, skuId, false);
                 }
             });
 
-            PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(getActivity());
-            HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(getActivity());
+            PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(mainActivity);
+            HashSet<String> savedSkuSet = feedSingleton.getSavedSkus(mainActivity);
             if(seenProductsContainer.getChildCount() < savedSkuSet.size()) {
                 // still loading other items' data
                 seenProductsLoading.setVisibility(View.VISIBLE);
@@ -187,21 +185,23 @@ public class PersonalFeedFragment extends Fragment {
         public void failure(RetrofitError retrofitError) {
             seenProductsWrapper.setState(DataWrapper.State.EMPTY);
 
-            Activity activity = getActivity();
-            if (activity == null) {
+            if (mainActivity == null) {
                 return;
             }
 
             String message = ApiError.getErrorMessage(retrofitError);
-            ((MainActivity)activity).showErrorDialog(message);
+            mainActivity.showErrorDialog(message);
             Log.d(TAG, message);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        this.myInflater = inflater;
+        this.mainActivity = (MainActivity) getActivity();
+
         Crittercism.leaveBreadcrumb("PersonalFeedFragment:onCreateView(): Displaying the Personal Feed screen.");
-        LinearLayout personalFeedLayout = (LinearLayout) inflater.inflate(R.layout.personal_feed, container, false);
+        LinearLayout personalFeedLayout = (LinearLayout) myInflater.inflate(R.layout.personal_feed, container, false);
 
         // get section titles for the sake of analytics
         Resources r = getResources();
@@ -237,7 +237,7 @@ public class PersonalFeedFragment extends Fragment {
 
                 removeSavedSeenProducts();
 
-                PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(getActivity());
+                PersonalFeedSingleton feedSingleton = PersonalFeedSingleton.getInstance(mainActivity);
                 feedSingleton.setSavedSkus(new HashSet<String>());
                 feedSingleton.setSavedSeenProducts(
                         new PersistentSizedArrayList<String>(PersonalFeedSingleton.SEEN_PRODUCTS_AMOUNT));
@@ -253,8 +253,6 @@ public class PersonalFeedFragment extends Fragment {
         setCartItems();
 
         seenProductsLoading = (RelativeLayout) personalFeedLayout.findViewById(R.id.seen_products_loading_footer);
-
-        seenProductsWrapper.setState(DataWrapper.State.LOADING);
 
         setSeenProductsAdapter();
 
@@ -297,9 +295,11 @@ public class PersonalFeedFragment extends Fragment {
     }
 
     private void setSeenProductsAdapter(){
+        seenProductsWrapper.setState(DataWrapper.State.LOADING);
+
         // set seen products list
         HashSet<String> saveSeenSkus =
-                PersonalFeedSingleton.getInstance(getActivity()).getSavedSkus(getActivity());
+                PersonalFeedSingleton.getInstance(mainActivity).getSavedSkus(mainActivity);
 
         // if no saved seen products
         if(saveSeenSkus.isEmpty()){
@@ -432,8 +432,7 @@ public class PersonalFeedFragment extends Fragment {
                                LinearLayout container, final String containerTitle){
         final String productName = Html.fromHtml(cartItem.getProductName()).toString();
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View row = inflater.inflate(R.layout.personal_feed_product_item, null);
+        View row = myInflater.inflate(R.layout.personal_feed_product_item, null);
 
         TextView title = (TextView) row.findViewById(R.id.title);
         title.setText(productName);
@@ -446,10 +445,13 @@ public class PersonalFeedFragment extends Fragment {
         if (pricings!=null && pricings.size()>0) {
             com.staples.mobile.common.access.easyopen.model.cart.Pricing pricing = pricings.get(0);
             PriceSticker priceSticker = (PriceSticker) row.findViewById(R.id.pricing);
-            float finalPrice = pricing.getFinalPrice();
-            float wasPrice = pricing.getListPrice();
             String unit = pricing.getUnitOfMeasure();
+
             float rebate = findRebate(pricing);
+            int quantity = cartItem.getQuantity();
+            float finalPrice = pricing.getTotalOrderItemPrice()/quantity;
+            float wasPrice = pricing.getListPrice();
+
             if (rebate>0.0f) {
                 row.findViewById(R.id.rebate_layout).setVisibility(View.VISIBLE);
                 TextView rebateText = (TextView) row.findViewById(R.id.rebate_text);
@@ -467,7 +469,7 @@ public class PersonalFeedFragment extends Fragment {
         if(cartItem.getImage() != null && cartItem.getImage().size() > 0){
             imageUrl = cartItem.getImage().get(0).getUrl();
         }
-        Picasso.with(getActivity()).load(imageUrl).error(R.drawable.no_photo).into(imageView);
+        Picasso.with(mainActivity).load(imageUrl).error(R.drawable.no_photo).into(imageView);
 
         container.addView(row);
 
@@ -477,7 +479,7 @@ public class PersonalFeedFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Tracker.getInstance().trackActionForPersonalFeed(containerTitle);
-                ((MainActivity) getActivity()).selectSkuItem(productName, sku, false);
+                mainActivity.selectSkuItem(productName, sku, false);
             }
         });
 
@@ -485,7 +487,7 @@ public class PersonalFeedFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Tracker.getInstance().trackActionForPersonalFeed(containerTitle);
-                ((MainActivity) getActivity()).selectSkuItem(productName, sku, false);
+                mainActivity.selectSkuItem(productName, sku, false);
             }
         });
     }
@@ -523,7 +525,7 @@ public class PersonalFeedFragment extends Fragment {
     }
 
     private void removeSavedSeenProducts() {
-        SharedPreferences sp = getActivity().getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
+        SharedPreferences sp = mainActivity.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(SEEN_PRODUCT_SKU_LIST, "");
         editor.putString(SEEN_PRODUCT_LIST, "");
