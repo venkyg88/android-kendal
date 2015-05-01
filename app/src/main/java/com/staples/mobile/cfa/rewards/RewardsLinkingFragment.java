@@ -110,18 +110,16 @@ public class RewardsLinkingFragment extends Fragment implements View.OnClickList
         return phoneNumber;
     }
 
-
-
     @Override
-    public void onClick(View v) {
+    public void onClick(View view) {
         if(activity == null) return;
-        switch(v.getId()) {
+        switch(view.getId()) {
             case R.id.rewards_link_acct_button:
-                activity.hideSoftKeyboard(v);
+                activity.hideSoftKeyboard();
                 String rewardsNumber = rewardsNumberVw.getText().toString();
                 String phoneNumber = stripPhoneNumber(phoneNumberVw.getText().toString());
                 if(validateFields(rewardsNumber, phoneNumber)) {
-                    if(phoneNumber.length() < 10) {
+                    if(phoneNumber.length()<10) {
                         activity.showErrorDialog(R.string.invalid_phone_number);
                         return;
                     }

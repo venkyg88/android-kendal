@@ -44,6 +44,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -54,7 +56,6 @@ public class PersonalFeedFragment extends Fragment {
 
     public static final String SEEN_PRODUCT_SKU_LIST = "seenProductSkuList";
     public static final String SEEN_PRODUCT_LIST = "seenProductList";
-
 
     public static final String DAILY_DEAL_IDENTIFIER = "BI739472"; // TODO Needs to be configurable
     public static final String CLEARANCE_IDENTIFIER = "BI642994"; // TODO Needs to be configurable
@@ -76,10 +77,17 @@ public class PersonalFeedFragment extends Fragment {
 
     private TextView seenProductClearTV;
     private RelativeLayout seenProductsLoading;
+    private View seenProductsSeparator;
+    private View clearanceSeparator;
+
 
     private String dailyDealTitle;
     private String clearanceTitle;
     private String seenProductsTitle;
+
+    private boolean isSeenProductsEmpty = true;
+    private boolean isDailyDealEmpty = true;
+    private boolean isClearanceEmpty = true;
 
     private List<com.staples.mobile.common.access.easyopen.model.cart.Product> cartItems;
 
@@ -214,6 +222,9 @@ public class PersonalFeedFragment extends Fragment {
         clearanceContainer = (LinearLayout) personalFeedLayout.findViewById(R.id.clearance_container);
         seenProductsContainer = (LinearLayout) personalFeedLayout.findViewById(R.id.seen_products_container);
 
+        seenProductsSeparator = (View) personalFeedLayout.findViewById(R.id.seen_products_separator);
+        clearanceSeparator = (View) personalFeedLayout.findViewById(R.id.clearance_separator);
+
         seenProductClearTV = (TextView) personalFeedLayout.findViewById(R.id.seen_products_clear);
         seenProductClearTV.setVisibility(View.GONE);
         seenProductClearTV.setOnClickListener(new View.OnClickListener() {
@@ -231,6 +242,7 @@ public class PersonalFeedFragment extends Fragment {
                 feedSingleton.setSavedSeenProducts(
                         new PersistentSizedArrayList<String>(PersonalFeedSingleton.SEEN_PRODUCTS_AMOUNT));
                 seenProductsLayout.setVisibility(View.GONE);
+                seenProductsSeparator.setVisibility(View.GONE);
 
                 if(dailyDealContainer.getChildCount() == 0 && clearanceContainer.getChildCount() == 0) {
                     emptyFeedLayout.setVisibility(View.VISIBLE);
@@ -245,10 +257,32 @@ public class PersonalFeedFragment extends Fragment {
         seenProductsWrapper.setState(DataWrapper.State.LOADING);
 
         setSeenProductsAdapter();
-        setDailyDealAdapter();
-        setClearanceAdapter();
 
-        return (personalFeedLayout);
+        Thread dailyDealThread = new Thread(new Runnable(){
+            public void run(){
+                setDailyDealAdapter();
+            }
+        });
+
+        Thread clearanceThread = new Thread(new Runnable(){
+            public void run(){
+                setClearanceAdapter();
+            }
+        });
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(dailyDealThread);
+        executor.submit(clearanceThread);
+        executor.shutdown();
+
+        if(isSeenProductsEmpty && isClearanceEmpty && isDailyDealEmpty){
+            emptyFeedLayout.setVisibility(View.VISIBLE);
+        }
+        else {
+            emptyFeedLayout.setVisibility(View.GONE);
+        }
+
+        return personalFeedLayout;
     }
 
     @Override
@@ -267,12 +301,16 @@ public class PersonalFeedFragment extends Fragment {
         HashSet<String> saveSeenSkus =
                 PersonalFeedSingleton.getInstance(getActivity()).getSavedSkus(getActivity());
 
-        // display "nothing found" if no saved seen products
+        // if no saved seen products
         if(saveSeenSkus.isEmpty()){
             seenProductsLayout.setVisibility(View.GONE);
+            seenProductsSeparator.setVisibility(View.GONE);
+            isSeenProductsEmpty = true;
         }
         else{
+            isSeenProductsEmpty = false;
             emptyFeedLayout.setVisibility(View.GONE);
+            seenProductsSeparator.setVisibility(View.VISIBLE);
             seenProductsWrapper.setState(DataWrapper.State.LOADING);
             for(String sku : saveSeenSkus){
                 // Initiate SKU API call
@@ -314,13 +352,18 @@ public class PersonalFeedFragment extends Fragment {
                                     }
                                 }
                             }
+                            else{
+                                isDailyDealEmpty = true;
+                            }
 
-                            // display "nothing found" if no daily deal products
+                            // if no daily deal products
                             if (dailyDealContainer.getChildCount() == 0) {
-                                if(seenProductsContainer.getChildCount() == 0 && clearanceContainer.getChildCount() == 0) {
-                                    emptyFeedLayout.setVisibility(View.VISIBLE);
-                                }
+                                isDailyDealEmpty = true;
+//                                if(seenProductsContainer.getChildCount() == 0 && clearanceContainer.getChildCount() == 0) {
+//                                    emptyFeedLayout.setVisibility(View.VISIBLE);
+//                                }
                             } else {
+                                isDailyDealEmpty = false;
                                 emptyFeedLayout.setVisibility(View.GONE);
                                 dailyDealWrapper.setState(DataWrapper.State.DONE);
                                 dailyDealLayout.setVisibility(View.VISIBLE);
@@ -352,7 +395,6 @@ public class PersonalFeedFragment extends Fragment {
                                 //fillContainer(p, clearanceContainer, clearanceTitle);
                                 //Log.d(TAG, "Clearance Products: " + p.getProductName() + "-" + p.getSku());
                             }
-
                         }
 
                         if (cartItems != null) {
@@ -365,13 +407,20 @@ public class PersonalFeedFragment extends Fragment {
                                 }
                             }
                         } else{
-                            clearanceWrapper.setState(DataWrapper.State.EMPTY);
+                            isClearanceEmpty = true;
                         }
 
-                        // display "nothing found" if no clearance products
+                        // if no clearance products
                         if (clearanceContainer.getChildCount() == 0) {
+                            isClearanceEmpty = true;
+                            clearanceSeparator.setVisibility(View.GONE);
+                            if(seenProductsContainer.getChildCount() == 0 && dailyDealContainer.getChildCount() == 0) {
+                                emptyFeedLayout.setVisibility(View.VISIBLE);
+                            }
                         } else {
+                            isClearanceEmpty = false;
                             emptyFeedLayout.setVisibility(View.GONE);
+                            clearanceSeparator.setVisibility(View.VISIBLE);
                             clearanceWrapper.setState(DataWrapper.State.DONE);
                             clearanceLayout.setVisibility(View.VISIBLE);
                         }

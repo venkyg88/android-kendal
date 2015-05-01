@@ -1,7 +1,9 @@
 package com.staples.mobile.cfa.bundle;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 
 import com.crittercism.app.Crittercism;
 import com.staples.mobile.cfa.IdentifierType;
@@ -33,8 +36,10 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class BundleFragment extends Fragment implements Callback<Browse>, BundleAdapter.OnFetchMoreData, View.OnClickListener {
+public class BundleFragment extends Fragment implements Callback<Browse>, BundleAdapter.OnFetchMoreData, View.OnClickListener, DialogInterface.OnDismissListener {
     private static final String TAG = BundleFragment.class.getSimpleName();
+
+    private enum SortOption {DENY, ALLOW, VISIBLE};
 
     private static final String TITLE = "title";
     private static final String IDENTIFIER = "identifier";
@@ -49,8 +54,10 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Bundle
     private DataWrapper.State state;
     private boolean complete;
     private int page;
+    private SortOption sortOption;
     private BundleItem.SortType fetchSort;
     private BundleItem.SortType displaySort;
+    private Dialog popup;
 
     public void setArguments(String title, String identifier) {
         Bundle args = new Bundle();
@@ -69,6 +76,9 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Bundle
             identifier = args.getString(IDENTIFIER);
         }
 
+        IdentifierType type = IdentifierType.detect(identifier);
+        if (type==IdentifierType.BUNDLE) sortOption = SortOption.DENY;
+        else sortOption = SortOption.ALLOW;
         page = 1;
         displaySort = BundleItem.SortType.BESTMATCH;
         query();
@@ -87,11 +97,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Bundle
 
         // Disable sort on bundles
         IdentifierType type = IdentifierType.detect(identifier);
-        if (type==IdentifierType.BUNDLE) {
-            view.findViewById(R.id.open_sort).setVisibility(View.GONE);
-        } else {
-            view.findViewById(R.id.open_sort).setOnClickListener(this);
-        }
 
         applyState(view);
         return(view);
@@ -103,6 +108,10 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Bundle
         DataWrapper wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
         if (list!=null && list.getAdapter()==null && adapter!=null) {
             list.setAdapter(adapter);
+        }
+        if (sortOption==SortOption.VISIBLE) {
+            view.findViewById(R.id.open_sort).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.open_sort).setOnClickListener(this);
         }
         wrapper.setState(state);
     }
@@ -132,8 +141,12 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Bundle
         if (!(activity instanceof MainActivity)) return;
 
         int count = processBrowse(browse);
-        if (count==0) state = DataWrapper.State.EMPTY;
-        else state = DataWrapper.State.DONE;
+        if (count==0) {
+            state = DataWrapper.State.EMPTY;
+        } else {
+            state = DataWrapper.State.DONE;
+            if (sortOption==SortOption.ALLOW) sortOption = SortOption.VISIBLE;
+        }
         applyState(null);
 
         Tracker.getInstance().trackStateForClass(count, browse, Tracker.ViewType.GRID, fetchSort.stringParam); // Analytics
@@ -145,10 +158,10 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Bundle
         if (!(activity instanceof MainActivity)) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
-        ((MainActivity) activity).showErrorDialog(msg);
         Log.d(TAG, msg);
         state = DataWrapper.State.EMPTY;
         applyState(null);
+        showPopup();
     }
 
     private int processBrowse(Browse browse) {
@@ -253,6 +266,23 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Bundle
         }
     }
 
+    private void showPopup() {
+        popup = new Dialog(getActivity());
+        Window window = popup.getWindow();
+        window.requestFeature(Window.FEATURE_NO_TITLE);
+        window.setBackgroundDrawableResource(R.drawable.dialog_frame);
+        popup.setContentView(R.layout.expired_dialog);
+        popup.findViewById(R.id.ok).setOnClickListener(this);
+        popup.setCanceledOnTouchOutside(false);
+        popup.setOnDismissListener(this);
+        popup.show();
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        getFragmentManager().popBackStack();
+    }
+
     @Override
     public void onClick(View view) {
         Object tag;
@@ -283,6 +313,9 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Bundle
                 panel.setSelectedRadioButton(displaySort.button);
                 panel.setOnClickListener(this);
                 panel.show();
+                break;
+            case R.id.ok:
+                if (popup!=null) popup.dismiss();
                 break;
             default:
                 BundleItem.SortType sortType = BundleItem.SortType.findSortTypeById(view.getId());

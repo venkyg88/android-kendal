@@ -161,8 +161,6 @@ public class MainActivity extends Activity
             boolean freshStart = (bundle == null);
             prepareMainScreen(freshStart);
 
-            LocationFinder.getInstance(this);
-
             initialLoginComplete = false;
             appConfigurator = AppConfigurator.getInstance();
             appConfigurator.getConfigurator(this); // AppConfiguratorCallback
@@ -369,9 +367,12 @@ public class MainActivity extends Activity
         }
     }
 
-    public void hideSoftKeyboard(View view) {
-        InputMethodManager keyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    public void hideSoftKeyboard() {
+        View view = getCurrentFocus();
+        if (view!=null) {
+            InputMethodManager keyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     public void showSoftKeyboard(View view) {
@@ -503,7 +504,8 @@ public class MainActivity extends Activity
 
                 // do login based on persisted cache if available
                 loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
-                    @Override public void onProfileRefresh(Member member, String errMsg) {
+                    @Override
+                    public void onProfileRefresh(Member member, String errMsg) {
                         initialLoginComplete = true;
                         showMainScreen();
                     }
@@ -515,8 +517,11 @@ public class MainActivity extends Activity
                 // because the configurator object is not yet available. Therefore, enable here.
                 AdobeTracker.enableTracking(true);
 
-                // set default zip code for now, update it as it changes
+                // set default zip code for now, update it as it changes (via LocationFinder below)
                 Tracker.getInstance().setZipCode("02139");
+
+                // initialize location finder (this will update zip code if possible)
+                LocationFinder.getInstance(this);
 
                 // initialize Kount fraud detection
                 KountManager.getInstance(this);
@@ -917,7 +922,7 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.close_button:
-                hideSoftKeyboard(view);
+                hideSoftKeyboard();
                 if (currentTag != null && currentTag.equals(DrawerItem.CHECKOUT)) {
                     fragmentManager.popBackStack(DrawerItem.CART, 0);
                 } else {
@@ -928,7 +933,7 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.up_button:
-                hideSoftKeyboard(view);
+                hideSoftKeyboard();
                 if (!ActionBar.getInstance().closeSearch()) {
 
                     // Note that checkout page is handled by the close button above. If checkout had an Up

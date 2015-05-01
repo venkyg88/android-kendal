@@ -45,6 +45,8 @@
     <string name="sort_title_ascending">Name A–Z</string>
     <string name="sort_title_descending">Name Z–A</string>
     <string name="rebate_text">*Price before rebate</string>
+    <string name="expired_notice">This promotion has expired.\n\nCheck out some of our other great offers\nor search for whatever you may need.</string>
+    <string name="expired_ok">Ok</string>
 
     <!-- Notifications -->
     <string name="notify_prefs_title">Notification Preferences</string>
@@ -257,7 +259,7 @@
     <string name="item">Item</string>
     <string name="model">Model</string>
     <string name="phone">Phone</string>
-    <string name="store_nearby">Store nearby you</string>
+    <string name="store_nearby">Store near you</string>
     <string name="store_hours">Store Hours</string>
     <string name="store_features">Store Features</string>
     <string name="store_closed">Closed</string>

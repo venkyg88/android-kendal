@@ -219,7 +219,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onClick(View view) {
-        activity.hideSoftKeyboard(view);
+        activity.hideSoftKeyboard();
 
         // ensure credit card number entered
         creditCardNumber = cardNumberET.getText().toString().replaceAll(" ", "");
