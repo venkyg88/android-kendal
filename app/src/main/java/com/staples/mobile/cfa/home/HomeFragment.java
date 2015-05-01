@@ -1116,7 +1116,6 @@ public class HomeFragment extends Fragment {
             }
 
             String message = ApiError.getErrorMessage(retrofitError);
-            ((MainActivity)activity).showErrorDialog(message);
             Log.d(TAG, message);
 
             storeWrapper.setState(DataWrapper.State.EMPTY);
