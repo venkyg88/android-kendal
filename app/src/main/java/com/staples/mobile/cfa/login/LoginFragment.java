@@ -183,7 +183,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             String email = signInEmail.getText().toString();
             String password = signInPassword.getText().toString();
 
-            activity.hideSoftKeyboard(view);
+            activity.hideSoftKeyboard();
 
             if(!email.isEmpty() && !password.isEmpty())
             {
@@ -216,7 +216,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             String email = registerEmailET.getText().toString();
             String password = registerPasswordET.getText().toString();
 
-            activity.hideSoftKeyboard(view);
+            activity.hideSoftKeyboard();
 
             if(!email.isEmpty() && !password.isEmpty())
             {

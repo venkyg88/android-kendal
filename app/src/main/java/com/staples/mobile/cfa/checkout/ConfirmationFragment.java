@@ -143,12 +143,12 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
                 }
                 break;
             case R.id.cancel:
-                activity.hideSoftKeyboard(view);
+                activity.hideSoftKeyboard();
                 accountDialog.dismiss();
                 accountDialog = null;
                 break;
             case R.id.create_account_button:
-                activity.hideSoftKeyboard(view);
+                activity.hideSoftKeyboard();
                 String requiredMsg = getResources().getString(R.string.required);
                 EditText emailAddressEditVw = (EditText) accountDialog.findViewById(R.id.emailAddr);
                 EditText passwordEditVw = (EditText) accountDialog.findViewById(R.id.password);
