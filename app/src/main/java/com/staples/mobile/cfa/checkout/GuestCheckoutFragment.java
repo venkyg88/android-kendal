@@ -27,7 +27,7 @@ import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.Calendar;
 
-public class GuestCheckoutFragment extends CheckoutFragment implements AddressBlock.OnDoneListener, CompoundButton.OnCheckedChangeListener, TextWatcher, View.OnFocusChangeListener, TextView.OnEditorActionListener {
+public class GuestCheckoutFragment extends CheckoutFragment implements AddressBlock.OnDoneListener, CompoundButton.OnCheckedChangeListener, TextWatcher, View.OnFocusChangeListener{
 
     private static final String TAG = GuestCheckoutFragment.class.getSimpleName();
 
@@ -41,6 +41,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     EditText expirationMonthVw;
     EditText expirationYearVw;
     EditText cidVw;
+    TextView zipCodeVw;
 
     private boolean shippingAddrNeedsApplying = true;
     private boolean billingAddrNeedsApplying = true;
@@ -89,6 +90,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         billingAddrBlock = (AddressBlock) frame.findViewById(R.id.billing_addr_layout);
         billingAddrBlock.setOnDoneListener(this);
         billingAddrHeadingVw = frame.findViewById(R.id.billing_addr_heading);
+        zipCodeVw = (TextView) shippingAddrBlock.findViewById(R.id.zipCode);
 
         paymentMethodLayoutVw = frame.findViewById(R.id.payment_method_layout);
         cardNumberVw = (EditText) paymentMethodLayoutVw.findViewById(R.id.cardNumber);
@@ -97,6 +99,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         expirationYearVw = (EditText) paymentMethodLayoutVw.findViewById(R.id.expiration_year);
         cidVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cid);
         useShipAddrAsBillingAddrSwitch = (Switch) frame.findViewById(R.id.useShipAddrAsBillingAddr_switch);
+
 
         // initialize from cache
         if (shippingAddressCache != null) {
@@ -114,74 +117,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         // TODO: ideally the expiration date code should be encapsulated in a custom compound view,
         // but given the end-of-project rush, this will have to do
 
-        expirationMonthVw.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String input = editable.toString();
-                if (editable.length() == 1) {
-                    int month = Integer.parseInt(input);
-                    if (month > 1) {
-                        expirationMonthVw.setText("0" + expirationMonthVw.getText().toString());
-                        expirationYearVw.requestFocus();
-                    }
-
-                } else if (editable.length() == 2) {
-                    int month = Integer.parseInt(input);
-                    if (month <= 12) {
-                        expirationYearVw.requestFocus();
-                    } else {
-                        activity.showErrorDialog("Please check the expiration month");
-                    }
-                } else {
-                }
-
-            }
-        });
-
-        expirationMonthVw.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString().replaceAll(" ", ""));
-                    if (ccType != CreditCard.Type.UNKNOWN) {
-                        cardImage.setImageResource(ccType.getImageResource());
-                    }
-                }
-            }
-        });
-
-        expirationYearVw.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String input = editable.toString();
-                if (editable.length() == 2) {
-                    Calendar calendar = Calendar.getInstance();
-                    int currentYear = calendar.get(Calendar.YEAR) % 100;
-                    int year = Integer.parseInt(input);
-
-                    if (year < currentYear) {
-                        activity.showErrorDialog("Please check the expiration year");
-                    }
-                }
-            }
-        });
-
         cidVw.setVisibility(View.VISIBLE); // set initially visible, hide later if not applicable to card type (as per Joe Raffone)
         expirationYearVw.setImeOptions(EditorInfo.IME_ACTION_NEXT);
 
@@ -191,9 +126,10 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         // hide imported views' Save buttons
         paymentMethodLayoutVw.findViewById(R.id.addCCBtn).setVisibility(View.GONE);
         paymentMethodLayoutVw.findViewById(R.id.address_cancel).setVisibility(View.GONE);
-        TextView.OnEditorActionListener paymentMethodCompletionListener = this;
-        expirationYearVw.setOnEditorActionListener(paymentMethodCompletionListener);
-        cidVw.setOnEditorActionListener(paymentMethodCompletionListener);
+
+//        TextView.OnEditorActionListener paymentMethodCompletionListener = this;
+//        expirationYearVw.setOnEditorActionListener(paymentMethodCompletionListener);
+//        cidVw.setOnEditorActionListener(paymentMethodCompletionListener);
         cardNumberVw.setFilters(new InputFilter[]{new CcNumberInputFilter()});
         // add listener to billing addr toggle button switch
         useShipAddrAsBillingAddrSwitch = (Switch) frame.findViewById(R.id.useShipAddrAsBillingAddr_switch);
@@ -203,43 +139,40 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         // focus listener for CC and shipping addr
         shippingAddrBlock.findViewById(R.id.firstName).setOnFocusChangeListener(this);
         cardNumberVw.setOnFocusChangeListener(this);
+        cardNumberVw.addTextChangedListener(this);
         expirationMonthVw.addTextChangedListener(this);
         expirationMonthVw.setOnFocusChangeListener(this);
         expirationYearVw.addTextChangedListener(this);
-    }
-
-    // grouping event methods together for easier reading and getting rid of anonymous classes
-
-    @Override
-    public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-        if (i == EditorInfo.IME_ACTION_DONE) {
-            if (useShipAddrAsBillingAddrSwitch.isChecked()) {
-                applyAddressesAndPrecheckout();
-            }
-        }
-        return false; // pass on to other listeners.
+        zipCodeVw.setOnFocusChangeListener(this);
     }
 
     @Override
-    public void onFocusChange(View view, boolean b) {
-        if (b) {
+    public void onFocusChange(View view, boolean hasFocus) {
+        if (hasFocus) {
         if (view.getId() == R.id.firstName) {
             Tracker.getInstance().trackActionForCheckoutEnterAddress(); // analytics
         } else if (view.getId() == R.id.cardNumber) {
+            applyAddressesAndPrecheckout();
             Tracker.getInstance().trackActionForCheckoutEnterPayment(); // analytics
         } else if (view.getId() == R.id.expiration_month) {
             // loss of focus on CC number isn't consistent, so handle gain of focus on exp date too
             handleCardNumberChange();
             }
+            else if(view.getId() == R.id.zipCode) {
+            resetShippingAndTax();
+        }
         } else  {
             // when CC number loses focus, evaluate card type and show/hide CID
             if (view.getId() == R.id.cardNumber) {
                 handleCardNumberChange();
             }
-        if(view.getId() == R.id.expiration_month) {
-            CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString().replaceAll(" ", ""));
-            if (ccType != CreditCard.Type.UNKNOWN) {
-                cardImage.setImageResource(ccType.getImageResource());
+            if(view.getId() == R.id.expiration_month) {
+                CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString().replaceAll(" ", ""));
+                if (ccType != CreditCard.Type.UNKNOWN) {
+                    cardImage.setImageResource(ccType.getImageResource());
+            }
+            if(view.getId() == R.id.zipCode) {
+                applyAddressesAndPrecheckout();
             }
         }
         }
@@ -396,10 +329,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         if(!useShipAddrAsBillingAddrSwitch.isChecked()) {
             billingAddrReady = billingAddrBlock.validate();
         }
-        getPaymentMethod();
-        boolean paymentMethodReady = (cidVw.getVisibility() == View.VISIBLE)?
-                !TextUtils.isEmpty(cidVw.getText()) : !TextUtils.isEmpty(expirationYearVw.getText());
-        return (shippingAddrReady && billingAddrReady && paymentMethodReady);
+        return (shippingAddrReady && billingAddrReady);
     }
 
     private void applyAddressesAndPrecheckout() {
@@ -409,8 +339,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
             return;
         }
 
-        activity.hideSoftKeyboard();
-
         // add shipping address to cart if necessary, then billing address and precheckout
         if (shippingAddrNeedsApplying) {
             ShippingAddress shippingAddress = getShippingAddress();
@@ -419,11 +347,9 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                 Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
                 activity.showErrorDialog(errMsg);
             } else {
-                showProgressIndicator();
                 CheckoutApiManager.applyShippingAddress(shippingAddress, new CheckoutApiManager.ApplyAddressCallback() {
                     @Override
                     public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
-                        hideProgressIndicator();
 
                         // if success
                         if (errMsg == null) {
@@ -463,7 +389,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                 Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
                 activity.showErrorDialog(errMsg);
             } else {
-                showProgressIndicator();
                 CheckoutApiManager.applyBillingAddress(billingAddress, new CheckoutApiManager.ApplyAddressCallback() {
                     @Override
                     public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
@@ -507,30 +432,27 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     /** handles order submission */
     @Override
     protected void onSubmit() {
-        submitPaymentMethodAndOrder();
-    }
-
-
-    private void submitPaymentMethodAndOrder() {
         // encrypt and apply payment method
-        showProgressIndicator();
         final PaymentMethod paymentMethod = getPaymentMethod();
-        CheckoutApiManager.encryptAndApplyPaymentMethod(paymentMethod, new CheckoutApiManager.ApplyPaymentMethodCallback() {
-            @Override
-            public void onApplyPaymentMethodComplete(String paymentMethodId, String authorized, String errMsg) {
-                hideProgressIndicator();
+        if(getPaymentMethod() != null) {
+            showProgressIndicator();
+            CheckoutApiManager.encryptAndApplyPaymentMethod(paymentMethod, new CheckoutApiManager.ApplyPaymentMethodCallback() {
+                @Override
+                public void onApplyPaymentMethodComplete(String paymentMethodId, String authorized, String errMsg) {
+                    hideProgressIndicator();
 
-                // if success
-                if (errMsg == null) {
-                    // submit the order
-                    submitOrder(paymentMethod, shippingAddrBlock.getEmailAddress());
+                    // if success
+                    if (errMsg == null) {
+                        // submit the order
+                        submitOrder(paymentMethod, shippingAddrBlock.getEmailAddress());
 
-                } else {
-                    Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
-                    activity.showErrorDialog(errMsg);
-                    Log.d(TAG, errMsg);
+                    } else {
+                        Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
+                        activity.showErrorDialog(errMsg);
+                        Log.d(TAG, errMsg);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 }

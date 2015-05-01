@@ -168,11 +168,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     protected abstract void initEntryArea(View frame);
 
     protected void startPrecheckout() {
-        showProgressIndicator();
         CheckoutApiManager.precheckout(new CheckoutApiManager.PrecheckoutCallback() {
             @Override
             public void onPrecheckoutComplete(Float totalHandlingCost, String shippingCharge, Float tax, String errMsg, String infoMsg) {
-                hideProgressIndicator();
 
                 // if success
                 if (errMsg == null) {
