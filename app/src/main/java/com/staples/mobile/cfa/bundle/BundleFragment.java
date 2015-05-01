@@ -272,8 +272,8 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Bundle
         window.requestFeature(Window.FEATURE_NO_TITLE);
         window.setBackgroundDrawableResource(R.drawable.dialog_frame);
         popup.setContentView(R.layout.expired_dialog);
-        popup.findViewById(R.id.dialog).setOnClickListener(this);
         popup.findViewById(R.id.ok).setOnClickListener(this);
+        popup.setCanceledOnTouchOutside(false);
         popup.setOnDismissListener(this);
         popup.show();
     }
@@ -314,7 +314,6 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Bundle
                 panel.setOnClickListener(this);
                 panel.show();
                 break;
-            case R.id.dialog:
             case R.id.ok:
                 if (popup!=null) popup.dismiss();
                 break;

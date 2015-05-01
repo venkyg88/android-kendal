@@ -63,7 +63,7 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
 
     private void save(View view) {
         MainActivity activity = (MainActivity) getActivity();
-        activity.hideSoftKeyboard(view);
+        activity.hideSoftKeyboard();
 
         switch(view.getId()) {
             case R.id.address_save:

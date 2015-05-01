@@ -324,7 +324,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
     @Override
     public void onClick(View view) {
-        activity.hideSoftKeyboard(view);
+        activity.hideSoftKeyboard();
         switch(view.getId()) {
             case R.id.coupons_rewards_layout:
                 if (!couponsExpanded()) {
@@ -355,7 +355,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 activity.selectOrderCheckout();
                 break;
             case R.id.rewards_link_acct_button:
-                activity.hideSoftKeyboard(view);
+                activity.hideSoftKeyboard();
 
 
                 String rewardsNumber = ((EditText)getView().findViewById(R.id.rewards_card_number)).getText().toString();
@@ -696,7 +696,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             if (cartAdapter != null && tag != null && tag instanceof CartAdapter.CartItemPosition) {
                 CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition)tag);
 
-                activity.hideSoftKeyboard(view);
+                activity.hideSoftKeyboard();
 
                 // delete from cart via API
                 cartItem.setProposedQty(0);
