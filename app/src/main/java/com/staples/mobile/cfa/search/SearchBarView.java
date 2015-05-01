@@ -207,12 +207,14 @@ public class SearchBarView extends LinearLayout implements View.OnClickListener,
     public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
         switch(actionId) {
             case EditorInfo.IME_ACTION_SEARCH:
+                activity.hideSoftKeyboard();
                 doSearch(null);
-                break;
+                return(true);
             case EditorInfo.IME_NULL:
                 if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER &&
                     event.getAction()==KeyEvent.ACTION_DOWN) {
                     doSearch(null);
+                    return(true);
                 }
                 break;
         }
