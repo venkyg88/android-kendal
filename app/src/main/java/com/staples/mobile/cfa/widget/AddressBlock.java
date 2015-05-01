@@ -4,6 +4,7 @@ import android.content.Context;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -88,6 +89,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
             view.setError(getContext().getResources().getString(R.string.required));
             return false;
         }
+        view.setError(null);
         view.setText(text);
         return true;
     }
@@ -109,12 +111,28 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         return(true);
     }
 
+    private boolean validateEmail(int id) {
+        TextView view = (TextView) findViewById(id);
+
+        String text = view.getText().toString().trim();
+        if (text.length()==0) {
+            view.setError(getContext().getResources().getString(R.string.required));
+            return false;
+        }
+        if(!Patterns.EMAIL_ADDRESS.matcher(text).matches()) {
+            view.setError(getContext().getResources().getString(R.string.bad_email));
+            return(false);
+        }
+        view.setText(text);
+        return true;
+    }
+
     public boolean validate() {
         boolean valid = true;
         valid &= validateRequired(R.id.firstName);
         valid &= validateRequired(R.id.lastName);
         valid &= validateRequired(R.id.phoneNumber);
-        valid &= validateRequired(R.id.emailAddr);
+        valid &= validateEmail(R.id.emailAddr);
         valid &= validateRequired(R.id.address);
         valid &= validateRequired(R.id.city);
         valid &= validateUsState(R.id.state);
@@ -263,6 +281,8 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
             injectField(R.id.city, place.city);
             injectField(R.id.state, place.state);
             injectField(R.id.zipCode, place.postalCode);
+            validateRequired(R.id.city);
+            validateRequired(R.id.zipCode);
         }
     }
 }
