@@ -1,4 +1,4 @@
-package com.staples.mobile.cfa;
+package app.staples.mobile.cfa;
 
 // Development version
 

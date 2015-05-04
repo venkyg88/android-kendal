@@ -1,19 +1,16 @@
 package app.staples.mobile.cfa;
 
 import android.app.Application;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.StrictMode;
 import android.os.StrictMode.ThreadPolicy;
 import android.os.StrictMode.VmPolicy;
-import android.os.StrictMode;
-
 import android.util.Log;
 
 import com.crittercism.app.Crittercism;
-
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.configurator.model.Configurator;
