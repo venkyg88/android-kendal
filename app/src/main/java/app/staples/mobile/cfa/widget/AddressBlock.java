@@ -12,11 +12,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import app.staples.mobile.cfa.R;
-import app.staples.mobile.cfa.profile.UsState;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.UpdateAddress;
+
+import app.staples.R;
+import app.staples.mobile.cfa.profile.UsState;
 
 public class AddressBlock extends LinearLayout implements TextView.OnEditorActionListener, PlaceFieldView.OnPlaceDoneListener {
     private static final String TAG = AddressBlock.class.getSimpleName();

@@ -9,19 +9,19 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.crittercism.app.Crittercism;
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
-import com.staples.mobile.common.analytics.Tracker;
-import app.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.EmptyResponse;
 import com.staples.mobile.common.access.easyopen.model.login.PasswordRecovery;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import app.staples.R;
+import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.widget.ActionBar;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;

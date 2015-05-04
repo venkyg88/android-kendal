@@ -29,8 +29,21 @@ import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.crittercism.app.Crittercism;
-import app.staples.mobile.cfa.R;
+import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.config.AppConfigurator;
+import com.staples.mobile.common.access.config.StaplesAppContext;
+import com.staples.mobile.common.access.configurator.model.Configurator;
+import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
+import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.member.Member;
+import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
+import com.staples.mobile.common.analytics.Tracker;
+import com.urbanairship.UAirship;
+import com.urbanairship.push.PushManager;
 
+import java.util.Date;
+
+import app.staples.R;
 import app.staples.mobile.cfa.UpgradeManager.UPGRADE_STATUS;
 import app.staples.mobile.cfa.analytics.AdobeTracker;
 import app.staples.mobile.cfa.apptentive.ApptentiveSdk;
@@ -63,20 +76,6 @@ import app.staples.mobile.cfa.weeklyad.WeeklyAdByCategoryFragment;
 import app.staples.mobile.cfa.weeklyad.WeeklyAdInStoreFragment;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.LinearLayoutWithOverlay;
-import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.config.AppConfigurator;
-import com.staples.mobile.common.access.config.StaplesAppContext;
-import com.staples.mobile.common.access.configurator.model.Configurator;
-import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
-import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.member.Member;
-import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
-import com.staples.mobile.common.analytics.Tracker;
-import com.urbanairship.UAirship;
-import com.urbanairship.push.PushManager;
-
-import java.util.Date;
-
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;

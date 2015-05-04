@@ -8,11 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
 
 import java.util.List;
+
+import app.staples.R;
+import app.staples.mobile.cfa.MainActivity;
 
 public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.ViewHolder> {
 

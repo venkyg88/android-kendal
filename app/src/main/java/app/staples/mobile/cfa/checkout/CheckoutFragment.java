@@ -11,18 +11,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
-import app.staples.mobile.cfa.cart.CartApiManager;
-import app.staples.mobile.cfa.kount.KountManager;
-import app.staples.mobile.cfa.util.CurrencyFormat;
-import app.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.analytics.Tracker;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+
+import app.staples.R;
+import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.cart.CartApiManager;
+import app.staples.mobile.cfa.kount.KountManager;
+import app.staples.mobile.cfa.util.CurrencyFormat;
+import app.staples.mobile.cfa.widget.ActionBar;
 
 public abstract class CheckoutFragment extends Fragment implements View.OnClickListener {
 

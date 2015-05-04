@@ -16,11 +16,6 @@ import android.widget.HorizontalScrollView;
 import android.widget.TabHost;
 
 import com.crittercism.app.Crittercism;
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
-import app.staples.mobile.cfa.cart.CartApiManager;
-import app.staples.mobile.cfa.widget.ActionBar;
-import app.staples.mobile.cfa.widget.HorizontalDivider;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -32,6 +27,11 @@ import com.staples.mobile.common.analytics.Tracker;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.staples.R;
+import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.cart.CartApiManager;
+import app.staples.mobile.cfa.widget.ActionBar;
+import app.staples.mobile.cfa.widget.HorizontalDivider;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;

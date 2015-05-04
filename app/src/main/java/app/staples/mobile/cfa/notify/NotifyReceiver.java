@@ -11,12 +11,13 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
 import com.urbanairship.push.BaseIntentReceiver;
 import com.urbanairship.push.PushMessage;
 import com.urbanairship.push.notifications.NotificationFactory;
 import com.urbanairship.util.NotificationIDGenerator;
+
+import app.staples.R;
+import app.staples.mobile.cfa.MainActivity;
 
 public class NotifyReceiver extends BaseIntentReceiver {
     private static final String TAG = NotifyReceiver.class.getSimpleName();

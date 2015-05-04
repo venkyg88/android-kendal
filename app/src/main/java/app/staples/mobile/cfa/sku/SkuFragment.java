@@ -20,7 +20,7 @@ import com.apptentive.android.sdk.Apptentive;
 import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
 import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
+import app.staples.R;
 import app.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import app.staples.mobile.cfa.cart.CartApiManager;
 import app.staples.mobile.cfa.feed.PersistentSizedArrayList;

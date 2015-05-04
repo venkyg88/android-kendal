@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import app.staples.mobile.cfa.R;
+import app.staples.R;
 
 import java.util.ArrayList;
 

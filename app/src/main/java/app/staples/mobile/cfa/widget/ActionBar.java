@@ -8,9 +8,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import app.staples.mobile.cfa.R;
-import app.staples.mobile.cfa.search.SearchBarView;
 import com.staples.mobile.common.analytics.Tracker;
+
+import app.staples.R;
+import app.staples.mobile.cfa.search.SearchBarView;
 
 public class ActionBar extends LinearLayout {
     private static final String TAG = ActionBar.class.getSimpleName();

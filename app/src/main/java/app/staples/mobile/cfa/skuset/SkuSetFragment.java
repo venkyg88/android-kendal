@@ -11,12 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.crittercism.app.Crittercism;
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
-import app.staples.mobile.cfa.bundle.BundleItem;
-import app.staples.mobile.cfa.widget.ActionBar;
-import app.staples.mobile.cfa.widget.DataWrapper;
-import app.staples.mobile.cfa.widget.HorizontalDivider;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -25,6 +19,12 @@ import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
 
 import java.util.List;
 
+import app.staples.R;
+import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.bundle.BundleItem;
+import app.staples.mobile.cfa.widget.ActionBar;
+import app.staples.mobile.cfa.widget.DataWrapper;
+import app.staples.mobile.cfa.widget.HorizontalDivider;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;

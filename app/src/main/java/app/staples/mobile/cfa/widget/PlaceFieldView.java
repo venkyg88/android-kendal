@@ -12,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListPopupWindow;
 import android.widget.TextView;
 
-import app.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.google.api.GoogleApi;
 import com.staples.mobile.common.access.google.model.places.AddressComponent;
@@ -24,6 +23,7 @@ import com.staples.mobile.common.access.google.model.places.Result;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import app.staples.R;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;

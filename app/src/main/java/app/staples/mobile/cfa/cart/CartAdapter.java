@@ -10,15 +10,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import app.staples.mobile.cfa.R;
-import app.staples.mobile.cfa.util.CurrencyFormat;
-import app.staples.mobile.cfa.widget.QuantityEditor;
-import app.staples.mobile.cfa.widget.PriceSticker;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import app.staples.R;
+import app.staples.mobile.cfa.util.CurrencyFormat;
+import app.staples.mobile.cfa.widget.PriceSticker;
+import app.staples.mobile.cfa.widget.QuantityEditor;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 

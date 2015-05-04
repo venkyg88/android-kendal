@@ -10,9 +10,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
-import app.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 import com.staples.mobile.common.access.easyopen.model.member.CCDetails;
@@ -20,6 +17,10 @@ import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.List;
+
+import app.staples.R;
+import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.widget.ActionBar;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener{
     private static final String TAG = ProfileFragment.class.getSimpleName();

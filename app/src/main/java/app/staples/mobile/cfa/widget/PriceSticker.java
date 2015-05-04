@@ -9,7 +9,7 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 
-import app.staples.mobile.cfa.R;
+import app.staples.R;
 
 import java.text.NumberFormat;
 import java.util.List;

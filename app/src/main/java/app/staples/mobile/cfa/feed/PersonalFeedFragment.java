@@ -21,13 +21,6 @@ import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
-import app.staples.mobile.cfa.cart.CartApiManager;
-import app.staples.mobile.cfa.widget.ActionBar;
-import app.staples.mobile.cfa.widget.DataWrapper;
-import app.staples.mobile.cfa.widget.PriceSticker;
-import app.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -46,6 +39,13 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import app.staples.R;
+import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.cart.CartApiManager;
+import app.staples.mobile.cfa.widget.ActionBar;
+import app.staples.mobile.cfa.widget.DataWrapper;
+import app.staples.mobile.cfa.widget.PriceSticker;
+import app.staples.mobile.cfa.widget.RatingStars;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;

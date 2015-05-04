@@ -11,10 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.crittercism.app.Crittercism;
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
-import app.staples.mobile.cfa.profile.ProfileDetails;
-import app.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -22,6 +18,10 @@ import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.UpdateProfile;
 import com.staples.mobile.common.access.easyopen.model.member.UpdateProfileResponse;
 
+import app.staples.R;
+import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.profile.ProfileDetails;
+import app.staples.mobile.cfa.widget.ActionBar;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;

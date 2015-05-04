@@ -3,7 +3,6 @@ package app.staples.mobile.cfa.store;
 import android.content.Context;
 
 import com.crittercism.app.Crittercism;
-import app.staples.mobile.cfa.R;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -11,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import app.staples.R;
 
 /** This class represents a span of UTC time within a repeating week.
  * The basic unit is milliseconds since midnight at the start of Thursday.

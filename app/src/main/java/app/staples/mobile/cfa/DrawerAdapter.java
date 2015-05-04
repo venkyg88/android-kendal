@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import app.staples.R;
 import app.staples.mobile.cfa.browse.BrowseFragment;
 import app.staples.mobile.cfa.feed.PersonalFeedFragment;
 import app.staples.mobile.cfa.home.HomeFragment;

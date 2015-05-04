@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import app.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.browse.Browse;
@@ -19,6 +18,7 @@ import com.staples.mobile.common.access.easyopen.model.browse.Product;
 
 import java.util.List;
 
+import app.staples.R;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;

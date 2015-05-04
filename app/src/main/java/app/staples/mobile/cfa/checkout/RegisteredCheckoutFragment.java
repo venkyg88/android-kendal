@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import app.staples.mobile.cfa.DrawerItem;
 import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
+import app.staples.R;
 import app.staples.mobile.cfa.profile.CreditCard;
 import app.staples.mobile.cfa.profile.ProfileDetails;
 import app.staples.mobile.cfa.widget.ActionBar;

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.crittercism.app.Crittercism;
 import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
+import app.staples.R;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.AddressBlock;
 import com.staples.mobile.common.access.Access;

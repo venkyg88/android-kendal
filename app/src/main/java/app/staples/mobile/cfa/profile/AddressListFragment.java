@@ -10,13 +10,14 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.crittercism.app.Crittercism;
-import app.staples.mobile.cfa.DrawerItem;
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
-import app.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
 
 import java.util.List;
+
+import app.staples.R;
+import app.staples.mobile.cfa.DrawerItem;
+import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.widget.ActionBar;
 
 public class AddressListFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "Address List Fragment";

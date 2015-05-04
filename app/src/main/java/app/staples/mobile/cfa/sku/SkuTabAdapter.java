@@ -8,12 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import app.staples.mobile.cfa.R;
-import app.staples.mobile.cfa.widget.DataWrapper;
-import app.staples.mobile.cfa.widget.HorizontalDivider;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 
 import java.util.ArrayList;
+
+import app.staples.R;
+import app.staples.mobile.cfa.widget.DataWrapper;
+import app.staples.mobile.cfa.widget.HorizontalDivider;
 
 public class SkuTabAdapter extends PagerAdapter {
     private static final String TAG = SkuTabAdapter.class.getSimpleName();

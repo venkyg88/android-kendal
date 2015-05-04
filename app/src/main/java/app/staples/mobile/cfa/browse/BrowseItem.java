@@ -1,6 +1,6 @@
 package app.staples.mobile.cfa.browse;
 
-import app.staples.mobile.cfa.R;
+import app.staples.R;
 
 public class BrowseItem {
     private static final String TAG = BrowseItem.class.getSimpleName();
