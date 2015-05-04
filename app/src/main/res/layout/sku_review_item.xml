@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingTop="@dimen/sku_padding_5">
-        <com.staples.mobile.cfa.widget.RatingStars
+        <app.staples.mobile.cfa.widget.RatingStars
             android:id="@+id/sku_review_rating"
             style="@style/SmallRatingStars"
             android:paddingRight="@dimen/sku_padding_10"

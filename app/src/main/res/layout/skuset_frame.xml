@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.staples.mobile.cfa.widget.AnimatorLayout
+<app.staples.mobile.cfa.widget.AnimatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <com.staples.mobile.cfa.widget.DataWrapper
+    <app.staples.mobile.cfa.widget.DataWrapper
         android:id="@+id/wrapper"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -29,5 +29,5 @@
             android:gravity="center"
             android:textSize="@dimen/fontsize_20sp"
             android:text="@string/empty"/>
-    </com.staples.mobile.cfa.widget.DataWrapper>
-</com.staples.mobile.cfa.widget.AnimatorLayout>
+    </app.staples.mobile.cfa.widget.DataWrapper>
+</app.staples.mobile.cfa.widget.AnimatorLayout>

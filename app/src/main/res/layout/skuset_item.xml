@@ -18,11 +18,11 @@
             android:id="@+id/title"
             style="@style/SmallProductTitle"
             android:layout_marginRight="@dimen/margin_16dp"/>
-        <com.staples.mobile.cfa.widget.PriceSticker
+        <app.staples.mobile.cfa.widget.PriceSticker
             android:id="@+id/pricing"
             style="@style/SmallPriceSticker"
             android:layout_marginTop="@dimen/elevation_high"/>
-        <com.staples.mobile.cfa.widget.RatingStars
+        <app.staples.mobile.cfa.widget.RatingStars
             android:id="@+id/rating"
             style="@style/SmallRatingStars"
             android:layout_marginTop="@dimen/elevation_high"/>

@@ -4,7 +4,7 @@
   ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
   -->
 
-<com.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<app.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:other="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -53,7 +53,7 @@
                     android:layout_below="@id/member_duration"
                     android:textSize="@dimen/fontsize_18sp"/>
 
-                <com.staples.mobile.cfa.widget.Numeric39Barcode
+                <app.staples.mobile.cfa.widget.Numeric39Barcode
                     android:id="@+id/rewards_number_barcode39"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -128,4 +128,4 @@
             </FrameLayout>
         </LinearLayout>
     </TabHost>
-</com.staples.mobile.cfa.widget.AnimatorLayout>
+</app.staples.mobile.cfa.widget.AnimatorLayout>

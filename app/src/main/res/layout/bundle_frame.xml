@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.staples.mobile.cfa.widget.AnimatorFrame xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+<app.staples.mobile.cfa.widget.AnimatorFrame xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.staples.mobile.cfa.widget.DataWrapper
+    <app.staples.mobile.cfa.widget.DataWrapper
         android:id="@+id/wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -23,11 +23,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
-    </com.staples.mobile.cfa.widget.DataWrapper>
+    </app.staples.mobile.cfa.widget.DataWrapper>
     <ImageButton
         android:id="@+id/open_sort"
         style="@style/RoundButton"
         android:background="@drawable/oval_red"
         android:src="@drawable/ic_sort_white"
         android:visibility="gone"/>
-</com.staples.mobile.cfa.widget.AnimatorFrame>
+</app.staples.mobile.cfa.widget.AnimatorFrame>

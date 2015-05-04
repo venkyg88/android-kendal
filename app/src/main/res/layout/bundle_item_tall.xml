@@ -37,7 +37,7 @@
         android:text="@string/add_on"
         android:textColor="@color/staples_white"
         android:background="@color/staples_green"/>
-    <com.staples.mobile.cfa.widget.PriceSticker
+    <app.staples.mobile.cfa.widget.PriceSticker
         android:id="@+id/pricing"
         style="@style/SmallPriceSticker"
         android:layout_marginTop="@dimen/elevation_high"/>
@@ -68,7 +68,7 @@
                 android:paddingBottom="@dimen/action_bar_quarter_margin"
                 android:textColor="@color/staples_white"
                 android:background="@drawable/rounded_corner_red"/>
-            <com.staples.mobile.cfa.widget.RatingStars
+            <app.staples.mobile.cfa.widget.RatingStars
                 android:id="@+id/rating"
                 style="@style/SmallRatingStars"
                 android:layout_marginTop="@dimen/elevation_high"/>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.staples.mobile.cfa.widget.AddressBlock xmlns:android="http://schemas.android.com/apk/res/android"
+<app.staples.mobile.cfa.widget.AddressBlock xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
 	android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -7,13 +7,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <com.staples.mobile.cfa.widget.DualHintEdit
+        <app.staples.mobile.cfa.widget.DualHintEdit
             android:id="@+id/firstName"
             style="@style/InputField"
             android:layout_weight="1"
             android:inputType="textPersonName"
             android:hint="@string/first_name_label"/>
-        <com.staples.mobile.cfa.widget.DualHintEdit
+        <app.staples.mobile.cfa.widget.DualHintEdit
             android:id="@+id/lastName"
             style="@style/InputField"
             android:layout_weight="1"
@@ -24,14 +24,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <com.staples.mobile.cfa.widget.PlaceFieldView
+        <app.staples.mobile.cfa.widget.PlaceFieldView
             android:id="@+id/address"
             style="@style/InputField"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:inputType="textPostalAddress"
             android:hint="@string/address_label"/>
-        <com.staples.mobile.cfa.widget.DualHintEdit
+        <app.staples.mobile.cfa.widget.DualHintEdit
             android:id="@+id/apartment"
             style="@style/InputField"
             android:layout_width="wrap_content"
@@ -43,14 +43,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <com.staples.mobile.cfa.widget.DualHintEdit
+        <app.staples.mobile.cfa.widget.DualHintEdit
             android:id="@+id/city"
             style="@style/InputField"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:inputType="textPostalAddress"
             android:hint="@string/city_label"/>
-        <com.staples.mobile.cfa.widget.DualHintEdit
+        <app.staples.mobile.cfa.widget.DualHintEdit
             android:id="@+id/state"
             style="@style/InputField"
             android:layout_width="wrap_content"
@@ -60,7 +60,7 @@
             android:hint="@string/state_label"/>
         <!--dls: zipcode field can't be strictly numeric since it may receive a dash character when
             switching from autocomplete, so setting to textPostalAddress instead-->
-        <com.staples.mobile.cfa.widget.DualHintEdit
+        <app.staples.mobile.cfa.widget.DualHintEdit
             android:id="@+id/zipCode"
             style="@style/InputField"
             android:layout_width="wrap_content"
@@ -69,15 +69,15 @@
             android:inputType="textPostalAddress"
             android:hint="@string/zip_code_label"/>
     </LinearLayout>
-    <com.staples.mobile.cfa.widget.DualHintEdit
+    <app.staples.mobile.cfa.widget.DualHintEdit
         android:id="@+id/phoneNumber"
         style="@style/InputField"
         android:inputType="phone"
         android:maxLength="14"
         android:hint="@string/phone_label"/>
-    <com.staples.mobile.cfa.widget.DualHintEdit
+    <app.staples.mobile.cfa.widget.DualHintEdit
         android:id="@+id/emailAddr"
         style="@style/InputField"
         android:inputType="textEmailAddress"
         android:hint="@string/email"/>
-</com.staples.mobile.cfa.widget.AddressBlock>
+</app.staples.mobile.cfa.widget.AddressBlock>
