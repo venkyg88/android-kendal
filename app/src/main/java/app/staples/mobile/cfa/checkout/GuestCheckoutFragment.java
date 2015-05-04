@@ -42,6 +42,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     EditText expirationYearVw;
     EditText cidVw;
     TextView zipCodeVw;
+    View submissionLayout;
 
     private boolean shippingAddrNeedsApplying = true;
     private boolean billingAddrNeedsApplying = true;
@@ -85,6 +86,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     /** initializes variable entry area of checkout screen */
     @Override
     protected void initEntryArea(View frame) {
+        disableCheckoutButton(true);
         shippingAddrBlock = (AddressBlock) frame.findViewById(R.id.shipping_addr_layout);
         shippingAddrBlock.setOnDoneListener(this);
         billingAddrBlock = (AddressBlock) frame.findViewById(R.id.billing_addr_layout);
@@ -384,7 +386,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     }
 
     private void applyBillingAddressIfNeededAndPrecheckout() {
-
         // apply billing address to cart if necessary
         if (billingAddrNeedsApplying) {
             BillingAddress billingAddress = getBillingAddress();
@@ -443,7 +444,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
             CheckoutApiManager.encryptAndApplyPaymentMethod(paymentMethod, new CheckoutApiManager.ApplyPaymentMethodCallback() {
                 @Override
                 public void onApplyPaymentMethodComplete(String paymentMethodId, String authorized, String errMsg) {
-                    hideProgressIndicator();
 
                     // if success
                     if (errMsg == null) {

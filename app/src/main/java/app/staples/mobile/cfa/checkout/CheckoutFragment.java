@@ -27,9 +27,9 @@ import app.staples.mobile.cfa.widget.ActionBar;
 
 public abstract class CheckoutFragment extends Fragment implements View.OnClickListener {
 
-    public enum ButtonState {
-        CLICKABLE, DISABLED
-    }
+   protected enum ButtonState {
+       ENABLED, DISABLED
+   }
 
     public static final String TAG = CheckoutFragment.class.getSimpleName();
 
@@ -68,7 +68,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     private Float pretaxSubtotal;
     private String deliveryRange;
 
-    ButtonState buttonState;
+    private ButtonState buttonState;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -103,7 +103,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
         // Set click listeners
         submissionLayout.setOnClickListener(this);
-        buttonState = ButtonState.DISABLED;
 
 //        couponsRewardsAmount = CartApiManager.getCouponsRewardsAdjustedAmount();
         itemSubtotal = CartApiManager.getSubTotal();
@@ -152,10 +151,10 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.co_submission_layout:
-                if(buttonState == ButtonState.CLICKABLE) {
+                if(buttonState == ButtonState.ENABLED) {
                     onSubmit();
-                    break;
                 }
+                break;
         }
     }
 
@@ -167,6 +166,16 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
     /** initializes variable entry area of checkout screen */
     protected abstract void initEntryArea(View frame);
+
+    protected void disableCheckoutButton(boolean isDisabled) {
+        if(isDisabled) {
+            submissionLayout.setCardBackgroundColor(getResources().getColor(R.color.staples_dark_gray));
+            buttonState = ButtonState.DISABLED;
+        } else {
+            submissionLayout.setCardBackgroundColor(getResources().getColor(R.color.staples_red));
+            buttonState = ButtonState.ENABLED;
+        }
+    }
 
     protected void startPrecheckout() {
         CheckoutApiManager.precheckout(new CheckoutApiManager.PrecheckoutCallback() {
@@ -180,15 +189,15 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                     if (infoMsg != null) {
                         activity.showErrorDialog(infoMsg);
                     }
-
+                    disableCheckoutButton(false);
                     // utilize shipping and tax info
                     setShippingAndTax(totalHandlingCost, shippingCharge, tax);
-                    submissionLayout.setCardBackgroundColor(getResources().getColor(R.color.staples_red));
-                    buttonState = ButtonState.CLICKABLE;
+
+                    hideProgressIndicator();
                 } else {
                     // if shipping and tax already showing, need to hide them
                     resetShippingAndTax();
-
+                    hideProgressIndicator();
                     activity.showErrorDialog(errMsg);
                     Log.d(TAG, errMsg);
                 }
@@ -197,11 +206,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     }
 
     protected void submitOrder(final PaymentMethod paymentMethod, final String emailAddress) {
-        showProgressIndicator();
         CheckoutApiManager.submitOrder(paymentMethod.getCardVerificationCode(), new CheckoutApiManager.OrderSubmissionCallback() {
             @Override
             public void onOrderSubmissionComplete(String orderId, String orderNumber, String errMsg) {
-                hideProgressIndicator();
 
                 final DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
 
@@ -215,7 +222,8 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                     // reset cart since empty after successful order submission
                     CartApiManager.resetCart(); // reset cart since empty after successful order submission
                     ActionBar.getInstance().setCartCount(0);
-
+                    hideProgressIndicator();
+                    
                     // show confirmation page
                     activity.selectOrderConfirmation(orderNumber, emailAddress,
                             deliveryRange, currencyFormat.format(getCheckoutTotal()));
@@ -224,7 +232,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                     Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg);
                     activity.showErrorDialog(errMsg);
                     Log.d(TAG, errMsg);
-
+                    hideProgressIndicator();
                     // sometimes there's a failure such as timeout but the order actually goes thru.
                     // therefore, refresh the cart to make sure we have the right cart status.
                     // (note that even this safeguard sometimes fails because order submission is still
@@ -289,7 +297,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
             checkoutBundle.putFloat(BUNDLE_PARAM_TAX, -1);
             this.shippingCharge = null;
             this.tax = null;
-            submissionLayout.setCardBackgroundColor(getResources().getColor(R.color.staples_dark_gray));
             submissionLayout.setClickable(false);
         }
     }

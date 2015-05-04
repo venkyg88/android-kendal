@@ -126,7 +126,7 @@
             card_view:contentPadding="@dimen/cartmath_half_margin"
             card_view:cardCornerRadius="8dp"
             card_view:cardElevation="0dp"
-            card_view:cardBackgroundColor="@color/staples_dark_gray">
+            card_view:cardBackgroundColor="@color/staples_red">
 
             <TextView
                 android:id="@+id/checkout_button_text"
