@@ -9,7 +9,7 @@ android {
     }
 
     defaultConfig {
-        applicationId 'com.staples'
+        applicationId 'app.staples'
         versionCode 22
     }
     signingConfigs {
