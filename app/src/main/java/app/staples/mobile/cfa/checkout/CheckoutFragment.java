@@ -223,7 +223,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                     CartApiManager.resetCart(); // reset cart since empty after successful order submission
                     ActionBar.getInstance().setCartCount(0);
                     hideProgressIndicator();
-                    
+
                     // show confirmation page
                     activity.selectOrderConfirmation(orderNumber, emailAddress,
                             deliveryRange, currencyFormat.format(getCheckoutTotal()));
@@ -297,7 +297,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
             checkoutBundle.putFloat(BUNDLE_PARAM_TAX, -1);
             this.shippingCharge = null;
             this.tax = null;
-            submissionLayout.setClickable(false);
         }
     }
 
