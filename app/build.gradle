@@ -5,12 +5,12 @@ android {
     buildToolsVersion "22.0.0"
 
     ext {
-        versionPrefix = '4.0.0.3'
+        versionPrefix = '4.0.0.4'
     }
 
     defaultConfig {
         applicationId 'com.staples.mobile.cfa'
-        versionCode 21
+        versionCode 22
     }
     signingConfigs {
         release {
@@ -53,6 +53,7 @@ android {
                 }
                 release {
                     minifyEnabled true
+                    //shrinkResources true
                     proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
                     signingConfig signingConfigs.release
                 }

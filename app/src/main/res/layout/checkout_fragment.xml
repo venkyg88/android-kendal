@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<app.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/checkout"
     android:layout_width="match_parent"
@@ -150,4 +150,4 @@
 
         </android.support.v7.widget.CardView>
     </RelativeLayout>
-</com.staples.mobile.cfa.widget.AnimatorLayout>
+</app.staples.mobile.cfa.widget.AnimatorLayout>

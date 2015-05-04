@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<app.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -93,4 +93,4 @@
 			android:textColor="@color/staples_black"
             android:layout_toLeftOf="@+id/addCCBtn"/>
         </RelativeLayout>
-</com.staples.mobile.cfa.widget.AnimatorLayout>
+</app.staples.mobile.cfa.widget.AnimatorLayout>

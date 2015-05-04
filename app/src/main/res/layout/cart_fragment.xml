@@ -3,7 +3,7 @@
   ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
   -->
 
-<com.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<app.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cart_layout"
     android:layout_width="match_parent"
@@ -282,4 +282,4 @@
 
     </RelativeLayout>
 
-</com.staples.mobile.cfa.widget.AnimatorLayout>
+</app.staples.mobile.cfa.widget.AnimatorLayout>

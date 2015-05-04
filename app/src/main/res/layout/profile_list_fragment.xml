@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.staples.mobile.cfa.widget.AnimatorFrame xmlns:android="http://schemas.android.com/apk/res/android"
+<app.staples.mobile.cfa.widget.AnimatorFrame xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -16,4 +16,4 @@
         style="@style/RoundButton"
         android:background="@drawable/oval_red"
         android:src="@drawable/ic_add_white"/>
-</com.staples.mobile.cfa.widget.AnimatorFrame>
+</app.staples.mobile.cfa.widget.AnimatorFrame>

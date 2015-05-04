@@ -60,7 +60,7 @@
             android:background="@color/staples_green"/>
 
         <!--price-->
-		<com.staples.mobile.cfa.widget.PriceSticker
+		<app.staples.mobile.cfa.widget.PriceSticker
 			android:id="@+id/cartitem_price"
 			android:layout_below="@id/overweight"
 			style="@style/SmallPriceSticker"
@@ -99,7 +99,7 @@
             android:layout_marginTop="@dimen/verticalspacing_8dp"
             android:src="@drawable/ic_close_black"/>
 
-        <com.staples.mobile.cfa.widget.QuantityEditor
+        <app.staples.mobile.cfa.widget.QuantityEditor
             android:id="@+id/cartitem_qty"
             style="@style/QtyEditorStyle"
             android:layout_width="60dp"

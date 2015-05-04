@@ -13,7 +13,7 @@
         android:src="@drawable/splash"
         android:background="@color/staples_white"/>
     <!-- Main screen -->
-    <com.staples.mobile.cfa.widget.LinearLayoutWithOverlay
+    <app.staples.mobile.cfa.widget.LinearLayoutWithOverlay
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -46,7 +46,7 @@
                 android:background="@color/staples_white"
                 android:choiceMode="singleChoice"/>
         </android.support.v4.widget.DrawerLayout>
-    </com.staples.mobile.cfa.widget.LinearLayoutWithOverlay>
+    </app.staples.mobile.cfa.widget.LinearLayoutWithOverlay>
 
     <!--progress indicator overlay-->
     <RelativeLayout
