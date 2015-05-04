@@ -8,7 +8,7 @@ import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import app.staples.mobile.cfa.R;
+import app.staples.R;
 
 public class HorizontalDivider extends RecyclerView.ItemDecoration {
     private static final String TAG = HorizontalDivider.class.getSimpleName();

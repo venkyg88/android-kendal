@@ -11,14 +11,15 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.crittercism.app.Crittercism;
-import app.staples.mobile.cfa.R;
-import app.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.analytics.Tracker;
 import com.urbanairship.UAirship;
 import com.urbanairship.push.PushManager;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import app.staples.R;
+import app.staples.mobile.cfa.widget.ActionBar;
 
 public class NotifyPrefsFragment extends Fragment implements CompoundButton.OnCheckedChangeListener {
     private static final String TAG = NotifyPrefsFragment.class.getSimpleName();

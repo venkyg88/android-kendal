@@ -17,12 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
-import app.staples.mobile.cfa.DrawerItem;
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
-import app.staples.mobile.cfa.widget.ActionBar;
-import app.staples.mobile.cfa.widget.HorizontalDivider;
-import app.staples.mobile.cfa.widget.LinearLayoutWithOverlay;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -42,6 +36,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import app.staples.R;
+import app.staples.mobile.cfa.DrawerItem;
+import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.widget.ActionBar;
+import app.staples.mobile.cfa.widget.HorizontalDivider;
+import app.staples.mobile.cfa.widget.LinearLayoutWithOverlay;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;

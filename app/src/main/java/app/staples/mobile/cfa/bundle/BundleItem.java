@@ -1,11 +1,14 @@
 package app.staples.mobile.cfa.bundle;
 
-import app.staples.mobile.cfa.IdentifierType;
-import app.staples.mobile.cfa.R;
-import com.staples.mobile.common.access.easyopen.model.browse.*;
+import com.staples.mobile.common.access.easyopen.model.browse.Discount;
+import com.staples.mobile.common.access.easyopen.model.browse.Image;
+import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 
 import java.util.Comparator;
 import java.util.List;
+
+import app.staples.R;
+import app.staples.mobile.cfa.IdentifierType;
 
 public class BundleItem {
     public enum SortType {

@@ -43,11 +43,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
-import com.staples.mobile.common.analytics.Tracker;
-import app.staples.mobile.cfa.location.LocationFinder;
-import app.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.channel.model.store.Obj;
 import com.staples.mobile.common.access.channel.model.store.StoreAddress;
@@ -56,10 +51,15 @@ import com.staples.mobile.common.access.channel.model.store.StoreFeature;
 import com.staples.mobile.common.access.channel.model.store.StoreHours;
 import com.staples.mobile.common.access.channel.model.store.StoreQuery;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.List;
 import java.util.Locale;
 
+import app.staples.R;
+import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.location.LocationFinder;
+import app.staples.mobile.cfa.widget.ActionBar;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;

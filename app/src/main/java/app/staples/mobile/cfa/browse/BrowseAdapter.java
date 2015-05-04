@@ -8,9 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import app.staples.mobile.cfa.R;
-
 import java.util.ArrayList;
+
+import app.staples.R;
 
 public class BrowseAdapter extends RecyclerView.Adapter<BrowseAdapter.ViewHolder> {
     private static final String TAG = BrowseAdapter.class.getSimpleName();

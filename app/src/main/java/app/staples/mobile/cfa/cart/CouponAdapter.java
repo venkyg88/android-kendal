@@ -7,11 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import app.staples.mobile.cfa.R;
-import app.staples.mobile.cfa.widget.EditTextWithImeBackEvent;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import app.staples.R;
+import app.staples.mobile.cfa.widget.EditTextWithImeBackEvent;
 
 public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder> {
 

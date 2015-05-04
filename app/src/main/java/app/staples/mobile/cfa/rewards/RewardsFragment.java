@@ -15,22 +15,23 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
-import com.staples.mobile.common.analytics.Tracker;
-import app.staples.mobile.cfa.cart.CartApiManager;
-import app.staples.mobile.cfa.profile.ProfileDetails;
-import app.staples.mobile.cfa.util.CurrencyFormat;
-import app.staples.mobile.cfa.widget.ActionBar;
-import app.staples.mobile.cfa.widget.Numeric39Barcode;
 import com.staples.mobile.common.access.easyopen.model.member.InkRecyclingDetail;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
 import com.staples.mobile.common.access.easyopen.model.member.YearToDateSave;
 import com.staples.mobile.common.access.easyopen.model.member.YearToDateSpend;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.text.DecimalFormat;
 import java.util.List;
+
+import app.staples.R;
+import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.cart.CartApiManager;
+import app.staples.mobile.cfa.profile.ProfileDetails;
+import app.staples.mobile.cfa.util.CurrencyFormat;
+import app.staples.mobile.cfa.widget.ActionBar;
+import app.staples.mobile.cfa.widget.Numeric39Barcode;
 
 public class RewardsFragment extends Fragment implements View.OnClickListener, CartApiManager.CartRefreshCallback {
     private static final String TAG = RewardsFragment.class.getSimpleName();

@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
-import app.staples.mobile.cfa.R;
-import app.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.channel.model.review.Review;
 import com.staples.mobile.common.access.channel.model.review.User;
 
@@ -21,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+
+import app.staples.R;
+import app.staples.mobile.cfa.widget.RatingStars;
 
 public class SkuReviewAdapter extends RecyclerView.Adapter<SkuReviewAdapter.ViewHolder> {
     private static final String TAG = SkuReviewAdapter.class.getSimpleName();

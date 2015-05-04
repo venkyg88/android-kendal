@@ -11,14 +11,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import app.staples.mobile.cfa.R;
-import app.staples.mobile.cfa.bundle.BundleItem;
-import app.staples.mobile.cfa.widget.PriceSticker;
-import app.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import app.staples.R;
+import app.staples.mobile.cfa.bundle.BundleItem;
+import app.staples.mobile.cfa.widget.PriceSticker;
+import app.staples.mobile.cfa.widget.RatingStars;
 
 public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder> {
     private static final String TAG = SkuSetAdapter.class.getSimpleName();

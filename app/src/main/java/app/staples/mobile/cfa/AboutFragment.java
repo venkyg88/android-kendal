@@ -34,6 +34,7 @@ import java.util.zip.ZipFile;
 
 import app.staples.mobile.cfa.location.LocationFinder;
 import app.staples.mobile.cfa.widget.ActionBar;
+import app.staples.R;
 
 public class AboutFragment extends Fragment {
     private static final String TAG = AboutFragment.class.getSimpleName();

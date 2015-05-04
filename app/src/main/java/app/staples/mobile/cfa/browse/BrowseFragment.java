@@ -17,14 +17,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 
 import com.crittercism.app.Crittercism;
-import app.staples.mobile.cfa.DrawerItem;
-import app.staples.mobile.cfa.IdentifierType;
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
-import com.staples.mobile.common.analytics.Tracker;
-import app.staples.mobile.cfa.widget.ActionBar;
-import app.staples.mobile.cfa.widget.DataWrapper;
-import app.staples.mobile.cfa.widget.FixedSizeLayoutManager;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -32,9 +24,17 @@ import com.staples.mobile.common.access.easyopen.model.browse.Browse;
 import com.staples.mobile.common.access.easyopen.model.browse.Category;
 import com.staples.mobile.common.access.easyopen.model.browse.Description;
 import com.staples.mobile.common.access.easyopen.model.browse.SubCategory;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.List;
 
+import app.staples.R;
+import app.staples.mobile.cfa.DrawerItem;
+import app.staples.mobile.cfa.IdentifierType;
+import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.widget.ActionBar;
+import app.staples.mobile.cfa.widget.DataWrapper;
+import app.staples.mobile.cfa.widget.FixedSizeLayoutManager;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;

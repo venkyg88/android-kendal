@@ -9,9 +9,9 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 
-import app.staples.mobile.cfa.R;
-
 import java.util.HashMap;
+
+import app.staples.R;
 
 public class Numeric39Barcode extends View {
 

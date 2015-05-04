@@ -19,11 +19,24 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
-
 import com.crittercism.app.Crittercism;
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
+import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.config.AppConfigurator;
+import com.staples.mobile.common.access.configurator.model.Configurator;
+import com.staples.mobile.common.access.easyopen.model.cart.Cart;
+import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
+import com.staples.mobile.common.access.easyopen.model.cart.Product;
+import com.staples.mobile.common.access.easyopen.model.member.Reward;
 import com.staples.mobile.common.analytics.Tracker;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import app.staples.R;
+import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import app.staples.mobile.cfa.checkout.CheckoutFragment;
 import app.staples.mobile.cfa.profile.ProfileDetails;
@@ -31,19 +44,6 @@ import app.staples.mobile.cfa.rewards.RewardsLinkingFragment;
 import app.staples.mobile.cfa.util.CurrencyFormat;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.QuantityEditor;
-import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.configurator.model.Configurator;
-import com.staples.mobile.common.access.easyopen.model.cart.Cart;
-import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
-import com.staples.mobile.common.access.easyopen.model.cart.Product;
-import com.staples.mobile.common.access.easyopen.model.member.Reward;
-import com.staples.mobile.common.access.config.AppConfigurator;
-
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 /** fragment to manage display and update of shopping cart */
 public class CartFragment extends Fragment implements View.OnClickListener, CartApiManager.CartRefreshCallback {

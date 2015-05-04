@@ -1,8 +1,8 @@
 package app.staples.mobile.cfa.profile;
 
-import app.staples.mobile.cfa.R;
-
 import java.util.regex.Pattern;
+
+import app.staples.R;
 
 public class CreditCard {
     public enum Type {

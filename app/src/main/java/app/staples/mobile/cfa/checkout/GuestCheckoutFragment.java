@@ -14,17 +14,18 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import app.staples.mobile.cfa.R;
-import app.staples.mobile.cfa.profile.CcNumberInputFilter;
-import app.staples.mobile.cfa.profile.CreditCard;
-import app.staples.mobile.cfa.widget.ActionBar;
-import app.staples.mobile.cfa.widget.AddressBlock;
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
 import com.staples.mobile.common.access.easyopen.model.cart.ShippingAddress;
 import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.Calendar;
+
+import app.staples.R;
+import app.staples.mobile.cfa.profile.CcNumberInputFilter;
+import app.staples.mobile.cfa.profile.CreditCard;
+import app.staples.mobile.cfa.widget.ActionBar;
+import app.staples.mobile.cfa.widget.AddressBlock;
 
 public class GuestCheckoutFragment extends CheckoutFragment implements AddressBlock.OnDoneListener, CompoundButton.OnCheckedChangeListener, TextWatcher, View.OnFocusChangeListener{
 

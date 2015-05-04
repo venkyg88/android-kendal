@@ -7,9 +7,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
-import app.staples.mobile.cfa.R;
 
 import java.util.ArrayList;
+
+import app.staples.R;
 
 public class SkuImageAdapter extends PagerAdapter {
     private static final String TAG = SkuImageAdapter.class.getSimpleName();

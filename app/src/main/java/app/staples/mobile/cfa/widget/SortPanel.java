@@ -24,7 +24,7 @@ import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import app.staples.mobile.cfa.R;
+import app.staples.R;
 
 public class SortPanel extends Dialog implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, Animation.AnimationListener {
     private static final String TAG = SortPanel.class.getSimpleName();

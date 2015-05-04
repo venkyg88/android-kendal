@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="app.staples.mobile.cfa">
+    package="app.staples">
     <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="22"/>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>

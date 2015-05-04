@@ -13,12 +13,6 @@ import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
-import com.staples.mobile.common.analytics.Tracker;
-import app.staples.mobile.cfa.profile.CreditCard;
-import app.staples.mobile.cfa.util.CurrencyFormat;
-import app.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.browse.Image;
@@ -27,10 +21,16 @@ import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
 import com.staples.mobile.common.access.easyopen.model.member.OrderStatus;
 import com.staples.mobile.common.access.easyopen.model.member.Shipment;
 import com.staples.mobile.common.access.easyopen.model.member.ShipmentSKU;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
+import app.staples.R;
+import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.profile.CreditCard;
+import app.staples.mobile.cfa.util.CurrencyFormat;
+import app.staples.mobile.cfa.widget.ActionBar;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;

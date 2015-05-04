@@ -8,7 +8,7 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
-import app.staples.mobile.cfa.R;
+import app.staples.R;
 
 public class DualHintEdit extends EditText {
     private static final String TAG = DualHintEdit.class.getSimpleName();

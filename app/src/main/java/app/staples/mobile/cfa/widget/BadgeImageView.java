@@ -11,7 +11,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-import app.staples.mobile.cfa.R;
+import app.staples.R;
 
 /**
  * Custom image view that draws text on top of image

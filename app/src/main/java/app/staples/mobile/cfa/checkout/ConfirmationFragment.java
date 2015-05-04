@@ -15,14 +15,15 @@ import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.crittercism.app.Crittercism;
+import com.staples.mobile.common.access.easyopen.model.member.Member;
+
+import app.staples.R;
 import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
 import app.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import app.staples.mobile.cfa.login.LoginHelper;
 import app.staples.mobile.cfa.profile.ProfileDetails;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.RelativeLayoutWithProgressOverlay;
-import com.staples.mobile.common.access.easyopen.model.member.Member;
 
 public class ConfirmationFragment extends Fragment implements View.OnClickListener {
     public static final String TAG = ConfirmationFragment.class.getSimpleName();

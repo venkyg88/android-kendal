@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
 import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
+import app.staples.R;
 import app.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;

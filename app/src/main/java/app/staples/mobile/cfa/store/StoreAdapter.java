@@ -13,10 +13,11 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import app.staples.mobile.cfa.R;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+
+import app.staples.R;
 
 public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> {
     private static final String TAG = StoreAdapter.class.getSimpleName();

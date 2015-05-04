@@ -12,10 +12,10 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.crittercism.app.Crittercism;
-import app.staples.mobile.cfa.R;
-
-import app.staples.mobile.cfa.widget.ActionBar;
 import com.staples.mobile.common.analytics.Tracker;
+
+import app.staples.R;
+import app.staples.mobile.cfa.widget.ActionBar;
 
 public class TermsFragment extends Fragment {
     private static final String TAG = TermsFragment.class.getSimpleName();

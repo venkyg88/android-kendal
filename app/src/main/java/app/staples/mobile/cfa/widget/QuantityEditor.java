@@ -14,7 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import app.staples.mobile.cfa.R;
+import app.staples.R;
 
 public class QuantityEditor extends EditText implements View.OnClickListener, TextView.OnEditorActionListener {
     private static final String TAG = QuantityEditor.class.getSimpleName();

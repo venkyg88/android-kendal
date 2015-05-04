@@ -10,10 +10,11 @@ import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
-import app.staples.mobile.cfa.R;
+import com.staples.mobile.common.analytics.Tracker;
+
+import app.staples.R;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.PriceSticker;
-import com.staples.mobile.common.analytics.Tracker;
 
 public class WeeklyAdInStoreFragment extends Fragment {
 

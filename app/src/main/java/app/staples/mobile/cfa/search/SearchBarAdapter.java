@@ -15,10 +15,10 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.mobile.cfa.R;
-
 import java.util.ArrayList;
+
+import app.staples.R;
+import app.staples.mobile.cfa.MainActivity;
 
 public class SearchBarAdapter extends BaseAdapter implements Filterable {
     private static final String TAG = SearchBarAdapter.class.getSimpleName();

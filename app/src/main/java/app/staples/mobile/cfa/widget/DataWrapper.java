@@ -9,7 +9,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import app.staples.mobile.cfa.R;
+import app.staples.R;
 
 /**
  * This class is a ViewGroup wrapper for three child Views:

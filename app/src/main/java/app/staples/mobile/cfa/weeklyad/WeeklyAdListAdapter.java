@@ -9,11 +9,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import app.staples.mobile.cfa.R;
 import com.staples.mobile.common.access.easyopen.model.weeklyad.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import app.staples.R;
 
 public class  WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapter.ViewHolder> {
     private static String TAG = WeeklyAdListAdapter.class.getSimpleName();
