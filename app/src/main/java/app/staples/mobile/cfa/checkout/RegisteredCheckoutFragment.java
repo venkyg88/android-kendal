@@ -155,7 +155,6 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
             CheckoutApiManager.applyShippingAddress(new ShippingAddress(profileAddress), new CheckoutApiManager.ApplyAddressCallback() {
                     @Override
                     public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
-                        hideProgressIndicator();
 
                         // if success
                         if (errMsg == null) {
@@ -171,13 +170,12 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                                 billingAddressId = newId; // fix our local id
                                 checkoutBundle.putString(BUNDLE_PARAM_BILLING_ADDR_ID, newId); // fix id in bundle
                             }
-
                             startPrecheckout();
 
                         } else {
                             // if shipping and tax already showing, need to hide them
                             resetShippingAndTax();
-
+                            hideProgressIndicator();
                             activity.showErrorDialog(errMsg);
                             Log.d(TAG, errMsg);
                         }
@@ -208,16 +206,13 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         CheckoutApiManager.applyBillingAddress(new BillingAddress(billingAddress), new CheckoutApiManager.ApplyAddressCallback() {
             @Override
             public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
-                hideProgressIndicator();
 
                 // if success
                 if (errMsg == null) {
-                    showProgressIndicator();
                     final PaymentMethod paymentMethod = new PaymentMethod(profilePaymentMethod);
                     CheckoutApiManager.applyPaymentMethod(paymentMethod, new CheckoutApiManager.ApplyPaymentMethodCallback() {
                         @Override
                         public void onApplyPaymentMethodComplete(String paymentMethodId, String authorized, String errMsg) {
-                            hideProgressIndicator();
                             // if success
                             if (errMsg == null) {
                                 // finally, upon payment method success, submit the order
@@ -226,6 +221,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                             } else {
                                 activity.showErrorDialog(errMsg);
                                 Log.d(TAG, errMsg);
+                                hideProgressIndicator();
                             }
                         }
                     });
