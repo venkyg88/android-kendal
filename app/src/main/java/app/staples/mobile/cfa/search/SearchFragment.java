@@ -41,6 +41,8 @@ import retrofit.client.Response;
 public class SearchFragment extends Fragment implements Callback<SearchResult>, BundleAdapter.OnFetchMoreData, View.OnClickListener {
     private static final String TAG = SearchFragment.class.getSimpleName();
 
+    private enum SortOption {DENY, ALLOW, VISIBLE};
+
     private static final String TITLE = "title";
     private static final String KEYWORD = "keyword";
 
@@ -54,6 +56,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
     private DataWrapper.State state;
     private boolean complete;
     private int page;
+    private SortOption sortOption;
     private BundleItem.SortType fetchSort;
     private BundleItem.SortType displaySort;
 
@@ -74,6 +77,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
             keyword = args.getString(KEYWORD);
         }
 
+        sortOption = SortOption.ALLOW;
         page = 1;
         displaySort = BundleItem.SortType.BESTMATCH;
         query();
@@ -102,6 +106,10 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         DataWrapper wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
         if (list!=null && list.getAdapter()==null && adapter!=null) {
             list.setAdapter(adapter);
+        }
+        if (sortOption==SortOption.VISIBLE) {
+            view.findViewById(R.id.open_sort).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.open_sort).setOnClickListener(this);
         }
         wrapper.setState(state);
     }
@@ -133,8 +141,12 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         if (!(activity instanceof MainActivity)) return;
 
         int count = processSearch(searchResult);
-        if (count==0) state = DataWrapper.State.EMPTY;
-        else state = DataWrapper.State.DONE;
+        if (count==0) {
+            state = DataWrapper.State.EMPTY;
+        } else {
+            state = DataWrapper.State.DONE;
+            sortOption = SortOption.VISIBLE;
+        }
         applyState(null);
 
         // Analytics

@@ -6,6 +6,7 @@ import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
@@ -27,7 +28,7 @@ import app.staples.mobile.cfa.profile.CreditCard;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.AddressBlock;
 
-public class GuestCheckoutFragment extends CheckoutFragment implements AddressBlock.OnDoneListener, CompoundButton.OnCheckedChangeListener, TextWatcher, View.OnFocusChangeListener{
+public class GuestCheckoutFragment extends CheckoutFragment implements AddressBlock.OnDoneListener, CompoundButton.OnCheckedChangeListener, TextWatcher, View.OnFocusChangeListener, TextView.OnEditorActionListener{
 
     private static final String TAG = GuestCheckoutFragment.class.getSimpleName();
 
@@ -42,6 +43,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     EditText expirationYearVw;
     EditText cidVw;
     TextView zipCodeVw;
+    View submissionLayout;
 
     private boolean shippingAddrNeedsApplying = true;
     private boolean billingAddrNeedsApplying = true;
@@ -85,6 +87,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     /** initializes variable entry area of checkout screen */
     @Override
     protected void initEntryArea(View frame) {
+        disableCheckoutButton(true);
         shippingAddrBlock = (AddressBlock) frame.findViewById(R.id.shipping_addr_layout);
         shippingAddrBlock.setOnDoneListener(this);
         billingAddrBlock = (AddressBlock) frame.findViewById(R.id.billing_addr_layout);
@@ -148,6 +151,19 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         expirationMonthVw.setOnFocusChangeListener(this);
         expirationYearVw.addTextChangedListener(this);
         zipCodeVw.setOnFocusChangeListener(this);
+        cidVw.setOnEditorActionListener(this);
+    }
+
+
+    @Override
+    public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+        // note that exp date will only have a DONE action if there's no CID, otherwise has NEXT action
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
+            if (useShipAddrAsBillingAddrSwitch.isChecked()) {
+                applyAddressesAndPrecheckout();
+            }
+        }
+        return false; // pass on to other listeners.
     }
 
     @Override
@@ -156,15 +172,11 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         if (view.getId() == R.id.firstName) {
             Tracker.getInstance().trackActionForCheckoutEnterAddress(); // analytics
         } else if (view.getId() == R.id.cardNumber) {
-            applyAddressesAndPrecheckout();
             Tracker.getInstance().trackActionForCheckoutEnterPayment(); // analytics
         } else if (view.getId() == R.id.expiration_month) {
             // loss of focus on CC number isn't consistent, so handle gain of focus on exp date too
             handleCardNumberChange();
             }
-            else if(view.getId() == R.id.zipCode) {
-            resetShippingAndTax();
-        }
         } else  {
             // when CC number loses focus, evaluate card type and show/hide CID
             if (view.getId() == R.id.cardNumber) {
@@ -174,9 +186,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                 CreditCard.Type ccType = CreditCard.Type.detect(cardNumberVw.getText().toString().replaceAll(" ", ""));
                 if (ccType != CreditCard.Type.UNKNOWN) {
                     cardImage.setImageResource(ccType.getImageResource());
-            }
-            if(view.getId() == R.id.zipCode) {
-                applyAddressesAndPrecheckout();
             }
         }
         }
@@ -384,7 +393,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     }
 
     private void applyBillingAddressIfNeededAndPrecheckout() {
-
         // apply billing address to cart if necessary
         if (billingAddrNeedsApplying) {
             BillingAddress billingAddress = getBillingAddress();
@@ -443,7 +451,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
             CheckoutApiManager.encryptAndApplyPaymentMethod(paymentMethod, new CheckoutApiManager.ApplyPaymentMethodCallback() {
                 @Override
                 public void onApplyPaymentMethodComplete(String paymentMethodId, String authorized, String errMsg) {
-                    hideProgressIndicator();
 
                     // if success
                     if (errMsg == null) {
