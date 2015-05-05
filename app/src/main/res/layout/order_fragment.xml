@@ -20,7 +20,7 @@
             android:layout_marginLeft="@dimen/margin_16dp"
             android:layout_marginTop="@dimen/verticalspacing_24dp"
             android:visibility="gone"
-            android:textSize="@dimen/fontsize_20sp"
+            android:textSize="@dimen/fontsize_18sp"
             android:text="@string/no_orders_found"
 			android:textColor="@color/staples_dark_gray"/>
 

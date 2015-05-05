@@ -1,7 +1,5 @@
-package com.staples.mobile.test;
+package app.staples.mobile.test;
 
-import com.staples.mobile.cfa.BuildConfig;
-import app.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
@@ -16,6 +14,8 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
 import org.robolectric.util.ActivityController;
 
+import app.staples.BuildConfig;
+import app.staples.mobile.cfa.MainActivity;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;

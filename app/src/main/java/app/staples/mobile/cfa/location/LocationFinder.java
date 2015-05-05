@@ -6,7 +6,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -15,10 +14,12 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import app.staples.mobile.cfa.MainActivity;
 import com.staples.mobile.common.analytics.Tracker;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import app.staples.mobile.cfa.MainActivity;
 
 public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = LocationFinder.class.getSimpleName();
@@ -53,6 +54,7 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
     private Location location;
     private String postalCode;
     private long startTime;
+    private List<PostalCodeCallback> postalCodeListeners;
 
     public interface PostalCodeCallback {
         void onGetPostalCodeSuccess(String postalCode);
@@ -60,6 +62,7 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
     }
 
     private LocationFinder(Context context) {
+        postalCodeListeners = new ArrayList<>();
         this.context = context;
         loadRecentLocation();
 
@@ -85,17 +88,9 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
 
     private class Resolver extends Thread {
 
-        private PostalCodeCallback callback;
-        public Resolver(@Nullable PostalCodeCallback callback) {
-            this.callback = callback;
-        }
-
-        public Resolver() {}
-
         @Override
         public void run() {
             if (location == null) return;
-
             try {
                 startTime = System.currentTimeMillis();
                 List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
@@ -104,8 +99,10 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
                     Log.d(TAG, msg);
                     Address address = addresses.get(0);
                     postalCode = address.getPostalCode();
-                    if (callback != null) {
-                        this.callback.onGetPostalCodeSuccess(postalCode);
+                    if (!postalCodeListeners.isEmpty()) {
+                        for (PostalCodeCallback callback: postalCodeListeners) {
+                            callback.onGetPostalCodeSuccess(postalCode);
+                        }
                     }
                     if (!TextUtils.isEmpty(postalCode)) {
                         Tracker.getInstance().setZipCode(postalCode);
@@ -119,34 +116,33 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
     }
 
     // Getters
-    public Location getLocation(@Nullable PostalCodeCallback callback) {
+
+    /**
+     * Finds the last known location from the FusedLocationApi. Use this to trigger a refresh on
+     * the location. Also initiates callbacks to {@link #postalCodeListeners}.
+     */
+    public Location getLocation() {
         // Try update
         if (client!=null) {
             Location latest = LocationServices.FusedLocationApi.getLastLocation(client);
             if ((latest != null) && latest != location) {
                 Tracker.getInstance().trackLocation(latest); // analytics
                 location = latest;
-                new Resolver(callback).start();
-
+                new Resolver().start();
                 Log.d(TAG, "Current location -> Longitude:" + location.getLongitude()
                         + ", Latitude:" + location.getLatitude());
-            }
-
-            else {
+            } else {
                 Log.d(TAG, "Default location -> Longitude:" + getDefaultLocation().getLongitude()
                         + ", Latitude:" + getDefaultLocation().getLatitude());
-                if (callback != null) {
-                    callback.onGetPostalCodeFailure();
+                if (!postalCodeListeners.isEmpty()) {
+                    for (PostalCodeCallback callback: postalCodeListeners) {
+                        callback.onGetPostalCodeFailure();
+                    }
                 }
                 return getDefaultLocation();
             }
         }
-
         return(location);
-    }
-
-    public Location getLocation() {
-        return getLocation(null);
     }
 
     // use Framingham as a default location when location service is not available
@@ -216,5 +212,13 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
         if (postalCode!=null)
             editor.putString(PREFS_POSTALCODE, postalCode);
         editor.apply();
+    }
+
+    public void registerPostalCodeListener(PostalCodeCallback callback) {
+        postalCodeListeners.add(callback);
+    }
+
+    public void unRegisterPostalCodeListener(PostalCodeCallback callback) {
+        postalCodeListeners.remove(callback);
     }
 }

@@ -33,12 +33,13 @@ public class DrawerItem {
     public static final String ADDRESS  = "019";
     public static final String CARD     = "020";
     public static final String CART     = "021";
-    public static final String CHECKOUT = "022";
     public static final String CONFIRM  = "023";
     public static final String LINK     = "024";
     public static final String SALES    = "025";
     public static final String ORDERDETAIL = "026";
     public static final String WEEKLYDETAIL = "027";
+    public static final String REG_CHECKOUT = "028";
+    public static final String GUEST_CHECKOUT = "029";
 
     // Generic info
     public String tag;

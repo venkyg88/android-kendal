@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import app.staples.R;
 import app.staples.mobile.cfa.IdentifierType;
@@ -29,7 +30,7 @@ import app.staples.mobile.cfa.widget.RatingStars;
 
 public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder> implements DataWrapper.Layoutable {
     private static final String TAG = BundleAdapter.class.getSimpleName();
-    private static final NumberFormat format = NumberFormat.getCurrencyInstance();
+    private static final NumberFormat format = NumberFormat.getCurrencyInstance(Locale.US);
 
     public interface OnFetchMoreData {
         void onFetchMoreData();

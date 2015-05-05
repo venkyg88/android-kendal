@@ -43,7 +43,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class CreditCardFragment extends Fragment implements View.OnClickListener{
+public class CreditCardFragment extends Fragment implements View.OnClickListener, TextWatcher, View.OnFocusChangeListener, TextView.OnEditorActionListener{
 
     private static final String TAG = CreditCardFragment.class.getSimpleName();
 
@@ -71,61 +71,26 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         Crittercism.leaveBreadcrumb("CreditCardFragment:onCreateView(): Displaying the Credit Card screen.");
         activity = (MainActivity)getActivity();
         Resources r = getResources();
+        easyOpenApi = Access.getInstance().getEasyOpenApi(true);
 
         View view = inflater.inflate(R.layout.add_creditcard_fragment, container, false);
         cardNumberET = (EditText) view.findViewById(R.id.cardNumber);
         expirationMonthET = (EditText) view.findViewById(R.id.expiration_month);
         expirationYearET = (EditText) view.findViewById(R.id.expiration_year);
-
-        expirationMonthET.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String input = editable.toString();
-                if (editable.length() == 1) {
-                    int month = Integer.parseInt(input);
-                    if (month > 1) {
-                        expirationMonthET.setText("0" + expirationMonthET.getText().toString());
-                        expirationYearET.requestFocus();
-                    }
-
-                } else if (editable.length() == 2) {
-                    int month = Integer.parseInt(input);
-                    if (month <= 12) {
-                        expirationYearET.requestFocus();
-                    } else {
-                        activity.showErrorDialog("Please check the expiration month");
-                    }
-                } else {
-                }
-
-            }
-        });
-
-        expirationMonthET.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    CreditCard.Type ccType = CreditCard.Type.detect(cardNumberET.getText().toString().replaceAll(" ", ""));
-                    if (ccType != CreditCard.Type.UNKNOWN) {
-                        cardImage.setImageResource(ccType.getImageResource());
-                    }
-                }
-            }
-        });
-
         cardImage = (ImageView) view.findViewById(R.id.card_image);
+        addCCBtn = (Button) view.findViewById(R.id.addCCBtn);
+        cancelCCBtn = (Button) view.findViewById(R.id.address_cancel);
+
+        expirationMonthET.addTextChangedListener(this);
+        expirationMonthET.setOnFocusChangeListener(this);
+        cardNumberET.setOnEditorActionListener(this);
+        cardNumberET.setFilters(new InputFilter[]{new InputFilter.LengthFilter(19), new CcNumberInputFilter()});
+        addCCBtn.setOnClickListener(this);
+        cancelCCBtn.setOnClickListener(this);
 
         Bundle args = getArguments();
         if(args != null) {
-             creditCard = (CCDetails)args.getSerializable("creditCardData");
+            creditCard = (CCDetails)args.getSerializable("creditCardData");
             if(creditCard != null) {
                 cardNumberET.setHint(r.getString(R.string.card_ending_in) + " " + creditCard.getCardNumber());
                 cardType = creditCard.getCardType();
@@ -141,39 +106,71 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
                 creditCardId = creditCard.getCreditCardId();
             }
         }
-        cardNumberET.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                switch (actionId) {
-                    case EditorInfo.IME_ACTION_NEXT:
-                        validate();
-                        expirationMonthET.requestFocus();
-                        return (true);
-                    case EditorInfo.IME_NULL:
-                        Log.d(TAG, "Got an enter key");
-                        if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                            validate();
-                        }
-                        return (true);
-                }
-                return (false);
-            }
-        });
-        cardNumberET.setFilters(new InputFilter[] { new CcNumberInputFilter()});
-
-        easyOpenApi = Access.getInstance().getEasyOpenApi(true);
-
-        addCCBtn = (Button) view.findViewById(R.id.addCCBtn);
-        addCCBtn.setOnClickListener(this);
-        cancelCCBtn = (Button) view.findViewById(R.id.address_cancel);
-        cancelCCBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getFragmentManager().popBackStack();
-            }
-        });
 
         return (view);
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if (hasFocus) {
+            CreditCard.Type ccType = CreditCard.Type.detect(cardNumberET.getText().toString().replaceAll(" ", ""));
+            if (ccType != CreditCard.Type.UNKNOWN) {
+                cardImage.setImageResource(ccType.getImageResource());
+            }
+        }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+        String input = editable.toString();
+        if (editable.length() == 1) {
+            int month = Integer.parseInt(input);
+            if (month > 1) {
+                expirationMonthET.setText("0" + expirationMonthET.getText().toString());
+                expirationYearET.requestFocus();
+            }
+
+        } else if (editable.length() == 2) {
+            int month = Integer.parseInt(input);
+            if (month <= 12) {
+                expirationYearET.requestFocus();
+            } else {
+                activity.showErrorDialog("Please check the expiration month");
+            }
+        } else {
+        }
+
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        switch (actionId) {
+            case EditorInfo.IME_ACTION_NEXT:
+                validate();
+                expirationMonthET.requestFocus();
+                return (true);
+            case EditorInfo.IME_NULL:
+                Log.d(TAG, "Got an enter key");
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    validate();
+                }
+                return (true);
+        }
+        return (false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ActionBar.getInstance().setConfig(ActionBar.Config.ADDCARD);
     }
 
     private boolean validate() {
@@ -185,12 +182,6 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         return(false);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ActionBar.getInstance().setConfig(ActionBar.Config.ADDCARD);
-    }
-
     private boolean validateCC (String creditCardNumber, String expirationMonth, String expirationYear) {
         CreditCard card = new CreditCard(null, creditCardNumber);
         if(!card.isChecksumValid()) {
@@ -198,9 +189,10 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
             return false;
         }
 
+        // calender month returns between 0-11. so adding 1 to produce the error when entering the previous month
         Calendar calendar = Calendar.getInstance();
         int currentYear = calendar.get(Calendar.YEAR);
-        int currentMonth = calendar.get(Calendar.MONTH);
+        int currentMonth = calendar.get(Calendar.MONTH) +1;
 
         if(Integer.parseInt(expirationYear) <= currentYear && Integer.parseInt(expirationMonth) < currentMonth) {
             activity.showErrorDialog("Please check the expiration month & year");
@@ -217,110 +209,116 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         return true;
     }
 
-    @Override
-    public void onClick(View view) {
-        activity.hideSoftKeyboard();
-
-        // ensure credit card number entered
-        creditCardNumber = cardNumberET.getText().toString().replaceAll(" ", "");
-        expirationMonth = expirationMonthET.getText().toString();
-        expirationYear = expirationYearET.getText().toString();
-
-        if (TextUtils.isEmpty(creditCardNumber)) {
-            activity.showErrorDialog(R.string.all_fields_required);
-            return;
-        }
-
-        if(TextUtils.isEmpty(expirationMonth) && TextUtils.isEmpty(expirationYear)) {
-            activity.showErrorDialog(R.string.all_fields_required);
-            return;
-        }
-
-        expirationYear = "20" + expirationYear;
-
-        if(!validateCC(creditCardNumber, expirationMonth, expirationYear)) {
-            return;
-        }
-
-        final AddCreditCardPOW creditCard = new AddCreditCardPOW(creditCardNumber, cardType.toUpperCase());
-        List<AddCreditCardPOW> ccList = new ArrayList<AddCreditCardPOW>();
-        ccList.add(creditCard);
-        Log.i(TAG, "Card " + creditCardNumber);
-        Log.i(TAG, "CCN " + cardType);
-
-        activity.showProgressIndicator();
-        EasyOpenApi powApi = Access.getInstance().getPOWApi(true);
-        powApi.addCreditPOWCall(ccList, new Callback<List<POWResponse>>() {
-
+    private void updateCreditCard() {
+        UpdateCreditCard updatedCard= new UpdateCreditCard(cardType, encryptedPacket, expirationMonth, expirationYear, "notes", creditCardId);
+        easyOpenApi.updateMemberCreditCard(updatedCard, new Callback<EmptyResponse>() {
             @Override
-            public void success(List<POWResponse> powList, Response response) {
-                Log.i(TAG, "Packet " + powList.get(0).getPacket());
-                Log.i(TAG, "Status " + powList.get(0).getStatus());
-                encryptedPacket = powList.get(0).getPacket();
-
-                if(encryptedPacket.isEmpty()) {
-                    activity.hideProgressIndicator();
-                    activity.showErrorDialog(R.string.cc_encryption_failure);
-                    Log.i(TAG, "Success " + response.getUrl());
-                }
-                else if(creditCardId != null) {
-                    UpdateCreditCard updatedCard= new UpdateCreditCard(cardType, encryptedPacket, expirationMonth, expirationYear, "notes", creditCardId);
-                    easyOpenApi.updateMemberCreditCard(updatedCard, new Callback<EmptyResponse>() {
-                        @Override
-                        public void success(EmptyResponse empty, Response response) {
-                            (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
-                                @Override public void onProfileRefresh(Member member, String errMsg) {
-                                    activity.hideProgressIndicator();
-                                    activity.showNotificationBanner(R.string.cc_updated);
-                                    FragmentManager fm = getFragmentManager();
-                                    if (fm != null) {
-                                        fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
-                                    }
-                                }
-                            });
+            public void success(EmptyResponse empty, Response response) {
+                (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
+                    @Override public void onProfileRefresh(Member member, String errMsg) {
+                        activity.hideProgressIndicator();
+                        activity.showNotificationBanner(R.string.cc_updated);
+                        FragmentManager fm = getFragmentManager();
+                        if (fm != null) {
+                            fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
                         }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                            activity.hideProgressIndicator();
-                            activity.showErrorDialog(ApiError.getErrorMessage(error));
-                        }
-                    });
-                }
-                else {
-                    AddCreditCard addCC = new AddCreditCard(cardType, encryptedPacket, expirationMonth, expirationYear, "notes");
-                    easyOpenApi.addMemberCreditCard(addCC, new Callback<CreditCardId>() {
-                        @Override
-                        public void success(CreditCardId creditCardID, Response response) {
-                            (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
-                                @Override public void onProfileRefresh(Member member, String errMsg) {
-                                    activity.hideProgressIndicator();
-                                    activity.showNotificationBanner(R.string.cc_added);
-                                    FragmentManager fm = getFragmentManager();
-                                    if (fm != null) {
-                                        fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
-                                    }
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                            activity.hideProgressIndicator();
-                            activity.showErrorDialog(ApiError.getErrorMessage(error));
-                            Log.i(TAG, "Add CC Fail Message " + error.getMessage());
-                            Log.i(TAG, "Url " + error.getUrl());
-                        }
-                    } );
-                }
+                    }
+                });
             }
 
             @Override
             public void failure(RetrofitError error) {
-                ((MainActivity)activity).hideProgressIndicator();
+                activity.hideProgressIndicator();
                 activity.showErrorDialog(ApiError.getErrorMessage(error));
-                Log.i(TAG, "Fail Response POW " + error.getUrl() + " " + error.getMessage());
             }
         });
+    }
+
+    private void addCreditCard() {
+        AddCreditCard addCC = new AddCreditCard(cardType, encryptedPacket, expirationMonth, expirationYear, "notes");
+        easyOpenApi.addMemberCreditCard(addCC, new Callback<CreditCardId>() {
+            @Override
+            public void success(CreditCardId creditCardID, Response response) {
+                (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
+                    @Override public void onProfileRefresh(Member member, String errMsg) {
+                        activity.hideProgressIndicator();
+                        activity.showNotificationBanner(R.string.cc_added);
+                        FragmentManager fm = getFragmentManager();
+                        if (fm != null) {
+                            fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                activity.hideProgressIndicator();
+                activity.showErrorDialog(ApiError.getErrorMessage(error));
+            }
+        });
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()) {
+            case R.id.addCCBtn :
+                activity.hideSoftKeyboard();
+
+                // ensure credit card number entered
+                creditCardNumber = cardNumberET.getText().toString().replaceAll(" ", "");
+                expirationMonth = expirationMonthET.getText().toString();
+                expirationYear = expirationYearET.getText().toString();
+
+                if (TextUtils.isEmpty(creditCardNumber)) {
+                    activity.showErrorDialog(R.string.all_fields_required);
+                    return;
+                }
+
+                if(TextUtils.isEmpty(expirationMonth) && TextUtils.isEmpty(expirationYear)) {
+                    activity.showErrorDialog(R.string.all_fields_required);
+                    return;
+                }
+
+                expirationYear = "20" + expirationYear;
+
+                if(!validateCC(creditCardNumber, expirationMonth, expirationYear)) {
+                    return;
+                }
+
+                final AddCreditCardPOW creditCard = new AddCreditCardPOW(creditCardNumber, cardType.toUpperCase());
+                List<AddCreditCardPOW> ccList = new ArrayList<AddCreditCardPOW>();
+                ccList.add(creditCard);
+
+                activity.showProgressIndicator();
+                EasyOpenApi powApi = Access.getInstance().getPOWApi(true);
+                powApi.addCreditPOWCall(ccList, new Callback<List<POWResponse>>() {
+                    @Override
+                    public void success(List<POWResponse> powList, Response response) {
+                        encryptedPacket = powList.get(0).getPacket();
+
+                        if(encryptedPacket.isEmpty()) {
+                            activity.hideProgressIndicator();
+                            activity.showErrorDialog(R.string.cc_encryption_failure);
+                        }
+                        else if(creditCardId != null) {
+                            updateCreditCard();
+                        }
+                        else {
+                            addCreditCard();
+                        }
+                    }
+                    @Override
+                    public void failure(RetrofitError error) {
+                        ((MainActivity)activity).hideProgressIndicator();
+                        activity.showErrorDialog(ApiError.getErrorMessage(error));
+                    }
+                });
+                break;
+
+            case R.id.address_cancel:
+                getFragmentManager().popBackStack();
+                break;
+        }
     }
 }

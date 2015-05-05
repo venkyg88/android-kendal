@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.crittercism.app.Crittercism;
@@ -21,6 +22,7 @@ import com.staples.mobile.common.access.easyopen.model.browse.SearchResult;
 import com.staples.mobile.common.access.easyopen2.api.EasyOpenApi2;
 import com.staples.mobile.common.analytics.Tracker;
 
+import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.List;
 
@@ -41,6 +43,8 @@ import retrofit.client.Response;
 public class SearchFragment extends Fragment implements Callback<SearchResult>, BundleAdapter.OnFetchMoreData, View.OnClickListener {
     private static final String TAG = SearchFragment.class.getSimpleName();
 
+    private enum SortOption {DENY, ALLOW, VISIBLE};
+
     private static final String TITLE = "title";
     private static final String KEYWORD = "keyword";
 
@@ -54,8 +58,11 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
     private DataWrapper.State state;
     private boolean complete;
     private int page;
+    private SortOption sortOption;
     private BundleItem.SortType fetchSort;
     private BundleItem.SortType displaySort;
+    private TextView resultsNotFoundHeader;
+    private TextView resultsNotFoundSuggestions;
 
     public void setArguments(String title, String keyword) {
         Bundle args = new Bundle();
@@ -74,6 +81,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
             keyword = args.getString(KEYWORD);
         }
 
+        sortOption = SortOption.ALLOW;
         page = 1;
         displaySort = BundleItem.SortType.BESTMATCH;
         query();
@@ -90,6 +98,11 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         list.setLayoutManager(new GridLayoutManager(activity, 1));
         list.addItemDecoration(new HorizontalDivider(activity));
 
+        resultsNotFoundHeader = (TextView) view.findViewById(R.id.search_results_not_found_header);
+        resultsNotFoundSuggestions = (TextView) view.findViewById(R.id.search_results_not_found_suggestions);
+        //not set in XML to avoid duplicating bundle_frame.xml
+        resultsNotFoundSuggestions.setText(getString(R.string.search_results_not_found_suggestions));
+
         view.findViewById(R.id.open_sort).setOnClickListener(this);
 
         applyState(view);
@@ -102,6 +115,14 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         DataWrapper wrapper = (DataWrapper) view.findViewById(R.id.wrapper);
         if (list!=null && list.getAdapter()==null && adapter!=null) {
             list.setAdapter(adapter);
+        }
+        if (sortOption==SortOption.VISIBLE) {
+            view.findViewById(R.id.open_sort).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.open_sort).setOnClickListener(this);
+        }
+        if (state == DataWrapper.State.EMPTY) {
+            String header = MessageFormat.format(getString(R.string.search_results_not_found_header), keyword);
+            resultsNotFoundHeader.setText(header);
         }
         wrapper.setState(state);
     }
@@ -133,8 +154,12 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         if (!(activity instanceof MainActivity)) return;
 
         int count = processSearch(searchResult);
-        if (count==0) state = DataWrapper.State.EMPTY;
-        else state = DataWrapper.State.DONE;
+        if (count==0) {
+            state = DataWrapper.State.EMPTY;
+        } else {
+            state = DataWrapper.State.DONE;
+            sortOption = SortOption.VISIBLE;
+        }
         applyState(null);
 
         // Analytics
