@@ -4,6 +4,7 @@ package app.staples.mobile.cfa.feed;
  * Author: Yongnan Zhou
  */
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -36,8 +37,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import app.staples.R;
 import app.staples.mobile.cfa.MainActivity;
@@ -70,22 +69,20 @@ public class PersonalFeedFragment extends Fragment {
     private DataWrapper clearanceWrapper;
     private DataWrapper seenProductsWrapper;
 
-    private LinearLayout dailyDealContainer;
-    private LinearLayout clearanceContainer;
-    private LinearLayout seenProductsContainer;
+    private static LinearLayout dailyDealContainer;
+    private static LinearLayout clearanceContainer;
+    private static LinearLayout seenProductsContainer;
 
     private TextView seenProductClearTV;
+
     private RelativeLayout seenProductsLoading;
+
     private View seenProductsSeparator;
     private View clearanceSeparator;
 
     private String dailyDealTitle;
     private String clearanceTitle;
     private String seenProductsTitle;
-
-    private boolean isSeenProductsEmpty = true;
-    private boolean isDailyDealEmpty = true;
-    private boolean isClearanceEmpty = true;
 
     private MainActivity mainActivity;
     private LayoutInflater myInflater;
@@ -196,9 +193,14 @@ public class PersonalFeedFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.mainActivity = (MainActivity) activity;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         this.myInflater = inflater;
-        this.mainActivity = (MainActivity) getActivity();
 
         Crittercism.leaveBreadcrumb("PersonalFeedFragment:onCreateView(): Displaying the Personal Feed screen.");
         LinearLayout personalFeedLayout = (LinearLayout) myInflater.inflate(R.layout.personal_feed, container, false);
@@ -225,12 +227,13 @@ public class PersonalFeedFragment extends Fragment {
         seenProductsSeparator = (View) personalFeedLayout.findViewById(R.id.seen_products_separator);
         clearanceSeparator = (View) personalFeedLayout.findViewById(R.id.clearance_separator);
 
+        seenProductsLoading = (RelativeLayout) personalFeedLayout.findViewById(R.id.seen_products_loading_footer);
+
         seenProductClearTV = (TextView) personalFeedLayout.findViewById(R.id.seen_products_clear);
         seenProductClearTV.setVisibility(View.GONE);
         seenProductClearTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                seenProductsWrapper.setState(DataWrapper.State.LOADING);
                 seenProductsContainer.removeAllViews();
                 seenProductClearTV.setVisibility(View.GONE);
                 seenProductsLoading.setVisibility(View.GONE);
@@ -252,33 +255,7 @@ public class PersonalFeedFragment extends Fragment {
 
         setCartItems();
 
-        seenProductsLoading = (RelativeLayout) personalFeedLayout.findViewById(R.id.seen_products_loading_footer);
-
-        setSeenProductsAdapter();
-
-        Thread dailyDealThread = new Thread(new Runnable(){
-            public void run(){
-                setDailyDealAdapter();
-            }
-        });
-
-        Thread clearanceThread = new Thread(new Runnable(){
-            public void run(){
-                setClearanceAdapter();
-            }
-        });
-
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(dailyDealThread);
-        executor.submit(clearanceThread);
-        executor.shutdown();
-
-        if(isSeenProductsEmpty && isClearanceEmpty && isDailyDealEmpty){
-            emptyFeedLayout.setVisibility(View.VISIBLE);
-        }
-        else {
-            emptyFeedLayout.setVisibility(View.GONE);
-        }
+        getDailyDeal();
 
         return personalFeedLayout;
     }
@@ -294,33 +271,7 @@ public class PersonalFeedFragment extends Fragment {
         this.cartItems = getCartItems(CartApiManager.getCart());
     }
 
-    private void setSeenProductsAdapter(){
-        seenProductsWrapper.setState(DataWrapper.State.LOADING);
-
-        // set seen products list
-        HashSet<String> saveSeenSkus =
-                PersonalFeedSingleton.getInstance(mainActivity).getSavedSkus(mainActivity);
-
-        // if no saved seen products
-        if(saveSeenSkus.isEmpty()){
-            seenProductsLayout.setVisibility(View.GONE);
-            seenProductsSeparator.setVisibility(View.GONE);
-            isSeenProductsEmpty = true;
-        }
-        else{
-            isSeenProductsEmpty = false;
-            emptyFeedLayout.setVisibility(View.GONE);
-            seenProductsSeparator.setVisibility(View.VISIBLE);
-            seenProductsWrapper.setState(DataWrapper.State.LOADING);
-            for(String sku : saveSeenSkus){
-                // Initiate SKU API call
-                EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
-                api.getSkuDetails(sku, 1, MAXFETCH, new SkuDetailsCallback());
-            }
-        }
-    }
-
-    private void setDailyDealAdapter() {
+    private void getDailyDeal() {
         if(cartItems != null) {
             dailyDealWrapper.setState(DataWrapper.State.LOADING);
 
@@ -352,80 +303,124 @@ public class PersonalFeedFragment extends Fragment {
                                     }
                                 }
                             }
-                            else{
-                                isDailyDealEmpty = true;
-                            }
 
                             // if no daily deal products
                             if (dailyDealContainer.getChildCount() == 0) {
-                                isDailyDealEmpty = true;
+                                dailyDealWrapper.setState(DataWrapper.State.EMPTY);
 //                                if(seenProductsContainer.getChildCount() == 0 && clearanceContainer.getChildCount() == 0) {
 //                                    emptyFeedLayout.setVisibility(View.VISIBLE);
 //                                }
                             } else {
-                                isDailyDealEmpty = false;
                                 emptyFeedLayout.setVisibility(View.GONE);
                                 dailyDealWrapper.setState(DataWrapper.State.DONE);
                                 dailyDealLayout.setVisibility(View.VISIBLE);
                             }
+
+                            getClearance();
                         }
                     }); // ProductCollection CallBack
         }
         else {
+            getSeenProducts();
+
             dailyDealWrapper.setState(DataWrapper.State.EMPTY);
+        }
+
+        HashSet<String> saveSeenSkus =
+                PersonalFeedSingleton.getInstance(mainActivity).getSavedSkus(mainActivity);
+
+        if(saveSeenSkus.isEmpty()){
+            seenProductsLayout.setVisibility(View.GONE);
+        }
+        else{
+            seenProductsLayout.setVisibility(View.VISIBLE);
         }
     }
 
-    private void setClearanceAdapter() {
-        String bundleUrl = "category/identifier/";
-        Map collectionMap = new HashMap<String, String>();
+    private void getClearance() {
+        if(cartItems != null) {
+            clearanceWrapper.setState(DataWrapper.State.LOADING);
 
-        ProductCollection.getProducts(bundleUrl + CLEARANCE_IDENTIFIER,
-                "50", // limit (may be null)
-                "1", // offset (may be null)
-                collectionMap, // currently not used
-                new ProductCollection.ProductCollectionCallBack() {
-                    @Override
-                    public void onProductCollectionResult(ProductCollection.ProductContainer productContainer,
-                                                          List<ProductCollection.ProductContainer.ERROR_CODES> errorCodes) {
-                        HashSet<String> clearanceSkuSet = new HashSet<String>();
-                        if (productContainer.getProducts() != null) {
-                            for (Product p : productContainer.getProducts()) {
-                                clearanceSkuSet.add(p.getSku());
-                                //fillContainer(p, clearanceContainer, clearanceTitle);
-                                //Log.d(TAG, "Clearance Products: " + p.getProductName() + "-" + p.getSku());
-                            }
-                        }
+            String bundleUrl = "category/identifier/";
+            Map collectionMap = new HashMap<String, String>();
 
-                        if (cartItems != null) {
-                            clearanceWrapper.setState(DataWrapper.State.LOADING);
-                            for (com.staples.mobile.common.access.easyopen.model.cart.Product cartItem : cartItems) {
-                                String cartItemSku = cartItem.getSku();
-                                if (clearanceSkuSet.contains(cartItemSku)) {
-                                    fillContainer(cartItem, clearanceContainer, clearanceTitle);
-                                    Log.d(TAG, "Clearance products in cart: " + cartItem.getProductName());
+            ProductCollection.getProducts(bundleUrl + CLEARANCE_IDENTIFIER,
+                    "50", // limit (may be null)
+                    "1", // offset (may be null)
+                    collectionMap, // currently not used
+                    new ProductCollection.ProductCollectionCallBack() {
+                        @Override
+                        public void onProductCollectionResult(ProductCollection.ProductContainer productContainer,
+                                                              List<ProductCollection.ProductContainer.ERROR_CODES> errorCodes) {
+                            HashSet<String> clearanceSkuSet = new HashSet<String>();
+                            if (productContainer.getProducts() != null) {
+                                for (Product p : productContainer.getProducts()) {
+                                    clearanceSkuSet.add(p.getSku());
+                                    //fillContainer(p, clearanceContainer, clearanceTitle);
+                                    //Log.d(TAG, "Clearance Products: " + p.getProductName() + "-" + p.getSku());
                                 }
                             }
-                        } else{
-                            isClearanceEmpty = true;
-                        }
 
-                        // if no clearance products
-                        if (clearanceContainer.getChildCount() == 0) {
-                            isClearanceEmpty = true;
-                            clearanceSeparator.setVisibility(View.GONE);
-                            if(seenProductsContainer.getChildCount() == 0 && dailyDealContainer.getChildCount() == 0) {
-                                emptyFeedLayout.setVisibility(View.VISIBLE);
+                            if (cartItems != null) {
+                                for (com.staples.mobile.common.access.easyopen.model.cart.Product cartItem : cartItems) {
+                                    String cartItemSku = cartItem.getSku();
+                                    if (clearanceSkuSet.contains(cartItemSku)) {
+                                        fillContainer(cartItem, clearanceContainer, clearanceTitle);
+                                        Log.d(TAG, "Clearance products in cart: " + cartItem.getProductName());
+                                    }
+                                }
                             }
-                        } else {
-                            isClearanceEmpty = false;
-                            emptyFeedLayout.setVisibility(View.GONE);
-                            clearanceSeparator.setVisibility(View.VISIBLE);
-                            clearanceWrapper.setState(DataWrapper.State.DONE);
-                            clearanceLayout.setVisibility(View.VISIBLE);
+
+                            // if no clearance products
+                            if (clearanceContainer.getChildCount() == 0) {
+                                clearanceWrapper.setState(DataWrapper.State.EMPTY);
+                                clearanceSeparator.setVisibility(View.GONE);
+
+                                if (seenProductsContainer.getChildCount() == 0 && dailyDealContainer.getChildCount() == 0) {
+                                    emptyFeedLayout.setVisibility(View.VISIBLE);
+                                } else {
+                                    emptyFeedLayout.setVisibility(View.GONE);
+                                }
+                            } else {
+                                emptyFeedLayout.setVisibility(View.GONE);
+                                clearanceSeparator.setVisibility(View.VISIBLE);
+                                clearanceWrapper.setState(DataWrapper.State.DONE);
+                                clearanceLayout.setVisibility(View.VISIBLE);
+                            }
+
+                            getSeenProducts();
                         }
-                    }
-                }); // ProductCollection CallBack
+                    }); // ProductCollection CallBack
+        }
+        else{
+            clearanceWrapper.setState(DataWrapper.State.EMPTY);
+        }
+    }
+
+    private void getSeenProducts(){
+        seenProductsWrapper.setState(DataWrapper.State.LOADING);
+
+        // set seen products list
+        HashSet<String> saveSeenSkus =
+                PersonalFeedSingleton.getInstance(mainActivity).getSavedSkus(mainActivity);
+
+        // if no saved seen products
+        if(saveSeenSkus.isEmpty()){
+            seenProductsLayout.setVisibility(View.GONE);
+            seenProductsSeparator.setVisibility(View.GONE);
+        }
+        else{
+            emptyFeedLayout.setVisibility(View.GONE);
+
+            seenProductsLayout.setVisibility(View.VISIBLE);
+            seenProductsSeparator.setVisibility(View.VISIBLE);
+            seenProductsWrapper.setState(DataWrapper.State.LOADING);
+            for(String sku : saveSeenSkus){
+                // Initiate SKU API call
+                EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
+                api.getSkuDetails(sku, 1, MAXFETCH, new SkuDetailsCallback());
+            }
+        }
     }
 
     private void fillContainer(com.staples.mobile.common.access.easyopen.model.cart.Product cartItem,
@@ -455,7 +450,7 @@ public class PersonalFeedFragment extends Fragment {
             if (rebate>0.0f) {
                 row.findViewById(R.id.rebate_layout).setVisibility(View.VISIBLE);
                 TextView rebateText = (TextView) row.findViewById(R.id.rebate_text);
-                String text = String.format("$%.2f %s", rebate, getResources().getString(R.string.rebate));
+                String text = String.format("$%.2f %s", rebate, mainActivity.getResources().getString(R.string.rebate));
                 rebateText.setText(text);
                 priceSticker.setPricing(finalPrice, wasPrice, unit, "*");
             } else {
@@ -530,6 +525,8 @@ public class PersonalFeedFragment extends Fragment {
         editor.putString(SEEN_PRODUCT_SKU_LIST, "");
         editor.putString(SEEN_PRODUCT_LIST, "");
         editor.apply();
+
+        //isSeenProductsEmpty = true;
     }
 
     private ArrayList<com.staples.mobile.common.access.easyopen.model.cart.Product> getCartItems(Cart cart) {
