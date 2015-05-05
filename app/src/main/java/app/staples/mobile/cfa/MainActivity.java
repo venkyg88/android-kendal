@@ -698,8 +698,17 @@ public class MainActivity extends Activity
 
         ActionBar.getInstance().closeSearch();
 
-        // Swap Fragments
         FragmentManager manager = getFragmentManager();
+
+        // HACK: always exclude guest checkout in backstack
+        // (this checks for a transition FROM guest checkout to any other page)
+        int currentBackStackIndex = manager.getBackStackEntryCount()-1;
+        if (currentBackStackIndex >= 0 &&
+                DrawerItem.GUEST_CHECKOUT.equals(manager.getBackStackEntryAt(currentBackStackIndex).getName())) {
+            push = false;
+        }
+
+        // Swap Fragments
         FragmentTransaction transaction = manager.beginTransaction();
         if (transition != null) transition.setAnimation(transaction);
         transaction.replace(R.id.content, fragment);
@@ -729,10 +738,11 @@ public class MainActivity extends Activity
             // if logged in and have at least an address or a payment method, then use registered flow, otherwise use guest flow
             if (!loginHelper.isGuestLogin()) {
                 fragment = RegisteredCheckoutFragment.newInstance();
+                return selectFragment(DrawerItem.REG_CHECKOUT, fragment, Transition.RIGHT, true);
             } else {
                 fragment = GuestCheckoutFragment.newInstance();
+                return selectFragment(DrawerItem.GUEST_CHECKOUT, fragment, Transition.RIGHT, true);
             }
-            return selectFragment(DrawerItem.CHECKOUT, fragment, Transition.RIGHT, true);
         }
         return false;
     }
@@ -921,7 +931,8 @@ public class MainActivity extends Activity
 
             case R.id.close_button:
                 hideSoftKeyboard();
-                if (currentTag != null && currentTag.equals(DrawerItem.CHECKOUT)) {
+                if (currentTag != null && (currentTag.equals(DrawerItem.REG_CHECKOUT) ||
+                        currentTag.equals(DrawerItem.GUEST_CHECKOUT))) {
                     fragmentManager.popBackStack(DrawerItem.CART, 0);
                 } else {
                     // at the moment order confirmation is the only other fragment that uses the Close button
