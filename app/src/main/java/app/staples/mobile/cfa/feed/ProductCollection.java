@@ -331,7 +331,7 @@ public class ProductCollection {
 
                 for (Category promoCategory : promoCategories) {
                     promoProducts = promoCategory.getProduct();
-                    if(promoProducts != null) products.addAll(promoProducts);
+                    if(promoProducts != null && promoProducts.size() > 0) products.addAll(promoProducts);
                 }
 
                 break; // while (true)
