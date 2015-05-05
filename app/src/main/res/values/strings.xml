@@ -159,8 +159,7 @@
     <!--order confirmation-->
     <string name="submit_order">Place Order</string>
     <string name="order_confirmation_msg">Thank you for your order!</string>
-    <string name="order_confirmation_msg2">An email with complete details has</string>
-    <string name="order_confirmation_msg3">been sent to %s.</string>
+    <string name="order_confirmation_msg2">An email with complete details has been sent to %s.</string>
     <string name="order_number_label">Order Number</string>
     <string name="delivery_range_label">Delivery Range for Shipped Items</string>
     <string name="order_total_label">Total</string>
