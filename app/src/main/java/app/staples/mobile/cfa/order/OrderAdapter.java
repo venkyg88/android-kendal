@@ -86,7 +86,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
                 holder.orderTotalTV.setText("");
             } else {
                 DecimalFormat currencyFormatter = CurrencyFormat.getFormatter();
-                holder.orderTotalTV.setText(currencyFormatter.format(Float.parseFloat(orderStatus.getGrandTotal())));
+                float shipmentTotal = 0.0f;
+                for(ShipmentSKU shipmentSku : shipment.getShipmentSku()) {
+                    if(shipmentSku != null) {
+                        shipmentTotal += Float.parseFloat(shipmentSku.getLineTotal());
+                    }
+                }
+                holder.orderTotalTV.setText(currencyFormatter.format(shipmentTotal));
             }
         }
 

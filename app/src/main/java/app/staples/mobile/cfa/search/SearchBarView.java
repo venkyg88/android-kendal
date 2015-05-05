@@ -19,7 +19,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.suggest.api.SuggestApi;
@@ -284,8 +283,6 @@ public class SearchBarView extends LinearLayout implements View.OnClickListener,
             keyword = searchText.getText().toString().trim();
         }
         if (keyword.isEmpty()) return;
-
-        Toast.makeText(activity, "Searching " + keyword + "...", Toast.LENGTH_SHORT).show();
         adapter.pushRecentKeyword(keyword);
         activity.selectSearch(keyword, keyword);
     }
