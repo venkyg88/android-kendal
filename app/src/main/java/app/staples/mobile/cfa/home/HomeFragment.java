@@ -235,7 +235,14 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         Tracker.getInstance().trackStateForHome(); // Analytics
 
         // call store api and get store info
-        getStoreInfo();
+        LocationFinder finder = LocationFinder.getInstance(getActivity());
+        finder.registerPostalCodeListener(this);
+        String postalCode = finder.getPostalCode();
+        if (TextUtils.isEmpty(postalCode)) {
+            finder.getLocation();
+        } else {
+            onGetPostalCodeSuccess(postalCode);
+        }
     }
 
     private void initFromConfiguratorResult() {
@@ -315,12 +322,15 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
                 doLandscape();
             }
 
-            // call store api and get store info
-            getStoreInfo();
-
             break; // while (true)
 
         } // while (true)
+    }
+
+    @Override
+    public void onPause() {
+        LocationFinder.getInstance(getActivity()).unRegisterPostalCodeListener(this);
+        super.onPause();
     }
 
     private void doPortrait() {
@@ -1039,20 +1049,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         }
 
     } // fillWithDLand()
-
-    //////////////////////////////////////////////////////////////////////////////
-    // Personalized Message Bar Methods created by Yongnan Zhou:
-    private void getStoreInfo(){
-        LocationFinder finder = LocationFinder.getInstance(getActivity());
-        String postalCode = finder.getPostalCode();
-        if (TextUtils.isEmpty(postalCode)) {
-            storeWrapper.setState(DataWrapper.State.LOADING);
-            finder.getLocation(this);
-        } else {
-            Log.d(TAG, "Store zipcode:" + postalCode);
-            Access.getInstance().getChannelApi(false).storeLocations(postalCode, new StoreInfoCallback());
-        }
-    }
 
     @Override
     public void onGetPostalCodeSuccess(String postalCode) {

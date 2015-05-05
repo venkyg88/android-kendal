@@ -147,7 +147,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     private void gotoHere() {
         // Get location
         LocationFinder finder = LocationFinder.getInstance(getActivity());
-        location = finder.getLocation(this);
+        location = finder.getLocation();
         if (location==null) {
             Log.d(TAG, "LocationFinder.getLocation returned null");
             String errorMessage = (String) getResources().getText(R.string.error_no_location_service);
@@ -185,6 +185,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     public void onResume() {
         int icon;
         super.onResume();
+        LocationFinder.getInstance(getActivity()).registerPostalCodeListener(this);
         if (mapView!=null) mapView.onResume();
         if (adapter.isSingleMode()) icon = R.drawable.ic_view_list_black;
         else icon = R.drawable.ic_map_black;
@@ -196,6 +197,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     public void onPause() {
         super.onPause();
         if (mapView!=null) mapView.onPause();
+        LocationFinder.getInstance(getActivity()).unRegisterPostalCodeListener(this);
     }
 
     @Override
