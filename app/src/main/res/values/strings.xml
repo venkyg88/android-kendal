@@ -109,6 +109,7 @@
     <string name="link_rewards_account">Link Your Rewards Account</string>
     <string name="link_account">Link Account</string>
 	<string name="expiration_date_error">Must be in the form MM/YY.</string>
+    <string name="premium_product_requires_login">At least one of the items in your cart is a premium product and requires you to be signed in. Please login to complete your purchase.</string>
     <plurals name="business_days">
         <item quantity="one">business day</item>
         <item quantity="other">business days</item>
