@@ -1,7 +1,6 @@
-package com.staples.mobile.test;
+package app.staples.mobile.test;
 
 import com.crittercism.app.Crittercism;
-import app.staples.mobile.cfa.cart.CartApiManager;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
 
 import org.junit.Assert;
@@ -10,6 +9,8 @@ import org.junit.Test;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
+import app.staples.mobile.cfa.cart.CartApiManager;
 
 //For testing the body generator functions for the cart add and update calls
 public class CartGeneratorTest {

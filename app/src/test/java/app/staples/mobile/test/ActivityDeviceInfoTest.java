@@ -1,6 +1,5 @@
-package com.staples.mobile.test;
+package app.staples.mobile.test;
 
-import com.staples.mobile.cfa.BuildConfig;
 import com.staples.mobile.common.device.DeviceInfo;
 
 import org.junit.After;
@@ -10,6 +9,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
+
+import app.staples.BuildConfig;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, emulateSdk = 21, qualifiers = "port" )

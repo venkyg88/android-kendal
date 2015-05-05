@@ -86,7 +86,7 @@ public class ConfirmationFragment extends Fragment implements View.OnClickListen
         String deliveryRange = confirmationBundle.getString(BUNDLE_PARAM_DELIVERY);
         String total = confirmationBundle.getString(BUNDLE_PARAM_TOTAL);
 
-        confirmationMsgVw.setText(String.format(getResources().getString(R.string.order_confirmation_msg3), emailAddress));
+        confirmationMsgVw.setText(String.format(getResources().getString(R.string.order_confirmation_msg2), emailAddress));
         orderNumberVw.setText(orderNumber);
         deliveryRangeVw.setText(deliveryRange);
         checkoutTotalVw.setText(total);
