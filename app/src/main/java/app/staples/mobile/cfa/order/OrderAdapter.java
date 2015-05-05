@@ -33,6 +33,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         TextView numItemsTV;
         TextView orderStatusTV;
         TextView orderDateTV;
+        TextView orderNumTV;
+        TextView orderShipmentTV;
         Button trackShipmentBtn;
         Button viewRecieptBtn;
 
@@ -42,6 +44,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             orderStatusTV = (TextView) v.findViewById(R.id.order_status);
             numItemsTV = (TextView) v.findViewById(R.id.order_item_count);
             orderTotalTV = (TextView) v.findViewById(R.id.order_total);
+            orderNumTV = (TextView) v.findViewById(R.id.order_number);
+            orderShipmentTV = (TextView) v.findViewById(R.id.order_shipment);
             trackShipmentBtn = (Button) v.findViewById(R.id.track_shipment_btn);
             viewRecieptBtn = (Button) v.findViewById(R.id.order_reciept_btn);
         }
@@ -96,10 +100,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             }
         }
 
+        holder.orderShipmentTV.setText("Shipment " + (order.getShipmentIndex()+1) + " of " + order.getShipments().size());
+        holder.orderNumTV.setText("#"+ orderStatus.getOrderNumber());
         holder.orderStatusTV.setText(shipment.getShipmentStatusDescription());
         holder.numItemsTV.setText(r.getQuantityString(R.plurals.cart_qty, totalItemQtyOfShipment, totalItemQtyOfShipment));
-        holder.trackShipmentBtn.setTag(position);
-        holder.viewRecieptBtn.setTag(position);
+        holder.trackShipmentBtn.setTag(order);
+        holder.viewRecieptBtn.setTag(order);
 
         holder.trackShipmentBtn.setOnClickListener(onClickListener);
         holder.viewRecieptBtn.setOnClickListener(onClickListener);

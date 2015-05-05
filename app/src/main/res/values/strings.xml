@@ -109,6 +109,7 @@
     <string name="link_rewards_account">Link Your Rewards Account</string>
     <string name="link_account">Link Account</string>
 	<string name="expiration_date_error">Must be in the form MM/YY.</string>
+    <string name="premium_product_requires_login">At least one of the items in your cart is a premium product and requires you to be signed in. Please login to complete your purchase.</string>
     <plurals name="business_days">
         <item quantity="one">business day</item>
         <item quantity="other">business days</item>
@@ -204,7 +205,7 @@
     <string name="login_error_msg">The specified user name or password is not correct. Verify the information provided and log in again.</string>
     <string name="address_error_msg">Please enter a valid address</string>
     <string name="track_shipment">Track</string>
-    <string name="view_receipt">View receipt</string>
+    <string name="view_receipt">View Receipt</string>
 
     <!-- Orders -->
     <string name="order">Order</string>

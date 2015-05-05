@@ -80,7 +80,6 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
         orderShipmentListItems = new ArrayList<OrderShipmentListItem>();
         View view = inflater.inflate(R.layout.order_fragment, container, false);
 
-
         // setup overlay
         overlayableLayout = (LinearLayoutWithOverlay)view.findViewById(R.id.overlayable_layout);
         overlayableLayout.setOverlayView(view.findViewById(R.id.overlay));
@@ -138,13 +137,12 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
         OrderShipmentListItem order;
         switch(view.getId()) {
             case R.id.track_shipment_btn:
-                Button trackShipment = (Button)view;
-                order = adapter.getItem((int)view.getTag());
-                trackShipment.setEnabled(false);
+                order = (OrderShipmentListItem)view.getTag();
+                activity.showProgressIndicator();
                 showTrackingInfo(order, view);
                 break;
             case R.id.order_reciept_btn:
-                order = adapter.getItem((int)view.getTag());
+                order = (OrderShipmentListItem)view.getTag();
                 Fragment orderDetailsFragment = Fragment.instantiate(activity, OrderReceiptFragment.class.getName());
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("orderData", order);
@@ -211,7 +209,6 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
                         closeButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                trackShipment.setEnabled(true);
                                 dismissTrackingInfo();
                             }
                         });
@@ -225,7 +222,6 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
                     public void failure(RetrofitError error) {
                         activity.hideProgressIndicator();
                         activity.showErrorDialog(ApiError.getErrorMessage(error));
-                        trackShipment.setEnabled(true);
                     }
                 });
     }

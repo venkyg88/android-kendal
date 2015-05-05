@@ -199,6 +199,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                     // if shipping and tax already showing, need to hide them
                     resetShippingAndTax();
                     hideProgressIndicator();
+                    if (errMsg.contains("Please sign in")) { // full message: "Guest Checkout Not Available: Because of one or more items in your Cart, Guest Checkout is not available. Please sign in or create an account to continue.""
+                        errMsg = getResources().getString(R.string.premium_product_requires_login);
+                    }
                     activity.showErrorDialog(errMsg);
                     Log.d(TAG, errMsg);
                 }
