@@ -84,7 +84,7 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
         expirationMonthET.addTextChangedListener(this);
         expirationMonthET.setOnFocusChangeListener(this);
         cardNumberET.setOnEditorActionListener(this);
-        cardNumberET.setFilters(new InputFilter[] { new CcNumberInputFilter()});
+        cardNumberET.setFilters(new InputFilter[]{new InputFilter.LengthFilter(19), new CcNumberInputFilter()});
         addCCBtn.setOnClickListener(this);
         cancelCCBtn.setOnClickListener(this);
 
