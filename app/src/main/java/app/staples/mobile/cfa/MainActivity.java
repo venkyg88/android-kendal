@@ -962,7 +962,7 @@ public class MainActivity extends Activity
                     }
 
                     // if on search results or page reached via drawer-menu then go to first Home fragment found in backstack
-                    if (drawerItem != null || DrawerItem.SEARCH.equals(currentTag)) {
+                    if (drawerItem != null || DrawerItem.SEARCH.equals(currentTag) || DrawerItem.LOGIN.equals(currentTag)) {
                         int backstackIndex = currentBackStackIndex - 1;
                         while (backstackIndex >= 0) {
                             if (DrawerItem.HOME.equals(fragmentManager.getBackStackEntryAt(backstackIndex).getName())) {
