@@ -1,9 +1,9 @@
-package com.staples.mobile.test;
-
-import app.staples.mobile.cfa.IdentifierType;
+package app.staples.mobile.test;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import app.staples.mobile.cfa.IdentifierType;
 
 public class IdentifierTypeTest {
 
