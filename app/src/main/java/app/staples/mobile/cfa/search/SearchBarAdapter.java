@@ -25,7 +25,7 @@ public class SearchBarAdapter extends BaseAdapter implements Filterable {
 
     private static final String PREFS_HISTORY = "searchHistory";
     private static final int MAXHISTORY = 10;
-    private static final boolean INVERTHIGHLIGHT = true;
+    private static final boolean INVERT_HIGHLIGHT = true;
 
     private Activity activity;
     private SearchBarView searchBar;
@@ -67,7 +67,7 @@ public class SearchBarAdapter extends BaseAdapter implements Filterable {
     }
 
     /**
-     * setHighlightedText is controlled by INVERTHIGHLIGHT
+     * setHighlightedText is controlled by INVERT_HIGHLIGHT
      * false -> highlight matched text
      * true -> highlight non-matched text
      */
@@ -86,12 +86,12 @@ public class SearchBarAdapter extends BaseAdapter implements Filterable {
         for(i=0;i<textLen;i=k) {
             j = text.indexOf(keyword, i);
             if (j<0) j = textLen;
-            if (INVERTHIGHLIGHT && i<j)
+            if (INVERT_HIGHLIGHT && i<j)
                 sb.setSpan(new StyleSpan(Typeface.BOLD), i, j, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
             if (j>=textLen) break;
             for(k=j+keyLen;k<textLen;k+=keyLen)
                 if (!text.startsWith(keyword, k)) break;
-            if (!INVERTHIGHLIGHT && j<k)
+            if (!INVERT_HIGHLIGHT && j<k)
                 sb.setSpan(new StyleSpan(Typeface.BOLD), j, k, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
         }
         view.setText(sb);
