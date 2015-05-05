@@ -330,9 +330,8 @@ public class ProductCollection {
                 if (promoCategories == null) break; // while (true)
 
                 for (Category promoCategory : promoCategories) {
-
                     promoProducts = promoCategory.getProduct();
-                    products.addAll(promoProducts);
+                    if(promoProducts != null) products.addAll(promoProducts);
                 }
 
                 break; // while (true)

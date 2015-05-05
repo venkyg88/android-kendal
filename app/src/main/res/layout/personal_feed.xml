@@ -24,11 +24,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:padding="@dimen/margin_16dp"
                 android:orientation="vertical"
                 android:visibility="gone">
                 <!--your feed is empty-->
                 <TextView
+                    android:id="@+id/empty_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="@dimen/verticalspacing_48dp"
@@ -52,7 +52,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/staples_white"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -105,14 +106,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
                     </LinearLayout>
-                    <TextView
+                    <View
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textSize="@dimen/fontsize_20sp"
-                        android:text="@string/empty"
-                        android:padding="@dimen/verticalspacing_8dp"/>
+                        android:layout_weight="1"/>
                     <RelativeLayout
                         android:id="@+id/seen_products_loading_footer"
                         android:layout_width="match_parent"
@@ -131,70 +128,6 @@
             <!-- Separator -->
             <View
                 android:id="@+id/seen_products_separator"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/verticalspacing_8dp"/>
-
-            <!-- Clearance Products in Cart -->
-            <LinearLayout
-                android:id="@+id/clearance_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/staples_white"
-                android:orientation="vertical"
-                android:visibility="gone">
-                <TextView
-                    android:id="@+id/clearance_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left|center_vertical"
-                    android:padding="@dimen/verticalspacing_8dp"
-                    android:text="@string/feed_clearance_title"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:background="@color/staples_middle_gray"/>
-                <app.staples.mobile.cfa.widget.DataWrapper
-                    android:id="@+id/clearance_wrapper"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-                    <LinearLayout
-                        android:id="@+id/clearance_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingLeft="@dimen/verticalspacing_8dp"/>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:textSize="@dimen/fontsize_20sp"
-                            android:text="@string/loading"
-                            android:padding="@dimen/verticalspacing_8dp"/>
-                        <ProgressBar
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-                    </LinearLayout>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textSize="@dimen/fontsize_20sp"
-                        android:text="@string/empty"
-                        android:padding="@dimen/verticalspacing_8dp"/>
-                </app.staples.mobile.cfa.widget.DataWrapper>
-            </LinearLayout>
-
-            <!-- Separator -->
-            <View
-                android:id="@+id/clearance_separator"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/verticalspacing_8dp"/>
 
@@ -245,14 +178,70 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
                     </LinearLayout>
-                    <TextView
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"/>
+                </app.staples.mobile.cfa.widget.DataWrapper>
+            </LinearLayout>
+
+            <!-- Separator -->
+            <View
+                android:id="@+id/clearance_separator"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/verticalspacing_8dp"/>
+
+            <!-- Clearance Products in Cart -->
+            <LinearLayout
+                android:id="@+id/clearance_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/staples_white"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/clearance_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left|center_vertical"
+                    android:padding="@dimen/verticalspacing_8dp"
+                    android:text="@string/feed_clearance_title"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/staples_middle_gray"/>
+                <app.staples.mobile.cfa.widget.DataWrapper
+                    android:id="@+id/clearance_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:id="@+id/clearance_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/verticalspacing_8dp"/>
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:textSize="@dimen/fontsize_20sp"
-                        android:text="@string/empty"
-                        android:padding="@dimen/verticalspacing_8dp"/>
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textSize="@dimen/fontsize_20sp"
+                            android:text="@string/loading"
+                            android:padding="@dimen/verticalspacing_8dp"/>
+                        <ProgressBar
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"/>
                 </app.staples.mobile.cfa.widget.DataWrapper>
             </LinearLayout>
         </LinearLayout>
