@@ -699,10 +699,8 @@ public class MainActivity extends Activity
 
         ActionBar.getInstance().closeSearch();
 
-        // fix orientation to portrait for cart, allow rotation for other fragments
-        if (DrawerItem.CART.equals(tag)) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        } else {
+        // allow rotation for all fragments except cart
+        if (!DrawerItem.CART.equals(tag)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         }
 

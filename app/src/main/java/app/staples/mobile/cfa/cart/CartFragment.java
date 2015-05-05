@@ -3,6 +3,7 @@ package app.staples.mobile.cfa.cart;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.Fragment;
+import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -198,6 +199,9 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     @Override
     public void onResume() {
         super.onResume();
+
+        // force cart fragment to portrait mode because it doesn't fit well in landscape
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // update action bar
         ActionBar.getInstance().setConfig(ActionBar.Config.CART);
