@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -61,7 +62,6 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
     ArrayList<OrderShipmentListItem> orderShipmentListItems;
     OrderStatusDetailCallback orderStatusDetailCallback;
     int numOrdersToRetrieve;
-
 
 
     @Override
@@ -113,6 +113,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
         });
 
         orderErrorTV = (TextView)view.findViewById(R.id.orderErrorTV);
+
         list = (RecyclerView) view.findViewById(R.id.orders_list);
         list.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -137,8 +138,10 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
         OrderShipmentListItem order;
         switch(view.getId()) {
             case R.id.track_shipment_btn:
+                Button trackShipment = (Button)view;
                 order = adapter.getItem((int)view.getTag());
-                showTrackingInfo(order);
+                trackShipment.setEnabled(false);
+                showTrackingInfo(order, view);
                 break;
             case R.id.order_reciept_btn:
                 order = adapter.getItem((int)view.getTag());
@@ -153,9 +156,10 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
         }
     }
 
-    private void showTrackingInfo(final OrderShipmentListItem order) {
+    private void showTrackingInfo(final OrderShipmentListItem order, View view) {
         final OrderStatus orderStatus = order.getOrderStatus();
         final Shipment shipment = order.getShipment();
+        final Button trackShipment = (Button)view;
 
         easyOpenApi.getMemberOrderTrackingShipment(order.getOrderStatus().getOrderNumber(),
                 shipment.getShipmentNumber(), "000", new Callback<OrderStatusDetail>() {
@@ -207,6 +211,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
                         closeButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                trackShipment.setEnabled(true);
                                 dismissTrackingInfo();
                             }
                         });
@@ -220,6 +225,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
                     public void failure(RetrofitError error) {
                         activity.hideProgressIndicator();
                         activity.showErrorDialog(ApiError.getErrorMessage(error));
+                        trackShipment.setEnabled(true);
                     }
                 });
     }
