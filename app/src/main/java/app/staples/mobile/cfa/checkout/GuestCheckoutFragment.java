@@ -140,7 +140,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 //        TextView.OnEditorActionListener paymentMethodCompletionListener = this;
 //        expirationYearVw.setOnEditorActionListener(paymentMethodCompletionListener);
 //        cidVw.setOnEditorActionListener(paymentMethodCompletionListener);
-        cardNumberVw.setFilters(new InputFilter[]{new CcNumberInputFilter()});
+        cardNumberVw.setFilters(new InputFilter[]{new InputFilter.LengthFilter(19), new CcNumberInputFilter()});
         // add listener to billing addr toggle button switch
         useShipAddrAsBillingAddrSwitch.setChecked(true);
         useShipAddrAsBillingAddrSwitch.setOnCheckedChangeListener(this);
