@@ -706,14 +706,6 @@ public class MainActivity extends Activity
 
         FragmentManager manager = getFragmentManager();
 
-        // HACK: always exclude guest checkout in backstack
-        // (this checks for a transition FROM guest checkout to any other page)
-        int currentBackStackIndex = manager.getBackStackEntryCount()-1;
-        if (currentBackStackIndex >= 0 &&
-                DrawerItem.GUEST_CHECKOUT.equals(manager.getBackStackEntryAt(currentBackStackIndex).getName())) {
-            push = false;
-        }
-
         // Swap Fragments
         FragmentTransaction transaction = manager.beginTransaction();
         if (transition != null) transition.setAnimation(transaction);
@@ -897,6 +889,15 @@ public class MainActivity extends Activity
     @Override
     public void onBackPressed () {
         hideProgressIndicator();
+
+        // HACK: if going BACK to guest checkout pop an additional time
+        FragmentManager fragmentManager = getFragmentManager();
+        int currentBackStackIndex = fragmentManager.getBackStackEntryCount()-1;
+        if (currentBackStackIndex > 0 &&
+                DrawerItem.GUEST_CHECKOUT.equals(fragmentManager.getBackStackEntryAt(currentBackStackIndex - 1).getName())) {
+            fragmentManager.popBackStack();
+        }
+
         super.onBackPressed();
     }
 
@@ -961,7 +962,7 @@ public class MainActivity extends Activity
                     }
 
                     // if on search results or page reached via drawer-menu then go to first Home fragment found in backstack
-                    if (drawerItem != null || DrawerItem.SEARCH.equals(currentTag)) {
+                    if (drawerItem != null || DrawerItem.SEARCH.equals(currentTag) || DrawerItem.LOGIN.equals(currentTag)) {
                         int backstackIndex = currentBackStackIndex - 1;
                         while (backstackIndex >= 0) {
                             if (DrawerItem.HOME.equals(fragmentManager.getBackStackEntryAt(backstackIndex).getName())) {
