@@ -1,10 +1,6 @@
-package com.staples.mobile.test;
+package app.staples.mobile.test;
 
 import android.widget.ListView;
-
-import com.staples.mobile.cfa.BuildConfig;
-import app.staples.mobile.cfa.DrawerAdapter;
-import app.staples.mobile.cfa.R;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -13,6 +9,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
+
+import app.staples.BuildConfig;
+import app.staples.R;
+import app.staples.mobile.cfa.DrawerAdapter;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, emulateSdk = 21, qualifiers = "port")

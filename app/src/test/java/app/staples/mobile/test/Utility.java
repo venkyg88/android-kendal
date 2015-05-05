@@ -1,6 +1,4 @@
-package com.staples.mobile.test;
-
-import app.staples.mobile.cfa.MainActivity;
+package app.staples.mobile.test;
 
 import org.junit.Assert;
 import org.robolectric.Robolectric;
@@ -8,6 +6,8 @@ import org.robolectric.shadows.ShadowLog;
 import org.robolectric.util.ActivityController;
 
 import java.util.Map;
+
+import app.staples.mobile.cfa.MainActivity;
 
 public class Utility {
 

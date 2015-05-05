@@ -103,7 +103,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         cidVw = (EditText)paymentMethodLayoutVw.findViewById(R.id.cid);
         useShipAddrAsBillingAddrSwitch = (Switch) frame.findViewById(R.id.useShipAddrAsBillingAddr_switch);
 
-        // initialize from cache
+        // initialize from cache BEFORE calling init on the address blocks to avoid autocomplete popping up
         if (shippingAddressCache != null) {
             shippingAddrBlock.setShippingAddress(shippingAddressCache);
         }
@@ -114,6 +114,14 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         // initialize address blocks AFTER setting values from cache so that autocomplete is not triggered
         shippingAddrBlock.init(true);
         billingAddrBlock.init(false);
+
+        // initialize autocomplete mode AFTER calling init to avoid NPE
+        if (shippingAddressCache != null && !TextUtils.isEmpty(shippingAddressCache.getDeliveryCity())) {
+            shippingAddrBlock.selectMode(false);
+        }
+        if (billingAddressCache != null && !TextUtils.isEmpty(billingAddressCache.getDeliveryCity())) {
+            billingAddrBlock.selectMode(false);
+        }
 
 
         // TODO: ideally the expiration date code should be encapsulated in a custom compound view,
@@ -132,7 +140,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 //        TextView.OnEditorActionListener paymentMethodCompletionListener = this;
 //        expirationYearVw.setOnEditorActionListener(paymentMethodCompletionListener);
 //        cidVw.setOnEditorActionListener(paymentMethodCompletionListener);
-        cardNumberVw.setFilters(new InputFilter[]{new CcNumberInputFilter()});
+        cardNumberVw.setFilters(new InputFilter[]{new InputFilter.LengthFilter(19), new CcNumberInputFilter()});
         // add listener to billing addr toggle button switch
         useShipAddrAsBillingAddrSwitch.setChecked(true);
         useShipAddrAsBillingAddrSwitch.setOnCheckedChangeListener(this);

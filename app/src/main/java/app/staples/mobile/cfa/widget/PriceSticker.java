@@ -13,6 +13,7 @@ import app.staples.R;
 
 import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * <b>XML attributes</b>
@@ -25,7 +26,7 @@ import java.util.List;
 public class PriceSticker extends View {
     private static final String TAG = PriceSticker.class.getSimpleName();
 
-    private static final NumberFormat format = NumberFormat.getCurrencyInstance();
+    private static final NumberFormat format = NumberFormat.getCurrencyInstance(Locale.US);
 
     private Paint majorPaint;
     private Paint wasPaint;

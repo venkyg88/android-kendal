@@ -3,6 +3,7 @@ package app.staples.mobile.cfa.cart;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.Fragment;
+import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -199,6 +200,9 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     public void onResume() {
         super.onResume();
 
+        // force cart fragment to portrait mode because it doesn't fit well in landscape
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         // update action bar
         ActionBar.getInstance().setConfig(ActionBar.Config.CART);
         //initialize cart based on what's been returned from api so far
@@ -210,7 +214,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     @Override
     public void onPause() {
         super.onPause();
-        cartAdapter = null;
     }
 
     /** Sets item count indicator on cart icon and cart drawer title */
@@ -241,7 +244,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         ActionBar.getInstance().setCartCount(totalItemCount);
 
         // if fragment is attached to activity, then update the fragment's views
-        if (cartAdapter != null) {
+        if (getActivity() != null) {
 
             // Set text of cart item qty
             ActionBar.getInstance().setCartCount(totalItemCount);
@@ -439,7 +442,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     // happen since this should all be on the main UI thread)
     private synchronized void setAdapterListItems() {
         // if fragment is attached to activity, then update the fragment's views
-        if (cartAdapter != null) {
+        if (getActivity() != null) {
             cartAdapter.setItems(cartItemGroups);
         } else {
             ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
@@ -676,7 +679,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         @Override
         public void onQtyChange(View view, int value) {
             Object tag = view.getTag();
-            if (cartAdapter != null && tag != null && tag instanceof CartAdapter.CartItemPosition) {
+            if (tag != null && tag instanceof CartAdapter.CartItemPosition) {
                 CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition) tag);
 
                 // default proposed qty to orig in case new value not parseable;
@@ -693,7 +696,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         @Override
         public void onClick(View view) {
             Object tag = view.getTag();
-            if (cartAdapter != null && tag != null && tag instanceof CartAdapter.CartItemPosition) {
+            if (tag != null && tag instanceof CartAdapter.CartItemPosition) {
                 CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition)tag);
 
                 activity.hideSoftKeyboard();
@@ -709,7 +712,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     class ProductClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            if (cartAdapter != null && view.getTag() != null && view.getTag() instanceof CartAdapter.CartItemPosition) {
+            if (view.getTag() != null && view.getTag() instanceof CartAdapter.CartItemPosition) {
                 CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition) view.getTag());
                 activity.selectSkuItem(cartItem.getDescription(), cartItem.getSku(), false);
             }

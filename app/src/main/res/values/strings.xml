@@ -46,7 +46,9 @@
     <string name="sort_title_descending">Name Z–A</string>
     <string name="rebate_text">*Price before rebate</string>
     <string name="expired_notice">This promotion has expired.\n\nCheck out some of our other great offers or search for whatever you may need.</string>
-    <string name="expired_ok">Ok</string>
+    <string name="expired_ok">OK</string>
+    <string name="search_results_not_found_header">Your search for \"{0}\" \ndid not match any products</string>
+    <string name="search_results_not_found_suggestions">Check spelling\nTry different keywords\nTry more general keywords</string>
 
     <!-- Notifications -->
     <string name="notify_prefs_title">Notification Preferences</string>
@@ -159,8 +161,7 @@
     <!--order confirmation-->
     <string name="submit_order">Place Order</string>
     <string name="order_confirmation_msg">Thank you for your order!</string>
-    <string name="order_confirmation_msg2">An email with complete details has</string>
-    <string name="order_confirmation_msg3">been sent to %s.</string>
+    <string name="order_confirmation_msg2">An email with complete details has been sent to %s.</string>
     <string name="order_number_label">Order Number</string>
     <string name="delivery_range_label">Delivery Range for Shipped Items</string>
     <string name="order_total_label">Total</string>

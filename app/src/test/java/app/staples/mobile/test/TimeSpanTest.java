@@ -1,7 +1,4 @@
-package com.staples.mobile.test;
-
-import com.staples.mobile.cfa.BuildConfig;
-import app.staples.mobile.cfa.store.TimeSpan;
+package app.staples.mobile.test;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -13,6 +10,9 @@ import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.TimeZone;
+
+import app.staples.BuildConfig;
+import app.staples.mobile.cfa.store.TimeSpan;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, emulateSdk = 21, qualifiers = "port")
@@ -45,10 +45,10 @@ public class TimeSpanTest {
         Assert.assertEquals("Wednesday 11:59PM should parse to 7 days", 7*ONEDAY, span.getEnd()-offset);
     }
 
-    public static final String response = "Mon-Wed\t9:00AM-5:00PM\n"+
+    public static final String response = "Mon-Wed\t9:00 AM-5:00 PM\n"+
                                           "Thu\t24 hours\n"+
-                                          "Fri\t9:00AM-5:00PM\n"+
-                                          "Sat-Sun\t9:00AM-2:00PM";
+                                          "Fri\t9:00 AM-5:00 PM\n"+
+                                          "Sat-Sun\t9:00 AM-2:00 PM";
 
     @Test
     public void testFormatSchedule() {
