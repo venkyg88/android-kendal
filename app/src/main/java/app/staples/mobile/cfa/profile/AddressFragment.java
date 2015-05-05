@@ -97,6 +97,7 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
         (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
             @Override public void onProfileRefresh(Member member, String errMsg) {
                 MainActivity activity = (MainActivity) getActivity();
+                if (activity==null) return;
                 activity.hideProgressIndicator();
                 activity.showNotificationBanner(R.string.address_updated);
                 FragmentManager fm = getFragmentManager();
@@ -110,6 +111,7 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
     @Override
     public void failure(RetrofitError error) {
         MainActivity activity = (MainActivity) getActivity();
+        if (activity==null) return;
         activity.hideProgressIndicator();
         activity.showErrorDialog(ApiError.getErrorMessage(error));
     }
