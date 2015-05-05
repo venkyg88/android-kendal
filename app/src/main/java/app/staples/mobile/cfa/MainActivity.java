@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -697,6 +698,11 @@ public class MainActivity extends Activity
         hideSoftKeyboard();
 
         ActionBar.getInstance().closeSearch();
+
+        // allow rotation for all fragments except cart
+        if (!DrawerItem.CART.equals(tag)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        }
 
         FragmentManager manager = getFragmentManager();
 
