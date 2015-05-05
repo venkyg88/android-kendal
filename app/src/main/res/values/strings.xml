@@ -203,7 +203,7 @@
     <string name="login_error_msg">The specified user name or password is not correct. Verify the information provided and log in again.</string>
     <string name="address_error_msg">Please enter a valid address</string>
     <string name="track_shipment">Track</string>
-    <string name="view_receipt">View receipt</string>
+    <string name="view_receipt">View Receipt</string>
 
     <!-- Orders -->
     <string name="order">Order</string>
