@@ -1,8 +1,7 @@
-package com.staples.mobile.test;
+package app.staples.mobile.test;
 
 import android.util.Log;
 
-import com.staples.mobile.cfa.BuildConfig;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
@@ -20,6 +19,7 @@ import org.robolectric.annotation.Config;
 
 import java.util.List;
 
+import app.staples.BuildConfig;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
