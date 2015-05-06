@@ -278,17 +278,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     }
 
     public void onNext(AddressBlock addressBlock) {
-        // Commented out because if i try to change address and click next button its triggering a precheckout call
-        // if zipcode is not empty
-
-//        ShippingAddress shippingAddress = addressBlock.getShippingAddress();
-//        // if zip code filled out, treat this as completing the address
-//        if (!TextUtils.isEmpty(shippingAddress.getDeliveryZipCode())) {
-//            onDone(addressBlock, addressBlock.validate());
-//        }
-    }
-
-    public void onDone(AddressBlock addressBlock, boolean valid) {
         if (addressBlock == shippingAddrBlock) {
             shippingAddrNeedsApplying = true;
             if (useShipAddrAsBillingAddrSwitch.isChecked()) {
@@ -297,24 +286,27 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         } else if (addressBlock == billingAddrBlock) {
             billingAddrNeedsApplying = true;
         }
+    }
+
+    public void onDone(AddressBlock addressBlock, boolean valid) {
+        onNext(addressBlock);
         applyAddressesAndPrecheckout();
     }
 
     /** implements CompoundButton.OnCheckedChangeListener */
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if(!shippingAddrBlock.validate()) {
-            useShipAddrAsBillingAddrSwitch.setChecked(true);
-            return;
-        }
         int visibility = isChecked ? View.GONE: View.VISIBLE;
         int shippingVisibility = isChecked ? View.VISIBLE: View.GONE;
         billingAddrHeadingVw.setVisibility(visibility);
         billingAddrBlock.setVisibility(visibility);
         billingAddrNeedsApplying = true;
         if(!isChecked)billingAddrBlock.requestFocus();
-        shippingAddrBlock.setVisibility(shippingVisibility);
-        preCheckoutShippingLayoutVw.setVisibility(visibility);
-        shippingAddressTv.setText(shippingAddrBlock.getShippingAddress().getCompleteAddress(shippingAddrBlock.getShippingAddress()));
+        if(!shippingAddrBlock.validate()) {
+            shippingAddrBlock.setVisibility(shippingVisibility);
+            preCheckoutShippingLayoutVw.setVisibility(visibility);
+            shippingAddressTv.setText(shippingAddrBlock.getShippingAddress().getCompleteAddress(shippingAddrBlock.getShippingAddress()));
+        }
+
     }
 
     /** gets shipping address from user's entries */
@@ -407,6 +399,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 
                             if (infoMsg != null) {
                                 Tracker.getInstance().trackActionForCheckoutFormErrors("Shipping address alert: " + infoMsg); // analytics
+                                // checking to see if the fragment is detached
+                                if(getActivity() == null) return;
                                 activity.showErrorDialog("Shipping address alert: " + infoMsg);
                             }
 
@@ -452,6 +446,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 
                             if (infoMsg != null) {
                                 Tracker.getInstance().trackActionForCheckoutFormErrors("Billing address alert: " + infoMsg); // analytics
+                                // checking to see if the fragment is detached
+                                if(getActivity() == null) return;
                                 activity.showErrorDialog("Billing address alert: " + infoMsg);
                             }
 
@@ -499,6 +495,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 
                     } else {
                         Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
+                        // checking to see if the fragment is detached
+                        if(getActivity() == null) return;
                         activity.showErrorDialog(errMsg);
                         Log.d(TAG, errMsg);
                     }
