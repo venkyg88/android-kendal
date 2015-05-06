@@ -296,16 +296,18 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     /** implements CompoundButton.OnCheckedChangeListener */
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         int visibility = isChecked ? View.GONE: View.VISIBLE;
-        int shippingVisibility = isChecked ? View.VISIBLE: View.GONE;
         billingAddrHeadingVw.setVisibility(visibility);
         billingAddrBlock.setVisibility(visibility);
         billingAddrNeedsApplying = true;
         if(!isChecked)billingAddrBlock.requestFocus();
-        if(!shippingAddrBlock.validate()) {
-            shippingAddrBlock.setVisibility(shippingVisibility);
-            preCheckoutShippingLayoutVw.setVisibility(visibility);
-            shippingAddressTv.setText(shippingAddrBlock.getShippingAddress().getCompleteAddress(shippingAddrBlock.getShippingAddress()));
-        }
+
+        // layout changes to shipping on billing checked
+//        int shippingVisibility = isChecked ? View.VISIBLE: View.GONE;
+//        if(shippingAddrBlock.validate()) {
+//            shippingAddrBlock.setVisibility(shippingVisibility);
+//            preCheckoutShippingLayoutVw.setVisibility(visibility);
+//            shippingAddressTv.setText(shippingAddrBlock.getShippingAddress().getCompleteAddress(shippingAddrBlock.getShippingAddress()));
+//        }
 
     }
 
@@ -393,14 +395,14 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                     @Override
                     public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
 
+                        // checking to see if the fragment is detached
+                        if(getActivity() == null) return;
+
                         // if success
                         if (errMsg == null) {
                             shippingAddrNeedsApplying = false;
-
                             if (infoMsg != null) {
                                 Tracker.getInstance().trackActionForCheckoutFormErrors("Shipping address alert: " + infoMsg); // analytics
-                                // checking to see if the fragment is detached
-                                if(getActivity() == null) return;
                                 activity.showErrorDialog("Shipping address alert: " + infoMsg);
                             }
 
@@ -439,6 +441,8 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                 CheckoutApiManager.applyBillingAddress(billingAddress, new CheckoutApiManager.ApplyAddressCallback() {
                     @Override
                     public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
+                        // checking to see if the fragment is detached
+                        if(getActivity() == null) return;
 
                         // if success
                         if (errMsg == null) {
@@ -446,8 +450,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 
                             if (infoMsg != null) {
                                 Tracker.getInstance().trackActionForCheckoutFormErrors("Billing address alert: " + infoMsg); // analytics
-                                // checking to see if the fragment is detached
-                                if(getActivity() == null) return;
                                 activity.showErrorDialog("Billing address alert: " + infoMsg);
                             }
 
@@ -488,6 +490,9 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                 @Override
                 public void onApplyPaymentMethodComplete(String paymentMethodId, String authorized, String errMsg) {
 
+                    // checking to see if the fragment is detached
+                    if(getActivity() == null) return;
+
                     // if success
                     if (errMsg == null) {
                         // submit the order
@@ -495,6 +500,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 
                     } else {
                         Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
+
                         // checking to see if the fragment is detached
                         if(getActivity() == null) return;
                         activity.showErrorDialog(errMsg);
