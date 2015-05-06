@@ -1,5 +1,6 @@
 package app.staples.mobile.cfa.profile;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.res.Resources;
@@ -216,11 +217,14 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
             public void success(EmptyResponse empty, Response response) {
                 (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
                     @Override public void onProfileRefresh(Member member, String errMsg) {
-                        activity.hideProgressIndicator();
-                        activity.showNotificationBanner(R.string.cc_updated);
-                        FragmentManager fm = getFragmentManager();
-                        if (fm != null) {
-                            fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
+                        Activity activity = getActivity();
+                        if (activity instanceof MainActivity) {
+                            ((MainActivity) activity).hideProgressIndicator();
+                            ((MainActivity) activity).showNotificationBanner(R.string.cc_updated);
+                            FragmentManager fm = getFragmentManager();
+                            if (fm != null) {
+                                fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
+                            }
                         }
                     }
                 });
@@ -228,8 +232,11 @@ public class CreditCardFragment extends Fragment implements View.OnClickListener
 
             @Override
             public void failure(RetrofitError error) {
-                activity.hideProgressIndicator();
-                activity.showErrorDialog(ApiError.getErrorMessage(error));
+                Activity activity = getActivity();
+                if (activity instanceof MainActivity) {
+                    ((MainActivity) activity).hideProgressIndicator();
+                    ((MainActivity) activity).showErrorDialog(ApiError.getErrorMessage(error));
+                }
             }
         });
     }
