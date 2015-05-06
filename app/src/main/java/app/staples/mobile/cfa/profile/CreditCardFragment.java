@@ -70,7 +70,7 @@ public class CreditCardFragment extends Fragment implements Callback, ProfileDet
         Resources r = getResources();
         easyOpenApi = Access.getInstance().getEasyOpenApi(true);
 
-        View view = inflater.inflate(R.layout.add_creditcard_fragment, container, false);
+        View view = inflater.inflate(R.layout.credit_card_fragment, container, false);
         cardNumberET = (EditText) view.findViewById(R.id.cardNumber);
         expirationMonthET = (EditText) view.findViewById(R.id.expiration_month);
         expirationYearET = (EditText) view.findViewById(R.id.expiration_year);

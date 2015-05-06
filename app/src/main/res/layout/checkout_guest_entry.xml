@@ -47,7 +47,7 @@
         style="@style/GraySubheading"
         android:layout_marginTop="@dimen/margin_16dp"
         android:text="@string/payment_method"/>
-    <include layout="@layout/add_creditcard_fragment" android:id="@+id/payment_method_layout"/>
+    <include layout="@layout/credit_card_block" android:id="@+id/payment_method_layout"/>
 
  <Space
      android:layout_width="match_parent"
