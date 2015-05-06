@@ -107,8 +107,9 @@
         android:elevation="@dimen/action_bar_quarter_margin"
         android:text="@string/payment_button_text"
         android:textSize="@dimen/fontsize_18sp"
-        android:textColor="@color/staples_green"
-        android:padding="@dimen/action_bar_half_margin"/>
+        android:textColor="@color/staples_white"
+        android:padding="@dimen/action_bar_half_margin"
+        android:background="@drawable/rounded_corner_green"/>
 
     <!--payment method-->
     <LinearLayout

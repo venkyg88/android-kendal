@@ -278,11 +278,15 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     }
 
     public void onNext(AddressBlock addressBlock) {
-        ShippingAddress shippingAddress = addressBlock.getShippingAddress();
-        // if zip code filled out, treat this as completing the address
-        if (!TextUtils.isEmpty(shippingAddress.getDeliveryZipCode())) {
-            onDone(addressBlock, addressBlock.validate());
-        }
+
+        // Commented out because if i try to change address and click next button its triggering a precheckout call
+        // if zipcode is not empty
+
+//        ShippingAddress shippingAddress = addressBlock.getShippingAddress();
+//        // if zip code filled out, treat this as completing the address
+//        if (!TextUtils.isEmpty(shippingAddress.getDeliveryZipCode())) {
+//            onDone(addressBlock, addressBlock.validate());
+//        }
     }
 
     public void onDone(AddressBlock addressBlock, boolean valid) {
@@ -303,10 +307,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         billingAddrHeadingVw.setVisibility(visibility);
         billingAddrBlock.setVisibility(visibility);
         billingAddrNeedsApplying = true;
-        billingAddrBlock.requestFocus();
-//        if (isChecked || !TextUtils.isEmpty(billingAddrBlock.getShippingAddress().getDeliveryZipCode())) {
-//            applyAddressesAndPrecheckout();
-//        }
+        if(!isChecked)billingAddrBlock.requestFocus();
     }
 
     /** gets shipping address from user's entries */
