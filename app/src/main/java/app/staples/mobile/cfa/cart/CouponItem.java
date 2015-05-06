@@ -13,6 +13,7 @@ public class CouponItem {
     public static final int TYPE_REDEEMABLE_REWARD = 3;
     public static final int TYPE_NO_REDEEMABLE_REWARDS_MSG = 4;
     public static final int TYPE_ASSOC_REWARD_COUPON = 5;
+    public static final int TYPE_LINK_REWARD_ACCOUNT = 6;
 
     private Coupon coupon;
     private Reward reward;
