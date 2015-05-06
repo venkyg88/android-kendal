@@ -276,7 +276,6 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/fontsize_16sp</item>
         <item name="android:textColor">@color/staples_black</item>
-        <item name="android:paddingTop">@dimen/action_bar_quarter_margin</item>
     </style>
 
     <style name="HorizontalDivLine">
