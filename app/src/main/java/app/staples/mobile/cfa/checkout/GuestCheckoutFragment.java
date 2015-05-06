@@ -503,6 +503,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 
                         // checking to see if the fragment is detached
                         if(getActivity() == null) return;
+                        hideProgressIndicator();
                         activity.showErrorDialog(errMsg);
                         Log.d(TAG, errMsg);
                     }
@@ -543,6 +544,9 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                 billingAddrBlock.requestFocus();
                 disableCheckoutButton(true);
                 hideLayoutsInGuest(false);
+                break;
+            case R.id.co_submission_layout:
+                onSubmit();
                 break;
         }
     }
