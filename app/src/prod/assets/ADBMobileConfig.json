@@ -13,7 +13,7 @@
   },
   "analytics": {
     "rsids": "staplesmobileappprod",
-    "server": “metrics.staples.com”,
+    "server": "metrics.staples.com",
     "ssl": false,
     "offlineEnabled": false,
     "charset": "UTF-8",
