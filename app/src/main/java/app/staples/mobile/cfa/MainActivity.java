@@ -699,11 +699,6 @@ public class MainActivity extends Activity
 
         ActionBar.getInstance().closeSearch();
 
-        // allow rotation for all fragments except cart
-        if (!DrawerItem.CART.equals(tag)) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-        }
-
         FragmentManager manager = getFragmentManager();
 
         // Swap Fragments
