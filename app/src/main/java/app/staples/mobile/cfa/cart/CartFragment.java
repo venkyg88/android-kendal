@@ -201,7 +201,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         super.onResume();
 
         // force cart fragment to portrait mode because it doesn't fit well in landscape
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
 
         // update action bar
         ActionBar.getInstance().setConfig(ActionBar.Config.CART);
