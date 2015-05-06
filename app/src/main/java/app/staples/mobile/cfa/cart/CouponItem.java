@@ -21,6 +21,7 @@ public class CouponItem {
     private Reward reward;
     private int itemType;
     private String couponCodeToAdd;
+    private EditText couponCodeVw;
     private EditText rewardsNumberVw;
     private EditText rewardsPhoneNumberVw;
 
@@ -92,6 +93,13 @@ public class CouponItem {
         this.couponCodeToAdd = couponCodeToAdd;
     }
 
+    public EditText getCouponCodeVw() {
+        return couponCodeVw;
+    }
+
+    public void setCouponCodeVw(EditText couponCodeVw) {
+        this.couponCodeVw = couponCodeVw;
+    }
 
     public EditText getRewardsNumberVw() {
         return rewardsNumberVw;

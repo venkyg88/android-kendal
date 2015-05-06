@@ -330,7 +330,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 }
                 break;
             case R.id.coupon_add_button:
-                String couponCode = couponAdapter.getItem((Integer)view.getTag()).getCouponCodeToAdd();
+                CouponItem couponItemForAdding = couponAdapter.getItem((Integer) view.getTag());
+                String couponCode = couponItemForAdding.getCouponCodeVw().getText().toString();
                 if (TextUtils.isEmpty(couponCode)) {
                     activity.showErrorDialog(R.string.missing_coupon_code);
                 } else {
@@ -350,11 +351,9 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 activity.selectOrderCheckout();
                 break;
             case R.id.rewards_link_acct_button:
-                activity.hideSoftKeyboard();
-                CouponItem couponItem = couponAdapter.getItem((Integer)view.getTag());
-
-                final String rewardsNumber = couponItem.getRewardsNumberVw().getText().toString();
-                String phoneNumber = stripPhoneNumber(couponItem.getRewardsPhoneNumberVw().getText().toString());
+                CouponItem couponItemForAccount = couponAdapter.getItem((Integer)view.getTag());
+                final String rewardsNumber = couponItemForAccount.getRewardsNumberVw().getText().toString();
+                String phoneNumber = stripPhoneNumber(couponItemForAccount.getRewardsPhoneNumberVw().getText().toString());
 
                 if(validateFields(rewardsNumber, phoneNumber)) {
                     if(phoneNumber.length() < 10) {
