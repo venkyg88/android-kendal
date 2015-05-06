@@ -9,11 +9,13 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
@@ -28,7 +30,9 @@ import app.staples.mobile.cfa.profile.CreditCard;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.AddressBlock;
 
-public class GuestCheckoutFragment extends CheckoutFragment implements AddressBlock.OnDoneListener, CompoundButton.OnCheckedChangeListener, TextWatcher, View.OnFocusChangeListener, TextView.OnEditorActionListener{
+public class GuestCheckoutFragment extends CheckoutFragment implements AddressBlock.OnDoneListener,
+        CompoundButton.OnCheckedChangeListener, TextWatcher, View.OnFocusChangeListener,
+        TextView.OnEditorActionListener, View.OnClickListener{
 
     private static final String TAG = GuestCheckoutFragment.class.getSimpleName();
 
@@ -44,6 +48,14 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     EditText cidVw;
     TextView zipCodeVw;
     View submissionLayout;
+    TextView preCheckOutValidateBtn;
+    View guestPaymentLayoutVw;
+    View billingSwitchSelectLayoutVw;
+    View preCheckoutShippingLayoutVw;
+    View preCheckoutBillingLayoutVw;
+    TextView shippingAddressTv;
+    TextView billingAddressTv;
+    TextView billingAddressLbl;
 
     private boolean shippingAddrNeedsApplying = true;
     private boolean billingAddrNeedsApplying = true;
@@ -94,6 +106,14 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         billingAddrBlock.setOnDoneListener(this);
         billingAddrHeadingVw = frame.findViewById(R.id.billing_addr_heading);
         zipCodeVw = (TextView) shippingAddrBlock.findViewById(R.id.zipCode);
+        preCheckOutValidateBtn = (TextView)frame.findViewById(R.id.precheckout_validate_button);
+        guestPaymentLayoutVw = frame.findViewById(R.id.guest_payment_layout);
+        billingSwitchSelectLayoutVw = frame.findViewById(R.id.billing_select_layout);
+        preCheckoutShippingLayoutVw = frame.findViewById(R.id.shipping_addon_layout);
+        preCheckoutBillingLayoutVw = frame.findViewById(R.id.billing_addon_layout);
+        shippingAddressTv = (TextView)frame.findViewById(R.id.shipping_address_guest);
+        billingAddressTv = (TextView)frame.findViewById(R.id.billing_address_guest);
+        billingAddressLbl = (TextView)frame.findViewById(R.id.billing_addr_heading);
 
         paymentMethodLayoutVw = frame.findViewById(R.id.payment_method_layout);
         cardNumberVw = (EditText) paymentMethodLayoutVw.findViewById(R.id.cardNumber);
@@ -156,14 +176,20 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         expirationYearVw.addTextChangedListener(this);
         zipCodeVw.setOnFocusChangeListener(this);
         cidVw.setOnEditorActionListener(this);
+        preCheckOutValidateBtn.setOnClickListener(this);
+        preCheckoutShippingLayoutVw.setOnClickListener(this);
+        preCheckoutBillingLayoutVw.setOnClickListener(this);
     }
-
 
     @Override
     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
         // note that exp date will only have a DONE action if there's no CID, otherwise has NEXT action
         if (actionId == EditorInfo.IME_ACTION_DONE) {
-            if (useShipAddrAsBillingAddrSwitch.isChecked()) {
+            if(textView.getId() == R.id.cid) {
+                if(activity != null)
+                activity.hideSoftKeyboard();
+            }
+            else {
                 applyAddressesAndPrecheckout();
             }
         }
@@ -252,14 +278,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     }
 
     public void onNext(AddressBlock addressBlock) {
-        ShippingAddress shippingAddress = addressBlock.getShippingAddress();
-        // if zip code filled out, treat this as completing the address
-        if (!TextUtils.isEmpty(shippingAddress.getDeliveryZipCode())) {
-            onDone(addressBlock, addressBlock.validate());
-        }
-    }
-
-    public void onDone(AddressBlock addressBlock, boolean valid) {
         if (addressBlock == shippingAddrBlock) {
             shippingAddrNeedsApplying = true;
             if (useShipAddrAsBillingAddrSwitch.isChecked()) {
@@ -268,13 +286,11 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         } else if (addressBlock == billingAddrBlock) {
             billingAddrNeedsApplying = true;
         }
-        if (!valid) {
-            String errMsg = activity.getResources().getString(R.string.required_fields);
-            Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
-            activity.showErrorDialog(errMsg);
-        } else {
-            applyAddressesAndPrecheckout();
-        }
+    }
+
+    public void onDone(AddressBlock addressBlock, boolean valid) {
+        onNext(addressBlock);
+        applyAddressesAndPrecheckout();
     }
 
     /** implements CompoundButton.OnCheckedChangeListener */
@@ -283,10 +299,16 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         billingAddrHeadingVw.setVisibility(visibility);
         billingAddrBlock.setVisibility(visibility);
         billingAddrNeedsApplying = true;
-        billingAddrBlock.requestFocus();
-        if (isChecked || !TextUtils.isEmpty(billingAddrBlock.getShippingAddress().getDeliveryZipCode())) {
-            applyAddressesAndPrecheckout();
-        }
+        if(!isChecked)billingAddrBlock.requestFocus();
+
+        // layout changes to shipping on billing checked
+//        int shippingVisibility = isChecked ? View.VISIBLE: View.GONE;
+//        if(shippingAddrBlock.validate()) {
+//            shippingAddrBlock.setVisibility(shippingVisibility);
+//            preCheckoutShippingLayoutVw.setVisibility(visibility);
+//            shippingAddressTv.setText(shippingAddrBlock.getShippingAddress().getCompleteAddress(shippingAddrBlock.getShippingAddress()));
+//        }
+
     }
 
     /** gets shipping address from user's entries */
@@ -344,18 +366,19 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         boolean shippingAddrReady = shippingAddrBlock.validate();
 
         if(!useShipAddrAsBillingAddrSwitch.isChecked()) {
-            billingAddrReady = billingAddrBlock.validate();
+            billingAddrReady = billingAddrBlock.validateBillingAddress();
         }
         return (shippingAddrReady && billingAddrReady);
     }
 
     private void applyAddressesAndPrecheckout() {
+        if(activity != null) activity.hideSoftKeyboard();
         if (!readyForPrecheckout()) {
             // reset shipping/tax info if already calculated and showing
             resetShippingAndTax();
             return;
         }
-
+            showProgressIndicator();
         // add shipping address to cart if necessary, then billing address and precheckout
         if (shippingAddrNeedsApplying) {
             ShippingAddress shippingAddress = getShippingAddress();
@@ -363,15 +386,21 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                 String errMsg = activity.getResources().getString(R.string.required_fields);
                 Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
                 activity.showErrorDialog(errMsg);
+                hideProgressIndicator();
             } else {
+                if(shippingAddress.getCompleteAddress(shippingAddress) != null) {
+                    shippingAddressTv.setText(shippingAddress.getCompleteAddress(shippingAddress));
+                }
                 CheckoutApiManager.applyShippingAddress(shippingAddress, new CheckoutApiManager.ApplyAddressCallback() {
                     @Override
                     public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
 
+                        // checking to see if the fragment is detached
+                        if(getActivity() == null) return;
+
                         // if success
                         if (errMsg == null) {
                             shippingAddrNeedsApplying = false;
-
                             if (infoMsg != null) {
                                 Tracker.getInstance().trackActionForCheckoutFormErrors("Shipping address alert: " + infoMsg); // analytics
                                 activity.showErrorDialog("Shipping address alert: " + infoMsg);
@@ -383,7 +412,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                         } else {
                             // if shipping and tax already showing, need to hide them
                             resetShippingAndTax();
-
+                            hideProgressIndicator();
                             Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
                             activity.showErrorDialog(errMsg);
                             Log.d(TAG, errMsg);
@@ -404,11 +433,16 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                 String errMsg = activity.getResources().getString(R.string.required_fields);
                 Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
                 activity.showErrorDialog(errMsg);
+                hideProgressIndicator();
             } else {
+                if(billingAddress.getCompleteAddress(billingAddress) != null) {
+                    billingAddressTv.setText(billingAddress.getCompleteAddress(billingAddress));
+                }
                 CheckoutApiManager.applyBillingAddress(billingAddress, new CheckoutApiManager.ApplyAddressCallback() {
                     @Override
                     public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
-                        hideProgressIndicator();
+                        // checking to see if the fragment is detached
+                        if(getActivity() == null) return;
 
                         // if success
                         if (errMsg == null) {
@@ -425,7 +459,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                         } else {
                             // if shipping and tax already showing, need to hide them
                             resetShippingAndTax();
-
+                            hideProgressIndicator();
                             Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
                             activity.showErrorDialog(errMsg);
                             Log.d(TAG, errMsg);
@@ -456,6 +490,9 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                 @Override
                 public void onApplyPaymentMethodComplete(String paymentMethodId, String authorized, String errMsg) {
 
+                    // checking to see if the fragment is detached
+                    if(getActivity() == null) return;
+
                     // if success
                     if (errMsg == null) {
                         // submit the order
@@ -463,11 +500,54 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 
                     } else {
                         Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
+
+                        // checking to see if the fragment is detached
+                        if(getActivity() == null) return;
+                        hideProgressIndicator();
                         activity.showErrorDialog(errMsg);
                         Log.d(TAG, errMsg);
                     }
                 }
             });
+        }
+    }
+
+    @Override
+    protected void hideLayoutsInGuest(boolean isPrecheckOutComplete) {
+        shippingAddrBlock.setVisibility(isPrecheckOutComplete?View.GONE:View.VISIBLE);
+        preCheckOutValidateBtn.setVisibility(isPrecheckOutComplete?View.GONE:View.VISIBLE);
+        guestPaymentLayoutVw.setVisibility(isPrecheckOutComplete?View.VISIBLE:View.GONE);
+        preCheckoutShippingLayoutVw.setVisibility(isPrecheckOutComplete?View.VISIBLE:View.GONE);
+
+        if(useShipAddrAsBillingAddrSwitch.isChecked()) {
+            billingSwitchSelectLayoutVw.setVisibility(isPrecheckOutComplete?View.GONE:View.VISIBLE);
+        } else {
+            billingSwitchSelectLayoutVw.setVisibility(isPrecheckOutComplete?View.GONE:View.VISIBLE);
+            billingAddrBlock.setVisibility(isPrecheckOutComplete?View.GONE:View.VISIBLE);
+            billingAddressLbl.setVisibility(isPrecheckOutComplete?View.VISIBLE:View.GONE);
+            preCheckoutBillingLayoutVw.setVisibility(isPrecheckOutComplete?View.VISIBLE:View.GONE);
+        }
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()) {
+            case R.id.precheckout_validate_button:
+                applyAddressesAndPrecheckout();
+                break;
+            case R.id.shipping_addon_layout:
+                disableCheckoutButton(true);
+                hideLayoutsInGuest(false);
+                break;
+            case R.id.billing_addon_layout:
+                billingAddrBlock.requestFocus();
+                disableCheckoutButton(true);
+                hideLayoutsInGuest(false);
+                break;
+            case R.id.co_submission_layout:
+                onSubmit();
+                break;
         }
     }
 }

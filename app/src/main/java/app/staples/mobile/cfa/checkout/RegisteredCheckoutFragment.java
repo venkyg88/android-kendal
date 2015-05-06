@@ -147,6 +147,11 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
         }
     }
 
+    @Override
+    protected void hideLayoutsInGuest(boolean isPrecheckOutComplete) {
+
+    }
+
     /** applies shipping address to cart and initiates precheckout */
     private void applyShippingAddressAndPrecheckout() {
         final com.staples.mobile.common.access.easyopen.model.member.Address profileAddress = ProfileDetails.getAddress(shippingAddressId);

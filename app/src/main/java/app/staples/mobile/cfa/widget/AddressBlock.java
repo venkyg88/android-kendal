@@ -141,7 +141,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         return (valid);
     }
 
-    public boolean validateAddress() {
+    public boolean validateBillingAddress() {
         boolean valid = true;
         valid &= validateRequired(R.id.firstName);
         valid &= validateRequired(R.id.lastName);
