@@ -6,17 +6,46 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="@dimen/margin_16dp">
+    android:padding="@dimen/margin_16dp"
+    android:orientation="vertical">
 
     <!--shipping address-->
     <TextView
         style="@style/GraySubheading"
         android:text="@string/shipping_addr"/>
-    <include layout="@layout/address_block" android:id="@+id/shipping_addr_layout" />
+    <include layout="@layout/address_block"
+        android:id="@+id/shipping_addr_layout"/>
+
+    <RelativeLayout
+        android:id="@+id/shipping_addon_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/action_bar_half_margin"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/shipping_address_guest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="@dimen/fontsize_16sp"
+            android:layout_alignParentLeft="true"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_expand_more_black"
+            android:layout_alignParentRight="true"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_below="@+id/shipping_address_guest"
+            android:layout_marginTop="@dimen/action_bar_half_margin"
+            android:layout_height="@dimen/div_line"
+            android:background="@color/staples_dark_gray" />
+        </RelativeLayout>
 
     <!--widget for choosing billing addr to match shipping addr-->
     <LinearLayout
+        android:id="@+id/billing_select_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_16dp"
@@ -30,8 +59,7 @@
         <Switch
             android:id="@+id/useShipAddrAsBillingAddr_switch"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-           />
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <!-- billing address (visible when different from shipping address) -->
@@ -40,17 +68,67 @@
         style="@style/GraySubheading"
         android:layout_marginTop="@dimen/margin_16dp"
         android:text="@string/billing_addr"/>
-    <include layout="@layout/address_block" android:id="@+id/billing_addr_layout" />
+    <include layout="@layout/address_block"
+        android:id="@+id/billing_addr_layout" />
+
+    <RelativeLayout
+        android:id="@+id/billing_addon_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/action_bar_half_margin"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/billing_address_guest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/fontsize_16sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_alignParentLeft="true"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_expand_more_black"
+            android:layout_alignParentRight="true"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_below="@+id/billing_address_guest"
+            android:layout_marginTop="@dimen/action_bar_half_margin"
+            android:layout_height="@dimen/div_line"
+            android:background="@color/staples_dark_gray" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/precheckout_validate_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_16dp"
+        android:layout_gravity="right"
+        android:elevation="@dimen/action_bar_quarter_margin"
+        android:text="@string/payment_button_text"
+        android:textSize="@dimen/fontsize_18sp"
+        android:textColor="@color/staples_green"
+        android:padding="@dimen/action_bar_half_margin"/>
 
     <!--payment method-->
-    <TextView
-        style="@style/GraySubheading"
-        android:layout_marginTop="@dimen/margin_16dp"
-        android:text="@string/payment_method"/>
-    <include layout="@layout/add_creditcard_fragment" android:id="@+id/payment_method_layout"/>
+    <LinearLayout
+        android:id="@+id/guest_payment_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="-16dp"
+        android:visibility="gone">
+        <TextView
+            style="@style/GraySubheading"
+            android:layout_marginTop="@dimen/margin_16dp"
+            android:paddingLeft="@dimen/margin_16dp"
+            android:text="@string/payment_method"/>
+        <include layout="@layout/add_creditcard_fragment"
+            android:id="@+id/payment_method_layout"/>
+        </LinearLayout>
 
- <Space
-     android:layout_width="match_parent"
-     android:layout_height="220dp" />
+     <Space
+         android:layout_width="match_parent"
+         android:layout_height="200dp" />
 
 </LinearLayout>

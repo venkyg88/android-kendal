@@ -67,7 +67,7 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
 
         switch(view.getId()) {
             case R.id.address_save:
-                if (addressBlock.validateAddress()) {
+                if (addressBlock.validateBillingAddress()) {
 
                 activity.showProgressIndicator();
                 EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
