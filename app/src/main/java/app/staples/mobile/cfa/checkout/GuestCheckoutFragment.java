@@ -278,7 +278,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     }
 
     public void onNext(AddressBlock addressBlock) {
-
         // Commented out because if i try to change address and click next button its triggering a precheckout call
         // if zipcode is not empty
 
@@ -303,11 +302,19 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 
     /** implements CompoundButton.OnCheckedChangeListener */
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if(!shippingAddrBlock.validate()) {
+            useShipAddrAsBillingAddrSwitch.setChecked(true);
+            return;
+        }
         int visibility = isChecked ? View.GONE: View.VISIBLE;
+        int shippingVisibility = isChecked ? View.VISIBLE: View.GONE;
         billingAddrHeadingVw.setVisibility(visibility);
         billingAddrBlock.setVisibility(visibility);
         billingAddrNeedsApplying = true;
         if(!isChecked)billingAddrBlock.requestFocus();
+        shippingAddrBlock.setVisibility(shippingVisibility);
+        preCheckoutShippingLayoutVw.setVisibility(visibility);
+        shippingAddressTv.setText(shippingAddrBlock.getShippingAddress().getCompleteAddress(shippingAddrBlock.getShippingAddress()));
     }
 
     /** gets shipping address from user's entries */

@@ -100,15 +100,14 @@
 
     <TextView
         android:id="@+id/precheckout_validate_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="70dp"
+        android:layout_height="36dp"
         android:layout_marginTop="@dimen/margin_16dp"
         android:layout_gravity="right"
-        android:elevation="@dimen/action_bar_quarter_margin"
+        android:gravity="center"
         android:text="@string/payment_button_text"
-        android:textSize="@dimen/fontsize_18sp"
+        android:textSize="@dimen/fontsize_16sp"
         android:textColor="@color/staples_white"
-        android:padding="@dimen/action_bar_half_margin"
         android:background="@drawable/rounded_corner_green"/>
 
     <!--payment method-->
