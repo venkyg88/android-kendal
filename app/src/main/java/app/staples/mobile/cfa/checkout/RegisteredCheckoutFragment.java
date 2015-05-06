@@ -161,7 +161,9 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                     @Override
                     public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
 
-                        // if success
+                        if (getActivity() == null) { return; } // make sure fragment is still attached
+
+                            // if success
                         if (errMsg == null) {
 
                             // applying the shipping address actually modifies the id on the server, so need to fix everything up
@@ -182,7 +184,6 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                             resetShippingAndTax();
                             hideProgressIndicator();
                             activity.showErrorDialog(errMsg);
-                            Log.d(TAG, errMsg);
                         }
                     }
             });
@@ -212,12 +213,17 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
             @Override
             public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
 
+                if (getActivity() == null) { return; } // make sure fragment is still attached
+
                 // if success
                 if (errMsg == null) {
                     final PaymentMethod paymentMethod = new PaymentMethod(profilePaymentMethod);
                     CheckoutApiManager.applyPaymentMethod(paymentMethod, new CheckoutApiManager.ApplyPaymentMethodCallback() {
                         @Override
                         public void onApplyPaymentMethodComplete(String paymentMethodId, String authorized, String errMsg) {
+
+                            if (getActivity() == null) { return; } // make sure fragment is still attached
+
                             // if success
                             if (errMsg == null) {
                                 // finally, upon payment method success, submit the order

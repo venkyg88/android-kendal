@@ -123,8 +123,7 @@
             android:layout_marginTop="@dimen/margin_16dp"
             android:paddingLeft="@dimen/margin_16dp"
             android:text="@string/payment_method"/>
-        <include layout="@layout/add_creditcard_fragment"
-            android:id="@+id/payment_method_layout"/>
+        <include layout="@layout/credit_card_block" android:id="@+id/payment_method_layout"/>/>
         </LinearLayout>
 
      <Space

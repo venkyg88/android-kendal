@@ -185,7 +185,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         CheckoutApiManager.precheckout(new CheckoutApiManager.PrecheckoutCallback() {
             @Override
             public void onPrecheckoutComplete(Float totalHandlingCost, String shippingCharge, Float tax, String errMsg, String infoMsg) {
-                if (getActivity() == null) { return; } // make sure fragment is still attached
+                if (getActivity() == null) {
+                    return;
+                } // make sure fragment is still attached
                 activity.hideProgressIndicator();
                 // if success
                 if (errMsg == null) {
@@ -230,17 +232,22 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                     // reset cart since empty after successful order submission
                     CartApiManager.resetCart(); // reset cart since empty after successful order submission
                     ActionBar.getInstance().setCartCount(0);
-                    hideProgressIndicator();
 
                     // show confirmation page
-                    activity.selectOrderConfirmation(orderNumber, emailAddress,
-                            deliveryRange, currencyFormat.format(getCheckoutTotal()));
+                    if (getActivity() != null) {  // make sure fragment is still attached
+                        hideProgressIndicator();
+                        activity.selectOrderConfirmation(orderNumber, emailAddress,
+                                deliveryRange, currencyFormat.format(getCheckoutTotal()));
+                    }
 
                 } else {
                     Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg);
-                    activity.showErrorDialog(errMsg);
-                    Log.d(TAG, errMsg);
-                    hideProgressIndicator();
+
+                    if (getActivity() != null) { // make sure fragment is still attached
+                        activity.showErrorDialog(errMsg);
+                        hideProgressIndicator();
+                    }
+
                     // sometimes there's a failure such as timeout but the order actually goes thru.
                     // therefore, refresh the cart to make sure we have the right cart status.
                     // (note that even this safeguard sometimes fails because order submission is still
@@ -250,11 +257,13 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                         @Override
                         public void onCartRefreshComplete(String errMsg) {
                             if (CartApiManager.getCartTotalItems() == 0) {
-                                activity.showErrorDialog(R.string.order_confirmation_with_error);
+                                if (getActivity() != null) { // make sure fragment is still attached
+                                    activity.showErrorDialog(R.string.order_confirmation_with_error);
+                                    // show confirmation page
+                                    activity.selectOrderConfirmation("(see email)", emailAddress,
+                                            deliveryRange, currencyFormat.format(getCheckoutTotal()));
+                                }
                                 ActionBar.getInstance().setCartCount(0);
-                                // show confirmation page
-                                activity.selectOrderConfirmation("(see email)", emailAddress,
-                                        deliveryRange, currencyFormat.format(getCheckoutTotal()));
                             }
                         }
                     });
