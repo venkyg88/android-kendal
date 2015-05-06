@@ -167,11 +167,11 @@
         android:padding="@dimen/margin_16dp"
         android:scrollbars="vertical"/>
 
-    <!--link rewards account -->
-    <include layout="@layout/rewards_linking"
-        android:id="@+id/link_rewards_acct_layout"
-        android:padding="@dimen/margin_16dp"
-        android:visibility="gone"/>
+    <!--&lt;!&ndash;link rewards account &ndash;&gt;-->
+    <!--<include layout="@layout/rewards_linking"-->
+        <!--android:id="@+id/link_rewards_acct_layout"-->
+        <!--android:padding="@dimen/margin_16dp"-->
+        <!--android:visibility="gone"/>-->
 
     <!--shipping info -->
     <RelativeLayout

@@ -1,10 +1,12 @@
 package app.staples.mobile.cfa.cart;
 
 import android.support.v7.widget.RecyclerView;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -22,10 +24,16 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
     // widget listeners
     private View.OnClickListener addButtonListener;
     private View.OnClickListener deleteButtonListener;
+    private View.OnClickListener linkRewardsAccountButtonListener;
+    PhoneNumberFormattingTextWatcher phoneNumberFormattingTextWatcher;
 
-    public CouponAdapter(View.OnClickListener addButtonListener, View.OnClickListener deleteButtonListener) {
+
+    public CouponAdapter(View.OnClickListener addButtonListener, View.OnClickListener deleteButtonListener,
+                         View.OnClickListener linkRewardsAccountButtonListener) {
         this.addButtonListener = addButtonListener;
         this.deleteButtonListener = deleteButtonListener;
+        this.linkRewardsAccountButtonListener = linkRewardsAccountButtonListener;
+        this.phoneNumberFormattingTextWatcher = new PhoneNumberFormattingTextWatcher();
     }
 
     public void setItems(List<CouponItem> items) {
@@ -41,6 +49,7 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
             case CouponItem.TYPE_REDEEMABLE_REWARD_HEADING: return R.layout.coupon_item_redeemable_heading;
             case CouponItem.TYPE_REDEEMABLE_REWARD: return R.layout.coupon_item_redeemable;
             case CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG: return R.layout.coupon_item_no_rewards_msg;
+            case CouponItem.TYPE_LINK_REWARD_ACCOUNT: return R.layout.rewards_linking;
         }
         return 0;
     }
@@ -101,12 +110,14 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
                 }
             });
             vh.couponCodeEditVw.setOnImeBackListener(new EditTextWithImeBackEvent.EditTextImeBackListener() {
-                @Override public void onImeBack(EditTextWithImeBackEvent view, String text) {
+                @Override
+                public void onImeBack(EditTextWithImeBackEvent view, String text) {
                     retrieveCouponCodeFromEditText((TextView) view);
                 }
             });
             vh.couponCodeEditVw.setOnKeyListener(new View.OnKeyListener() {
-                @Override public boolean onKey(View v, int keyCode, KeyEvent event) {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
                     retrieveCouponCodeFromEditText((TextView) v);
                     return false;
                 }
@@ -130,6 +141,15 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
             vh.couponAddButton.setTag(position);
             vh.couponAddButton.setOnClickListener(addButtonListener);
         }
+
+        // set up link rewards account button
+        if (vh.linkRewardsAccountButton != null) {
+            vh.linkRewardsAccountButton.setTag(position);
+            vh.linkRewardsAccountButton.setOnClickListener(linkRewardsAccountButtonListener);
+            couponItem.setRewardsNumberVw(vh.rewardsNumberVw);
+            couponItem.setRewardsPhoneNumberVw(vh.rewardsPhoneNumberVw);
+            vh.rewardsPhoneNumberVw.addTextChangedListener(phoneNumberFormattingTextWatcher);
+        }
     }
 
     private void retrieveCouponCodeFromEditText(TextView v) {
@@ -151,6 +171,9 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
         private TextView assocRewardAmountVw;
         private View couponDeleteButton;
         private View couponAddButton;
+        private EditText rewardsNumberVw;
+        private EditText rewardsPhoneNumberVw;
+        private View linkRewardsAccountButton;
 
         /** constructor */
         public ViewHolder(View itemView, int type) {
@@ -177,6 +200,11 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
                     couponAddButton = itemView.findViewById(R.id.reward_add_button);
                     break;
                 case CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG:
+                    break;
+                case CouponItem.TYPE_LINK_REWARD_ACCOUNT:
+                    linkRewardsAccountButton = itemView.findViewById(R.id.rewards_link_acct_button);
+                    rewardsNumberVw = (EditText)itemView.findViewById(R.id.rewards_card_number);
+                    rewardsPhoneNumberVw = (EditText)itemView.findViewById(R.id.rewards_phone_number);
                     break;
             }
         }

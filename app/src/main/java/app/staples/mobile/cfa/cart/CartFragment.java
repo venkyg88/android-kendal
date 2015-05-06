@@ -8,20 +8,17 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.crittercism.app.Crittercism;
-import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
@@ -73,8 +70,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private RecyclerView cartListVw;
     private LinearLayoutManager cartListLayoutMgr;
     private View couponsRewardsLayout;
-    private View linkRewardsAcctLayout;
-    private Button rewardsLinkAcctButton;
+//    private View linkRewardsAcctLayout;
+//    private Button rewardsLinkAcctButton;
     private int greenText;
     private int blackText;
 
@@ -88,7 +85,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private QtyDeleteButtonListener qtyDeleteButtonListener;
     private QtyChangeListener qtyChangeListener;
     private ProductClickListener productClickListener;
-    PhoneNumberFormattingTextWatcher phoneNumberFormattingTextWatcher;
 
     CouponWeightAnimator couponUpAnimator;
     CouponWeightAnimator couponDownAnimator;
@@ -110,7 +106,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         couponsRewardsLayout = view.findViewById(R.id.coupons_rewards_layout);
         couponsRewardsLabel = (TextView) view.findViewById(R.id.coupons_rewards_label);
         couponsRewardsValue = (TextView) view.findViewById(R.id.coupons_rewards_value);
-        linkRewardsAcctLayout = view.findViewById(R.id.link_rewards_acct_layout);
+//        linkRewardsAcctLayout = view.findViewById(R.id.link_rewards_acct_layout);
         oversizedShipping = (TextView) view.findViewById(R.id.oversized_shipping);
         oversizedShippingLabel = (TextView) view.findViewById(R.id.oversized_shipping_label);
         cartShipping = (TextView) view.findViewById(R.id.cart_shipping);
@@ -118,7 +114,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         cartShippingLayout = view.findViewById(R.id.cart_shipping_layout);
         cartSubtotalLayout = view.findViewById(R.id.cart_subtotal_layout);
         cartProceedToCheckout = view.findViewById(R.id.action_checkout);
-        rewardsLinkAcctButton = (Button)view.findViewById(R.id.rewards_link_acct_button);
+//        rewardsLinkAcctButton = (Button)view.findViewById(R.id.rewards_link_acct_button);
 
         Resources r = getResources();
         greenText = r.getColor(R.color.staples_green);
@@ -131,17 +127,13 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
         // Initialize coupon listview
         couponListVw = (RecyclerView) view.findViewById(R.id.coupon_list);
-        couponAdapter = new CouponAdapter(this, this);
+        couponAdapter = new CouponAdapter(this, this, this);
         couponListVw.setAdapter(couponAdapter);
         couponListVw.setLayoutManager(new LinearLayoutManager(activity));
 
         // set up coupons & rewards panel animation
         couponUpAnimator = new CouponWeightAnimator(true);
         couponDownAnimator = new CouponWeightAnimator(false);
-
-        phoneNumberFormattingTextWatcher = new PhoneNumberFormattingTextWatcher();
-        phoneNumberVw = (EditText)view.findViewById(R.id.rewards_phone_number);
-        phoneNumberVw.addTextChangedListener(phoneNumberFormattingTextWatcher);
 
 //        // set up fade in/out animations
 //        mathStoryFadeInAnimation = AnimationUtils.loadAnimation(activity, R.anim.fade_in);
@@ -191,7 +183,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         // Set click listeners
         cartProceedToCheckout.setOnClickListener(this);
         couponsRewardsLayout.setOnClickListener(this);
-        rewardsLinkAcctButton.setOnClickListener(this);
+//        rewardsLinkAcctButton.setOnClickListener(this);
 
         return view;
     }
@@ -359,10 +351,10 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 break;
             case R.id.rewards_link_acct_button:
                 activity.hideSoftKeyboard();
+                CouponItem couponItem = couponAdapter.getItem((Integer)view.getTag());
 
-
-                String rewardsNumber = ((EditText)getView().findViewById(R.id.rewards_card_number)).getText().toString();
-                String phoneNumber = stripPhoneNumber(phoneNumberVw.getText().toString());
+                final String rewardsNumber = couponItem.getRewardsNumberVw().getText().toString();
+                String phoneNumber = stripPhoneNumber(couponItem.getRewardsPhoneNumberVw().getText().toString());
 
                 if(validateFields(rewardsNumber, phoneNumber)) {
                     if(phoneNumber.length() < 10) {
@@ -373,12 +365,16 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                     RewardsLinkingFragment.linkRewardsAccount(rewardsNumber, phoneNumber, new RewardsLinkingFragment.LinkRewardsCallback() {
                         @Override
                         public void onLinkRewardsComplete(String errMsg) {
+                            if (getActivity() == null) { return; } // check for fragment detachment
+
                             activity.hideProgressIndicator();
                             if (errMsg != null) {
                                 activity.showErrorDialog(errMsg);
                             } else {
-                                linkRewardsAcctLayout.setVisibility(View.GONE);
-                                updateCartFields();
+                                // temporarily update profile object
+                                ProfileDetails.getMember().setRewardsNumber(rewardsNumber);
+                                ProfileDetails.getMember().setRewardsNumberVerified(true);
+                                convertCart(CartApiManager.getCart());
                             }
                         }
                     });
@@ -573,6 +569,9 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                     } else {
                         couponItems.add(new CouponItem(null, null, CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG));
                     }
+                } else {
+                    // if registered but not a rewards member
+                    couponItems.add(new CouponItem(null, null, CouponItem.TYPE_LINK_REWARD_ACCOUNT));
                 }
             }
         }
@@ -637,9 +636,9 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             valueAnimator.addListener(new Animator.AnimatorListener() {
                 @Override public void onAnimationStart(Animator animation) {
                     // if starting to animate down, set cart items to visible and hide rewards account
-                    if (!up) {
-                        linkRewardsAcctLayout.setVisibility(View.GONE);
-                    }
+//                    if (!up) {
+//                        linkRewardsAcctLayout.setVisibility(View.GONE);
+//                    }
                     // update these at beginning of animation while it's moving fast rather than when it's coasting to a finish at the end
                     boolean showCouponsAmount = (couponsRewardsAmount != 0 || up);
                     couponsRewardsValue.setVisibility(showCouponsAmount? View.VISIBLE : View.GONE);
@@ -649,10 +648,10 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                     // if finishing animation up, set cart items to gone and show rewards account if applicable
                     if (up) {
                         // if logged in and not a rewards member, display link rewards layout
-                        if (Access.getInstance().isLoggedIn() && !Access.getInstance().isGuestLogin() &&
-                                ProfileDetails.getMember() != null && !ProfileDetails.isRewardsMember()) {
-                            linkRewardsAcctLayout.setVisibility(View.VISIBLE);
-                        }
+//                        if (Access.getInstance().isLoggedIn() && !Access.getInstance().isGuestLogin() &&
+//                                ProfileDetails.getMember() != null && !ProfileDetails.isRewardsMember()) {
+//                            linkRewardsAcctLayout.setVisibility(View.VISIBLE);
+//                        }
                     }
                 }
                 @Override public void onAnimationCancel(Animator animation) { }
