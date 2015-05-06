@@ -133,10 +133,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         billingAddrHeadingVw.setVisibility(View.GONE);
         billingAddrBlock.setVisibility(View.GONE);
 
-        // hide imported views' Save buttons
-        paymentMethodLayoutVw.findViewById(R.id.addCCBtn).setVisibility(View.GONE);
-        paymentMethodLayoutVw.findViewById(R.id.address_cancel).setVisibility(View.GONE);
-
 //        TextView.OnEditorActionListener paymentMethodCompletionListener = this;
 //        expirationYearVw.setOnEditorActionListener(paymentMethodCompletionListener);
 //        cidVw.setOnEditorActionListener(paymentMethodCompletionListener);
