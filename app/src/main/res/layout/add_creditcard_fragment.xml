@@ -76,21 +76,21 @@
         android:orientation="horizontal"
         android:paddingTop="@dimen/action_bar_half_margin">
         <Button
+            android:id="@+id/add_cc_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/save_btn"
-            android:id="@+id/addCCBtn"
             android:imeOptions="actionDone"
 			android:textColor="@color/staples_black"
 			android:layout_alignParentRight="true"/>
         <Button
+            android:id="@+id/add_cc_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/cancel_btn"
-            android:id="@+id/address_cancel"
             android:imeOptions="actionDone"
             android:layout_marginRight="@dimen/margin_16dp"
 			android:textColor="@color/staples_black"
-            android:layout_toLeftOf="@+id/addCCBtn"/>
+            android:layout_toLeftOf="@+id/add_cc_save"/>
         </RelativeLayout>
 </app.staples.mobile.cfa.widget.AnimatorLayout>
