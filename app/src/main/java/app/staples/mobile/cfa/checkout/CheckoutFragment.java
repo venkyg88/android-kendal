@@ -167,6 +167,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     /** initializes variable entry area of checkout screen */
     protected abstract void initEntryArea(View frame);
 
+    // handles the precheckout layout changes
+    protected abstract void hideLayoutsInGuest(boolean isPrecheckOutComplete);
+
     protected void disableCheckoutButton(boolean isDisabled) {
         if(isDisabled) {
             submissionLayout.setCardBackgroundColor(getResources().getColor(R.color.staples_dark_gray));
@@ -194,9 +197,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                         activity.showErrorDialog(infoMsg);
                     }
                     disableCheckoutButton(false);
+                    hideLayoutsInGuest(true);
                     // utilize shipping and tax info
                     setShippingAndTax(totalHandlingCost, shippingCharge, tax);
-
                     hideProgressIndicator();
                 } else {
                     // if shipping and tax already showing, need to hide them
