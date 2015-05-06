@@ -11,17 +11,17 @@
         android:gravity="right"
         android:paddingTop="@dimen/action_bar_half_margin">
         <Button
-            android:id="@+id/add_cc_save"
+            android:id="@+id/add_cc_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/margin_16dp"
             android:textColor="@color/staples_black"
-            android:text="@string/save_btn"/>
+            android:text="@string/cancel_btn"/>
         <Button
-            android:id="@+id/add_cc_cancel"
+            android:id="@+id/add_cc_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/staples_black"
-            android:text="@string/cancel_btn"/>
+            android:text="@string/save_btn"/>
     </LinearLayout>
 </app.staples.mobile.cfa.widget.AnimatorLayout>
