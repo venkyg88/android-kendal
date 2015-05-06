@@ -201,7 +201,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         super.onResume();
 
         // force cart fragment to portrait mode because it doesn't fit well in landscape
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
 
         // update action bar
         ActionBar.getInstance().setConfig(ActionBar.Config.CART);
@@ -214,6 +214,9 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     @Override
     public void onPause() {
         super.onPause();
+
+        // allow rotation for all fragments except cart
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
     /** Sets item count indicator on cart icon and cart drawer title */
@@ -245,9 +248,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
         // if fragment is attached to activity, then update the fragment's views
         if (getActivity() != null) {
-
-            // Set text of cart item qty
-            ActionBar.getInstance().setCartCount(totalItemCount);
 
             emptyCartLayout.setVisibility(totalItemCount == 0? View.VISIBLE : View.GONE);
 
@@ -342,16 +342,16 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 if (TextUtils.isEmpty(couponCode)) {
                     activity.showErrorDialog(R.string.missing_coupon_code);
                 } else {
-                    showProgressIndicator();
+                    activity.showProgressIndicator();
                     CartApiManager.addCoupon(couponCode, this);
                 }
                 break;
             case R.id.reward_add_button:
-                showProgressIndicator();
+                activity.showProgressIndicator();
                 CartApiManager.addCoupon(couponAdapter.getItem((Integer) view.getTag()).getReward().getCode(), this);
                 break;
             case R.id.coupon_delete_button:
-                showProgressIndicator();
+                activity.showProgressIndicator();
                 CartApiManager.deleteCoupon(couponAdapter.getItem((Integer) view.getTag()).getCoupon().getCode(), this);
                 break;
             case R.id.action_checkout:
@@ -373,7 +373,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                     RewardsLinkingFragment.linkRewardsAccount(rewardsNumber, phoneNumber, new RewardsLinkingFragment.LinkRewardsCallback() {
                         @Override
                         public void onLinkRewardsComplete(String errMsg) {
-                            hideProgressIndicator();
+                            activity.hideProgressIndicator();
                             if (errMsg != null) {
                                 activity.showErrorDialog(errMsg);
                             } else {
@@ -403,17 +403,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         return phoneNumber;
     }
 
-    private void showProgressIndicator() {
-        if (activity != null) {
-            activity.showProgressIndicator();
-        }
-    }
-
-    private void hideProgressIndicator() {
-        if (activity != null) {
-            activity.hideProgressIndicator();
-        }
-    }
 
     /** returns current list of cart items */
     public static List<CartItem> getListItems() {
@@ -423,7 +412,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     /** updates item quantity */
     private void updateItemQty(final CartItem cartItem) {
         if (cartItem.isProposedQtyDifferent()) {
-            showProgressIndicator();
+            activity.showProgressIndicator();
             if (cartItem.getProposedQty() == 0) {
                 CartApiManager.deleteItem(cartItem.getOrderItemId(), new CartApiManager.CartRefreshCallback() {
                     @Override public void onCartRefreshComplete(String errMsg) {
@@ -450,17 +439,22 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     }
 
     public void onCartRefreshComplete(String errMsg) {
-        hideProgressIndicator();
-        if (errMsg != null) {
-            // if non-grammatical out-of-stock message from api, provide a nicer message
-            if (errMsg.contains("items is out of stock")) {
-                errMsg = activity.getResources().getString(R.string.avail_outofstock);
+        // if fragment is attached to activity
+        if (getActivity() != null) {
+            activity.hideProgressIndicator();
+            if (errMsg != null) {
+                // if non-grammatical out-of-stock message from api, provide a nicer message
+                if (errMsg.contains("items is out of stock")) {
+                    errMsg = activity.getResources().getString(R.string.avail_outofstock);
+                }
+                activity.showErrorDialog(errMsg);
+            } else {
+                activity.showNotificationBanner(R.string.cart_updated_msg);
             }
-            activity.showErrorDialog(errMsg);
+            convertCart(CartApiManager.getCart());
         } else {
-            activity.showNotificationBanner(R.string.cart_updated_msg);
+            ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
         }
-        convertCart(CartApiManager.getCart());
     }
 
     private void convertCart(Cart cart) {

@@ -76,6 +76,7 @@ public class PersonalFeedFragment extends Fragment {
     private TextView seenProductClearTV;
 
     private RelativeLayout seenProductsLoading;
+    private LinearLayout feedLoading;
 
     private View seenProductsSeparator;
     private View clearanceSeparator;
@@ -228,6 +229,7 @@ public class PersonalFeedFragment extends Fragment {
         clearanceSeparator = (View) personalFeedLayout.findViewById(R.id.clearance_separator);
 
         seenProductsLoading = (RelativeLayout) personalFeedLayout.findViewById(R.id.seen_products_loading_footer);
+        feedLoading = (LinearLayout) personalFeedLayout.findViewById(R.id.feed_loading_spinner);
 
         seenProductClearTV = (TextView) personalFeedLayout.findViewById(R.id.seen_products_clear);
         seenProductClearTV.setVisibility(View.GONE);
@@ -314,6 +316,7 @@ public class PersonalFeedFragment extends Fragment {
                                 emptyFeedLayout.setVisibility(View.GONE);
                                 dailyDealWrapper.setState(DataWrapper.State.DONE);
                                 dailyDealLayout.setVisibility(View.VISIBLE);
+                                feedLoading.setVisibility(View.GONE);
                             }
 
                             getClearance();
@@ -378,6 +381,7 @@ public class PersonalFeedFragment extends Fragment {
 
                                 if (seenProductsContainer.getChildCount() == 0 && dailyDealContainer.getChildCount() == 0) {
                                     emptyFeedLayout.setVisibility(View.VISIBLE);
+                                    feedLoading.setVisibility(View.GONE);
                                 } else {
                                     emptyFeedLayout.setVisibility(View.GONE);
                                 }
@@ -386,6 +390,7 @@ public class PersonalFeedFragment extends Fragment {
                                 clearanceSeparator.setVisibility(View.VISIBLE);
                                 clearanceWrapper.setState(DataWrapper.State.DONE);
                                 clearanceLayout.setVisibility(View.VISIBLE);
+                                feedLoading.setVisibility(View.GONE);
                             }
 
                             getSeenProducts();

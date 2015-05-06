@@ -73,8 +73,7 @@
     <string name="signup_title">Sign Up</string>
     <string name="or">\u0020Or\u0020</string>
     <string name="question_mark">\?</string>
-    <string name="redeem">Your redeemable</string>
-    <string name="reward">Reward!</string>
+    <string name="rewards">Rewards</string>
     <string name="store_open">Open</string>
     <string name="store_close">Close</string>
     <string name="no_store">Find a store</string>

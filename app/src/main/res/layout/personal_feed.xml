@@ -246,4 +246,16 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+    <!-- Personal feed page progress bar -->
+    <LinearLayout
+        android:id="@+id/feed_loading_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 </app.staples.mobile.cfa.widget.AnimatorLayout>
