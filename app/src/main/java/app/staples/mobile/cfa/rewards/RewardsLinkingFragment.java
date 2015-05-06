@@ -49,8 +49,7 @@ public class RewardsLinkingFragment extends Fragment implements View.OnClickList
         phoneNumberFormattingTextWatcher = new PhoneNumberFormattingTextWatcher();
         phoneNumberVw.addTextChangedListener(phoneNumberFormattingTextWatcher);
 
-        Button rewardsLinkAcctButton = (Button)view.findViewById(R.id.rewards_link_acct_button);
-
+        View rewardsLinkAcctButton = view.findViewById(R.id.rewards_link_acct_button);
         rewardsLinkAcctButton.setOnClickListener(this);
         return(view);
      }

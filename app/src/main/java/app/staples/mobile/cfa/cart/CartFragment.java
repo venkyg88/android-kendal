@@ -8,20 +8,17 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.crittercism.app.Crittercism;
-import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.configurator.model.Configurator;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
@@ -88,7 +85,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private QtyDeleteButtonListener qtyDeleteButtonListener;
     private QtyChangeListener qtyChangeListener;
     private ProductClickListener productClickListener;
-    PhoneNumberFormattingTextWatcher phoneNumberFormattingTextWatcher;
 
     CouponWeightAnimator couponUpAnimator;
     CouponWeightAnimator couponDownAnimator;
@@ -138,10 +134,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         // set up coupons & rewards panel animation
         couponUpAnimator = new CouponWeightAnimator(true);
         couponDownAnimator = new CouponWeightAnimator(false);
-
-        phoneNumberFormattingTextWatcher = new PhoneNumberFormattingTextWatcher();
-        phoneNumberVw = (EditText)view.findViewById(R.id.rewards_phone_number);
-        phoneNumberVw.addTextChangedListener(phoneNumberFormattingTextWatcher);
 
 //        // set up fade in/out animations
 //        mathStoryFadeInAnimation = AnimationUtils.loadAnimation(activity, R.anim.fade_in);
@@ -361,33 +353,34 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
                 activity.hideSoftKeyboard();
                 CouponItem couponItem = couponAdapter.getItem((Integer)view.getTag());
 
+                final String rewardsNumber = couponItem.getRewardsNumberVw().getText().toString();
+                String phoneNumber = stripPhoneNumber(couponItem.getRewardsPhoneNumberVw().getText().toString());
 
-                //todo
+                if(validateFields(rewardsNumber, phoneNumber)) {
+                    if(phoneNumber.length() < 10) {
+                        activity.showErrorDialog(R.string.invalid_phone_number);
+                        return;
+                    }
+                    activity.showProgressIndicator();
+                    RewardsLinkingFragment.linkRewardsAccount(rewardsNumber, phoneNumber, new RewardsLinkingFragment.LinkRewardsCallback() {
+                        @Override
+                        public void onLinkRewardsComplete(String errMsg) {
+                            if (getActivity() == null) { return; } // check for fragment detachment
 
-//                String rewardsNumber = ((EditText)getView().findViewById(R.id.rewards_card_number)).getText().toString();
-//                String phoneNumber = stripPhoneNumber(phoneNumberVw.getText().toString());
-//
-//                if(validateFields(rewardsNumber, phoneNumber)) {
-//                    if(phoneNumber.length() < 10) {
-//                        activity.showErrorDialog(R.string.invalid_phone_number);
-//                        return;
-//                    }
-//                    activity.showProgressIndicator();
-//                    RewardsLinkingFragment.linkRewardsAccount(rewardsNumber, phoneNumber, new RewardsLinkingFragment.LinkRewardsCallback() {
-//                        @Override
-//                        public void onLinkRewardsComplete(String errMsg) {
-//                            activity.hideProgressIndicator();
-//                            if (errMsg != null) {
-//                                activity.showErrorDialog(errMsg);
-//                            } else {
-//                                linkRewardsAcctLayout.setVisibility(View.GONE);
-//                                updateCartFields();
-//                            }
-//                        }
-//                    });
-//                } else{
-//                    activity.showErrorDialog(R.string.empty_rewards_linking_msg);
-//                }
+                            activity.hideProgressIndicator();
+                            if (errMsg != null) {
+                                activity.showErrorDialog(errMsg);
+                            } else {
+                                // temporarily update profile object
+                                ProfileDetails.getMember().setRewardsNumber(rewardsNumber);
+                                ProfileDetails.getMember().setRewardsNumberVerified(true);
+                                convertCart(CartApiManager.getCart());
+                            }
+                        }
+                    });
+                } else{
+                    activity.showErrorDialog(R.string.empty_rewards_linking_msg);
+                }
                 break;
         }
     }

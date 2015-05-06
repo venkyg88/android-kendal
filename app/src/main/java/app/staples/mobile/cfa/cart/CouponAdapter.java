@@ -1,6 +1,7 @@
 package app.staples.mobile.cfa.cart;
 
 import android.support.v7.widget.RecyclerView;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,12 +25,15 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
     private View.OnClickListener addButtonListener;
     private View.OnClickListener deleteButtonListener;
     private View.OnClickListener linkRewardsAccountButtonListener;
+    PhoneNumberFormattingTextWatcher phoneNumberFormattingTextWatcher;
+
 
     public CouponAdapter(View.OnClickListener addButtonListener, View.OnClickListener deleteButtonListener,
                          View.OnClickListener linkRewardsAccountButtonListener) {
         this.addButtonListener = addButtonListener;
         this.deleteButtonListener = deleteButtonListener;
         this.linkRewardsAccountButtonListener = linkRewardsAccountButtonListener;
+        this.phoneNumberFormattingTextWatcher = new PhoneNumberFormattingTextWatcher();
     }
 
     public void setItems(List<CouponItem> items) {
@@ -142,6 +146,9 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
         if (vh.linkRewardsAccountButton != null) {
             vh.linkRewardsAccountButton.setTag(position);
             vh.linkRewardsAccountButton.setOnClickListener(linkRewardsAccountButtonListener);
+            couponItem.setRewardsNumberVw(vh.rewardsNumberVw);
+            couponItem.setRewardsPhoneNumberVw(vh.rewardsPhoneNumberVw);
+            vh.rewardsPhoneNumberVw.addTextChangedListener(phoneNumberFormattingTextWatcher);
         }
     }
 

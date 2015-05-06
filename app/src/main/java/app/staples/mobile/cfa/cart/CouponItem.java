@@ -1,5 +1,7 @@
 package app.staples.mobile.cfa.cart;
 
+import android.widget.EditText;
+
 import app.staples.mobile.cfa.util.CurrencyFormat;
 
 import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
@@ -19,6 +21,8 @@ public class CouponItem {
     private Reward reward;
     private int itemType;
     private String couponCodeToAdd;
+    private EditText rewardsNumberVw;
+    private EditText rewardsPhoneNumberVw;
 
     public CouponItem(Coupon coupon, Reward reward, int itemType) {
         this.coupon = coupon;
@@ -87,4 +91,22 @@ public class CouponItem {
     public void setCouponCodeToAdd(String couponCodeToAdd) {
         this.couponCodeToAdd = couponCodeToAdd;
     }
+
+
+    public EditText getRewardsNumberVw() {
+        return rewardsNumberVw;
+    }
+
+    public void setRewardsNumberVw(EditText rewardsNumberVw) {
+        this.rewardsNumberVw = rewardsNumberVw;
+    }
+
+    public EditText getRewardsPhoneNumberVw() {
+        return rewardsPhoneNumberVw;
+    }
+
+    public void setRewardsPhoneNumberVw(EditText rewardsPhoneNumberVw) {
+        this.rewardsPhoneNumberVw = rewardsPhoneNumberVw;
+    }
+
 }
