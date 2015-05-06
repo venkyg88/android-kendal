@@ -2,7 +2,6 @@ package app.staples.mobile.cfa.cart;
 
 import android.support.v7.widget.RecyclerView;
 import android.telephony.PhoneNumberFormattingTextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
