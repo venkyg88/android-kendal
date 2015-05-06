@@ -182,6 +182,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         CheckoutApiManager.precheckout(new CheckoutApiManager.PrecheckoutCallback() {
             @Override
             public void onPrecheckoutComplete(Float totalHandlingCost, String shippingCharge, Float tax, String errMsg, String infoMsg) {
+                if (getActivity() == null) { return; } // make sure fragment is still attached
                 activity.hideProgressIndicator();
                 // if success
                 if (errMsg == null) {
@@ -243,7 +244,8 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
                     // in process following the timeout and this reloading of the cart is too
                     // soon (items still returned)
                     CartApiManager.loadCart(new CartApiManager.CartRefreshCallback() {
-                        @Override public void onCartRefreshComplete(String errMsg) {
+                        @Override
+                        public void onCartRefreshComplete(String errMsg) {
                             if (CartApiManager.getCartTotalItems() == 0) {
                                 activity.showErrorDialog(R.string.order_confirmation_with_error);
                                 ActionBar.getInstance().setCartCount(0);
@@ -305,7 +307,11 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     }
 
     private Float getCheckoutTotal() {
-        return pretaxSubtotal + tax; // coupons/rewards are already factored into pretaxSubtotal
+        float total = pretaxSubtotal.floatValue();
+        if (tax != null) {
+            total += tax.floatValue();
+        }
+        return total; // coupons/rewards are already factored into pretaxSubtotal
     }
 
     /** returns tax value if available */
