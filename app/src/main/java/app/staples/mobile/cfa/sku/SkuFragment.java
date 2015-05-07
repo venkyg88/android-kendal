@@ -801,7 +801,7 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
                 if (errMsg.contains("items is out of stock")) {
                     errMsg = activity.getResources().getString(R.string.avail_outofstock);
                 }
-                ((MainActivity) activity) .showErrorDialog(errMsg);
+                ((MainActivity) activity).showErrorDialog(errMsg);
             }
         }
     }
@@ -830,14 +830,11 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
             case R.id.select_sku:
                 Object skuSetTag = view.getTag();
                 if(skuSetTag instanceof Product) {
-                    Product product = (Product)skuSetTag;
+                    Product product = (Product) skuSetTag;
                     ((MainActivity)getActivity()).selectSkuSet(product.getProductName(), product.getSku(), product.getThumbnailImage().get(0).getUrl());
                 }
                 if(isSkuSetOriginated) {
-                    FragmentManager fm = getFragmentManager();
-                    if (fm != null) {
-                        fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
-                    }
+                    ((MainActivity) getActivity()).popBackStack();
                 }
                 break;
             case R.id.accessory_layout:

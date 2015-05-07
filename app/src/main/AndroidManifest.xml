@@ -35,9 +35,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="com.staples.mobile.cfa.OPEN_SKU"/>
-                <action android:name="com.staples.mobile.cfa.OPEN_CATEGORY"/>
-                <action android:name="com.staples.mobile.cfa.OPEN_SEARCH"/>
+                <action android:name="app.staples.mobile.cfa.OPEN_SKU"/>
+                <action android:name="app.staples.mobile.cfa.OPEN_CATEGORY"/>
+                <action android:name="app.staples.mobile.cfa.OPEN_SEARCH"/>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

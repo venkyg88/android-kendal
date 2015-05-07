@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -42,6 +41,7 @@ import com.staples.mobile.common.analytics.Tracker;
 import com.urbanairship.UAirship;
 import com.urbanairship.push.PushManager;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import app.staples.R;
@@ -91,29 +91,20 @@ public class MainActivity extends Activity
 
     private static final int CONNECTIVITY_CHECK_INTERVAL = 300000; // in milliseconds (e.g. 300000=5min)
 
-    private DrawerLayout drawerLayout;
-    private ListView leftMenu;
-    private DrawerAdapter leftMenuAdapter;
-    private LinearLayoutWithOverlay mainLayout;
-    private CartFragment cartFragment;
-    private DrawerItem homeDrawerItem;
-    private long timeOfLastSessionCheck;
-    private TextView notificationBanner;
-    private Animation notificationBannerAnimation;
+    private static class QueuedTransaction { // TODO This is only public for test!
+        enum Type {POPONE, POPNAME, POPALL, PUSH};
 
-    private LoginHelper loginHelper;
-    private boolean initialLoginComplete;
-
-    private AppConfigurator appConfigurator;
-    private AlertDialog upgradeDialog;
-
-    private NetworkConnectivityBroadCastReceiver networkConnectivityBroadCastReceiver;
+        private Type type;
+        private String name;
+        private Fragment fragment;
+        private Transition transition;
+        private boolean push;
+    }
 
     public enum Transition {
         NONE (0, 0, 0, 0, 0),
         RIGHT(0, R.animator.right_push_enter, R.animator.right_push_exit, R.animator.right_pop_enter, R.animator.right_pop_exit),
-        UP   (0, R.animator.up_push_enter, R.animator.up_push_exit, R.animator.up_pop_enter, R.animator.up_pop_exit),
-        FADE (0, R.animator.fade_in, R.animator.fade_out, 0, 0);
+        UP   (0, R.animator.up_push_enter, R.animator.up_push_exit, R.animator.up_pop_enter, R.animator.up_pop_exit);
 
         private int standard;
         private int push_enter;
@@ -133,14 +124,33 @@ public class MainActivity extends Activity
             if (standard!=0) {
                 transaction.setTransition(standard);
             }
-            else if (pop_enter!=0 && pop_exit!=0) {
+            else if (push_enter!=0 && push_exit!=0 && pop_enter!=0 && pop_exit!=0) {
                 transaction.setCustomAnimations(push_enter, push_exit, pop_enter, pop_exit);
-            }
-            else if (push_enter!=0 && push_exit!=0) {
-                transaction.setCustomAnimations(push_enter, push_exit);
             }
         }
     }
+
+    private DrawerLayout drawerLayout;
+    private ListView leftMenu;
+    private DrawerAdapter leftMenuAdapter;
+    private LinearLayoutWithOverlay mainLayout;
+    private CartFragment cartFragment;
+    private DrawerItem homeDrawerItem;
+    private long timeOfLastSessionCheck;
+    private TextView notificationBanner;
+    private Animation notificationBannerAnimation;
+
+    private LoginHelper loginHelper;
+    private boolean initialLoginComplete;
+
+    private AppConfigurator appConfigurator;
+    private AlertDialog upgradeDialog;
+
+    public ArrayList<QueuedTransaction> queuedTransactions; // TODO This is only public for test!
+
+    private NetworkConnectivityBroadCastReceiver networkConnectivityBroadCastReceiver;
+
+public static MainActivity instance; // TODO This is only in for test!
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -166,6 +176,8 @@ public class MainActivity extends Activity
             appConfigurator = AppConfigurator.getInstance();
             appConfigurator.getConfigurator(this); // AppConfiguratorCallback
         }
+
+        queuedTransactions = new ArrayList<QueuedTransaction>();
 
         // Support for Urban Airship
 //        AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(this); TODO Enable Urban Airship when we're ready
@@ -235,7 +247,9 @@ public class MainActivity extends Activity
         super.onResume();
         registerReceiver(networkConnectivityBroadCastReceiver,
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-        //@TODO So what happens ensure errors out! REach next line?
+
+        executeQueuedTransactions();
+
         //Analytics
         AdobeTracker.enableTracking(true); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
     }
@@ -691,25 +705,82 @@ public class MainActivity extends Activity
         }
     }
 
-    // Navigation
-    public boolean selectFragment(String tag, Fragment fragment, Transition transition, boolean push) {
-        // Make sure all drawers and the keyboard are closed
+    /** FragmentManager primitives
+     * All fragment navigation should be funneled through here
+     */
+
+    public boolean popBackStack() {
+        QueuedTransaction qt = new QueuedTransaction();
+        qt.type = QueuedTransaction.Type.POPONE;
+        queuedTransactions.add(qt);
+        return(executeQueuedTransactions());
+    }
+
+    public boolean popBackStack(String name) {
+        QueuedTransaction qt = new QueuedTransaction();
+        qt.type = QueuedTransaction.Type.POPNAME;
+        qt.name = name;
+        queuedTransactions.add(qt);
+        return(executeQueuedTransactions());
+    }
+
+    public boolean clearBackStack() {
+        QueuedTransaction qt = new QueuedTransaction();
+        qt.type = QueuedTransaction.Type.POPALL;
+        queuedTransactions.add(qt);
+        return(executeQueuedTransactions());
+    }
+
+    public boolean selectFragment(String name, Fragment fragment, Transition transition, boolean push) {
+        // Close everything
         drawerLayout.closeDrawers();
         hideSoftKeyboard();
-
         ActionBar.getInstance().closeSearch();
 
-        FragmentManager manager = getFragmentManager();
-
-        // Swap Fragments
-        FragmentTransaction transaction = manager.beginTransaction();
-        if (transition != null) transition.setAnimation(transaction);
-        transaction.replace(R.id.content, fragment);
-        if (push)
-            transaction.addToBackStack(tag);
-        transaction.commitAllowingStateLoss();
-        return(true);
+        QueuedTransaction qt = new QueuedTransaction();
+        qt.type = QueuedTransaction.Type.PUSH;
+        qt.name = name;
+        qt.fragment = fragment;
+        qt.transition = transition;
+        qt.push = push;
+        queuedTransactions.add(qt);
+        return(executeQueuedTransactions());
     }
+
+    private boolean executeQueuedTransactions() {
+        FragmentManager fm = getFragmentManager();
+        for(;;) {
+            if (queuedTransactions.size()==0) return(true);
+            QueuedTransaction qt=queuedTransactions.get(0);
+
+            try {
+                switch(qt.type) {
+                    case POPONE:
+                        fm.popBackStack();
+                        break;
+                    case POPNAME:
+                        fm.popBackStack(qt.name, 0);
+                        break;
+                    case POPALL:
+                        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        break;
+                    case PUSH:
+                        FragmentTransaction transaction = fm.beginTransaction();
+                        if (qt.transition!=null) qt.transition.setAnimation(transaction);
+                        transaction.replace(R.id.content, qt.fragment);
+                        if (qt.push) transaction.addToBackStack(qt.name);
+                        transaction.commit();
+                        break;
+                }
+            } catch(IllegalStateException e) {
+                return(false);
+            }
+
+            queuedTransactions.remove(0);
+        }
+    }
+
+    // Higher level navigation methods
 
     private boolean selectDrawerItem(DrawerItem item, Transition transition, boolean push) {
         // Safety check
@@ -742,8 +813,8 @@ public class MainActivity extends Activity
 
     public boolean selectOrderConfirmation(String orderNumber, String emailAddress,
                                            String deliveryRange, String total) {
-        // clear the back stack immediately (not asynchronously)
-        getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        // clear the back stack
+        clearBackStack();
 
         // open order confirmation fragment
         Fragment fragment = ConfirmationFragment.newInstance(orderNumber, emailAddress, deliveryRange, total);
@@ -890,7 +961,7 @@ public class MainActivity extends Activity
         int currentBackStackIndex = fragmentManager.getBackStackEntryCount()-1;
         if (currentBackStackIndex > 0 &&
                 DrawerItem.GUEST_CHECKOUT.equals(fragmentManager.getBackStackEntryAt(currentBackStackIndex - 1).getName())) {
-            fragmentManager.popBackStack();
+            popBackStack();
         }
 
         super.onBackPressed();
@@ -935,11 +1006,11 @@ public class MainActivity extends Activity
                 hideSoftKeyboard();
                 if (currentTag != null && (currentTag.equals(DrawerItem.REG_CHECKOUT) ||
                         currentTag.equals(DrawerItem.GUEST_CHECKOUT))) {
-                    fragmentManager.popBackStack(DrawerItem.CART, 0);
+                    popBackStack(DrawerItem.CART);
                 } else {
                     // at the moment order confirmation is the only other fragment that uses the Close button
                     // and it has the backstack cleared upon opening, so going back one is appropriate.
-                    fragmentManager.popBackStack();
+                    popBackStack();
                 }
                 break;
 
@@ -968,10 +1039,10 @@ public class MainActivity extends Activity
                         }
                         // if no Home found in backstack, clear the backstack all the way up to landing page
                         if (backstackIndex < 0) {
-                            fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                            clearBackStack();
                         }
                     } else { // otherwise Up = Back
-                        fragmentManager.popBackStack();
+                        popBackStack();
                     }
                 }
                 break;

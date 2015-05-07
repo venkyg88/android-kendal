@@ -63,6 +63,14 @@
                     android:id="@+id/secondItemText"/>
             </LinearLayout>
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/cardTypeImg"
+                android:paddingTop="@dimen/verticalspacing_8dp"
+                android:paddingRight="@dimen/margin_16dp"
+                android:layout_toLeftOf="@+id/listOptions"
+                android:layout_toStartOf="@+id/listOptions" />
 
             <ImageButton
                 android:layout_width="30dip"
@@ -71,16 +79,6 @@
                 android:layout_alignParentRight="true"
                 android:background="@color/staples_white"
                 android:src="@drawable/ic_more_vert_black"/>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/cardTypeImg"
-                android:paddingTop="@dimen/verticalspacing_8dp"
-                android:paddingRight="@dimen/margin_16dp"
-                android:layout_below="@+id/selectionImage"
-                android:layout_toLeftOf="@+id/listOptions"
-                android:layout_toStartOf="@+id/listOptions" />
 
         </RelativeLayout>
 
