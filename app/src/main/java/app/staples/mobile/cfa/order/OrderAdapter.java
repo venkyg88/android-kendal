@@ -24,6 +24,20 @@ import app.staples.mobile.cfa.util.CurrencyFormat;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
 
+    public enum TrackType {
+        SHIPPED("Shipped"),
+        DELIVERED("Delivered");
+        private String name;
+
+        TrackType(String name) {
+            this.name = name;
+        }
+
+        public String toString() {
+            return name;
+        }
+    }
+
     private ArrayList<OrderShipmentListItem> array;
     private Activity activity;
     View.OnClickListener onClickListener;
@@ -104,6 +118,14 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         holder.orderNumTV.setText("#"+ orderStatus.getOrderNumber());
         holder.orderStatusTV.setText(shipment.getShipmentStatusDescription());
         holder.numItemsTV.setText(r.getQuantityString(R.plurals.cart_qty, totalItemQtyOfShipment, totalItemQtyOfShipment));
+
+        holder.trackShipmentBtn.setVisibility(View.INVISIBLE);
+        if (shipment.getShipmentStatusDescription().equals(TrackType.SHIPPED.toString())) {
+            holder.trackShipmentBtn.setVisibility(View.VISIBLE);
+        } else if (shipment.getShipmentStatusDescription().equals(TrackType.DELIVERED.toString())) {
+            holder.trackShipmentBtn.setVisibility(View.VISIBLE);
+        }
+
         holder.trackShipmentBtn.setTag(order);
         holder.viewRecieptBtn.setTag(order);
 

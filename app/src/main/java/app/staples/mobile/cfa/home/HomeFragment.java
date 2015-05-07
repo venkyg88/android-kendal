@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +38,7 @@ import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.common.device.DeviceInfo;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +49,7 @@ import app.staples.mobile.cfa.location.LocationFinder;
 import app.staples.mobile.cfa.profile.ProfileDetails;
 import app.staples.mobile.cfa.store.StoreFragment;
 import app.staples.mobile.cfa.store.TimeSpan;
+import app.staples.mobile.cfa.util.CurrencyFormat;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.DataWrapper;
 import retrofit.Callback;
@@ -111,15 +114,13 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     private View.OnClickListener itemOnClickListener;
 
     // Personalized Message Bar UI Elements
-    private LinearLayout login_info_layout;
+    private TextView loginText;
     private LinearLayout login_layout;
     private LinearLayout reward_layout;
     private LinearLayout store_wrapper;
     private TextView rewardTextView;
-    private TextView loginMessageTextView;
     private TextView storeNameTextView;
     private TextView storeStatusTextView;
-    private TextView usernameTextView;
     private DataWrapper storeWrapper;
 
     @Override
@@ -156,9 +157,9 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
         picasso = Picasso.with(activity);
 
-        noPhoto = resources.getDrawable(R.drawable.no_photo);
+        noPhoto = ResourcesCompat.getDrawable(resources, R.drawable.no_photo, null);
 
-        configFrameView = layoutInflater.inflate(R.layout.config_frame, container, false);
+        configFrameView = layoutInflater.inflate(R.layout.home_fragment, container, false);
 
         configScrollLayout = (LinearLayout) configFrameView.findViewById(R.id.configScrollLayout);
 
@@ -1136,12 +1137,10 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
     private void findMessageBarViews(){
         login_layout = (LinearLayout) configFrameView.findViewById(R.id.login_layout);
-        login_info_layout = (LinearLayout) configFrameView.findViewById(R.id.login_info_layout);
+        loginText = (TextView) configFrameView.findViewById(R.id.login_message);
         reward_layout = (LinearLayout) configFrameView.findViewById(R.id.reward_layout);
         store_wrapper = (LinearLayout) configFrameView.findViewById(R.id.store_wrapper);
         rewardTextView = (TextView) configFrameView.findViewById(R.id.reward);
-        loginMessageTextView = (TextView) configFrameView.findViewById(R.id.login_message);
-        usernameTextView = (TextView) configFrameView.findViewById(R.id.login_username);
         storeNameTextView = (TextView) configFrameView.findViewById(R.id.store_name);
         storeStatusTextView = (TextView) configFrameView.findViewById(R.id.store_status);
     }
@@ -1155,21 +1154,19 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         if(access.isLoggedIn() && !access.isGuestLogin() && ProfileDetails.getMember() != null){
             float rewards = 0;
             Member member = ProfileDetails.getMember();
-            if(member.getRewardsNumber() != null && member.getRewardDetails() != null) {
+            if (member.getRewardsNumber() != null && member.getRewardDetails() != null) {
                 rewards = ProfileDetails.getRewardsTotal();
             }
 
-            if(rewards != 0) {
+            if (rewards != 0) {
                 login_layout.setVisibility(View.GONE);
                 reward_layout.setVisibility(View.VISIBLE);
-                rewardTextView.setText("$" + (int) rewards);
+                rewardTextView.setText(CurrencyFormat.getFormatter().getCurrency().toString() + (int) rewards);
                 Log.d(TAG, "Rewards from message bar: " + rewards);
             }
-            else{
-                loginMessageTextView.setText(R.string.welcome);
-                usernameTextView.setVisibility(View.VISIBLE);
-                usernameTextView.setText(member.getUserName());
-                login_info_layout.setVisibility(View.GONE);
+            else {
+                String loginMessage = MessageFormat.format(getString(R.string.welcome_format), member.getUserName());
+                loginText.setText(loginMessage);
 
                 login_layout.setVisibility(View.VISIBLE);
                 reward_layout.setVisibility(View.GONE);
@@ -1186,9 +1183,8 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         }
         // Not Logged In
         else{
-            loginMessageTextView.setText(R.string.hello);
-            usernameTextView.setVisibility(View.GONE);
-            login_info_layout.setVisibility(View.VISIBLE);
+            loginText.setText(R.string.login_greeting);
+            login_layout.setVisibility(View.VISIBLE);
             reward_layout.setVisibility(View.GONE);
         }
     }
