@@ -56,7 +56,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_close_black"/>
+        android:src="@drawable/ic_close_black"
+        android:visibility="gone"/>
     <!--<Button-->
         <!--android:id="@+id/reward_remove_button"-->
         <!--android:layout_width="85dp"-->
