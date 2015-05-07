@@ -18,7 +18,7 @@ import app.staples.mobile.cfa.widget.ActionBar;
 
 public class TermsFragment extends Fragment {
     private static final String TAG = TermsFragment.class.getSimpleName();
-    private static final String TERMS_URL = "http://m.staples.com/skmobwidget/sbd/content/help-center/policies-and-legal.html";
+    private static final String TERMS_URL = "file:///android_asset/Terms.html";
     private LinearLayout loadingSpinner;
 
     @Override
