@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply from: 'build-version.gradle'
+
 
 android {
     compileSdkVersion 22
@@ -10,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId 'app.staples'
-        versionCode 22
+        versionCode calculateVersionCode()
     }
     signingConfigs {
         release {
@@ -21,10 +23,11 @@ android {
         }
     }
 
-
     productFlavors {
         qa {
-            versionName versionPrefix+'-qa-'+defaultConfig.versionCode
+//            versionName versionPrefix+'-qa-'+defaultConfig.versionCode
+            versionName   calculateVersionName()+"-"+getKickoff()+"-"+getEnv()
+            println "VERSION INFO   code"+defaultConfig.versionCode + "     name: "+ versionName
             buildTypes {
                 debug {
                     minifyEnabled false
@@ -35,18 +38,18 @@ android {
             }
         }
         dev {
-            versionName versionPrefix+'-dev-'+defaultConfig.versionCode
+            versionName   calculateVersionName()+"-"+getKickoff()+"-"+getEnv()
+            println "VERSION INFO   code"+defaultConfig.versionCode + "     name: "+ versionName
             buildTypes {
                 debug {
-                    minifyEnabled false
-                }
-                release {
                     minifyEnabled false
                 }
             }
         }
         prod {
-            versionName versionPrefix+'-prod-'+defaultConfig.versionCode
+            //versionName versionPrefix+'-prod-'+defaultConfig.versionCode
+            versionName   calculateVersionName()+"-"+getKickoff()
+            println "VERSION INFO   code"+defaultConfig.versionCode + "     name: "+ versionName
             buildTypes {
                 debug {
                     minifyEnabled false
