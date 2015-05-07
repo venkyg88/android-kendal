@@ -2,7 +2,6 @@ package app.staples.mobile.cfa.cart;
 
 import android.support.v7.widget.RecyclerView;
 import android.telephony.PhoneNumberFormattingTextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,25 +102,6 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
         if (vh.couponCodeEditVw != null) {
             vh.couponCodeEditVw.setText(couponItem.getCouponCodeToAdd());
             vh.couponCodeEditVw.setTag(position);
-            vh.couponCodeEditVw.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                    retrieveCouponCodeFromEditText(textView);
-                    return false;
-                }
-            });
-            vh.couponCodeEditVw.setOnImeBackListener(new EditTextWithImeBackEvent.EditTextImeBackListener() {
-                @Override
-                public void onImeBack(EditTextWithImeBackEvent view, String text) {
-                    retrieveCouponCodeFromEditText((TextView) view);
-                }
-            });
-            vh.couponCodeEditVw.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    retrieveCouponCodeFromEditText((TextView) v);
-                    return false;
-                }
-            });
         }
 
         // set coupon text
@@ -140,6 +120,7 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
         if (vh.couponAddButton != null) {
             vh.couponAddButton.setTag(position);
             vh.couponAddButton.setOnClickListener(addButtonListener);
+            couponItem.setCouponCodeVw(vh.couponCodeEditVw);
         }
 
         // set up link rewards account button
@@ -152,10 +133,6 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
         }
     }
 
-    private void retrieveCouponCodeFromEditText(TextView v) {
-        CouponItem couponItem = getItem((Integer) v.getTag());
-        couponItem.setCouponCodeToAdd(v.getText().toString());
-    }
 
     //---------------------------------------//
     //------------ inner classes ------------//
