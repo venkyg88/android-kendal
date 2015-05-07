@@ -6,6 +6,18 @@
     android:orientation="vertical">
     <WebView
         android:id="@+id/terms_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <!-- progress bar -->
+    <LinearLayout
+        android:id="@+id/loading_spinner"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 </app.staples.mobile.cfa.widget.AnimatorLayout>
