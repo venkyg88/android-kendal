@@ -1,8 +1,6 @@
 package app.staples.mobile.cfa;
 
-import android.annotation.TargetApi;
 import android.app.Fragment;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
 
 import com.crittercism.app.Crittercism;
 import com.staples.mobile.common.analytics.Tracker;
@@ -20,6 +19,7 @@ import app.staples.mobile.cfa.widget.ActionBar;
 public class TermsFragment extends Fragment {
     private static final String TAG = TermsFragment.class.getSimpleName();
     private static final String TERMS_URL = "http://m.staples.com/skmobwidget/sbd/content/help-center/policies-and-legal.html";
+    private LinearLayout loadingSpinner;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -41,9 +41,16 @@ public class TermsFragment extends Fragment {
             }
         });
 
-        termsWebView.loadUrl(TERMS_URL);
+        loadingSpinner = (LinearLayout) view.findViewById(R.id.loading_spinner);
 
-        termsWebView.requestFocus();
+        termsWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                loadingSpinner.setVisibility(View.GONE);
+            }
+        });
+
+        termsWebView.loadUrl(TERMS_URL);
 
         return view;
     }
