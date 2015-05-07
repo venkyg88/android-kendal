@@ -53,7 +53,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private MainActivity activity;
 
     private TextView cartSubtotal;
-    private TextView cartFreeShippingMsg;
+    private View freeShippingLayout;
+    private TextView freeShippingMsg;
     private TextView oversizedShipping;
     private TextView oversizedShippingLabel;
     private TextView cartShipping;
@@ -100,7 +101,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         View view = inflater.inflate(R.layout.cart_fragment, container, false);
 
         emptyCartLayout = view.findViewById(R.id.empty_cart_layout);
-        cartFreeShippingMsg = (TextView) view.findViewById(R.id.free_shipping_msg);
+        freeShippingLayout = view.findViewById(R.id.free_shipping_layout);
+        freeShippingMsg = (TextView) view.findViewById(R.id.free_shipping_msg);
         couponsRewardsLayout = view.findViewById(R.id.coupons_rewards_layout);
         couponsRewardsLabel = (TextView) view.findViewById(R.id.coupons_rewards_label);
         couponsRewardsValue = (TextView) view.findViewById(R.id.coupons_rewards_value);
@@ -245,25 +247,25 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             if (totalItemCount > 0) {
                 if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !ProfileDetails.isRewardsMember()) {
                     // need to spend more to qualify for free shipping
-                    cartFreeShippingMsg.setVisibility(View.VISIBLE);
-                    cartFreeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
+                    freeShippingLayout.setVisibility(View.VISIBLE);
+                    freeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
                             currencyFormat.format(freeShippingThreshold), currencyFormat.format(freeShippingThreshold - subtotal)));
                 } else {
                     // qualifies for free shipping
                     String freeShippingMsg = r.getString(R.string.free_shipping_msg2);
-                    if (!freeShippingMsg.equals(cartFreeShippingMsg.getText().toString())) {
-                        cartFreeShippingMsg.setVisibility(View.VISIBLE);
-                        cartFreeShippingMsg.setText(freeShippingMsg);
+                    if (!freeShippingMsg.equals(this.freeShippingMsg.getText().toString())) {
+                        this.freeShippingLayout.setVisibility(View.VISIBLE);
+                        this.freeShippingMsg.setText(freeShippingMsg);
 //                        // hide after a delay
-//                        cartFreeShippingMsg.postDelayed(new Runnable() {
+//                        freeShippingMsg.postDelayed(new Runnable() {
 //                            @Override public void run() {
-//                                cartFreeShippingMsg.setVisibility(View.GONE);
+//                                freeShippingMsg.setVisibility(View.GONE);
 //                            }
 //                        }, 3000);
                     }
                 }
             } else {
-                cartFreeShippingMsg.setVisibility(View.GONE);
+                freeShippingLayout.setVisibility(View.GONE);
             }
 
             // set text of shipping, and subtotal
