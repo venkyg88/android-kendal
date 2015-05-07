@@ -131,7 +131,7 @@
 
     <!--rewards-->
     <string name="rewards_card_number">Rewards Card Number</string>
-    <string name="rewards_phone_number">Your Rewards Account Phone Number</string>
+    <string name="rewards_phone_number">Phone Number</string>
     <string name="rewards_list_tabtitle">REWARDS</string>
     <string name="rewards_ink_tabtitle">INK RECYCLING</string>
     <string name="rewards_summary_tabtitle">SUMMARY</string>
