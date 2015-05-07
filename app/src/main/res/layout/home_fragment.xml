@@ -12,7 +12,7 @@
 		<LinearLayout
 			android:id="@+id/configScrollLayout"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
+			android:layout_height="wrap_content"
             android:layout_margin="0dp"
 			android:orientation="vertical"
 			android:background="@color/staples_light_gray"
@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/staples_light_gray">
                 <LinearLayout
-                    android:id="@+id/message_contain_layout"
+                    android:id="@+id/message_container_layout"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:orientation="horizontal">
@@ -39,59 +39,12 @@
                             android:id="@+id/login_message"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:textSize="@dimen/fontsize_14sp"
-                            android:textColor="@color/staples_black"/>
-                        <TextView
-                            android:id="@+id/login_username"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:lines="1"
-                            android:ellipsize="end"
-                            android:textSize="@dimen/fontsize_14sp"
-                            android:visibility="gone"
-                            android:textColor="@color/staples_black"/>
-
-                        <LinearLayout
-                            android:id="@+id/login_info_layout"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center">
-                            <TextView
-                                android:id="@+id/login_sign_in"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:textSize="@dimen/fontsize_14sp"
-                                android:textColor="@color/staples_black"
-                                android:textStyle="bold"
-                                android:text="@string/login_title"/>
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:textSize="@dimen/fontsize_14sp"
-                                android:textColor="@color/staples_black"
-                                android:text="@string/or"/>
-                            <TextView
-                                android:id="@+id/login_sign_up"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:textSize="@dimen/fontsize_14sp"
-                                android:textColor="@color/staples_black"
-                                android:textStyle="bold"
-                                android:text="@string/signup_title"/>
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:textSize="@dimen/fontsize_14sp"
-                                android:textColor="@color/staples_black"
-                                android:text="@string/question_mark"/>
-                        </LinearLayout>
+                            android:gravity="center_horizontal"
+                            android:textSize="@dimen/fontsize_12sp"
+                            android:textColor="@color/staples_black"
+                            android:textStyle="bold"
+                            android:lines="2"
+                            android:text="@string/login_greeting"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -123,7 +76,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:textSize="@dimen/fontsize_13sp"
+                                android:textSize="@dimen/fontsize_12sp"
                                 android:textColor="@color/staples_black"
                                 android:text="@string/rewards"/>
                         </LinearLayout>
@@ -137,6 +90,9 @@
                         android:padding="5dp"
                         android:gravity="center"
                         android:orientation="vertical">
+
+                        <!--Datawrapper "list"-->
+
                         <LinearLayout
                             android:id="@+id/store_layout"
                             android:layout_width="wrap_content"
@@ -187,6 +143,8 @@
                             </LinearLayout>
                         </LinearLayout>
 
+                        <!--Datawrapper "progress"-->
+
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -202,6 +160,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"/>
                         </LinearLayout>
+
+                        <!--Datawrapper "empty"-->
 
                         <TextView
                             android:id="@+id/error_info"

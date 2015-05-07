@@ -68,11 +68,8 @@
     <string name="feed_empty_interact_message">Explore and come back to find suggestions, deals and more.</string>
 
     <!-- Personalized Message -->
-    <string name="welcome">Welcome</string>
-    <string name="hello">Hello</string>
-    <string name="signup_title">Sign Up</string>
-    <string name="or">\u0020Or\u0020</string>
-    <string name="question_mark">\?</string>
+    <string name="welcome_format">Welcome\n{0}</string>
+    <string name="login_greeting">Hello\nLog in or Sign up?</string>
     <string name="rewards">Rewards</string>
     <string name="store_open">Open</string>
     <string name="store_close">Close</string>
