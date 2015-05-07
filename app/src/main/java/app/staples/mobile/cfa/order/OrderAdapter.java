@@ -104,6 +104,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         holder.orderNumTV.setText("#"+ orderStatus.getOrderNumber());
         holder.orderStatusTV.setText(shipment.getShipmentStatusDescription());
         holder.numItemsTV.setText(r.getQuantityString(R.plurals.cart_qty, totalItemQtyOfShipment, totalItemQtyOfShipment));
+
+        holder.trackShipmentBtn.setVisibility(View.VISIBLE);
+        if(shipment.getShipmentStatusDescription().equals("Processing Order")) {
+            holder.trackShipmentBtn.setVisibility(View.INVISIBLE);
+        }
+
         holder.trackShipmentBtn.setTag(order);
         holder.viewRecieptBtn.setTag(order);
 
