@@ -175,7 +175,7 @@
     <string name="skuset_change">Change product option</string>
 
     <!--profile-->
-    <string name="username">User name</string>
+    <string name="username">Username/Email</string>
     <string name="password">Password</string>
     <string name="password_forgot">Forgot your password?</string>
     <string name="email">Email</string>
