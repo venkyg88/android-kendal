@@ -120,22 +120,6 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
         Log.d(TAG, msg);
         state = DataWrapper.State.NOMORE;
         applyState(null);
-
-        FragmentManager fragmentManager = getFragmentManager();
-        int currentBackStackIndex = fragmentManager.getBackStackEntryCount() - 1;
-        int backstackIndex = currentBackStackIndex - 1;
-        while (backstackIndex >= 0) {
-            if (DrawerItem.HOME.equals(fragmentManager.getBackStackEntryAt(backstackIndex).getName())) {
-                fragmentManager.popBackStack(DrawerItem.HOME, 0);
-                break;
-            }
-            backstackIndex--;
-        }
-        // If no Home found in backstack, clear the backstack all the way up to
-        // landing page.
-        if (backstackIndex < 0) {
-            fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }
     }
 
     private String getTitleFromDescriptions(List<Description> descriptions) {

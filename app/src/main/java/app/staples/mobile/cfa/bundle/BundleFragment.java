@@ -280,7 +280,10 @@ public class BundleFragment extends Fragment implements Callback<Browse>, Bundle
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        getFragmentManager().popBackStack();
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity!=null) {
+            activity.popBackStack();
+        }
     }
 
     @Override

@@ -318,10 +318,10 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         }
     }
 
-    private Float getCheckoutTotal() {
-        float total = pretaxSubtotal.floatValue();
+    private float getCheckoutTotal() {
+        float total = pretaxSubtotal;
         if (tax != null) {
-            total += tax.floatValue();
+            total += tax;
         }
         return total; // coupons/rewards are already factored into pretaxSubtotal
     }

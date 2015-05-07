@@ -227,10 +227,8 @@ public class CreditCardFragment extends Fragment implements Callback, ProfileDet
 
         activity.hideProgressIndicator();
         activity.showNotificationBanner(R.string.cc_updated);
-        FragmentManager fm = getFragmentManager();
-        if (fm != null) {
-            fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
-        }
+
+        activity.popBackStack();
     }
 
     private String getEncryptedPacket(List list) {
@@ -264,7 +262,7 @@ public class CreditCardFragment extends Fragment implements Callback, ProfileDet
             }
         }
 
-        // Callback #2, added/updated credit card confirm
+        // Callback #2, added/updated credit card confirmed
         else if (obj instanceof CreditCardId) {
             (new ProfileDetails()).refreshProfile(this);
         }
@@ -322,7 +320,7 @@ public class CreditCardFragment extends Fragment implements Callback, ProfileDet
                 break;
 
             case R.id.add_cc_cancel:
-                getFragmentManager().popBackStack();
+                activity.popBackStack();
                 break;
         }
     }

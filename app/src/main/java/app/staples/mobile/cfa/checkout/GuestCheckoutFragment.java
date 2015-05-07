@@ -9,13 +9,11 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.staples.mobile.common.access.easyopen.model.cart.BillingAddress;
 import com.staples.mobile.common.access.easyopen.model.cart.PaymentMethod;
@@ -528,7 +526,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
             preCheckoutBillingLayoutVw.setVisibility(isPrecheckOutComplete?View.VISIBLE:View.GONE);
         }
     }
-
 
     @Override
     public void onClick(View view) {
