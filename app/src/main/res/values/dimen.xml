@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="fontsize_8sp">8sp</dimen> <!-- Extra small for special cases only! -->
     <dimen name="fontsize_10sp">12sp</dimen>   <!-- TODO: temporary part of style guide-->
     <dimen name="fontsize_11sp">12sp</dimen>   <!-- TODO: temporary part of style guide-->
     <dimen name="fontsize_12sp">12sp</dimen>   <!--part of style guide-->
@@ -73,4 +74,8 @@
     <dimen name="fontsize_32sp">32sp</dimen>
 
     <dimen name="div_line">1px</dimen>
+
+    <!--Home screen-->
+    <dimen name="home_store_wrapper_padding">8dp</dimen>
+    <dimen name="home_message_bar_height">50dp</dimen>
 </resources>

@@ -17,7 +17,9 @@
 			android:orientation="vertical"
 			android:background="@color/staples_light_gray"
             android:padding="0dp">
+
             <!-- Personalized message bar -->
+
             <FrameLayout
                 android:id="@+id/message_layout"
                 android:layout_width="match_parent"
@@ -26,7 +28,7 @@
                 <LinearLayout
                     android:id="@+id/message_container_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="@dimen/home_message_bar_height"
                     android:orientation="horizontal">
                     <LinearLayout
                         android:id="@+id/login_layout"
@@ -87,7 +89,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="0.5"
-                        android:padding="5dp"
+                        android:padding="@dimen/home_store_wrapper_padding"
                         android:gravity="center"
                         android:orientation="vertical">
 
@@ -96,48 +98,44 @@
                         <LinearLayout
                             android:id="@+id/store_layout"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:orientation="horizontal">
                             <LinearLayout
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:orientation="vertical">
                                 <ImageView
                                     android:layout_width="match_parent"
-                                    android:layout_height="20dp"
-                                    android:layout_gravity="center"
-                                    android:scaleType="fitCenter"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="1"
                                     android:src="@drawable/ic_place_black"/>
                                 <TextView
                                     android:id="@+id/store_status"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:textSize="@dimen/fontsize_12sp"
+                                    android:textSize="@dimen/fontsize_8sp"
+                                    android:paddingBottom="2dp"
                                     android:textColor="@color/staples_black"/>
                             </LinearLayout>
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:orientation="vertical"
-                                android:paddingLeft="5dp">
+                                android:paddingLeft="@dimen/home_store_wrapper_padding">
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:textSize="@dimen/fontsize_13sp"
+                                    android:textSize="@dimen/fontsize_12sp"
                                     android:textColor="@color/staples_black"
                                     android:text="@string/store_nearby"/>
                                 <TextView
                                     android:id="@+id/store_name"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
                                     android:lines="1"
                                     android:ellipsize="end"
-                                    android:maxEms="4"
-                                    android:textSize="@dimen/fontsize_13sp"
+                                    android:textSize="@dimen/fontsize_12sp"
                                     android:textColor="@color/staples_black"
                                     android:textStyle="bold"/>
                             </LinearLayout>
@@ -150,11 +148,11 @@
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:orientation="horizontal"
-                            android:padding="5dp">
+                            android:padding="@dimen/home_store_wrapper_padding">
                             <TextView
-                                android:layout_width="fill_parent"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textSize="@dimen/fontsize_14sp"
+                                android:textSize="@dimen/fontsize_12sp"
                                 android:text="@string/loading"/>
                             <ProgressBar
                                 android:layout_width="wrap_content"
@@ -168,9 +166,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:gravity="center"
-                            android:textSize="@dimen/fontsize_15sp"
+                            android:textSize="@dimen/fontsize_12sp"
                             android:text="@string/no_store"
-                            android:padding="5dp"
+                            android:padding="@dimen/home_store_wrapper_padding"
+                            android:textColor="@color/staples_black"
                             android:textStyle="bold"/>
                     </app.staples.mobile.cfa.widget.DataWrapper>
                 </LinearLayout>
