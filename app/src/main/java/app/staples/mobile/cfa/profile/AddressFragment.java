@@ -24,7 +24,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class AddressFragment extends Fragment implements Callback<AddressId>, View.OnClickListener
+public class AddressFragment extends Fragment implements Callback<AddressId>, ProfileDetails.ProfileRefreshCallback, View.OnClickListener
 {
     private static final String TAG = AddressFragment.class.getSimpleName();
 
@@ -86,7 +86,7 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
                     break;
                 }
             case R.id.address_cancel:
-                getFragmentManager().popBackStack();
+                activity.popBackStack();
                 break;
         }
 
@@ -94,18 +94,7 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
 
     @Override
     public void success(AddressId addressId, Response response) {
-        (new ProfileDetails()).refreshProfile(new ProfileDetails.ProfileRefreshCallback() {
-            @Override public void onProfileRefresh(Member member, String errMsg) {
-                MainActivity activity = (MainActivity) getActivity();
-                if (activity==null) return;
-                activity.hideProgressIndicator();
-                activity.showNotificationBanner(R.string.address_updated);
-                FragmentManager fm = getFragmentManager();
-                if (fm != null) {
-                    fm.popBackStack(); // this will take us back to one of the many places that could have opened this page
-                }
-            }
-        });
+        (new ProfileDetails()).refreshProfile(this);
     }
 
     @Override
@@ -114,6 +103,15 @@ public class AddressFragment extends Fragment implements Callback<AddressId>, Vi
         if (activity==null) return;
         activity.hideProgressIndicator();
         activity.showErrorDialog(ApiError.getErrorMessage(error));
+    }
+
+    @Override
+    public void onProfileRefresh(Member member, String errMsg) {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity==null) return;
+        activity.hideProgressIndicator();
+        activity.showNotificationBanner(R.string.address_updated);
+        activity.popBackStack();
     }
 
     @Override

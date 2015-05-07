@@ -33,7 +33,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Pro
     public static final String BUNDLE_PARAM_RETURNTOCHECKOUT = "returnToCheckout";
 
     LoginHelper loginHelper;
-    MainActivity activity;
     EditText registerEmailET;
     EditText registerPasswordET;
     EditText signInEmail;
@@ -58,12 +57,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Pro
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Crittercism.leaveBreadcrumb("LoginFragment:onCreateView(): Displaying the Login screen.");
-        activity = (MainActivity)getActivity();
-        loginHelper = new LoginHelper((MainActivity)getActivity());
+        MainActivity activity = (MainActivity) getActivity();
+        loginHelper = new LoginHelper(activity);
         Resources r = activity.getResources();
 
         if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
-            getFragmentManager().popBackStack();
+            activity.popBackStack();
             return null;
         }else {
             View view = inflater.inflate(R.layout.login_fragment, container, false);
@@ -115,6 +114,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Pro
             signInEmail.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    MainActivity activity = (MainActivity) getActivity();
                     signInEmail.requestFocus();
                     activity.showSoftKeyboard(signInEmail);
                 }
@@ -177,6 +177,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Pro
     public void onClick(View view) {
         String email, password;
 
+        MainActivity activity = (MainActivity) getActivity();
         switch(view.getId()){
             case R.id.passwordLbl:
                 password = ((TextView) view).getText().toString();
