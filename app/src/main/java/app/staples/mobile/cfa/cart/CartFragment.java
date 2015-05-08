@@ -190,9 +190,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     public void onResume() {
         super.onResume();
 
-        // force cart fragment to portrait mode because it doesn't fit well in landscape
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-
         // update action bar
         ActionBar.getInstance().setConfig(ActionBar.Config.CART);
         //initialize cart based on what's been returned from api so far
@@ -204,9 +201,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     @Override
     public void onPause() {
         super.onPause();
-
-        // allow rotation for all fragments except cart
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
     /** Sets item count indicator on cart icon and cart drawer title */

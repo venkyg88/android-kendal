@@ -29,6 +29,7 @@
             android:name="app.staples.mobile.cfa.MainActivity"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="sensorPortrait"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

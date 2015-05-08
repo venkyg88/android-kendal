@@ -45,6 +45,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     EditText expirationYearVw;
     EditText cidVw;
     TextView zipCodeVw;
+    TextView billingzipCodeVw;
     View submissionLayout;
     TextView preCheckOutValidateBtn;
     View guestPaymentLayoutVw;
@@ -53,7 +54,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     View preCheckoutBillingLayoutVw;
     TextView shippingAddressTv;
     TextView billingAddressTv;
-    TextView billingAddressLbl;
 
     private boolean shippingAddrNeedsApplying = true;
     private boolean billingAddrNeedsApplying = true;
@@ -104,6 +104,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         billingAddrBlock.setOnDoneListener(this);
         billingAddrHeadingVw = frame.findViewById(R.id.billing_addr_heading);
         zipCodeVw = (TextView) shippingAddrBlock.findViewById(R.id.zipCode);
+        billingzipCodeVw = (TextView) shippingAddrBlock.findViewById(R.id.zipCode);;
         preCheckOutValidateBtn = (TextView)frame.findViewById(R.id.precheckout_validate_button);
         guestPaymentLayoutVw = frame.findViewById(R.id.guest_payment_layout);
         billingSwitchSelectLayoutVw = frame.findViewById(R.id.billing_select_layout);
@@ -111,7 +112,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         preCheckoutBillingLayoutVw = frame.findViewById(R.id.billing_addon_layout);
         shippingAddressTv = (TextView)frame.findViewById(R.id.shipping_address_guest);
         billingAddressTv = (TextView)frame.findViewById(R.id.billing_address_guest);
-        billingAddressLbl = (TextView)frame.findViewById(R.id.billing_addr_heading);
 
         paymentMethodLayoutVw = frame.findViewById(R.id.payment_method_layout);
         cardNumberVw = (EditText) paymentMethodLayoutVw.findViewById(R.id.cardNumber);
@@ -366,14 +366,23 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         if(!useShipAddrAsBillingAddrSwitch.isChecked()) {
             billingAddrReady = billingAddrBlock.validateBillingAddress();
         }
+        if(!shippingAddrReady && billingAddrReady) {
+            if(TextUtils.isEmpty(zipCodeVw.getText())) {
+                activity.showErrorDialog("Please enter a valid shipping address.");
+            }
+        }
+        if(!billingAddrReady) {
+            if(TextUtils.isEmpty(billingzipCodeVw.getText())) {
+                activity.showErrorDialog("Please enter a valid billing address.");
+            }
+        }
         return (shippingAddrReady && billingAddrReady);
     }
 
     private void applyAddressesAndPrecheckout() {
         if(activity != null) activity.hideSoftKeyboard();
         if (!readyForPrecheckout()) {
-            // reset shipping/tax info if already calculated and showing
-            resetShippingAndTax();
+
             return;
         }
             showProgressIndicator();
@@ -522,7 +531,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         } else {
             billingSwitchSelectLayoutVw.setVisibility(isPrecheckOutComplete?View.GONE:View.VISIBLE);
             billingAddrBlock.setVisibility(isPrecheckOutComplete?View.GONE:View.VISIBLE);
-            billingAddressLbl.setVisibility(isPrecheckOutComplete?View.VISIBLE:View.GONE);
+            billingAddrHeadingVw.setVisibility(isPrecheckOutComplete?View.VISIBLE:View.GONE);
             preCheckoutBillingLayoutVw.setVisibility(isPrecheckOutComplete?View.VISIBLE:View.GONE);
         }
     }

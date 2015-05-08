@@ -33,7 +33,7 @@
 -	ic_remove_green			32	32	#6fab04	material/content/ic_remove_48px
 -	ic_search_black			32	32	#333333	material/action/ic_search_48px
 -	ic_search_black			32	32	#333333	material/action/ic_search_48px
--	ic_shopping_cart_black		32	32	#333333	material/action/ic_shopping_cart_48px
+-	ic_shopping_cart_black		32	32	#333333	staples/staples_shopping_cart
 -	ic_sort_white			32	32	#ffffff material/content/ic_sort_48px
 -	ic_sort_invert_white		32	32	#ffffff staples/sort_invert
 -	ic_staples_card			51	32	-	staples/staples_card

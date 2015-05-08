@@ -1,5 +1,6 @@
 package app.staples.mobile.cfa.cart;
 
+import android.text.Html;
 import android.text.TextUtils;
 
 import com.staples.mobile.common.access.Access;
@@ -114,6 +115,8 @@ public class CartApiManager {
                         String errMsg = cartUpdate.getMessage();
                         if (TextUtils.isEmpty(errMsg)) {
                             errMsg = ApiError.getApiSuccessError(cartUpdate);
+                        } else {
+                            errMsg = Html.fromHtml(errMsg).toString();
                         }
                         cartRefreshCallback.onCartRefreshComplete(errMsg);
                     }
@@ -146,6 +149,8 @@ public class CartApiManager {
                         String errMsg = cartUpdate.getMessage();
                         if (TextUtils.isEmpty(errMsg)) {
                             errMsg = ApiError.getApiSuccessError(cartUpdate);
+                        } else {
+                            errMsg = Html.fromHtml(errMsg).toString();
                         }
                         cartRefreshCallback.onCartRefreshComplete(errMsg);
                     }
