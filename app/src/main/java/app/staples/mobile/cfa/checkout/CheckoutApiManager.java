@@ -1,5 +1,6 @@
 package app.staples.mobile.cfa.checkout;
 
+import android.text.Html;
 import android.text.TextUtils;
 
 import app.staples.mobile.cfa.profile.ProfileDetails;
@@ -47,26 +48,30 @@ public class CheckoutApiManager {
     public static void applyShippingAddress(ShippingAddress shippingAddress, final ApplyAddressCallback applyAddressCallback) {
         final EasyOpenApi secureApi = Access.getInstance().getEasyOpenApi(true);
         secureApi.addShippingAddressToCart(shippingAddress, new Callback<AddressValidationAlert>() {
-                @Override
-                public void success(AddressValidationAlert addressValidationAlert, Response response) {
-                    if (applyAddressCallback != null) {
-                        applyAddressCallback.onApplyAddressComplete(addressValidationAlert.getShippingAddressId(),
-                                null, addressValidationAlert.getAddressValidationAlert());
+            @Override
+            public void success(AddressValidationAlert addressValidationAlert, Response response) {
+                if (applyAddressCallback != null) {
+                    String addressAlert = addressValidationAlert.getAddressValidationAlert();
+                    if (addressAlert != null) {
+                        addressAlert = Html.fromHtml(addressAlert).toString();
                     }
-                    // applying a shipping address causes a change to the profile, so refresh cached profile
-                    new ProfileDetails().refreshProfile(null);
+                    applyAddressCallback.onApplyAddressComplete(addressValidationAlert.getShippingAddressId(),
+                            null, addressAlert);
                 }
+                // applying a shipping address causes a change to the profile, so refresh cached profile
+                new ProfileDetails().refreshProfile(null);
+            }
 
-                @Override
-                public void failure(RetrofitError retrofitError) {
-                    if (applyAddressCallback != null) {
-                        applyAddressCallback.onApplyAddressComplete(null, ApiError.getErrorMessage(retrofitError), null);
-                    }
-                    // if timeout, adding address may have triggered a change to the profile,
-                    // therefore refresh cached profile so at least if user leaves page and
-                    // re-enters they have a chance of succeeding
-                    new ProfileDetails().refreshProfile(null);
+            @Override
+            public void failure(RetrofitError retrofitError) {
+                if (applyAddressCallback != null) {
+                    applyAddressCallback.onApplyAddressComplete(null, ApiError.getErrorMessage(retrofitError), null);
                 }
+                // if timeout, adding address may have triggered a change to the profile,
+                // therefore refresh cached profile so at least if user leaves page and
+                // re-enters they have a chance of succeeding
+                new ProfileDetails().refreshProfile(null);
+            }
         });
     }
 
@@ -77,8 +82,12 @@ public class CheckoutApiManager {
             @Override
             public void success(AddressValidationAlert addressValidationAlert, Response response) {
                 if (applyAddressCallback != null) {
+                    String addressAlert = addressValidationAlert.getAddressValidationAlert();
+                    if (addressAlert != null) {
+                        addressAlert = Html.fromHtml(addressAlert).toString();
+                    }
                     applyAddressCallback.onApplyAddressComplete(addressValidationAlert.getBillingAddressId(),
-                            null, addressValidationAlert.getAddressValidationAlert());
+                            null, addressAlert);
                 }
             }
 
@@ -171,6 +180,9 @@ public class CheckoutApiManager {
                 String infoMsg = addressValidationAlert.getAddressValidationAlert();
                 if (infoMsg == null) {
                     infoMsg = addressValidationAlert.getInventoryCheckAlert();
+                }
+                if (infoMsg != null) {
+                    infoMsg = Html.fromHtml(infoMsg).toString();
                 }
                 final String finalInfoMsg = infoMsg;
 
