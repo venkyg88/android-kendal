@@ -152,6 +152,10 @@ public class CartApiManager {
                         } else {
                             errMsg = Html.fromHtml(errMsg).toString();
                         }
+                        if (errMsg != null) {
+                            //Remove decimals from inventory quantities being returned in the error message
+                            errMsg = errMsg.replaceAll("\\.\\d", "");
+                        }
                         cartRefreshCallback.onCartRefreshComplete(errMsg);
                     }
                 }
