@@ -146,11 +146,9 @@ public class MainActivity extends Activity
     private AppConfigurator appConfigurator;
     private AlertDialog upgradeDialog;
 
-    public ArrayList<QueuedTransaction> queuedTransactions; // TODO This is only public for test!
+    private ArrayList<QueuedTransaction> queuedTransactions;
 
     private NetworkConnectivityBroadCastReceiver networkConnectivityBroadCastReceiver;
-
-public static MainActivity instance; // TODO This is only in for test!
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -452,8 +450,8 @@ public static MainActivity instance; // TODO This is only in for test!
         leftMenuAdapter.fill();
         leftMenu.setOnItemClickListener(this);
 
-        // Create non-drawer DrawerItems
-        homeDrawerItem = leftMenuAdapter.getItem(0); // TODO Hard-coded alias
+        // Get home drawer item
+        homeDrawerItem = leftMenuAdapter.findItemByTag(DrawerItem.HOME);
 
         // Cart
         cartFragment = new CartFragment();
