@@ -51,12 +51,15 @@ public class CheckoutApiManager {
             @Override
             public void success(AddressValidationAlert addressValidationAlert, Response response) {
                 if (applyAddressCallback != null) {
-                    String addressAlert = addressValidationAlert.getAddressValidationAlert();
-                    if (addressAlert != null) {
-                        addressAlert = Html.fromHtml(addressAlert).toString();
-                    }
+//                    String addressAlert = addressValidationAlert.getAddressValidationAlert();
+//                    if (addressAlert != null) {
+//                        addressAlert = Html.fromHtml(addressAlert).toString();
+//                    }
+//                    applyAddressCallback.onApplyAddressComplete(addressValidationAlert.getShippingAddressId(),
+//                            null, addressAlert);
+                    // DLS: leaving above for future implementation, currently not a complete solution
                     applyAddressCallback.onApplyAddressComplete(addressValidationAlert.getShippingAddressId(),
-                            null, addressAlert);
+                            null, null);
                 }
                 // applying a shipping address causes a change to the profile, so refresh cached profile
                 new ProfileDetails().refreshProfile(null);
@@ -82,12 +85,15 @@ public class CheckoutApiManager {
             @Override
             public void success(AddressValidationAlert addressValidationAlert, Response response) {
                 if (applyAddressCallback != null) {
-                    String addressAlert = addressValidationAlert.getAddressValidationAlert();
-                    if (addressAlert != null) {
-                        addressAlert = Html.fromHtml(addressAlert).toString();
-                    }
+//                    String addressAlert = addressValidationAlert.getAddressValidationAlert();
+//                    if (addressAlert != null) {
+//                        addressAlert = Html.fromHtml(addressAlert).toString();
+//                    }
+//                    applyAddressCallback.onApplyAddressComplete(addressValidationAlert.getBillingAddressId(),
+//                            null, addressAlert);
+                    // DLS: leaving above for future implementation, currently not a complete solution
                     applyAddressCallback.onApplyAddressComplete(addressValidationAlert.getBillingAddressId(),
-                            null, addressAlert);
+                            null, null);
                 }
             }
 
@@ -177,10 +183,12 @@ public class CheckoutApiManager {
             public void success(AddressValidationAlert addressValidationAlert, Response response) {
 
                 // check for alerts
-                String infoMsg = addressValidationAlert.getAddressValidationAlert();
-                if (infoMsg == null) {
-                    infoMsg = addressValidationAlert.getInventoryCheckAlert();
-                }
+//                String infoMsg = addressValidationAlert.getAddressValidationAlert();
+//                if (infoMsg == null) {
+//                    infoMsg = addressValidationAlert.getInventoryCheckAlert();
+//                }
+                // DLS: leaving above for future implementation, currently not a complete solution
+                String infoMsg = addressValidationAlert.getInventoryCheckAlert();
                 if (infoMsg != null) {
                     infoMsg = Html.fromHtml(infoMsg).toString();
                 }
