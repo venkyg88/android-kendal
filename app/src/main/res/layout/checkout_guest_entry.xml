@@ -33,6 +33,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/margin_16dp"
             android:src="@drawable/ic_expand_more_black"
             android:layout_alignParentRight="true"/>
         <View
@@ -88,6 +89,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/margin_16dp"
             android:src="@drawable/ic_expand_more_black"
             android:layout_alignParentRight="true"/>
         <View
@@ -126,6 +128,6 @@
 
      <Space
          android:layout_width="match_parent"
-         android:layout_height="200dp" />
+         android:layout_height="@dimen/margin_72dp" />
 
 </LinearLayout>
