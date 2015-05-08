@@ -32,9 +32,6 @@ android {
                 debug {
                     minifyEnabled false
                 }
-                release {
-                    minifyEnabled false
-                }
             }
         }
         dev {
@@ -49,7 +46,7 @@ android {
         prod {
             //versionName versionPrefix+'-prod-'+defaultConfig.versionCode
             versionName   calculateVersionName()+"-"+getKickoff()
-            println "VERSION INFO   code"+defaultConfig.versionCode + "     name: "+ versionName
+            println "VERSION INFO   code: "+defaultConfig.versionCode + "     name: "+ versionName
             buildTypes {
                 debug {
                     minifyEnabled false

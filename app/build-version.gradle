@@ -35,6 +35,8 @@ Properties readVersion() {
         if (stream != null) stream.close()
     }
     // safety defaults in case file is missing
+    if(!version['currentName']) version['currentName'] = "undef"
+    if(!version['currentCode']) version['currentCode'] = "undef"
     if(!version['major']) version['major'] = "4"
     if(!version['minor']) version['minor'] = "0"
     if(!version['patch']) version['patch'] = "0"
@@ -49,6 +51,8 @@ void incrementVersionNumber() {
     def build = version['build'] as int
     build++
     version['build'] = build.toString()
+    version['currentName'] =  (calculateVersionName()+"-"+getKickoff()+"-"+getEnv()).toString()
+    version['currentCode'] =  calculateVersionCode().toString()
 
     def stream = new FileOutputStream(versionFile)
     try {
