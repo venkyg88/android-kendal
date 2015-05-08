@@ -957,12 +957,12 @@ public class MainActivity extends Activity
         // HACK: if going BACK to guest checkout pop an additional time
         FragmentManager fragmentManager = getFragmentManager();
         int currentBackStackIndex = fragmentManager.getBackStackEntryCount()-1;
-        if (currentBackStackIndex > 0 &&
+        if (currentBackStackIndex >= 2  &&
                 DrawerItem.GUEST_CHECKOUT.equals(fragmentManager.getBackStackEntryAt(currentBackStackIndex - 1).getName())) {
-            popBackStack();
+            popBackStack(fragmentManager.getBackStackEntryAt(currentBackStackIndex - 2).getName());
+        } else {
+            super.onBackPressed();
         }
-
-        super.onBackPressed();
     }
 
     // Action bar & button clicks
