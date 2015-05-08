@@ -151,13 +151,15 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
     }
 
     private void activateItem(Item item) {
-        popup.dismiss();
-        if (item==null && adapter.getCount()>0) item = adapter.getItem(0);
-        if (item==null || item.placeId==null) {
-            if (listener!=null) listener.onPlaceDone(null);
-        } else {
-            GoogleApi googleApi = Access.getInstance().getGoogleApi();
-            googleApi.getPlaceDetails(item.placeId, this);
+        if (autoMode) { // this method currently gets called even when autoMode turned off
+            popup.dismiss();
+            if (item == null && adapter.getCount() > 0) item = adapter.getItem(0);
+            if (item == null || item.placeId == null) {
+                if (listener != null) listener.onPlaceDone(null);
+            } else {
+                GoogleApi googleApi = Access.getInstance().getGoogleApi();
+                googleApi.getPlaceDetails(item.placeId, this);
+            }
         }
     }
 

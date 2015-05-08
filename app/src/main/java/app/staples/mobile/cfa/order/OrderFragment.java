@@ -68,9 +68,12 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = (MainActivity)getActivity();
-        if(activity != null) activity.showProgressIndicator();
-        easyOpenApi = Access.getInstance().getEasyOpenApi(true);
-        easyOpenApi.getMemberOrderHistory("orderDate", "DESC", 1, 30, this);
+        if(activity != null && adapter == null) {
+            activity.showProgressIndicator();
+            easyOpenApi = Access.getInstance().getEasyOpenApi(true);
+            easyOpenApi.getMemberOrderHistory("orderDate", "DESC", 1, 30, this);
+        }
+
     }
 
     @Override
