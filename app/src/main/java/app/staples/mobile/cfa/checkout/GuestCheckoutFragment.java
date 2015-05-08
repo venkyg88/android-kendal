@@ -55,9 +55,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     TextView shippingAddressTv;
     TextView billingAddressTv;
 
-    private boolean shippingAddrNeedsApplying = true;
-    private boolean billingAddrNeedsApplying = true;
-
     // cache guest checkout entries
     private static ShippingAddress shippingAddressCache;
     private static ShippingAddress billingAddressCache;
@@ -276,18 +273,9 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     }
 
     public void onNext(AddressBlock addressBlock) {
-        if (addressBlock == shippingAddrBlock) {
-            shippingAddrNeedsApplying = true;
-            if (useShipAddrAsBillingAddrSwitch.isChecked()) {
-                billingAddrNeedsApplying = true;
-            }
-        } else if (addressBlock == billingAddrBlock) {
-            billingAddrNeedsApplying = true;
-        }
     }
 
     public void onDone(AddressBlock addressBlock, boolean valid) {
-        onNext(addressBlock);
         applyAddressesAndPrecheckout();
     }
 
@@ -296,7 +284,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         int visibility = isChecked ? View.GONE: View.VISIBLE;
         billingAddrHeadingVw.setVisibility(visibility);
         billingAddrBlock.setVisibility(visibility);
-        billingAddrNeedsApplying = true;
         if(!isChecked)billingAddrBlock.requestFocus();
 
         // layout changes to shipping on billing checked
@@ -385,106 +372,91 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
 
             return;
         }
-            showProgressIndicator();
+        showProgressIndicator();
+
         // add shipping address to cart if necessary, then billing address and precheckout
-        if (shippingAddrNeedsApplying) {
-            ShippingAddress shippingAddress = getShippingAddress();
-            if (shippingAddress == null) {
-                String errMsg = activity.getResources().getString(R.string.required_fields);
-                Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
-                activity.showErrorDialog(errMsg);
-                hideProgressIndicator();
-            } else {
-                if(shippingAddress.getCompleteAddress(shippingAddress) != null) {
-                    shippingAddressTv.setText(shippingAddress.getCompleteAddress(shippingAddress));
-                }
-                CheckoutApiManager.applyShippingAddress(shippingAddress, new CheckoutApiManager.ApplyAddressCallback() {
-                    @Override
-                    public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
-
-                        // checking to see if the fragment is detached
-                        if(getActivity() == null) return;
-
-                        // if success
-                        if (errMsg == null) {
-                            shippingAddrNeedsApplying = false;
-                            if (infoMsg != null) {
-                                Tracker.getInstance().trackActionForCheckoutFormErrors("Shipping address alert: " + infoMsg); // analytics
-                                activity.showErrorDialog("Shipping address alert: " + infoMsg);
-                            }
-
-                            // now apply billing address
-                            applyBillingAddressIfNeededAndPrecheckout();
-
-                        } else {
-                            // if shipping and tax already showing, need to hide them
-                            resetShippingAndTax();
-                            hideProgressIndicator();
-                            Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
-                            activity.showErrorDialog(errMsg);
-                            Log.d(TAG, errMsg);
-                        }
-                    }
-                });
-            }
+        ShippingAddress shippingAddress = getShippingAddress();
+        if (shippingAddress == null) {
+            String errMsg = activity.getResources().getString(R.string.required_fields);
+            Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
+            activity.showErrorDialog(errMsg);
+            hideProgressIndicator();
         } else {
-            applyBillingAddressIfNeededAndPrecheckout();
+            if(shippingAddress.getCompleteAddress(shippingAddress) != null) {
+                shippingAddressTv.setText(shippingAddress.getCompleteAddress(shippingAddress));
+            }
+            CheckoutApiManager.applyShippingAddress(shippingAddress, new CheckoutApiManager.ApplyAddressCallback() {
+                @Override
+                public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
+
+                    // checking to see if the fragment is detached
+                    if (getActivity() == null) return;
+
+                    // if success
+                    if (errMsg == null) {
+                        if (infoMsg != null) {
+                            Tracker.getInstance().trackActionForCheckoutFormErrors("Shipping address alert: " + infoMsg); // analytics
+                            activity.showErrorDialog("Shipping address alert: " + infoMsg);
+                        }
+
+                        // now apply billing address
+                        applyBillingAddressAndPrecheckout();
+
+                    } else {
+                        // if shipping and tax already showing, need to hide them
+                        resetShippingAndTax();
+                        hideProgressIndicator();
+                        Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
+                        activity.showErrorDialog(errMsg);
+                        Log.d(TAG, errMsg);
+                    }
+                }
+            });
         }
     }
 
-    private void applyBillingAddressIfNeededAndPrecheckout() {
+    private void applyBillingAddressAndPrecheckout() {
         // apply billing address to cart if necessary
-        if (billingAddrNeedsApplying) {
-            BillingAddress billingAddress = getBillingAddress();
-            if (billingAddress == null) {
-                String errMsg = activity.getResources().getString(R.string.required_fields);
-                Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
-                activity.showErrorDialog(errMsg);
-                hideProgressIndicator();
-            } else {
-                if(billingAddress.getCompleteAddress(billingAddress) != null) {
-                    billingAddressTv.setText(billingAddress.getCompleteAddress(billingAddress));
-                }
-                CheckoutApiManager.applyBillingAddress(billingAddress, new CheckoutApiManager.ApplyAddressCallback() {
-                    @Override
-                    public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
-                        // checking to see if the fragment is detached
-                        if(getActivity() == null) return;
-
-                        // if success
-                        if (errMsg == null) {
-                            billingAddrNeedsApplying = false;
-
-                            if (infoMsg != null) {
-                                Tracker.getInstance().trackActionForCheckoutFormErrors("Billing address alert: " + infoMsg); // analytics
-                                activity.showErrorDialog("Billing address alert: " + infoMsg);
-                            }
-
-                            // do precheckout
-                            startPrecheckoutIfReady();
-
-                        } else {
-                            // if shipping and tax already showing, need to hide them
-                            resetShippingAndTax();
-                            hideProgressIndicator();
-                            Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
-                            activity.showErrorDialog(errMsg);
-                            Log.d(TAG, errMsg);
-                        }
-                    }
-                });
-            }
+        BillingAddress billingAddress = getBillingAddress();
+        if (billingAddress == null) {
+            String errMsg = activity.getResources().getString(R.string.required_fields);
+            Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
+            activity.showErrorDialog(errMsg);
+            hideProgressIndicator();
         } else {
-            // do precheckout
-            startPrecheckoutIfReady();
+            if(billingAddress.getCompleteAddress(billingAddress) != null) {
+                billingAddressTv.setText(billingAddress.getCompleteAddress(billingAddress));
+            }
+            CheckoutApiManager.applyBillingAddress(billingAddress, new CheckoutApiManager.ApplyAddressCallback() {
+                @Override
+                public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
+                    // checking to see if the fragment is detached
+                    if(getActivity() == null) return;
+
+                    // if success
+                    if (errMsg == null) {
+
+                        if (infoMsg != null) {
+                            Tracker.getInstance().trackActionForCheckoutFormErrors("Billing address alert: " + infoMsg); // analytics
+                            activity.showErrorDialog("Billing address alert: " + infoMsg);
+                        }
+
+                        // do precheckout
+                        startPrecheckout();
+
+                    } else {
+                        // if shipping and tax already showing, need to hide them
+                        resetShippingAndTax();
+                        hideProgressIndicator();
+                        Tracker.getInstance().trackActionForCheckoutFormErrors(errMsg); // analytics
+                        activity.showErrorDialog(errMsg);
+                        Log.d(TAG, errMsg);
+                    }
+                }
+            });
         }
     }
 
-    private void startPrecheckoutIfReady() {
-        if (!shippingAddrNeedsApplying && !billingAddrNeedsApplying) {
-            startPrecheckout();
-        }
-    }
 
     /** handles order submission */
     @Override
