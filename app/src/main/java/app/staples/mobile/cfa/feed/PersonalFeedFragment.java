@@ -336,6 +336,7 @@ public class PersonalFeedFragment extends Fragment {
             seenProductsLayout.setVisibility(View.GONE);
         }
         else{
+            feedLoading.setVisibility(View.GONE);
             seenProductsLayout.setVisibility(View.VISIBLE);
         }
     }
@@ -384,6 +385,7 @@ public class PersonalFeedFragment extends Fragment {
                                     feedLoading.setVisibility(View.GONE);
                                 } else {
                                     emptyFeedLayout.setVisibility(View.GONE);
+                                    feedLoading.setVisibility(View.GONE);
                                 }
                             } else {
                                 emptyFeedLayout.setVisibility(View.GONE);
@@ -416,7 +418,7 @@ public class PersonalFeedFragment extends Fragment {
         }
         else{
             emptyFeedLayout.setVisibility(View.GONE);
-
+            feedLoading.setVisibility(View.GONE);
             seenProductsLayout.setVisibility(View.VISIBLE);
             seenProductsSeparator.setVisibility(View.VISIBLE);
             seenProductsWrapper.setState(DataWrapper.State.LOADING);

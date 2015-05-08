@@ -5,10 +5,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import app.staples.mobile.cfa.MainActivity;
-
 import java.util.ArrayList;
 import java.util.HashSet;
+
+import app.staples.mobile.cfa.MainActivity;
 
 /**
  * Author: Yongnan Zhou
