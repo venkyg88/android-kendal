@@ -53,7 +53,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     View preCheckoutBillingLayoutVw;
     TextView shippingAddressTv;
     TextView billingAddressTv;
-    TextView billingAddressLbl;
 
     private boolean shippingAddrNeedsApplying = true;
     private boolean billingAddrNeedsApplying = true;
@@ -111,7 +110,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         preCheckoutBillingLayoutVw = frame.findViewById(R.id.billing_addon_layout);
         shippingAddressTv = (TextView)frame.findViewById(R.id.shipping_address_guest);
         billingAddressTv = (TextView)frame.findViewById(R.id.billing_address_guest);
-        billingAddressLbl = (TextView)frame.findViewById(R.id.billing_addr_heading);
 
         paymentMethodLayoutVw = frame.findViewById(R.id.payment_method_layout);
         cardNumberVw = (EditText) paymentMethodLayoutVw.findViewById(R.id.cardNumber);
@@ -522,7 +520,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         } else {
             billingSwitchSelectLayoutVw.setVisibility(isPrecheckOutComplete?View.GONE:View.VISIBLE);
             billingAddrBlock.setVisibility(isPrecheckOutComplete?View.GONE:View.VISIBLE);
-            billingAddressLbl.setVisibility(isPrecheckOutComplete?View.VISIBLE:View.GONE);
+            billingAddrHeadingVw.setVisibility(isPrecheckOutComplete?View.VISIBLE:View.GONE);
             preCheckoutBillingLayoutVw.setVisibility(isPrecheckOutComplete?View.VISIBLE:View.GONE);
         }
     }
