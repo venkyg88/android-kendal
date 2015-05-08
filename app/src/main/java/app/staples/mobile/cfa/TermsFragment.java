@@ -58,7 +58,7 @@ public class TermsFragment extends Fragment {
     @Override
      public void onResume() {
         super.onResume();
-        Tracker.getInstance().trackStateForAbout(); // analytics
+        Tracker.getInstance().trackStateForPrivacy(); // analytics
         ActionBar.getInstance().setConfig(ActionBar.Config.TERMS);
     }
 }
