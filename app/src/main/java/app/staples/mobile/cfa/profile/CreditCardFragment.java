@@ -1,7 +1,6 @@
 package app.staples.mobile.cfa.profile;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
@@ -195,9 +194,11 @@ public class CreditCardFragment extends Fragment implements Callback, ProfileDet
         int currentYear = calendar.get(Calendar.YEAR);
         int currentMonth = calendar.get(Calendar.MONTH) + 1;
 
-        if (Integer.parseInt(expirationYear) <= currentYear && Integer.parseInt(expirationMonth) < currentMonth) {
-            activity.showErrorDialog("Please check the expiration month & year");
-            return false;
+        if (Integer.parseInt(expirationYear) <= currentYear) {
+            if (Integer.parseInt(expirationMonth) == 0 || Integer.parseInt(expirationMonth) < currentMonth) {
+                activity.showErrorDialog("Please check the expiration month & year");
+                return false;
+            }
         }
 
         // validate card type
