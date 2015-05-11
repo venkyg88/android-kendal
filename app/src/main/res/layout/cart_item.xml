@@ -62,7 +62,7 @@
         <!--price-->
 		<app.staples.mobile.cfa.widget.PriceSticker
 			android:id="@+id/cartitem_price"
-			android:layout_below="@id/overweight"
+			android:layout_below="@id/addon"
 			style="@style/SmallPriceSticker"
 			android:padding="0dp"/>
 
