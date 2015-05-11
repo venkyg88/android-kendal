@@ -101,10 +101,9 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
         addressText.setTextColor(context.getResources().getColor(R.color.staples_black));
         nameText.setText(tmpName);
         nameText.setTypeface(null, Typeface.BOLD);
-        nameText.setTag(position);
-        nameText.setOnClickListener(this);
-        addressText.setTag(position);
-        addressText.setOnClickListener(this);
+        View itemLayout = rowView.findViewById(R.id.item_layout);
+        itemLayout.setOnClickListener(this);
+        itemLayout.setTag(position);
 
         return rowView;
     }
@@ -112,8 +111,7 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
     @Override
     public void onClick(View view) {
         switch(view.getId()){
-            case R.id.secondItemText:
-            case R.id.rowItemText:
+            case R.id.item_layout:
                 final int position=(Integer)view.getTag();
                 String addressId = values.get(position).getAddressId();
                 if (ProfileDetails.addressSelectionListener != null) {

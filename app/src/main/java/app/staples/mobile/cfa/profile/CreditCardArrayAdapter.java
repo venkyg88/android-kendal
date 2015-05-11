@@ -75,12 +75,11 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
         String expDate = "Exp. " + creditCard.getExpirationMonth() + "/" + creditCard.getExpirationYear().substring(2,4);
         TextView ccText = (TextView) rowView.findViewById(R.id.rowItemText);
         TextView expText = (TextView) rowView.findViewById(R.id.secondItemText);
+        View itemLayout = rowView.findViewById(R.id.item_layout);
         ccText.setText(tmpCard);
         expText.setText(expDate);
-        ccText.setTag(position);
-        ccText.setOnClickListener(this);
-        expText.setTag(position);
-        expText.setOnClickListener(this);
+        itemLayout.setOnClickListener(this);
+        itemLayout.setTag(position);
 
         cardTypeImg = (ImageView)rowView.findViewById(R.id.cardTypeImg);
         cardTypeImg.setImageResource(CreditCard.Type.matchOnApiName(creditCard.getCardType()).getImageResource());
@@ -101,8 +100,7 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.secondItemText:
-            case R.id.rowItemText:
+            case R.id.item_layout:
                 final int position = (Integer) view.getTag();
                 String paymentMethodId = values.get(position).getCreditCardId();
                 if (ProfileDetails.paymentMethodSelectionListener != null) {
