@@ -142,6 +142,10 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         return array.get(position);
     }
 
+    public void clear() {
+        array.clear();
+    }
+
     public void fill(List<OrderShipmentListItem> items) {
         array.addAll(items);
         notifyDataSetChanged();
