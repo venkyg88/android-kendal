@@ -137,7 +137,6 @@ public class CreditCardFragment extends Fragment implements Callback, ProfileDet
                     expirationYearET.requestFocus();
                 }
             } catch (NumberFormatException nfe) {
-                nfe.getMessage();
             }
         } else if (editable.length() == 2) {
             try {
@@ -148,7 +147,6 @@ public class CreditCardFragment extends Fragment implements Callback, ProfileDet
                     activity.showErrorDialog("Please check the expiration month");
                 }
             } catch (NumberFormatException nfe) {
-                nfe.getMessage();
             }
 
         } else {
@@ -212,7 +210,6 @@ public class CreditCardFragment extends Fragment implements Callback, ProfileDet
                 return false;
             }
         } catch (NumberFormatException nfe) {
-            nfe.getMessage();
         }
 
 
