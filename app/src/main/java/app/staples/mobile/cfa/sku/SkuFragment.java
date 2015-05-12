@@ -355,7 +355,6 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
         if (parent.getChildCount()>0) return;
 
         for (final Product accessory : accessories) {
-            String accessoryImageUrl = accessory.getImage().get(0).getUrl();
             String accessoryTitle = accessory.getProductName();
             String sku = accessory.getSku();
 
@@ -364,8 +363,20 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
             row.setTag(accessory);
 
             // Set accessory image
+            String accessoryImageUrl = null;
+            List<Image> images = accessory.getImage();
+            if (images!=null && images.size()>0) {
+                Image image = images.get(0);
+                if (image!=null) {
+                    accessoryImageUrl = image.getUrl();
+                }
+            }
             ImageView accessoryImageView = (ImageView) row.findViewById(R.id.accessory_image);
-            Picasso.with(activity).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
+            if (accessoryImageUrl==null) {
+                Picasso.with(activity).load(R.drawable.no_photo).into(accessoryImageView);
+            } else {
+                Picasso.with(activity).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
+            }
 
             // Set accessory title
             TextView accessoryTitleTextView = (TextView) row.findViewById(R.id.accessory_title);
