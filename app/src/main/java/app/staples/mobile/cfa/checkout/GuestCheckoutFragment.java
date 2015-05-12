@@ -94,7 +94,6 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     /** initializes variable entry area of checkout screen */
     @Override
     protected void initEntryArea(View frame) {
-        disableCheckoutButton(true);
         shippingAddrBlock = (AddressBlock) frame.findViewById(R.id.shipping_addr_layout);
         shippingAddrBlock.setOnDoneListener(this);
         billingAddrBlock = (AddressBlock) frame.findViewById(R.id.billing_addr_layout);

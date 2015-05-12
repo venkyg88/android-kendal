@@ -238,6 +238,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                     });
                 } else {
                     activity.showErrorDialog(errMsg);
+                    hideProgressIndicator();
                     Log.d(TAG, errMsg);
                 }
             }

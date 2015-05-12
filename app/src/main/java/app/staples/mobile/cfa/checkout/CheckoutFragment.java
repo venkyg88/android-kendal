@@ -104,6 +104,9 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         // Set click listeners
         submissionLayout.setOnClickListener(this);
 
+        disableCheckoutButton(true);
+
+
 //        couponsRewardsAmount = CartApiManager.getCouponsRewardsAdjustedAmount();
         itemSubtotal = CartApiManager.getSubTotal();
         pretaxSubtotal = CartApiManager.getPreTaxTotal();
