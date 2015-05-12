@@ -39,6 +39,11 @@ import app.staples.R;
 public class AboutFragment extends Fragment {
     private static final String TAG = AboutFragment.class.getSimpleName();
 
+    private static final String[] orientations = {"unspecified", "landscape", "portrait", "user",
+                                                  "behind", "sensor", "nosensor", "sensorLandscape",
+                                                  "sensorPortrait", "reverseLandscape", "reversePortrait", "fullSensor",
+                                                  "userLandscape", "userPortrait", "fullUser", "locked"};
+
     private SimpleDateFormat dateFormat;
     private DecimalFormat coordFormat;
 
@@ -95,6 +100,12 @@ public class AboutFragment extends Fragment {
         }
     }
 
+    private String formatOrientation(int value) {
+        value++;
+        if (value<0 || value>=orientations.length) return(null);
+        return(orientations[value]);
+    }
+
     private void addDisplayRows(LayoutInflater inflater, TableLayout table) {
         Activity activity = getActivity();
         DisplayMetrics metrics = getActivity().getResources().getDisplayMetrics();
@@ -108,6 +119,8 @@ public class AboutFragment extends Fragment {
         else density = Integer.toString(metrics.densityDpi);
         addRow(inflater, table, "Pixels per inch", density);
         addRow(inflater, table, "Refresh rate", Math.round(display.getRefreshRate())+" Hz");
+        String orientation = formatOrientation(getActivity().getRequestedOrientation());
+        addRow(inflater, table, "Orientation", orientation);
     }
 
     private void addPackageRows(LayoutInflater inflater, TableLayout table) {
