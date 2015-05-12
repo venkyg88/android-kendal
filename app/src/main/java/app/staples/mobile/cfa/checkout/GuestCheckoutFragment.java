@@ -281,18 +281,24 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     /** implements CompoundButton.OnCheckedChangeListener */
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         int visibility = isChecked ? View.GONE: View.VISIBLE;
-        billingAddrHeadingVw.setVisibility(visibility);
-        billingAddrBlock.setVisibility(visibility);
-        if(!isChecked)billingAddrBlock.requestFocus();
+        int shippingVisibility = isChecked ? View.VISIBLE: View.GONE;
 
-        // layout changes to shipping on billing checked
-//        int shippingVisibility = isChecked ? View.VISIBLE: View.GONE;
-//        if(shippingAddrBlock.validate()) {
-//            shippingAddrBlock.setVisibility(shippingVisibility);
-//            preCheckoutShippingLayoutVw.setVisibility(visibility);
-//            shippingAddressTv.setText(shippingAddrBlock.getShippingAddress().getCompleteAddress(shippingAddrBlock.getShippingAddress()));
-//        }
-
+//        layout changes to shipping on billing checked
+        if(shippingAddrBlock.validate()) {
+            shippingAddrBlock.setVisibility(shippingVisibility);
+            preCheckoutShippingLayoutVw.setVisibility(visibility);
+            shippingAddressTv.setText(shippingAddrBlock.getShippingAddress().getCompleteAddress(shippingAddrBlock.getShippingAddress()));
+            billingAddrHeadingVw.setVisibility(visibility);
+            billingAddrBlock.setVisibility(visibility);
+            if(!billingAddressTv.getText().toString().isEmpty()) {
+                preCheckoutBillingLayoutVw.setVisibility(visibility);
+            }
+        } else {
+            useShipAddrAsBillingAddrSwitch.setChecked(true);
+        }
+        if(!isChecked) {
+            preCheckoutBillingLayoutVw.setVisibility(shippingVisibility);
+        }
     }
 
     /** gets shipping address from user's entries */
@@ -507,6 +513,13 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
         }
     }
 
+    private void showHiddenLayout() {
+        guestPaymentLayoutVw.setVisibility(View.GONE);
+        preCheckOutValidateBtn.setVisibility(View.VISIBLE);
+        billingSwitchSelectLayoutVw.setVisibility(View.VISIBLE);
+    }
+
+
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
@@ -515,12 +528,17 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                 break;
             case R.id.shipping_addon_layout:
                 disableCheckoutButton(true);
-                hideLayoutsInGuest(false);
+                preCheckoutShippingLayoutVw.setVisibility(View.GONE);
+                shippingAddrBlock.setVisibility(View.VISIBLE);
+                showHiddenLayout();
                 break;
             case R.id.billing_addon_layout:
                 billingAddrBlock.requestFocus();
                 disableCheckoutButton(true);
-                hideLayoutsInGuest(false);
+                preCheckoutBillingLayoutVw.setVisibility(View.GONE);
+                billingAddrBlock.setVisibility(View.VISIBLE);
+                billingAddrHeadingVw.setVisibility(View.VISIBLE);
+                showHiddenLayout();
                 break;
             case R.id.co_submission_layout:
                 onSubmit();
