@@ -164,6 +164,9 @@ public class MainActivity extends Activity
                     + " bundle[" + bundle + "]");
         }
 
+        //noinspection ResourceType
+        setRequestedOrientation(getResources().getInteger(R.integer.screenOrientation));
+
         // Note: error handling for no network availability will happen in ensureActiveSession() called from onResume()
         if (isNetworkAvailable()) {
 
