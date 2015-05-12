@@ -130,19 +130,27 @@ public class CreditCardFragment extends Fragment implements Callback, ProfileDet
 
         String input = editable.toString();
         if (editable.length() == 1) {
-            int month = Integer.parseInt(input);
-            if (month > 1) {
-                expirationMonthET.setText("0" + expirationMonthET.getText().toString());
-                expirationYearET.requestFocus();
+            try {
+                int month = Integer.parseInt(input);
+                if (month > 1) {
+                    expirationMonthET.setText("0" + expirationMonthET.getText().toString());
+                    expirationYearET.requestFocus();
+                }
+            } catch (NumberFormatException nfe) {
+                nfe.getMessage();
+            }
+        } else if (editable.length() == 2) {
+            try {
+                int month = Integer.parseInt(input);
+                if (month <= 12) {
+                    expirationYearET.requestFocus();
+                } else {
+                    activity.showErrorDialog("Please check the expiration month");
+                }
+            } catch (NumberFormatException nfe) {
+                nfe.getMessage();
             }
 
-        } else if (editable.length() == 2) {
-            int month = Integer.parseInt(input);
-            if (month <= 12) {
-                expirationYearET.requestFocus();
-            } else {
-                activity.showErrorDialog("Please check the expiration month");
-            }
         } else {
         }
 
@@ -194,12 +202,19 @@ public class CreditCardFragment extends Fragment implements Callback, ProfileDet
         int currentYear = calendar.get(Calendar.YEAR);
         int currentMonth = calendar.get(Calendar.MONTH) + 1;
 
-        if (Integer.parseInt(expirationYear) <= currentYear) {
-            if (Integer.parseInt(expirationMonth) == 0 || Integer.parseInt(expirationMonth) < currentMonth) {
-                activity.showErrorDialog("Please check the expiration month & year");
+        try {
+            if (Integer.parseInt(expirationYear) <= currentYear) {
+                if (Integer.parseInt(expirationMonth) == 0 || Integer.parseInt(expirationMonth) < currentMonth) {
+                    activity.showErrorDialog("Please check the expiration month & year");
+                    return false;
+                }
+                activity.showErrorDialog("Please check the expiration year");
                 return false;
             }
+        } catch (NumberFormatException nfe) {
+            nfe.getMessage();
         }
+
 
         // validate card type
         cardType = CreditCard.Type.detect(creditCardNumber).getName();
