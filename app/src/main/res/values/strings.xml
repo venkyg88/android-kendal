@@ -202,6 +202,8 @@
     <string name="address_error_msg">Please enter a valid address</string>
     <string name="track_shipment">Track</string>
     <string name="view_receipt">View Receipt</string>
+    <string name="card_expiration_msg">Please check the expiration month &amp; year</string>
+    <string name="card_expiration_year">Please check the expiration year</string>
 
     <!-- Orders -->
     <string name="order">Order</string>

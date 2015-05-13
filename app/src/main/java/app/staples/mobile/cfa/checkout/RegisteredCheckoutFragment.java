@@ -143,6 +143,7 @@ public class RegisteredCheckoutFragment extends CheckoutFragment implements View
                 applyShippingAddressAndPrecheckout();
             } else {
                 setShippingAndTax(getTotalHandlingCost(), getShippingCharge(), getTax());
+                disableCheckoutButton(false);
             }
         }
     }
