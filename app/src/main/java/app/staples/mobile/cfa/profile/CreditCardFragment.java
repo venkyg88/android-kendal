@@ -201,12 +201,14 @@ public class CreditCardFragment extends Fragment implements Callback, ProfileDet
         int currentMonth = calendar.get(Calendar.MONTH) + 1;
 
         try {
-            if (Integer.parseInt(expirationYear) <= currentYear) {
+            if (Integer.parseInt(expirationYear) == currentYear) {
                 if (Integer.parseInt(expirationMonth) == 0 || Integer.parseInt(expirationMonth) < currentMonth) {
-                    activity.showErrorDialog("Please check the expiration month & year");
+                    activity.showErrorDialog(R.string.card_expiration_msg);
                     return false;
                 }
-                activity.showErrorDialog("Please check the expiration year");
+            }
+            if(Integer.parseInt(expirationYear) < currentYear) {
+                activity.showErrorDialog(R.string.card_expiration_year);
                 return false;
             }
         } catch (NumberFormatException nfe) {
