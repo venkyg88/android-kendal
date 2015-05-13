@@ -129,6 +129,6 @@ public class DrawerAdapter extends BaseAdapter {
         array.add(new DrawerItem(activity, DrawerItem.NOTIFY,  R.drawable.ic_notifications_black, R.string.notify_prefs_title, NotifyPrefsFragment.class));
         */
         array.add(new DrawerItem(activity, DrawerItem.TERMS,   R.drawable.ic_info_black, R.string.terms_title, TermsFragment.class));
-        array.add(new DrawerItem(activity, DrawerItem.ABOUT, R.drawable.ic_info_black, R.string.about_title, AboutFragment.class));
+//        array.add(new DrawerItem(activity, DrawerItem.ABOUT, R.drawable.ic_info_black, R.string.about_title, AboutFragment.class));
     }
 }
