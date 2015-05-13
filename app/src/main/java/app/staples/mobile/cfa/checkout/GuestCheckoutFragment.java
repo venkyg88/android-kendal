@@ -225,34 +225,42 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
     public void afterTextChanged(Editable editable) {
         if(expirationMonthVw.getText().hashCode() == editable.hashCode()) {
             String input = editable.toString();
-            if (editable.length() == 1) {
-                int month = Integer.parseInt(input);
-                if (month > 1) {
-                    expirationMonthVw.setText("0" + expirationMonthVw.getText().toString());
-                    expirationYearVw.requestFocus();
-                }
+            try {
+                if (editable.length() == 1) {
+                    int month = Integer.parseInt(input);
+                    if (month > 1) {
+                        expirationMonthVw.setText("0" + expirationMonthVw.getText().toString());
+                        expirationYearVw.requestFocus();
+                    }
 
-            } else if (editable.length() == 2) {
-                int month = Integer.parseInt(input);
-                if (month <= 12) {
-                    expirationYearVw.requestFocus();
+                } else if (editable.length() == 2) {
+                    int month = Integer.parseInt(input);
+                    if (month <= 12) {
+                        expirationYearVw.requestFocus();
+                    } else {
+                        activity.showErrorDialog("Please check the expiration month");
+                    }
                 } else {
-                    activity.showErrorDialog("Please check the expiration month");
                 }
-            } else {
+            } catch (NumberFormatException nfe) {
             }
+
         }
         if(expirationYearVw.getText().hashCode() == editable.hashCode()) {
             String input = editable.toString();
-            if (editable.length() == 2) {
-                Calendar calendar = Calendar.getInstance();
-                int currentYear = calendar.get(Calendar.YEAR) % 100;
-                int year = Integer.parseInt(input);
+            try {
+                if (editable.length() == 2) {
+                    Calendar calendar = Calendar.getInstance();
+                    int currentYear = calendar.get(Calendar.YEAR) % 100;
+                    int year = Integer.parseInt(input);
 
-                if (year < currentYear) {
-                    activity.showErrorDialog("Please check the expiration year");
+                    if (year < currentYear) {
+                        activity.showErrorDialog("Please check the expiration year");
+                    }
                 }
+            } catch (NumberFormatException nfe) {
             }
+
         }
     }
 
@@ -436,7 +444,7 @@ public class GuestCheckoutFragment extends CheckoutFragment implements AddressBl
                 @Override
                 public void onApplyAddressComplete(String addressId, String errMsg, String infoMsg) {
                     // checking to see if the fragment is detached
-                    if(getActivity() == null) return;
+                    if (getActivity() == null) return;
 
                     // if success
                     if (errMsg == null) {
