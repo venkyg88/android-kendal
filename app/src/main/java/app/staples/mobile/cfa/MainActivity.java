@@ -1082,6 +1082,7 @@ public class MainActivity extends Activity
                     } else {
                         selectLoginFragment();
                     }
+                    break;
                 default:
                     selectDrawerItem(item, Transition.RIGHT, true);
                     break;
