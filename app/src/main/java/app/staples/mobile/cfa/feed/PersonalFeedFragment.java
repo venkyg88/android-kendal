@@ -282,6 +282,9 @@ public class PersonalFeedFragment extends Fragment {
                         @Override
                         public void onProductCollectionResult(ProductCollection.ProductContainer productContainer,
                                                               List<ProductCollection.ProductContainer.ERROR_CODES> errorCodes) {
+                            Activity activity = getActivity();
+                            if (activity==null) return;
+
                             HashSet<String> dailyDealSkuSet = new HashSet<String>();
                             if (productContainer.getProducts() != null) {
                                 for (Product p : productContainer.getProducts()) {
