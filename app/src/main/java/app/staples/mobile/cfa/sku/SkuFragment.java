@@ -19,18 +19,6 @@ import android.widget.TextView;
 import com.apptentive.android.sdk.Apptentive;
 import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
-import app.staples.mobile.cfa.MainActivity;
-import app.staples.R;
-import app.staples.mobile.cfa.apptentive.ApptentiveSdk;
-import app.staples.mobile.cfa.cart.CartApiManager;
-import app.staples.mobile.cfa.feed.PersistentSizedArrayList;
-import app.staples.mobile.cfa.feed.PersonalFeedSingleton;
-import app.staples.mobile.cfa.widget.ActionBar;
-import app.staples.mobile.cfa.widget.DataWrapper;
-import app.staples.mobile.cfa.widget.PagerStripe;
-import app.staples.mobile.cfa.widget.PriceSticker;
-import app.staples.mobile.cfa.widget.QuantityEditor;
-import app.staples.mobile.cfa.widget.RatingStars;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.channel.api.ChannelApi;
 import com.staples.mobile.common.access.channel.model.review.Pagination;
@@ -51,6 +39,18 @@ import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.List;
 
+import app.staples.R;
+import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.apptentive.ApptentiveSdk;
+import app.staples.mobile.cfa.cart.CartApiManager;
+import app.staples.mobile.cfa.feed.PersistentSizedArrayList;
+import app.staples.mobile.cfa.feed.PersonalFeedSingleton;
+import app.staples.mobile.cfa.widget.ActionBar;
+import app.staples.mobile.cfa.widget.DataWrapper;
+import app.staples.mobile.cfa.widget.PagerStripe;
+import app.staples.mobile.cfa.widget.PriceSticker;
+import app.staples.mobile.cfa.widget.QuantityEditor;
+import app.staples.mobile.cfa.widget.RatingStars;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -221,8 +221,7 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
                 reviewAdapter.onBindViewHolder(vh, 0);
                 vh.limitComments(3);
                 reviews.addView(vh.itemView);
-                reviews.setVisibility(View.VISIBLE);
-                summary.findViewById(R.id.review_detail).setVisibility(View.VISIBLE);
+                summary.findViewById(R.id.review_layout).setVisibility(View.VISIBLE);
                 summary.findViewById(R.id.rating).setOnClickListener(this);
             }
         }
