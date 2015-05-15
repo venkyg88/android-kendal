@@ -27,6 +27,7 @@ android {
         qa {
 //            versionName versionPrefix+'-qa-'+defaultConfig.versionCode
             versionName   calculateVersionName()+"-"+getKickoff()+"-"+getEnv()
+            versionName   calculateVersionName()+"-"+getKickoff()+"-qa"
             println "VERSION INFO   code"+defaultConfig.versionCode + "     name: "+ versionName
             buildTypes {
                 debug {
@@ -43,8 +44,16 @@ android {
                 }
             }
         }
+        preprod {
+            versionName   calculateVersionName()+"-"+getKickoff()+"-"+getEnv()
+            println "VERSION INFO   code"+defaultConfig.versionCode + "     name: "+ versionName
+            buildTypes {
+                debug {
+                    minifyEnabled false
+                }
+            }
+        }
         prod {
-            //versionName versionPrefix+'-prod-'+defaultConfig.versionCode
             versionName   calculateVersionName()+"-"+getKickoff()
             println "VERSION INFO   code: "+defaultConfig.versionCode + "     name: "+ versionName
             buildTypes {
