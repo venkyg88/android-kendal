@@ -73,8 +73,8 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.ViewHolder
             vh.couponRemoveButton.setVisibility(View.GONE);
         }
 
-        vh.couponAddButton.setTag(position);
-        vh.couponRemoveButton.setTag(position);
+        vh.couponAddButton.setTag(reward);
+        vh.couponRemoveButton.setTag(reward);
 
         // set widget listeners
         vh.couponAddButton.setOnClickListener(rewardButtonListener);
