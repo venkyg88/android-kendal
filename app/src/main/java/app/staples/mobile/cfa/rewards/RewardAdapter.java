@@ -34,9 +34,6 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.ViewHolder
         this.rewardButtonListener = rewardButtonListener;
     }
 
-/* Views */
-
-    // Create new views (invoked by the layout manager)
     @Override
     public RewardAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(activity)
@@ -44,7 +41,6 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.ViewHolder
         return new ViewHolder(v);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder vh, int position) {
         // - get element from your dataset at this position
@@ -53,8 +49,8 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.ViewHolder
         Reward reward = rewards.get(position);
 
         // set reward text
-        vh.couponField1Vw.setText(reward.getAmount());
-        vh.couponField2Vw.setText("exp " + reward.getExpiryDate());
+        vh.amountField.setText(reward.getAmount());
+        vh.expireField.setText(reward.getExpiryDate());
 
         Resources r = activity.getResources();
 
@@ -62,26 +58,27 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.ViewHolder
         int blackTextColor = r.getColor(R.color.staples_black);
         int grayTextColor = r.getColor(R.color.staples_middle_gray);
         if (reward.isIsApplied()) {
-            vh.couponField1Vw.setTextColor(grayTextColor);
-            vh.couponField2Vw.setTextColor(grayTextColor);
-            vh.couponAddButton.setVisibility(View.GONE);
-            vh.couponRemoveButton.setVisibility(View.VISIBLE);
+            vh.amountField.setTextColor(grayTextColor);
+            vh.expireField.setTextColor(grayTextColor);
+            vh.addButton.setVisibility(View.GONE);
+            vh.removeButton.setVisibility(View.VISIBLE);
         } else {
-            vh.couponField1Vw.setTextColor(blackTextColor);
-            vh.couponField2Vw.setTextColor(blackTextColor);
-            vh.couponAddButton.setVisibility(View.VISIBLE);
-            vh.couponRemoveButton.setVisibility(View.GONE);
+            vh.amountField.setTextColor(blackTextColor);
+            vh.expireField.setTextColor(blackTextColor);
+            vh.addButton.setVisibility(View.VISIBLE);
+            vh.removeButton.setVisibility(View.GONE);
         }
 
-        vh.couponAddButton.setTag(reward);
-        vh.couponRemoveButton.setTag(reward);
+        vh.addButton.setTag(reward);
+        vh.viewButton.setTag(reward);
+        vh.removeButton.setTag(reward);
 
         // set widget listeners
-        vh.couponAddButton.setOnClickListener(rewardButtonListener);
-        vh.couponRemoveButton.setOnClickListener(rewardButtonListener);
+        vh.addButton.setOnClickListener(rewardButtonListener);
+        vh.viewButton.setOnClickListener(rewardButtonListener);
+        vh.removeButton.setOnClickListener(rewardButtonListener);
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return rewards.size();
@@ -95,26 +92,21 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.ViewHolder
         this.rewards = rewards;
     }
 
-    //---------------------------------------//
-    //------------ inner classes ------------//
-    //---------------------------------------//
-
-    /************* view holder ************/
-
-//    static class ViewHolder {
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView couponField1Vw;
-        private TextView couponField2Vw;
-        private View couponAddButton;
-        private View couponRemoveButton;
+        private TextView amountField;
+        private TextView expireField;
+        private View addButton;
+        private View viewButton;
+        private View removeButton;
 
         /** constructor */
         public ViewHolder (View itemView) {
             super(itemView);
-            couponField1Vw = (TextView) itemView.findViewById(R.id.coupon_item_field1);
-            couponField2Vw = (TextView) itemView.findViewById(R.id.coupon_item_field2);
-            couponAddButton = itemView.findViewById(R.id.reward_add_button);
-            couponRemoveButton = itemView.findViewById(R.id.reward_remove_button);
+            amountField = (TextView) itemView.findViewById(R.id.coupon_amount);
+            expireField = (TextView) itemView.findViewById(R.id.coupon_expire);
+            addButton = itemView.findViewById(R.id.reward_add_button);
+            viewButton = itemView.findViewById(R.id.reward_view_button);
+            removeButton = itemView.findViewById(R.id.reward_remove_button);
         }
     }
 }

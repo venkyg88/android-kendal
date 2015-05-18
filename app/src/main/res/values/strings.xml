@@ -76,6 +76,7 @@
 
     <!--cart, coupon/reward, checkout -->
     <string name="add">ADD</string>
+    <string name="view">VIEW</string>
     <string name="cartitem_qty_label">Qty</string>
     <string name="add_to_cart">ADD TO CART</string>
     <string name="add_another">Add Another</string>
