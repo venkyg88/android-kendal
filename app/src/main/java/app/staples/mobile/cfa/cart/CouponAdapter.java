@@ -165,15 +165,15 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
                     couponAddButton = itemView.findViewById(R.id.coupon_add_button);
                     break;
                 case CouponItem.TYPE_APPLIED_COUPON:
-                    couponField1Vw = (TextView) itemView.findViewById(R.id.coupon_item_field1);
-                    couponField2Vw = (TextView) itemView.findViewById(R.id.coupon_item_field2);
+                    couponField1Vw = (TextView) itemView.findViewById(R.id.coupon_amount);
+                    couponField2Vw = (TextView) itemView.findViewById(R.id.coupon_expire);
                     couponDeleteButton = itemView.findViewById(R.id.coupon_delete_button);
                     break;
                 case CouponItem.TYPE_REDEEMABLE_REWARD_HEADING:
                     break;
                 case CouponItem.TYPE_REDEEMABLE_REWARD:
-                    couponField1Vw = (TextView) itemView.findViewById(R.id.coupon_item_field1);
-                    couponField2Vw = (TextView) itemView.findViewById(R.id.coupon_item_field2);
+                    couponField1Vw = (TextView) itemView.findViewById(R.id.coupon_amount);
+                    couponField2Vw = (TextView) itemView.findViewById(R.id.coupon_expire);
                     couponAddButton = itemView.findViewById(R.id.reward_add_button);
                     break;
                 case CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG:

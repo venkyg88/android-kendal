@@ -21,6 +21,7 @@ import com.staples.mobile.common.access.easyopen.model.member.Reward;
 import com.staples.mobile.common.access.easyopen.model.member.YearToDateSave;
 import com.staples.mobile.common.access.easyopen.model.member.YearToDateSpend;
 import com.staples.mobile.common.analytics.Tracker;
+import com.staples.mobile.common.widget.Code128CBarcode;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -31,7 +32,6 @@ import app.staples.mobile.cfa.cart.CartApiManager;
 import app.staples.mobile.cfa.profile.ProfileDetails;
 import app.staples.mobile.cfa.util.CurrencyFormat;
 import app.staples.mobile.cfa.widget.ActionBar;
-import app.staples.mobile.cfa.widget.Numeric39Barcode;
 
 public class RewardsFragment extends Fragment implements View.OnClickListener, CartApiManager.CartRefreshCallback {
     private static final String TAG = RewardsFragment.class.getSimpleName();
@@ -91,9 +91,7 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
             view.findViewById(R.id.rewards_number_label).setVisibility(View.GONE);
 //            memberDurationVw.setText("member since ???????????????");
 //            rewardsNumberLabelVw.setText("type of rewards member ?????");
-            ((Numeric39Barcode) view.findViewById(R.id.rewards_number_barcode39)).setText(member.getRewardsNumber());
-//            rewardsNumberBarcodeVw.setText("*"+m.getRewardsNumber()+"*");
-//            rewardsNumberBarcodeVw.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/3of9_new.ttf"));
+            ((Code128CBarcode) view.findViewById(R.id.rewards_number_barcode)).setText(member.getRewardsNumber());
             ((TextView) view.findViewById(R.id.rewards_number)).setText(member.getRewardsNumber());
 
             // if ink recycling info
@@ -195,6 +193,12 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
                     activity.showProgressIndicator();
                     confirmationMsg = getResources().getString(R.string.rewards_addtocart_confirmation);
                     CartApiManager.addCoupon(((Reward) tag).getCode(), this);
+                }
+                break;
+            case R.id.reward_view_button:
+                tag = view.getTag();
+                if (tag instanceof Reward) {
+                    activity.selectBarcodeFragment("Coupon", ((Reward) tag).getCode());
                 }
                 break;
             case R.id.reward_remove_button:

@@ -67,6 +67,7 @@ import app.staples.mobile.cfa.profile.CreditCardFragment;
 import app.staples.mobile.cfa.profile.CreditCardListFragment;
 import app.staples.mobile.cfa.profile.ProfileDetails;
 import app.staples.mobile.cfa.profile.ProfileFragment;
+import app.staples.mobile.cfa.rewards.BarcodeFragment;
 import app.staples.mobile.cfa.rewards.RewardsFragment;
 import app.staples.mobile.cfa.rewards.RewardsLinkingFragment;
 import app.staples.mobile.cfa.search.SearchFragment;
@@ -833,6 +834,12 @@ public class MainActivity extends Activity
 
     public boolean selectRewardsLinkingFragment() {
         return selectFragment(DrawerItem.LINK, new RewardsLinkingFragment(), Transition.RIGHT, true);
+    }
+
+    public boolean selectBarcodeFragment(String title, String barcode) {
+        BarcodeFragment fragment = new BarcodeFragment();
+        fragment.setArguments(title, barcode);
+        return(selectFragment(DrawerItem.BARCODE, fragment, Transition.RIGHT, true));
     }
 
     public boolean selectBundle(String title, String identifier) {

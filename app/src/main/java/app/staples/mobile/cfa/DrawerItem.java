@@ -10,35 +10,36 @@ public class DrawerItem {
     private static final String TAG = DrawerItem.class.getSimpleName();
 
     // Unique (and arbitrary) tags for marking back stack
-    public static final String HOME     = "001";
-    public static final String FEED     = "002";
-    public static final String BROWSE   = "003";
-    public static final String STORE    = "004";
-    public static final String WEEKLY   = "005";
-    public static final String ACCOUNT  = "006";
-    public static final String REWARDS  = "007";
-    public static final String ORDERS   = "008";
-    public static final String PROFILE  = "009";
-    public static final String NOTIFY   = "010";
-    public static final String TERMS    = "011";
-    public static final String ABOUT    = "012";
+    public static final String HOME           = "001";
+    public static final String FEED           = "002";
+    public static final String BROWSE         = "003";
+    public static final String STORE          = "004";
+    public static final String WEEKLY         = "005";
+    public static final String ACCOUNT        = "006";
+    public static final String REWARDS        = "007";
+    public static final String ORDERS         = "008";
+    public static final String PROFILE        = "009";
+    public static final String NOTIFY         = "010";
+    public static final String TERMS          = "011";
+    public static final String ABOUT          = "012";
 
     // Non-drawer items
-    public static final String LOGIN    = "013";
-    public static final String PASSWORD = "014";
-    public static final String BUNDLE   = "015";
-    public static final String SEARCH   = "016";
-    public static final String SKUSET   = "017";
-    public static final String SKU      = "018";
-    public static final String ADDRESS  = "019";
-    public static final String CARD     = "020";
-    public static final String CART     = "021";
-    public static final String CONFIRM  = "023";
-    public static final String LINK     = "024";
-    public static final String SALES    = "025";
-    public static final String ORDERDETAIL = "026";
-    public static final String WEEKLYDETAIL = "027";
-    public static final String REG_CHECKOUT = "028";
+    public static final String LOGIN          = "013";
+    public static final String PASSWORD       = "014";
+    public static final String BARCODE        = "015";
+    public static final String BUNDLE         = "016";
+    public static final String SEARCH         = "017";
+    public static final String SKUSET         = "018";
+    public static final String SKU            = "019";
+    public static final String ADDRESS        = "020";
+    public static final String CARD           = "021";
+    public static final String CART           = "022";
+    public static final String CONFIRM        = "023";
+    public static final String LINK           = "024";
+    public static final String SALES          = "025";
+    public static final String ORDERDETAIL    = "026";
+    public static final String WEEKLYDETAIL   = "027";
+    public static final String REG_CHECKOUT   = "028";
     public static final String GUEST_CHECKOUT = "029";
 
     // Generic info
