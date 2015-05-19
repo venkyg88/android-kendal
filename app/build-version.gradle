@@ -45,6 +45,10 @@ Properties readVersion() {
 }
 
 void incrementVersionNumber() {
+    println "do nothing"
+
+}
+void incrementVersionNumberx() {
     def version = readVersion()
 
     // careful with the types, culprits: "9"++ = ":", "9" + 1 = "91"
