@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.UriMatcher;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -17,7 +18,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -131,6 +131,21 @@ public class MainActivity extends Activity
         }
     }
 
+    public static final String SCHEME    = "staples";
+    public static final String AUTHORITY = "cfa";
+
+    private static final UriMatcher uriMatcher;
+    private static final int MATCH_SKU      = 1;
+    private static final int MATCH_CATEGORY = 2;
+    private static final int MATCH_SEARCH   = 3;
+
+    static {
+        uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+        uriMatcher.addURI(AUTHORITY, "sku/*",      MATCH_SKU);
+        uriMatcher.addURI(AUTHORITY, "category/*", MATCH_CATEGORY);
+        uriMatcher.addURI(AUTHORITY, "search/*",   MATCH_SEARCH);
+    }
+
     private DrawerLayout drawerLayout;
     private ListView leftMenu;
     private DrawerAdapter leftMenuAdapter;
@@ -196,45 +211,25 @@ public class MainActivity extends Activity
 
     @Override
     public void onNewIntent(Intent intent) {
-        String action = intent.getAction();
+        if (intent == null) return;
+        Uri uri = intent.getData();
+        if (uri == null) return;
+        if (!SCHEME.equals(uri.getScheme())) return;
 
-        // analytics
-        String userMessage = intent.getStringExtra(NotifyReceiver.EXTRA_MESSAGE);
-        if (!TextUtils.isEmpty(userMessage)) {
-            Tracker tracker = Tracker.getInstance();
-            if (tracker.isInitialized()) {
-                Tracker.getInstance().trackActionForPushMessaging(userMessage);
-            }
-        }
-
-        if (NotifyReceiver.ACTION_OPEN_SKU.equals(action)) {
-            String sku = intent.getStringExtra(NotifyReceiver.EXTRA_SKU);
-            if (sku!=null) {
-                String title = intent.getStringExtra(NotifyReceiver.EXTRA_TITLE);
-                if (title==null) title = getResources().getString(R.string.sku_notification_title);
-                selectSkuItem(title, sku, false);
-            }
-            return;
-        }
-
-        if (NotifyReceiver.ACTION_OPEN_CATEGORY.equals(action)) {
-            String identifier = intent.getStringExtra(NotifyReceiver.EXTRA_IDENTIFIER);
-            if (identifier!=null) {
-                String title = intent.getStringExtra(NotifyReceiver.EXTRA_TITLE);
-                if (title==null) title = getResources().getString(R.string.sku_notification_title);
-                selectBundle(title, identifier);
-            }
-            return;
-        }
-
-        if (NotifyReceiver.ACTION_OPEN_SEARCH.equals(action)) {
-            String keyword = intent.getStringExtra(NotifyReceiver.EXTRA_KEYWORD);
-            if (keyword!=null) {
-                String title = intent.getStringExtra(NotifyReceiver.EXTRA_TITLE);
-                if (title==null) title = getResources().getString(R.string.sku_notification_title);
-                selectSearch(title, keyword);
-            }
-            return;
+        int match = uriMatcher.match(uri);
+        switch(match) {
+            case MATCH_SKU:
+                String sku = uri.getPathSegments().get(1);
+                selectSkuItem("Product item", sku, false);
+                break;
+            case MATCH_CATEGORY:
+                String identifier = uri.getPathSegments().get(1);
+                selectBundle("Category", identifier);
+                break;
+            case MATCH_SEARCH:
+                String keyword = uri.getPathSegments().get(1);
+                selectSearch("Search", keyword);
+                break;
         }
     }
 
