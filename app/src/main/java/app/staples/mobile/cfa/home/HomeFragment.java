@@ -56,7 +56,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class HomeFragment extends Fragment implements LocationFinder.PostalCodeCallback {
+public class HomeFragment extends Fragment implements LocationFinder.PostalCodeCallback, AppConfigurator.AppConfiguratorCallback {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -230,6 +230,9 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     public void onResume() {
 
         super.onResume();
+
+        appConfigurator = AppConfigurator.getInstance();
+        appConfigurator.getConfigurator(this); // AppConfiguratorCallback
 
         ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
 
@@ -1069,6 +1072,15 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     public void onGetPostalCodeFailure() {
         if (storeWrapper != null) {
             storeWrapper.setState(DataWrapper.State.EMPTY);
+        }
+    }
+
+    @Override
+    public void onGetConfiguratorResult(Configurator configurator, boolean success, RetrofitError retrofitError) {
+        if(success) {
+            Log.d(TAG, "Successfully retrieved MCS data");
+        } else {
+            Log.d(TAG, retrofitError.getMessage());
         }
     }
 

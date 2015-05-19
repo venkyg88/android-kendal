@@ -3,7 +3,6 @@ package app.staples.mobile.cfa.browse;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -29,7 +28,6 @@ import com.staples.mobile.common.analytics.Tracker;
 import java.util.List;
 
 import app.staples.R;
-import app.staples.mobile.cfa.DrawerItem;
 import app.staples.mobile.cfa.IdentifierType;
 import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.widget.ActionBar;
@@ -214,7 +212,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
         String url = item.webLink;
         if (url==null || url.isEmpty()) return(false);
 
-        if (!url.startsWith("http:")) {
+        if (!url.startsWith("http")) {
             url = EXTERNALROOT + url;
         }
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));

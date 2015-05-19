@@ -32,37 +32,27 @@ import retrofit.client.Response;
 
 public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements View.OnClickListener{
 
-    private final Context context;
-    private final List<CCDetails> values;
+    private Context context;
+    private LayoutInflater inflater;
     private String selectedCreditCardId;
-    ImageButton optionButton;
-    EasyOpenApi easyOpenApi;
-    ImageView cardTypeImg;
-    View rowView;
 
     public CreditCardArrayAdapter(Context context, List<CCDetails> values, String selectedCreditCardId) {
-        super(context, R.layout.profile_listview_row, values);
+        super(context, R.layout.profile_listview_row);
         this.context = context;
-        this.values = values;
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.selectedCreditCardId = selectedCreditCardId;
-        easyOpenApi = Access.getInstance().getEasyOpenApi(true);
+        if (values!=null) {
+            addAll(values);
+        }
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        if(convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = inflater.inflate(R.layout.profile_listview_row, parent, false);
+    public View getView(int position, View view, ViewGroup parent) {
+        if(view == null) {
+            view = inflater.inflate(R.layout.profile_listview_row, parent, false);
         }
-        else {
-            rowView  = convertView;
-        }
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.profile_listview_row, parent, false);
 
-        CCDetails creditCard = values.get(position);
+        CCDetails creditCard = getItem(position);
         String cardNumber;
         if (creditCard.getCardNumber().length() > 4) {
             cardNumber = creditCard.getCardNumber().substring(creditCard.getCardNumber().length() - 4);
@@ -73,44 +63,44 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
         Resources r = context.getResources();
         String tmpCard = r.getString(R.string.card_ending_in) + " " + cardNumber;
         String expDate = "Exp. " + creditCard.getExpirationMonth() + "/" + creditCard.getExpirationYear().substring(2,4);
-        TextView ccText = (TextView) rowView.findViewById(R.id.rowItemText);
-        TextView expText = (TextView) rowView.findViewById(R.id.secondItemText);
+        TextView ccText = (TextView) view.findViewById(R.id.rowItemText);
+        TextView expText = (TextView) view.findViewById(R.id.secondItemText);
+        View itemLayout = view.findViewById(R.id.item_layout);
         ccText.setText(tmpCard);
         expText.setText(expDate);
-        ccText.setTag(position);
-        ccText.setOnClickListener(this);
-        expText.setTag(position);
-        expText.setOnClickListener(this);
+        itemLayout.setOnClickListener(this);
+        itemLayout.setTag(creditCard);
 
-        cardTypeImg = (ImageView)rowView.findViewById(R.id.cardTypeImg);
+        ImageView cardTypeImg = (ImageView)view.findViewById(R.id.cardTypeImg);
         cardTypeImg.setImageResource(CreditCard.Type.matchOnApiName(creditCard.getCardType()).getImageResource());
-        optionButton = (ImageButton) rowView.findViewById(R.id.listOptions);
-        optionButton.setTag(position);
+        ImageButton optionButton = (ImageButton) view.findViewById(R.id.listOptions);
+        optionButton.setTag(creditCard);
         optionButton.setOnClickListener(this);
 
         if (selectedCreditCardId != null) {
-            View selectionImageView = rowView.findViewById(R.id.selectionImage);
+            View selectionImageView = view.findViewById(R.id.selectionImage);
             if (selectedCreditCardId.equals(creditCard.getCreditCardId())) {
                 selectionImageView.setVisibility(View.VISIBLE); // visible
             } else {
                 selectionImageView.setVisibility(View.INVISIBLE); // invisible but taking up space
             }
         }
-        return rowView;
+        return view;
     }
     @Override
     public void onClick(View view) {
+        final CCDetails creditCard;
+
         switch (view.getId()) {
-            case R.id.secondItemText:
-            case R.id.rowItemText:
-                final int position = (Integer) view.getTag();
-                String paymentMethodId = values.get(position).getCreditCardId();
+            case R.id.item_layout:
+                creditCard = (CCDetails) view.getTag();
+                String paymentMethodId = creditCard.getCreditCardId();
                 if (ProfileDetails.paymentMethodSelectionListener != null) {
                     ProfileDetails.paymentMethodSelectionListener.onPaymentMethodSelected(paymentMethodId);
                 }
                 break;
             case R.id.listOptions:
-                final int position1 = (Integer) view.getTag();
+                creditCard = (CCDetails) view.getTag();
                 //Creating the instance of PopupMenu
                 PopupMenu popup = new PopupMenu(context, view);
                 //Inflating the Popup using xml file
@@ -122,10 +112,10 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.updateListItem:
-                                updateCreditCard(position1);
+                                updateCreditCard(creditCard);
                                 return true;
                             case R.id.deleteListItem:
-                                deleteCreditCard(position1);
+                                deleteCreditCard(creditCard);
                                 return true;
                             default:
                                 return true;
@@ -137,17 +127,18 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
         }
     }
 
-    public void updateCreditCard(int position) {
+    public void updateCreditCard(final CCDetails creditCard) {
         Fragment creditFragment = Fragment.instantiate(context, CreditCardFragment.class.getName());
         Bundle bundle = new Bundle();
-        bundle.putSerializable("creditCardData", values.get(position));
+        bundle.putSerializable("creditCardData", creditCard);
         creditFragment.setArguments(bundle);
         ((MainActivity)context).selectFragment(DrawerItem.CARD, creditFragment, MainActivity.Transition.RIGHT, true);
     }
 
-    public void deleteCreditCard(final int position) {
-        String creditCardId = values.get(position).getCreditCardId();
+    public void deleteCreditCard(final CCDetails creditCard) {
+        String creditCardId = creditCard.getCreditCardId();
         ((MainActivity)context).showProgressIndicator();
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
         easyOpenApi.deleteMemberCreditCard(creditCardId, new Callback<EmptyResponse>() {
 
             @Override
@@ -156,7 +147,8 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
                     @Override
                     public void onProfileRefresh(Member member, String errMsg) {
                         ((MainActivity) context).hideProgressIndicator();
-                        values.remove(position);
+
+                        remove(creditCard);
                         notifyDataSetChanged();
                         ((MainActivity) context).showNotificationBanner(R.string.cc_deleted);
                     }
@@ -171,4 +163,3 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
         });
     }
 }
-

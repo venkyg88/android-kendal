@@ -49,34 +49,34 @@ import retrofit.client.Response;
 
 public class OrderFragment extends Fragment implements View.OnClickListener, Callback<OrderDetail> {
     private static final String TAG = OrderFragment.class.getSimpleName();
-    MainActivity activity;
+
+    private static final int REFRESHDELAY = 5*60*1000; // 5 minutes
 
     private RecyclerView list;
-    LinearLayoutWithOverlay overlayableLayout;
+    private LinearLayoutWithOverlay overlayableLayout;
     private OrderAdapter adapter;
-    TextView orderErrorTV;
-    LinearLayout trackingLayout;
-    private EasyOpenApi easyOpenApi;
-    Animation bottomSheetSlideUpAnimation;
-    Animation bottomSheetSlideDownAnimation;
-    ArrayList<OrderShipmentListItem> orderShipmentListItems;
-    OrderStatusDetailCallback orderStatusDetailCallback;
-    int numOrdersToRetrieve;
-
+    private TextView orderErrorTV;
+    private LinearLayout trackingLayout;
+    private Animation bottomSheetSlideUpAnimation;
+    private Animation bottomSheetSlideDownAnimation;
+    private ArrayList<OrderShipmentListItem> orderShipmentListItems;
+    private OrderStatusDetailCallback orderStatusDetailCallback;
+    private int numOrdersToRetrieve;
+    private String wcToken;
+    private long lastRefresh;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = (MainActivity)getActivity();
-        if(activity != null) activity.showProgressIndicator();
-        easyOpenApi = Access.getInstance().getEasyOpenApi(true);
-        easyOpenApi.getMemberOrderHistory("orderDate", "DESC", 1, 30, this);
+        MainActivity activity = (MainActivity) getActivity();
+        adapter = new OrderAdapter(getActivity(), this);
+        query();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Crittercism.leaveBreadcrumb("OrderFragment:onCreateView(): Displaying the Order screen.");
-        activity = (MainActivity) getActivity();
+        MainActivity activity = (MainActivity) getActivity();
         orderShipmentListItems = new ArrayList<OrderShipmentListItem>();
         View view = inflater.inflate(R.layout.order_fragment, container, false);
 
@@ -119,10 +119,26 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
         list.setLayoutManager(mLayoutManager);
         list.setItemAnimator(new DefaultItemAnimator());
         list.addItemDecoration(new HorizontalDivider(activity));
-        if(adapter == null) adapter = new OrderAdapter(getActivity(), this);
         list.setAdapter(adapter);
 
+        String token = Access.getInstance().getWcToken();
+        if (token==null || !token.equals(wcToken) ||
+            System.currentTimeMillis()-lastRefresh>=REFRESHDELAY) {
+            adapter.clear();
+            adapter.notifyDataSetChanged();
+            query();
+        }
+
         return view;
+    }
+
+    private void query() {
+        MainActivity activity = (MainActivity) getActivity();
+        Access access = Access.getInstance();
+        wcToken = access.getWcToken();
+        lastRefresh = System.currentTimeMillis();
+        access.getEasyOpenApi(true).getMemberOrderHistory("orderDate", "DESC", 1, 30, this);
+        activity.showProgressIndicator();
     }
 
     @Override
@@ -134,6 +150,8 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
 
     @Override
     public void onClick(View view) {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity==null) return;
         OrderShipmentListItem order;
         switch(view.getId()) {
             case R.id.track_shipment_btn:
@@ -147,7 +165,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("orderData", order);
                 orderDetailsFragment.setArguments(bundle);
-                ((MainActivity) activity).selectFragment(DrawerItem.ORDERDETAIL, orderDetailsFragment, MainActivity.Transition.RIGHT, true);
+                activity.selectFragment(DrawerItem.ORDERDETAIL, orderDetailsFragment, MainActivity.Transition.RIGHT, true);
                 break;
             default:
                 break;
@@ -159,13 +177,17 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
         final Shipment shipment = order.getShipment();
         final Button trackShipment = (Button)view;
 
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
         easyOpenApi.getMemberOrderTrackingShipment(order.getOrderStatus().getOrderNumber(),
                 shipment.getShipmentNumber(), "000", new Callback<OrderStatusDetail>() {
 
                     @Override
                     public void success(OrderStatusDetail orderStatusDetail, Response response) {
+                        MainActivity activity = (MainActivity) getActivity();
+                        if (activity == null) return;
+
                         activity.hideProgressIndicator();
-                        Resources r = activity.getResources();
+                        Resources res = activity.getResources();
                         TextView shipmentLabelVw = (TextView) trackingLayout.findViewById(R.id.shipment_label);
                         TextView trackingNumberVw = (TextView) trackingLayout.findViewById(R.id.tracking_number);
                         TextView carrierVw = (TextView) trackingLayout.findViewById(R.id.carrier);
@@ -182,11 +204,11 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
                         Shipment shipment = orderStatusDetail.getOrderStatus().get(0).getShipment().get(0);
                         if (shipment.getCartonWithSku() != null && shipment.getCartonWithSku().size() > 0) {
                             CartonWithSku cartonWithSku = shipment.getCartonWithSku().get(0);
-                            carrierVw.setText(r.getString(R.string.carrier) + ": " + cartonWithSku.getCarrierCode());
-                            trackingNumberVw.setText(r.getString(R.string.tracking_number) + " " + cartonWithSku.getTrackingNumber());
+                            carrierVw.setText(res.getString(R.string.carrier) + ": " + cartonWithSku.getCarrierCode());
+                            trackingNumberVw.setText(res.getString(R.string.tracking_number) + " " + cartonWithSku.getTrackingNumber());
                             SimpleDateFormat dateFormatter = new SimpleDateFormat("M/d/yy h:mm aa");
                             if (cartonWithSku.getScanData() != null) {
-                                for (ScanData scanData : cartonWithSku.getScanData()) {
+                                for(ScanData scanData : cartonWithSku.getScanData()) {
                                     Date date = OrderShipmentListItem.parseDate(scanData.getScanDateAndTime());
                                     if (scanBuf.length() > 0) {
                                         scanBuf.append("\n");
@@ -202,7 +224,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
                             trackingNumberVw.setText(null);
                         }
                         if (scanBuf.length() == 0) {
-                            scanBuf.append(r.getString(R.string.no_detailed_tracking));
+                            scanBuf.append(res.getString(R.string.no_detailed_tracking));
                         }
                         deliveryScansVw.setText(scanBuf.toString());
 
@@ -220,6 +242,9 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
 
                     @Override
                     public void failure(RetrofitError error) {
+                        MainActivity activity = (MainActivity) getActivity();
+                        if (activity == null) return;
+
                         activity.hideProgressIndicator();
                         activity.showErrorDialog(ApiError.getErrorMessage(error));
                     }
@@ -232,9 +257,8 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
 
     @Override
     public void success(OrderDetail orderDetail, Response response) {
-        activity = (MainActivity)getActivity();
-        if(activity == null) return;
-        if(adapter == null)  adapter = new OrderAdapter(activity, this);
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity==null) return;
 
         orderStatusDetailCallback = new OrderStatusDetailCallback(); // only need to create one instance of the item detail callback
         numOrdersToRetrieve = 0;
@@ -248,6 +272,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
                 break;
             }
 
+            EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
             easyOpenApi.getMemberOrderStatus(order.getOrderNumber(), orderStatusDetailCallback);
             numOrdersToRetrieve++;
         }
@@ -260,8 +285,9 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
 
     @Override
     public void failure(RetrofitError error) {
-        activity = (MainActivity)getActivity();
-        if(activity == null) return;
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity==null) return;
+
         orderErrorTV.setVisibility(View.VISIBLE);
         list.setVisibility(View.GONE);
         activity.hideProgressIndicator();
@@ -278,8 +304,9 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
 
         @Override
         public void success(OrderStatusDetail orderStatusDetail, Response response) {
-            activity = (MainActivity)getActivity();
-            if(activity == null) return;
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity==null) return;
+
             numOrdersToRetrieve--;
             OrderStatus orderStatus =  orderStatusDetail.getOrderStatus().get(0);
             List<Shipment> shipments = orderStatus.getShipment();
@@ -293,8 +320,9 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
 
         @Override
         public void failure(RetrofitError error) {
-            activity = (MainActivity)getActivity();
-            if(activity == null) return;
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity==null) return;
+
             numOrdersToRetrieve--;
             finishOrderDetail(); // since some calls may have succeeded
             // DLS: do not display error message for order details calls that fail, the order simply won't show up in the list
@@ -302,6 +330,9 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
         }
 
         private void finishOrderDetail() {
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity==null) return;
+
             // DLS: need to wait until all items retrieved (otherwise the same items get added multiple times)
             if (numOrdersToRetrieve == 0) {
                 if (orderShipmentListItems.size() > 0) {

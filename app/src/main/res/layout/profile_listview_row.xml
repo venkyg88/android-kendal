@@ -20,12 +20,12 @@
         card_view:cardElevation="2dp">
 
         <RelativeLayout
+            android:id="@+id/item_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/margin_16dp"
             android:paddingBottom="@dimen/verticalspacing_8dp"
-            android:paddingTop="@dimen/verticalspacing_8dp"
-            android:paddingRight="@dimen/verticalspacing_8dp">
+            android:paddingTop="@dimen/verticalspacing_8dp">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -68,15 +68,19 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/cardTypeImg"
                 android:paddingTop="@dimen/verticalspacing_8dp"
-                android:paddingRight="@dimen/margin_16dp"
                 android:layout_toLeftOf="@+id/listOptions"
                 android:layout_toStartOf="@+id/listOptions" />
 
+            <!--include some padding to increase click area since surrounding area is for item selection-->
             <ImageButton
                 android:layout_width="30dip"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:id="@+id/listOptions"
                 android:layout_alignParentRight="true"
+                android:paddingTop="@dimen/verticalspacing_8dp"
+                android:paddingLeft="@dimen/margin_16dp"
+                android:paddingRight="@dimen/margin_16dp"
+                android:paddingBottom="@dimen/margin_16dp"
                 android:background="@color/staples_white"
                 android:src="@drawable/ic_more_vert_black"/>
 

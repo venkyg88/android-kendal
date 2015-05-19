@@ -210,12 +210,14 @@
 
             <!-- Customer reviews -->
             <LinearLayout
+                android:id="@+id/review_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginTop="@dimen/sku_padding_10"
                 android:padding="@dimen/sku_border_width"
-                android:background="@drawable/sku_round_layout">
+                android:background="@drawable/sku_round_layout"
+                android:visibility="gone">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -235,13 +237,11 @@
                     android:id="@+id/reviews"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/sku_divider"
-                    android:visibility="gone"/>
+                    android:background="@drawable/sku_divider"/>
                 <TextView
                     android:id="@+id/review_detail"
                     style="@style/SkuDetailHeader"
-                    android:text="@string/reviews_detail"
-                    android:visibility="gone"/>
+                    android:text="@string/reviews_detail"/>
             </LinearLayout>
 
             <!-- Accessory List -->

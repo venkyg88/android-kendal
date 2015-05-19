@@ -1,3 +1,7 @@
+apply plugin: 'com.android.application'
+
+import java.text.SimpleDateFormat
+
 ext {
     versionFile = new File(project.rootDir, 'build-version.properties')
     calculateVersionName = {
@@ -15,10 +19,15 @@ ext {
         return vCode
     }
     getKickoff = {
-        return ( System.env.kickoff == "null") ? "undef"  : System.env.kickoff
+        println "kickoff:" +System.env.kickoff
+        java.text.SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        //get current date time with Date()
+        Date date = new Date();
+        String now = dateFormat.format(date);
+        return ( System.env.kickoff == null ) ? now  : System.env.kickoff
     }
     getEnv =  {
-        return ( System.env.environment == "null" ) ? "undef"  : System.env.environment
+        return ( System.env.environment == null ) ? "developer"  : System.env.environment
     }
 }
 

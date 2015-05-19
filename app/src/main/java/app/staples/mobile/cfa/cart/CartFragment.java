@@ -3,7 +3,6 @@ package app.staples.mobile.cfa.cart;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.Fragment;
-import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -190,9 +189,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     public void onResume() {
         super.onResume();
 
-        // force cart fragment to portrait mode because it doesn't fit well in landscape
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-
         // update action bar
         ActionBar.getInstance().setConfig(ActionBar.Config.CART);
         //initialize cart based on what's been returned from api so far
@@ -204,9 +200,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     @Override
     public void onPause() {
         super.onPause();
-
-        // allow rotation for all fragments except cart
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
     /** Sets item count indicator on cart icon and cart drawer title */

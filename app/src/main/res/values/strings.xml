@@ -76,6 +76,7 @@
 
     <!--cart, coupon/reward, checkout -->
     <string name="add">ADD</string>
+    <string name="view">VIEW</string>
     <string name="cartitem_qty_label">Qty</string>
     <string name="add_to_cart">ADD TO CART</string>
     <string name="add_another">Add Another</string>
@@ -202,6 +203,8 @@
     <string name="address_error_msg">Please enter a valid address</string>
     <string name="track_shipment">Track</string>
     <string name="view_receipt">View Receipt</string>
+    <string name="card_expiration_msg">Please check the expiration month &amp; year</string>
+    <string name="card_expiration_year">Please check the expiration year</string>
 
     <!-- Orders -->
     <string name="order">Order</string>

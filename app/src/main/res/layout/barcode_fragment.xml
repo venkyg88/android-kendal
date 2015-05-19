@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<app.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center">
+    <com.staples.mobile.common.widget.Code128CBarcode
+        android:id="@+id/barcode"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/barcode_height"
+        android:layout_gravity="center"
+        android:padding="@dimen/margin_16dp"
+        app:maxScale="2dp"/>
+    <TextView
+        android:id="@+id/caption"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/barcode_height"
+        android:layout_gravity="center"
+        android:textSize="@dimen/fontsize_16sp"
+        android:textColor="@color/staples_black"/>
+</app.staples.mobile.cfa.widget.AnimatorLayout>

@@ -11,13 +11,13 @@
             android:id="@+id/firstName"
             style="@style/InputField"
             android:layout_weight="1"
-            android:inputType="textPersonName"
+            android:inputType="textPersonName|textCapWords"
             android:hint="@string/first_name_label"/>
         <app.staples.mobile.cfa.widget.DualHintEdit
             android:id="@+id/lastName"
             style="@style/InputField"
             android:layout_weight="1"
-            android:inputType="textPersonName"
+            android:inputType="textPersonName|textCapWords"
             android:hint="@string/last_name_label"/>
     </LinearLayout>
     <LinearLayout
