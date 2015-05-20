@@ -180,6 +180,8 @@ public class MainActivity extends Activity
                     + " bundle[" + bundle + "]");
         }
 
+        appConfigurator = AppConfigurator.getInstance();
+
         //noinspection ResourceType
         setRequestedOrientation(getResources().getInteger(R.integer.screenOrientation));
 
@@ -190,8 +192,6 @@ public class MainActivity extends Activity
             prepareMainScreen(freshStart);
 
             initialLoginComplete = false;
-            appConfigurator = AppConfigurator.getInstance();
-            appConfigurator.getConfigurator(this); // AppConfiguratorCallback
         }
 
         queuedTransactions = new ArrayList<QueuedTransaction>();
@@ -242,10 +242,14 @@ public class MainActivity extends Activity
     @Override
     protected void onResume() {
         super.onResume();
+
+        appConfigurator.getConfigurator(this);
         registerReceiver(networkConnectivityBroadCastReceiver,
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         executeQueuedTransactions();
+
+        // refresh configurator if we have new one
 
         //Analytics
         AdobeTracker.enableTracking(true); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
