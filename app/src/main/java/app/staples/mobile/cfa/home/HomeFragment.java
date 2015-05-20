@@ -230,12 +230,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     public void onResume() {
 
         super.onResume();
-
-        appConfigurator = AppConfigurator.getInstance();
-        appConfigurator.getConfigurator(this); // AppConfiguratorCallback
-
         ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
-
         Tracker.getInstance().trackStateForHome(); // Analytics
 
         // call store api and get store info
