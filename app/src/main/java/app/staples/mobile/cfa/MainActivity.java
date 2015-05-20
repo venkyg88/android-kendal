@@ -243,13 +243,13 @@ public class MainActivity extends Activity
     protected void onResume() {
         super.onResume();
 
+        // refresh configurator if we have new one
         appConfigurator.getConfigurator(this);
+
         registerReceiver(networkConnectivityBroadCastReceiver,
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         executeQueuedTransactions();
-
-        // refresh configurator if we have new one
 
         //Analytics
         AdobeTracker.enableTracking(true); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
