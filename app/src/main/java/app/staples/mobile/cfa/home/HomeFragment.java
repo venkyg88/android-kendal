@@ -148,6 +148,12 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     }
 
     @Override
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup container, Bundle bundle) {
 
         Crittercism.leaveBreadcrumb("HomeFragment:onCreateView(): Displaying the home/landing screen.");

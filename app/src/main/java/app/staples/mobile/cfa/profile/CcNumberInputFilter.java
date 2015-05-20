@@ -23,7 +23,7 @@ public class CcNumberInputFilter implements InputFilter {
             int indexOfSpace = -1;
             if (dstart % 5 == 3) {
                 indexOfSpace = textToCheck.indexOf(" ", dstart);
-                if (textToCheck.length() < 19) {
+                if (textToCheck.length() < 23) {
                     if (indexOfSpace == -1 && replacementBuf.length() > 0) {
                         replacementBuf.insert(1, ' ');
                     }
@@ -31,7 +31,7 @@ public class CcNumberInputFilter implements InputFilter {
             } else {
                 int textToCheckLen = textToCheck.length();
                 if (textToCheckLen % 5 == 0) {
-                    if (textToCheckLen < 19) {
+                    if (textToCheckLen < 23) {
                         indexOfSpace = textToCheck.indexOf(" ", dstart);
                         if (indexOfSpace == -1 && replacementBuf.length() > 0) {
                             replacementBuf.insert(0, ' ');

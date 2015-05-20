@@ -80,7 +80,7 @@ public class CreditCardFragment extends Fragment implements Callback, ProfileDet
         expirationMonthET.addTextChangedListener(this);
         expirationMonthET.setOnFocusChangeListener(this);
         cardNumberET.setOnEditorActionListener(this);
-        cardNumberET.setFilters(new InputFilter[]{new InputFilter.LengthFilter(19), new CcNumberInputFilter()});
+        cardNumberET.setFilters(new InputFilter[]{new InputFilter.LengthFilter(23), new CcNumberInputFilter()});
         addCCBtn.setOnClickListener(this);
         cancelCCBtn.setOnClickListener(this);
 
