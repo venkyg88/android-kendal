@@ -175,14 +175,14 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
             @Override
             public void onClick(View view) {
-                
-
                 ConfigItem configItem = (ConfigItem) view.getTag();
                 if (configItem != null) {
                     Crittercism.leaveBreadcrumb("HomeFragment:OnClickListener.onClick(): User has selected an item with the following title: configItem.title[" + configItem.title + "]");
                     Tracker.getInstance().trackActionForHomePage(configItem.title); // Analytics
                 }
-                activity.selectBundle(configItem.title, configItem.identifier);
+                if(!configItem.identifier.isEmpty()) {
+                    activity.selectBundle(configItem.title, configItem.identifier);
+                }
             }
         };
 
