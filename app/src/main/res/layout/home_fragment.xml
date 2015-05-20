@@ -16,10 +16,9 @@
             android:layout_margin="0dp"
 			android:orientation="vertical"
 			android:background="@color/staples_light_gray"
-            android:padding="0dp">
+            android:paddingBottom="@dimen/verticalspacing_48dp">
 
             <!-- Personalized message bar -->
-
             <FrameLayout
                 android:id="@+id/message_layout"
                 android:layout_width="match_parent"
@@ -184,5 +183,4 @@
             </FrameLayout>
 		</LinearLayout>
 	</ScrollView>
-
 </app.staples.mobile.cfa.widget.AnimatorLayout>
