@@ -27,11 +27,9 @@ ext {
         return ( System.env.kickoff == null ) ? now  : System.env.kickoff
     }
     getEnv =  {
-        return ( System.env.environment == null ) ? "developer"  : System.env.environment
+        return ( System.env.environment == '' ) ? "developer"  : System.env.environment
     }
 }
-
-
 
 Properties readVersion() {
     def version = new Properties()
@@ -49,62 +47,8 @@ Properties readVersion() {
     if(!version['major']) version['major'] = "4"
     if(!version['minor']) version['minor'] = "0"
     if(!version['patch']) version['patch'] = "0"
-    if(!version['build']) version['build'] = "6"
+    if(!version['build']) version['build'] = "33"
     return version
 }
 
-void incrementVersionNumber() {
-    println "do nothing"
 
-}
-void incrementVersionNumberx() {
-    def version = readVersion()
-
-    // careful with the types, culprits: "9"++ = ":", "9" + 1 = "91"
-    def build = version['build'] as int
-    build++
-    version['build'] = build.toString()
-    version['currentName'] =  (calculateVersionName()+"-"+getKickoff()+"-"+getEnv()).toString()
-    version['currentCode'] =  calculateVersionCode().toString()
-
-    def stream = new FileOutputStream(versionFile)
-    try {
-        version.store(stream, null)
-    } finally {
-        stream.close()
-    }
-}
-
-task incrementVersion {
-    description "Increments build counter in ${versionFile}"
-    doFirst {
-        incrementVersionNumber()
-    }
-}
-
-if (plugins.hasPlugin('android') || plugins.hasPlugin('android-library')) {
-    android {
-        defaultConfig {
-            versionName = calculateVersionName()
-            versionCode = calculateVersionCode()
-        }
-
-        afterEvaluate {
-            def autoIncrementVariant = { variant ->
-                if (variant.buildType.name == buildTypes.release.name) { // don't increment on debug builds
-                    variant.preBuild.dependsOn incrementVersion
-                    incrementVersion.doLast {
-                        variant.mergedFlavor.versionName = calculateVersionName()
-                        variant.mergedFlavor.versionCode = calculateVersionCode()
-                    }
-                }
-            }
-            if (plugins.hasPlugin('android')) {
-                applicationVariants.all { variant -> autoIncrementVariant(variant) }
-            }
-            if (plugins.hasPlugin('android-library')) {
-                libraryVariants.all { variant -> autoIncrementVariant(variant) }
-            }
-        }
-    }
-}

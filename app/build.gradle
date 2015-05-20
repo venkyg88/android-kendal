@@ -10,9 +10,14 @@ android {
         versionPrefix = '4.0.0.4'
     }
 
+
     defaultConfig {
         applicationId 'app.staples'
         versionCode calculateVersionCode()
+        versionName   calculateVersionName()+"-"+getKickoff()+"-"+getEnv()
+        println "***** INFO   code"+defaultConfig.versionCode + "     name: "+ versionName
+
+
     }
     signingConfigs {
         release {
@@ -25,10 +30,7 @@ android {
 
     productFlavors {
         qa {
-//            versionName versionPrefix+'-qa-'+defaultConfig.versionCode
-            versionName   calculateVersionName()+"-"+getKickoff()+"-"+getEnv()
-            versionName   calculateVersionName()+"-"+getKickoff()+"-qa"
-            println "VERSION INFO   code"+defaultConfig.versionCode + "     name: "+ versionName
+            versionName   calculateVersionName()+"-"+getKickoff()+"-"+"qa"
             buildTypes {
                 debug {
                     minifyEnabled false
@@ -36,8 +38,7 @@ android {
             }
         }
         dev {
-            versionName   calculateVersionName()+"-"+getKickoff()+"-"+getEnv()
-            println "VERSION INFO   code"+defaultConfig.versionCode + "     name: "+ versionName
+            versionName   calculateVersionName()+"-"+getKickoff()+"-"+"dev"
             buildTypes {
                 debug {
                     minifyEnabled false
@@ -45,18 +46,16 @@ android {
             }
         }
         preprod {
-            versionName   calculateVersionName()+"-"+getKickoff()+"-"+getEnv()
-            println "VERSION INFO   code"+defaultConfig.versionCode + "     name: "+ versionName
             buildTypes {
+                versionName   calculateVersionName()+"-"+getKickoff()+"-"+"preprod"
                 debug {
                     minifyEnabled false
                 }
             }
         }
         prod {
-            versionName   calculateVersionName()+"-"+getKickoff()
-            println "VERSION INFO   code: "+defaultConfig.versionCode + "     name: "+ versionName
             buildTypes {
+                versionName   calculateVersionName()+"-"+getKickoff()
                 debug {
                     minifyEnabled false
                 }
