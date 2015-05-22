@@ -132,7 +132,7 @@ public class CreditCardArrayAdapter extends ArrayAdapter<CCDetails> implements V
         Bundle bundle = new Bundle();
         bundle.putSerializable("creditCardData", creditCard);
         creditFragment.setArguments(bundle);
-        ((MainActivity)context).selectFragment(DrawerItem.CARD, creditFragment, MainActivity.Transition.RIGHT, true);
+        ((MainActivity)context).selectFragment(DrawerItem.CARD, creditFragment, MainActivity.Transition.RIGHT);
     }
 
     public void deleteCreditCard(final CCDetails creditCard) {

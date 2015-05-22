@@ -98,6 +98,8 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
     private String identifier;
     private boolean isSkuSetOriginated;
 
+    private Picasso picasso;
+
     private DataWrapper wrapper;
     private DataWrapper.State state;
     private View summary;
@@ -138,6 +140,8 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
             identifier = args.getString(IDENTIFIER);
             isSkuSetOriginated = args.getBoolean(SKUSET);
         }
+
+        picasso = Picasso.with(getActivity());
 
         // Get product details & reviews
         EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
@@ -371,10 +375,10 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
                 }
             }
             ImageView accessoryImageView = (ImageView) row.findViewById(R.id.accessory_image);
-            if (accessoryImageUrl==null) {
-                Picasso.with(activity).load(R.drawable.no_photo).into(accessoryImageView);
+            if (accessoryImageUrl!=null) {
+                picasso.load(accessoryImageUrl).error(R.drawable.no_photo).fit().into(accessoryImageView);
             } else {
-                Picasso.with(activity).load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
+                picasso.load(R.drawable.no_photo).into(accessoryImageView);
             }
 
             // Set accessory title

@@ -1,6 +1,7 @@
 package app.staples.mobile.cfa.bundle;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 
@@ -30,6 +32,9 @@ import app.staples.mobile.cfa.widget.RatingStars;
 
 public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder> implements DataWrapper.Layoutable {
     private static final String TAG = BundleAdapter.class.getSimpleName();
+
+    private static final String SCENE7SIGNATURE = "/s7/is/";
+
     private static final NumberFormat format = NumberFormat.getCurrencyInstance(Locale.US);
 
     public interface OnFetchMoreData {
@@ -70,12 +75,19 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
     private int threshold;
     private View.OnClickListener listener;
     private int layout;
+    private Picasso picasso;
+    private int imageWidth;
+    private int imageHeight;
     private Drawable noPhoto;
 
     public BundleAdapter(Context context) {
         this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         array = new ArrayList<BundleItem>();
+        picasso = Picasso.with(context);
+        Resources res = context.getResources();
+        imageWidth = res.getDimensionPixelSize(R.dimen.image_square_size);
+        imageHeight = res.getDimensionPixelSize(R.dimen.image_square_size);
         noPhoto = context.getResources().getDrawable(R.drawable.no_photo);
     }
 
@@ -127,9 +139,19 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         vh.itemView.setTag(item);
         vh.action.setTag(item);
 
+        // Load image
+        String imageUrl = item.imageUrl;
+        if (imageUrl==null) {
+            vh.image.setImageDrawable(noPhoto);
+        } else {
+            if (imageUrl.contains(SCENE7SIGNATURE) &&
+                !imageUrl.contains("?")) {
+                imageUrl = imageUrl + "?$std$";
+            }
+            picasso.load(imageUrl).error(noPhoto).resize(imageWidth, imageHeight).centerInside().into(vh.image);
+        }
+
         // Set content
-        if (item.imageUrl == null) vh.image.setImageDrawable(noPhoto);
-        else Picasso.with(context).load(item.imageUrl).error(noPhoto).into(vh.image);
         vh.title.setText(item.title);
         vh.ratingStars.setRating(item.customerRating, item.customerCount);
         vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, item.rebateIndicator);

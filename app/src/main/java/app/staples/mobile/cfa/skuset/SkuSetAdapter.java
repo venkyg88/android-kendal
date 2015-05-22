@@ -42,13 +42,15 @@ public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder
     private Context context;
     private LayoutInflater inflater;
     private ArrayList<BundleItem> array;
-    private View.OnClickListener listener;
+    private Picasso picasso;
     private Drawable noPhoto;
+    private View.OnClickListener listener;
 
     public SkuSetAdapter(Context context) {
         this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         array = new ArrayList<BundleItem>();
+        picasso = Picasso.with(context);
         noPhoto = context.getResources().getDrawable(R.drawable.no_photo);
     }
 
@@ -80,7 +82,7 @@ public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder
 
         // Set content
         if (item.imageUrl == null) vh.image.setImageDrawable(noPhoto);
-        else Picasso.with(context).load(item.imageUrl).error(noPhoto).into(vh.image);
+        else picasso.load(item.imageUrl).error(noPhoto).fit().into(vh.image);
         vh.title.setText(item.title);
         vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, item.rebateIndicator);
         vh.ratingStars.setRating(item.customerRating, item.customerCount);

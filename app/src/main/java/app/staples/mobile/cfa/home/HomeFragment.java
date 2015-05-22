@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.channel.model.store.Obj;
 import com.staples.mobile.common.access.channel.model.store.StoreAddress;
@@ -74,7 +73,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     private Resources resources;
 
     private DeviceInfo deviceInfo;
-    private String postalCode;
 
     private int lastOrientation = Configuration.ORIENTATION_UNDEFINED;
     private View configFrameView;
@@ -86,11 +84,11 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     private Configurator configurator;
     private StaplesAppContext staplesAppContext;
 
-    private List<ConfigItem> configItems;
-    private List<ConfigItem> configItemsA;
-    private List<ConfigItem> configItemsB;
-    private List<ConfigItem> configItemsC;
-    private List<ConfigItem> configItemsD;
+    private List<HomeItem> homeItems;
+    private List<HomeItem> homeItemsA;
+    private List<HomeItem> homeItemsB;
+    private List<HomeItem> homeItemsC;
+    private List<HomeItem> homeItemsD;
 
     private List<Screen> screens;
 
@@ -138,11 +136,11 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         resources = activity.getResources();
         appConfigurator = AppConfigurator.getInstance();
 
-        configItems = new ArrayList<ConfigItem>();
-        configItemsA = new ArrayList<ConfigItem>();
-        configItemsB = new ArrayList<ConfigItem>();
-        configItemsC = new ArrayList<ConfigItem>();
-        configItemsD = new ArrayList<ConfigItem>();
+        homeItems = new ArrayList<HomeItem>();
+        homeItemsA = new ArrayList<HomeItem>();
+        homeItemsB = new ArrayList<HomeItem>();
+        homeItemsC = new ArrayList<HomeItem>();
+        homeItemsD = new ArrayList<HomeItem>();
 
         return;
     }
@@ -155,7 +153,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         Configuration configuration = resources.getConfiguration();
         lastOrientation = configuration.orientation;
 
-        picasso = Picasso.with(activity);
+        picasso = Picasso.with(getActivity());
 
         noPhoto = ResourcesCompat.getDrawable(resources, R.drawable.no_photo, null);
 
@@ -175,16 +173,16 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
             @Override
             public void onClick(View view) {
-                ConfigItem configItem = (ConfigItem) view.getTag();
-                if (configItem != null) {
-                    Crittercism.leaveBreadcrumb("HomeFragment:OnClickListener.onClick(): User has selected an item with the following title: configItem.title[" + configItem.title + "]");
-                    Tracker.getInstance().trackActionForHomePage(configItem.title); // Analytics
+                HomeItem homeItem = (HomeItem) view.getTag();
+                if (homeItem != null) {
+                    Crittercism.leaveBreadcrumb("HomeFragment:OnClickListener.onClick(): User has selected an item with the following title: configItem.title[" + homeItem.title + "]");
+                    Tracker.getInstance().trackActionForHomePage(homeItem.title); // Analytics
                 }
-                if(!configItem.identifier.isEmpty()) {
-                    activity.selectBundle(configItem.title, configItem.identifier);
+
+                if(!homeItem.identifier.isEmpty()) {
+                    activity.selectBundle(homeItem.title, homeItem.identifier);
                 }
-            }
-        };
+            }};
 
         // initiate personalized message bar
         findMessageBarViews();
@@ -268,15 +266,15 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             Screen screen = screens.get(0);
             items = screen.getItem();
 
-            ConfigItem configItem = null;
+            HomeItem homeItem = null;
             List<Area> areas = null;
             String skuList = null;
 
-            configItems.clear();
-            configItemsA.clear();
-            configItemsB.clear();
-            configItemsC.clear();
-            configItemsD.clear();
+            homeItems.clear();
+            homeItemsA.clear();
+            homeItemsB.clear();
+            homeItemsC.clear();
+            homeItemsD.clear();
 
             if (LOGGING) Log.v(TAG, "HomeFragment:initFromConfiguratorResult():"
                             + " items[" + items + "]"
@@ -290,26 +288,26 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
                 areas = item.getArea();
                 skuList = areas.get(0).getSkuList();
 
-                configItem = new ConfigItem(item.getTitle(), item.getBanner(), skuList, item.getSize());
-                configItems.add(configItem);
+                homeItem = new HomeItem(item.getTitle(), item.getBanner(), skuList, item.getSize());
+                homeItems.add(homeItem);
 
-                String size = configItem.size;
+                String size = homeItem.size;
 
                 if (size.equalsIgnoreCase("A")) {
 
-                    configItemsA.add(configItem);
+                    homeItemsA.add(homeItem);
 
                 } else if (size.equalsIgnoreCase("B")) {
 
-                    configItemsB.add(configItem);
+                    homeItemsB.add(homeItem);
 
                 } else if (size.equalsIgnoreCase("C")) {
 
-                    configItemsC.add(configItem);
+                    homeItemsC.add(homeItem);
 
                 } else if (size.equalsIgnoreCase("D")) {
 
-                    configItemsD.add(configItem);
+                    homeItemsD.add(homeItem);
                 }
             }
 
@@ -350,31 +348,31 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         dItemWidth = aItemWidth;        // same width as an A item.
         dItemHeight = aItemHeight / 4;  // quarter the height of an A item.
 
-        if (configItemsA.size() > 0) {
-            doConfigItemsABDPort(configItemsA);
+        if (homeItemsA.size() > 0) {
+            doConfigItemsABDPort(homeItemsA);
         }
-        if (configItemsB.size() > 0) {
-            doConfigItemsABDPort(configItemsB);
+        if (homeItemsB.size() > 0) {
+            doConfigItemsABDPort(homeItemsB);
         }
-        if (configItemsC.size() > 0) {
+        if (homeItemsC.size() > 0) {
             doConfigItemsCPort();
         }
-        if (configItemsD.size() > 0) {
-            doConfigItemsABDPort(configItemsD);
+        if (homeItemsD.size() > 0) {
+            doConfigItemsABDPort(homeItemsD);
         }
 
     } // doPortrait()
 
-    private void doConfigItemsABDPort(List<ConfigItem> configItems) {
+    private void doConfigItemsABDPort(List<HomeItem> homeItems) {
 
         if (LOGGING) Log.v(TAG, "HomeFragment:doConfigItemsABDPort():"
-                        + " configItems[" + configItems + "]"
+                        + " configItems[" + homeItems + "]"
                         + " this[" + this + "]"
         );
 
-        for (ConfigItem configItem : configItems) {
+        for (HomeItem homeItem : homeItems) {
 
-            String size = configItem.size;
+            String size = homeItem.size;
             int subLayoutHeight = 0;
             ImageView categoryImageView = null;
 
@@ -394,12 +392,12 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
                 categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
             }
 
-            setImage(categoryImageView, configItem.bannerUrl);
+            setImage(categoryImageView, homeItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
             LinearLayout widgetLayout = getWidgetLayout(aItemWidth, subLayoutHeight, MARGIN_BOTTOM_DP, categoryImageView);
-            widgetLayout.setTag(configItem);
+            widgetLayout.setTag(homeItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 
@@ -419,7 +417,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         boolean firstSubInContainer = true;
         int configItemNbr = -1;
 
-        for (ConfigItem configItem : configItemsC) {
+        for (HomeItem homeItem : homeItemsC) {
 
             configItemNbr++;
 
@@ -433,12 +431,12 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             }
 
             ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-            setImage(categoryImageView, configItem.bannerUrl);
+            setImage(categoryImageView, homeItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
             LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, MARGIN_ZERO, categoryImageView);
-            widgetLayout.setTag(configItem);
+            widgetLayout.setTag(homeItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 
@@ -478,7 +476,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
                         + " this[" + this + "]"
         );
 
-        if (configItemsA.size() > 0) {
+        if (homeItemsA.size() > 0) {
             doConfigItemsALand();
         } else {
             doConfigItemsLand();
@@ -494,7 +492,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
         // Handle the A item.
 
-        ConfigItem configItemA = configItemsA.get(0);
+        HomeItem homeItemA = homeItemsA.get(0);
 
         // Configurator Sublayout
 
@@ -507,12 +505,12 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         configScrollLayout.addView(subLayout, subLayoutContainerLayoutParms);
 
         ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-        setImage(categoryImageView, configItemA.bannerUrl);
+        setImage(categoryImageView, homeItemA.bannerUrl);
 
         // Vertical. Contains selectable content. Used to create a rectangular
         // frame around the content.
         LinearLayout widgetLayout = getWidgetLayout(aItemWidth, aItemHeight, MARGIN_ZERO, categoryImageView);
-        widgetLayout.setTag(configItemA);
+        widgetLayout.setTag(homeItemA);
         widgetLayout.setOnClickListener(itemOnClickListener);
         widgetLayout.addView(categoryImageView);
 
@@ -525,36 +523,36 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
         while (true) {
 
-            if (configItemsB.size() >= 2) {
+            if (homeItemsB.size() >= 2) {
 
                 fillAWithB(configBCDLayout, 2);
 
                 break; // while (true)
             }
-            if (configItemsB.size() > 0) {
+            if (homeItemsB.size() > 0) {
 
                 fillAWithB(configBCDLayout, 1);
 
-                if (configItemsC.size() > 0) {
+                if (homeItemsC.size() > 0) {
 
                     fillAWithC(configBCDLayout, 1);
 
-                } else if (configItemsD.size() >= 2) {
+                } else if (homeItemsD.size() >= 2) {
 
                     fillAWithD(configBCDLayout, 1);
                 }
                 break; // while (true)
 
-            } else if (configItemsC.size() >= 4) {
+            } else if (homeItemsC.size() >= 4) {
 
                 fillAWithC(configBCDLayout, 2);
 
-            } else if (configItemsC.size() > 0) {
+            } else if (homeItemsC.size() > 0) {
 
                 fillAWithC(configBCDLayout, 1);
                 fillAWithD(configBCDLayout, 2);
 
-            } else if (configItemsD.size() > 0) {
+            } else if (homeItemsD.size() > 0) {
 
                 fillAWithD(configBCDLayout, 4);
             }
@@ -572,33 +570,33 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
                         + " this[" + this + "]"
         );
 
-        int nbrListItems = Math.min(configItemsB.size(), maxItems);
+        int nbrListItems = Math.min(homeItemsB.size(), maxItems);
 
         int configItemNdx = 0;
-        ConfigItem configItem = null;
+        HomeItem homeItem = null;
 
         for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
-            configItem = configItemsB.get(0);
+            homeItem = homeItemsB.get(0);
 
-            configItemsB.remove(0);
+            homeItemsB.remove(0);
 
             if (LOGGING) Log.v(TAG, "HomeFragment:fillAWithB(): configItem:"
-                            + " configItem.title[" + configItem.title + "]"
-                            + " configItem.bannerUrl[" + configItem.bannerUrl + "]"
+                            + " configItem.title[" + homeItem.title + "]"
+                            + " configItem.bannerUrl[" + homeItem.bannerUrl + "]"
                             + " this[" + this + "]"
             );
 
             // Category ImageView
 
             ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-            setImage(categoryImageView, configItem.bannerUrl);
+            setImage(categoryImageView, homeItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
             int marginBottom = (configItemNdx == (nbrListItems - 1)) ? MARGIN_ZERO : MARGIN_BOTTOM_DP;
             LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, marginBottom, categoryImageView);
-            widgetLayout.setTag(configItem);
+            widgetLayout.setTag(homeItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 
@@ -617,20 +615,20 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
         // maxItems is the maximum number of SubLayout containers allowed. Each
         // SubLayout container can contain 2 list items.
-        int nbrListItems = Math.min(configItemsC.size(), (maxItems * 2));
+        int nbrListItems = Math.min(homeItemsC.size(), (maxItems * 2));
 
         boolean firstSubInContainer = true;
 
         int nbrSubLayoutContainers = 0;
 
         int configItemNdx = 0;
-        ConfigItem configItem = null;
+        HomeItem homeItem = null;
 
         for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
-            configItem = configItemsC.get(0);
+            homeItem = homeItemsC.get(0);
 
-            configItemsC.remove(0);
+            homeItemsC.remove(0);
 
             firstSubInContainer = (configItemNdx % 2 == 0);
 
@@ -643,13 +641,13 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             }
 
             ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-            setImage(categoryImageView, configItem.bannerUrl);
+            setImage(categoryImageView, homeItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
             int marginBottom = (configItemNdx == (nbrListItems - 1)) ? MARGIN_ZERO : MARGIN_BOTTOM_DP;
             LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, marginBottom, categoryImageView);
-            widgetLayout.setTag(configItem);
+            widgetLayout.setTag(homeItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 
@@ -664,33 +662,33 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
                         + " this[" + this + "]"
         );
 
-        int nbrListItems = Math.min(configItemsD.size(), maxItems);
+        int nbrListItems = Math.min(homeItemsD.size(), maxItems);
 
         int configItemNdx = 0;
-        ConfigItem configItem = null;
+        HomeItem homeItem = null;
 
         for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
-            configItem = configItemsD.get(0);
+            homeItem = homeItemsD.get(0);
 
-            configItemsD.remove(0);
+            homeItemsD.remove(0);
 
             if (LOGGING) Log.v(TAG, "HomeFragment:fillAWithD(): configItem:"
-                            + " configItem.title[" + configItem.title + "]"
-                            + " configItem.bannerUrl[" + configItem.bannerUrl + "]"
+                            + " configItem.title[" + homeItem.title + "]"
+                            + " configItem.bannerUrl[" + homeItem.bannerUrl + "]"
                             + " this[" + this + "]"
             );
 
             // Category ImageView
 
             ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-            setImage(categoryImageView, configItem.bannerUrl);
+            setImage(categoryImageView, homeItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
             int marginBottom = (configItemNdx == (nbrListItems - 1)) ? MARGIN_ZERO : MARGIN_BOTTOM_DP;
             LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, marginBottom, categoryImageView);
-            widgetLayout.setTag(configItem);
+            widgetLayout.setTag(homeItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 
@@ -825,19 +823,8 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     } // getImageView()
 
     private void setImage(ImageView imageView, String imageUrl) {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:setImage():"
-                        + " imageUrl[" + imageUrl + "]"
-                        + " imageView[" + imageView + "]"
-                        + " this[" + this + "]"
-        );
-
-        RequestCreator requestCreator = picasso.load(imageUrl);
-        requestCreator.error(noPhoto);
-        requestCreator.into(imageView);
-        requestCreator.fit();
-
-    } // setImage()
+        picasso.load(imageUrl).error(noPhoto).fit().into(imageView);
+    }
 
     private void doConfigItemsLand() {
 
@@ -845,13 +832,13 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
                         + " this[" + this + "]"
         );
 
-        if (configItemsB.size() > 0) {
+        if (homeItemsB.size() > 0) {
             fillWithBLand();
         }
-        if (configItemsC.size() > 0) {
+        if (homeItemsC.size() > 0) {
             fillWithCLand();
         }
-        if (configItemsD.size() > 0) {
+        if (homeItemsD.size() > 0) {
             fillWithDLand();
         }
 
@@ -865,20 +852,20 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
         final int NBR_ITEMS_IN_CONTAINER = 2;
 
-        int nbrListItems = configItemsB.size();
+        int nbrListItems = homeItemsB.size();
 
         boolean firstSubInContainer = true;
 
         int configItemNdx = 0;
-        ConfigItem configItem = null;
+        HomeItem homeItem = null;
 
         LinearLayout subLayoutContainer = null;
 
         for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
-            configItem = configItemsB.get(0);
+            homeItem = homeItemsB.get(0);
 
-            configItemsB.remove(0);
+            homeItemsB.remove(0);
 
             firstSubInContainer = (configItemNdx % NBR_ITEMS_IN_CONTAINER == 0);
 
@@ -891,12 +878,12 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             }
 
             ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-            setImage(categoryImageView, configItem.bannerUrl);
+            setImage(categoryImageView, homeItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
             LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
-            widgetLayout.setTag(configItem);
+            widgetLayout.setTag(homeItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 
@@ -913,22 +900,22 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
         final int NBR_ITEMS_IN_CONTAINER = 4;
 
-        int nbrListItems = configItemsC.size();
+        int nbrListItems = homeItemsC.size();
 
         boolean firstSubInContainer = true;
 
         int nbrCItemsInContainer = 0;
 
         int configItemNdx = 0;
-        ConfigItem configItem = null;
+        HomeItem homeItem = null;
 
         LinearLayout subLayoutContainer = null;
 
         for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
-            configItem = configItemsC.get(0);
+            homeItem = homeItemsC.get(0);
 
-            configItemsC.remove(0);
+            homeItemsC.remove(0);
 
             firstSubInContainer = (configItemNdx % NBR_ITEMS_IN_CONTAINER == 0);
 
@@ -944,13 +931,13 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             }
 
             ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-            setImage(categoryImageView, configItem.bannerUrl);
+            setImage(categoryImageView, homeItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
             LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, MARGIN_ZERO, categoryImageView);
             widgetLayout.setOnClickListener(itemOnClickListener);
-            widgetLayout.setTag(configItem);
+            widgetLayout.setTag(homeItem);
             widgetLayout.addView(categoryImageView);
 
             subLayoutContainer.addView(widgetLayout);
@@ -972,27 +959,27 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
                         + " this[" + this + "]"
         );
 
-        int configItemsSize = configItemsD.size();
+        int configItemsSize = homeItemsD.size();
         int lastListItem = (nbrListItems <= configItemsSize) ? nbrListItems : configItemsSize;
         int configItemNdx = 0;
-        ConfigItem configItem = null;
+        HomeItem homeItem = null;
 
         LinearLayout dItemContainer = getSubLayoutContainer(LinearLayout.VERTICAL);
         subLayoutContainer.addView(dItemContainer);
 
         for (configItemNdx = 0; configItemNdx < lastListItem; configItemNdx++) {
 
-            configItem = configItemsD.get(0);
+            homeItem = homeItemsD.get(0);
 
-            configItemsD.remove(0);
+            homeItemsD.remove(0);
 
             ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-            setImage(categoryImageView, configItem.bannerUrl);
+            setImage(categoryImageView, homeItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
             LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, MARGIN_ZERO, categoryImageView);
-            widgetLayout.setTag(configItem);
+            widgetLayout.setTag(homeItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 
@@ -1009,20 +996,20 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
         final int NBR_ITEMS_IN_CONTAINER = 2;
 
-        int nbrListItems = configItemsD.size();
+        int nbrListItems = homeItemsD.size();
 
         boolean firstSubInContainer = true;
 
         int configItemNdx = 0;
-        ConfigItem configItem = null;
+        HomeItem homeItem = null;
 
         LinearLayout subLayoutContainer = null;
 
         for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
-            configItem = configItemsD.get(0);
+            homeItem = homeItemsD.get(0);
 
-            configItemsD.remove(0);
+            homeItemsD.remove(0);
 
             firstSubInContainer = (configItemNdx % NBR_ITEMS_IN_CONTAINER == 0);
 
@@ -1035,12 +1022,12 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             }
 
             ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-            setImage(categoryImageView, configItem.bannerUrl);
+            setImage(categoryImageView, homeItem.bannerUrl);
 
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
             LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, MARGIN_ZERO, categoryImageView);
-            widgetLayout.setTag(configItem);
+            widgetLayout.setTag(homeItem);
             widgetLayout.setOnClickListener(itemOnClickListener);
             widgetLayout.addView(categoryImageView);
 
@@ -1220,7 +1207,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             public void onClick(View v) {
                 Tracker.getInstance().trackActionForPersonalizedMessaging("Store"); // Analytics
                 MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.selectFragment(DrawerItem.STORE, new StoreFragment(), MainActivity.Transition.NONE, true);
+                mainActivity.selectFragment(DrawerItem.STORE, new StoreFragment(), MainActivity.Transition.NONE);
             }
         });
     }

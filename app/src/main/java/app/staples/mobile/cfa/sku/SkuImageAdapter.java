@@ -1,6 +1,7 @@
 package app.staples.mobile.cfa.sku;
 
-import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,17 +16,25 @@ import app.staples.R;
 public class SkuImageAdapter extends PagerAdapter {
     private static final String TAG = SkuImageAdapter.class.getSimpleName();
 
-    private Activity activity;
+    private Context context;
     private ArrayList<SkuImageItem> array;
+    private Picasso picasso;
+    private int imageWidth;
+    private int imageHeight;
 
     private static class SkuImageItem {
         ImageView view;
         String url;
     }
 
-    public SkuImageAdapter(Activity activity) {
+    public SkuImageAdapter(Context context) {
         super();
-        this.activity = activity;
+        this.context = context;
+        picasso = Picasso.with(context);
+        Resources res = context.getResources();
+        imageWidth = res.getDimensionPixelSize(R.dimen.sku_image_width);
+        imageHeight = res.getDimensionPixelSize(R.dimen.sku_image_height);
+
         array = new ArrayList<SkuImageItem>();
     }
 
@@ -44,8 +53,8 @@ public class SkuImageAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         SkuImageItem item = array.get(position);
 
-        item.view = new ImageView(activity);
-        Picasso.with(activity).load(item.url).error(R.drawable.no_photo).into(item.view);
+        item.view = new ImageView(context);
+        picasso.load(item.url).error(R.drawable.no_photo).resize(imageWidth, imageHeight).centerInside().into(item.view);
 
         container.addView(item.view);
         return (item);

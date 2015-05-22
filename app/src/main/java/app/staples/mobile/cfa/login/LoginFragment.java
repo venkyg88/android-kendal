@@ -195,7 +195,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Pro
 
             case R.id.forgotPwdTV:
                 Fragment passwordFragment = Fragment.instantiate(activity, ResetPasswordFragment.class.getName());
-                activity.selectFragment(DrawerItem.PASSWORD, passwordFragment, MainActivity.Transition.RIGHT, true);
+                activity.selectFragment(DrawerItem.PASSWORD, passwordFragment, MainActivity.Transition.RIGHT);
                 break;
 
             case R.id.submit_button:

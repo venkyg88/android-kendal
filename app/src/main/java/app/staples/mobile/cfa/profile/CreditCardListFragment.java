@@ -54,6 +54,6 @@ public class CreditCardListFragment extends Fragment implements View.OnClickList
     @Override
     public void onClick(View view) {
         Fragment cardFragment = Fragment.instantiate(activity, CreditCardFragment.class.getName());
-        ((MainActivity) activity).selectFragment(DrawerItem.CARD, cardFragment, MainActivity.Transition.RIGHT, true);
+        ((MainActivity) activity).selectFragment(DrawerItem.CARD, cardFragment, MainActivity.Transition.RIGHT);
         }
     }
