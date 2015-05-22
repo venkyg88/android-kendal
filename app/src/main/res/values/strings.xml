@@ -98,6 +98,7 @@
     <string name="use_as_billing_addr">Use above as billing address</string>
     <string name="item_subtotal">Product Total (including coupons)</string>
     <string name="coupons_rewards">Coupons &amp; Rewards</string>
+    <string name="rewards_coupon_text_label">Present this bar code to an associate to redeem your reward in store</string>
     <string name="coupon_code_hint">Add Coupon Code here</string>
     <string name="missing_coupon_code">Please enter a coupon code</string>
     <string name="redeemable_rewards">Redeemable Rewards</string>
