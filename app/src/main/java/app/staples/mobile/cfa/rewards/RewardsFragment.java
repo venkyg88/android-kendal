@@ -27,6 +27,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import app.staples.R;
+import app.staples.mobile.cfa.DrawerItem;
 import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.cart.CartApiManager;
 import app.staples.mobile.cfa.profile.ProfileDetails;
@@ -198,7 +199,11 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
             case R.id.reward_view_button:
                 tag = view.getTag();
                 if (tag instanceof Reward) {
-                    activity.selectBarcodeFragment("Coupon", ((Reward) tag).getCode());
+                    Reward reward = (Reward) tag;
+                    BarcodeFragment fragment = new BarcodeFragment();
+                    fragment.setArguments("Coupon", reward.getCode(), reward.getAmount(), reward.getExpiryDate());
+                    activity.selectFragment(DrawerItem.BARCODE, fragment, MainActivity.Transition.RIGHT);
+
                 }
                 break;
             case R.id.reward_remove_button:
