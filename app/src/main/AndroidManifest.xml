@@ -19,11 +19,11 @@
     <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE"/>
     TODO End of Urban Airship comment -->
     <application
-		android:name="app.staples.mobile.cfa.MainApplication"
         android:allowBackup="true"
         android:label="@string/app_name"
         android:icon="@drawable/ic_app"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:largeHeap="true">
         <activity
             android:name="app.staples.mobile.cfa.MainActivity"
             android:launchMode="singleInstance"
@@ -37,7 +37,7 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="staples"/>
+                <data android:scheme="http" android:host="staples.com" android:pathPrefix="/cfa"/>
             </intent-filter>
             <intent-filter>
                 <action android:name="app.staples.mobile.cfa.OPEN_SKU"/>

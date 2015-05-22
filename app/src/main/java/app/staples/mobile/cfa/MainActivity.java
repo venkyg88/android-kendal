@@ -20,6 +20,7 @@ import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -99,7 +100,6 @@ public class MainActivity extends Activity
         private String name;
         private Fragment fragment;
         private Transition transition;
-        private boolean push;
     }
 
     public enum Transition {
@@ -131,19 +131,21 @@ public class MainActivity extends Activity
         }
     }
 
-    public static final String SCHEME    = "staples";
-    public static final String AUTHORITY = "cfa";
+    public static final String SCHEME    = "http";
+    public static final String AUTHORITY = "staples.com";
 
     private static final UriMatcher uriMatcher;
-    private static final int MATCH_SKU      = 1;
-    private static final int MATCH_CATEGORY = 2;
-    private static final int MATCH_SEARCH   = 3;
+    private static final int MATCH_HOME     = 1;
+    private static final int MATCH_SKU      = 2;
+    private static final int MATCH_CATEGORY = 3;
+    private static final int MATCH_SEARCH   = 4;
 
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(AUTHORITY, "sku/*",      MATCH_SKU);
-        uriMatcher.addURI(AUTHORITY, "category/*", MATCH_CATEGORY);
-        uriMatcher.addURI(AUTHORITY, "search/*",   MATCH_SEARCH);
+        uriMatcher.addURI(AUTHORITY, "cfa/home",       MATCH_HOME);
+        uriMatcher.addURI(AUTHORITY, "cfa/sku/*",      MATCH_SKU);
+        uriMatcher.addURI(AUTHORITY, "cfa/category/*", MATCH_CATEGORY);
+        uriMatcher.addURI(AUTHORITY, "cfa/search/*",   MATCH_SEARCH);
     }
 
     private DrawerLayout drawerLayout;
@@ -168,22 +170,19 @@ public class MainActivity extends Activity
 
     @Override
     public void onCreate(Bundle bundle) {
-        // DLS: do NOT pass in bundle to super.onCreate!!! if super tries to restore from previous
-        // state, it will try to attach fragments before our app configurator initialization completes
-        // and all kinds of errors will get thrown. I'm able to cause this to happen on my API 15 HTC
-        // Evo phone by turning the phone completely off while the Staples app is open, then turning
-        // it back on and re-opening the Staples app.
-        super.onCreate(null);
-        Crittercism.leaveBreadcrumb("MainActivity:onCreate(): Entry.");
-        if (LOGGING) {
-            Log.v(TAG, "MainActivity:onCreate():"
-                    + " bundle[" + bundle + "]");
-        }
+        super.onCreate(bundle);
 
-        appConfigurator = AppConfigurator.getInstance();
+        try {
+            Crittercism.initialize(this, FlavorSpecific.CRITTERCISM_ID);
+            Crittercism.leaveBreadcrumb("MainActivty:onCreate(): Crittercism initialized.");
+        } catch (Exception exception) {}
+
+        // DebugUtil.setStrictMode();
 
         //noinspection ResourceType
         setRequestedOrientation(getResources().getInteger(R.integer.screenOrientation));
+
+        appConfigurator = AppConfigurator.getInstance(this, FlavorSpecific.MCS_URL);
 
         // Note: error handling for no network availability will happen in ensureActiveSession() called from onResume()
         if (isNetworkAvailable()) {
@@ -211,26 +210,44 @@ public class MainActivity extends Activity
 
     @Override
     public void onNewIntent(Intent intent) {
-        if (intent == null) return;
+        if (intent==null || !initialLoginComplete) {
+            // Do nothing
+        } else if (handleCustomIntent(intent)) {
+            setIntent(null);
+        } else {
+            ViewGroup content = (ViewGroup) findViewById(R.id.content);
+            if (content!=null & content.getChildCount()==0) {
+                selectDrawerItem(homeDrawerItem, Transition.NONE);
+            }
+            setIntent(null);
+        }
+    }
+
+    private boolean handleCustomIntent(Intent intent) {
+        if (intent==null) return(false);
         Uri uri = intent.getData();
-        if (uri == null) return;
-        if (!SCHEME.equals(uri.getScheme())) return;
+        if (uri==null) return(false);
+        if (!SCHEME.equals(uri.getScheme())) return(false);
 
         int match = uriMatcher.match(uri);
         switch(match) {
+            case MATCH_HOME:
+                selectDrawerItem(homeDrawerItem, Transition.NONE);
+                return(true);
             case MATCH_SKU:
-                String sku = uri.getPathSegments().get(1);
+                String sku = uri.getPathSegments().get(2);
                 selectSkuItem("Product item", sku, false);
-                break;
+                return(true);
             case MATCH_CATEGORY:
-                String identifier = uri.getPathSegments().get(1);
+                String identifier = uri.getPathSegments().get(2);
                 selectBundle("Category", identifier);
-                break;
+                return(true);
             case MATCH_SEARCH:
-                String keyword = uri.getPathSegments().get(1);
+                String keyword = uri.getPathSegments().get(2);
                 selectSearch("Search", keyword);
-                break;
+                return(true);
         }
+        return(false);
     }
 
     @Override
@@ -431,7 +448,7 @@ public class MainActivity extends Activity
     private void showMainScreen() {
         findViewById(R.id.splash).setVisibility(View.GONE);
         findViewById(R.id.main).setVisibility(View.VISIBLE);
-        selectDrawerItem(homeDrawerItem, Transition.NONE, false);
+        onNewIntent(getIntent());
         Apptentive.engage(this, ApptentiveSdk.HOME_CONTAINER_SHOWN_EVENT);
     }
 
@@ -654,7 +671,7 @@ public class MainActivity extends Activity
         // disable menu items as appropriate
         updateMenuItemState();
 
-        selectFragment(DrawerItem.HOME, new HomeFragment(), Transition.NONE, true);
+        selectFragment(DrawerItem.HOME, new HomeFragment(), Transition.RIGHT);
     }
 
     private void updateMenuItemState() {
@@ -732,7 +749,7 @@ public class MainActivity extends Activity
         return(executeQueuedTransactions());
     }
 
-    public boolean selectFragment(String name, Fragment fragment, Transition transition, boolean push) {
+    public boolean selectFragment(String name, Fragment fragment, Transition transition) {
         // Close everything
         drawerLayout.closeDrawers();
         hideSoftKeyboard();
@@ -743,7 +760,6 @@ public class MainActivity extends Activity
         qt.name = name;
         qt.fragment = fragment;
         qt.transition = transition;
-        qt.push = push;
         queuedTransactions.add(qt);
         return(executeQueuedTransactions());
     }
@@ -766,10 +782,16 @@ public class MainActivity extends Activity
                         fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         break;
                     case PUSH:
+                        ViewGroup content = (ViewGroup) findViewById(R.id.content);
+                        boolean empty = (content==null || content.getChildCount()==0);
                         FragmentTransaction transaction = fm.beginTransaction();
-                        if (qt.transition!=null) qt.transition.setAnimation(transaction);
+                        if (!empty && qt.transition!=null) {
+                            qt.transition.setAnimation(transaction);
+                        }
                         transaction.replace(R.id.content, qt.fragment);
-                        if (qt.push) transaction.addToBackStack(qt.name);
+                        if (!empty) {
+                            transaction.addToBackStack(qt.name);
+                        }
                         transaction.commit();
                         break;
                 }
@@ -783,18 +805,18 @@ public class MainActivity extends Activity
 
     // Higher level navigation methods
 
-    private boolean selectDrawerItem(DrawerItem item, Transition transition, boolean push) {
+    private boolean selectDrawerItem(DrawerItem item, Transition transition) {
         // Safety check
         if (item == null || item.fragmentClass == null) return (false);
 
         // Create Fragment if necessary
         if (item.fragment == null)
             item.instantiate(this);
-        return(selectFragment(item.tag, item.fragment, transition, push));
+        return(selectFragment(item.tag, item.fragment, transition));
     }
 
     public boolean selectShoppingCart() {
-        return selectFragment(DrawerItem.CART, cartFragment, Transition.RIGHT, true);
+        return selectFragment(DrawerItem.CART, cartFragment, Transition.RIGHT);
     }
 
     public boolean selectOrderCheckout(/*String deliveryRange, float couponsRewardsAmount*/) {
@@ -803,10 +825,10 @@ public class MainActivity extends Activity
             // if logged in and have at least an address or a payment method, then use registered flow, otherwise use guest flow
             if (!loginHelper.isGuestLogin()) {
                 fragment = RegisteredCheckoutFragment.newInstance();
-                return selectFragment(DrawerItem.REG_CHECKOUT, fragment, Transition.RIGHT, true);
+                return selectFragment(DrawerItem.REG_CHECKOUT, fragment, Transition.RIGHT);
             } else {
                 fragment = GuestCheckoutFragment.newInstance();
-                return selectFragment(DrawerItem.GUEST_CHECKOUT, fragment, Transition.RIGHT, true);
+                return selectFragment(DrawerItem.GUEST_CHECKOUT, fragment, Transition.RIGHT);
             }
         }
         return false;
@@ -819,26 +841,26 @@ public class MainActivity extends Activity
 
         // open order confirmation fragment
         Fragment fragment = ConfirmationFragment.newInstance(orderNumber, emailAddress, deliveryRange, total);
-        return selectFragment(DrawerItem.CONFIRM, fragment, Transition.RIGHT, true);
+        return selectFragment(DrawerItem.CONFIRM, fragment, Transition.RIGHT);
     }
 
     public boolean selectStoreFinder() {
         DrawerItem drawerItem = leftMenuAdapter.findItemByTag(DrawerItem.STORE);
-        return selectDrawerItem(drawerItem, Transition.RIGHT, true);
+        return selectDrawerItem(drawerItem, Transition.RIGHT);
     }
 
     public boolean selectRewardsFragment() {
-        return selectFragment(DrawerItem.REWARDS, new RewardsFragment(), Transition.RIGHT, true);
+        return selectFragment(DrawerItem.REWARDS, new RewardsFragment(), Transition.RIGHT);
     }
 
     public boolean selectRewardsLinkingFragment() {
-        return selectFragment(DrawerItem.LINK, new RewardsLinkingFragment(), Transition.RIGHT, true);
+        return selectFragment(DrawerItem.LINK, new RewardsLinkingFragment(), Transition.RIGHT);
     }
 
     public boolean selectBarcodeFragment(String title, String barcode) {
         BarcodeFragment fragment = new BarcodeFragment();
         fragment.setArguments(title, barcode);
-        return(selectFragment(DrawerItem.BARCODE, fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.BARCODE, fragment, Transition.RIGHT));
     }
 
     public boolean selectBundle(String title, String identifier) {
@@ -848,7 +870,7 @@ public class MainActivity extends Activity
         );
         BundleFragment fragment = new BundleFragment();
         fragment.setArguments(title, identifier);
-        return(selectFragment(DrawerItem.BUNDLE, fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.BUNDLE, fragment, Transition.RIGHT));
     }
 
     public boolean selectSearch(String title, String keyword) {
@@ -858,7 +880,7 @@ public class MainActivity extends Activity
         );
         SearchFragment fragment = new SearchFragment();
         fragment.setArguments(title, keyword);
-        return(selectFragment(DrawerItem.SEARCH, fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.SEARCH, fragment, Transition.RIGHT));
     }
 
     public boolean selectSkuSet(String title, String identifier, String imageUrl) {
@@ -868,7 +890,7 @@ public class MainActivity extends Activity
         );
         SkuSetFragment fragment = new SkuSetFragment();
         fragment.setArguments(title, identifier, imageUrl);
-        return(selectFragment(DrawerItem.SKUSET, fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.SKUSET, fragment, Transition.RIGHT));
     }
 
     public boolean selectSkuItem(String title, String identifier, boolean isSkuSetOriginated) {
@@ -878,7 +900,7 @@ public class MainActivity extends Activity
         );
         SkuFragment fragment = new SkuFragment();
         fragment.setArguments(title, identifier, isSkuSetOriginated);
-        return(selectFragment(DrawerItem.SKU, fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.SKU, fragment, Transition.RIGHT));
     }
 
     public boolean selectWeeklyAd(String storeNo) {
@@ -887,7 +909,7 @@ public class MainActivity extends Activity
         );
         WeeklyAdByCategoryFragment fragment = new WeeklyAdByCategoryFragment();
         fragment.setArguments(storeNo);
-        return(selectFragment(DrawerItem.WEEKLY, fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.WEEKLY, fragment, Transition.RIGHT));
     }
 
     public boolean selectInStoreWeeklyAd(String title, float price, String unit, String literal, String imageUrl, boolean inStoreOnly) {
@@ -897,12 +919,12 @@ public class MainActivity extends Activity
         );
         WeeklyAdInStoreFragment fragment = new WeeklyAdInStoreFragment();
         fragment.setArguments(title, price, unit, literal, imageUrl, inStoreOnly);
-        return(selectFragment(DrawerItem.SALES, fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.SALES, fragment, Transition.RIGHT));
     }
 
     public boolean selectProfileFragment() {
         Fragment fragment = new ProfileFragment();
-        return(selectFragment(DrawerItem.PROFILE, fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.PROFILE, fragment, Transition.RIGHT));
     }
 
     public boolean selectLoginFragment() {
@@ -915,12 +937,12 @@ public class MainActivity extends Activity
      */
     public boolean selectLoginFragment(boolean returnToCheckout) {
         Fragment fragment = LoginFragment.newInstance(returnToCheckout);
-        return(selectFragment(DrawerItem.LOGIN, fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.LOGIN, fragment, Transition.RIGHT));
     }
 
     public boolean selectFeedFragment() {
         DrawerItem item = leftMenuAdapter.findItemByTag(DrawerItem.FEED);
-        return(selectDrawerItem(item, Transition.RIGHT, true));
+        return(selectDrawerItem(item, Transition.RIGHT));
     }
 
     /** opens the profile addresses fragment */
@@ -938,7 +960,7 @@ public class MainActivity extends Activity
         } else {
             fragment = Fragment.instantiate(this, AddressFragment.class.getName());
         }
-        return(selectFragment(DrawerItem.ADDRESS, fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.ADDRESS, fragment, Transition.RIGHT));
     }
 
     /** opens the profile credit cards fragment */
@@ -956,7 +978,7 @@ public class MainActivity extends Activity
         } else {
             fragment = Fragment.instantiate(this, CreditCardFragment.class.getName());
         }
-        return(selectFragment(DrawerItem.CARD, fragment, Transition.RIGHT, true));
+        return(selectFragment(DrawerItem.CARD, fragment, Transition.RIGHT));
     }
 
     @Override
@@ -998,7 +1020,7 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.continue_shopping_btn:
-                selectDrawerItem(homeDrawerItem, Transition.RIGHT, true);
+                selectDrawerItem(homeDrawerItem, Transition.RIGHT);
                 break;
 
             case R.id.action_show_cart:
@@ -1057,7 +1079,7 @@ public class MainActivity extends Activity
             case R.id.extra:
                 if (loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
                     loginHelper.userSignOut();
-                    selectDrawerItem(homeDrawerItem, Transition.RIGHT, true);
+                    selectDrawerItem(homeDrawerItem, Transition.RIGHT);
                 } else {
                     selectLoginFragment();
                 }
@@ -1090,7 +1112,7 @@ public class MainActivity extends Activity
                     }
                     break;
                 default:
-                    selectDrawerItem(item, Transition.RIGHT, true);
+                    selectDrawerItem(item, Transition.RIGHT);
                     break;
             }
         }

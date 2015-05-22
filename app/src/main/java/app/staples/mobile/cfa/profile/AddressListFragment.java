@@ -56,6 +56,6 @@ public class AddressListFragment extends Fragment implements View.OnClickListene
     @Override
     public void onClick(View view) {
         Fragment shippingFragment = Fragment.instantiate(activity, AddressFragment.class.getName());
-        ((MainActivity) activity).selectFragment(DrawerItem.ADDRESS, shippingFragment, MainActivity.Transition.RIGHT, true);
+        ((MainActivity) activity).selectFragment(DrawerItem.ADDRESS, shippingFragment, MainActivity.Transition.RIGHT);
     }
 }

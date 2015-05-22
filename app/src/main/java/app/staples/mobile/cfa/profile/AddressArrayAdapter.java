@@ -148,7 +148,7 @@ public class AddressArrayAdapter extends ArrayAdapter<Address> implements View.O
         Bundle bundle = new Bundle();
         bundle.putSerializable("addressData", address);
         addressFragment.setArguments(bundle);
-        ((MainActivity)context).selectFragment(DrawerItem.ADDRESS, addressFragment, MainActivity.Transition.RIGHT, true);
+        ((MainActivity)context).selectFragment(DrawerItem.ADDRESS, addressFragment, MainActivity.Transition.RIGHT);
     }
 
     public void deleteAddress(final Address address){
