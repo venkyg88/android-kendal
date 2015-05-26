@@ -14,12 +14,12 @@
         app:cardElevation="4dp">
 
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingTop="@dimen/verticalspacing_16dp"
@@ -33,36 +33,34 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/staples_white"
                     android:textSize="@dimen/fontsize_18sp"
-                    android:text="@string/rewards_list_tabtitle" />
+                    android:text="@string/rewards_list_tabtitle"/>
 
                 <TextView
                     android:id="@+id/reward_coupon_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/fontsize_18sp"
-                    android:textColor="@color/staples_white"
-                    android:text="$20:00" />
+                    android:textColor="@color/staples_white"/>
 
                 <TextView
                     android:id="@+id/reward_coupon_expire"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/fontsize_12sp"
-                    android:textColor="@color/staples_white"
-                    android:text="expires 07/04/15/" />
+                    android:textColor="@color/staples_white"/>
             </LinearLayout>
 
             <TextView
                 android:id="@+id/rewards_coupon_text_label"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:text="@string/rewards_coupon_text_label"
                 android:textSize="@dimen/fontsize_16sp"
                 android:textColor="@color/staples_dark_gray"
                 android:paddingLeft="@dimen/margin_24dp"
+                android:paddingRight="@dimen/margin_24dp"
                 android:layout_marginTop="@dimen/verticalspacing_24dp"
-                android:layout_marginBottom="@dimen/verticalspacing_24dp" />
+                android:layout_marginBottom="@dimen/verticalspacing_24dp"/>
 
             <com.staples.mobile.common.widget.Code128CBarcode
                 android:id="@+id/barcode"
@@ -71,7 +69,7 @@
                 android:layout_gravity="center"
                 android:paddingLeft="@dimen/margin_24dp"
                 android:paddingRight="@dimen/margin_24dp"
-                app:maxScale="2dp" />
+                app:maxScale="2dp"/>
 
             <TextView
                 android:id="@+id/caption"
@@ -81,7 +79,7 @@
                 android:textSize="@dimen/fontsize_24sp"
                 android:textColor="@color/staples_black"
                 android:layout_marginTop="@dimen/verticalspacing_16dp"
-                android:layout_marginBottom="@dimen/verticalspacing_24dp" />
+                android:layout_marginBottom="@dimen/verticalspacing_24dp"/>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 </app.staples.mobile.cfa.widget.AnimatorLayout>

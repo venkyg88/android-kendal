@@ -46,7 +46,6 @@ public class BarcodeFragment extends Fragment {
             barcode = args.getString(BARCODE);
             amount = args.getString(AMOUNT);
             expires = args.getString(EXPIRES);
-
         }
     }
 
@@ -54,11 +53,11 @@ public class BarcodeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Crittercism.leaveBreadcrumb("BarcodeFragment:onCreateView(): Displaying the Barcode screen.");
         View view = inflater.inflate(R.layout.barcode_fragment, container, false);
-        ((TextView) view.findViewById(R.id.reward_coupon_label)).setText(R.string.rewards_list_tabtitle);
         ((TextView) view.findViewById(R.id.reward_coupon_value)).setText(amount);
         ((TextView) view.findViewById(R.id.reward_coupon_expire)).setText("expires " + expires);
         ((Code128CBarcode) view.findViewById(R.id.barcode)).setText(barcode);
-        ((TextView) view.findViewById(R.id.caption)).setText(barcode);
+        String caption = Code128CBarcode.formatCaption(barcode, ' ');
+        ((TextView) view.findViewById(R.id.caption)).setText(caption);
         return(view);
     }
 

@@ -75,8 +75,8 @@
     <string name="no_store">Find a store</string>
 
     <!--cart, coupon/reward, checkout -->
-    <string name="add">ADD</string>
-    <string name="view">VIEW</string>
+    <string name="add">Add to cart</string>
+    <string name="view">Use in store</string>
     <string name="cartitem_qty_label">Qty</string>
     <string name="add_to_cart">ADD TO CART</string>
     <string name="add_another">Add Another</string>
@@ -98,7 +98,7 @@
     <string name="use_as_billing_addr">Use above as billing address</string>
     <string name="item_subtotal">Product Total (including coupons)</string>
     <string name="coupons_rewards">Coupons &amp; Rewards</string>
-    <string name="rewards_coupon_text_label">Present this bar code to an associate to redeem your reward in store</string>
+    <string name="rewards_coupon_text_label">Present this barcode to an associate\nto redeem your reward in store</string>
     <string name="coupon_code_hint">Add Coupon Code here</string>
     <string name="missing_coupon_code">Please enter a coupon code</string>
     <string name="redeemable_rewards">Redeemable Rewards</string>
