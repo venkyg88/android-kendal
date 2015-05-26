@@ -93,7 +93,8 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
 //            memberDurationVw.setText("member since ???????????????");
 //            rewardsNumberLabelVw.setText("type of rewards member ?????");
             ((Code128CBarcode) view.findViewById(R.id.rewards_number_barcode)).setText(member.getRewardsNumber());
-            ((TextView) view.findViewById(R.id.rewards_number)).setText(member.getRewardsNumber());
+            String caption = Code128CBarcode.formatCaption(member.getRewardsNumber(), ' ');
+            ((TextView) view.findViewById(R.id.rewards_number)).setText(caption);
 
             // if ink recycling info
             if (member.getInkRecyclingDetails() != null && member.getInkRecyclingDetails().size() > 0) {
