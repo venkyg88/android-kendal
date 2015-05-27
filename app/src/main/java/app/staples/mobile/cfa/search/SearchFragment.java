@@ -15,7 +15,7 @@ import com.apptentive.android.sdk.Apptentive;
 import com.crittercism.app.Crittercism;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.StaplesAppContext;
-import com.staples.mobile.common.access.configurator.model.Api;
+import com.staples.mobile.common.access.config.model.Api;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.Search;
 import com.staples.mobile.common.access.easyopen.model.browse.SearchResult;

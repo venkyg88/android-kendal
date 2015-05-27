@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.apptentive.android.sdk.Apptentive;
 import com.crittercism.app.Crittercism;
 import com.staples.mobile.common.access.config.AppConfigurator;
-import com.staples.mobile.common.access.configurator.model.Configurator;
+import com.staples.mobile.common.access.config.model.Configurator;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
@@ -222,7 +222,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             AppConfigurator appConfigurator = AppConfigurator.getInstance();
             Configurator configurator = appConfigurator.getConfigurator();
             if (configurator != null) {
-                freeShippingThreshold = configurator.getAppContext().getPromotions().getFreeShippingThreshold().floatValue();
+                freeShippingThreshold = configurator.getAppContext().getPromotions().getFreeShippingThreshold();
             }
         }
 

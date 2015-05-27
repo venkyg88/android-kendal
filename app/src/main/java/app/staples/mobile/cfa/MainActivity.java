@@ -33,7 +33,7 @@ import com.crittercism.app.Crittercism;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.config.StaplesAppContext;
-import com.staples.mobile.common.access.configurator.model.Configurator;
+import com.staples.mobile.common.access.config.model.Configurator;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
@@ -544,7 +544,7 @@ public class MainActivity extends Activity
                 });
 
                 // initialize analytics
-                new AdobeTracker(this.getApplicationContext(), configurator.getAppContext().getDev()); // allow logging only for dev environment
+                new AdobeTracker(this.getApplicationContext(), configurator.getAppContext().isDev()); // allow logging only for dev environment
                 // The call in onResume to enable tracking will be ignored during application creation
                 // because the configurator object is not yet available. Therefore, enable here.
                 AdobeTracker.enableTracking(true);
