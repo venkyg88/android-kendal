@@ -49,12 +49,11 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
     private String storeNo; // storeNo available via store finder
     private String city;
     private String address;
-    private MainActivity activity;
+
     private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager mLayoutManager;
     private TextView storeInfoVw;
     private TextView dateRangeVw;
-    TextView changeStoreVw;
+    private TextView changeStoreVw;
     private WeeklyAdByCategoryAdapter adapter;
     private List<Data> weeklyAdItems;
 
@@ -68,7 +67,7 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Crittercism.leaveBreadcrumb("WeeklyAdByCategoryFragment:onCreateView(): Displaying the Weekly Ad by Category screen.");
-        activity = (MainActivity)getActivity();
+        MainActivity activity = (MainActivity)getActivity();
 
         Bundle args = getArguments();
         if (args != null) {  // note that there will likely be a title arg even when no storeNo, so storeNo may still be null when args is not
@@ -81,8 +80,8 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
         changeStoreVw = (TextView) view.findViewById(R.id.change_store);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.weekly_ad_categories_list);
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(activity);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(activity);
+        mRecyclerView.setLayoutManager(manager);
         adapter = new WeeklyAdByCategoryAdapter(activity);
         mRecyclerView.setAdapter(adapter);
 
@@ -115,11 +114,17 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
     }
 
     private void getWeeklyAdStoreAndData() {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity==null) return;
+
         activity.showProgressIndicator();
         final EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         easyOpenApi.getWeeklyAdStore(Integer.parseInt(storeNo), new Callback<WeeklyAd>() {
             @Override
             public void success(WeeklyAd weeklyAdStore, Response response) {
+                MainActivity activity = (MainActivity) getActivity();
+                if (activity==null) return;
+
                 if (weeklyAdStore.getContent().getCollection() != null) {
                     Content content = weeklyAdStore.getContent();
                     if (content != null) {
@@ -144,6 +149,9 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
 
             @Override
             public void failure(RetrofitError error) {
+                MainActivity activity = (MainActivity) getActivity();
+                if (activity==null) return;
+
                 activity.hideProgressIndicator();
                 activity.showErrorDialog(ApiError.getErrorMessage(error));
             }
@@ -156,6 +164,9 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
         easyOpenApi.getWeeklyAdPromotions(storeId, new Callback<WeeklyAd>() {
             @Override
             public void success(WeeklyAd weeklyAdPromo, Response response) {
+                MainActivity activity = (MainActivity) getActivity();
+                if (activity==null) return;
+
                 if (weeklyAdPromo.getContent().getCollection() != null) {
                     Content content = weeklyAdPromo.getContent();
                     if (content != null) {
@@ -188,11 +199,17 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
     }
 
     private void getWeeklyAdData(){
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity==null) return;
+
         activity.showProgressIndicator();
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         easyOpenApi.getWeeklyAdByCategories(storeId, new Callback<WeeklyAd>() {
             @Override
             public void success(WeeklyAd weeklyAdCategories, Response response) {
+                MainActivity activity = (MainActivity) getActivity();
+                if (activity==null) return;
+
                 activity.hideProgressIndicator();
                 if (weeklyAdCategories.getContent().getCollection() != null) {
                     weeklyAdItems = weeklyAdCategories.getContent().getCollection().getData();
@@ -204,6 +221,9 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
 
             @Override
             public void failure(RetrofitError error) {
+                MainActivity activity = (MainActivity) getActivity();
+                if (activity==null) return;
+
                 activity.hideProgressIndicator();
                 activity.showErrorDialog(ApiError.getErrorMessage(error));
             }
@@ -212,13 +232,17 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        if(activity == null) return;
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity==null) return;
          activity.selectStoreFinder();
     }
 
     private class StoreInfoCallback implements Callback<StoreQuery> {
         @Override
         public void success(StoreQuery storeQuery, Response response) {
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity==null) return;
+
             List<StoreData> storeData = storeQuery.getStoreData();
             // if there are any nearby stores
             if (storeData != null && !storeData.isEmpty()) {
@@ -237,6 +261,9 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
 
         @Override
         public void failure(RetrofitError retrofitError) {
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity==null) return;
+
             activity.hideProgressIndicator();
             activity.showErrorDialog(ApiError.getErrorMessage(retrofitError));
         }
