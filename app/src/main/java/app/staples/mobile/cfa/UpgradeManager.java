@@ -10,9 +10,9 @@ import android.util.Log;
 import com.crittercism.app.Crittercism;
 
 import com.staples.mobile.common.access.config.StaplesAppContext;
-import com.staples.mobile.common.access.configurator.model.Force;
-import com.staples.mobile.common.access.configurator.model.Suggest;
-import com.staples.mobile.common.access.configurator.model.Update;
+import com.staples.mobile.common.access.config.model.Force;
+import com.staples.mobile.common.access.config.model.Suggest;
+import com.staples.mobile.common.access.config.model.Update;
 
 public class UpgradeManager {
 
