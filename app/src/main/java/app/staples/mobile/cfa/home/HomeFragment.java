@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -27,9 +26,7 @@ import com.staples.mobile.common.access.channel.model.store.StoreData;
 import com.staples.mobile.common.access.channel.model.store.StoreHours;
 import com.staples.mobile.common.access.channel.model.store.StoreQuery;
 import com.staples.mobile.common.access.config.AppConfigurator;
-import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.config.model.Area;
-import com.staples.mobile.common.access.config.model.Configurator;
 import com.staples.mobile.common.access.config.model.Item;
 import com.staples.mobile.common.access.config.model.Screen;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -55,7 +52,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class HomeFragment extends Fragment implements LocationFinder.PostalCodeCallback, AppConfigurator.AppConfiguratorCallback {
+public class HomeFragment extends Fragment implements LocationFinder.PostalCodeCallback, View.OnClickListener {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -68,10 +65,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     private static final int MARGIN_TOP_DP = 0;
     private static final int MARGIN_RIGHT_DP = 0;
     private static final int MARGIN_BOTTOM_DP = 24;
-
-    private MainActivity activity;
-    private Resources resources;
-
     private DeviceInfo deviceInfo;
 
     private int lastOrientation = Configuration.ORIENTATION_UNDEFINED;
@@ -79,10 +72,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     private LinearLayout configScrollLayout;
     private LinearLayout.LayoutParams subLayoutContainerLayoutParms;
     private LinearLayout.LayoutParams widgetLayoutParms;
-
-    private AppConfigurator appConfigurator;
-    private Configurator configurator;
-    private StaplesAppContext staplesAppContext;
 
     private List<HomeItem> homeItems;
     private List<HomeItem> homeItemsA;
@@ -109,8 +98,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     private int dItemWidth;
     private int dItemHeight;
 
-    private View.OnClickListener itemOnClickListener;
-
     // Personalized Message Bar UI Elements
     private TextView loginText;
     private LinearLayout login_layout;
@@ -122,35 +109,22 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     private DataWrapper storeWrapper;
 
     @Override
-    public void onAttach(Activity activity) {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:onAttach():"
-                        + " activity[" + activity + "]"
-                        + " this[" + this + "]"
-        );
-
-        super.onAttach(activity);
-
-        this.activity = (MainActivity) activity;
-
-        resources = activity.getResources();
-        appConfigurator = AppConfigurator.getInstance();
-
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
         homeItems = new ArrayList<HomeItem>();
         homeItemsA = new ArrayList<HomeItem>();
         homeItemsB = new ArrayList<HomeItem>();
         homeItemsC = new ArrayList<HomeItem>();
         homeItemsD = new ArrayList<HomeItem>();
-
-        return;
     }
 
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup container, Bundle bundle) {
-
         Crittercism.leaveBreadcrumb("HomeFragment:onCreateView(): Displaying the home/landing screen.");
 
+        Resources resources = getActivity().getResources();
         Configuration configuration = resources.getConfiguration();
+
         lastOrientation = configuration.orientation;
 
         picasso = Picasso.with(getActivity());
@@ -169,49 +143,15 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
         subLayoutContainerLayoutParms.setMargins(MARGIN_LEFT_DP, MARGIN_TOP_DP, MARGIN_RIGHT_DP, MARGIN_BOTTOM_DP); // left, top, right, bottom
 
-        itemOnClickListener = new OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                HomeItem homeItem = (HomeItem) view.getTag();
-                if (homeItem != null) {
-                    Crittercism.leaveBreadcrumb("HomeFragment:OnClickListener.onClick(): User has selected an item with the following title: configItem.title[" + homeItem.title + "]");
-                    Tracker.getInstance().trackActionForHomePage(homeItem.title); // Analytics
-                }
-
-                if(!homeItem.identifier.isEmpty()) {
-                    activity.selectBundle(homeItem.title, homeItem.identifier);
-                }
-            }};
-
-        // initiate personalized message bar
+        initFromConfiguratorResult();
         findMessageBarViews();
         updateMessageBar();
-
-        // checking for configurator just to be sure, but MainActivity should not allow this
-        // fragment to be loaded if no configurator.
-        if (appConfigurator != null) {
-
-            configurator = appConfigurator.getConfigurator();
-
-            if (configurator != null) {
-                initFromConfiguratorResult();
-            }
-        }
 
         return (configFrameView);
     }
 
     @Override
     public void onConfigurationChanged(Configuration configuration) {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:onConfigurationChanged():"
-                        + " lastOrientation[" + lastOrientation + "]"
-                        + " configuration.orientation[" + configuration.orientation + "]"
-                        + " configurator[" + configurator + "]"
-                        + " this[" + this + "]"
-        );
-
         if (configuration.orientation != lastOrientation) {
 
             lastOrientation = configuration.orientation;
@@ -243,85 +183,63 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     }
 
     private void initFromConfiguratorResult() {
+        Resources resources = getActivity().getResources();
+        deviceInfo = new DeviceInfo(resources);
 
-        if (LOGGING) Log.v(TAG, "HomeFragment:initFromConfiguratorResult():"
-                        + " this[" + this + "]"
-        );
+        AppConfigurator appConfigurator = AppConfigurator.getInstance();
+        screens = appConfigurator.getConfigurator().getScreen();
 
-        while (true) {
+        if (screens == null) return;
 
-            deviceInfo = new DeviceInfo(resources);
+        Screen screen = screens.get(0);
+        items = screen.getItem();
 
-            staplesAppContext = StaplesAppContext.getInstance();
+        HomeItem homeItem = null;
+        List<Area> areas = null;
+        String skuList = null;
 
-            screens = staplesAppContext.getScreen();
+        homeItems.clear();
+        homeItemsA.clear();
+        homeItemsB.clear();
+        homeItemsC.clear();
+        homeItemsD.clear();
 
-            if (LOGGING) Log.v(TAG, "HomeFragment:initFromConfiguratorResult():"
-                            + " screens[" + screens + "]"
-                            + " this[" + this + "]"
-            );
+        if (items == null) return;
 
-            if (screens == null) break; // while (true)
+        for(Item item : items) {
+            areas = item.getArea();
+            skuList = areas.get(0).getSkuList();
 
-            Screen screen = screens.get(0);
-            items = screen.getItem();
+            homeItem = new HomeItem(item.getTitle(), item.getBanner(), skuList, item.getSize());
+            homeItems.add(homeItem);
 
-            HomeItem homeItem = null;
-            List<Area> areas = null;
-            String skuList = null;
+            String size = homeItem.size;
 
-            homeItems.clear();
-            homeItemsA.clear();
-            homeItemsB.clear();
-            homeItemsC.clear();
-            homeItemsD.clear();
+            if (size.equalsIgnoreCase("A")) {
 
-            if (LOGGING) Log.v(TAG, "HomeFragment:initFromConfiguratorResult():"
-                            + " items[" + items + "]"
-                            + " this[" + this + "]"
-            );
+                homeItemsA.add(homeItem);
 
-            if (items == null) break; // while (true)
+            } else if (size.equalsIgnoreCase("B")) {
 
-            for (Item item : items) {
+                homeItemsB.add(homeItem);
 
-                areas = item.getArea();
-                skuList = areas.get(0).getSkuList();
+            } else if (size.equalsIgnoreCase("C")) {
 
-                homeItem = new HomeItem(item.getTitle(), item.getBanner(), skuList, item.getSize());
-                homeItems.add(homeItem);
+                homeItemsC.add(homeItem);
 
-                String size = homeItem.size;
+            } else if (size.equalsIgnoreCase("D")) {
 
-                if (size.equalsIgnoreCase("A")) {
-
-                    homeItemsA.add(homeItem);
-
-                } else if (size.equalsIgnoreCase("B")) {
-
-                    homeItemsB.add(homeItem);
-
-                } else if (size.equalsIgnoreCase("C")) {
-
-                    homeItemsC.add(homeItem);
-
-                } else if (size.equalsIgnoreCase("D")) {
-
-                    homeItemsD.add(homeItem);
-                }
+                homeItemsD.add(homeItem);
             }
+        }
 
-            boolean isPortrait = deviceInfo.isCurrentOrientationPortrait(resources);
+        boolean isPortrait = deviceInfo.isCurrentOrientationPortrait(resources);
 
-            if (isPortrait) {
-                doPortrait();
-            } else {
-                doLandscape();
-            }
-
-            break; // while (true)
-
-        } // while (true)
+        if (isPortrait) {
+            doPortrait();
+        } else {
+            doLandscape();
+        }
     }
 
     @Override
@@ -370,7 +288,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
                         + " this[" + this + "]"
         );
 
-        for (HomeItem homeItem : homeItems) {
+        for(HomeItem homeItem : homeItems) {
 
             String size = homeItem.size;
             int subLayoutHeight = 0;
@@ -398,7 +316,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             // rectangular frame around the content.
             LinearLayout widgetLayout = getWidgetLayout(aItemWidth, subLayoutHeight, MARGIN_BOTTOM_DP, categoryImageView);
             widgetLayout.setTag(homeItem);
-            widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.setOnClickListener(this);
             widgetLayout.addView(categoryImageView);
 
             configScrollLayout.addView(widgetLayout);
@@ -417,7 +335,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         boolean firstSubInContainer = true;
         int configItemNbr = -1;
 
-        for (HomeItem homeItem : homeItemsC) {
+        for(HomeItem homeItem : homeItemsC) {
 
             configItemNbr++;
 
@@ -437,7 +355,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             // rectangular frame around the content.
             LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, MARGIN_ZERO, categoryImageView);
             widgetLayout.setTag(homeItem);
-            widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.setOnClickListener(this);
             widgetLayout.addView(categoryImageView);
 
             subLayoutContainer.addView(widgetLayout);
@@ -511,7 +429,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         // frame around the content.
         LinearLayout widgetLayout = getWidgetLayout(aItemWidth, aItemHeight, MARGIN_ZERO, categoryImageView);
         widgetLayout.setTag(homeItemA);
-        widgetLayout.setOnClickListener(itemOnClickListener);
+        widgetLayout.setOnClickListener(this);
         widgetLayout.addView(categoryImageView);
 
         subLayout.addView(widgetLayout);
@@ -521,7 +439,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
         subLayout.addView(configBCDLayout);
 
-        while (true) {
+        while(true) {
 
             if (homeItemsB.size() >= 2) {
 
@@ -575,7 +493,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         int configItemNdx = 0;
         HomeItem homeItem = null;
 
-        for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
+        for(configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
             homeItem = homeItemsB.get(0);
 
@@ -597,7 +515,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             int marginBottom = (configItemNdx == (nbrListItems - 1)) ? MARGIN_ZERO : MARGIN_BOTTOM_DP;
             LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, marginBottom, categoryImageView);
             widgetLayout.setTag(homeItem);
-            widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.setOnClickListener(this);
             widgetLayout.addView(categoryImageView);
 
             configBCDLayout.addView(widgetLayout);
@@ -624,7 +542,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         int configItemNdx = 0;
         HomeItem homeItem = null;
 
-        for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
+        for(configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
             homeItem = homeItemsC.get(0);
 
@@ -648,7 +566,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             int marginBottom = (configItemNdx == (nbrListItems - 1)) ? MARGIN_ZERO : MARGIN_BOTTOM_DP;
             LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, marginBottom, categoryImageView);
             widgetLayout.setTag(homeItem);
-            widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.setOnClickListener(this);
             widgetLayout.addView(categoryImageView);
 
             subLayoutContainer.addView(widgetLayout);
@@ -667,7 +585,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         int configItemNdx = 0;
         HomeItem homeItem = null;
 
-        for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
+        for(configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
             homeItem = homeItemsD.get(0);
 
@@ -689,7 +607,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             int marginBottom = (configItemNdx == (nbrListItems - 1)) ? MARGIN_ZERO : MARGIN_BOTTOM_DP;
             LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, marginBottom, categoryImageView);
             widgetLayout.setTag(homeItem);
-            widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.setOnClickListener(this);
             widgetLayout.addView(categoryImageView);
 
             configBCDLayout.addView(widgetLayout);
@@ -710,7 +628,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         // frame around the content.
         LinearLayout widgetLayout = null;
 
-        widgetLayout = new LinearLayout(activity);
+        widgetLayout = new LinearLayout(getActivity());
         /* @@@ STUBBED
         widgetLayout.setBackgroundResource(R.drawable.rectangle_frame);
         @@@ STUBBED */
@@ -745,7 +663,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
                 new LinearLayout.LayoutParams(aItemWidth, // width
                         aItemHeight); // height
 
-        LinearLayout configBCDLayout = new LinearLayout(activity);
+        LinearLayout configBCDLayout = new LinearLayout(getActivity());
         configBCDLayout.setLayoutParams(configBCDLayoutParms);
 
         configBCDLayout.setId(configBCDLayout.hashCode());
@@ -770,7 +688,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
                 new LinearLayout.LayoutParams(layoutWidth, // width
                         layoutHeight); // height
 
-        LinearLayout subLayout = new LinearLayout(activity);
+        LinearLayout subLayout = new LinearLayout(getActivity());
 
         subLayout.setLayoutParams(configSubLayoutParms);
         /* @@@ STUBBED
@@ -794,7 +712,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
                         + " this[" + this + "]"
         );
 
-        LinearLayout subLayoutContainer = new LinearLayout(activity);
+        LinearLayout subLayoutContainer = new LinearLayout(getActivity());
         subLayoutContainer.setId(subLayoutContainer.hashCode());
         subLayoutContainer.setOrientation(orientation);
         subLayoutContainer.setMeasureWithLargestChildEnabled(true);
@@ -811,7 +729,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
                         + " this[" + this + "]"
         );
 
-        ImageView imageView = new ImageView(activity);
+        ImageView imageView = new ImageView(getActivity());
         imageView.setId(imageView.hashCode());
         imageView.setAdjustViewBounds(true);
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -861,7 +779,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
         LinearLayout subLayoutContainer = null;
 
-        for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
+        for(configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
             homeItem = homeItemsB.get(0);
 
@@ -884,7 +802,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             // rectangular frame around the content.
             LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
             widgetLayout.setTag(homeItem);
-            widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.setOnClickListener(this);
             widgetLayout.addView(categoryImageView);
 
             subLayoutContainer.addView(widgetLayout);
@@ -911,7 +829,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
         LinearLayout subLayoutContainer = null;
 
-        for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
+        for(configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
             homeItem = homeItemsC.get(0);
 
@@ -936,7 +854,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             // Vertical. Contains selectable content. Used to create a
             // rectangular frame around the content.
             LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, MARGIN_ZERO, categoryImageView);
-            widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.setOnClickListener(this);
             widgetLayout.setTag(homeItem);
             widgetLayout.addView(categoryImageView);
 
@@ -967,7 +885,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         LinearLayout dItemContainer = getSubLayoutContainer(LinearLayout.VERTICAL);
         subLayoutContainer.addView(dItemContainer);
 
-        for (configItemNdx = 0; configItemNdx < lastListItem; configItemNdx++) {
+        for(configItemNdx = 0; configItemNdx < lastListItem; configItemNdx++) {
 
             homeItem = homeItemsD.get(0);
 
@@ -980,7 +898,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             // rectangular frame around the content.
             LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, MARGIN_ZERO, categoryImageView);
             widgetLayout.setTag(homeItem);
-            widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.setOnClickListener(this);
             widgetLayout.addView(categoryImageView);
 
             dItemContainer.addView(widgetLayout, widgetLayoutParms);
@@ -1005,7 +923,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
         LinearLayout subLayoutContainer = null;
 
-        for (configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
+        for(configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
 
             homeItem = homeItemsD.get(0);
 
@@ -1028,7 +946,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             // rectangular frame around the content.
             LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, MARGIN_ZERO, categoryImageView);
             widgetLayout.setTag(homeItem);
-            widgetLayout.setOnClickListener(itemOnClickListener);
+            widgetLayout.setOnClickListener(this);
             widgetLayout.addView(categoryImageView);
 
             subLayoutContainer.addView(widgetLayout);
@@ -1057,15 +975,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         }
     }
 
-    @Override
-    public void onGetConfiguratorResult(Configurator configurator, boolean success, RetrofitError retrofitError) {
-        if(success) {
-            Log.d(TAG, "Successfully retrieved MCS data");
-        } else {
-            Log.d(TAG, retrofitError.getMessage());
-        }
-    }
-
     private class StoreInfoCallback implements Callback<StoreQuery> {
         @Override
         public void success(StoreQuery storeQuery, Response response) {
@@ -1074,7 +983,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
             List<StoreData> storeData = storeQuery.getStoreData();
             // if there are any nearby stores
-            if(storeData != null) {
+            if (storeData != null) {
                 if (!storeData.isEmpty()) {
                     Obj storeObj = storeData.get(0).getObj();
 
@@ -1087,7 +996,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
                     // Get store office hours
                     List<StoreHours> storeHourList = storeObj.getStoreHours();
                     ArrayList<TimeSpan> spans = new ArrayList<TimeSpan>();
-                    for (StoreHours hours : storeHourList) {
+                    for(StoreHours hours : storeHourList) {
                         TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
                         if (span != null) spans.add(span);
                     }
@@ -1129,7 +1038,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         }
     }
 
-    private void findMessageBarViews(){
+    private void findMessageBarViews() {
         login_layout = (LinearLayout) configFrameView.findViewById(R.id.login_layout);
         loginText = (TextView) configFrameView.findViewById(R.id.login_message);
         reward_layout = (LinearLayout) configFrameView.findViewById(R.id.reward_layout);
@@ -1137,15 +1046,17 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         rewardTextView = (TextView) configFrameView.findViewById(R.id.reward);
         storeNameTextView = (TextView) configFrameView.findViewById(R.id.store_name);
         storeStatusTextView = (TextView) configFrameView.findViewById(R.id.store_status);
+
+        login_layout.setOnClickListener(this);
+        reward_layout.setOnClickListener(this);
+        store_wrapper.setOnClickListener(this);
     }
 
-    private void updateMessageBar(){
-        setMessageListeners();
-
-        Access access = Access.getInstance();
+    private void updateMessageBar() {
+                Access access = Access.getInstance();
         // Logged In
         // Note that member can be null if failure to retrieve profile following successful login
-        if(access.isLoggedIn() && !access.isGuestLogin() && ProfileDetails.getMember() != null){
+        if (access.isLoggedIn() && !access.isGuestLogin() && ProfileDetails.getMember() != null) {
             float rewards = 0;
             Member member = ProfileDetails.getMember();
             if (member.getRewardsNumber() != null && member.getRewardDetails() != null) {
@@ -1157,60 +1068,50 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
                 reward_layout.setVisibility(View.VISIBLE);
                 rewardTextView.setText(CurrencyFormat.getFormatter().getCurrency().toString() + (int) rewards);
                 Log.d(TAG, "Rewards from message bar: " + rewards);
-            }
-            else {
+            } else {
                 String loginMessage = MessageFormat.format(getString(R.string.welcome_format), member.getUserName());
                 loginText.setText(loginMessage);
 
                 login_layout.setVisibility(View.VISIBLE);
                 reward_layout.setVisibility(View.GONE);
-
-                login_layout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Tracker.getInstance().trackActionForPersonalizedMessaging("Profile"); // Analytics
-                        MainActivity mainActivity = (MainActivity) getActivity();
-                        mainActivity.selectProfileFragment();
-                    }
-                });
             }
         }
         // Not Logged In
-        else{
+        else {
             loginText.setText(R.string.login_greeting);
             login_layout.setVisibility(View.VISIBLE);
             reward_layout.setVisibility(View.GONE);
         }
     }
 
-    private void setMessageListeners(){
-        login_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    @Override
+    public void onClick(View view) {
+        MainActivity activity = (MainActivity) getActivity();
+
+        switch(view.getId()) {
+            case R.id.login_layout:
                 Tracker.getInstance().trackActionForPersonalizedMessaging("Login"); // Analytics
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.selectLoginFragment();
-            }
-        });
-
-        reward_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                activity.selectLoginFragment();
+                break;
+            case R.id.reward_layout:
                 Tracker.getInstance().trackActionForPersonalizedMessaging("Reward"); // Analytics
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.selectRewardsFragment();
-            }
-        });
-
-        store_wrapper.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                activity.selectRewardsFragment();
+                break;
+            case R.id.store_wrapper:
                 Tracker.getInstance().trackActionForPersonalizedMessaging("Store"); // Analytics
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.selectFragment(DrawerItem.STORE, new StoreFragment(), MainActivity.Transition.NONE);
-            }
-        });
+                activity.selectFragment(DrawerItem.STORE, new StoreFragment(), MainActivity.Transition.NONE);
+                break;
+            default:
+                Object tag = (HomeItem) view.getTag();
+                if (tag instanceof HomeItem) {
+                    HomeItem homeItem = (HomeItem) tag;
+                    Crittercism.leaveBreadcrumb("HomeFragment:OnClickListener.onClick(): User has selected an item with the following title: homeItem.title[" + homeItem.title + "]");
+                    Tracker.getInstance().trackActionForHomePage(homeItem.title); // Analytics
+                    if (!homeItem.identifier.isEmpty()) {
+                        activity.selectBundle(homeItem.title, homeItem.identifier);
+                    }
+                }
+
+        }
     }
-    // End of Personalized Message Bar Methods
-    //////////////////////////////////////////////////////////////////////////////
 }

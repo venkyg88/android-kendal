@@ -32,7 +32,6 @@ import com.apptentive.android.sdk.Apptentive;
 import com.crittercism.app.Crittercism;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.AppConfigurator;
-import com.staples.mobile.common.access.config.StaplesAppContext;
 import com.staples.mobile.common.access.config.model.Configurator;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -160,7 +159,6 @@ public class MainActivity extends Activity
     private LoginHelper loginHelper;
     private boolean initialLoginComplete;
 
-    private AppConfigurator appConfigurator;
     private AlertDialog upgradeDialog;
 
     private ArrayList<QueuedTransaction> queuedTransactions;
@@ -181,17 +179,7 @@ public class MainActivity extends Activity
         //noinspection ResourceType
         setRequestedOrientation(getResources().getInteger(R.integer.screenOrientation));
 
-        appConfigurator = AppConfigurator.getInstance(this, FlavorSpecific.MCS_URL);
-
-        // Note: error handling for no network availability will happen in ensureActiveSession() called from onResume()
-        if (isNetworkAvailable()) {
-
-            boolean freshStart = (bundle == null);
-            prepareMainScreen(freshStart);
-
-            initialLoginComplete = false;
-        }
-
+        prepareMainScreen();
         queuedTransactions = new ArrayList<QueuedTransaction>();
 
         // Support for Urban Airship
@@ -206,6 +194,8 @@ public class MainActivity extends Activity
         manager.setNotificationFactory(new NotifyReceiver.CustomNotificationFactory(this));
         manager.setUserNotificationsEnabled(true);
     }
+
+    // Intent handling for notifications & deep links
 
     @Override
     public void onNewIntent(Intent intent) {
@@ -249,6 +239,8 @@ public class MainActivity extends Activity
         return(false);
     }
 
+    // Activity life cycle methods
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -259,8 +251,9 @@ public class MainActivity extends Activity
     protected void onResume() {
         super.onResume();
 
-        // refresh configurator if we have new one
-        appConfigurator.getConfigurator(this);
+        // load Configurator
+        AppConfigurator appConfigurator = AppConfigurator.getInstance();
+        appConfigurator.loadConfigurator(this, FlavorSpecific.MCS_SERVER, FlavorSpecific.MCS_TAG, this);
 
         registerReceiver(networkConnectivityBroadCastReceiver,
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
@@ -301,7 +294,7 @@ public class MainActivity extends Activity
             if (loginHelper != null) {
                 loginHelper.unregisterLoginCompleteListener(this);
             }
-            StaplesAppContext.getInstance().resetConfigurator(); // need to reset so a fresh network attempt is made, to enable correct handling of redirect error
+// TODO             StaplesAppContext.getInstance().resetConfigurator(); // need to reset so a fresh network attempt is made, to enable correct handling of redirect error
         }
         super.onDestroy();
     }
@@ -451,7 +444,7 @@ public class MainActivity extends Activity
         Apptentive.engage(this, ApptentiveSdk.HOME_CONTAINER_SHOWN_EVENT);
     }
 
-    public void prepareMainScreen(boolean freshStart) {
+    public void prepareMainScreen() {
         // Inflate, init ActionBar
         setContentView(R.layout.main);
         ActionBar actionBar = (ActionBar) findViewById(R.id.action_bar);
@@ -498,17 +491,11 @@ public class MainActivity extends Activity
         // profile info to be loaded before it can be displayed.
     }
 
-    public void onGetConfiguratorResult(Configurator configurator, boolean success, RetrofitError retrofitError) {
-        if (LOGGING) {
-            Log.v(TAG, "MainActivity:AppConfigurator.onGetConfiguratorResult():"
-                    + " success[" + success + "]"
-                    + " retrofitError[" + retrofitError + "]"
-                    + " configurator[" + configurator + "]"
-                    + " this[" + this + "]");
-        }
-        // note that retrofitError may be non-null even if success==true, since config may have been
-        // successfully drawn from a persisted location following a failed network attempt.
-        // Regardless of success, if retrofitError not null, check for the redirect error condition
+    @Override
+    public void onGetConfiguratorResult(AppConfigurator.Status status, RetrofitError retrofitError) {
+        Log.d(TAG, "AppConfigurator.load "+status);
+
+        // Show errors
         if (retrofitError != null) {
             ApiError apiError = ApiError.getApiError(retrofitError);
             if (apiError.isRedirectionError()) {
@@ -517,55 +504,56 @@ public class MainActivity extends Activity
             }
         }
 
-        // if configurator successfully retrieved (from network OR persisted file)
-        if (success) {
-
-            UpgradeManager upgradeManager = new UpgradeManager(this);
-            UpgradeManager.UPGRADE_STATUS upgradeStatus = upgradeManager.getUpgradeStatus();
-            String upgradeMsg = upgradeManager.getUpgradeMsg();
-            String upgradeUrl = upgradeManager.getUpgradeUrl();
-
-            if (upgradeStatus == UPGRADE_STATUS.FORCE_UPGRADE) {
-
-                doForcedUpgrade(upgradeMsg, upgradeUrl);
-
-            } else {
-
-                loginHelper = new LoginHelper(this);
-                loginHelper.registerLoginCompleteListener(this);
-
-                // do login based on persisted cache if available
-                loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
-                    @Override
-                    public void onProfileRefresh(Member member, String errMsg) {
-                        initialLoginComplete = true;
-                        showMainScreen();
-                    }
-                });
-
-                // initialize analytics
-                new AdobeTracker(this.getApplicationContext(), configurator.getAppContext().isDev()); // allow logging only for dev environment
-                // The call in onResume to enable tracking will be ignored during application creation
-                // because the configurator object is not yet available. Therefore, enable here.
-                AdobeTracker.enableTracking(true);
-
-                // set default zip code for now, update it as it changes (via LocationFinder below)
-                Tracker.getInstance().setZipCode("02139");
-
-                // initialize location finder (this will update zip code if possible)
-                LocationFinder.getInstance(this);
-
-                // initialize Kount fraud detection
-                KountManager.getInstance(this);
-
-                if (upgradeStatus == UPGRADE_STATUS.SUGGEST_UPGRADE) {
-                    doOptionalUpgrade(upgradeMsg, upgradeUrl);
-                }
-            }
-        } else { // can't get configurator from network or from persisted file
-
+        if (status==AppConfigurator.Status.FAILURE) {
             showErrorDialog(R.string.error_server_connection, true); // setting fatal=true which will close the app
+            return;
         }
+
+        UpgradeManager upgradeManager = new UpgradeManager(this);
+        UpgradeManager.UPGRADE_STATUS upgradeStatus = upgradeManager.getUpgradeStatus();
+        String upgradeMsg = upgradeManager.getUpgradeMsg();
+        String upgradeUrl = upgradeManager.getUpgradeUrl();
+
+        if (upgradeStatus == UPGRADE_STATUS.FORCE_UPGRADE) {
+            doForcedUpgrade(upgradeMsg, upgradeUrl);
+            return;
+        }
+
+        if (status==AppConfigurator.Status.STARTUP ||
+            status==AppConfigurator.Status.CHANGED ||
+            status== AppConfigurator.Status.FALLBACK) {
+            loginHelper = new LoginHelper(this);
+            loginHelper.registerLoginCompleteListener(this);
+
+            // do login based on persisted cache if available
+            loginHelper.doCachedLogin(new ProfileDetails.ProfileRefreshCallback() {
+                @Override
+                public void onProfileRefresh(Member member, String errMsg) {
+                    initialLoginComplete = true;
+                    showMainScreen();
+                }
+            });
+
+            // initialize analytics
+            boolean dev = AppConfigurator.getInstance().getConfigurator().getAppContext().isDev();
+            new AdobeTracker(this.getApplicationContext(), dev); // allow logging only for dev environment
+            // The call in onResume to enable tracking will be ignored during application creation
+            // because the configurator object is not yet available. Therefore, enable here.
+            AdobeTracker.enableTracking(true);
+
+            // set default zip code for now, update it as it changes (via LocationFinder below)
+            Tracker.getInstance().setZipCode("02139");
+
+            // initialize location finder (this will update zip code if possible)
+            LocationFinder.getInstance(this);
+
+            // initialize Kount fraud detection
+            KountManager.getInstance(this);
+
+            if (upgradeStatus == UPGRADE_STATUS.SUGGEST_UPGRADE) {
+                doOptionalUpgrade(upgradeMsg, upgradeUrl);
+            }
+        } else showMainScreen();
     }
 
     private void doOptionalUpgrade(String upgradeMsg, final String upgradeUrl) {
