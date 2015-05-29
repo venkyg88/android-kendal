@@ -29,8 +29,9 @@
 -	ic_profile_black		32	32	#333333	staples/profile
 -	ic_radio_button_off_white_24dp	24	24	#ffffff	material/toggle/ic_radio_button_off_48px
 -	ic_radio_button_on_white_24dp	24	24	#ffffff	material/toggle/ic_radio_button_on_48px
--	ic_rewards_black		32	32	#333333 staples/rewards
 -	ic_remove_green			32	32	#6fab04	material/content/ic_remove_48px
+-	ic_rewards_black		32	32	#333333 staples/rewards
+-	ic_rewards_badge		64	56	-	staples/rewards_badge
 -	ic_search_black			32	32	#333333	material/action/ic_search_48px
 -	ic_search_black			32	32	#333333	material/action/ic_search_48px
 -	ic_shopping_cart_black		32	32	#333333	staples/staples_shopping_cart
