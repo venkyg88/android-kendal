@@ -75,8 +75,10 @@
     <string name="no_store">Find a store</string>
 
     <!--cart, coupon/reward, checkout -->
+    <string name="add_coupon">Add</string>
     <string name="add">Add to cart</string>
     <string name="view">Use in store</string>
+    <string name="added_to_cart">Added to cart</string>
     <string name="cartitem_qty_label">Qty</string>
     <string name="add_to_cart">ADD TO CART</string>
     <string name="add_another">Add Another</string>

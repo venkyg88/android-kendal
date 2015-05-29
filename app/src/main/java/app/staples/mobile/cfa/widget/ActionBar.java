@@ -22,7 +22,7 @@ public class ActionBar extends LinearLayout {
         ABOUT    (true,  false, false, false, false, false, true,  false, false, R.string.about_title),
         ADDCARD  (true,  false, false, false, false, false, false, false, false, R.string.add_card_title),
         ADDRESS  (true,  false, false, false, true,  false, true,  false, false, R.string.address_title),
-        BARCODE  (true,  false, false, false, false, false, false, false, false, 0),
+        BARCODE  (false,  false, false, false, false, false, false, false, true, 0),
         BROWSE   (true,  false, false, true,  true,  false, true,  false, false, R.string.browse_title),
         BUNDLE   (true,  false, false, true,  true,  false, true,  false, false, 0),
         CART     (true,  false, false, false, false, true,  false, false, false, R.string.cart_title),

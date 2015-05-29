@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/staples_white">
+    android:background="@color/staples_off_white">
 
     <!--rewards membership card-->
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/rewards_card_height"
         android:layout_gravity="center_horizontal"
         android:layout_margin="@dimen/verticalspacing_24dp"
         app:cardCornerRadius="8dp"
@@ -18,29 +18,40 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="@dimen/verticalspacing_8dp"
-                android:paddingBottom="@dimen/verticalspacing_16dp"
-                android:paddingLeft="@dimen/verticalspacing_56dp"
+                android:orientation="horizontal"
                 android:background="@color/staples_red">
-                <TextView
-                    android:id="@+id/member_name"
+                <ImageView
+                    android:id="@+id/rewards_badge_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:textColor="@color/staples_white"
-                    android:textSize="@dimen/fontsize_18sp"/>
-                <TextView
-                    android:id="@+id/rewards_number"
+                    android:paddingLeft="@dimen/margin_16dp"
+                    android:src="@drawable/ic_rewards_badge"/>
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/staples_white"
-                    android:layout_gravity="center_horizontal"
-                    android:textSize="@dimen/fontsize_24sp"/>
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/verticalspacing_16dp"
+                    android:paddingBottom="@dimen/verticalspacing_16dp"
+                    android:paddingRight="@dimen/verticalspacing_16dp"
+                    android:paddingLeft="@dimen/progress_bar_width">
+                    <TextView
+                        android:id="@+id/member_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@color/staples_white"
+                        android:textSize="@dimen/fontsize_18sp"/>
+                    <TextView
+                        android:id="@+id/rewards_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/staples_white"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="@dimen/fontsize_24sp"/>
+                </LinearLayout>
             </LinearLayout>
             <TextView
                 android:id="@+id/member_duration"
@@ -60,7 +71,10 @@
                 android:layout_height="@dimen/barcode_height"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center"
-                android:padding="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="@dimen/verticalspacing_24dp"
+                android:paddingBottom="@dimen/verticalspacing_24dp"
                 app:maxScale="2dp"/>
 
         </LinearLayout>
@@ -71,7 +85,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:id="@android:id/tabhost">
+        android:id="@android:id/tabhost"
+        android:background="@color/staples_white">
 
         <LinearLayout
             android:layout_width="fill_parent"

@@ -10,6 +10,7 @@ import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -38,7 +39,6 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
     private static final String TAG = RewardsFragment.class.getSimpleName();
 
     private RewardAdapter adapter;
-    private String confirmationMsg;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -177,8 +177,6 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
         fillRewardAdapter(getView()); // note that error may occur on cart refresh rather than on coupon add/delete, so need to update rewards regardless
         if (errMsg != null) {
             activity.showErrorDialog(errMsg, false);
-        } else {
-            activity.showNotificationBanner(confirmationMsg);
         }
     }
 
@@ -192,9 +190,13 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
             case R.id.reward_add_button:
                 tag = view.getTag();
                 if (tag instanceof Reward) {
-                    activity.showProgressIndicator();
-                    confirmationMsg = getResources().getString(R.string.rewards_addtocart_confirmation);
-                    CartApiManager.addCoupon(((Reward) tag).getCode(), this);
+                    Reward reward = (Reward)view.getTag();
+                   if(!reward.isIsApplied()) {
+                        activity.showProgressIndicator();
+                        CartApiManager.addCoupon(reward.getCode(), this);
+                    } else {
+                        activity.selectShoppingCart();
+                    }
                 }
                 break;
             case R.id.reward_view_button:
@@ -204,15 +206,6 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
                     BarcodeFragment fragment = new BarcodeFragment();
                     fragment.setArguments("Coupon", reward.getCode(), reward.getAmount(), reward.getExpiryDate());
                     activity.selectFragment(DrawerItem.BARCODE, fragment, MainActivity.Transition.RIGHT);
-
-                }
-                break;
-            case R.id.reward_remove_button:
-                tag = view.getTag();
-                if (tag instanceof Reward) {
-                    activity.showProgressIndicator();
-                    confirmationMsg = getResources().getString(R.string.rewards_removefromcart_confirmation);
-                    CartApiManager.deleteCoupon(((Reward) tag).getCode(), this);
                 }
                 break;
         }

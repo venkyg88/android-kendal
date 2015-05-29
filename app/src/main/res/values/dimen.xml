@@ -76,8 +76,14 @@
 
     <dimen name="div_line">1px</dimen>
 
-    <dimen name="barcode_height">64dp</dimen>
+    <dimen name="barcode_height">96dp</dimen>
     <dimen name="barcode_safety">16dp</dimen>
+
+    <dimen name="coupon_button_height">48dp</dimen>
+    <dimen name="coupon_button_width">136dp</dimen>
+
+    <dimen name="rewards_card_height">196dp</dimen>
+    <dimen name="rewards_card_width">320dp</dimen>
 
     <!--Home screen-->
     <dimen name="home_store_wrapper_padding">8dp</dimen>
