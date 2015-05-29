@@ -5,51 +5,53 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_gravity="center">
-
     <android.support.v7.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         app:cardCornerRadius="4dp"
         app:cardElevation="4dp">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="@dimen/verticalspacing_16dp"
-                android:paddingBottom="@dimen/verticalspacing_16dp"
-                android:paddingLeft="@dimen/verticalspacing_24dp"
+                android:orientation="horizontal"
                 android:background="@color/staples_red">
-
-                <TextView
-                    android:id="@+id/reward_coupon_label"
+                <ImageView
                     android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_rewards_badge"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/staples_white"
-                    android:textSize="@dimen/fontsize_18sp"
-                    android:text="@string/rewards_list_tabtitle"/>
-
-                <TextView
-                    android:id="@+id/reward_coupon_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/fontsize_18sp"
-                    android:textColor="@color/staples_white"/>
-
-                <TextView
-                    android:id="@+id/reward_coupon_expire"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/fontsize_12sp"
-                    android:textColor="@color/staples_white"/>
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/verticalspacing_16dp"
+                    android:paddingBottom="@dimen/verticalspacing_16dp"
+                    android:paddingLeft="@dimen/verticalspacing_24dp">
+                    <TextView
+                        android:id="@+id/reward_coupon_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/staples_white"
+                        android:textSize="@dimen/fontsize_18sp"
+                        android:text="@string/rewards_list_tabtitle"/>
+                    <TextView
+                        android:id="@+id/reward_coupon_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/fontsize_18sp"
+                        android:textColor="@color/staples_white"/>
+                    <TextView
+                        android:id="@+id/reward_coupon_expire"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/fontsize_12sp"
+                        android:textColor="@color/staples_white"/>
+                </LinearLayout>
             </LinearLayout>
-
             <TextView
                 android:id="@+id/rewards_coupon_text_label"
                 android:layout_width="wrap_content"
@@ -61,7 +63,6 @@
                 android:paddingRight="@dimen/margin_24dp"
                 android:layout_marginTop="@dimen/verticalspacing_24dp"
                 android:layout_marginBottom="@dimen/verticalspacing_24dp"/>
-
             <com.staples.mobile.common.widget.Code128CBarcode
                 android:id="@+id/barcode"
                 android:layout_width="wrap_content"
@@ -70,7 +71,6 @@
                 android:paddingLeft="@dimen/margin_24dp"
                 android:paddingRight="@dimen/margin_24dp"
                 app:maxScale="2dp"/>
-
             <TextView
                 android:id="@+id/caption"
                 android:layout_width="wrap_content"
