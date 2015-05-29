@@ -46,6 +46,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <!-- Support for Adobe Omniture Analytic -->
+        <receiver android:name="app.staples.mobile.cfa.analytics.GPBroadcastReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
         <!-- Support for Urban Airship TODO Enable Urban Airship when we're ready
         <receiver android:name=".notify.NotifyReceiver"
                   android:exported="false">

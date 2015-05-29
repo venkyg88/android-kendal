@@ -38,7 +38,7 @@ android {
             }
         }
         dev {
-            versionName   calculateVersionName()+"-"+getKickoff()+"-"+"dev"
+            versionName   calculateVersionName()+"-"+getKickoff()+"-"+getEnv()
             buildTypes {
                 debug {
                     minifyEnabled false

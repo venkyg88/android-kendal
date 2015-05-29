@@ -27,7 +27,10 @@ ext {
         return ( System.env.kickoff == null ) ? now  : System.env.kickoff
     }
     getEnv =  {
-        return ( System.env.environment == '' ) ? "developer"  : System.env.environment
+        if (System.env.environment == null) {
+            return "developer_" + System.getenv("USER");
+        }else {}
+       return System.env.environment;
     }
 }
 
@@ -47,7 +50,7 @@ Properties readVersion() {
     if(!version['major']) version['major'] = "4"
     if(!version['minor']) version['minor'] = "0"
     if(!version['patch']) version['patch'] = "0"
-    if(!version['build']) version['build'] = "33"
+    if(!version['build']) version['build'] = "41"
     return version
 }
 
