@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.apptentive.android.sdk.Apptentive;
 import com.crittercism.app.Crittercism;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.config.StaplesAppContext;
+import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.config.model.Api;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.Search;
@@ -143,8 +143,7 @@ public class SearchFragment extends Fragment implements Callback<SearchResult>, 
         fetchSort = displaySort;
 
         EasyOpenApi2 easyOpenApi2 = Access.getInstance().getEasyOpenApi2(false);
-        Api easy2API = StaplesAppContext.getInstance().getApiByName(StaplesAppContext.EASYOPEN2);
-        String version = easy2API.getVersion();
+        String version = AppConfigurator.getInstance().findApiVersionByName(Access.EASYOPEN2);
         easyOpenApi2.searchResult(version, keyword, page, MAXFETCH, fetchSort.intParam, null, this);
     }
 

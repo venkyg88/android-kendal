@@ -8,8 +8,8 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.crittercism.app.Crittercism;
-
-import com.staples.mobile.common.access.config.StaplesAppContext;
+import com.staples.mobile.common.access.config.AppConfigurator;
+import com.staples.mobile.common.access.config.model.Configurator;
 import com.staples.mobile.common.access.config.model.Force;
 import com.staples.mobile.common.access.config.model.Suggest;
 import com.staples.mobile.common.access.config.model.Update;
@@ -78,8 +78,9 @@ public class UpgradeManager {
 
         upgradeStatus = UPGRADE_STATUS.NOT_NECESSARY;
 
-        StaplesAppContext staplesAppContext = StaplesAppContext.getInstance();
-        update = staplesAppContext.getUpdate();
+        AppConfigurator appConfigurator = AppConfigurator.getInstance();
+        Configurator configurator = appConfigurator.getConfigurator();
+        update = configurator.getUpdate();
 
         int appVersionCode = 0;
         String thresholdForceStr = "";
