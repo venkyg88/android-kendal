@@ -3,42 +3,22 @@
     android:id="@+id/coupon_item_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp"
     android:orientation="vertical">
 
-    <LinearLayout android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:orientation="horizontal">
-        <TextView
-            android:id="@+id/coupon_amount"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/verticalspacing_16dp"
-            android:textSize="@dimen/fontsize_16sp"
-            android:textColor="@color/staples_black"/>
-
-<!-- Expand button not implemented yet
-        <ImageView
-            android:id="@+id/reward_expand_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginLeft="8dp"
-            android:src="@drawable/ic_expand_more_black"
-            android:visibility="visible"/>
-Expand button not implemented yet -->
-
-    </LinearLayout>
-
+    <TextView
+        android:id="@+id/coupon_amount"
+        android:paddingTop="@dimen/verticalspacing_24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/verticalspacing_16dp"
+        android:textSize="@dimen/fontsize_16sp"
+        android:textColor="@color/staples_black"/>
 
     <TextView
         android:id="@+id/coupon_expire"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="@dimen/verticalspacing_16dp"
         android:textSize="@dimen/fontsize_16sp"
@@ -48,40 +28,30 @@ Expand button not implemented yet -->
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:orientation="horizontal"
-        android:gravity="center_horizontal"
         android:layout_marginTop="@dimen/verticalspacing_24dp"
-        android:layout_marginLeft="@dimen/verticalspacing_24dp"
-        android:layout_marginRight="@dimen/verticalspacing_24dp">
-        <Button
-            android:id="@+id/reward_add_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right|center_vertical"
-            android:background="@drawable/rounded_corner_green"
-            android:layout_weight="1"
-            android:text="@string/add"
-            android:textSize="@dimen/fontsize_16sp"
-            android:textColor="@color/staples_white"
-            />
+        android:layout_marginLeft="@dimen/margin_16dp"
+        android:layout_marginRight="@dimen/margin_16dp"
+        android:layout_marginBottom="@dimen/verticalspacing_24dp">
         <Button
             android:id="@+id/reward_view_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="right|center_vertical"
-            android:layout_marginLeft="8dp"
-            android:background="@drawable/rounded_corner_green"
+            android:layout_width="@dimen/coupon_button_width"
+            android:layout_height="@dimen/coupon_button_height"
+            android:background="@drawable/rounded_corner_green_stroke"
             android:text="@string/view"
-            android:textSize="@dimen/fontsize_16sp"
+            android:textSize="@dimen/fontsize_18sp"
+            android:textColor="@color/staples_green"/>
+        <Button
+            android:id="@+id/reward_add_button"
+            android:layout_width="@dimen/coupon_button_width"
+            android:layout_height="@dimen/coupon_button_height"
+            android:layout_marginLeft="@dimen/margin_16dp"
+            android:background="@drawable/rounded_corner_green"
+            android:text="@string/add"
+            android:textSize="@dimen/fontsize_18sp"
             android:textColor="@color/staples_white"/>
     </LinearLayout>
-    <!--REMOVE button (only used in rewards dashboard)-->
-    <ImageView
-        android:id="@+id/reward_remove_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|center_vertical"
-        android:layout_marginLeft="8dp"
-        android:src="@drawable/ic_close_black"
-        android:visibility="gone"/>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/div_line"
+        android:background="@color/staples_dark_gray"/>
 </LinearLayout>

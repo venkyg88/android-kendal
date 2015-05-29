@@ -4,11 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_gravity="center">
+    android:background="@color/staples_black">
     <android.support.v7.widget.CardView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="@dimen/margin_16dp"
+        android:layout_marginRight="@dimen/margin_16dp"
+        android:layout_marginTop="@dimen/verticalspacing_48dp"
         app:cardCornerRadius="4dp"
         app:cardElevation="4dp">
         <LinearLayout
@@ -18,39 +20,30 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/verticalspacing_16dp"
+                android:paddingBottom="@dimen/verticalspacing_16dp"
+                android:paddingLeft="@dimen/verticalspacing_24dp"
                 android:background="@color/staples_red">
-                <ImageView
+                <TextView
+                    android:id="@+id/reward_coupon_label"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_rewards_badge"/>
-                <LinearLayout
-                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingTop="@dimen/verticalspacing_16dp"
-                    android:paddingBottom="@dimen/verticalspacing_16dp"
-                    android:paddingLeft="@dimen/verticalspacing_24dp">
-                    <TextView
-                        android:id="@+id/reward_coupon_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/staples_white"
-                        android:textSize="@dimen/fontsize_18sp"
-                        android:text="@string/rewards_list_tabtitle"/>
-                    <TextView
-                        android:id="@+id/reward_coupon_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/fontsize_18sp"
-                        android:textColor="@color/staples_white"/>
-                    <TextView
-                        android:id="@+id/reward_coupon_expire"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/fontsize_12sp"
-                        android:textColor="@color/staples_white"/>
-                </LinearLayout>
+                    android:textColor="@color/staples_white"
+                    android:textSize="@dimen/fontsize_18sp"
+                    android:text="@string/rewards_list_tabtitle"/>
+                <TextView
+                    android:id="@+id/reward_coupon_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/fontsize_18sp"
+                    android:textColor="@color/staples_white"/>
+                <TextView
+                    android:id="@+id/reward_coupon_expire"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/fontsize_12sp"
+                    android:textColor="@color/staples_white"/>
             </LinearLayout>
             <TextView
                 android:id="@+id/rewards_coupon_text_label"
@@ -59,6 +52,7 @@
                 android:text="@string/rewards_coupon_text_label"
                 android:textSize="@dimen/fontsize_16sp"
                 android:textColor="@color/staples_dark_gray"
+                android:layout_gravity="center"
                 android:paddingLeft="@dimen/margin_24dp"
                 android:paddingRight="@dimen/margin_24dp"
                 android:layout_marginTop="@dimen/verticalspacing_24dp"
