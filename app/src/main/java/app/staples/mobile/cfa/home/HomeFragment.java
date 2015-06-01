@@ -194,10 +194,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         Screen screen = screens.get(0);
         items = screen.getItem();
 
-        HomeItem homeItem = null;
-        List<Area> areas = null;
-        String skuList = null;
-
         homeItems.clear();
         homeItemsA.clear();
         homeItemsB.clear();
@@ -207,10 +203,17 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         if (items == null) return;
 
         for(Item item : items) {
-            areas = item.getArea();
-            skuList = areas.get(0).getSkuList();
+            // Get "skuList" (BIXXXX or CLXXXX)
+            String skuList = null;
+            List<Area> areas = item.getArea();
+            if (areas!=null && areas.size()>0) {
+                Area area = areas.get(0);
+                if (area!=null) {
+                    skuList = area.getSkuList();
+                }
+            }
 
-            homeItem = new HomeItem(item.getTitle(), item.getBanner(), skuList, item.getSize());
+            HomeItem homeItem = new HomeItem(item.getTitle(), item.getBanner(), skuList, item.getSize());
             homeItems.add(homeItem);
 
             String size = homeItem.size;

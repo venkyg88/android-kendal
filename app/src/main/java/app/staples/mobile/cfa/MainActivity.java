@@ -294,16 +294,18 @@ public class MainActivity extends Activity
             if (loginHelper != null) {
                 loginHelper.unregisterLoginCompleteListener(this);
             }
-// TODO             StaplesAppContext.getInstance().resetConfigurator(); // need to reset so a fresh network attempt is made, to enable correct handling of redirect error
         }
         super.onDestroy();
     }
 
     private boolean isNetworkAvailable() {
-        // first check for network connectivity
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        return (networkInfo != null && networkInfo.isConnected());
+        NetworkInfo[] infos = cm.getAllNetworkInfo();
+        if (infos==null) return(false);
+        for(NetworkInfo info : infos) {
+            if (info.isConnected()) return(true);
+        }
+        return(false);
     }
 
     private void showNetworkSettingsDialog() {
@@ -519,9 +521,10 @@ public class MainActivity extends Activity
             return;
         }
 
-        if (status==AppConfigurator.Status.STARTUP ||
+        if (!initialLoginComplete ||
+            status==AppConfigurator.Status.STARTUP ||
             status==AppConfigurator.Status.CHANGED ||
-            status== AppConfigurator.Status.FALLBACK) {
+            status==AppConfigurator.Status.FALLBACK) {
             loginHelper = new LoginHelper(this);
             loginHelper.registerLoginCompleteListener(this);
 
