@@ -111,6 +111,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+
         homeItems = new ArrayList<HomeItem>();
         homeItemsA = new ArrayList<HomeItem>();
         homeItemsB = new ArrayList<HomeItem>();
@@ -132,6 +133,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         noPhoto = ResourcesCompat.getDrawable(resources, R.drawable.no_photo, null);
 
         configFrameView = layoutInflater.inflate(R.layout.home_fragment, container, false);
+        configFrameView.setTag(this);
 
         configScrollLayout = (LinearLayout) configFrameView.findViewById(R.id.configScrollLayout);
 
@@ -143,9 +145,10 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
         subLayoutContainerLayoutParms.setMargins(MARGIN_LEFT_DP, MARGIN_TOP_DP, MARGIN_RIGHT_DP, MARGIN_BOTTOM_DP); // left, top, right, bottom
 
-        initFromConfiguratorResult();
         findMessageBarViews();
         updateMessageBar();
+
+        refreshPage();
 
         return (configFrameView);
     }
@@ -153,14 +156,8 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     @Override
     public void onConfigurationChanged(Configuration configuration) {
         if (configuration.orientation != lastOrientation) {
-
             lastOrientation = configuration.orientation;
-
-            FrameLayout messageLayout = (FrameLayout) configScrollLayout.getChildAt(0);
-            configScrollLayout.removeAllViews();
-            configScrollLayout.addView(messageLayout);
-
-            initFromConfiguratorResult();
+            refreshPage();
         }
     }
 
@@ -182,7 +179,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         }
     }
 
-    private void initFromConfiguratorResult() {
+    public void refreshPage() {
         Resources resources = getActivity().getResources();
         deviceInfo = new DeviceInfo(resources);
 
@@ -190,6 +187,12 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         screens = appConfigurator.getConfigurator().getScreen();
 
         if (screens == null) return;
+
+        // Ugly hack to remove old views
+        int n = configScrollLayout.getChildCount();
+        for(int i=n-1;i>0;i--) {
+            configScrollLayout.removeViewAt(i);
+        }
 
         Screen screen = screens.get(0);
         items = screen.getItem();
@@ -203,17 +206,18 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         if (items == null) return;
 
         for(Item item : items) {
-            // Get "skuList" (BIXXXX or CLXXXX)
-            String skuList = null;
+            // Get identifier
+            String identifier = null;
             List<Area> areas = item.getArea();
             if (areas!=null && areas.size()>0) {
                 Area area = areas.get(0);
                 if (area!=null) {
-                    skuList = area.getSkuList();
+                    identifier = area.getSkuList();
+                    if (identifier!=null && identifier.isEmpty()) identifier = null;
                 }
             }
 
-            HomeItem homeItem = new HomeItem(item.getTitle(), item.getBanner(), skuList, item.getSize());
+            HomeItem homeItem = new HomeItem(item.getTitle(), item.getBanner(), identifier, item.getSize());
             homeItems.add(homeItem);
 
             String size = homeItem.size;
@@ -270,23 +274,23 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         dItemHeight = aItemHeight / 4;  // quarter the height of an A item.
 
         if (homeItemsA.size() > 0) {
-            doConfigItemsABDPort(homeItemsA);
+            doHomeItemsABDPort(homeItemsA);
         }
         if (homeItemsB.size() > 0) {
-            doConfigItemsABDPort(homeItemsB);
+            doHomeItemsABDPort(homeItemsB);
         }
         if (homeItemsC.size() > 0) {
-            doConfigItemsCPort();
+            doHomeItemsCPort();
         }
         if (homeItemsD.size() > 0) {
-            doConfigItemsABDPort(homeItemsD);
+            doHomeItemsABDPort(homeItemsD);
         }
 
     } // doPortrait()
 
-    private void doConfigItemsABDPort(List<HomeItem> homeItems) {
+    private void doHomeItemsABDPort(List<HomeItem> homeItems) {
 
-        if (LOGGING) Log.v(TAG, "HomeFragment:doConfigItemsABDPort():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:doHomeItemsABDPort():"
                         + " configItems[" + homeItems + "]"
                         + " this[" + this + "]"
         );
@@ -325,11 +329,11 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             configScrollLayout.addView(widgetLayout);
         }
 
-    } // doConfigItemsABDPort()
+    } // doHomeItemsABDPort()
 
-    private void doConfigItemsCPort() {
+    private void doHomeItemsCPort() {
 
-        if (LOGGING) Log.v(TAG, "HomeFragment:doConfigItemsCPort():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:doHomeItemsCPort():"
                         + " this[" + this + "]"
         );
 
@@ -364,7 +368,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             subLayoutContainer.addView(widgetLayout);
         }
 
-    } // doConfigItemsCPort()
+    } // doHomeItemsCPort()
 
     private void doLandscape() {
 
@@ -398,16 +402,16 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         );
 
         if (homeItemsA.size() > 0) {
-            doConfigItemsALand();
+            doHomeItemsALand();
         } else {
             doConfigItemsLand();
         }
 
     } // doLandscape()
 
-    private void doConfigItemsALand() {
+    private void doHomeItemsALand() {
 
-        if (LOGGING) Log.v(TAG, "HomeFragment:doConfigItemsALand():"
+        if (LOGGING) Log.v(TAG, "HomeFragment:doHomeItemsALand():"
                         + " this[" + this + "]"
         );
 
@@ -483,7 +487,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
         doConfigItemsLand();
 
-    } // doConfigItemsALand()
+    } // doHomeItemsALand()
 
     private void fillAWithB(LinearLayout configBCDLayout, int maxItems) {
 
@@ -1105,16 +1109,15 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
                 activity.selectFragment(DrawerItem.STORE, new StoreFragment(), MainActivity.Transition.NONE);
                 break;
             default:
-                Object tag = (HomeItem) view.getTag();
+                Object tag = view.getTag();
                 if (tag instanceof HomeItem) {
                     HomeItem homeItem = (HomeItem) tag;
                     Crittercism.leaveBreadcrumb("HomeFragment:OnClickListener.onClick(): User has selected an item with the following title: homeItem.title[" + homeItem.title + "]");
                     Tracker.getInstance().trackActionForHomePage(homeItem.title); // Analytics
-                    if (!homeItem.identifier.isEmpty()) {
+                    if (homeItem.identifier!=null) {
                         activity.selectBundle(homeItem.title, homeItem.identifier);
                     }
                 }
-
         }
     }
 }

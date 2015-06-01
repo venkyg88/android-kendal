@@ -99,19 +99,13 @@ public class  WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapt
         } else {
             vh.priceSticker.setText("$" + item.finalPrice);
             vh.pricingUnit.setText(item.unit);
-
         }
 
         if (item.inStoreOnly) {
             vh.availability.setVisibility(View.VISIBLE);
             vh.action.setVisibility(View.GONE);
             vh.whirlie.setVisibility(View.GONE);
-        }
-        else if( item.buyNow == ""){
-            vh.availability.setVisibility(View.GONE);
-            vh.action.setVisibility(View.GONE);
-            vh.whirlie.setVisibility(View.GONE);
-        }  else if (item.identifier==null) {
+        } else if (item.buyNow==null || item.identifier==null) {
             vh.availability.setVisibility(View.GONE);
             vh.action.setVisibility(View.GONE);
             vh.whirlie.setVisibility(View.GONE);
@@ -134,7 +128,6 @@ public class  WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapt
             Item item = new Item();
             item.title = data.getTitle();
             item.description = data.getDescription();
-            item.buyNow = data.getBuynow();
             if (item.description==null || item.description.isEmpty()) {
                 item.description = item.title;
             }
@@ -157,6 +150,8 @@ public class  WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapt
             }
             item.imageUrl = data.getImage();
             item.inStoreOnly = data.getFineprint().contains("In store only");
+            item.buyNow = data.getBuynow();
+            if (item.buyNow!=null && item.buyNow.isEmpty()) item.buyNow = null;
             array.add(item);
         }
         notifyDataSetChanged();

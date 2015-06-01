@@ -557,6 +557,20 @@ public class MainActivity extends Activity
                 doOptionalUpgrade(upgradeMsg, upgradeUrl);
             }
         } else showMainScreen();
+
+        // Refresh HomeFragment if necessary
+        if (status==AppConfigurator.Status.CHANGED) {
+            ViewGroup content = (ViewGroup) findViewById(R.id.content);
+            if (content!=null && content.getChildCount()>0) {
+                View page = content.getChildAt(0);
+                if (page!=null) {
+                    Object tag = page.getTag();
+                    if (tag instanceof HomeFragment) {
+                        ((HomeFragment) tag).refreshPage();
+                    }
+                }
+            }
+        }
     }
 
     private void doOptionalUpgrade(String upgradeMsg, final String upgradeUrl) {
