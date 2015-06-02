@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,6 +26,7 @@ import com.staples.mobile.common.access.channel.model.store.StoreHours;
 import com.staples.mobile.common.access.channel.model.store.StoreQuery;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.config.model.Area;
+import com.staples.mobile.common.access.config.model.Configurator;
 import com.staples.mobile.common.access.config.model.Item;
 import com.staples.mobile.common.access.config.model.Screen;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -78,10 +78,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     private List<HomeItem> homeItemsB;
     private List<HomeItem> homeItemsC;
     private List<HomeItem> homeItemsD;
-
-    private List<Screen> screens;
-
-    private List<Item> items;
 
     private Picasso picasso;
     private Drawable noPhoto;
@@ -183,10 +179,15 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         Resources resources = getActivity().getResources();
         deviceInfo = new DeviceInfo(resources);
 
+        // Get list of items (safely)
         AppConfigurator appConfigurator = AppConfigurator.getInstance();
-        screens = appConfigurator.getConfigurator().getScreen();
-
-        if (screens == null) return;
+        Configurator configurator = appConfigurator.getConfigurator();
+        if (configurator==null) return;
+        List<Screen> screens = configurator.getScreen();
+        if (screens==null || screens.size()==0) return;
+        Screen screen = screens.get(0);
+        List<Item> items = screen.getItem();
+        if (items==null || items.size()==0) return;
 
         // Ugly hack to remove old views
         int n = configScrollLayout.getChildCount();
@@ -194,19 +195,14 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             configScrollLayout.removeViewAt(i);
         }
 
-        Screen screen = screens.get(0);
-        items = screen.getItem();
-
         homeItems.clear();
         homeItemsA.clear();
         homeItemsB.clear();
         homeItemsC.clear();
         homeItemsD.clear();
 
-        if (items == null) return;
-
         for(Item item : items) {
-            // Get identifier
+            // Get identifier (safely)
             String identifier = null;
             List<Area> areas = item.getArea();
             if (areas!=null && areas.size()>0) {
