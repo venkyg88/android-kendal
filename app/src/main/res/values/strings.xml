@@ -91,6 +91,7 @@
     <string name="pretax_subtotal">Pre-tax subtotal</string>
     <string name="tax">Tax</string>
     <string name="proceed_to_checkout">Secure Checkout</string>
+    <string name="pay_with_android">Pay with Android</string>
     <string name="shipping_addr">Shipping Address</string>
     <string name="payment_method">Payment Method</string>
     <string name="payment_method_required">Payment Method is required</string>

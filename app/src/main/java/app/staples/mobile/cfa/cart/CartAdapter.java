@@ -22,39 +22,31 @@ import app.staples.mobile.cfa.widget.PriceSticker;
 import app.staples.mobile.cfa.widget.QuantityEditor;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
-
     private static final String TAG = CartAdapter.class.getSimpleName();
-
-    private List<CartItemGroup> cartItemGroups = new ArrayList<CartItemGroup>();
-
-    private int cartItemGroupLayoutResId;
 
     private Context context;
     private LayoutInflater inflater;
-    ViewGroup parentViewGroup;
+
+    private List<CartItemGroup> cartItemGroups = new ArrayList<CartItemGroup>();
 
     private Drawable noPhoto;
     String shippingEstimateLabel;
 
     // widget listeners
-    private View.OnClickListener qtyDeleteButtonListener;
-    private View.OnClickListener productClickListener;
+    private View.OnClickListener onClickListener;
     private QuantityEditor.OnQtyChangeListener qtyChangeListener;
 
     /** constructor */
     public CartAdapter(Context context,
-                       int cartItemGroupLayoutResId,
-                       QuantityEditor.OnQtyChangeListener qtyChangeListener,
-                       View.OnClickListener qtyDeleteButtonListener,
-                       View.OnClickListener productClickListener) {
-        this.cartItemGroupLayoutResId = cartItemGroupLayoutResId;
-        this.qtyChangeListener = qtyChangeListener;
-        this.qtyDeleteButtonListener = qtyDeleteButtonListener;
-        this.productClickListener = productClickListener;
-        this.noPhoto = context.getResources().getDrawable(R.drawable.no_photo);
+                       View.OnClickListener onClickListener,
+                       QuantityEditor.OnQtyChangeListener qtyChangeListener) {
         this.context = context;
-        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.shippingEstimateLabel = context.getResources().getString(R.string.expected_delivery);
+        this.onClickListener = onClickListener;
+        this.qtyChangeListener = qtyChangeListener;
+
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        noPhoto = context.getResources().getDrawable(R.drawable.no_photo);
+        shippingEstimateLabel = context.getResources().getString(R.string.expected_delivery);
     }
 
     public void setItems(List<CartItemGroup> items) {
@@ -67,10 +59,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     // Create new views (invoked by the layout manager)
     @Override
     public CartAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        parentViewGroup = parent;
         // create a new view
-        View v = LayoutInflater.from(parent.getContext()).inflate(cartItemGroupLayoutResId, parent, false);
-        ViewHolder vh = new ViewHolder(v);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cart_item_group, parent, false);
+        ViewHolder vh = new ViewHolder(view);
         return vh;
     }
 
@@ -95,7 +86,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             vh.cartItemListLayout.removeViews(groupSize, listLayoutChildCount - groupSize);
         } else {
             for (int i = listLayoutChildCount; i < groupSize; i++) {
-                View v = inflater.inflate(R.layout.cart_item, parentViewGroup, false);
+                View v = inflater.inflate(R.layout.cart_item, vh.cartItemListLayout, false);
                 v.setTag(new CartItemViewHolder(v));
                 vh.cartItemListLayout.addView(v);
             }
@@ -158,9 +149,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
             // set widget listeners
             ciVh.qtyWidget.setOnQtyChangeListener(qtyChangeListener);
-            ciVh.deleteButton.setOnClickListener(qtyDeleteButtonListener);
-            ciVh.imageView.setOnClickListener(productClickListener);
-            ciVh.titleTextView.setOnClickListener(productClickListener);
+            ciVh.deleteButton.setOnClickListener(onClickListener);
+            ciVh.imageView.setOnClickListener(onClickListener);
+            ciVh.titleTextView.setOnClickListener(onClickListener);
 //        ciVh.updateButton.setOnClickListener(qtyUpdateButtonListener);
 
             // set quantity (AFTER listeners set up above)

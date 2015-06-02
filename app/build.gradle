@@ -102,6 +102,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-gcm:7.0.0'
     compile 'com.google.android.gms:play-services-location:7.0.0'
     compile 'com.google.android.gms:play-services-maps:7.0.0'
+    compile 'com.google.android.gms:play-services-wallet:7.0.0'
     compile 'com.crittercism:crittercism-android-agent:5.0.4'
     compile 'com.apptentive:apptentive-android:1.7.0@aar'
     compile(name: 'urbanairship-lib-5.1.5', ext: 'aar')
