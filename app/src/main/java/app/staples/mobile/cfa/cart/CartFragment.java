@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -43,7 +42,7 @@ import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.QuantityEditor;
 
 /** fragment to manage display and update of shopping cart */
-public class CartFragment extends Fragment implements View.OnClickListener, CartApiManager.CartRefreshCallback {
+public class CartFragment extends Fragment implements View.OnClickListener, QuantityEditor.OnQtyChangeListener, CartApiManager.CartRefreshCallback {
 
     private static final String TAG = CartFragment.class.getSimpleName();
 
@@ -59,13 +58,11 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private TextView cartShipping;
     private TextView couponsRewardsLabel;
     private TextView couponsRewardsValue;
-    EditText phoneNumberVw;
     private RecyclerView couponListVw;
     private CouponAdapter couponAdapter;
     private View emptyCartLayout;
-    private View cartProceedToCheckout;
     private View cartShippingLayout;
-    private View cartSubtotalLayout;
+    private View cartActionLayout;
     private CartAdapter cartAdapter;
     private RecyclerView cartListVw;
     private LinearLayoutManager cartListLayoutMgr;
@@ -78,11 +75,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
     private static List<CartItemGroup> cartItemGroups;
 
     private float couponsRewardsAmount;
-
-    // widget listeners
-    private QtyDeleteButtonListener qtyDeleteButtonListener;
-    private QtyChangeListener qtyChangeListener;
-    private ProductClickListener productClickListener;
 
     CouponWeightAnimator couponUpAnimator;
     CouponWeightAnimator couponDownAnimator;
@@ -110,17 +102,11 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         cartShipping = (TextView) view.findViewById(R.id.cart_shipping);
         cartSubtotal = (TextView) view.findViewById(R.id.cart_subtotal);
         cartShippingLayout = view.findViewById(R.id.cart_shipping_layout);
-        cartSubtotalLayout = view.findViewById(R.id.cart_subtotal_layout);
-        cartProceedToCheckout = view.findViewById(R.id.action_checkout);
+        cartActionLayout = view.findViewById(R.id.cart_action_layout);
 
         Resources r = getResources();
         greenText = r.getColor(R.color.staples_green);
         blackText = r.getColor(R.color.staples_black);
-
-        // create widget listeners
-        qtyChangeListener = new QtyChangeListener();
-        qtyDeleteButtonListener = new QtyDeleteButtonListener();
-        productClickListener = new ProductClickListener();
 
         // Initialize coupon listview
         couponListVw = (RecyclerView) view.findViewById(R.id.coupon_list);
@@ -141,8 +127,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 //        mathStoryFadeOutAnimation.setAnimationListener(mathStoryFadeOutAnimationListener);
 
         // Initialize cart listview
-        cartAdapter = new CartAdapter(activity, R.layout.cart_item_group, qtyChangeListener,
-                qtyDeleteButtonListener, productClickListener);
+        cartAdapter = new CartAdapter(activity, this, this);
         cartAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
@@ -178,7 +163,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 //        });
 
         // Set click listeners
-        cartProceedToCheckout.setOnClickListener(this);
+        view.findViewById(R.id.action_checkout).setOnClickListener(this);
+        view.findViewById(R.id.action_android_pay).setOnClickListener(this);
         couponsRewardsLayout.setOnClickListener(this);
 //        rewardsLinkAcctButton.setOnClickListener(this);
 
@@ -281,15 +267,13 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
             if (totalItemCount == 0) {
                 couponsRewardsLayout.setVisibility(View.GONE);
                 cartShippingLayout.setVisibility(View.GONE);
-                cartSubtotalLayout.setVisibility(View.GONE);
-                cartProceedToCheckout.setVisibility(View.GONE);
+                cartActionLayout.setVisibility(View.GONE);
             } else {
 //                if (isTopOfFirstItemVisible(cartListVw)) {
                 couponsRewardsLayout.setVisibility(View.VISIBLE);
                 cartShippingLayout.setVisibility(View.VISIBLE);
 //                }
-                cartSubtotalLayout.setVisibility(View.VISIBLE);
-                cartProceedToCheckout.setVisibility(View.VISIBLE);
+                cartActionLayout.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -306,73 +290,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
 
     private boolean couponsExpanded() {
         return (((LinearLayout.LayoutParams)couponListVw.getLayoutParams()).weight > 0);
-    }
-
-    @Override
-    public void onClick(View view) {
-        activity.hideSoftKeyboard();
-        switch(view.getId()) {
-            case R.id.coupons_rewards_layout:
-                if (!couponsExpanded()) {
-                    couponUpAnimator.start();
-                    Tracker.getInstance().trackStateForCartCoupons(); // analytics
-                } else {
-                    couponDownAnimator.start();
-                }
-                break;
-            case R.id.coupon_add_button:
-                CouponItem couponItemForAdding = couponAdapter.getItem((Integer) view.getTag());
-                String couponCode = couponItemForAdding.getCouponCodeVw().getText().toString();
-                if (TextUtils.isEmpty(couponCode)) {
-                    activity.showErrorDialog(R.string.missing_coupon_code);
-                } else {
-                    activity.showProgressIndicator();
-                    CartApiManager.addCoupon(couponCode, this);
-                }
-                break;
-            case R.id.reward_add_button:
-                activity.showProgressIndicator();
-                CartApiManager.addCoupon(couponAdapter.getItem((Integer) view.getTag()).getReward().getCode(), this);
-                break;
-            case R.id.coupon_delete_button:
-                activity.showProgressIndicator();
-                CartApiManager.deleteCoupon(couponAdapter.getItem((Integer) view.getTag()).getCoupon().getCode(), this);
-                break;
-            case R.id.action_checkout:
-                activity.selectOrderCheckout();
-                break;
-            case R.id.rewards_link_acct_button:
-                CouponItem couponItemForAccount = couponAdapter.getItem((Integer)view.getTag());
-                final String rewardsNumber = couponItemForAccount.getRewardsNumberVw().getText().toString();
-                String phoneNumber = stripPhoneNumber(couponItemForAccount.getRewardsPhoneNumberVw().getText().toString());
-
-                if(validateFields(rewardsNumber, phoneNumber)) {
-                    if(phoneNumber.length() < 10) {
-                        activity.showErrorDialog(R.string.invalid_phone_number);
-                        return;
-                    }
-                    activity.showProgressIndicator();
-                    RewardsLinkingFragment.linkRewardsAccount(rewardsNumber, phoneNumber, new RewardsLinkingFragment.LinkRewardsCallback() {
-                        @Override
-                        public void onLinkRewardsComplete(String errMsg) {
-                            if (getActivity() == null) { return; } // check for fragment detachment
-
-                            activity.hideProgressIndicator();
-                            if (errMsg != null) {
-                                activity.showErrorDialog(errMsg);
-                            } else {
-                                // temporarily update profile object
-                                ProfileDetails.getMember().setRewardsNumber(rewardsNumber);
-                                ProfileDetails.getMember().setRewardsNumberVerified(true);
-                                convertCart(CartApiManager.getCart());
-                            }
-                        }
-                    });
-                } else{
-                    activity.showErrorDialog(R.string.empty_rewards_linking_msg);
-                }
-                break;
-        }
     }
 
     private boolean validateFields(String rewardsNumber, String phoneNumber) {
@@ -642,51 +559,107 @@ public class CartFragment extends Fragment implements View.OnClickListener, Cart
         }
     }
 
-    /************* widget listeners ************/
+    @Override
+    public void onClick(View view) {
+        Object tag;
+        activity.hideSoftKeyboard();
+        switch(view.getId()) {
+            case R.id.cartitem_image:
+            case R.id.cartitem_title:
+                tag = view.getTag();
+                if (tag instanceof CartAdapter.CartItemPosition) {
+                    CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition) tag);
+                    activity.selectSkuItem(cartItem.getDescription(), cartItem.getSku(), false);
+                }
+                break;
+            case R.id.cartitem_delete:
+                tag = view.getTag();
+                if (tag instanceof CartAdapter.CartItemPosition) {
+                    CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition)tag);
 
-    /** listener class for qty change */
-    class QtyChangeListener implements QuantityEditor.OnQtyChangeListener {
-        @Override
-        public void onQtyChange(View view, int value) {
-            Object tag = view.getTag();
-            if (tag != null && tag instanceof CartAdapter.CartItemPosition) {
-                CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition) tag);
+                    activity.hideSoftKeyboard();
 
-                // default proposed qty to orig in case new value not parseable;
-                cartItem.setProposedQty(value);
+                    // delete from cart via API
+                    cartItem.setProposedQty(0);
+                    updateItemQty(cartItem);
+                }
+                break;
+            case R.id.coupons_rewards_layout:
+                if (!couponsExpanded()) {
+                    couponUpAnimator.start();
+                    Tracker.getInstance().trackStateForCartCoupons(); // analytics
+                } else {
+                    couponDownAnimator.start();
+                }
+                break;
+            case R.id.coupon_add_button:
+                CouponItem couponItemForAdding = couponAdapter.getItem((Integer) view.getTag());
+                String couponCode = couponItemForAdding.getCouponCodeVw().getText().toString();
+                if (TextUtils.isEmpty(couponCode)) {
+                    activity.showErrorDialog(R.string.missing_coupon_code);
+                } else {
+                    activity.showProgressIndicator();
+                    CartApiManager.addCoupon(couponCode, this);
+                }
+                break;
+            case R.id.reward_add_button:
+                activity.showProgressIndicator();
+                CartApiManager.addCoupon(couponAdapter.getItem((Integer) view.getTag()).getReward().getCode(), this);
+                break;
+            case R.id.coupon_delete_button:
+                activity.showProgressIndicator();
+                CartApiManager.deleteCoupon(couponAdapter.getItem((Integer) view.getTag()).getCoupon().getCode(), this);
+                break;
+            case R.id.action_checkout:
+                activity.selectOrderCheckout();
+                break;
+            case R.id.action_android_pay:
+                // TODO Need to implement Android Pay
+                break;
+            case R.id.rewards_link_acct_button:
+                CouponItem couponItemForAccount = couponAdapter.getItem((Integer)view.getTag());
+                final String rewardsNumber = couponItemForAccount.getRewardsNumberVw().getText().toString();
+                String phoneNumber = stripPhoneNumber(couponItemForAccount.getRewardsPhoneNumberVw().getText().toString());
 
-                updateItemQty(cartItem);
-            }
+                if(validateFields(rewardsNumber, phoneNumber)) {
+                    if(phoneNumber.length() < 10) {
+                        activity.showErrorDialog(R.string.invalid_phone_number);
+                        return;
+                    }
+                    activity.showProgressIndicator();
+                    RewardsLinkingFragment.linkRewardsAccount(rewardsNumber, phoneNumber, new RewardsLinkingFragment.LinkRewardsCallback() {
+                        @Override
+                        public void onLinkRewardsComplete(String errMsg) {
+                            if (getActivity() == null) { return; } // check for fragment detachment
+
+                            activity.hideProgressIndicator();
+                            if (errMsg != null) {
+                                activity.showErrorDialog(errMsg);
+                            } else {
+                                // temporarily update profile object
+                                ProfileDetails.getMember().setRewardsNumber(rewardsNumber);
+                                ProfileDetails.getMember().setRewardsNumberVerified(true);
+                                convertCart(CartApiManager.getCart());
+                            }
+                        }
+                    });
+                } else{
+                    activity.showErrorDialog(R.string.empty_rewards_linking_msg);
+                }
+                break;
         }
     }
 
-    /** listener class for item deletion button */
-    class QtyDeleteButtonListener implements View.OnClickListener {
+    @Override
+    public void onQtyChange(View view, int value) {
+        Object tag = view.getTag();
+        if (tag != null && tag instanceof CartAdapter.CartItemPosition) {
+            CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition) tag);
 
-        @Override
-        public void onClick(View view) {
-            Object tag = view.getTag();
-            if (tag != null && tag instanceof CartAdapter.CartItemPosition) {
-                CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition)tag);
+            // default proposed qty to orig in case new value not parseable;
+            cartItem.setProposedQty(value);
 
-                activity.hideSoftKeyboard();
-
-                // delete from cart via API
-                cartItem.setProposedQty(0);
-                updateItemQty(cartItem);
-            }
+            updateItemQty(cartItem);
         }
     }
-
-    /** listener class for item deletion button */
-    class ProductClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            if (view.getTag() != null && view.getTag() instanceof CartAdapter.CartItemPosition) {
-                CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition) view.getTag());
-                activity.selectSkuItem(cartItem.getDescription(), cartItem.getSku(), false);
-            }
-        }
-    }
-
 }
