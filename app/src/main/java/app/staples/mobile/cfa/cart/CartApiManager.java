@@ -2,6 +2,7 @@ package app.staples.mobile.cfa.cart;
 
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -25,6 +26,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class CartApiManager {
+    private static final String TAG = CartApiManager.class.getSimpleName();
 
     public interface CartRefreshCallback {
         public void onCartRefreshComplete(String errMsg);
@@ -198,7 +200,7 @@ public class CartApiManager {
             easyOpenApi.addCoupon(coupon, new Callback<EmptyResponse>() {
                 @Override
                 public void success(EmptyResponse emptyResponse, Response response) {
-                    loadCart(cartRefreshCallback);  // need updated info about the cart such as shipping and subtotals in addition to new quantities
+                    loadCart(cartRefreshCallback); // Need updated info about the cart such as shipping and subtotals in addition to new quantities
                     manuallyAddedCouponCodes.add(couponCode);
                 }
 

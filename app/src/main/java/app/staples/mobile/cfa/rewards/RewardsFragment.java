@@ -10,7 +10,6 @@ import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -187,7 +186,7 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
         if (activity==null) return;
 
         switch(view.getId()) {
-            case R.id.reward_add_button:
+            case R.id.coupon_add_button:
                 tag = view.getTag();
                 if (tag instanceof Reward) {
                     Reward reward = (Reward)view.getTag();
@@ -199,7 +198,7 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
                     }
                 }
                 break;
-            case R.id.reward_view_button:
+            case R.id.coupon_view_button:
                 tag = view.getTag();
                 if (tag instanceof Reward) {
                     Reward reward = (Reward) tag;

@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!--
-  ~ Copyright (c) 2014 Staples, Inc. All rights reserved.
-  -->
-
 <!--link rewards account -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -23,10 +18,9 @@
         android:textColor="@color/staples_black"
         android:text="@string/link_rewards_account"
         />
-    <EditText
+    <app.staples.mobile.cfa.widget.DualHintEdit
         android:id="@+id/rewards_card_number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/InputField"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/link_rewards_heading"
         android:layout_marginTop="@dimen/verticalspacing_8dp"
@@ -34,10 +28,9 @@
         android:inputType="number"
         android:imeOptions="actionNext"
         android:maxLength="10"/>
-    <EditText
+    <app.staples.mobile.cfa.widget.DualHintEdit
         android:id="@+id/rewards_phone_number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/InputField"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/rewards_card_number"
         android:layout_marginTop="@dimen/verticalspacing_8dp"

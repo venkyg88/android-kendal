@@ -33,7 +33,7 @@
         android:layout_marginRight="@dimen/margin_16dp"
         android:layout_marginBottom="@dimen/verticalspacing_24dp">
         <Button
-            android:id="@+id/reward_view_button"
+            android:id="@+id/coupon_view_button"
             android:layout_width="@dimen/coupon_button_width"
             android:layout_height="@dimen/coupon_button_height"
             android:background="@drawable/rounded_corner_green_stroke"
@@ -41,7 +41,7 @@
             android:textSize="@dimen/fontsize_18sp"
             android:textColor="@color/staples_green"/>
         <Button
-            android:id="@+id/reward_add_button"
+            android:id="@+id/coupon_add_button"
             android:layout_width="@dimen/coupon_button_width"
             android:layout_height="@dimen/coupon_button_height"
             android:layout_marginLeft="@dimen/margin_16dp"

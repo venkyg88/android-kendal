@@ -32,10 +32,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import app.staples.R;
+import app.staples.mobile.cfa.DrawerItem;
 import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import app.staples.mobile.cfa.checkout.CheckoutFragment;
 import app.staples.mobile.cfa.profile.ProfileDetails;
+import app.staples.mobile.cfa.rewards.BarcodeFragment;
 import app.staples.mobile.cfa.rewards.RewardsLinkingFragment;
 import app.staples.mobile.cfa.util.CurrencyFormat;
 import app.staples.mobile.cfa.widget.ActionBar;
@@ -110,7 +112,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
 
         // Initialize coupon listview
         couponListVw = (RecyclerView) view.findViewById(R.id.coupon_list);
-        couponAdapter = new CouponAdapter(this, this, this);
+        couponAdapter = new CouponAdapter(this);
         couponListVw.setAdapter(couponAdapter);
         couponListVw.setLayoutManager(new LinearLayoutManager(activity));
 
@@ -432,13 +434,13 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
             Coupon assocRewardCoupon = CartApiManager.getAssocRewardCoupon();
             Coupon assocRewardStaplesCoupon = CartApiManager.getAssocRewardStaplesCoupon();
             if (assocRewardCoupon != null) {
-                couponItems.add(new CouponItem(assocRewardCoupon, null, CouponItem.TYPE_ASSOC_REWARD_COUPON));
+                couponItems.add(new CouponItem(CouponItem.TYPE_ASSOC_REWARD_COUPON, assocRewardCoupon, null));
             }
             if (assocRewardStaplesCoupon != null) {
-                couponItems.add(new CouponItem(assocRewardStaplesCoupon, null, CouponItem.TYPE_ASSOC_REWARD_COUPON));
+                couponItems.add(new CouponItem(CouponItem.TYPE_ASSOC_REWARD_COUPON, assocRewardStaplesCoupon, null));
             }
             // add line to add a coupon
-            couponItems.add(new CouponItem(null, null, CouponItem.TYPE_COUPON_TO_ADD));
+            couponItems.add(new CouponItem(CouponItem.TYPE_COUPON_TO_ADD, null, null));
             // add list of applied cart-level coupons
             if (cart != null && cart.getCoupon() != null && cart.getCoupon().size() > 0) {
                 for (Coupon coupon : cart.getCoupon()) {
@@ -448,14 +450,14 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                         if (reward != null) {
                             profileRewards.remove(reward); // remove the applied rewards from the list
                         }
-                        couponItems.add(new CouponItem(coupon, reward, CouponItem.TYPE_APPLIED_COUPON));
+                        couponItems.add(new CouponItem(CouponItem.TYPE_APPLIED_COUPON, coupon, reward));
                     }
                 }
             }
             // if any sku-level coupons should be displayed, add them
             List<Coupon> skuLevelCoupons = CartApiManager.getManualSkuLevelCoupons();
             for (Coupon coupon : skuLevelCoupons) {
-                couponItems.add(new CouponItem(coupon, null, CouponItem.TYPE_APPLIED_COUPON));
+                couponItems.add(new CouponItem(CouponItem.TYPE_APPLIED_COUPON, coupon, null));
             }
 
             // if profile exists (registered user logged in and no errors getting profile)
@@ -465,20 +467,20 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                 if (ProfileDetails.isRewardsMember()) {
 
                     // add redeemable rewards heading
-                    couponItems.add(new CouponItem(null, null, CouponItem.TYPE_REDEEMABLE_REWARD_HEADING));
+                    couponItems.add(new CouponItem(CouponItem.TYPE_REDEEMABLE_REWARD_HEADING, null, null));
 
                     // if any unapplied redeemable rewards
                     if (profileRewards.size() > 0) {
                         // add redeemable rewards
                         for (Reward reward : profileRewards) {
-                            couponItems.add(new CouponItem(null, reward, CouponItem.TYPE_REDEEMABLE_REWARD));
+                            couponItems.add(new CouponItem(CouponItem.TYPE_REDEEMABLE_REWARD, null, reward));
                         }
                     } else {
-                        couponItems.add(new CouponItem(null, null, CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG));
+                        couponItems.add(new CouponItem(CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG, null, null));
                     }
                 } else {
                     // if registered but not a rewards member
-                    couponItems.add(new CouponItem(null, null, CouponItem.TYPE_LINK_REWARD_ACCOUNT));
+                    couponItems.add(new CouponItem(CouponItem.TYPE_LINK_REWARD_ACCOUNT, null, null));
                 }
             }
         }
@@ -567,15 +569,15 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
             case R.id.cartitem_image:
             case R.id.cartitem_title:
                 tag = view.getTag();
-                if (tag instanceof CartAdapter.CartItemPosition) {
-                    CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition) tag);
+                if (tag instanceof CartItem) {
+                    CartItem cartItem = (CartItem) tag;
                     activity.selectSkuItem(cartItem.getDescription(), cartItem.getSku(), false);
                 }
                 break;
             case R.id.cartitem_delete:
                 tag = view.getTag();
-                if (tag instanceof CartAdapter.CartItemPosition) {
-                    CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition)tag);
+                if (tag instanceof CartItem) {
+                    CartItem cartItem = (CartItem) tag;
 
                     activity.hideSoftKeyboard();
 
@@ -593,22 +595,71 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                 }
                 break;
             case R.id.coupon_add_button:
-                CouponItem couponItemForAdding = couponAdapter.getItem((Integer) view.getTag());
-                String couponCode = couponItemForAdding.getCouponCodeVw().getText().toString();
-                if (TextUtils.isEmpty(couponCode)) {
-                    activity.showErrorDialog(R.string.missing_coupon_code);
-                } else {
-                    activity.showProgressIndicator();
-                    CartApiManager.addCoupon(couponCode, this);
+                tag = view.getTag();
+                if (tag instanceof CouponItem) {
+                    String code = ((CouponItem) tag).getCode();
+                    if (TextUtils.isEmpty(code)) {
+                        activity.showErrorDialog(R.string.missing_coupon_code);
+                    } else {
+                        activity.showProgressIndicator();
+                        CartApiManager.addCoupon(code, this);
+                    }
                 }
                 break;
-            case R.id.reward_add_button:
-                activity.showProgressIndicator();
-                CartApiManager.addCoupon(couponAdapter.getItem((Integer) view.getTag()).getReward().getCode(), this);
-                break;
             case R.id.coupon_delete_button:
-                activity.showProgressIndicator();
-                CartApiManager.deleteCoupon(couponAdapter.getItem((Integer) view.getTag()).getCoupon().getCode(), this);
+                tag = view.getTag();
+                if (tag instanceof CouponItem) {
+                    String code = ((CouponItem) tag).getCode();
+                    if (!TextUtils.isEmpty(code)) {
+                        activity.showProgressIndicator();
+                        CartApiManager.deleteCoupon(code, this);
+                    }
+                }
+                break;
+            case R.id.coupon_view_button:
+                tag = view.getTag();
+                if (tag instanceof CouponItem) {
+                    Reward reward = ((CouponItem) tag).getReward();
+                    if (reward!=null) {
+                        BarcodeFragment fragment = new BarcodeFragment();
+                        fragment.setArguments("Coupon", reward.getCode(), reward.getAmount(), reward.getExpiryDate());
+                        activity.selectFragment(DrawerItem.BARCODE, fragment, MainActivity.Transition.RIGHT);
+                    }
+                }
+                break;
+            case R.id.rewards_link_acct_button:
+                tag = view.getTag();
+                if (tag instanceof CouponItem) {
+                    CouponItem item = (CouponItem) tag;
+                    final String rewardsNumber = item.getRewardsNumber();
+                    String phoneNumber = stripPhoneNumber(item.getPhoneNumber());
+
+                    if(validateFields(rewardsNumber, phoneNumber)) {
+                        if(phoneNumber.length() < 10) {
+                            activity.showErrorDialog(R.string.invalid_phone_number);
+                            return;
+                        }
+                        activity.showProgressIndicator();
+                        RewardsLinkingFragment.linkRewardsAccount(rewardsNumber, phoneNumber, new RewardsLinkingFragment.LinkRewardsCallback() {
+                            @Override
+                            public void onLinkRewardsComplete(String errMsg) {
+                                if (getActivity() == null) return; // check for fragment detachment
+
+                                activity.hideProgressIndicator();
+                                if (errMsg != null) {
+                                    activity.showErrorDialog(errMsg);
+                                } else {
+                                    // temporarily update profile object
+                                    ProfileDetails.getMember().setRewardsNumber(rewardsNumber);
+                                    ProfileDetails.getMember().setRewardsNumberVerified(true);
+                                    convertCart(CartApiManager.getCart());
+                                }
+                            }
+                        });
+                    } else{
+                        activity.showErrorDialog(R.string.empty_rewards_linking_msg);
+                    }
+                }
                 break;
             case R.id.action_checkout:
                 activity.selectOrderCheckout();
@@ -616,49 +667,17 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
             case R.id.action_android_pay:
                 // TODO Need to implement Android Pay
                 break;
-            case R.id.rewards_link_acct_button:
-                CouponItem couponItemForAccount = couponAdapter.getItem((Integer)view.getTag());
-                final String rewardsNumber = couponItemForAccount.getRewardsNumberVw().getText().toString();
-                String phoneNumber = stripPhoneNumber(couponItemForAccount.getRewardsPhoneNumberVw().getText().toString());
-
-                if(validateFields(rewardsNumber, phoneNumber)) {
-                    if(phoneNumber.length() < 10) {
-                        activity.showErrorDialog(R.string.invalid_phone_number);
-                        return;
-                    }
-                    activity.showProgressIndicator();
-                    RewardsLinkingFragment.linkRewardsAccount(rewardsNumber, phoneNumber, new RewardsLinkingFragment.LinkRewardsCallback() {
-                        @Override
-                        public void onLinkRewardsComplete(String errMsg) {
-                            if (getActivity() == null) { return; } // check for fragment detachment
-
-                            activity.hideProgressIndicator();
-                            if (errMsg != null) {
-                                activity.showErrorDialog(errMsg);
-                            } else {
-                                // temporarily update profile object
-                                ProfileDetails.getMember().setRewardsNumber(rewardsNumber);
-                                ProfileDetails.getMember().setRewardsNumberVerified(true);
-                                convertCart(CartApiManager.getCart());
-                            }
-                        }
-                    });
-                } else{
-                    activity.showErrorDialog(R.string.empty_rewards_linking_msg);
-                }
-                break;
         }
     }
 
     @Override
     public void onQtyChange(View view, int value) {
         Object tag = view.getTag();
-        if (tag != null && tag instanceof CartAdapter.CartItemPosition) {
-            CartItem cartItem = cartAdapter.getCartItem((CartAdapter.CartItemPosition) tag);
+        if (tag instanceof CartItem) {
+            CartItem cartItem = (CartItem) tag;
 
             // default proposed qty to orig in case new value not parseable;
             cartItem.setProposedQty(value);
-
             updateItemQty(cartItem);
         }
     }

@@ -9,45 +9,46 @@ import com.staples.mobile.common.access.easyopen.model.member.Reward;
 
 public class CouponItem {
 
-    public static final int TYPE_COUPON_TO_ADD = 0;
-    public static final int TYPE_APPLIED_COUPON = 1;
+    public static final int TYPE_COUPON_TO_ADD             = 0;
+    public static final int TYPE_APPLIED_COUPON            = 1;
     public static final int TYPE_REDEEMABLE_REWARD_HEADING = 2;
-    public static final int TYPE_REDEEMABLE_REWARD = 3;
+    public static final int TYPE_REDEEMABLE_REWARD         = 3;
     public static final int TYPE_NO_REDEEMABLE_REWARDS_MSG = 4;
-    public static final int TYPE_ASSOC_REWARD_COUPON = 5;
-    public static final int TYPE_LINK_REWARD_ACCOUNT = 6;
+    public static final int TYPE_ASSOC_REWARD_COUPON       = 5;
+    public static final int TYPE_LINK_REWARD_ACCOUNT       = 6;
 
+    private int itemType;
     private Coupon coupon;
     private Reward reward;
-    private int itemType;
-    private String couponCodeToAdd;
-    private EditText couponCodeVw;
-    private EditText rewardsNumberVw;
-    private EditText rewardsPhoneNumberVw;
 
-    public CouponItem(Coupon coupon, Reward reward, int itemType) {
+    // Editable string storage
+    private String couponCodeToAdd;
+    private String rewardsNumber;
+    private String phoneNumber;
+
+    public CouponItem(int itemType, Coupon coupon, Reward reward) {
         this.coupon = coupon;
         this.reward = reward;
         this.itemType = itemType;
     }
 
+    public String getCode() {
+        if (couponCodeToAdd != null) return(couponCodeToAdd);
+        if (reward != null) return(reward.getCode());
+        if (coupon != null) return(coupon.getCode());
+        return(null);
+    }
+
     public String getCouponField1Text() {
-        if (reward != null) {
-            return reward.getAmount();
-        } else if (coupon != null) {
-            return (reward != null)? reward.getAmount() :
-                    (getCouponAmountText() + " off");
-        }
-        return "";
+        if (reward != null) return(reward.getAmount());
+        if (coupon != null) return(getCouponAmountText() + " off");
+        return(null);
     }
 
     public String getCouponField2Text() {
-        if (reward != null) {
-            return "exp " + reward.getExpiryDate();
-        } else if (coupon != null) {
-            return "code: " + coupon.getCode();
-        }
-        return "";
+        if (reward != null) return("exp " + reward.getExpiryDate());
+        if (coupon != null) return("code: " + coupon.getCode());
+        return(null);
     }
 
     public String getCouponAmountText() {
@@ -61,29 +62,21 @@ public class CouponItem {
         return null;
     }
 
-    public Coupon getCoupon() {
-        return coupon;
+    // Plain getters
+
+    public int getItemType() {
+        return itemType;
     }
 
-    public void setCoupon(Coupon coupon) {
-        this.coupon = coupon;
+    public Coupon getCoupon() {
+        return coupon;
     }
 
     public Reward getReward() {
         return reward;
     }
 
-    public void setReward(Reward reward) {
-        this.reward = reward;
-    }
-
-    public int getItemType() {
-        return itemType;
-    }
-
-    public void setItemType(int itemType) {
-        this.itemType = itemType;
-    }
+    // Editable string storage
 
     public String getCouponCodeToAdd() {
         return couponCodeToAdd;
@@ -93,28 +86,19 @@ public class CouponItem {
         this.couponCodeToAdd = couponCodeToAdd;
     }
 
-    public EditText getCouponCodeVw() {
-        return couponCodeVw;
+    public String getRewardsNumber() {
+        return rewardsNumber;
     }
 
-    public void setCouponCodeVw(EditText couponCodeVw) {
-        this.couponCodeVw = couponCodeVw;
+    public void setRewardsNumber(String rewardsNumber) {
+        this.rewardsNumber = rewardsNumber;
     }
 
-    public EditText getRewardsNumberVw() {
-        return rewardsNumberVw;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setRewardsNumberVw(EditText rewardsNumberVw) {
-        this.rewardsNumberVw = rewardsNumberVw;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
-
-    public EditText getRewardsPhoneNumberVw() {
-        return rewardsPhoneNumberVw;
-    }
-
-    public void setRewardsPhoneNumberVw(EditText rewardsPhoneNumberVw) {
-        this.rewardsPhoneNumberVw = rewardsPhoneNumberVw;
-    }
-
 }

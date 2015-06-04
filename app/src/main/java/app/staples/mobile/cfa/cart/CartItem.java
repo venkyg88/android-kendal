@@ -16,8 +16,8 @@ public class CartItem {
 
     private Product product;
     private int proposedQty;
-    int minExpectedBusinessDays;
-    int maxExpectedBusinessDays;
+    private int minExpectedBusinessDays;
+    private int maxExpectedBusinessDays;
 
     QuantityEditor qtyWidget;
 
