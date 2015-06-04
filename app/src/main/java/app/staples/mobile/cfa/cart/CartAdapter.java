@@ -136,13 +136,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                 ciVh.rebateText.setVisibility(View.GONE);
             }
 
-            // associate position with each widget (position of card, and position within group)
-            CartItemPosition pos = new CartItemPosition(position, i);
-            ciVh.qtyWidget.setTag(pos);
-            ciVh.deleteButton.setTag(pos);
-            ciVh.imageView.setTag(pos);
-            ciVh.titleTextView.setTag(pos);
-//        ciVh.updateButton.setTag(pos);
+            ciVh.imageView.setTag(cartItem);
+            ciVh.titleTextView.setTag(cartItem);
+            ciVh.qtyWidget.setTag(cartItem);
+            ciVh.deleteButton.setTag(cartItem);
+//        ciVh.updateButton.setTag(cartItem);
 
             // associate qty widget with cart item
             cartItem.setQtyWidget(ciVh.qtyWidget);
@@ -181,7 +179,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         }
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return cartItemGroups.size();
@@ -189,28 +186,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     public CartItemGroup getGroupItem(int position) {
         return cartItemGroups.get(position);
-    }
-
-    public CartItem getCartItem(CartAdapter.CartItemPosition position) {
-        CartItemGroup cartItemGroup = getGroupItem(position.groupPosition);
-        CartItem cartItem = cartItemGroup.getCartItems().get(position.itemPositionWithinGroup);
-        return cartItem;
-    }
-
-    //---------------------------------------//
-    //------------ inner classes ------------//
-    //---------------------------------------//
-
-    /************* view holder ************/
-
-    public static class CartItemPosition {
-        public int groupPosition;
-        public int itemPositionWithinGroup;
-
-        public CartItemPosition(int groupPosition, int itemPositionWithinGroup) {
-            this.groupPosition = groupPosition;
-            this.itemPositionWithinGroup = itemPositionWithinGroup;
-        }
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

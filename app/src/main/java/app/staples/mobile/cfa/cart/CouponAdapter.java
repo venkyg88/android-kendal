@@ -5,33 +5,26 @@ import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import app.staples.R;
-import app.staples.mobile.cfa.widget.EditTextWithImeBackEvent;
+import app.staples.mobile.cfa.widget.DualHintEdit;
 
-public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder> {
+public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder> implements DualHintEdit.OnUpdatedTextListener {
 
     private static final String TAG = CouponAdapter.class.getSimpleName();
 
     private List<CouponItem> couponItems = new ArrayList<CouponItem>();
 
     // widget listeners
-    private View.OnClickListener addButtonListener;
-    private View.OnClickListener deleteButtonListener;
-    private View.OnClickListener linkRewardsAccountButtonListener;
-    PhoneNumberFormattingTextWatcher phoneNumberFormattingTextWatcher;
+    private View.OnClickListener onClickListener;
+    private PhoneNumberFormattingTextWatcher phoneNumberFormattingTextWatcher;
 
-
-    public CouponAdapter(View.OnClickListener addButtonListener, View.OnClickListener deleteButtonListener,
-                         View.OnClickListener linkRewardsAccountButtonListener) {
-        this.addButtonListener = addButtonListener;
-        this.deleteButtonListener = deleteButtonListener;
-        this.linkRewardsAccountButtonListener = linkRewardsAccountButtonListener;
+    public CouponAdapter(View.OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
         this.phoneNumberFormattingTextWatcher = new PhoneNumberFormattingTextWatcher();
     }
 
@@ -53,7 +46,6 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
         return 0;
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return couponItems.size();
@@ -68,13 +60,8 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
         return couponItems.get(position);
     }
 
-    public List<CouponItem> getCouponItems() {
-        return couponItems;
-    }
-
     /* Views */
 
-    // Create new views (invoked by the layout manager)
     @Override
     public CouponAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
@@ -84,73 +71,97 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
         return vh;
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder vh, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-
-        CouponItem couponItem = getItem(position);
+        CouponItem item = getItem(position);
 
         // if associate reward
         if (vh.assocRewardDescVw != null) {
-            vh.assocRewardDescVw.setText(couponItem.getCouponShortDescription());
-            vh.assocRewardAmountVw.setText(couponItem.getCouponAmountText());
+            vh.assocRewardDescVw.setText(item.getCouponShortDescription());
+        }
+        if (vh.assocRewardAmountVw != null) {
+            vh.assocRewardAmountVw.setText(item.getCouponAmountText());
         }
 
         // set up coupon code entry view
         if (vh.couponCodeEditVw != null) {
-            vh.couponCodeEditVw.setText(couponItem.getCouponCodeToAdd());
-            vh.couponCodeEditVw.setTag(position);
+            vh.couponCodeEditVw.setTag(item);
+            vh.couponCodeEditVw.setOnUpdatedTextListener(this);
+            vh.couponCodeEditVw.setText(item.getCouponCodeToAdd());
         }
 
         // set coupon text
         if (vh.couponField1Vw != null) {
-            vh.couponField1Vw.setText(couponItem.getCouponField1Text());
-            vh.couponField2Vw.setText(couponItem.getCouponField2Text());
+            vh.couponField1Vw.setText(item.getCouponField1Text());
+        }
+        if (vh.couponField2Vw != null) {
+            vh.couponField2Vw.setText(item.getCouponField2Text());
         }
 
-        // set up delete button
-        if (vh.couponDeleteButton != null) {
-            vh.couponDeleteButton.setTag(position);
-            vh.couponDeleteButton.setOnClickListener(deleteButtonListener);
-        }
-
-        // set up add button
+        // set up buttons
         if (vh.couponAddButton != null) {
-            vh.couponAddButton.setTag(position);
-            vh.couponAddButton.setOnClickListener(addButtonListener);
-            couponItem.setCouponCodeVw(vh.couponCodeEditVw);
+            vh.couponAddButton.setTag(item);
+            vh.couponAddButton.setOnClickListener(onClickListener);
+        }
+        if (vh.couponDeleteButton != null) {
+            vh.couponDeleteButton.setTag(item);
+            vh.couponDeleteButton.setOnClickListener(onClickListener);
+        }
+        if (vh.couponViewButton != null) {
+            vh.couponViewButton.setTag(item);
+            vh.couponViewButton.setOnClickListener(onClickListener);
         }
 
-        // set up link rewards account button
+        // set up link rewards
         if (vh.linkRewardsAccountButton != null) {
-            vh.linkRewardsAccountButton.setTag(position);
-            vh.linkRewardsAccountButton.setOnClickListener(linkRewardsAccountButtonListener);
-            couponItem.setRewardsNumberVw(vh.rewardsNumberVw);
-            couponItem.setRewardsPhoneNumberVw(vh.rewardsPhoneNumberVw);
-            vh.rewardsPhoneNumberVw.addTextChangedListener(phoneNumberFormattingTextWatcher);
+            vh.linkRewardsAccountButton.setTag(item);
+            vh.linkRewardsAccountButton.setOnClickListener(onClickListener);
+        }
+        if (vh.rewardsNumberVw != null) {
+            vh.rewardsNumberVw.setTag(item);
+            vh.rewardsNumberVw.setOnUpdatedTextListener(this);
+            vh.rewardsNumberVw.setText(item.getRewardsNumber());
+        }
+        if (vh.phoneNumberVw != null) {
+            vh.phoneNumberVw.setTag(item);
+            vh.phoneNumberVw.setOnUpdatedTextListener(this);
+            vh.phoneNumberVw.addTextChangedListener(phoneNumberFormattingTextWatcher);
+            vh.phoneNumberVw.setText(item.getPhoneNumber());
         }
     }
 
-
-    //---------------------------------------//
-    //------------ inner classes ------------//
-    //---------------------------------------//
-
-    /************* view holder ************/
+    // This keeps the CouponItem up to date with text edits
+    @Override
+    public void onUpdatedText(DualHintEdit view) {
+        Object tag = view.getTag();
+        if (tag instanceof CouponItem) {
+            CouponItem item = (CouponItem) tag;
+            switch(view.getId()) {
+                case R.id.coupon_code:
+                    item.setCouponCodeToAdd(((TextView) view).getText().toString());
+                    break;
+                case R.id.rewards_card_number:
+                    item.setRewardsNumber(((TextView) view).getText().toString());
+                    break;
+                case R.id.rewards_phone_number:
+                    item.setPhoneNumber(((TextView) view).getText().toString());
+                    break;
+            }
+        }
+    }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        private EditTextWithImeBackEvent couponCodeEditVw;
         private TextView couponField1Vw;
         private TextView couponField2Vw;
         private TextView assocRewardDescVw;
         private TextView assocRewardAmountVw;
-        private View couponDeleteButton;
         private View couponAddButton;
-        private EditText rewardsNumberVw;
-        private EditText rewardsPhoneNumberVw;
+        private View couponDeleteButton;
+        private View couponViewButton;
         private View linkRewardsAccountButton;
+        private DualHintEdit couponCodeEditVw;
+        private DualHintEdit rewardsNumberVw;
+        private DualHintEdit phoneNumberVw;
 
         /** constructor */
         public ViewHolder(View itemView, int type) {
@@ -161,7 +172,7 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
                     assocRewardAmountVw = (TextView) itemView.findViewById(R.id.associate_reward_amount);
                     break;
                 case CouponItem.TYPE_COUPON_TO_ADD:
-                    couponCodeEditVw = (EditTextWithImeBackEvent) itemView.findViewById(R.id.coupon_code);
+                    couponCodeEditVw = (DualHintEdit) itemView.findViewById(R.id.coupon_code);
                     couponAddButton = itemView.findViewById(R.id.coupon_add_button);
                     break;
                 case CouponItem.TYPE_APPLIED_COUPON:
@@ -174,14 +185,15 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
                 case CouponItem.TYPE_REDEEMABLE_REWARD:
                     couponField1Vw = (TextView) itemView.findViewById(R.id.coupon_amount);
                     couponField2Vw = (TextView) itemView.findViewById(R.id.coupon_expire);
-                    couponAddButton = itemView.findViewById(R.id.reward_add_button);
+                    couponAddButton = itemView.findViewById(R.id.coupon_add_button);
+                    couponViewButton = itemView.findViewById(R.id.coupon_view_button);
                     break;
                 case CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG:
                     break;
                 case CouponItem.TYPE_LINK_REWARD_ACCOUNT:
+                    rewardsNumberVw = (DualHintEdit) itemView.findViewById(R.id.rewards_card_number);
+                    phoneNumberVw = (DualHintEdit) itemView.findViewById(R.id.rewards_phone_number);
                     linkRewardsAccountButton = itemView.findViewById(R.id.rewards_link_acct_button);
-                    rewardsNumberVw = (EditText)itemView.findViewById(R.id.rewards_card_number);
-                    rewardsPhoneNumberVw = (EditText)itemView.findViewById(R.id.rewards_phone_number);
                     break;
             }
         }

@@ -99,8 +99,8 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.ViewHolder
             super(itemView);
             amountField = (TextView) itemView.findViewById(R.id.coupon_amount);
             expireField = (TextView) itemView.findViewById(R.id.coupon_expire);
-            addButton = (Button) itemView.findViewById(R.id.reward_add_button);
-            viewButton = (Button) itemView.findViewById(R.id.reward_view_button);
+            addButton = (Button) itemView.findViewById(R.id.coupon_add_button);
+            viewButton = (Button) itemView.findViewById(R.id.coupon_view_button);
         }
     }
 }

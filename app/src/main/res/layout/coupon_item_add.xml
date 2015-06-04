@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="0dp">
-    <app.staples.mobile.cfa.widget.EditTextWithImeBackEvent
+    <app.staples.mobile.cfa.widget.DualHintEdit
         android:id="@+id/coupon_code"
+        style="@style/InputField"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_gravity="center_vertical"
         android:hint="@string/coupon_code_hint"

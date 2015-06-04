@@ -4,20 +4,27 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
+import android.text.Editable;
 import android.text.TextPaint;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
 import app.staples.R;
 
-public class DualHintEdit extends EditText {
+public class DualHintEdit extends EditText implements TextWatcher {
     private static final String TAG = DualHintEdit.class.getSimpleName();
+
+    public interface OnUpdatedTextListener {
+        void onUpdatedText(DualHintEdit view);
+    }
 
     private TextPaint dualPaint;
     private int dualSize;
     private int dualGap;
     private int dualX;
     private int dualY;
+    private OnUpdatedTextListener listener;
 
     // Constructors
 
@@ -72,6 +79,25 @@ public class DualHintEdit extends EditText {
         // Set metrics
         dualX = getPaddingLeft();
         dualY = getPaddingTop()-(int) dualPaint.ascent();
+    }
+
+    public void setOnUpdatedTextListener(OnUpdatedTextListener listener) {
+        this.listener = listener;
+        addTextChangedListener(this);
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+    @Override
+    public void
+    afterTextChanged(Editable s) {
+        if (listener!=null) {
+            listener.onUpdatedText(this);
+        }
     }
 
     @Override

@@ -31,6 +31,7 @@ public class HorizontalDivider extends RecyclerView.ItemDecoration {
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(color);
     }
+
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         outRect.left = 0;
         outRect.right = 0;
