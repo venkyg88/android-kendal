@@ -354,7 +354,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                 }
                 activity.showErrorDialog(errMsg);
             } else {
-                activity.showNotificationBanner(R.string.cart_updated_msg);
+//                activity.showNotificationBanner(R.string.cart_updated_msg);
             }
             convertCart(CartApiManager.getCart());
         } else {
@@ -616,17 +616,17 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                     }
                 }
                 break;
-            case R.id.coupon_view_button:
-                tag = view.getTag();
-                if (tag instanceof CouponItem) {
-                    Reward reward = ((CouponItem) tag).getReward();
-                    if (reward!=null) {
-                        BarcodeFragment fragment = new BarcodeFragment();
-                        fragment.setArguments("Coupon", reward.getCode(), reward.getAmount(), reward.getExpiryDate());
-                        activity.selectFragment(DrawerItem.BARCODE, fragment, MainActivity.Transition.RIGHT);
-                    }
-                }
-                break;
+//            case R.id.coupon_view_button:
+//                tag = view.getTag();
+//                if (tag instanceof CouponItem) {
+//                    Reward reward = ((CouponItem) tag).getReward();
+//                    if (reward!=null) {
+//                        BarcodeFragment fragment = new BarcodeFragment();
+//                        fragment.setArguments("Coupon", reward.getCode(), reward.getAmount(), reward.getExpiryDate());
+//                        activity.selectFragment(DrawerItem.BARCODE, fragment, MainActivity.Transition.RIGHT);
+//                    }
+//                }
+//                break;
             case R.id.rewards_link_acct_button:
                 tag = view.getTag();
                 if (tag instanceof CouponItem) {

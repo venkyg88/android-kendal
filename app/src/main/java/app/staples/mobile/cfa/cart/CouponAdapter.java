@@ -39,7 +39,7 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
             case CouponItem.TYPE_COUPON_TO_ADD: return R.layout.coupon_item_add;
             case CouponItem.TYPE_APPLIED_COUPON: return R.layout.coupon_item_applied;
             case CouponItem.TYPE_REDEEMABLE_REWARD_HEADING: return R.layout.coupon_item_redeemable_heading;
-            case CouponItem.TYPE_REDEEMABLE_REWARD: return R.layout.coupon_item_redeemable;
+            case CouponItem.TYPE_REDEEMABLE_REWARD: return R.layout.coupon_item_redeemable_cart;
             case CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG: return R.layout.coupon_item_no_rewards_msg;
             case CouponItem.TYPE_LINK_REWARD_ACCOUNT: return R.layout.rewards_linking;
         }
@@ -107,10 +107,6 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
             vh.couponDeleteButton.setTag(item);
             vh.couponDeleteButton.setOnClickListener(onClickListener);
         }
-        if (vh.couponViewButton != null) {
-            vh.couponViewButton.setTag(item);
-            vh.couponViewButton.setOnClickListener(onClickListener);
-        }
 
         // set up link rewards
         if (vh.linkRewardsAccountButton != null) {
@@ -157,7 +153,6 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
         private TextView assocRewardAmountVw;
         private View couponAddButton;
         private View couponDeleteButton;
-        private View couponViewButton;
         private View linkRewardsAccountButton;
         private DualHintEdit couponCodeEditVw;
         private DualHintEdit rewardsNumberVw;
@@ -186,7 +181,6 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
                     couponField1Vw = (TextView) itemView.findViewById(R.id.coupon_amount);
                     couponField2Vw = (TextView) itemView.findViewById(R.id.coupon_expire);
                     couponAddButton = itemView.findViewById(R.id.coupon_add_button);
-                    couponViewButton = itemView.findViewById(R.id.coupon_view_button);
                     break;
                 case CouponItem.TYPE_NO_REDEEMABLE_REWARDS_MSG:
                     break;
