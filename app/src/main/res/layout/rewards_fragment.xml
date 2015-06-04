@@ -12,7 +12,7 @@
         android:layout_height="@dimen/rewards_card_height"
         android:layout_gravity="center_horizontal"
         android:layout_margin="@dimen/verticalspacing_24dp"
-        app:cardCornerRadius="8dp"
+        app:cardCornerRadius="4dp"
         app:cardElevation="4dp">
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="@color/staples_red">
+                android:background="@drawable/rounded_corner_red_card">
                 <ImageView
                     android:id="@+id/rewards_badge_image"
                     android:layout_width="wrap_content"

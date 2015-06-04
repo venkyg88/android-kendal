@@ -46,7 +46,7 @@ public class CouponItem {
     }
 
     public String getCouponField2Text() {
-        if (reward != null) return("exp " + reward.getExpiryDate());
+        if (reward != null) return("expires " + reward.getExpiryDate());
         if (coupon != null) return("code: " + coupon.getCode());
         return(null);
     }

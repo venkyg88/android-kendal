@@ -40,20 +40,6 @@
         android:layout_alignParentRight="true"
         android:layout_gravity="center_vertical"
         android:src="@drawable/ic_close_black"/>
-    <!--<Button-->
-        <!--android:id="@+id/coupon_delete_button"-->
-        <!--android:layout_width="85dp"-->
-        <!--android:layout_height="36dp"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_gravity="center_vertical"-->
-        <!--android:background="@color/staples_light_gray"-->
-        <!--android:textColor="@color/staples_black"-->
-        <!--android:text="@string/remove"-->
-        <!--android:textSize="@dimen/fontsize_14sp"-->
-        <!--android:paddingTop="4dp"-->
-        <!--android:paddingBottom="4dp"-->
-        <!--android:paddingLeft="8dp"-->
-        <!--android:paddingRight="8dp"-->
         <!--/>-->
 
 </RelativeLayout>

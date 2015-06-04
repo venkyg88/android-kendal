@@ -24,7 +24,7 @@
                 android:paddingTop="@dimen/verticalspacing_16dp"
                 android:paddingBottom="@dimen/verticalspacing_16dp"
                 android:paddingLeft="@dimen/verticalspacing_24dp"
-                android:background="@color/staples_red">
+                android:background="@drawable/rounded_corner_red_card">
                 <TextView
                     android:id="@+id/reward_coupon_label"
                     android:layout_width="wrap_content"
