@@ -97,6 +97,8 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         // Supports Google Play Services?
         if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity())==ConnectionResult.SUCCESS) {
             view = inflater.inflate(R.layout.store_fragment_map, container, false);
+            view.setTag(this);
+
             mapView = (MapView) view.findViewById(R.id.map);
             mapView.onCreate(bundle);
             mapView.getMapAsync(this);
@@ -105,6 +107,8 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         // No Google Play Services
         else {
             view = inflater.inflate(R.layout.store_fragment_nomap, container, false);
+            view.setTag(this);
+
             gotoHere();
         }
 

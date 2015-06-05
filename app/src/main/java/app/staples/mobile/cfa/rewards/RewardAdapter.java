@@ -26,13 +26,13 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.ViewHolder
     List<Reward> rewards;
 
     // widget listeners
-    private View.OnClickListener rewardButtonListener;
+    private View.OnClickListener listener;
 
     /** constructor */
-    public RewardAdapter(Activity activity, View.OnClickListener rewardButtonListener) {
+    public RewardAdapter(Activity activity, View.OnClickListener listener) {
         rewardItemLayoutResId = R.layout.coupon_item_redeemable;
         this.activity = (MainActivity)activity;
-        this.rewardButtonListener = rewardButtonListener;
+        this.listener = listener;
     }
 
     @Override
@@ -71,8 +71,8 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.ViewHolder
         vh.viewButton.setTag(reward);
 
         // set widget listeners
-        vh.addButton.setOnClickListener(rewardButtonListener);
-        vh.viewButton.setOnClickListener(rewardButtonListener);
+        vh.addButton.setOnClickListener(listener);
+        vh.viewButton.setOnClickListener(listener);
     }
 
     @Override

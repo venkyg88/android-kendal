@@ -28,11 +28,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.adobe.mobile.Config;
 import com.apptentive.android.sdk.Apptentive;
 import com.crittercism.app.Crittercism;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.AppConfigurator;
-import com.staples.mobile.common.access.config.model.Configurator;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
@@ -46,7 +46,6 @@ import java.util.Date;
 
 import app.staples.R;
 import app.staples.mobile.cfa.UpgradeManager.UPGRADE_STATUS;
-import app.staples.mobile.cfa.analytics.AdobeTracker;
 import app.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import app.staples.mobile.cfa.bundle.BundleFragment;
 import app.staples.mobile.cfa.cart.CartApiManager;
@@ -182,6 +181,11 @@ public class MainActivity extends Activity
         prepareMainScreen();
         queuedTransactions = new ArrayList<QueuedTransaction>();
 
+        // Analytics
+        Config.setContext(this);
+        Tracker.getInstance().initialize(Tracker.AppType.CFA);
+
+
         // Support for Urban Airship
 //        AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(this); TODO Enable Urban Airship when we're ready
 //        UAirship.takeOff(getApplication(), options, this);
@@ -261,7 +265,7 @@ public class MainActivity extends Activity
         executeQueuedTransactions();
 
         //Analytics
-        AdobeTracker.enableTracking(true); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
+        Config.collectLifecycleData();
     }
 
     @Override
@@ -277,7 +281,7 @@ public class MainActivity extends Activity
             actionBar.saveSearchHistory();
         }
         //Analytics
-        AdobeTracker.enableTracking(false); // this will be ignored if tracking not yet initialized (initialization happens after configurator completes)
+        Config.pauseCollectingLifecycleData();
     }
 
     @Override
@@ -493,6 +497,15 @@ public class MainActivity extends Activity
         // profile info to be loaded before it can be displayed.
     }
 
+    private Fragment getTopFragment() {
+        ViewGroup content = (ViewGroup) findViewById(R.id.content);
+        if (content==null || content.getChildCount()==0) return(null);
+        View page = content.getChildAt(0);
+        Object tag = page.getTag();
+        if (tag instanceof Fragment) return((Fragment) tag);
+        return(null);
+    }
+
     @Override
     public void onGetConfiguratorResult(AppConfigurator.Status status, RetrofitError retrofitError) {
         Log.d(TAG, "AppConfigurator.load "+status);
@@ -537,12 +550,10 @@ public class MainActivity extends Activity
                 }
             });
 
-            // initialize analytics
-            boolean dev = AppConfigurator.getInstance().getConfigurator().getAppContext().isDev();
-            new AdobeTracker(this.getApplicationContext(), dev); // allow logging only for dev environment
-            // The call in onResume to enable tracking will be ignored during application creation
-            // because the configurator object is not yet available. Therefore, enable here.
-            AdobeTracker.enableTracking(true);
+            // Enable analytics debugging in dev
+            if (AppConfigurator.getInstance().getConfigurator().getAppContext().isDev()) {
+                Config.setDebugLogging(true);
+            }
 
             // set default zip code for now, update it as it changes (via LocationFinder below)
             Tracker.getInstance().setZipCode("02139");
@@ -560,15 +571,9 @@ public class MainActivity extends Activity
 
         // Refresh HomeFragment if necessary
         if (status==AppConfigurator.Status.CHANGED) {
-            ViewGroup content = (ViewGroup) findViewById(R.id.content);
-            if (content!=null && content.getChildCount()>0) {
-                View page = content.getChildAt(0);
-                if (page!=null) {
-                    Object tag = page.getTag();
-                    if (tag instanceof HomeFragment) {
-                        ((HomeFragment) tag).refreshPage();
-                    }
-                }
+            Fragment top = getTopFragment();
+            if (top instanceof HomeFragment) {
+                ((HomeFragment) top).refreshPage();
             }
         }
     }
@@ -788,6 +793,15 @@ public class MainActivity extends Activity
                     case PUSH:
                         ViewGroup content = (ViewGroup) findViewById(R.id.content);
                         boolean empty = (content==null || content.getChildCount()==0);
+                        // Check for duplicates
+                        if (!empty) {
+                            View page = content.getChildAt(0);
+                            Object tag = page.getTag();
+                            if (tag!=null && tag.getClass()==qt.fragment.getClass()) {
+                                break; // skip transaction
+                            }
+                        }
+                        // Perform transaction
                         FragmentTransaction transaction = fm.beginTransaction();
                         if (!empty && qt.transition!=null) {
                             qt.transition.setAnimation(transaction);

@@ -50,6 +50,8 @@ public class AboutFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         View view = inflater.inflate(R.layout.about_fragment, container, false);
+        view.setTag(this);
+
         TableLayout table = (TableLayout) view.findViewById(R.id.about_table);
         dateFormat = new SimpleDateFormat(("yyyy-MM-dd HH:mm"));
         coordFormat = new DecimalFormat("0.0000");
@@ -59,7 +61,6 @@ public class AboutFragment extends Fragment {
         addPackageRows(inflater, table);
         addGoogleRows(inflater, table);
         addLocationRows(inflater, table);
-        addFontRows(inflater, table);
 
         return(view);
     }
@@ -225,7 +226,7 @@ public class AboutFragment extends Fragment {
         Location location = finder.getLocation();
         if (location!=null) {
             String coords = "[" + coordFormat.format(location.getLatitude()) + ", " +
-                    coordFormat.format(location.getLongitude()) + "]";
+                            coordFormat.format(location.getLongitude()) + "]";
             addRow(inflater, table, "Location", coords);
             addRow(inflater, table, "Last fix", formatElapsedTime(location.getTime()));
         } else {
@@ -236,21 +237,5 @@ public class AboutFragment extends Fragment {
         String postalCode = finder.getPostalCode();
         if (postalCode==null) postalCode = "Not available";
         addRow(inflater, table, "Postal code", postalCode);
-    }
-
-    private void addFontRows(LayoutInflater inflater, TableLayout table) {
-        TableRow row = addRow(inflater, table, "3 of 9 font", null);
-        TextView view = (TextView) row.getChildAt(1);
-        Typeface standard = view.getTypeface();
-        Typeface barcode = Typeface.createFromAsset(getActivity().getAssets(), "fonts/3of9_new.ttf");
-
-        if (barcode==null) {
-            view.setText("Create returned null");
-        } else if (barcode==standard) {
-            view.setText("Create returned default font");
-        } else {
-            view.setText("1234567890");
-            view.setTypeface(barcode);
-        }
     }
 }
