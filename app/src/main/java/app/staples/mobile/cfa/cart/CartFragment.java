@@ -603,6 +603,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                     } else {
                         activity.showProgressIndicator();
                         CartApiManager.addCoupon(code, this);
+                        Tracker.getInstance().trackActionForRewardsAddToCart();
                     }
                 }
                 break;

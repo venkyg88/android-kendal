@@ -41,6 +41,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         activity = (MainActivity) getActivity();
 
         View view = inflater.inflate(R.layout.profile_fragment, container, false);
+        view.setTag(this);
 
         shippingBtn = (TextView) view.findViewById(R.id.addShippingBtn);
         ccBtn = (TextView) view.findViewById(R.id.addCCBtn);

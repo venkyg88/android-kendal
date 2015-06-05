@@ -34,7 +34,7 @@ import app.staples.mobile.cfa.profile.ProfileDetails;
 import app.staples.mobile.cfa.util.CurrencyFormat;
 import app.staples.mobile.cfa.widget.ActionBar;
 
-public class RewardsFragment extends Fragment implements View.OnClickListener, CartApiManager.CartRefreshCallback {
+public class RewardsFragment extends Fragment implements View.OnClickListener, TabHost.OnTabChangeListener, CartApiManager.CartRefreshCallback {
     private static final String TAG = RewardsFragment.class.getSimpleName();
 
     private RewardAdapter adapter;
@@ -42,16 +42,18 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Crittercism.leaveBreadcrumb("RewardsFragment:onCreateView(): Displaying the Rewards screen.");
-        Resources res = getResources();
         MainActivity activity = (MainActivity) getActivity();
+        Resources res = getResources();
+
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.rewards_fragment, container, false);
+        view.setTag(this);
 
         // set up tabs
         TabHost tabHost = (TabHost) view.findViewById(android.R.id.tabhost);
         tabHost.setup();
-        TabHost.TabSpec tab1 = tabHost.newTabSpec("First Tab");
-        TabHost.TabSpec tab2 = tabHost.newTabSpec("Second Tab");
-        TabHost.TabSpec tab3 = tabHost.newTabSpec("Third Tab");
+        TabHost.TabSpec tab1 = tabHost.newTabSpec("1");
+        TabHost.TabSpec tab2 = tabHost.newTabSpec("2");
+        TabHost.TabSpec tab3 = tabHost.newTabSpec("3");
         tab1.setIndicator(res.getString(R.string.rewards_list_tabtitle));
         tab1.setContent(R.id.tab1_rewards);
         tab2.setIndicator(res.getString(R.string.rewards_ink_tabtitle));
@@ -61,6 +63,7 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
         tabHost.addTab(tab1);
         tabHost.addTab(tab2);
         tabHost.addTab(tab3);
+        tabHost.setOnTabChangedListener(this);
 
         // get rewards list views
         RecyclerView list = (RecyclerView) view.findViewById(R.id.rewards_list);
@@ -190,9 +193,10 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
                 tag = view.getTag();
                 if (tag instanceof Reward) {
                     Reward reward = (Reward)view.getTag();
-                   if(!reward.isIsApplied()) {
+                    if(!reward.isIsApplied()) {
                         activity.showProgressIndicator();
                         CartApiManager.addCoupon(reward.getCode(), this);
+                        Tracker.getInstance().trackActionForRewardsAddToCart();
                     } else {
                         activity.selectShoppingCart();
                     }
@@ -205,8 +209,18 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, C
                     BarcodeFragment fragment = new BarcodeFragment();
                     fragment.setArguments("Coupon", reward.getCode(), reward.getAmount(), reward.getExpiryDate());
                     activity.selectFragment(DrawerItem.BARCODE, fragment, MainActivity.Transition.RIGHT);
+                    Tracker.getInstance().trackActionForRewardsUseInStore();
                 }
                 break;
+        }
+    }
+
+    @Override
+    public void onTabChanged(String tabId) {
+        if ("2".equals(tabId)) {
+            Tracker.getInstance().trackActionForRewardsInkRecycling();
+        } else if ("3".equals(tabId)) {
+            Tracker.getInstance().trackActionForRewardsSummary();
         }
     }
 }

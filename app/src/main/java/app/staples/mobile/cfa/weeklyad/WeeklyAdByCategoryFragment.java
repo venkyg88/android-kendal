@@ -75,6 +75,8 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
         }
 
         View view = inflater.inflate(R.layout.weekly_ad_category, container, false);
+        view.setTag(this);
+
         storeInfoVw = (TextView) view.findViewById(R.id.store_address);
         dateRangeVw = (TextView) view.findViewById(R.id.date_range);
         changeStoreVw = (TextView) view.findViewById(R.id.change_store);

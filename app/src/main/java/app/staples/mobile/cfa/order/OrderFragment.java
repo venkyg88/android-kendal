@@ -78,7 +78,9 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
         Crittercism.leaveBreadcrumb("OrderFragment:onCreateView(): Displaying the Order screen.");
         MainActivity activity = (MainActivity) getActivity();
         orderShipmentListItems = new ArrayList<OrderShipmentListItem>();
+
         View view = inflater.inflate(R.layout.order_fragment, container, false);
+        view.setTag(this);
 
         // setup overlay
         overlayableLayout = (LinearLayoutWithOverlay)view.findViewById(R.id.overlayable_layout);

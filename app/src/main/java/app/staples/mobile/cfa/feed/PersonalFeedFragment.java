@@ -199,6 +199,7 @@ public class PersonalFeedFragment extends Fragment {
 
         Crittercism.leaveBreadcrumb("PersonalFeedFragment:onCreateView(): Displaying the Personal Feed screen.");
         LinearLayout personalFeedLayout = (LinearLayout) myInflater.inflate(R.layout.personal_feed, container, false);
+        personalFeedLayout.setTag(this);
 
         // get section titles for the sake of analytics
         Resources r = getResources();

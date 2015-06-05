@@ -26,8 +26,9 @@ public class TermsFragment extends Fragment {
         Crittercism.leaveBreadcrumb("TermsFragment:onCreateView(): Displaying the Privacy & Terms screen.");
 
         View view = inflater.inflate(R.layout.terms_fragment, container, false);
-        WebView termsWebView = (WebView) view.findViewById(R.id.terms_view);
+        view.setTag(this);
 
+        WebView termsWebView = (WebView) view.findViewById(R.id.terms_view);
         termsWebView.getSettings().setJavaScriptEnabled(true);
         termsWebView.getSettings().setLoadWithOverviewMode(true);
         termsWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
