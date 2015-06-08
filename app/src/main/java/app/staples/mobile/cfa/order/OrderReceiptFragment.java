@@ -29,7 +29,7 @@ import java.text.SimpleDateFormat;
 import app.staples.R;
 import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.profile.CreditCard;
-import app.staples.mobile.cfa.util.CurrencyFormat;
+import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.widget.ActionBar;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -91,7 +91,7 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
                 OrderStatus orderStatus = order.getOrderStatus();
 //                int totalItemsInOrder = 0;
 
-                DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
+                DecimalFormat currencyFormat = MiscUtils.getCurrencyFormat();
 
                 // for each shipment of the order
                 for (int i = 0;  i < order.getShipments().size(); i++) {

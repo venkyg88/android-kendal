@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,6 +20,8 @@ import com.crittercism.app.Crittercism;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.weeklyad.Collection;
+import com.staples.mobile.common.access.easyopen.model.weeklyad.Content;
 import com.staples.mobile.common.access.easyopen.model.weeklyad.Data;
 import com.staples.mobile.common.access.easyopen.model.weeklyad.WeeklyAd;
 import com.staples.mobile.common.access.easyopen.util.WeeklyAdImageUrlHelper;
@@ -43,15 +46,14 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
     private static final String TITLES = "titles";
     private static final String TABINDEX = "tabIndex";
 
-    WeeklyAdListAdapter adapter;
-    String storeId;
-    EasyOpenApi easyOpenApi;
-    List<Data> weeklyAdItems;
-    List<String> categoryTreeIds;
-    List<String> titles;
-    int currentTabIndex;
-    TabHost tabHost;
-    HorizontalScrollView tabScrollView;
+    private String storeId;
+    private List<String> categoryTreeIds;
+    private List<String> titles;
+    private int currentTabIndex;
+
+    private WeeklyAdListAdapter adapter;
+    private TabHost tabHost;
+    private HorizontalScrollView tabScrollView;
 
     public void setArguments(String storeId, int currentTabIndex,
                              ArrayList<String> categoryTreeIds, ArrayList<String> titles) {
@@ -158,7 +160,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
         Activity activity = getActivity();
       //  activity.showProgressIndicator();
         final int imageWidth = (int) activity.getResources().getDimension(R.dimen.weekly_ad_list_item_image_width);
-        easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+        EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
         easyOpenApi.getWeeklyAdCategoryListing(storeId, categoryTreeIds.get(currentTabIndex),
                 imageWidth, 1, 100,
                 new Callback<WeeklyAd>() {
@@ -168,8 +170,17 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                 if (!(activity instanceof MainActivity)) return;
 
 //                activity.hideProgressIndicator();
-                weeklyAdItems = weeklyAd.getContent().getCollection().getData();
-                adapter.fill(weeklyAdItems);
+                adapter.clear();
+                if (weeklyAd!=null) {
+                    Content content = weeklyAd.getContent();
+                    if (content!=null) {
+                        Collection collection = content.getCollection();
+                        if (collection!=null) {
+                            List<Data> datas = collection.getData();
+                            adapter.fill(datas);
+                        }
+                    }
+                }
             }
 
             @Override
@@ -233,7 +244,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                     WeeklyAdListAdapter.Item item = (WeeklyAdListAdapter.Item) tag;
 
                     // if in-store item, open expanded image of the ad, otherwise open sku page
-                    if (item.inStoreOnly || item.buyNow == "") {
+                    if (item.inStoreOnly || TextUtils.isEmpty(item.buyNow)) {
                         String imageUrl = WeeklyAdImageUrlHelper.getUrl(
                                 (int) res.getDimension(R.dimen.weekly_ad_image_height),
                                 (int) res.getDimension(R.dimen.weekly_ad_image_width),

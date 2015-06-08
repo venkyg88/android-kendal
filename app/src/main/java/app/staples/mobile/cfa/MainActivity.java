@@ -71,7 +71,7 @@ import app.staples.mobile.cfa.rewards.RewardsLinkingFragment;
 import app.staples.mobile.cfa.search.SearchFragment;
 import app.staples.mobile.cfa.sku.SkuFragment;
 import app.staples.mobile.cfa.skuset.SkuSetFragment;
-import app.staples.mobile.cfa.util.CurrencyFormat;
+import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.weeklyad.WeeklyAdByCategoryFragment;
 import app.staples.mobile.cfa.weeklyad.WeeklyAdInStoreFragment;
 import app.staples.mobile.cfa.widget.ActionBar;
@@ -701,7 +701,7 @@ public class MainActivity extends Activity
                     if (registeredUser) {
                         float rewards = ProfileDetails.getRewardsTotal();
                         if (rewards > 0f)
-                            item.extra = CurrencyFormat.getFormatter().format(rewards);
+                            item.extra = MiscUtils.getCurrencyFormat().format(rewards);
                         else item.extra = null;
                     } else item.extra = null;
                     break;

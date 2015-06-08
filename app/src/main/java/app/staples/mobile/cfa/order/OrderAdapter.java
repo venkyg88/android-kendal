@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Locale;
 
 import app.staples.R;
-import app.staples.mobile.cfa.util.CurrencyFormat;
+import app.staples.mobile.cfa.util.MiscUtils;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
 
@@ -103,7 +103,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             if (orderStatus.getGrandTotal() == null) {
                 holder.orderTotalTV.setText("");
             } else {
-                DecimalFormat currencyFormatter = CurrencyFormat.getFormatter();
+                DecimalFormat currencyFormatter = MiscUtils.getCurrencyFormat();
                 float shipmentTotal = 0.0f;
                 for(ShipmentSKU shipmentSku : shipment.getShipmentSku()) {
                     if(shipmentSku != null) {

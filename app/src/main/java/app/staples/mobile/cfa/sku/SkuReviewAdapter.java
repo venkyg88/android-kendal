@@ -2,7 +2,6 @@ package app.staples.mobile.cfa.sku;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import app.staples.R;
+import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.widget.RatingStars;
 
 public class SkuReviewAdapter extends RecyclerView.Adapter<SkuReviewAdapter.ViewHolder> {
@@ -155,13 +155,13 @@ public class SkuReviewAdapter extends RecyclerView.Adapter<SkuReviewAdapter.View
         for(Review review : reviews) {
             Item item = new Item();
             item.rating = review.getScore();
-            item.title = Html.fromHtml(review.getTitle()).toString();
+            item.title = MiscUtils.cleanupHtml(review.getTitle());
             User user = review.getUser();
             if (user!=null) {
                 item.author = user.getDisplayName();
             }
             item.date = formatTimestamp(review.getCreatedAt());
-            item.comments = Html.fromHtml(review.getContent()).toString();
+            item.comments = MiscUtils.cleanupHtml(review.getContent());
             array.add(item);
         }
     }

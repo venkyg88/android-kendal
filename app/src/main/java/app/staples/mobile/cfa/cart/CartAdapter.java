@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.staples.R;
-import app.staples.mobile.cfa.util.CurrencyFormat;
+import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.widget.PriceSticker;
 import app.staples.mobile.cfa.widget.QuantityEditor;
 
@@ -92,7 +92,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             }
         }
 
-        DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
+        DecimalFormat currencyFormat = MiscUtils.getCurrencyFormat();
         float amountToReachToCheckoutAddOnItems = cart.getAmountToReachToCheckoutAddOnItems();
         String amountToReachToCheckoutAddOnItemsStr = currencyFormat.format(amountToReachToCheckoutAddOnItems);
 

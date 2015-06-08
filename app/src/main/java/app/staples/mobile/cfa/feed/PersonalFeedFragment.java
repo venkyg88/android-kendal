@@ -1,16 +1,11 @@
 package app.staples.mobile.cfa.feed;
 
-/**
- * Author: Yongnan Zhou
- */
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +36,7 @@ import java.util.Map;
 import app.staples.R;
 import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.cart.CartApiManager;
+import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.DataWrapper;
 import app.staples.mobile.cfa.widget.PriceSticker;
@@ -103,7 +99,7 @@ public class PersonalFeedFragment extends Fragment {
             View seenSavedProductRow = myInflater.inflate(R.layout.personal_feed_product_item, null);
 
             TextView title = (TextView) seenSavedProductRow.findViewById(R.id.title);
-            final String productName = Html.fromHtml(seenProduct.getProductName()).toString();
+            final String productName = MiscUtils.cleanupHtml(seenProduct.getProductName());
             title.setText(productName);
 
             RatingStars ratingStars = (RatingStars) seenSavedProductRow.findViewById(R.id.rating);
@@ -436,7 +432,7 @@ public class PersonalFeedFragment extends Fragment {
 
     private void fillContainer(com.staples.mobile.common.access.easyopen.model.cart.Product cartItem,
                                LinearLayout container, final String containerTitle){
-        final String productName = Html.fromHtml(cartItem.getProductName()).toString();
+        final String productName = MiscUtils.cleanupHtml(cartItem.getProductName());
 
         MainActivity activity = (MainActivity) getActivity();
         View row = myInflater.inflate(R.layout.personal_feed_product_item, null);

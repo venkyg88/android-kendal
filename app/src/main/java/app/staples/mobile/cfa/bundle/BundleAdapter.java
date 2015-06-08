@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 
@@ -26,6 +24,7 @@ import java.util.Locale;
 
 import app.staples.R;
 import app.staples.mobile.cfa.IdentifierType;
+import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.widget.DataWrapper;
 import app.staples.mobile.cfa.widget.PriceSticker;
 import app.staples.mobile.cfa.widget.RatingStars;
@@ -191,7 +190,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
     public void fill(List<Product> products) {
         if (products==null) return;
         for (Product product : products) {
-            String name = Html.fromHtml(product.getProductName()).toString();
+            String name = MiscUtils.cleanupHtml(product.getProductName());
             BundleItem item = new BundleItem(array.size(), name, product.getSku());
             item.setImageUrl(product.getImage());
             item.customerRating = product.getCustomerReviewRating();

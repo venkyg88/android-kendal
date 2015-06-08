@@ -9,10 +9,6 @@ import app.staples.mobile.cfa.MainActivity;
 
 import java.util.HashSet;
 
-/**
- * Author: Yongnan Zhou
- */
-
 public class PersonalFeedSingleton {
     private static final String TAG = PersonalFeedSingleton.class.getSimpleName();
 

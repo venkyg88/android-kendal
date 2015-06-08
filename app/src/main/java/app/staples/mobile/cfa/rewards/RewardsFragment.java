@@ -31,7 +31,7 @@ import app.staples.mobile.cfa.DrawerItem;
 import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.cart.CartApiManager;
 import app.staples.mobile.cfa.profile.ProfileDetails;
-import app.staples.mobile.cfa.util.CurrencyFormat;
+import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.widget.ActionBar;
 
 public class RewardsFragment extends Fragment implements View.OnClickListener, TabHost.OnTabChangeListener, CartApiManager.CartRefreshCallback {
@@ -120,7 +120,7 @@ public class RewardsFragment extends Fragment implements View.OnClickListener, T
             }
         }
 
-        DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
+        DecimalFormat currencyFormat = MiscUtils.getCurrencyFormat();
 
         // set text of ink recycling views
         ((TextView) view.findViewById(R.id.cartridges_recycled)).setText(Integer.toString(cartridgesRecycled));

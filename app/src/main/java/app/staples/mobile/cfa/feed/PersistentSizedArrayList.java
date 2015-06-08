@@ -10,10 +10,6 @@ import java.util.HashSet;
 
 import app.staples.mobile.cfa.MainActivity;
 
-/**
- * Author: Yongnan Zhou
- */
-
 public class PersistentSizedArrayList<T> extends ArrayList<T> {
     private static final String TAG = PersistentSizedArrayList.class.getSimpleName();
 

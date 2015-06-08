@@ -1,6 +1,5 @@
 package app.staples.mobile.cfa.checkout;
 
-import android.text.Html;
 import android.text.TextUtils;
 
 import app.staples.mobile.cfa.profile.ProfileDetails;
@@ -22,6 +21,7 @@ import com.staples.mobile.common.access.easyopen.model.member.POWResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.staples.mobile.cfa.util.MiscUtils;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -52,9 +52,7 @@ public class CheckoutApiManager {
             public void success(AddressValidationAlert addressValidationAlert, Response response) {
                 if (applyAddressCallback != null) {
 //                    String addressAlert = addressValidationAlert.getAddressValidationAlert();
-//                    if (addressAlert != null) {
-//                        addressAlert = Html.fromHtml(addressAlert).toString();
-//                    }
+//                    addressAlert = MiscUtils.cleanupHtml(addressAlert);
 //                    applyAddressCallback.onApplyAddressComplete(addressValidationAlert.getShippingAddressId(),
 //                            null, addressAlert);
                     // DLS: leaving above for future implementation, currently not a complete solution
@@ -86,9 +84,7 @@ public class CheckoutApiManager {
             public void success(AddressValidationAlert addressValidationAlert, Response response) {
                 if (applyAddressCallback != null) {
 //                    String addressAlert = addressValidationAlert.getAddressValidationAlert();
-//                    if (addressAlert != null) {
-//                        addressAlert = Html.fromHtml(addressAlert).toString();
-//                    }
+//                    addressAlert = MiscUtils.cleanupHtml(addressAlert);
 //                    applyAddressCallback.onApplyAddressComplete(addressValidationAlert.getBillingAddressId(),
 //                            null, addressAlert);
                     // DLS: leaving above for future implementation, currently not a complete solution
@@ -189,9 +185,7 @@ public class CheckoutApiManager {
 //                }
                 // DLS: leaving above for future implementation, currently not a complete solution
                 String infoMsg = addressValidationAlert.getInventoryCheckAlert();
-                if (infoMsg != null) {
-                    infoMsg = Html.fromHtml(infoMsg).toString();
-                }
+                infoMsg = MiscUtils.cleanupHtml(infoMsg);
                 final String finalInfoMsg = infoMsg;
 
                 // get shipping charge, then get tax
