@@ -209,7 +209,7 @@ public class MainActivity extends Activity
             setIntent(null);
         } else {
             ViewGroup content = (ViewGroup) findViewById(R.id.content);
-            if (content!=null & content.getChildCount()==0) {
+            if (content!=null && content.getChildCount()==0) {
                 selectDrawerItem(homeDrawerItem, Transition.NONE);
             }
             setIntent(null);
