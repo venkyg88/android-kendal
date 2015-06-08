@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +29,7 @@ import java.util.List;
 import app.staples.R;
 import app.staples.mobile.cfa.IdentifierType;
 import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.DataWrapper;
 import app.staples.mobile.cfa.widget.FixedSizeLayoutManager;
@@ -129,7 +129,7 @@ public class BrowseFragment extends Fragment  implements Callback<Browse>, View.
             if (title==null) title = description.getText();
             if (title==null) title = description.getDescription();
             if (title!=null) {
-                title = Html.fromHtml(title).toString();
+                title = MiscUtils.cleanupHtml(title);
                 return(title);
             }
         }

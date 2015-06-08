@@ -32,14 +32,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import app.staples.R;
-import app.staples.mobile.cfa.DrawerItem;
 import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import app.staples.mobile.cfa.checkout.CheckoutFragment;
 import app.staples.mobile.cfa.profile.ProfileDetails;
-import app.staples.mobile.cfa.rewards.BarcodeFragment;
 import app.staples.mobile.cfa.rewards.RewardsLinkingFragment;
-import app.staples.mobile.cfa.util.CurrencyFormat;
+import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.QuantityEditor;
 
@@ -222,7 +220,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
 
             emptyCartLayout.setVisibility(totalItemCount == 0? View.VISIBLE : View.GONE);
 
-            DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
+            DecimalFormat currencyFormat = MiscUtils.getCurrencyFormat();
 
             // set text of free shipping msg
             if (totalItemCount > 0) {
@@ -419,7 +417,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                 }
             }
 
-            DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
+            DecimalFormat currencyFormat = MiscUtils.getCurrencyFormat();
 
             // set text of coupons
             boolean couponsShowing = couponsExpanded();

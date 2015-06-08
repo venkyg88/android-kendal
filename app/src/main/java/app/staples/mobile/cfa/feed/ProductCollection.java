@@ -25,9 +25,8 @@ public class ProductCollection {
     private static final boolean LOGGING = false;
 
     public interface ProductCollectionCallBack {
-
-        public void onProductCollectionResult(ProductCollection.ProductContainer productContainer,
-                                              List<ProductContainer.ERROR_CODES> errorCodes);
+        void onProductCollectionResult(ProductCollection.ProductContainer productContainer,
+                                       List<ProductContainer.ERROR_CODES> errorCodes);
     }
 
     private ProductCollection() {

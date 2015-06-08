@@ -1,9 +1,7 @@
 package app.staples.mobile.cfa.cart;
 
-import android.text.Html;
-
+import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.widget.QuantityEditor;
-//import QuantityEditor;
 import com.staples.mobile.common.access.easyopen.model.browse.Discount;
 import com.staples.mobile.common.access.easyopen.model.cart.Image;
 import com.staples.mobile.common.access.easyopen.model.cart.Pricing;
@@ -44,7 +42,7 @@ public class CartItem {
     }
 
     public String getDescription() {
-        return Html.fromHtml(product.getProductName()).toString();
+        return(MiscUtils.cleanupHtml(product.getProductName()));
     }
 
     public String getOrderItemId() {

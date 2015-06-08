@@ -1,8 +1,6 @@
 package app.staples.mobile.cfa.cart;
 
-import android.widget.EditText;
-
-import app.staples.mobile.cfa.util.CurrencyFormat;
+import app.staples.mobile.cfa.util.MiscUtils;
 
 import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
@@ -52,7 +50,7 @@ public class CouponItem {
     }
 
     public String getCouponAmountText() {
-        return CurrencyFormat.getFormatter().format(Math.abs(coupon.getAdjustedAmount()));
+        return MiscUtils.getCurrencyFormat().format(Math.abs(coupon.getAdjustedAmount()));
     }
 
     public String getCouponShortDescription() {

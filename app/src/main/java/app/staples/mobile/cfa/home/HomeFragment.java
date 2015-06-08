@@ -45,7 +45,7 @@ import app.staples.mobile.cfa.location.LocationFinder;
 import app.staples.mobile.cfa.profile.ProfileDetails;
 import app.staples.mobile.cfa.store.StoreFragment;
 import app.staples.mobile.cfa.store.TimeSpan;
-import app.staples.mobile.cfa.util.CurrencyFormat;
+import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.DataWrapper;
 import retrofit.Callback;
@@ -1069,7 +1069,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             if (rewards != 0) {
                 login_layout.setVisibility(View.GONE);
                 reward_layout.setVisibility(View.VISIBLE);
-                rewardTextView.setText(CurrencyFormat.getFormatter().getCurrency().toString() + (int) rewards);
+                rewardTextView.setText(MiscUtils.getCurrencyFormat().getCurrency().toString() + (int) rewards);
                 Log.d(TAG, "Rewards from message bar: " + rewards);
             } else {
                 String loginMessage = MessageFormat.format(getString(R.string.welcome_format), member.getUserName());

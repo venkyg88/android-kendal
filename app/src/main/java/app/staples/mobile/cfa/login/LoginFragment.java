@@ -42,10 +42,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Pro
 
     boolean returnToCheckout;
 
-    /**
-     * Create a new instance of ConfirmationFragment that will be initialized
-     * with the given arguments.
-     */
     public static LoginFragment newInstance(boolean returnToCheckout) {
         LoginFragment f = new LoginFragment();
         Bundle args = new Bundle();
@@ -61,88 +57,86 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Pro
         loginHelper = new LoginHelper(activity);
         Resources r = activity.getResources();
 
-        if(loginHelper.isLoggedIn() && !loginHelper.isGuestLogin()) {
-            activity.popBackStack();
-            return null;
-        }else {
-            View view = inflater.inflate(R.layout.login_fragment, container, false);
+        View view = inflater.inflate(R.layout.login_fragment, container, false);
+        view.setTag(this);
 
-            TabHost tabHost = (TabHost) view.findViewById(R.id.tabHost);
-            tabHost.setup();
+        TabHost tabHost = (TabHost) view.findViewById(R.id.tabHost);
+        tabHost.setup();
 
-            TabHost.TabSpec tab1 = tabHost.newTabSpec(TABID_SIGNIN);
-            TabHost.TabSpec tab2 = tabHost.newTabSpec(TABID_REGISTER);
+        TabHost.TabSpec tab1 = tabHost.newTabSpec(TABID_SIGNIN);
+        TabHost.TabSpec tab2 = tabHost.newTabSpec(TABID_REGISTER);
 
-            tab1.setIndicator(r.getString(R.string.login_title));
-            tab1.setContent(R.id.login_signin);
+        tab1.setIndicator(r.getString(R.string.login_title));
+        tab1.setContent(R.id.login_signin);
 
-            tab2.setIndicator(r.getString(R.string.create_account_title));
-            tab2.setContent(R.id.login_create);
+        tab2.setIndicator(r.getString(R.string.create_account_title));
+        tab2.setContent(R.id.login_create);
 
-            tabHost.addTab(tab1);
-            tabHost.addTab(tab2);
+        tabHost.addTab(tab1);
+        tabHost.addTab(tab2);
 
-            tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
-                @Override
-                public void onTabChanged(String tabId) {
-                    if (tabId.equals(TABID_SIGNIN)) {
-                        Tracker.getInstance().trackStateForLogin(); // Analytics
-                    } else if (tabId.equals(TABID_REGISTER)) {
-                        Tracker.getInstance().trackStateForRegister(); // Analytics
-                    }
+        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                if (tabId.equals(TABID_SIGNIN)) {
+                    Tracker.getInstance().trackStateForLogin(); // Analytics
+                } else if (tabId.equals(TABID_REGISTER)) {
+                    Tracker.getInstance().trackStateForRegister(); // Analytics
                 }
-            });
+            }
+        });
 
-            Bundle checkoutBundle = this.getArguments();
-            returnToCheckout = checkoutBundle.getBoolean(BUNDLE_PARAM_RETURNTOCHECKOUT);
+        Bundle checkoutBundle = this.getArguments();
+        returnToCheckout = checkoutBundle.getBoolean(BUNDLE_PARAM_RETURNTOCHECKOUT);
 
-            Button signInBtn = (Button) view.findViewById(R.id.submit_button);
-            signInBtn.setOnClickListener(this);
+        Button signInBtn = (Button) view.findViewById(R.id.submit_button);
+        signInBtn.setOnClickListener(this);
 
-            Button registerBtn = (Button) view.findViewById(R.id.register_button);
-            registerBtn.setOnClickListener(this);
+        Button registerBtn = (Button) view.findViewById(R.id.register_button);
+        registerBtn.setOnClickListener(this);
 
-            registerEmailET = (EditText)view.findViewById(R.id.emailIdRegister);
-            registerPasswordET = (EditText)view.findViewById(R.id.passwordRegister);
-            signInEmail = (EditText) view.findViewById(R.id.username);
-            signInPassword = (EditText)view.findViewById(R.id.password);
-            passwordTxt = (TextView)view.findViewById(R.id.passwordTxt);
+        registerEmailET = (EditText)view.findViewById(R.id.emailIdRegister);
+        registerPasswordET = (EditText)view.findViewById(R.id.passwordRegister);
+        signInEmail = (EditText) view.findViewById(R.id.username);
+        signInPassword = (EditText)view.findViewById(R.id.password);
+        passwordTxt = (TextView)view.findViewById(R.id.passwordTxt);
 
-            showPassword = (TextView)view.findViewById(R.id.passwordLbl);
-            showPassword.setOnClickListener(this);
+        showPassword = (TextView)view.findViewById(R.id.passwordLbl);
+        showPassword.setOnClickListener(this);
 
-            signInEmail.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    MainActivity activity = (MainActivity) getActivity();
-                    signInEmail.requestFocus();
-                    activity.showSoftKeyboard(signInEmail);
+        signInEmail.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MainActivity activity = (MainActivity) getActivity();
+                signInEmail.requestFocus();
+                activity.showSoftKeyboard(signInEmail);
+            }
+        }, 100);
+
+        TextView forgotPassword = (TextView)view.findViewById(R.id.forgotPwdTV);
+        forgotPassword.setOnClickListener(this);
+
+        registerPasswordET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                if (s.length() != 0) {
+                    showPassword.setVisibility(View.VISIBLE);
+                    passwordTxt.setVisibility(View.VISIBLE);
                 }
-            }, 100);
+            }
+        });
 
-            TextView forgotPassword = (TextView)view.findViewById(R.id.forgotPwdTV);
-            forgotPassword.setOnClickListener(this);
-
-            registerPasswordET.addTextChangedListener(new TextWatcher() {
-
-                public void afterTextChanged(Editable s) {
-                }
-
-                public void beforeTextChanged(CharSequence s, int start,
-                                              int count, int after) {
-                }
-
-                public void onTextChanged(CharSequence s, int start,
-                                          int before, int count) {
-                    if (s.length() != 0) {
-                        showPassword.setVisibility(View.VISIBLE);
-                        passwordTxt.setVisibility(View.VISIBLE);
-                    }
-                }
-            });
-
-            return view;
-        }
+        return view;
     }
 
     @Override

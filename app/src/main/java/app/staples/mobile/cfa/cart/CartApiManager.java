@@ -1,8 +1,6 @@
 package app.staples.mobile.cfa.cart;
 
-import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -21,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import app.staples.mobile.cfa.util.MiscUtils;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -118,7 +117,7 @@ public class CartApiManager {
                         if (TextUtils.isEmpty(errMsg)) {
                             errMsg = ApiError.getApiSuccessError(cartUpdate);
                         } else {
-                            errMsg = Html.fromHtml(errMsg).toString();
+                            errMsg = MiscUtils.cleanupHtml(errMsg);
                         }
                         cartRefreshCallback.onCartRefreshComplete(errMsg);
                     }
@@ -152,7 +151,7 @@ public class CartApiManager {
                         if (TextUtils.isEmpty(errMsg)) {
                             errMsg = ApiError.getApiSuccessError(cartUpdate);
                         } else {
-                            errMsg = Html.fromHtml(errMsg).toString();
+                            errMsg = MiscUtils.cleanupHtml(errMsg);
                         }
                         if (errMsg != null) {
                             //Remove decimals from inventory quantities being returned in the error message

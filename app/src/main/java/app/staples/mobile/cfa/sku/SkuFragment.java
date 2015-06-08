@@ -7,7 +7,6 @@ import android.app.FragmentTransaction;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +44,7 @@ import app.staples.mobile.cfa.apptentive.ApptentiveSdk;
 import app.staples.mobile.cfa.cart.CartApiManager;
 import app.staples.mobile.cfa.feed.PersistentSizedArrayList;
 import app.staples.mobile.cfa.feed.PersonalFeedSingleton;
+import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.DataWrapper;
 import app.staples.mobile.cfa.widget.PagerStripe;
@@ -292,7 +292,7 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
         List<Description> paragraphs = product.getParagraph();
         if (paragraphs != null) {
             for (Description paragraph : paragraphs) {
-                String text = Html.fromHtml(paragraph.getText()).toString();
+                String text = MiscUtils.cleanupHtml(paragraph.getText());
                 if (!text.isEmpty()) {
                     TextView item = (TextView) inflater.inflate(R.layout.sku_paragraph_item, parent, false);
                     parent.addView(item);
@@ -308,7 +308,7 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
         if (bullets != null) {
             for (BulletDescription bullet : bullets) {
                 if (count >= limit) break;
-                String text = Html.fromHtml(bullet.getText()).toString();
+                String text = MiscUtils.cleanupHtml(bullet.getText());
                 if (!text.isEmpty()) {
                     View item = inflater.inflate(R.layout.sku_bullet_item, parent, false);
                     parent.addView(item);
@@ -333,8 +333,8 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
                 break;
             }
 
-            String specName = Html.fromHtml(spec.getName()).toString();
-            String specValue = Html.fromHtml(spec.getText()).toString();
+            String specName = MiscUtils.cleanupHtml(spec.getName());
+            String specValue = MiscUtils.cleanupHtml(spec.getText());
 
             if (!specName.isEmpty() && !specValue.isEmpty()) {
                 View row = inflater.inflate(R.layout.sku_spec_item, parent, false);
@@ -383,7 +383,7 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
 
             // Set accessory title
             TextView accessoryTitleTextView = (TextView) row.findViewById(R.id.accessory_title);
-            accessoryTitleTextView.setText(Html.fromHtml(accessoryTitle).toString());
+            accessoryTitleTextView.setText(MiscUtils.cleanupHtml(accessoryTitle));
 
             // Set accessory price
             ((PriceSticker) row.findViewById(R.id.accessory_price)).setBrowsePricing(accessory.getPricing());
@@ -627,7 +627,7 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
         }
 
         // Add info
-        String productName = Html.fromHtml(product.getProductName()).toString();
+        String productName = MiscUtils.cleanupHtml(product.getProductName());
         ((TextView) summary.findViewById(R.id.title)).setText(productName);
         ((TextView) summary.findViewById(R.id.model)).setText(formatNumbers(res, product));
         ((RatingStars) summary.findViewById(R.id.rating)).setRating(product.getCustomerReviewRating(), product.getCustomerReviewCount());

@@ -22,7 +22,7 @@ import app.staples.R;
 import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.cart.CartApiManager;
 import app.staples.mobile.cfa.kount.KountManager;
-import app.staples.mobile.cfa.util.CurrencyFormat;
+import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.widget.ActionBar;
 
 public abstract class CheckoutFragment extends Fragment implements View.OnClickListener {
@@ -125,7 +125,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
             tax = null;
         }
 
-        DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
+        DecimalFormat currencyFormat = MiscUtils.getCurrencyFormat();
 
         // DLS: taking this out as per Tim (commenting-out for now just in case they ask for it back)
         // set coupons/rewards adjusted amount
@@ -223,7 +223,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
             @Override
             public void onOrderSubmissionComplete(String orderId, String orderNumber, String errMsg) {
 
-                final DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
+                final DecimalFormat currencyFormat = MiscUtils.getCurrencyFormat();
 
                 // if success
                 if (errMsg == null) {
@@ -296,7 +296,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         this.shippingCharge = shippingCharge;
         this.tax = tax;
 
-        DecimalFormat currencyFormat = CurrencyFormat.getFormatter();
+        DecimalFormat currencyFormat = MiscUtils.getCurrencyFormat();
         String totalHandlingCostStr = currencyFormat.format(totalHandlingCost);
         oversizedShippingVw.setText(totalHandlingCostStr);
 

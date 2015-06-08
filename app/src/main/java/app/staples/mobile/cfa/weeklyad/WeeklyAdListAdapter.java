@@ -123,7 +123,7 @@ public class  WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapt
     }
 
     public void fill(List<Data> datas) {
-        array.clear();
+        if (datas==null) return;
         for(Data data : datas) {
             Item item = new Item();
             item.title = data.getTitle();

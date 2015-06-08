@@ -3,7 +3,6 @@ package app.staples.mobile.cfa.skuset;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +17,7 @@ import java.util.List;
 
 import app.staples.R;
 import app.staples.mobile.cfa.bundle.BundleItem;
+import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.widget.PriceSticker;
 import app.staples.mobile.cfa.widget.RatingStars;
 
@@ -39,7 +39,6 @@ public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder
         }
     }
 
-    private Context context;
     private LayoutInflater inflater;
     private ArrayList<BundleItem> array;
     private Picasso picasso;
@@ -47,7 +46,6 @@ public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder
     private View.OnClickListener listener;
 
     public SkuSetAdapter(Context context) {
-        this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         array = new ArrayList<BundleItem>();
         picasso = Picasso.with(context);
@@ -92,7 +90,7 @@ public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder
         if (products==null) return(0);
         int count = 0;
         for (Product product : products) {
-            String name = Html.fromHtml(product.getProductName()).toString();
+            String name = MiscUtils.cleanupHtml(product.getProductName());
             BundleItem item = new BundleItem(products.size(), name, product.getSku());
             item.setPrice(product.getPricing());
             item.setImageUrl(product.getImage());
