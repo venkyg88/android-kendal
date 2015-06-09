@@ -1055,7 +1055,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         store_wrapper.setOnClickListener(this);
     }
 
-    private void updateMessageBar() {
+    public void updateMessageBar() {
                 Access access = Access.getInstance();
         // Logged In
         // Note that member can be null if failure to retrieve profile following successful login
@@ -1093,8 +1093,13 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
 
         switch(view.getId()) {
             case R.id.login_layout:
-                Tracker.getInstance().trackActionForPersonalizedMessaging("Login"); // Analytics
-                activity.selectLoginFragment();
+                Access access = Access.getInstance();
+                if (access.isLoggedIn() && !access.isGuestLogin()) {
+                    activity.selectProfileFragment();
+                } else {
+                    Tracker.getInstance().trackActionForPersonalizedMessaging("Login"); // Analytics
+                    activity.selectLoginFragment();
+                }
                 break;
             case R.id.reward_layout:
                 Tracker.getInstance().trackActionForPersonalizedMessaging("Reward"); // Analytics

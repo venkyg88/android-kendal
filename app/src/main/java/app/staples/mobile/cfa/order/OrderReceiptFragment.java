@@ -134,7 +134,7 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
 
                         // fill in images asynchronously
                         easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-                        easyOpenApi.getSkuDetails(sku.getSkuNumber(), 1, 50, new Callback<SkuDetails>() {
+                        easyOpenApi.getSkuDetails(sku.getSkuNumber(), new Callback<SkuDetails>() {
                             @Override public void success(SkuDetails skuDetails, Response response) {
                                 String imageUrl = null;
                                 if (skuDetails.getProduct() != null && skuDetails.getProduct().size() > 0) {

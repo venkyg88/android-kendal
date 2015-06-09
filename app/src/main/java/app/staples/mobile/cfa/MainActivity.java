@@ -680,7 +680,13 @@ public class MainActivity extends Activity
         // disable menu items as appropriate
         updateMenuItemState();
 
-        selectFragment(DrawerItem.HOME, new HomeFragment(), Transition.RIGHT);
+        // Update header or switch to home page
+        Fragment top = getTopFragment();
+        if (top instanceof HomeFragment) {
+            ((HomeFragment) top).updateMessageBar();
+        } else {
+            selectFragment(DrawerItem.HOME, new HomeFragment(), Transition.RIGHT);
+        }
     }
 
     private void updateMenuItemState() {

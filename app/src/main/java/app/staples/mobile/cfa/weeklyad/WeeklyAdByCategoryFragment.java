@@ -50,10 +50,8 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
     private String city;
     private String address;
 
-    private RecyclerView mRecyclerView;
     private TextView storeInfoVw;
     private TextView dateRangeVw;
-    private TextView changeStoreVw;
     private WeeklyAdByCategoryAdapter adapter;
     private List<Data> weeklyAdItems;
 
@@ -64,8 +62,7 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Crittercism.leaveBreadcrumb("WeeklyAdByCategoryFragment:onCreateView(): Displaying the Weekly Ad by Category screen.");
         MainActivity activity = (MainActivity)getActivity();
 
@@ -79,15 +76,14 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
 
         storeInfoVw = (TextView) view.findViewById(R.id.store_address);
         dateRangeVw = (TextView) view.findViewById(R.id.date_range);
-        changeStoreVw = (TextView) view.findViewById(R.id.change_store);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.weekly_ad_categories_list);
-        mRecyclerView.setHasFixedSize(true);
+        RecyclerView list = (RecyclerView) view.findViewById(R.id.weekly_ad_categories_list);
+        list.setHasFixedSize(true);
         RecyclerView.LayoutManager manager = new LinearLayoutManager(activity);
-        mRecyclerView.setLayoutManager(manager);
+        list.setLayoutManager(manager);
         adapter = new WeeklyAdByCategoryAdapter(activity);
-        mRecyclerView.setAdapter(adapter);
+        list.setAdapter(adapter);
 
-        changeStoreVw.setOnClickListener(this);
+        view.findViewById(R.id.change_store).setOnClickListener(this);
 
         // if store info avail
         if (!TextUtils.isEmpty(storeNo)) {
@@ -127,7 +123,7 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
                 MainActivity activity = (MainActivity) getActivity();
                 if (activity==null) return;
 
-                if (weeklyAdStore.getContent().getCollection() != null) {
+                if (weeklyAdStore!=null) {
                     Content content = weeklyAdStore.getContent();
                     if (content != null) {
                         Collection collection = content.getCollection();
@@ -169,7 +165,7 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
                 MainActivity activity = (MainActivity) getActivity();
                 if (activity==null) return;
 
-                if (weeklyAdPromo.getContent().getCollection() != null) {
+                if (weeklyAdPromo!=null) {
                     Content content = weeklyAdPromo.getContent();
                     if (content != null) {
                         Collection collection = content.getCollection();
@@ -197,7 +193,6 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
                 Log.d(TAG, ApiError.getErrorMessage(error));
             }
         });
-
     }
 
     private void getWeeklyAdData(){
@@ -232,13 +227,6 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
         });
     }
 
-    @Override
-    public void onClick(View view) {
-        MainActivity activity = (MainActivity) getActivity();
-        if (activity==null) return;
-         activity.selectStoreFinder();
-    }
-
     private class StoreInfoCallback implements Callback<StoreQuery> {
         @Override
         public void success(StoreQuery storeQuery, Response response) {
@@ -268,6 +256,18 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
 
             activity.hideProgressIndicator();
             activity.showErrorDialog(ApiError.getErrorMessage(retrofitError));
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity==null) return;
+
+        switch(view.getId()) {
+            case R.id.change_store:
+                activity.selectStoreFinder();
+                break;
         }
     }
 }

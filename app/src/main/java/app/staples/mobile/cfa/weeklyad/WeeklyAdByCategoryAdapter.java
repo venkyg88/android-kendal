@@ -71,32 +71,32 @@ public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCa
 
     @Override
     public WeeklyAdByCategoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.weekly_ad_categories_item, parent, false);
-        ViewHolder viewHolder = new ViewHolder(v);
-        viewHolder.setClickListener(new ViewHolder.ClickListener() {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.weekly_ad_categories_item, parent, false);
+        ViewHolder vh = new ViewHolder(view);
+        vh.setClickListener(new ViewHolder.ClickListener() {
             @Override
             public void onClick(View v, int position) {
 //                Data data = array.get(position);
                 WeeklyAdListFragment weeklyAdFragment = new WeeklyAdListFragment();
                 weeklyAdFragment.setArguments(storeId, position, categoryTreeIds, titles);
-                ((MainActivity)activity).selectFragment(DrawerItem.WEEKLYDETAIL, weeklyAdFragment, MainActivity.Transition.RIGHT);
+                ((MainActivity) activity).selectFragment(DrawerItem.WEEKLYDETAIL, weeklyAdFragment, MainActivity.Transition.RIGHT);
             }
         });
 
-        return viewHolder;
+        return vh;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder vh, int position) {
         Data data = array.get(position);
 
-        holder.weeklyAdDealTileTV.setText(data.getName());
-        holder.weeklyAdDealCountTV.setText(activity.getResources().getQuantityString(R.plurals.deals,
+        vh.weeklyAdDealTileTV.setText(data.getName());
+        vh.weeklyAdDealCountTV.setText(activity.getResources().getQuantityString(R.plurals.deals,
                                            data.getCount(), data.getCount()));
         Picasso.with(activity)
                 .load(data.getImagelocation()) // note that urls returned from category api don't include dimensions
                 .error(R.drawable.no_photo)
-                .into(holder.weeklyAdCategoryIV);
+                .into(vh.weeklyAdCategoryIV);
     }
 
     @Override

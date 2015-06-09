@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -40,6 +39,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class WeeklyAdListFragment extends Fragment implements View.OnClickListener {
+    private static final String TAG = WeeklyAdListFragment.class.getSimpleName();
 
     private static final String STOREID = "storeid";
     private static final String CATEGORYTREEIDS = "categoryTreeIds";
@@ -244,7 +244,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
                     WeeklyAdListAdapter.Item item = (WeeklyAdListAdapter.Item) tag;
 
                     // if in-store item, open expanded image of the ad, otherwise open sku page
-                    if (item.inStoreOnly || TextUtils.isEmpty(item.buyNow)) {
+                    if (item.inStoreOnly || item.buyNow==null) {
                         String imageUrl = WeeklyAdImageUrlHelper.getUrl(
                                 (int) res.getDimension(R.dimen.weekly_ad_image_height),
                                 (int) res.getDimension(R.dimen.weekly_ad_image_width),
@@ -269,7 +269,6 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
     }
 
     private class LeftRightFlingListener extends GestureDetector.SimpleOnGestureListener {
-
         @Override
         public boolean onDown(MotionEvent event) {
             return true;

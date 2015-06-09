@@ -54,8 +54,6 @@ public class PersonalFeedFragment extends Fragment {
     public static final String DAILY_DEAL_IDENTIFIER = "BI739472"; // TODO Needs to be configurable
     public static final String CLEARANCE_IDENTIFIER = "BI642994"; // TODO Needs to be configurable
 
-    private static final int MAXFETCH = 50;
-
     private LinearLayout dailyDealLayout;
     private LinearLayout clearanceLayout;
     private LinearLayout seenProductsLayout;
@@ -425,7 +423,7 @@ public class PersonalFeedFragment extends Fragment {
             for(String sku : saveSeenSkus){
                 // Initiate SKU API call
                 EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
-                api.getSkuDetails(sku, 1, MAXFETCH, new SkuDetailsCallback());
+                api.getSkuDetails(sku, new SkuDetailsCallback());
             }
         }
     }
