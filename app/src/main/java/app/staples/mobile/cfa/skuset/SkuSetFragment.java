@@ -36,8 +36,6 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
     private static final String IDENTIFIER = "identifier";
     private static final String IMAGEURL = "imageUrl";
 
-    private static final int MAXFETCH = 50;
-
     private DataWrapper wrapper;
     private SkuSetAdapter adapter;
     private String title;
@@ -78,7 +76,7 @@ public class SkuSetFragment extends Fragment  implements Callback<SkuDetails>, V
 
         wrapper.setState(DataWrapper.State.LOADING);
         EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.getSkuSummary(identifier, null, MAXFETCH, this);
+        easyOpenApi.getSkuSummary(identifier, this);
 
         return(frame);
     }

@@ -6,14 +6,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.staples.mobile.common.access.easyopen.model.member.OrderStatus;
 import com.staples.mobile.common.access.easyopen.model.member.Shipment;
 import com.staples.mobile.common.access.easyopen.model.member.ShipmentSKU;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,25 +41,25 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     View.OnClickListener onClickListener;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView orderTotalTV;
-        TextView numItemsTV;
-        TextView orderStatusTV;
-        TextView orderDateTV;
-        TextView orderNumTV;
-        TextView orderShipmentTV;
-        Button trackShipmentBtn;
-        Button viewRecieptBtn;
+        private TextView orderTotalTV;
+        private TextView numItemsTV;
+        private TextView orderStatusTV;
+        private TextView orderDateTV;
+        private TextView orderNumTV;
+        private TextView orderShipmentTV;
+        private View trackShipmentBtn;
+        private View viewRecieptBtn;
 
-        public ViewHolder(View v) {
-            super(v);
-            orderDateTV = (TextView) v.findViewById(R.id.order_date);
-            orderStatusTV = (TextView) v.findViewById(R.id.order_status);
-            numItemsTV = (TextView) v.findViewById(R.id.order_item_count);
-            orderTotalTV = (TextView) v.findViewById(R.id.order_total);
-            orderNumTV = (TextView) v.findViewById(R.id.order_number);
-            orderShipmentTV = (TextView) v.findViewById(R.id.order_shipment);
-            trackShipmentBtn = (Button) v.findViewById(R.id.track_shipment_btn);
-            viewRecieptBtn = (Button) v.findViewById(R.id.order_reciept_btn);
+        public ViewHolder(View view) {
+            super(view);
+            orderDateTV = (TextView) view.findViewById(R.id.order_date);
+            orderStatusTV = (TextView) view.findViewById(R.id.order_status);
+            numItemsTV = (TextView) view.findViewById(R.id.order_item_count);
+            orderTotalTV = (TextView) view.findViewById(R.id.order_total);
+            orderNumTV = (TextView) view.findViewById(R.id.order_number);
+            orderShipmentTV = (TextView) view.findViewById(R.id.order_shipment);
+            trackShipmentBtn = view.findViewById(R.id.track_shipment_btn);
+            viewRecieptBtn = view.findViewById(R.id.order_reciept_btn);
         }
     }
 
@@ -79,7 +77,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder vh, int position) {
         OrderShipmentListItem order = array.get(position);
         OrderStatus orderStatus = order.getOrderStatus();
         Shipment shipment = order.getShipment();
@@ -94,43 +92,42 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         }
 
         if (orderStatus == null) {
-            holder.orderDateTV.setText("");
-            holder.orderTotalTV.setText("");
+            vh.orderDateTV.setText(null);
+            vh.orderTotalTV.setText(null);
         } else {
             SimpleDateFormat formatter = new SimpleDateFormat("MMM. dd, yyyy", Locale.US);
             String orderDate = formatter.format(OrderShipmentListItem.parseDate(orderStatus.getOrderDate()));
-            holder.orderDateTV.setText(orderDate);
+            vh.orderDateTV.setText(orderDate);
             if (orderStatus.getGrandTotal() == null) {
-                holder.orderTotalTV.setText("");
+                vh.orderTotalTV.setText(null);
             } else {
-                DecimalFormat currencyFormatter = MiscUtils.getCurrencyFormat();
                 float shipmentTotal = 0.0f;
                 for(ShipmentSKU shipmentSku : shipment.getShipmentSku()) {
                     if(shipmentSku != null) {
                         shipmentTotal += Float.parseFloat(shipmentSku.getLineTotal());
                     }
                 }
-                holder.orderTotalTV.setText(currencyFormatter.format(shipmentTotal));
+                vh.orderTotalTV.setText(MiscUtils.getCurrencyFormat().format(shipmentTotal));
             }
         }
 
-        holder.orderShipmentTV.setText("Shipment " + (order.getShipmentIndex()+1) + " of " + order.getShipments().size());
-        holder.orderNumTV.setText("#"+ orderStatus.getOrderNumber());
-        holder.orderStatusTV.setText(shipment.getShipmentStatusDescription());
-        holder.numItemsTV.setText(r.getQuantityString(R.plurals.cart_qty, totalItemQtyOfShipment, totalItemQtyOfShipment));
+        vh.orderShipmentTV.setText("Shipment " + (order.getShipmentIndex()+1) + " of " + order.getShipments().size());
+        vh.orderNumTV.setText("#" + orderStatus.getOrderNumber());
+        vh.orderStatusTV.setText(shipment.getShipmentStatusDescription());
+        vh.numItemsTV.setText(r.getQuantityString(R.plurals.cart_qty, totalItemQtyOfShipment, totalItemQtyOfShipment));
 
-        holder.trackShipmentBtn.setVisibility(View.INVISIBLE);
+        vh.trackShipmentBtn.setVisibility(View.INVISIBLE);
         if (shipment.getShipmentStatusDescription().equals(TrackType.SHIPPED.toString())) {
-            holder.trackShipmentBtn.setVisibility(View.VISIBLE);
+            vh.trackShipmentBtn.setVisibility(View.VISIBLE);
         } else if (shipment.getShipmentStatusDescription().equals(TrackType.DELIVERED.toString())) {
-            holder.trackShipmentBtn.setVisibility(View.VISIBLE);
+            vh.trackShipmentBtn.setVisibility(View.VISIBLE);
         }
 
-        holder.trackShipmentBtn.setTag(order);
-        holder.viewRecieptBtn.setTag(order);
+        vh.trackShipmentBtn.setTag(order);
+        vh.viewRecieptBtn.setTag(order);
 
-        holder.trackShipmentBtn.setOnClickListener(onClickListener);
-        holder.viewRecieptBtn.setOnClickListener(onClickListener);
+        vh.trackShipmentBtn.setOnClickListener(onClickListener);
+        vh.viewRecieptBtn.setOnClickListener(onClickListener);
     }
 
     @Override
@@ -150,5 +147,4 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         array.addAll(items);
         notifyDataSetChanged();
     }
-
 }

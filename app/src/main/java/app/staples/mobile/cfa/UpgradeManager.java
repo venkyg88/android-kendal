@@ -15,8 +15,7 @@ import com.staples.mobile.common.access.config.model.Suggest;
 import com.staples.mobile.common.access.config.model.Update;
 
 public class UpgradeManager {
-
-    private static final String TAG = "UpgradeManager";
+    private static final String TAG = UpgradeManager.class.getSimpleName();
 
     private static final boolean LOGGING = false;
 

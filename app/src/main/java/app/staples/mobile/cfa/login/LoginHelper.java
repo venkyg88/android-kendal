@@ -28,6 +28,7 @@ import retrofit.client.Response;
 
 public class LoginHelper {
     private static final String TAG = LoginHelper.class.getSimpleName();
+
     private static final String PREFS_USERNAME = "username";
     private static final String PREFS_ENCRYPTEDPASSWORD = "encryptedPassword";
     private static final String PREFS_TOKEN1 = "wcToken";
@@ -37,8 +38,8 @@ public class LoginHelper {
     private static String cachedPassword;
 
     public interface OnLoginCompleteListener {
-        public void onLoginComplete(boolean guestLevel);
-        public void onLogoutComplete();
+        void onLoginComplete(boolean guestLevel);
+        void onLogoutComplete();
     }
 
     private MainActivity activity;

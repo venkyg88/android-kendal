@@ -145,7 +145,7 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
 
         // Get product details & reviews
         EasyOpenApi api = Access.getInstance().getEasyOpenApi(false);
-        api.getSkuDetails(identifier, null, MAXFETCH, this);
+        api.getSkuDetails(identifier, this);
 
         reviewPage = 1;
         queryReviews();
