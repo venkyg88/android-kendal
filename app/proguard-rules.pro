@@ -4,6 +4,11 @@
 -adaptclassstrings
 -adaptresourcefilecontents **/*.xml
 
+-dontusemixedcaseclassnames
+-useuniqueclassmembernames
+-renamesourcefileattribute Null
+-keepattributes SourceFile,LineNumberTable
+
 -dontwarn rx.**
 -dontwarn retrofit.Platform$*
 -dontwarn retrofit.appengine.**
