@@ -61,7 +61,6 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         }
     }
 
-    private Activity activity;
     private LayoutInflater inflater;
     private ArrayList<StoreItem> array;
     private View.OnClickListener listener;
@@ -114,7 +113,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         singleIndex = 0;
     }
 
-    public void addStore(StoreItem item) {
+    public void addItem(StoreItem item) {
         array.add(item);
     }
 
@@ -226,8 +225,8 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         int n = array.size();
         for(int i=0;i<n;i++) {
             StoreItem item = array.get(i);
-            if (item.position.latitude==latitude &&
-                item.position.longitude==longitude)
+            if (item.latitude==latitude &&
+                item.longitude==longitude)
                 return (i);
         }
         return(-1);

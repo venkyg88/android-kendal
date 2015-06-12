@@ -169,7 +169,7 @@ public class MainActivity extends Activity
         super.onCreate(bundle);
 
         try {
-            Crittercism.initialize(this, FlavorSpecific.CRITTERCISM_ID);
+            Crittercism.initialize(getApplicationContext(), FlavorSpecific.CRITTERCISM_ID);
             Crittercism.leaveBreadcrumb("MainActivty:onCreate(): Crittercism initialized.");
         } catch (Exception exception) {}
 
@@ -509,6 +509,9 @@ public class MainActivity extends Activity
     @Override
     public void onGetConfiguratorResult(AppConfigurator.Status status, RetrofitError retrofitError) {
         Log.d(TAG, "AppConfigurator.load "+status);
+        if (status!= AppConfigurator.Status.NOQUERY) {
+            Crittercism.leaveBreadcrumb("AppConfigurator.load returned "+status);
+        }
 
         // Show errors
         if (retrofitError != null) {
@@ -575,6 +578,14 @@ public class MainActivity extends Activity
             if (top instanceof HomeFragment) {
                 ((HomeFragment) top).refreshPage();
             }
+        }
+    }
+
+    public void onNearbyStore() {
+        // Refresh HomeFragment header if necessary
+        Fragment top = getTopFragment();
+        if (top instanceof HomeFragment) {
+            ((HomeFragment) top).refreshNearbyStore();
         }
     }
 

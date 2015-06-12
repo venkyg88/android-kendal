@@ -38,6 +38,7 @@ public class CartModelTest {
         if (!Utility.doLiveCalls) return;
 
         easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+        Assert.assertNotNull("Should have gotten EasyOpenApi", easyOpenApi);
         success = false;
         failure = false;
 
@@ -81,6 +82,7 @@ public class CartModelTest {
         if (!Utility.doLiveCalls) return;
 
         easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+        Assert.assertNotNull("Should have gotten EasyOpenApi", easyOpenApi);
         success = false;
         failure = false;
 

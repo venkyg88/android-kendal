@@ -56,8 +56,10 @@ public class InventoryModelTest {
         if (!Utility.doLiveCalls) return;
 
         easyOpenApi = Access.getInstance().getEasyOpenApi(false);
+        Assert.assertNotNull("Should have gotten easyOpenApi", easyOpenApi);
         success = false;
         failure = false;
+
         //http://sapi.staples.com/v1/10001/stores/inventory?locale=en_US&zipCode=05251&catalogId=10051&partNumber=513096&distance=100&client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS
         easyOpenApi.getStoreInventory("513096", "25", 0, 50,
                 new Callback<StoreInventory>() {

@@ -65,15 +65,13 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class StoreFragment extends Fragment implements Callback<StoreQuery>,
-        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, View.OnClickListener, EditText.OnEditorActionListener, LocationFinder.PostalCodeCallback {
+        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, View.OnClickListener, EditText.OnEditorActionListener {
     private static final String TAG = StoreFragment.class.getSimpleName();
 
     private static int FITSTORES = 5; // Number of stores to fit in initial view
     private static double EARTHRADIUS = 6371.0; // kilometers
     private static double minViewAngle = 360.0/(2.0*Math.PI*EARTHRADIUS) * 5.0; // 5 km
     private static double maxViewAngle = 360.0/(2.0*Math.PI*EARTHRADIUS) * 100.0; // 100 km
-
-    private final String FraminghamZipcode = "01702";
 
     private MapView mapView;
     private GoogleMap googleMap;
@@ -88,6 +86,17 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     private Location location;
 
     private int singleHeight;
+
+    @Override
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+
+        adapter = new StoreAdapter(getActivity());
+
+        LocationFinder finder = LocationFinder.getInstance(getActivity());
+        String postalCode = finder.getPostalCode();
+        Access.getInstance().getChannelApi(false).storeLocations(postalCode, this);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -108,12 +117,9 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         else {
             view = inflater.inflate(R.layout.store_fragment_nomap, container, false);
             view.setTag(this);
-
-            gotoHere();
         }
 
         list = (RecyclerView) view.findViewById(R.id.list);
-        adapter = new StoreAdapter(getActivity());
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         adapter.setOnClickListener(this);
@@ -145,34 +151,17 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         hotIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
         coldIcon = BitmapDescriptorFactory.fromResource(R.drawable.ic_store_cold);
 
-        gotoHere();
+        applyState();
     }
 
-    private void gotoHere() {
-        // Get location
-        LocationFinder finder = LocationFinder.getInstance(getActivity());
-        location = finder.getLocation();
-        if (location==null) {
-            Log.d(TAG, "LocationFinder.getLocation returned null");
-            String errorMessage = (String) getResources().getText(R.string.error_no_location_service);
-            Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
+    private void applyState() {
+        if (adapter.getBackingCount()>0 && googleMap!=null) {
+            addMarkers();
+            scaleMap();
+            adapter.setSingleMode(true);
+            adapter.setSingleIndex(0);
         }
     }
-
-    @Override
-    public void onGetPostalCodeSuccess(String postalCode) {
-        if (postalCode==null) {
-            // FraminghamZipcode is default
-            postalCode = FraminghamZipcode;
-            Log.d(TAG, "LocationFinder.getPostalCode returned null");
-        }
-
-        // Find nearby stores
-        Access.getInstance().getChannelApi(false).storeLocations(postalCode, this);
-    }
-
-    @Override
-    public void onGetPostalCodeFailure() {}
 
     private CharSequence getHint() {
         Resources res = getActivity().getResources();
@@ -189,7 +178,6 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     public void onResume() {
         int icon;
         super.onResume();
-        LocationFinder.getInstance(getActivity()).registerPostalCodeListener(this);
         if (mapView!=null) mapView.onResume();
         if (adapter.isSingleMode()) icon = R.drawable.ic_view_list_black;
         else icon = R.drawable.ic_map_black;
@@ -201,7 +189,6 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     public void onPause() {
         super.onPause();
         if (mapView!=null) mapView.onPause();
-        LocationFinder.getInstance(getActivity()).unRegisterPostalCodeListener(this);
     }
 
     @Override
@@ -216,86 +203,36 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         if (mapView!=null) mapView.onLowMemory();
     }
 
-    private StoreItem addStore(StoreData storeData) {
-        if (storeData==null) return(null);
-        Obj obj = storeData.getObj();
-        if (obj==null) return(null);
-
-        // Get coordinates
-        List<Double> loc = obj.getLoc();
-        if (loc==null || loc.size()!=2) return(null);
-        Double lat = loc.get(1);
-        Double lng = loc.get(0);
-        if (lat==null || lng==null) return(null);
-
-        String storeNumber = obj.getStoreNumber();
-        StoreItem item = new StoreItem(storeNumber, lat, lng);
-        item.distance = storeData.getDis();
-
-        // store features
-        StringBuilder featuresBuf = new StringBuilder();
-        for (StoreFeature feature : obj.getStoreFeatures()) {
-            if (!TextUtils.isEmpty(feature.getName())) {
-                if (featuresBuf.length() > 0) {
-                    featuresBuf.append("\n");
-                }
-                featuresBuf.append(feature.getName());
-            }
-        }
-        item.storeFeatures = featuresBuf.toString();
-
-        // Get store address
-        StoreAddress storeAddress = obj.getStoreAddress();
-        if (storeAddress!=null) {
-            item.streetAddress1 = storeAddress.getAddressLine1();
-            item.streetAddress2 = storeAddress.getAddressLine2();
-            item.city = storeAddress.getCity();
-            item.state = storeAddress.getState();
-            item.country = storeAddress.getCountry();
-            item.zipcode = storeAddress.getZip();
-            item.phoneNumber = StoreItem.reformatPhoneFaxNumber(storeAddress.getPhoneNumber());
-            item.faxNumber = StoreItem.reformatPhoneFaxNumber(storeAddress.getFaxNumber());
-        }
-
-        // Get store hours
-        List<StoreHours> list = obj.getStoreHours();
-        for(StoreHours hours : list) {
-            TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
-            if (span!=null)
-                item.addTimeSpan(span);
-        }
-
-        adapter.addStore(item);
-        return(item);
-    }
-
     private void addMarkers() {
+        googleMap.clear();
         int n = adapter.getBackingCount();
-        if (n<=0) return;
-
-        // Add hot marker
-        StoreItem item = adapter.getBackingItem(0);
-        MarkerOptions options = new MarkerOptions();
-        options.icon(hotIcon);
-        options.anchor(0.5f, 1.0f);
-        options.position(item.position);
-        item.marker = googleMap.addMarker(options);
-        hotMarker = item.marker;
-
-        // Add cold markers
-        for(int i = 1; i < n; i++) {
-            item = adapter.getBackingItem(i);
-            options = new MarkerOptions();
-            options.icon(coldIcon);
-            options.anchor(0.5f, 0.5f);
-            options.position(item.position);
+        for(int i=0;i<n;i++) {
+            StoreItem item = adapter.getBackingItem(i);
+            MarkerOptions options = new MarkerOptions();
+            options.position(new LatLng(item.latitude, item.longitude));
+            if (i==0) {
+                // Add hot marker
+                options.icon(hotIcon);
+                options.anchor(0.5f, 1.0f);
+            } else {
+                // Add cold marker
+                options.icon(coldIcon);
+                options.anchor(0.5f, 0.5f);
+            }
             item.marker = googleMap.addMarker(options);
+            if (i==0) {
+                hotMarker = item.marker;
+            }
         }
     }
 
     // Map bounds and scaling
 
     private LatLngBounds makeBounds(double centerLat, double centerLng, double deltaLat, double deltaLng) {
+        // Inflate for padding
+        deltaLat *= 1.1;
+        deltaLng *= 1.1;
+
         // Clip deltas to min and max
         double cos = Math.cos(Math.PI/180.0*centerLat);
         deltaLat = Math.max(deltaLat, minViewAngle);
@@ -319,9 +256,9 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         // Get bounds of first N stores
         int n = Math.min(adapter.getBackingCount(), FITSTORES);
         for(int i=0;i<n;i++) {
-            LatLng position = adapter.getBackingItem(i).position;
-            deltaLat = Math.max(deltaLat, Math.abs(position.latitude-centerLat));
-            deltaLng = Math.max(deltaLng, Math.abs(position.longitude-centerLng));
+            StoreItem item = adapter.getBackingItem(i);
+            deltaLat = Math.max(deltaLat, Math.abs(item.latitude-centerLat));
+            deltaLng = Math.max(deltaLng, Math.abs(item.longitude-centerLng));
         }
 
         LatLngBounds bounds = makeBounds(centerLat, centerLng, deltaLat, deltaLng);
@@ -337,11 +274,11 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         // Get bounds of first N stores
         int n = Math.min(adapter.getBackingCount(), FITSTORES);
         for(int i=0;i<n;i++) {
-            LatLng position = adapter.getBackingItem(i).position;
-            minLat = Math.min(minLat, position.latitude);
-            minLng = Math.min(minLng, position.longitude);
-            maxLat = Math.max(maxLat, position.latitude);
-            maxLng = Math.max(maxLng, position.longitude);
+            StoreItem item = adapter.getBackingItem(i);
+            minLat = Math.min(minLat, item.latitude);
+            minLng = Math.min(minLng, item.longitude);
+            maxLat = Math.max(maxLat, item.latitude);
+            maxLng = Math.max(maxLng, item.longitude);
         }
 
         LatLngBounds bounds = makeBounds((minLat+maxLat)/2.0, (minLng+maxLng)/2.0,
@@ -397,7 +334,11 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         if (!(activity instanceof MainActivity)) return;
 
         int n = processStoreQuery(storeQuery);
-        if (n==0) showFailureDialog();
+        if (n>0) {
+            applyState();
+        } else {
+            showFailureDialog();
+        }
     }
 
     @Override
@@ -415,27 +356,72 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         List<StoreData> storeDatas = storeQuery.getStoreData();
         if (storeDatas==null || storeDatas.size()==0) return(0);
 
-        // Reset map
-        adapter.clear();
-        if (googleMap!=null) {
-            googleMap.clear();
-        }
-
         // Add stores
+        adapter.clear();
         for(StoreData storeData : storeDatas) {
-            addStore(storeData);
-        }
-
-        // Set markers
-        if (googleMap!=null) {
-            addMarkers();
-            scaleMap();
-            adapter.setSingleMode(true);
-            adapter.setSingleIndex(0);
+            StoreItem item = processStoreData(storeData);
+            if (item!=null) {
+                adapter.addItem(item);
+            }
         }
 
         adapter.notifyDataSetChanged();
         return(adapter.getBackingCount());
+    }
+
+    // This is also used by LocationFinder to get nearby store
+    public static StoreItem processStoreData(StoreData storeData) {
+        if (storeData==null) return(null);
+        Obj obj = storeData.getObj();
+        if (obj==null) return(null);
+
+        // Get coordinates
+        List<Double> loc = obj.getLoc();
+        if (loc==null || loc.size()!=2) return(null);
+        Double lat = loc.get(1);
+        Double lng = loc.get(0);
+        if (lat==null || lng==null) return(null);
+
+        String storeNumber = obj.getStoreNumber();
+        StoreItem item = new StoreItem();
+        item.storeNumber = storeNumber;
+        item.latitude = lat;
+        item.longitude = lng;
+        item.distance = storeData.getDis();
+
+        // Store features
+        StringBuilder featuresBuf = new StringBuilder();
+        for (StoreFeature feature : obj.getStoreFeatures()) {
+            if (!TextUtils.isEmpty(feature.getName())) {
+                if (featuresBuf.length() > 0) {
+                    featuresBuf.append("\n");
+                }
+                featuresBuf.append(feature.getName());
+            }
+        }
+        item.storeFeatures = featuresBuf.toString();
+
+        // Get store address
+        StoreAddress storeAddress = obj.getStoreAddress();
+        if (storeAddress!=null) {
+            item.streetAddress1 = storeAddress.getAddressLine1();
+            item.streetAddress2 = storeAddress.getAddressLine2();
+            item.city = storeAddress.getCity();
+            item.state = storeAddress.getState();
+            item.country = storeAddress.getCountry();
+            item.postalCode = storeAddress.getZip();
+            item.phoneNumber = StoreItem.reformatPhoneFaxNumber(storeAddress.getPhoneNumber());
+            item.faxNumber = StoreItem.reformatPhoneFaxNumber(storeAddress.getFaxNumber());
+        }
+
+        // Get store hours
+        List<StoreHours> list = obj.getStoreHours();
+        for(StoreHours hours : list) {
+            TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
+            if (span!=null)
+                item.addTimeSpan(span);
+        }
+        return(item);
     }
 
     // Failure dialog
@@ -548,10 +534,8 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
 
     private boolean getStoreDirections(StoreItem item) {
         if (item==null) return(false);
-        LatLng position = item.position;
-        if (position==null) return(false);
         String query = String.format(Locale.ENGLISH, "http://maps.google.com/maps?&daddr=%f,%f(Staples%%20%%23%s)",
-                                     position.latitude, position.longitude, item.storeNumber);
+                                     item.latitude, item.longitude, item.storeNumber);
         Uri uri = Uri.parse(query);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
@@ -580,7 +564,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                 toggleView();
                 break;
             case R.id.store_here:
-                gotoHere();
+//                gotoHere(); TODO ****************
                 break;
             case R.id.store_item:
                 if (!adapter.isFullStoreDetail()) {

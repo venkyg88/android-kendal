@@ -1,29 +1,27 @@
 package app.staples.mobile.cfa.store;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
 
-class StoreItem {
+public class StoreItem {
     public String storeNumber;
-    public LatLng position;
+    public double latitude;
+    public double longitude;
     public double distance;
     public String streetAddress1;
     public String streetAddress2;
     public String city;
     public String state;
     public String country;
-    public String zipcode;
+    public String postalCode;
     public String phoneNumber;
     public String faxNumber;
     public String storeFeatures;
     public Marker marker;
     private ArrayList<TimeSpan> spans;
 
-    StoreItem(String storeNumber, double latitude, double longitude) {
-        this.storeNumber = storeNumber;
-        position = new LatLng(latitude, longitude);
+    public StoreItem() {
         spans = new ArrayList<TimeSpan>(7);
     }
 
@@ -34,6 +32,16 @@ class StoreItem {
 
     public ArrayList<TimeSpan> getSpans() {
         return(spans);
+    }
+
+    public String formatCityState() {
+        if (city==null) {
+            if (state==null) return(null);
+            else return(state);
+        } else {
+            if (state==null) return(city);
+            else return(city+", "+state);
+        }
     }
 
     public static String reformatPhoneFaxNumber(String number) {

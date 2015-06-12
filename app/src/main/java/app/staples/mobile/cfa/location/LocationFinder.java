@@ -14,14 +14,26 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.staples.mobile.common.access.Access;
+import com.staples.mobile.common.access.channel.model.store.StoreData;
+import com.staples.mobile.common.access.channel.model.store.StoreQuery;
 import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.store.StoreFragment;
+import app.staples.mobile.cfa.store.StoreItem;
+import app.staples.mobile.cfa.util.MiscUtils;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
-public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+/** This singleton class performs a sequence of operations:
+ *  Get GoogleApiClient -> get location -> get postal code -> get nearby store -> set preferred store
+ */
+public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, Callback<StoreQuery> {
     private static final String TAG = LocationFinder.class.getSimpleName();
 
     private static final String PREFS_PROVIDER = "locationProvider";
@@ -29,11 +41,12 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
     private static final String PREFS_LONGITUDE = "locationLongitude";
     private static final String PREFS_TIMESTAMP = "locationTimestamp";
     private static final String PREFS_POSTALCODE = "postalCode";
+    private static final String PREFS_NEARBYSTORE = "nearbyStore";
+    private static final String PREFS_PREFERREDSTORE = "preferredStore";
 
-    // default Framingham store info from
-    // http://sapi.staples.com/v1/10001/stores/search?zipCode=01701&locale=en_US&catalogId=10051&distance=50&client_id=N6CA89Ti14E6PAbGTr5xsCJ2IGaHzGwS
-    private static final double DefaultLatitude = 42.2986;
-    private static final double DefaultLongitude = -71.423;
+    private static final float DEFAULT_LATITUDE = 42.2913142f;
+    private static final float DEFAULT_LONGITUDE = -71.4888961f;
+    private static final String DEFAULT_POSTALCODE = "01702";
 
     private static LocationFinder instance;
 
@@ -49,24 +62,18 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
     private Context context;
     private GoogleApiClient client;
     private final Geocoder geocoder;
-
     private boolean connected;
+    private long startTime;
+
     private Location location;
     private String postalCode;
-    private long startTime;
-    private List<PostalCodeCallback> postalCodeListeners;
-
-    public interface PostalCodeCallback {
-        void onGetPostalCodeSuccess(String postalCode);
-        void onGetPostalCodeFailure();
-    }
+    private StoreItem nearbyStore;
+    private StoreItem preferredStore;
 
     private LocationFinder(Context context) {
-        postalCodeListeners = new ArrayList<>();
         this.context = context;
-        loadRecentLocation();
-
         geocoder = new Geocoder(context);
+        loadRecentLocation();
 
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
         switch(status) {
@@ -86,78 +93,29 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
         }
     }
 
-    private class Resolver extends Thread {
-
-        @Override
-        public void run() {
-            if (location == null) return;
-            try {
-                startTime = System.currentTimeMillis();
-                List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                if (addresses != null && addresses.size() > 0) {
-                    String msg = "Geocoder completed in "+Long.toString(System.currentTimeMillis()-startTime)+"ms";
-                    Log.d(TAG, msg);
-                    Address address = addresses.get(0);
-                    postalCode = address.getPostalCode();
-                    if (!postalCodeListeners.isEmpty()) {
-                        for (PostalCodeCallback callback: postalCodeListeners) {
-                            callback.onGetPostalCodeSuccess(postalCode);
-                        }
-                    }
-                    if (!TextUtils.isEmpty(postalCode)) {
-                        Tracker.getInstance().setZipCode(postalCode);
-                    }
-                }
-            } catch(Exception e) {
-                Log.d(TAG, "Error by Geocoder: " + e.toString());
-                Crittercism.logHandledException(e);
-            }
-        }
-    }
-
     // Getters
 
-    /**
-     * Finds the last known location from the FusedLocationApi. Use this to trigger a refresh on
-     * the location. Also initiates callbacks to {@link #postalCodeListeners}.
-     */
+    public GoogleApiClient getClient() {
+        return(client);
+    }
+
     public Location getLocation() {
-        // Try update
-        if (client!=null) {
-            Location latest = LocationServices.FusedLocationApi.getLastLocation(client);
-            if ((latest != null) && latest != location) {
-                Tracker.getInstance().trackLocation(latest); // analytics
-                location = latest;
-                new Resolver().start();
-                Log.d(TAG, "Current location -> Longitude:" + location.getLongitude()
-                        + ", Latitude:" + location.getLatitude());
-            } else {
-                Log.d(TAG, "Default location -> Longitude:" + getDefaultLocation().getLongitude()
-                        + ", Latitude:" + getDefaultLocation().getLatitude());
-                if (!postalCodeListeners.isEmpty()) {
-                    for (PostalCodeCallback callback: postalCodeListeners) {
-                        callback.onGetPostalCodeFailure();
-                    }
-                }
-                return getDefaultLocation();
-            }
-        }
         return(location);
     }
 
-    // use Framingham as a default location when location service is not available
-    private Location getDefaultLocation(){
-        Location defaultLocation = new Location("default");
-        defaultLocation.setLatitude(DefaultLatitude);
-        defaultLocation.setLongitude(DefaultLongitude);
-        return defaultLocation;
-    }
-
     public String getPostalCode() {
-        return (postalCode);
+        return(postalCode);
     }
 
-    // Callbacks
+    public StoreItem getNearestStore() {
+        return(nearbyStore);
+    }
+
+    public StoreItem getPreferredStoreStore() {
+        return(preferredStore);
+    }
+
+    // Google API callbacks
 
     @Override
     public void onConnected(Bundle connectionHint) {
@@ -184,41 +142,112 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
         connected = false;
     }
 
-    // Recent location
+    // Geocoder address resolver
 
-    public void loadRecentLocation() {
+    private class Resolver extends Thread {
+        @Override
+        public void run() {
+            if (location == null) return;
+            try {
+                startTime = System.currentTimeMillis();
+                List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                if (addresses != null && addresses.size() > 0) {
+                    String msg = "Geocoder completed in "+Long.toString(System.currentTimeMillis()-startTime)+"ms";
+                    Log.d(TAG, msg);
+                    Address address = addresses.get(0);
+                    postalCode = address.getPostalCode();
+                    if (!TextUtils.isEmpty(postalCode)) {
+                        Tracker.getInstance().setZipCode(postalCode);
+                        Access.getInstance().getChannelApi(false).storeLocations(postalCode, LocationFinder.this);
+                    }
+                }
+            } catch(Exception e) {
+                Log.d(TAG, "Error by Geocoder: " + e.toString());
+                Crittercism.logHandledException(e);
+            }
+        }
+    }
+
+    // Nearest store Retrofit callbacks
+
+    @Override
+    public void success(StoreQuery storeQuery, Response response) {
+        if (storeQuery==null) return;
+        List<StoreData> storeDatas = storeQuery.getStoreData();
+        if (storeDatas==null || storeDatas.size()==0) return;
+        StoreItem item = StoreFragment.processStoreData(storeDatas.get(0));
+        if (item!=null) {
+            nearbyStore = item;
+            if (context instanceof MainActivity) {
+                ((MainActivity) context).onNearbyStore();
+            }
+            Log.d(TAG, "Nearest store "+nearbyStore.streetAddress1);
+        }
+    }
+
+    @Override
+    public void failure(RetrofitError retrofitError) {
+    }
+
+    // Cached values in preferences
+
+    private StoreItem loadStoreItem(SharedPreferences prefs, String key) {
+        List<String> list = MiscUtils.multiStringToList(prefs.getString(key, null));
+        if (list==null || list.size()!=6) return(null);
+        StoreItem item = new StoreItem();
+        item.storeNumber = list.get(0);
+        item.streetAddress1 = list.get(1);
+        item.streetAddress2 = list.get(2);
+        item.city = list.get(3);
+        item.state = list.get(4);
+        item.postalCode = list.get(5);
+        return(item);
+    }
+
+    private void saveStoreItem(SharedPreferences.Editor editor, String key, StoreItem item) {
+        if (item==null) return;
+        List<String> list = new ArrayList<String>(6);
+        list.add(item.storeNumber);
+        list.add(item.streetAddress1);
+        list.add(item.streetAddress2);
+        list.add(item.city);
+        list.add(item.state);
+        list.add(item.postalCode);
+        String multi = MiscUtils.listToMultiString(list);
+        editor.putString(key, multi);
+    }
+
+    private void loadRecentLocation() {
         SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
-        if (prefs.contains(PREFS_LATITUDE) && prefs.contains(PREFS_LONGITUDE)) {
-            location = new Location(prefs.getString(PREFS_PROVIDER, "Unknown"));
-            location.setLatitude(prefs.getFloat(PREFS_LATITUDE, 0.0f));
-            location.setLongitude(prefs.getFloat(PREFS_LONGITUDE, 0.0f));
-            location.setTime(prefs.getLong(PREFS_TIMESTAMP, 0));
-        }
-        if (prefs.contains(PREFS_POSTALCODE)) {
-            postalCode = prefs.getString(PREFS_POSTALCODE, null);
-            Tracker.getInstance().setZipCode(postalCode);
-        }
+
+        location = new Location(prefs.getString(PREFS_PROVIDER, "Default"));
+        location.setLatitude(prefs.getFloat(PREFS_LATITUDE, DEFAULT_LATITUDE));
+        location.setLongitude(prefs.getFloat(PREFS_LONGITUDE, DEFAULT_LONGITUDE));
+        location.setTime(prefs.getLong(PREFS_TIMESTAMP, 0));
+
+        postalCode = prefs.getString(PREFS_POSTALCODE, DEFAULT_POSTALCODE);
+
+        nearbyStore = loadStoreItem(prefs, PREFS_NEARBYSTORE);
+        preferredStore = loadStoreItem(prefs, PREFS_PREFERREDSTORE);
     }
 
     public void saveRecentLocation() {
         SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
+
         if (location!=null) {
             editor.putString(PREFS_PROVIDER, location.getProvider());
             editor.putFloat(PREFS_LATITUDE, (float) location.getLatitude());
             editor.putFloat(PREFS_LONGITUDE, (float) location.getLongitude());
             editor.putLong(PREFS_TIMESTAMP, location.getTime());
         }
+
         if (postalCode!=null)
             editor.putString(PREFS_POSTALCODE, postalCode);
+
+        saveStoreItem(editor, PREFS_NEARBYSTORE, nearbyStore);
+        saveStoreItem(editor, PREFS_PREFERREDSTORE, preferredStore);
+
         editor.apply();
-    }
-
-    public void registerPostalCodeListener(PostalCodeCallback callback) {
-        postalCodeListeners.add(callback);
-    }
-
-    public void unRegisterPostalCodeListener(PostalCodeCallback callback) {
-        postalCodeListeners.remove(callback);
     }
 }
