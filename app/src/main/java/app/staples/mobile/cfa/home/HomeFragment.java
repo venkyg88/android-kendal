@@ -7,7 +7,6 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,17 +18,11 @@ import android.widget.TextView;
 import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.channel.model.store.Obj;
-import com.staples.mobile.common.access.channel.model.store.StoreAddress;
-import com.staples.mobile.common.access.channel.model.store.StoreData;
-import com.staples.mobile.common.access.channel.model.store.StoreHours;
-import com.staples.mobile.common.access.channel.model.store.StoreQuery;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.config.model.Area;
 import com.staples.mobile.common.access.config.model.Configurator;
 import com.staples.mobile.common.access.config.model.Item;
 import com.staples.mobile.common.access.config.model.Screen;
-import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.analytics.Tracker;
 import com.staples.mobile.common.device.DeviceInfo;
@@ -44,15 +37,13 @@ import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.location.LocationFinder;
 import app.staples.mobile.cfa.profile.ProfileDetails;
 import app.staples.mobile.cfa.store.StoreFragment;
+import app.staples.mobile.cfa.store.StoreItem;
 import app.staples.mobile.cfa.store.TimeSpan;
 import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.DataWrapper;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
-public class HomeFragment extends Fragment implements LocationFinder.PostalCodeCallback, View.OnClickListener {
+public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -144,6 +135,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         findMessageBarViews();
         updateMessageBar();
 
+        refreshNearbyStore();
         refreshPage();
 
         return (configFrameView);
@@ -163,15 +155,18 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
         Tracker.getInstance().trackStateForHome(); // Analytics
+    }
 
-        // call store api and get store info
-        LocationFinder finder = LocationFinder.getInstance(getActivity());
-        finder.registerPostalCodeListener(this);
-        String postalCode = finder.getPostalCode();
-        if (TextUtils.isEmpty(postalCode)) {
-            finder.getLocation();
-        } else {
-            onGetPostalCodeSuccess(postalCode);
+    public void refreshNearbyStore() {
+        Activity activity = getActivity();
+        StoreItem store = LocationFinder.getInstance(activity).getNearestStore();
+        if (store!=null) {
+            storeNameTextView.setText(store.formatCityState());
+
+            String status = TimeSpan.formatStatus(activity, store.getSpans(), System.currentTimeMillis());
+            int i = status.indexOf(' ');
+            if (i > 0) status = status.substring(0, i);
+            storeStatusTextView.setText(status);
         }
     }
 
@@ -245,18 +240,7 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         }
     }
 
-    @Override
-    public void onPause() {
-        LocationFinder.getInstance(getActivity()).unRegisterPostalCodeListener(this);
-        super.onPause();
-    }
-
     private void doPortrait() {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:doPortrait():"
-                        + " this[" + this + "]"
-        );
-
         // A items are square.
         aItemWidth = aItemHeight = deviceInfo.getSmallestAbsWidthPixels();
 
@@ -285,12 +269,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     } // doPortrait()
 
     private void doHomeItemsABDPort(List<HomeItem> homeItems) {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:doHomeItemsABDPort():"
-                        + " configItems[" + homeItems + "]"
-                        + " this[" + this + "]"
-        );
-
         for(HomeItem homeItem : homeItems) {
 
             String size = homeItem.size;
@@ -328,11 +306,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     } // doHomeItemsABDPort()
 
     private void doHomeItemsCPort() {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:doHomeItemsCPort():"
-                        + " this[" + this + "]"
-        );
-
         LinearLayout subLayoutContainer = null;
 
         boolean firstSubInContainer = true;
@@ -385,18 +358,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         dItemWidth = aItemWidth;        // same width as an A item.
         dItemHeight = aItemHeight / 4;  // quarter the height of an A item.
 
-        if (LOGGING) Log.v(TAG, "HomeFragment:doLandscape():"
-                        + " aItemWidth[" + aItemWidth + "]"
-                        + " aItemHeight[" + aItemHeight + "]"
-                        + " bItemWidth[" + bItemWidth + "]"
-                        + " bItemHeight[" + bItemHeight + "]"
-                        + " cItemWidth[" + cItemWidth + "]"
-                        + " cItemHeight[" + cItemHeight + "]"
-                        + " dItemWidth[" + dItemWidth + "]"
-                        + " dItemHeight[" + dItemHeight + "]"
-                        + " this[" + this + "]"
-        );
-
         if (homeItemsA.size() > 0) {
             doHomeItemsALand();
         } else {
@@ -406,11 +367,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     } // doLandscape()
 
     private void doHomeItemsALand() {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:doHomeItemsALand():"
-                        + " this[" + this + "]"
-        );
-
         // Handle the A item.
 
         HomeItem homeItemA = homeItemsA.get(0);
@@ -486,11 +442,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     } // doHomeItemsALand()
 
     private void fillAWithB(LinearLayout configBCDLayout, int maxItems) {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:fillAWithB():"
-                        + " this[" + this + "]"
-        );
-
         int nbrListItems = Math.min(homeItemsB.size(), maxItems);
 
         int configItemNdx = 0;
@@ -527,11 +478,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     } // fillAWithB()
 
     private void fillAWithC(LinearLayout configBCDLayout, int maxItems) {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:fillAWithC():"
-                        + " this[" + this + "]"
-        );
-
         LinearLayout subLayoutContainer = null;
 
         // maxItems is the maximum number of SubLayout containers allowed. Each
@@ -578,11 +524,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     } // fillAWithC()
 
     private void fillAWithD(LinearLayout configBCDLayout, int maxItems) {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:fillAWithD():"
-                        + " this[" + this + "]"
-        );
-
         int nbrListItems = Math.min(homeItemsD.size(), maxItems);
 
         int configItemNdx = 0;
@@ -593,12 +534,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
             homeItem = homeItemsD.get(0);
 
             homeItemsD.remove(0);
-
-            if (LOGGING) Log.v(TAG, "HomeFragment:fillAWithD(): configItem:"
-                            + " configItem.title[" + homeItem.title + "]"
-                            + " configItem.bannerUrl[" + homeItem.bannerUrl + "]"
-                            + " this[" + this + "]"
-            );
 
             // Category ImageView
 
@@ -619,14 +554,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     } // fillAWithD()
 
     private LinearLayout getWidgetLayout(int layoutWidth, int layoutHeight, int marginBottom, View childView) {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:getWidgetLayout():"
-                        + " layoutWidth[" + layoutWidth + "]"
-                        + " layoutHeight[" + layoutHeight + "]"
-                        + " childView[" + childView + "]"
-                        + " this[" + this + "]"
-        );
-
         // Vertical. Contains selectable content. Used to create a rectangular
         // frame around the content.
         LinearLayout widgetLayout = null;
@@ -656,11 +583,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     } // getWidgetLayout()
 
     private LinearLayout getBCDLayout() {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:getBCDLayout():"
-                        + " this[" + this + "]"
-        );
-
         LinearLayout.LayoutParams configBCDLayoutParms =
 
                 new LinearLayout.LayoutParams(aItemWidth, // width
@@ -680,13 +602,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     } // getBCDLayout()
 
     private LinearLayout getSubLayout(int layoutWidth, int layoutHeight, int orientation) {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:getSubLayout():"
-                        + " layoutWidth[" + layoutWidth + "]"
-                        + " layoutHeight[" + layoutHeight + "]"
-                        + " this[" + this + "]"
-        );
-
         LinearLayout.LayoutParams configSubLayoutParms =
                 new LinearLayout.LayoutParams(layoutWidth, // width
                         layoutHeight); // height
@@ -709,12 +624,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     } // getSubLayout()
 
     private LinearLayout getSubLayoutContainer(int orientation) {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:getSubLayoutContainer():"
-                        + " orientation[" + orientation + "]"
-                        + " this[" + this + "]"
-        );
-
         LinearLayout subLayoutContainer = new LinearLayout(getActivity());
         subLayoutContainer.setId(subLayoutContainer.hashCode());
         subLayoutContainer.setOrientation(orientation);
@@ -727,11 +636,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     } // getSubLayoutContainer()
 
     private ImageView getImageView(int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:getImageView():"
-                        + " this[" + this + "]"
-        );
-
         ImageView imageView = new ImageView(getActivity());
         imageView.setId(imageView.hashCode());
         imageView.setAdjustViewBounds(true);
@@ -748,11 +652,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     }
 
     private void doConfigItemsLand() {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:doConfigItemsLand():"
-                        + " this[" + this + "]"
-        );
-
         if (homeItemsB.size() > 0) {
             fillWithBLand();
         }
@@ -766,11 +665,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     } // doConfigItemsLand()
 
     private void fillWithBLand() {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:fillWithBLand():"
-                        + " this[" + this + "]"
-        );
-
         final int NBR_ITEMS_IN_CONTAINER = 2;
 
         int nbrListItems = homeItemsB.size();
@@ -874,12 +768,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     } // fillWithCLand()
 
     private void padWithDLand(LinearLayout subLayoutContainer, int nbrListItems) {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:padWithDLand():"
-                        + " nbrListItems[" + nbrListItems + "]"
-                        + " this[" + this + "]"
-        );
-
         int configItemsSize = homeItemsD.size();
         int lastListItem = (nbrListItems <= configItemsSize) ? nbrListItems : configItemsSize;
         int configItemNdx = 0;
@@ -910,11 +798,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
     } // padWithDLand()
 
     private void fillWithDLand() {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:fillWithDLand():"
-                        + " this[" + this + "]"
-        );
-
         final int NBR_ITEMS_IN_CONTAINER = 2;
 
         int nbrListItems = homeItemsD.size();
@@ -956,90 +839,6 @@ public class HomeFragment extends Fragment implements LocationFinder.PostalCodeC
         }
 
     } // fillWithDLand()
-
-    @Override
-    public void onGetPostalCodeSuccess(String postalCode) {
-        if (TextUtils.isEmpty(postalCode)) {
-            // display "no store nearby"
-            if (storeWrapper != null) {
-                storeWrapper.setState(DataWrapper.State.EMPTY);
-            }
-            Log.d(TAG, (String) getResources().getText(R.string.error_no_location_service));
-        } else {
-            Log.d(TAG, "Store zipcode:" + postalCode);
-            Access.getInstance().getChannelApi(false).storeLocations(postalCode, new StoreInfoCallback());
-        }
-    }
-
-    @Override
-    public void onGetPostalCodeFailure() {
-        if (storeWrapper != null) {
-            storeWrapper.setState(DataWrapper.State.EMPTY);
-        }
-    }
-
-    private class StoreInfoCallback implements Callback<StoreQuery> {
-        @Override
-        public void success(StoreQuery storeQuery, Response response) {
-            Activity activity = getActivity();
-            if (!(activity instanceof MainActivity)) return;
-
-            List<StoreData> storeData = storeQuery.getStoreData();
-            // if there are any nearby stores
-            if (storeData != null) {
-                if (!storeData.isEmpty()) {
-                    Obj storeObj = storeData.get(0).getObj();
-
-                    // Get store location
-                    StoreAddress storeAddress = storeObj.getStoreAddress();
-                    String storeCity = storeAddress.getCity();
-                    String storeState = storeAddress.getState();
-                    storeNameTextView.setText(storeCity + "," + storeState);
-
-                    // Get store office hours
-                    List<StoreHours> storeHourList = storeObj.getStoreHours();
-                    ArrayList<TimeSpan> spans = new ArrayList<TimeSpan>();
-                    for(StoreHours hours : storeHourList) {
-                        TimeSpan span = TimeSpan.parse(hours.getDayName(), hours.getHours());
-                        if (span != null) spans.add(span);
-                    }
-                    String status = TimeSpan.formatStatus(activity, spans, System.currentTimeMillis());
-                    int i = status.indexOf(' ');
-                    if (i > 0) status = status.substring(0, i);
-                    storeStatusTextView.setText(status);
-
-                    if (storeCity == null) {
-                        storeWrapper.setState(DataWrapper.State.EMPTY);
-                    } else {
-                        storeWrapper.setState(DataWrapper.State.DONE);
-                    }
-                }
-                // display "find nearby store" if no store result
-                else {
-                    storeWrapper.setState(DataWrapper.State.EMPTY);
-                    Log.d(TAG, "No nearby stores found from the StoreInfoCallback.");
-                }
-            }
-            // display "find nearby store" if storeData is null
-            else {
-                storeWrapper.setState(DataWrapper.State.EMPTY);
-                Log.d(TAG, "storeData is null from the StoreInfoCallback.");
-            }
-        }
-
-        @Override
-        public void failure(RetrofitError retrofitError) {
-            Activity activity = getActivity();
-            if (activity == null) {
-                return;
-            }
-
-            String message = ApiError.getErrorMessage(retrofitError);
-            Log.d(TAG, message);
-
-            storeWrapper.setState(DataWrapper.State.EMPTY);
-        }
-    }
 
     private void findMessageBarViews() {
         login_layout = (LinearLayout) configFrameView.findViewById(R.id.login_layout);

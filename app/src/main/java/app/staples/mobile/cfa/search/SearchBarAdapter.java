@@ -16,9 +16,11 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import app.staples.R;
 import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.util.MiscUtils;
 
 public class SearchBarAdapter extends BaseAdapter implements Filterable {
     private static final String TAG = SearchBarAdapter.class.getSimpleName();
@@ -169,30 +171,22 @@ public class SearchBarAdapter extends BaseAdapter implements Filterable {
     public void loadSearchHistory() {
         // Get chunk
         SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
-        String chunk = prefs.getString(PREFS_HISTORY, null);
-        if (chunk==null || chunk.isEmpty()) return;
-
-        // Explode
-        String[] keywords = chunk.split("\\|");
-        for(String keyword : keywords)
-            history.add(keyword);
+        List<String> list = MiscUtils.multiStringToList(prefs.getString(PREFS_HISTORY, null));
+        if (list==null) return;
+        for(String keyword : list) {
+            if (keyword!=null) {
+                history.add(keyword);
+            }
+        }
         notifyDataSetChanged();
     }
 
     public void saveSearchHistory() {
-        // Build string
-        StringBuilder chunk = new StringBuilder();
-        boolean flag = false;
-        for(String keyword : history) {
-            if (flag) chunk.append("|");
-            chunk.append(keyword);
-            flag = true;
-        }
-
-        // Save in preferences
+        String multi = MiscUtils.listToMultiString(history);
+        if (multi==null) return;
         SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(PREFS_HISTORY, chunk.toString());
+        editor.putString(PREFS_HISTORY, multi);
         editor.apply();
     }
 }

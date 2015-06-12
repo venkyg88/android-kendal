@@ -58,7 +58,7 @@
             android:maxLength="2"
             android:inputType="textPostalAddress"
             android:hint="@string/state_label"/>
-        <!--dls: zipcode field can't be strictly numeric since it may receive a dash character when
+        <!--dls: postalCode field can't be strictly numeric since it may receive a dash character when
             switching from autocomplete, so setting to textPostalAddress instead-->
         <app.staples.mobile.cfa.widget.DualHintEdit
             android:id="@+id/zipCode"
