@@ -1,46 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <app.staples.mobile.cfa.widget.AnimatorScroll xmlns:android="http://schemas.android.com/apk/res/android"
+                                              xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
-        android:id="@+id/configScrollLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="0dp"
         android:orientation="vertical"
         android:background="@color/staples_light_gray"
         android:paddingBottom="@dimen/verticalspacing_48dp">
 
-        <!-- Personalized message bar -->
-        <FrameLayout
-            android:id="@+id/message_layout"
+        <LinearLayout
+            android:id="@+id/header"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/staples_light_gray">
-            <LinearLayout
-                android:id="@+id/message_container_layout"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/home_message_bar_height"
-                android:orientation="horizontal">
-                <LinearLayout
-                    android:id="@+id/login_layout"
+            android:layout_height="@dimen/home_message_bar_height"
+            android:orientation="horizontal"
+            android:background="@color/staples_dark_gray">
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/staples_light_gray">
+                <TextView
+                    android:id="@+id/login_message"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <TextView
-                        android:id="@+id/login_message"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:textSize="@dimen/fontsize_12sp"
-                        android:textColor="@color/staples_black"
-                        android:textStyle="bold"
-                        android:lines="2"
-                        android:text="@string/login_greeting"/>
-                </LinearLayout>
-
+                    android:gravity="center"
+                    android:textSize="@dimen/fontsize_12sp"
+                    android:textColor="@color/staples_black"
+                    android:textStyle="bold"
+                    android:lines="2"
+                    android:text="@string/login_greeting"/>
                 <LinearLayout
                     android:id="@+id/reward_layout"
                     android:layout_width="match_parent"
@@ -60,119 +50,71 @@
                         android:maxEms="4"
                         android:ellipsize="end"
                         android:textColor="@color/staples_black"/>
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:paddingLeft="10dp">
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:textSize="@dimen/fontsize_12sp"
-                            android:textColor="@color/staples_black"
-                            android:text="@string/rewards"/>
-                    </LinearLayout>
-                </LinearLayout>
-
-                <app.staples.mobile.cfa.widget.DataWrapper
-                    android:id="@+id/store_wrapper"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:padding="@dimen/home_store_wrapper_padding"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <!--Datawrapper "list"-->
-
-                    <LinearLayout
-                        android:id="@+id/store_layout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical">
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="0dp"
-                                android:layout_weight="1"
-                                android:src="@drawable/ic_place_black"/>
-                            <TextView
-                                android:id="@+id/store_status"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="@dimen/fontsize_8sp"
-                                android:paddingBottom="2dp"
-                                android:textColor="@color/staples_black"/>
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:paddingLeft="@dimen/home_store_wrapper_padding">
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textSize="@dimen/fontsize_12sp"
-                                android:textColor="@color/staples_black"
-                                android:text="@string/store_nearby"/>
-                            <TextView
-                                android:id="@+id/store_name"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:lines="1"
-                                android:ellipsize="end"
-                                android:textSize="@dimen/fontsize_12sp"
-                                android:textColor="@color/staples_black"
-                                android:textStyle="bold"/>
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <!--Datawrapper "progress"-->
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/home_store_wrapper_padding">
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/fontsize_12sp"
-                            android:text="@string/loading"/>
-                        <ProgressBar
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-                    </LinearLayout>
-
-                    <!--Datawrapper "empty"-->
-
                     <TextView
-                        android:id="@+id/error_info"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
                         android:textSize="@dimen/fontsize_12sp"
-                        android:text="@string/no_store"
-                        android:padding="@dimen/home_store_wrapper_padding"
+                        android:textColor="@color/staples_black"
+                        android:text="@string/rewards"/>
+                </LinearLayout>
+            </FrameLayout>
+            <LinearLayout
+                android:id="@+id/store_layout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_marginLeft="2dp"
+                android:gravity="center_horizontal"
+                android:background="@color/staples_light_gray">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_place_black_18dp"/>
+                    <TextView
+                        android:id="@+id/store_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/fontsize_12sp"
+                        android:textColor="@color/staples_black"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="@dimen/home_store_wrapper_padding"
+                    android:gravity="center_vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/fontsize_12sp"
+                        android:textColor="@color/staples_black"
+                        android:text="@string/store_nearby"/>
+                    <TextView
+                        android:id="@+id/store_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:lines="1"
+                        android:ellipsize="end"
+                        android:textSize="@dimen/fontsize_12sp"
                         android:textColor="@color/staples_black"
                         android:textStyle="bold"/>
-                </app.staples.mobile.cfa.widget.DataWrapper>
+                </LinearLayout>
             </LinearLayout>
-            <View
-                android:id="@+id/vertical_line"
-                android:layout_width="1dp"
-                android:layout_height="30dp"
-                android:background="@color/staples_middle_gray"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"/>
-        </FrameLayout>
+        </LinearLayout>
+        <app.staples.mobile.cfa.widget.TileLayout
+            android:id="@+id/tiles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:minHUnits="4"
+            app:maxHUnits="8"
+            app:hModulo="4"
+            app:minHUnitSize="100dp"/>
     </LinearLayout>
 </app.staples.mobile.cfa.widget.AnimatorScroll>

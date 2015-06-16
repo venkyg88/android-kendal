@@ -80,7 +80,7 @@ public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder
 
         // Set content
         if (item.imageUrl == null) vh.image.setImageDrawable(noPhoto);
-        else picasso.load(item.imageUrl).error(noPhoto).fit().into(vh.image);
+        else picasso.load(item.imageUrl).error(noPhoto).into(vh.image);
         vh.title.setText(item.title);
         vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, item.rebateIndicator);
         vh.ratingStars.setRating(item.customerRating, item.customerCount);
