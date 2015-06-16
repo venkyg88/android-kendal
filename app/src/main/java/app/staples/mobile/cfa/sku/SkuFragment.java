@@ -376,9 +376,9 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
             }
             ImageView accessoryImageView = (ImageView) row.findViewById(R.id.accessory_image);
             if (accessoryImageUrl!=null) {
-                picasso.load(accessoryImageUrl).error(R.drawable.no_photo).fit().into(accessoryImageView);
+                picasso.load(accessoryImageUrl).error(R.drawable.no_photo).into(accessoryImageView);
             } else {
-                picasso.load(R.drawable.no_photo).into(accessoryImageView);
+                accessoryImageView.setImageResource(R.drawable.no_photo);
             }
 
             // Set accessory title

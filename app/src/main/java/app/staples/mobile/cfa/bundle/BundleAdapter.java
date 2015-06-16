@@ -87,7 +87,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         Resources res = context.getResources();
         imageWidth = res.getDimensionPixelSize(R.dimen.image_square_size);
         imageHeight = res.getDimensionPixelSize(R.dimen.image_square_size);
-        noPhoto = context.getResources().getDrawable(R.drawable.no_photo);
+        noPhoto = res.getDrawable(R.drawable.no_photo);
     }
 
     public void setOnClickListener(View.OnClickListener listener) {

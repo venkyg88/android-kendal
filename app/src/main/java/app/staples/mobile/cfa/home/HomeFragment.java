@@ -2,17 +2,12 @@ package app.staples.mobile.cfa.home;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.content.res.ResourcesCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
@@ -25,156 +20,132 @@ import com.staples.mobile.common.access.config.model.Item;
 import com.staples.mobile.common.access.config.model.Screen;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.analytics.Tracker;
-import com.staples.mobile.common.device.DeviceInfo;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import app.staples.R;
-import app.staples.mobile.cfa.DrawerItem;
 import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.location.LocationFinder;
 import app.staples.mobile.cfa.profile.ProfileDetails;
-import app.staples.mobile.cfa.store.StoreFragment;
 import app.staples.mobile.cfa.store.StoreItem;
 import app.staples.mobile.cfa.store.TimeSpan;
 import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.widget.ActionBar;
-import app.staples.mobile.cfa.widget.DataWrapper;
+import app.staples.mobile.cfa.widget.TileLayout;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
-
     private static final String TAG = HomeFragment.class.getSimpleName();
 
-    private static final boolean LOGGING = false;
+    private static class Tile {
+        private String title;
+        private String identifier;
 
-    private static final int PADDING_ZERO = 0;
-
-    private static final int MARGIN_ZERO = 0;
-    private static final int MARGIN_LEFT_DP = 0;
-    private static final int MARGIN_TOP_DP = 0;
-    private static final int MARGIN_RIGHT_DP = 0;
-    private static final int MARGIN_BOTTOM_DP = 24;
-    private DeviceInfo deviceInfo;
-
-    private int lastOrientation = Configuration.ORIENTATION_UNDEFINED;
-    private View configFrameView;
-    private LinearLayout configScrollLayout;
-    private LinearLayout.LayoutParams subLayoutContainerLayoutParms;
-    private LinearLayout.LayoutParams widgetLayoutParms;
-
-    private List<HomeItem> homeItems;
-    private List<HomeItem> homeItemsA;
-    private List<HomeItem> homeItemsB;
-    private List<HomeItem> homeItemsC;
-    private List<HomeItem> homeItemsD;
-
-    private Picasso picasso;
-    private Drawable noPhoto;
-
-    private int aItemWidth;
-    private int aItemHeight;
-
-    private int bItemWidth;
-    private int bItemHeight;
-
-    private int cItemWidth;
-    private int cItemHeight;
-
-    private int dItemWidth;
-    private int dItemHeight;
-
-    // Personalized Message Bar UI Elements
-    private TextView loginText;
-    private LinearLayout login_layout;
-    private LinearLayout reward_layout;
-    private LinearLayout store_wrapper;
-    private TextView rewardTextView;
-    private TextView storeNameTextView;
-    private TextView storeStatusTextView;
-    private DataWrapper storeWrapper;
-
-    @Override
-    public void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-
-        homeItems = new ArrayList<HomeItem>();
-        homeItemsA = new ArrayList<HomeItem>();
-        homeItemsB = new ArrayList<HomeItem>();
-        homeItemsC = new ArrayList<HomeItem>();
-        homeItemsD = new ArrayList<HomeItem>();
+        private Tile(String title, String identifier) {
+            this.title = title;
+            this.identifier = identifier;
+        }
     }
+
+    private View header;
+    private TileLayout frame;
 
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup container, Bundle bundle) {
         Crittercism.leaveBreadcrumb("HomeFragment:onCreateView(): Displaying the home/landing screen.");
 
-        Resources resources = getActivity().getResources();
-        Configuration configuration = resources.getConfiguration();
+        View view = layoutInflater.inflate(R.layout.home_fragment, container, false);
+        view.setTag(this);
 
-        lastOrientation = configuration.orientation;
+        header = view.findViewById(R.id.header);
+        frame = (TileLayout) view.findViewById(R.id.tiles);
 
-        picasso = Picasso.with(getActivity());
+        header.findViewById(R.id.login_message).setOnClickListener(this);
+        header.findViewById(R.id.reward_layout).setOnClickListener(this);
+        header.findViewById(R.id.store_layout).setOnClickListener(this);
 
-        noPhoto = ResourcesCompat.getDrawable(resources, R.drawable.no_photo, null);
-
-        configFrameView = layoutInflater.inflate(R.layout.home_fragment, container, false);
-        configFrameView.setTag(this);
-
-        configScrollLayout = (LinearLayout) configFrameView.findViewById(R.id.configScrollLayout);
-
-        storeWrapper = (DataWrapper) configFrameView.findViewById(R.id.store_wrapper);
-
-        subLayoutContainerLayoutParms =
-                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, // width
-                        ViewGroup.LayoutParams.MATCH_PARENT); // height
-
-        subLayoutContainerLayoutParms.setMargins(MARGIN_LEFT_DP, MARGIN_TOP_DP, MARGIN_RIGHT_DP, MARGIN_BOTTOM_DP); // left, top, right, bottom
-
-        findMessageBarViews();
-        updateMessageBar();
-
+        refreshMessageBar();
         refreshNearbyStore();
-        refreshPage();
+        refreshTiles();
 
-        return (configFrameView);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration configuration) {
-        if (configuration.orientation != lastOrientation) {
-            lastOrientation = configuration.orientation;
-            refreshPage();
-        }
+        return (view);
     }
 
     @Override
     public void onResume() {
-
         super.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.DEFAULT);
         Tracker.getInstance().trackStateForHome(); // Analytics
+    }
+
+    public void refreshMessageBar() {
+        Access access = Access.getInstance();
+        View rewardLayout = header.findViewById(R.id.reward_layout);
+        TextView loginText = (TextView) header.findViewById(R.id.login_message);
+        TextView rewardText = (TextView) header.findViewById(R.id.reward);
+
+        // Logged In
+        // Note that member can be null if failure to retrieve profile following successful login
+        if (access.isLoggedIn() && !access.isGuestLogin() && ProfileDetails.getMember() != null) {
+            float rewards = 0;
+            Member member = ProfileDetails.getMember();
+            if (member.getRewardsNumber() != null && member.getRewardDetails() != null) {
+                rewards = ProfileDetails.getRewardsTotal();
+            }
+            if (rewards != 0) {
+                loginText.setVisibility(View.GONE);
+                rewardLayout.setVisibility(View.VISIBLE);
+                rewardText.setText(MiscUtils.getCurrencyFormat().getCurrency().toString() + (int) rewards);
+            } else {
+                loginText.setVisibility(View.VISIBLE);
+                rewardLayout.setVisibility(View.GONE);
+                String loginMessage = MessageFormat.format(getString(R.string.welcome_format), member.getUserName());
+                loginText.setText(loginMessage);
+            }
+        }
+        // Not Logged In
+        else {
+            loginText.setVisibility(View.VISIBLE);
+            rewardLayout.setVisibility(View.GONE);
+            loginText.setText(R.string.login_greeting);
+        }
     }
 
     public void refreshNearbyStore() {
         Activity activity = getActivity();
         StoreItem store = LocationFinder.getInstance(activity).getNearestStore();
         if (store!=null) {
-            storeNameTextView.setText(store.formatCityState());
+            TextView storeName = (TextView) header.findViewById(R.id.store_name);
+            storeName.setText(store.formatCityState());
 
             String status = TimeSpan.formatStatus(activity, store.getSpans(), System.currentTimeMillis());
             int i = status.indexOf(' ');
             if (i > 0) status = status.substring(0, i);
-            storeStatusTextView.setText(status);
+            TextView storeStatus = (TextView) header.findViewById(R.id.store_status);
+            storeStatus.setText(status);
         }
     }
 
-    public void refreshPage() {
-        Resources resources = getActivity().getResources();
-        deviceInfo = new DeviceInfo(resources);
+    private TileLayout.LayoutParams getTileLayoutParams(String size) {
+        if (size==null || size.isEmpty()) return(null);
+        switch(Character.toUpperCase(size.charAt(0))) {
+            case 'A':
+                return(new TileLayout.LayoutParams(4, 4));
+            case 'B':
+                return(new TileLayout.LayoutParams(4, 2));
+            case 'C':
+                return(new TileLayout.LayoutParams(2, 2));
+            case 'D':
+                return(new TileLayout.LayoutParams(4, 1));
+            default:
+                return(null);
+        }
+    }
 
-        // Get list of items (safely)
+    public void refreshTiles() {
+        Resources resources = getActivity().getResources();
+
+        // Get frame of items (safely)
         AppConfigurator appConfigurator = AppConfigurator.getInstance();
         Configurator configurator = appConfigurator.getConfigurator();
         if (configurator==null) return;
@@ -184,18 +155,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         List<Item> items = screen.getItem();
         if (items==null || items.size()==0) return;
 
-        // Ugly hack to remove old views
-        int n = configScrollLayout.getChildCount();
-        for(int i=n-1;i>0;i--) {
-            configScrollLayout.removeViewAt(i);
-        }
-
-        homeItems.clear();
-        homeItemsA.clear();
-        homeItemsB.clear();
-        homeItemsC.clear();
-        homeItemsD.clear();
-
+        Activity activity = getActivity();
+        Picasso picasso = Picasso.with(activity);
+        frame.removeAllViews();
         for(Item item : items) {
             // Get identifier (safely)
             String identifier = null;
@@ -206,683 +168,21 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     identifier = area.getSkuList();
                     if (identifier!=null && identifier.isEmpty()) identifier = null;
                 }
-            }
 
-            HomeItem homeItem = new HomeItem(item.getTitle(), item.getBanner(), identifier, item.getSize());
-            homeItems.add(homeItem);
-
-            String size = homeItem.size;
-
-            if (size.equalsIgnoreCase("A")) {
-
-                homeItemsA.add(homeItem);
-
-            } else if (size.equalsIgnoreCase("B")) {
-
-                homeItemsB.add(homeItem);
-
-            } else if (size.equalsIgnoreCase("C")) {
-
-                homeItemsC.add(homeItem);
-
-            } else if (size.equalsIgnoreCase("D")) {
-
-                homeItemsD.add(homeItem);
-            }
-        }
-
-        boolean isPortrait = deviceInfo.isCurrentOrientationPortrait(resources);
-
-        if (isPortrait) {
-            doPortrait();
-        } else {
-            doLandscape();
-        }
-    }
-
-    private void doPortrait() {
-        // A items are square.
-        aItemWidth = aItemHeight = deviceInfo.getSmallestAbsWidthPixels();
-
-        bItemWidth = aItemWidth;        // same width as an A item.
-        bItemHeight = aItemHeight / 2;  // half the height of an A item.
-
-        cItemWidth = bItemWidth / 2;    // half the width of a A item.
-        cItemHeight = bItemHeight;      // same height as a B item.
-
-        dItemWidth = aItemWidth;        // same width as an A item.
-        dItemHeight = aItemHeight / 4;  // quarter the height of an A item.
-
-        if (homeItemsA.size() > 0) {
-            doHomeItemsABDPort(homeItemsA);
-        }
-        if (homeItemsB.size() > 0) {
-            doHomeItemsABDPort(homeItemsB);
-        }
-        if (homeItemsC.size() > 0) {
-            doHomeItemsCPort();
-        }
-        if (homeItemsD.size() > 0) {
-            doHomeItemsABDPort(homeItemsD);
-        }
-
-    } // doPortrait()
-
-    private void doHomeItemsABDPort(List<HomeItem> homeItems) {
-        for(HomeItem homeItem : homeItems) {
-
-            String size = homeItem.size;
-            int subLayoutHeight = 0;
-            ImageView categoryImageView = null;
-
-            if (size.equalsIgnoreCase("A")) {
-
-                subLayoutHeight = aItemHeight;
-                categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-
-            } else if (size.equalsIgnoreCase("B")) {
-
-                subLayoutHeight = bItemHeight;
-                categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-
-            } else if (size.equalsIgnoreCase("D")) {
-
-                subLayoutHeight = dItemHeight;
-                categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-            }
-
-            setImage(categoryImageView, homeItem.bannerUrl);
-
-            // Vertical. Contains selectable content. Used to create a
-            // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(aItemWidth, subLayoutHeight, MARGIN_BOTTOM_DP, categoryImageView);
-            widgetLayout.setTag(homeItem);
-            widgetLayout.setOnClickListener(this);
-            widgetLayout.addView(categoryImageView);
-
-            configScrollLayout.addView(widgetLayout);
-        }
-
-    } // doHomeItemsABDPort()
-
-    private void doHomeItemsCPort() {
-        LinearLayout subLayoutContainer = null;
-
-        boolean firstSubInContainer = true;
-        int configItemNbr = -1;
-
-        for(HomeItem homeItem : homeItemsC) {
-
-            configItemNbr++;
-
-            firstSubInContainer = (configItemNbr % 2 == 0);
-
-            if (firstSubInContainer) {
-
-                subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
-                subLayoutContainerLayoutParms.setMargins(MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO, MARGIN_BOTTOM_DP); // left, top, right, bottom
-                configScrollLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
-            }
-
-            ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-            setImage(categoryImageView, homeItem.bannerUrl);
-
-            // Vertical. Contains selectable content. Used to create a
-            // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, MARGIN_ZERO, categoryImageView);
-            widgetLayout.setTag(homeItem);
-            widgetLayout.setOnClickListener(this);
-            widgetLayout.addView(categoryImageView);
-
-            subLayoutContainer.addView(widgetLayout);
-        }
-
-    } // doHomeItemsCPort()
-
-    private void doLandscape() {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:doLandscape():"
-                        + " this[" + this + "]"
-        );
-
-        // A items are square.
-        aItemWidth = (deviceInfo.getLargestAbsWidthPixels() / 2);
-        aItemHeight = aItemWidth;
-
-        bItemWidth = aItemWidth;        // same width as an A item.
-        bItemHeight = aItemHeight / 2;  // half the height of an A item.
-
-        cItemWidth = aItemWidth / 2;    // half the width of a A item.
-        cItemHeight = bItemHeight;      // same height as a B item.
-
-        dItemWidth = aItemWidth;        // same width as an A item.
-        dItemHeight = aItemHeight / 4;  // quarter the height of an A item.
-
-        if (homeItemsA.size() > 0) {
-            doHomeItemsALand();
-        } else {
-            doConfigItemsLand();
-        }
-
-    } // doLandscape()
-
-    private void doHomeItemsALand() {
-        // Handle the A item.
-
-        HomeItem homeItemA = homeItemsA.get(0);
-
-        // Configurator Sublayout
-
-        // Horizontal. Contains A item and configBCDLayout.
-        LinearLayout subLayout = getSubLayout(aItemWidth * 2,
-                aItemHeight,
-                LinearLayout.HORIZONTAL);
-
-        subLayoutContainerLayoutParms.setMargins(MARGIN_LEFT_DP, MARGIN_TOP_DP, MARGIN_RIGHT_DP, MARGIN_BOTTOM_DP); // left, top, right, bottom
-        configScrollLayout.addView(subLayout, subLayoutContainerLayoutParms);
-
-        ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-        setImage(categoryImageView, homeItemA.bannerUrl);
-
-        // Vertical. Contains selectable content. Used to create a rectangular
-        // frame around the content.
-        LinearLayout widgetLayout = getWidgetLayout(aItemWidth, aItemHeight, MARGIN_ZERO, categoryImageView);
-        widgetLayout.setTag(homeItemA);
-        widgetLayout.setOnClickListener(this);
-        widgetLayout.addView(categoryImageView);
-
-        subLayout.addView(widgetLayout);
-
-        // Vertical. Contains one or more B, C, and/or D items.
-        LinearLayout configBCDLayout = getBCDLayout();
-
-        subLayout.addView(configBCDLayout);
-
-        while(true) {
-
-            if (homeItemsB.size() >= 2) {
-
-                fillAWithB(configBCDLayout, 2);
-
-                break; // while (true)
-            }
-            if (homeItemsB.size() > 0) {
-
-                fillAWithB(configBCDLayout, 1);
-
-                if (homeItemsC.size() > 0) {
-
-                    fillAWithC(configBCDLayout, 1);
-
-                } else if (homeItemsD.size() >= 2) {
-
-                    fillAWithD(configBCDLayout, 1);
+                TileLayout.LayoutParams params = getTileLayoutParams(item.getSize());
+                if (params!=null) {
+                    ImageView image = new ImageView(activity);
+                    image.setLayoutParams(params);
+                    image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                    Tile tile = new Tile(item.getTitle(), identifier);
+                    image.setTag(tile);
+                    image.setOnClickListener(this);
+                    frame.addView(image);
+
+                    picasso.load(item.getBanner()).into(image);
                 }
-                break; // while (true)
-
-            } else if (homeItemsC.size() >= 4) {
-
-                fillAWithC(configBCDLayout, 2);
-
-            } else if (homeItemsC.size() > 0) {
-
-                fillAWithC(configBCDLayout, 1);
-                fillAWithD(configBCDLayout, 2);
-
-            } else if (homeItemsD.size() > 0) {
-
-                fillAWithD(configBCDLayout, 4);
             }
-            break; // while (true)
-
-        } // while (true)
-
-        doConfigItemsLand();
-
-    } // doHomeItemsALand()
-
-    private void fillAWithB(LinearLayout configBCDLayout, int maxItems) {
-        int nbrListItems = Math.min(homeItemsB.size(), maxItems);
-
-        int configItemNdx = 0;
-        HomeItem homeItem = null;
-
-        for(configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
-
-            homeItem = homeItemsB.get(0);
-
-            homeItemsB.remove(0);
-
-            if (LOGGING) Log.v(TAG, "HomeFragment:fillAWithB(): configItem:"
-                            + " configItem.title[" + homeItem.title + "]"
-                            + " configItem.bannerUrl[" + homeItem.bannerUrl + "]"
-                            + " this[" + this + "]"
-            );
-
-            // Category ImageView
-
-            ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-            setImage(categoryImageView, homeItem.bannerUrl);
-
-            // Vertical. Contains selectable content. Used to create a
-            // rectangular frame around the content.
-            int marginBottom = (configItemNdx == (nbrListItems - 1)) ? MARGIN_ZERO : MARGIN_BOTTOM_DP;
-            LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, marginBottom, categoryImageView);
-            widgetLayout.setTag(homeItem);
-            widgetLayout.setOnClickListener(this);
-            widgetLayout.addView(categoryImageView);
-
-            configBCDLayout.addView(widgetLayout);
-        }
-
-    } // fillAWithB()
-
-    private void fillAWithC(LinearLayout configBCDLayout, int maxItems) {
-        LinearLayout subLayoutContainer = null;
-
-        // maxItems is the maximum number of SubLayout containers allowed. Each
-        // SubLayout container can contain 2 list items.
-        int nbrListItems = Math.min(homeItemsC.size(), (maxItems * 2));
-
-        boolean firstSubInContainer = true;
-
-        int nbrSubLayoutContainers = 0;
-
-        int configItemNdx = 0;
-        HomeItem homeItem = null;
-
-        for(configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
-
-            homeItem = homeItemsC.get(0);
-
-            homeItemsC.remove(0);
-
-            firstSubInContainer = (configItemNdx % 2 == 0);
-
-            if (firstSubInContainer) {
-
-                subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
-                configBCDLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
-
-                nbrSubLayoutContainers++;
-            }
-
-            ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-            setImage(categoryImageView, homeItem.bannerUrl);
-
-            // Vertical. Contains selectable content. Used to create a
-            // rectangular frame around the content.
-            int marginBottom = (configItemNdx == (nbrListItems - 1)) ? MARGIN_ZERO : MARGIN_BOTTOM_DP;
-            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, marginBottom, categoryImageView);
-            widgetLayout.setTag(homeItem);
-            widgetLayout.setOnClickListener(this);
-            widgetLayout.addView(categoryImageView);
-
-            subLayoutContainer.addView(widgetLayout);
-        }
-
-    } // fillAWithC()
-
-    private void fillAWithD(LinearLayout configBCDLayout, int maxItems) {
-        int nbrListItems = Math.min(homeItemsD.size(), maxItems);
-
-        int configItemNdx = 0;
-        HomeItem homeItem = null;
-
-        for(configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
-
-            homeItem = homeItemsD.get(0);
-
-            homeItemsD.remove(0);
-
-            // Category ImageView
-
-            ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-            setImage(categoryImageView, homeItem.bannerUrl);
-
-            // Vertical. Contains selectable content. Used to create a
-            // rectangular frame around the content.
-            int marginBottom = (configItemNdx == (nbrListItems - 1)) ? MARGIN_ZERO : MARGIN_BOTTOM_DP;
-            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, marginBottom, categoryImageView);
-            widgetLayout.setTag(homeItem);
-            widgetLayout.setOnClickListener(this);
-            widgetLayout.addView(categoryImageView);
-
-            configBCDLayout.addView(widgetLayout);
-        }
-
-    } // fillAWithD()
-
-    private LinearLayout getWidgetLayout(int layoutWidth, int layoutHeight, int marginBottom, View childView) {
-        // Vertical. Contains selectable content. Used to create a rectangular
-        // frame around the content.
-        LinearLayout widgetLayout = null;
-
-        widgetLayout = new LinearLayout(getActivity());
-        /* @@@ STUBBED
-        widgetLayout.setBackgroundResource(R.drawable.rectangle_frame);
-        @@@ STUBBED */
-
-        widgetLayout.setId(widgetLayout.hashCode());
-        widgetLayout.setOrientation(LinearLayout.VERTICAL);
-        widgetLayout.setMeasureWithLargestChildEnabled(true);
-
-        widgetLayout.setPadding(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-
-        widgetLayoutParms =
-                new LinearLayout.LayoutParams(layoutWidth, // width
-                        layoutHeight); // height
-
-        int margin = 0;
-        widgetLayoutParms.setMargins(margin, margin, margin, marginBottom); // left, top, right, bottom
-
-        childView.setLayoutParams(widgetLayoutParms);
-
-        return (widgetLayout);
-
-    } // getWidgetLayout()
-
-    private LinearLayout getBCDLayout() {
-        LinearLayout.LayoutParams configBCDLayoutParms =
-
-                new LinearLayout.LayoutParams(aItemWidth, // width
-                        aItemHeight); // height
-
-        LinearLayout configBCDLayout = new LinearLayout(getActivity());
-        configBCDLayout.setLayoutParams(configBCDLayoutParms);
-
-        configBCDLayout.setId(configBCDLayout.hashCode());
-        configBCDLayout.setOrientation(LinearLayout.VERTICAL);
-        configBCDLayout.setMeasureWithLargestChildEnabled(true);
-
-        configBCDLayout.setPadding(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-
-        return (configBCDLayout);
-
-    } // getBCDLayout()
-
-    private LinearLayout getSubLayout(int layoutWidth, int layoutHeight, int orientation) {
-        LinearLayout.LayoutParams configSubLayoutParms =
-                new LinearLayout.LayoutParams(layoutWidth, // width
-                        layoutHeight); // height
-
-        LinearLayout subLayout = new LinearLayout(getActivity());
-
-        subLayout.setLayoutParams(configSubLayoutParms);
-        /* @@@ STUBBED
-        subLayout.setBackgroundResource(R.drawable.rectangle_frame);
-        @@@ STUBBED */
-
-        subLayout.setId(subLayout.hashCode());
-        subLayout.setOrientation(orientation);
-        subLayout.setMeasureWithLargestChildEnabled(true);
-
-        subLayout.setPadding(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-
-        return (subLayout);
-
-    } // getSubLayout()
-
-    private LinearLayout getSubLayoutContainer(int orientation) {
-        LinearLayout subLayoutContainer = new LinearLayout(getActivity());
-        subLayoutContainer.setId(subLayoutContainer.hashCode());
-        subLayoutContainer.setOrientation(orientation);
-        subLayoutContainer.setMeasureWithLargestChildEnabled(true);
-
-        subLayoutContainer.setPadding(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-
-        return (subLayoutContainer);
-
-    } // getSubLayoutContainer()
-
-    private ImageView getImageView(int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {
-        ImageView imageView = new ImageView(getActivity());
-        imageView.setId(imageView.hashCode());
-        imageView.setAdjustViewBounds(true);
-        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-
-        imageView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-
-        return (imageView);
-
-    } // getImageView()
-
-    private void setImage(ImageView imageView, String imageUrl) {
-        picasso.load(imageUrl).error(noPhoto).fit().into(imageView);
-    }
-
-    private void doConfigItemsLand() {
-        if (homeItemsB.size() > 0) {
-            fillWithBLand();
-        }
-        if (homeItemsC.size() > 0) {
-            fillWithCLand();
-        }
-        if (homeItemsD.size() > 0) {
-            fillWithDLand();
-        }
-
-    } // doConfigItemsLand()
-
-    private void fillWithBLand() {
-        final int NBR_ITEMS_IN_CONTAINER = 2;
-
-        int nbrListItems = homeItemsB.size();
-
-        boolean firstSubInContainer = true;
-
-        int configItemNdx = 0;
-        HomeItem homeItem = null;
-
-        LinearLayout subLayoutContainer = null;
-
-        for(configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
-
-            homeItem = homeItemsB.get(0);
-
-            homeItemsB.remove(0);
-
-            firstSubInContainer = (configItemNdx % NBR_ITEMS_IN_CONTAINER == 0);
-
-            if (firstSubInContainer) {
-
-                subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
-                subLayoutContainerLayoutParms.setMargins(MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO); // left, top, right, bottom
-                configScrollLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
-                subLayoutContainerLayoutParms.setMargins(MARGIN_LEFT_DP, MARGIN_TOP_DP, MARGIN_RIGHT_DP, MARGIN_BOTTOM_DP); // left, top, right, bottom
-            }
-
-            ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-            setImage(categoryImageView, homeItem.bannerUrl);
-
-            // Vertical. Contains selectable content. Used to create a
-            // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(bItemWidth, bItemHeight, MARGIN_BOTTOM_DP, categoryImageView);
-            widgetLayout.setTag(homeItem);
-            widgetLayout.setOnClickListener(this);
-            widgetLayout.addView(categoryImageView);
-
-            subLayoutContainer.addView(widgetLayout);
-        }
-
-    } // fillWithBLand()
-
-    private void fillWithCLand() {
-
-        if (LOGGING) Log.v(TAG, "HomeFragment:fillWithCLand():"
-                        + " this[" + this + "]"
-        );
-
-        final int NBR_ITEMS_IN_CONTAINER = 4;
-
-        int nbrListItems = homeItemsC.size();
-
-        boolean firstSubInContainer = true;
-
-        int nbrCItemsInContainer = 0;
-
-        int configItemNdx = 0;
-        HomeItem homeItem = null;
-
-        LinearLayout subLayoutContainer = null;
-
-        for(configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
-
-            homeItem = homeItemsC.get(0);
-
-            homeItemsC.remove(0);
-
-            firstSubInContainer = (configItemNdx % NBR_ITEMS_IN_CONTAINER == 0);
-
-            if (firstSubInContainer) {
-
-                nbrCItemsInContainer = 0;
-
-                subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
-
-                subLayoutContainerLayoutParms.setMargins(MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO, MARGIN_BOTTOM_DP); // left, top, right, bottom
-                configScrollLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
-                subLayoutContainerLayoutParms.setMargins(MARGIN_LEFT_DP, MARGIN_TOP_DP, MARGIN_RIGHT_DP, MARGIN_BOTTOM_DP); // left, top, right, bottom
-            }
-
-            ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-            setImage(categoryImageView, homeItem.bannerUrl);
-
-            // Vertical. Contains selectable content. Used to create a
-            // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(cItemWidth, cItemHeight, MARGIN_ZERO, categoryImageView);
-            widgetLayout.setOnClickListener(this);
-            widgetLayout.setTag(homeItem);
-            widgetLayout.addView(categoryImageView);
-
-            subLayoutContainer.addView(widgetLayout);
-
-            nbrCItemsInContainer++;
-        }
-
-        if (nbrCItemsInContainer < 4) {
-
-            padWithDLand(subLayoutContainer, 2);
-        }
-
-    } // fillWithCLand()
-
-    private void padWithDLand(LinearLayout subLayoutContainer, int nbrListItems) {
-        int configItemsSize = homeItemsD.size();
-        int lastListItem = (nbrListItems <= configItemsSize) ? nbrListItems : configItemsSize;
-        int configItemNdx = 0;
-        HomeItem homeItem = null;
-
-        LinearLayout dItemContainer = getSubLayoutContainer(LinearLayout.VERTICAL);
-        subLayoutContainer.addView(dItemContainer);
-
-        for(configItemNdx = 0; configItemNdx < lastListItem; configItemNdx++) {
-
-            homeItem = homeItemsD.get(0);
-
-            homeItemsD.remove(0);
-
-            ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-            setImage(categoryImageView, homeItem.bannerUrl);
-
-            // Vertical. Contains selectable content. Used to create a
-            // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, MARGIN_ZERO, categoryImageView);
-            widgetLayout.setTag(homeItem);
-            widgetLayout.setOnClickListener(this);
-            widgetLayout.addView(categoryImageView);
-
-            dItemContainer.addView(widgetLayout, widgetLayoutParms);
-        }
-
-    } // padWithDLand()
-
-    private void fillWithDLand() {
-        final int NBR_ITEMS_IN_CONTAINER = 2;
-
-        int nbrListItems = homeItemsD.size();
-
-        boolean firstSubInContainer = true;
-
-        int configItemNdx = 0;
-        HomeItem homeItem = null;
-
-        LinearLayout subLayoutContainer = null;
-
-        for(configItemNdx = 0; configItemNdx < nbrListItems; configItemNdx++) {
-
-            homeItem = homeItemsD.get(0);
-
-            homeItemsD.remove(0);
-
-            firstSubInContainer = (configItemNdx % NBR_ITEMS_IN_CONTAINER == 0);
-
-            if (firstSubInContainer) {
-
-                subLayoutContainer = getSubLayoutContainer(LinearLayout.HORIZONTAL);
-                subLayoutContainerLayoutParms.setMargins(MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO, MARGIN_BOTTOM_DP); // left, top, right, bottom
-                configScrollLayout.addView(subLayoutContainer, subLayoutContainerLayoutParms);
-                subLayoutContainerLayoutParms.setMargins(MARGIN_LEFT_DP, MARGIN_TOP_DP, MARGIN_RIGHT_DP, MARGIN_BOTTOM_DP); // left, top, right, bottom
-            }
-
-            ImageView categoryImageView = getImageView(PADDING_ZERO, PADDING_ZERO, PADDING_ZERO, PADDING_ZERO);
-            setImage(categoryImageView, homeItem.bannerUrl);
-
-            // Vertical. Contains selectable content. Used to create a
-            // rectangular frame around the content.
-            LinearLayout widgetLayout = getWidgetLayout(dItemWidth, dItemHeight, MARGIN_ZERO, categoryImageView);
-            widgetLayout.setTag(homeItem);
-            widgetLayout.setOnClickListener(this);
-            widgetLayout.addView(categoryImageView);
-
-            subLayoutContainer.addView(widgetLayout);
-        }
-
-    } // fillWithDLand()
-
-    private void findMessageBarViews() {
-        login_layout = (LinearLayout) configFrameView.findViewById(R.id.login_layout);
-        loginText = (TextView) configFrameView.findViewById(R.id.login_message);
-        reward_layout = (LinearLayout) configFrameView.findViewById(R.id.reward_layout);
-        store_wrapper = (LinearLayout) configFrameView.findViewById(R.id.store_wrapper);
-        rewardTextView = (TextView) configFrameView.findViewById(R.id.reward);
-        storeNameTextView = (TextView) configFrameView.findViewById(R.id.store_name);
-        storeStatusTextView = (TextView) configFrameView.findViewById(R.id.store_status);
-
-        login_layout.setOnClickListener(this);
-        reward_layout.setOnClickListener(this);
-        store_wrapper.setOnClickListener(this);
-    }
-
-    public void updateMessageBar() {
-                Access access = Access.getInstance();
-        // Logged In
-        // Note that member can be null if failure to retrieve profile following successful login
-        if (access.isLoggedIn() && !access.isGuestLogin() && ProfileDetails.getMember() != null) {
-            float rewards = 0;
-            Member member = ProfileDetails.getMember();
-            if (member.getRewardsNumber() != null && member.getRewardDetails() != null) {
-                rewards = ProfileDetails.getRewardsTotal();
-            }
-
-            if (rewards != 0) {
-                login_layout.setVisibility(View.GONE);
-                reward_layout.setVisibility(View.VISIBLE);
-                rewardTextView.setText(MiscUtils.getCurrencyFormat().getCurrency().toString() + (int) rewards);
-                Log.d(TAG, "Rewards from message bar: " + rewards);
-            } else {
-                String loginMessage = MessageFormat.format(getString(R.string.welcome_format), member.getUserName());
-                loginText.setText(loginMessage);
-
-                login_layout.setVisibility(View.VISIBLE);
-                reward_layout.setVisibility(View.GONE);
-            }
-        }
-        // Not Logged In
-        else {
-            loginText.setText(R.string.login_greeting);
-            login_layout.setVisibility(View.VISIBLE);
-            reward_layout.setVisibility(View.GONE);
         }
     }
 
@@ -891,31 +191,31 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         MainActivity activity = (MainActivity) getActivity();
 
         switch(view.getId()) {
-            case R.id.login_layout:
+            case R.id.login_message:
                 Access access = Access.getInstance();
                 if (access.isLoggedIn() && !access.isGuestLogin()) {
                     activity.selectProfileFragment();
                 } else {
-                    Tracker.getInstance().trackActionForPersonalizedMessaging("Login"); // Analytics
+                    Tracker.getInstance().trackActionForPersonalizedMessaging("Login");
                     activity.selectLoginFragment();
                 }
                 break;
             case R.id.reward_layout:
-                Tracker.getInstance().trackActionForPersonalizedMessaging("Reward"); // Analytics
+                Tracker.getInstance().trackActionForPersonalizedMessaging("Reward");
                 activity.selectRewardsFragment();
                 break;
-            case R.id.store_wrapper:
-                Tracker.getInstance().trackActionForPersonalizedMessaging("Store"); // Analytics
-                activity.selectFragment(DrawerItem.STORE, new StoreFragment(), MainActivity.Transition.NONE);
+            case R.id.store_layout:
+                Tracker.getInstance().trackActionForPersonalizedMessaging("Store");
+                activity.selectStoreFragment();
                 break;
             default:
                 Object tag = view.getTag();
-                if (tag instanceof HomeItem) {
-                    HomeItem homeItem = (HomeItem) tag;
-                    Crittercism.leaveBreadcrumb("HomeFragment:OnClickListener.onClick(): User has selected an item with the following title: homeItem.title[" + homeItem.title + "]");
-                    Tracker.getInstance().trackActionForHomePage(homeItem.title); // Analytics
-                    if (homeItem.identifier!=null) {
-                        activity.selectBundle(homeItem.title, homeItem.identifier);
+                if (tag instanceof Tile) {
+                    Tile tile = (Tile) tag;
+                    Tracker.getInstance().trackActionForHomePage(tile.title);
+                    if (tile.identifier!=null) {
+                        activity.selectBundle(tile.title, tile.identifier);
+                        Crittercism.leaveBreadcrumb("HomeFragment: User selected "+tile.identifier);
                     }
                 }
         }

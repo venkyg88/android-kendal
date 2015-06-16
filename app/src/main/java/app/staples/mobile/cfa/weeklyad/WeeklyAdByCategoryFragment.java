@@ -266,7 +266,7 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
 
         switch(view.getId()) {
             case R.id.change_store:
-                activity.selectStoreFinder();
+                activity.selectStoreFragment();
                 break;
         }
     }

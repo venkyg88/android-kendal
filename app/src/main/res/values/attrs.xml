@@ -35,4 +35,10 @@
         <attr name="android:gravity"/>
         <attr name="noReviews" format="string"/>
     </declare-styleable>
+    <declare-styleable name="TileLayout">
+        <attr name="minHUnits" format="integer"/>
+        <attr name="maxHUnits" format="integer"/>
+        <attr name="hModulo" format="integer"/>
+        <attr name="minHUnitSize" format="dimension"/>
+    </declare-styleable>
 </resources>

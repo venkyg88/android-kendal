@@ -576,7 +576,7 @@ public class MainActivity extends Activity
         if (status==AppConfigurator.Status.CHANGED) {
             Fragment top = getTopFragment();
             if (top instanceof HomeFragment) {
-                ((HomeFragment) top).refreshPage();
+                ((HomeFragment) top).refreshTiles();
             }
         }
     }
@@ -694,7 +694,7 @@ public class MainActivity extends Activity
         // Update header or switch to home page
         Fragment top = getTopFragment();
         if (top instanceof HomeFragment) {
-            ((HomeFragment) top).updateMessageBar();
+            ((HomeFragment) top).refreshMessageBar();
         } else {
             selectFragment(DrawerItem.HOME, new HomeFragment(), Transition.RIGHT);
         }
@@ -879,7 +879,7 @@ public class MainActivity extends Activity
         return selectFragment(DrawerItem.CONFIRM, fragment, Transition.RIGHT);
     }
 
-    public boolean selectStoreFinder() {
+    public boolean selectStoreFragment() {
         DrawerItem drawerItem = leftMenuAdapter.findItemByTag(DrawerItem.STORE);
         return selectDrawerItem(drawerItem, Transition.RIGHT);
     }

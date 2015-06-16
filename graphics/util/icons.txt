@@ -25,7 +25,7 @@
 -	ic_notifications_black		32	32	#333333 material/social/ic_notifications_48px
 -	ic_orders_black			32	32	#333333	staples/orders
 -	ic_phone_black			32	32	#333333	material/communication/ic_phone_48px
--	ic_place_black			32	32	#333333	material/maps/ic_place_48px
+-	ic_place_black_18dp		18	18	#333333	material/maps/ic_place_48px
 -	ic_profile_black		32	32	#333333	staples/profile
 -	ic_radio_button_off_white_24dp	24	24	#ffffff	material/toggle/ic_radio_button_off_48px
 -	ic_radio_button_on_white_24dp	24	24	#ffffff	material/toggle/ic_radio_button_on_48px
