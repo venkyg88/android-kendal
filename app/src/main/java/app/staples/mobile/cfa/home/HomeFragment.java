@@ -162,26 +162,28 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             // Get identifier (safely)
             String identifier = null;
             List<Area> areas = item.getArea();
-            if (areas!=null && areas.size()>0) {
-                Area area = areas.get(0);
-                if (area!=null) {
-                    identifier = area.getSkuList();
-                    if (identifier!=null && identifier.isEmpty()) identifier = null;
+            if (areas!=null) {
+                for(Area area : areas) {
+                    String skuList = area.getSkuList();
+                    if (skuList!=null && !skuList.isEmpty()) {
+                        identifier = skuList;
+                        break;
+                    }
                 }
+            }
 
-                TileLayout.LayoutParams params = getTileLayoutParams(item.getSize());
-                if (params!=null) {
-                    ImageView image = new ImageView(activity);
-                    image.setLayoutParams(params);
-                    image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            TileLayout.LayoutParams params = getTileLayoutParams(item.getSize());
+            if (params!=null) {
+                ImageView image = new ImageView(activity);
+                image.setLayoutParams(params);
+                image.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-                    Tile tile = new Tile(item.getTitle(), identifier);
-                    image.setTag(tile);
-                    image.setOnClickListener(this);
-                    frame.addView(image);
+                Tile tile = new Tile(item.getTitle(), identifier);
+                image.setTag(tile);
+                image.setOnClickListener(this);
+                frame.addView(image);
 
-                    picasso.load(item.getBanner()).into(image);
-                }
+                picasso.load(item.getBanner()).into(image);
             }
         }
     }
