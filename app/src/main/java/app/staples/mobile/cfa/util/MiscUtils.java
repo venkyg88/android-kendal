@@ -65,4 +65,15 @@ public class MiscUtils {
         }
         return(sb.toString());
     }
+
+    // Utility for dealing with bad JSON with "N" & "Y" for boolean values
+
+    public static boolean parseBoolean(String string, boolean defaultValue) {
+        if (string==null || string.isEmpty()) return(defaultValue);
+        if (string.equalsIgnoreCase("N")) return(false);
+        if (string.equalsIgnoreCase("Y")) return(true);
+        if (string.equalsIgnoreCase("false")) return(false);
+        if (string.equalsIgnoreCase("true")) return(true);
+        return(defaultValue);
+    }
 }

@@ -520,14 +520,6 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
         }
     }
 
-    // This method handles bad JSON boolean fields
-    private boolean isJsonTrue(String text) {
-        if (text==null) return(false);
-        if (text.equalsIgnoreCase("Y") ||
-            text.equalsIgnoreCase("true")) return(true);
-        return(false);
-    }
-
     private void processSkuDetails(SkuDetails sku) {
         final MainActivity activity = (MainActivity) getActivity();
         Resources res = activity.getResources();
@@ -657,12 +649,12 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
         }
 
         // check if the product is an add-on product
-        if (isJsonTrue(product.getAddOnSku())) {
+        if (MiscUtils.parseBoolean(product.getAddOnSku(), false)) {
             summary.findViewById(R.id.add_on_layout).setVisibility(View.VISIBLE);
         }
 
         // check if the product is an overweight product, example sku:650465
-        if (isJsonTrue(product.getHeavyWeightSku())) {
+        if (MiscUtils.parseBoolean(product.getHeavyWeightSku(), false)) {
             if (product.getPricing()!=null){
                 summary.findViewById(R.id.overweight_warning).setVisibility(View.VISIBLE);
                 float heavyWeightShipCharge = product.getPricing().get(0).getHeavyWeightShipCharge();

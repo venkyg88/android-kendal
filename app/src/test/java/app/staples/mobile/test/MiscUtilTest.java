@@ -47,4 +47,27 @@ public class MiscUtilTest {
         Assert.assertEquals("bananas", list.get(1));
         Assert.assertEquals("cantaloupes", list.get(2));
     }
+
+    @Test
+    public void testParseBoolean() {
+        // Default value
+        Assert.assertFalse(MiscUtils.parseBoolean(null, false));
+        Assert.assertTrue(MiscUtils.parseBoolean(null, true));
+        Assert.assertFalse(MiscUtils.parseBoolean("", false));
+        Assert.assertTrue(MiscUtils.parseBoolean("", true));
+        Assert.assertFalse(MiscUtils.parseBoolean("Me", false));
+        Assert.assertTrue(MiscUtils.parseBoolean("Me", true));
+
+        // False
+        Assert.assertFalse(MiscUtils.parseBoolean("n", false));
+        Assert.assertFalse(MiscUtils.parseBoolean("n", true));
+        Assert.assertFalse(MiscUtils.parseBoolean("FALSE", false));
+        Assert.assertFalse(MiscUtils.parseBoolean("FALSE", true));
+
+        // True
+        Assert.assertTrue(MiscUtils.parseBoolean("y", false));
+        Assert.assertTrue(MiscUtils.parseBoolean("y", true));
+        Assert.assertTrue(MiscUtils.parseBoolean("TRUE", false));
+        Assert.assertTrue(MiscUtils.parseBoolean("TRUE", true));
+    }
 }
