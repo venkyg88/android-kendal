@@ -179,9 +179,9 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         int icon;
         super.onResume();
         if (mapView!=null) mapView.onResume();
-        if (adapter.isSingleMode()) icon = R.drawable.ic_view_list_black;
-        else icon = R.drawable.ic_map_black;
-        ActionBar.getInstance().setConfig(ActionBar.Config.STORE, icon, this);
+//        if (adapter.isSingleMode()) icon = R.drawable.ic_view_list_black;
+//        else icon = R.drawable.ic_map_black;
+        ActionBar.getInstance().setConfig(ActionBar.Config.STORE);
         Tracker.getInstance().trackStateForStoreFinder(); // Analytics
     }
 
