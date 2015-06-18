@@ -29,35 +29,14 @@
                     android:textSize="@dimen/fontsize_12sp"
                     android:textColor="@color/staples_black"
                     android:textStyle="bold"
-                    android:lines="2"
-                    android:text="@string/login_greeting"/>
-                <LinearLayout
-                    android:id="@+id/reward_layout"
+                    android:lines="2"/>
+                <TextView
+                    android:id="@+id/reward_message"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:orientation="horizontal"
-                    android:padding="5dp"
                     android:gravity="center"
-                    android:visibility="gone">
-                    <TextView
-                        android:id="@+id/reward"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textSize="@dimen/fontsize_20sp"
-                        android:lines="1"
-                        android:maxEms="4"
-                        android:ellipsize="end"
-                        android:textColor="@color/staples_black"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textSize="@dimen/fontsize_12sp"
-                        android:textColor="@color/staples_black"
-                        android:text="@string/rewards"/>
-                </LinearLayout>
+                    android:textSize="@dimen/fontsize_20sp"
+                    android:textColor="@color/staples_black"/>
             </FrameLayout>
             <LinearLayout
                 android:id="@+id/store_layout"
