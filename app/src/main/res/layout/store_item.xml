@@ -80,33 +80,33 @@
             android:layout_marginBottom="8dp"
             android:background="@color/staples_middle_gray"/>
 
-        <!--phone number-->
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="6dp"
-            >
-            <TextView
-                android:id="@+id/phone2_label"
-                android:layout_gravity="left"
-                style="@style/GraySubheading"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:text="@string/phone"/>
-            <TextView
-                android:id="@+id/phone2"
-                android:layout_below="@id/phone2_label"
-                android:layout_alignParentLeft="true"
-                style="@style/StoreItem"/>
-            <ImageView
-                android:id="@+id/call_store2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="6dp"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                android:src="@drawable/ic_phone_black"/>
-        </RelativeLayout>
+        <!--&lt;!&ndash;phone number&ndash;&gt;-->
+        <!--<RelativeLayout-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:paddingLeft="6dp"-->
+            <!-->-->
+            <!--<TextView-->
+                <!--android:id="@+id/phone2_label"-->
+                <!--android:layout_gravity="left"-->
+                <!--style="@style/GraySubheading"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:layout_alignParentLeft="true"-->
+                <!--android:text="@string/phone"/>-->
+            <!--<TextView-->
+                <!--android:id="@+id/phone2"-->
+                <!--android:layout_below="@id/phone2_label"-->
+                <!--android:layout_alignParentLeft="true"-->
+                <!--style="@style/StoreItem"/>-->
+            <!--<ImageView-->
+                <!--android:id="@+id/call_store2"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginRight="6dp"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:src="@drawable/ic_phone_black"/>-->
+        <!--</RelativeLayout>-->
 
 
         <!--horizontal rule 2 -->
