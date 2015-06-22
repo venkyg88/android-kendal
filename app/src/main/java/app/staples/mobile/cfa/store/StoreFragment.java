@@ -18,15 +18,10 @@ import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.crittercism.app.Crittercism;
 import com.google.android.gms.common.ConnectionResult;
@@ -60,12 +55,13 @@ import app.staples.R;
 import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.location.LocationFinder;
 import app.staples.mobile.cfa.widget.ActionBar;
+import app.staples.mobile.cfa.widget.PlaceFieldView;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class StoreFragment extends Fragment implements Callback<StoreQuery>,
-        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, View.OnClickListener, EditText.OnEditorActionListener {
+        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, View.OnClickListener, PlaceFieldView.OnPlaceDoneListener {
     private static final String TAG = StoreFragment.class.getSimpleName();
 
     private static int FITSTORES = 5; // Number of stores to fit in initial view
@@ -75,7 +71,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
 
     private MapView mapView;
     private GoogleMap googleMap;
-    private EditText searchText;
+    private PlaceFieldView searchText;
     private RecyclerView list;
     private StoreAdapter adapter;
 
@@ -123,9 +119,10 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         adapter.setSingleMode(mapView != null);
         adapter.setFullStoreDetail(false); // initially only summary store info is displayed
 
-        searchText = (EditText) view.findViewById(R.id.store_search);
-        searchText.setOnEditorActionListener(this);
+        searchText = (PlaceFieldView) view.findViewById(R.id.store_search);
         searchText.setHint(getHint());
+        searchText.selectMode(true);
+        searchText.setOnPlaceDoneListener(this);
 
         view.findViewById(R.id.store_here).setOnClickListener(this);
 
@@ -302,21 +299,25 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     // Retrofit callbacks & processing
 
     @Override
-    public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-        switch(actionId) {
-            case EditorInfo.IME_ACTION_SEARCH:
-                ((MainActivity) getActivity()).hideSoftKeyboard();
-                doSearch();
-                return(true);
-            case EditorInfo.IME_NULL:
-                if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER &&
-                    event.getAction()==KeyEvent.ACTION_DOWN) {
-                    doSearch();
-                    return(true);
-                }
-                break;
+    public void onPlaceDone(PlaceFieldView.Place place) {
+        // Hide keyboard
+        MainActivity activity = (MainActivity) getActivity();
+        activity.hideSoftKeyboard();
+
+        // Get, then clear control
+        String address = searchText.getText().toString();
+        searchText.setText(null);
+
+        if (place!=null) {
+            if (place.postalCode!=null) {
+                address = place.postalCode;
+            } else if (place.city!=null && place.state!=null) {
+                address = place.city+", "+place.state;
+            }
         }
-        return(false);
+
+        location = null;
+        Access.getInstance().getChannelApi(false).storeLocations(address, this);
     }
 
     private void gotoHere() {
@@ -324,13 +325,6 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         location = finder.getLocation();
         String postalCode = finder.getPostalCode();
         Access.getInstance().getChannelApi(false).storeLocations(postalCode, this);
-    }
-
-    private void doSearch() {
-        String address = searchText.getText().toString().trim();
-        searchText.setText(null);
-        location = null;
-        Access.getInstance().getChannelApi(false).storeLocations(address, this);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package app.staples.mobile.cfa.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -64,6 +65,7 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
     private boolean autoMode;
     private OnPlaceDoneListener listener;
     private StartSuggest startSuggest;
+    private String searchTypes;
     private String manualEntry;
 
     public PlaceFieldView(Context context) {
@@ -87,6 +89,22 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
         adapter = new ArrayAdapter<Item>(context, R.layout.place_suggest_item);
         popup.setAdapter(adapter);
         popup.setAnchorView(this);
+
+        // Get styled attributes
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PlacesFieldView);
+        int n = a.getIndexCount();
+        for(int i=0;i<n;i++) {
+            int index = a.getIndex(i);
+            switch(index) {
+                case R.styleable.PlacesFieldView_searchTypes:
+                    searchTypes = a.getString(index);
+                    break;
+                case R.styleable.PlacesFieldView_manualPrompt:
+                    manualEntry = a.getString(index);
+                    break;
+            }
+        }
+        a.recycle();
 
         manualEntry = context.getResources().getString(R.string.input_manually_allcaps);
 
@@ -133,13 +151,13 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
         switch(actionId) {
             case EditorInfo.IME_ACTION_NEXT:
                 activateItem(null);
-                break;
+                return(true);
             case EditorInfo.IME_NULL:
                 if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER &&
                         event.getAction()==KeyEvent.ACTION_DOWN) {
                     activateItem(null);
                 }
-                break;
+                return(true);
         }
         return(false);
     }
@@ -164,13 +182,11 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
     }
 
     private class StartSuggest implements Runnable {
-        private String lastKey;
-
         @Override
         public void run() {
             String address = getText().toString();
             GoogleApi googleApi = Access.getInstance().getGoogleApi();
-            googleApi.getPlaceAutoComplete("address", "country:us", address, PlaceFieldView.this);
+            googleApi.getPlaceAutoComplete(searchTypes, "country:us", address, PlaceFieldView.this);
         }
     }
 
