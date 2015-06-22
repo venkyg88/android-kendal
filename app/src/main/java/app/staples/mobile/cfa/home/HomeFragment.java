@@ -61,7 +61,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         frame = (TileLayout) view.findViewById(R.id.tiles);
 
         header.findViewById(R.id.login_message).setOnClickListener(this);
-        header.findViewById(R.id.reward_layout).setOnClickListener(this);
+        header.findViewById(R.id.reward_message).setOnClickListener(this);
         header.findViewById(R.id.store_layout).setOnClickListener(this);
 
         refreshMessageBar();
@@ -80,9 +80,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     public void refreshMessageBar() {
         Access access = Access.getInstance();
-        View rewardLayout = header.findViewById(R.id.reward_layout);
         TextView loginText = (TextView) header.findViewById(R.id.login_message);
-        TextView rewardText = (TextView) header.findViewById(R.id.reward);
+        TextView rewardText = (TextView) header.findViewById(R.id.reward_message);
 
         // Logged In
         // Note that member can be null if failure to retrieve profile following successful login
@@ -94,11 +93,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             }
             if (rewards != 0) {
                 loginText.setVisibility(View.GONE);
-                rewardLayout.setVisibility(View.VISIBLE);
-                rewardText.setText(MiscUtils.getCurrencyFormat().getCurrency().toString() + (int) rewards);
+                rewardText.setVisibility(View.VISIBLE);
+                String rewardsMessage = MiscUtils.getCurrencyFormat().getPositivePrefix() + (int) rewards + " " + getString(R.string.rewards);
+                rewardText.setText(rewardsMessage);
             } else {
                 loginText.setVisibility(View.VISIBLE);
-                rewardLayout.setVisibility(View.GONE);
+                rewardText.setVisibility(View.GONE);
                 String loginMessage = MessageFormat.format(getString(R.string.welcome_format), member.getUserName());
                 loginText.setText(loginMessage);
             }
@@ -106,7 +106,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         // Not Logged In
         else {
             loginText.setVisibility(View.VISIBLE);
-            rewardLayout.setVisibility(View.GONE);
+            rewardText.setVisibility(View.GONE);
             loginText.setText(R.string.login_greeting);
         }
     }
@@ -162,26 +162,28 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             // Get identifier (safely)
             String identifier = null;
             List<Area> areas = item.getArea();
-            if (areas!=null && areas.size()>0) {
-                Area area = areas.get(0);
-                if (area!=null) {
-                    identifier = area.getSkuList();
-                    if (identifier!=null && identifier.isEmpty()) identifier = null;
+            if (areas!=null) {
+                for(Area area : areas) {
+                    String skuList = area.getSkuList();
+                    if (skuList!=null && !skuList.isEmpty()) {
+                        identifier = skuList;
+                        break;
+                    }
                 }
+            }
 
-                TileLayout.LayoutParams params = getTileLayoutParams(item.getSize());
-                if (params!=null) {
-                    ImageView image = new ImageView(activity);
-                    image.setLayoutParams(params);
-                    image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            TileLayout.LayoutParams params = getTileLayoutParams(item.getSize());
+            if (params!=null) {
+                ImageView image = new ImageView(activity);
+                image.setLayoutParams(params);
+                image.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-                    Tile tile = new Tile(item.getTitle(), identifier);
-                    image.setTag(tile);
-                    image.setOnClickListener(this);
-                    frame.addView(image);
+                Tile tile = new Tile(item.getTitle(), identifier);
+                image.setTag(tile);
+                image.setOnClickListener(this);
+                frame.addView(image);
 
-                    picasso.load(item.getBanner()).into(image);
-                }
+                picasso.load(item.getBanner()).into(image);
             }
         }
     }
@@ -200,7 +202,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     activity.selectLoginFragment();
                 }
                 break;
-            case R.id.reward_layout:
+            case R.id.reward_message:
                 Tracker.getInstance().trackActionForPersonalizedMessaging("Reward");
                 activity.selectRewardsFragment();
                 break;

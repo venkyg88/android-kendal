@@ -92,10 +92,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         super.onCreate(bundle);
 
         adapter = new StoreAdapter(getActivity());
-
-        LocationFinder finder = LocationFinder.getInstance(getActivity());
-        String postalCode = finder.getPostalCode();
-        Access.getInstance().getChannelApi(false).storeLocations(postalCode, this);
+        gotoHere();
     }
 
     @Override
@@ -322,8 +319,16 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         return(false);
     }
 
+    private void gotoHere() {
+        LocationFinder finder = LocationFinder.getInstance(getActivity());
+        location = finder.getLocation();
+        String postalCode = finder.getPostalCode();
+        Access.getInstance().getChannelApi(false).storeLocations(postalCode, this);
+    }
+
     private void doSearch() {
         String address = searchText.getText().toString().trim();
+        searchText.setText(null);
         location = null;
         Access.getInstance().getChannelApi(false).storeLocations(address, this);
     }
@@ -564,7 +569,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                 toggleView();
                 break;
             case R.id.store_here:
-//                gotoHere(); TODO ****************
+                gotoHere();
                 break;
             case R.id.store_item:
                 if (!adapter.isFullStoreDetail()) {
