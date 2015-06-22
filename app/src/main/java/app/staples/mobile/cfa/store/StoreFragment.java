@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -128,6 +129,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         searchText.setHint(getHint());
 
         view.findViewById(R.id.store_here).setOnClickListener(this);
+        view.findViewById(R.id.option_icon).setOnClickListener(this);
 
         return (view);
     }
@@ -488,10 +490,10 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
 
         // if showing single store (with map if available), toggle to list view
         if (adapter.isSingleMode()) {
-            ActionBar.getInstance().setConfig(ActionBar.Config.STORE, R.drawable.ic_map_black, this);
-            if (mapView != null) {
-                mapView.setVisibility(View.GONE);
-            }
+//            ActionBar.getInstance().setConfig(ActionBar.Config.STORE, R.drawable.ic_map_black, this);
+//            if (mapView != null) {
+//                mapView.setVisibility(View.GONE);
+//            }
             ViewGroup.LayoutParams params = list.getLayoutParams();
             singleHeight = params.height;
             params.height = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -505,7 +507,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
 
         // else if showing list of stores, then toggle to single mode
         else {
-            ActionBar.getInstance().setConfig(ActionBar.Config.STORE, R.drawable.ic_view_list_black, this);
+//            ActionBar.getInstance().setConfig(ActionBar.Config.STORE, R.drawable.ic_view_list_black, this);
             if (mapView != null) {
                 mapView.setVisibility(View.VISIBLE);
             } else {
@@ -513,7 +515,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
             }
             ViewGroup.LayoutParams params = list.getLayoutParams();
             params.height = singleHeight;
-            adapter.setSingleMode(true);
+            adapter.setSingleMode(false);
             adapter.notifyDataSetChanged();
             list.requestLayout();
             Tracker.getInstance().trackStateForStoreDetail(); // Analytics
@@ -588,9 +590,9 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
 
                         if (mapView != null) {
                             // resize map
-                            list.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
+                            list.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 0));
                             float newMapHeightPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 144, getResources().getDisplayMetrics());
-                            mapView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                            mapView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                                     Math.round(newMapHeightPx)));
 
                             // fake a marker click to get the right store and to refresh view taking into account full store detail flag
@@ -608,13 +610,13 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                 }
                 break;
             case R.id.call_store:
-            case R.id.call_store2:
-                obj = view.getTag();
-                if (obj instanceof StoreItem) {
-                    StoreItem storeItem = (StoreItem) obj;
-                    Tracker.getInstance().trackActionForCallStore(storeItem.storeNumber); // analytics
-                    dialStorePhone(storeItem);
-                }
+//            case R.id.call_store2:
+//                obj = view.getTag();
+//                if (obj instanceof StoreItem) {
+//                    StoreItem storeItem = (StoreItem) obj;
+//                    Tracker.getInstance().trackActionForCallStore(storeItem.storeNumber); // analytics
+//                    dialStorePhone(storeItem);
+//                }
                 break;
             case R.id.weekly_ad_link:
             case R.id.weekly_ad_link2:

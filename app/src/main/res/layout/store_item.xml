@@ -8,21 +8,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="6dp">
+        android:padding="@dimen/margin_16dp">
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_weight="1"
-            android:paddingRight="6dp">
+            android:layout_weight="1">
             <TextView
                 android:id="@+id/city"
-                style="@style/StoreItem"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/fontsize_24sp"
+                android:textColor="@color/staples_black"/>
             <TextView
                 android:id="@+id/street"
-                style="@style/StoreItem"/>
-            <TextView
-                android:id="@+id/phone"
                 style="@style/StoreItem"/>
             <TextView
                 android:id="@+id/store_number"
@@ -30,7 +29,9 @@
             <TextView
                 android:id="@+id/weekly_ad_link"
                 style="@style/StoreItem"
+                android:paddingTop="@dimen/margin_16dp"
                 android:text="@string/weekly_ad_title"
+                android:textStyle="bold"
                 android:textColor="@color/staples_red"/>
         </LinearLayout>
         <LinearLayout
@@ -44,11 +45,13 @@
             <TextView
                 android:id="@+id/open_time"
                 style="@style/StoreItem"
+                android:textColor="@color/staples_green"
                 android:layout_gravity="right"/>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:paddingTop="@dimen/margin_16dp"
                 android:layout_gravity="right">
                 <ImageView
                     android:id="@+id/call_store"

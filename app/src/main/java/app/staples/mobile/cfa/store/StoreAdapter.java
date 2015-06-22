@@ -44,7 +44,6 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
             super(view);
             city = (TextView) view.findViewById(R.id.city);
             street = (TextView) view.findViewById(R.id.street);
-            phone = (TextView) view.findViewById(R.id.phone);
             weeklyAd = (TextView) view.findViewById(R.id.weekly_ad_link);
             weeklyAd2 = (TextView) view.findViewById(R.id.weekly_ad_link2);
             distance = (TextView) view.findViewById(R.id.distance);
@@ -54,8 +53,8 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
             // store detail
             storeDetailLayout = view.findViewById(R.id.store_detail_layout);
             storeNumber = (TextView) view.findViewById(R.id.store_number);
-            phone2 = (TextView) view.findViewById(R.id.phone2);
-            callStore2 = view.findViewById(R.id.call_store2);
+//            phone2 = (TextView) view.findViewById(R.id.phone2);
+//            callStore2 = view.findViewById(R.id.call_store2);
             storeSchedule = (TextView) view.findViewById(R.id.store_schedule);
             storeFeatures = (TextView) view.findViewById(R.id.store_features);
         }
@@ -127,7 +126,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         // Set onClickListeners
         bvh.itemView.setOnClickListener(listener);
         bvh.callStore.setOnClickListener(listener);
-        bvh.callStore2.setOnClickListener(listener);
+//        bvh.callStore2.setOnClickListener(listener);
         bvh.directions.setOnClickListener(listener);
         bvh.weeklyAd.setOnClickListener(listener);
         bvh.weeklyAd2.setOnClickListener(listener);
@@ -142,7 +141,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         // Set tag for onClickListeners
         vh.itemView.setTag(item);
         vh.callStore.setTag(item);
-        vh.callStore2.setTag(item);
+//        vh.callStore2.setTag(item);
         vh.directions.setTag(item);
         vh.weeklyAd.setTag(item);
         vh.weeklyAd2.setTag(item);
@@ -152,18 +151,18 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
             vh.phone.setVisibility(View.GONE);
             vh.callStore.setVisibility(View.GONE);
             vh.weeklyAd.setVisibility(View.GONE);
-            vh.phone2.setVisibility(View.VISIBLE);
-            vh.callStore2.setVisibility(View.VISIBLE);
+//            vh.phone2.setVisibility(View.VISIBLE);
+//            vh.callStore2.setVisibility(View.VISIBLE);
             vh.weeklyAd2.setVisibility(View.VISIBLE);
             vh.storeNumber.setVisibility(View.VISIBLE);
             vh.storeDetailLayout.setVisibility(View.VISIBLE);
         } else {
             // else summary display
-            vh.phone.setVisibility(View.VISIBLE);
+//            vh.phone.setVisibility(View.VISIBLE);
             vh.callStore.setVisibility(View.VISIBLE);
             vh.weeklyAd.setVisibility(View.VISIBLE);
-            vh.phone2.setVisibility(View.GONE);
-            vh.callStore2.setVisibility(View.GONE);
+//            vh.phone2.setVisibility(View.GONE);
+//            vh.callStore2.setVisibility(View.GONE);
             vh.weeklyAd2.setVisibility(View.GONE);
             vh.storeNumber.setVisibility(View.GONE);
             vh.storeDetailLayout.setVisibility(View.GONE);
@@ -172,13 +171,13 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         // Set content
         vh.city.setText(item.city);
         vh.street.setText(item.streetAddress1);
-        vh.phone.setText(item.phoneNumber);
+//        vh.phone.setText(item.phoneNumber);
         vh.distance.setText(mileFormat.format(item.distance));
         vh.openTime.setText(TimeSpan.formatStatus(vh.itemView.getContext(), item.getSpans(), System.currentTimeMillis()));
 
         // Set detail content
         if (isFullStoreDetail()) {
-            vh.phone2.setText(item.phoneNumber);
+//            vh.phone2.setText(item.phoneNumber);
             vh.storeNumber.setText("Store # " + item.storeNumber);
             Context context = vh.itemView.getContext();
             String schedule = TimeSpan.formatSchedule(context, item.getSpans());
