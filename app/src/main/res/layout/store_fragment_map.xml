@@ -5,20 +5,23 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <RelativeLayout
+        android:id="@+id/map_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
         <com.google.android.gms.maps.MapView
             android:id="@+id/map"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:padding="@dimen/action_bar_half_margin"
             android:layout_alignParentTop="true">
             <app.staples.mobile.cfa.widget.PlaceFieldView
                 android:id="@+id/store_search"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="6dp"
@@ -29,7 +32,7 @@
                 app:searchTypes="(regions)"
                 app:manualPrompt="@string/input_manually_allcaps"/>
             <ImageButton
-                android:id="@+id/option_icon"
+                android:id="@+id/view_list"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:paddingRight="@dimen/margin_16dp"
@@ -37,18 +40,19 @@
                 android:src="@drawable/ic_view_list_black"/>
         </LinearLayout>
         <ImageButton
-            android:id="@+id/store_here"
+            android:id="@+id/goto_here"
             style="@style/RoundButton"
             android:background="@drawable/oval_white"
             android:src="@drawable/ic_my_location_black"
-            android:layout_above="@+id/list"
             android:layout_alignParentRight="true"
-            android:layout_marginBottom="@dimen/margin_16dp"/>
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/list"
-            android:background="@color/staples_white"
             android:layout_alignParentBottom="true"
-            android:layout_width="match_parent"
-            android:layout_height="125dp"/>
+            android:layout_marginBottom="@dimen/margin_16dp"/>
     </RelativeLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/staples_white"
+        android:visibility="gone"/>
+    <!-- Single StoreItem gets inserted here -->
 </app.staples.mobile.cfa.widget.AnimatorLayout>

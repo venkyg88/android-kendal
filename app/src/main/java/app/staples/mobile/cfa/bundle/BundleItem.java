@@ -56,7 +56,8 @@ public class BundleItem {
     public float customerRating;
     public int customerCount;
     public boolean isAddOnItem;
-    public boolean isOverSized;
+    public boolean isHeavyWeight;
+    public float heavyWeightShippingCharge;
     public float rebatePrice;
     public String rebateIndicator;
     public boolean busy;

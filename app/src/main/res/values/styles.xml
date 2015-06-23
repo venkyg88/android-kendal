@@ -231,7 +231,7 @@
 
     <!-- Store locator styling -->
     <style name="StoreItem">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/fontsize_16sp</item>
         <item name="android:textColor">@color/staples_black</item>

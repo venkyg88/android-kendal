@@ -76,15 +76,11 @@ public class ActionBar extends LinearLayout {
     private class State {
         private Config config;
         private String title;
-        private int icon;
-        private OnClickListener listener;
 
         private void copy(State other) {
             if (other==null) return;
             config = other.config;
             title = other.title;
-            icon = other.icon;
-            listener = other.listener;
         }
     }
 
@@ -101,7 +97,6 @@ public class ActionBar extends LinearLayout {
     private TextView cartQtyView;
     private BadgeImageView cartIconAction;
     private TextView checkoutSigninButton;
-    private ImageView optionIcon;
     private ImageView closeButton;
     private TextView titleView;
 
@@ -133,7 +128,6 @@ public class ActionBar extends LinearLayout {
         cartQtyView = (TextView) findViewById(R.id.cart_item_qty);
         cartIconAction = (BadgeImageView) findViewById(R.id.action_show_cart);
         checkoutSigninButton = (TextView) findViewById(R.id.checkout_login_button);
-        optionIcon = (ImageView) findViewById(R.id.option_icon);
         closeButton = (ImageView) findViewById(R.id.close_button);
         titleView = (TextView) findViewById(R.id.action_title);
 
@@ -152,8 +146,6 @@ public class ActionBar extends LinearLayout {
         searchBar.close();
         state.config = config;
         state.title = null;
-        state.icon = 0;
-        state.listener = null;
         update();
     }
 
@@ -161,17 +153,6 @@ public class ActionBar extends LinearLayout {
         searchBar.close();
         state.config = config;
         state.title = title;
-        state.icon = 0;
-        state.listener = null;
-        update();
-    }
-
-    public void setConfig(Config config, int icon, OnClickListener listener) {
-        searchBar.close();
-        state.config = config;
-        state.title = null;
-        state.icon = icon;
-        state.listener = listener;
         update();
     }
 
@@ -204,17 +185,6 @@ public class ActionBar extends LinearLayout {
         cartIconAction.setVisibility(state.config.cart ? VISIBLE : GONE);
         checkoutSigninButton.setVisibility(state.config.signin ? VISIBLE : GONE);
         cartQtyView.setVisibility(state.config.quantity ? VISIBLE : GONE);
-
-        // Set option icon
-        if (state.icon!=0 && state.listener!=null) {
-            optionIcon.setVisibility(VISIBLE);
-            optionIcon.setImageResource(state.icon);
-            optionIcon.setOnClickListener(state.listener);
-        } else {
-            optionIcon.setVisibility(GONE);
-            optionIcon.setOnClickListener(null);
-        }
-
         searchBar.setVisibility(state.config.search ? VISIBLE : GONE);
         feedIcon.setVisibility(state.config.feed ? VISIBLE : GONE);
         logoView.setVisibility(state.config.logo ? VISIBLE : GONE);
@@ -237,8 +207,6 @@ public class ActionBar extends LinearLayout {
 
         state.config = Config.QUERY;
         state.title = null;
-        state.icon = 0;
-        state.listener = null;
         update();
 
         searchBar.open();
