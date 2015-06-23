@@ -21,6 +21,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -75,6 +76,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     private PlaceFieldView searchText;
     private RecyclerView list;
     private StoreAdapter adapter;
+    private ImageButton optionButton;
 
     private BitmapDescriptor hotIcon;
     private BitmapDescriptor coldIcon;
@@ -126,7 +128,8 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         searchText.setOnPlaceDoneListener(this);
 
         view.findViewById(R.id.store_here).setOnClickListener(this);
-        view.findViewById(R.id.option_icon).setOnClickListener(this);
+        optionButton = (ImageButton)view.findViewById(R.id.option_icon);
+        optionButton.setOnClickListener(this);
 
         return (view);
     }
@@ -230,7 +233,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         deltaLng *= 1.1;
 
         // Clip deltas to min and max
-        double cos = Math.cos(Math.PI/180.0*centerLat);
+        double cos = Math.cos(Math.PI / 180.0 * centerLat);
         deltaLat = Math.max(deltaLat, minViewAngle);
         deltaLng = Math.max(deltaLng, minViewAngle/cos);
         deltaLat = Math.min(deltaLat, maxViewAngle);
@@ -277,8 +280,8 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
             maxLng = Math.max(maxLng, item.longitude);
         }
 
-        LatLngBounds bounds = makeBounds((minLat+maxLat)/2.0, (minLng+maxLng)/2.0,
-                                         (maxLat-minLat)/2.0, (maxLng-minLng)/2.0);
+        LatLngBounds bounds = makeBounds((minLat + maxLat) / 2.0, (minLng + maxLng) / 2.0,
+                (maxLat - minLat) / 2.0, (maxLng - minLng) / 2.0);
         return(bounds);
     }
 
@@ -568,6 +571,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                 gotoHere();
                 break;
             case R.id.store_item:
+                optionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_map_black));
                 if (!adapter.isFullStoreDetail()) {
                     adapter.setFullStoreDetail(true);
 
@@ -575,7 +579,6 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                     if (!adapter.isSingleMode()) {
                         toggleView();
                     }
-
                     Tracker.getInstance().trackStateForStoreDetail(); // Analytics
 
                     obj = view.getTag();
