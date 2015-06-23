@@ -607,13 +607,12 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                 }
                 break;
             case R.id.call_store:
-//            case R.id.call_store2:
-//                obj = view.getTag();
-//                if (obj instanceof StoreItem) {
-//                    StoreItem storeItem = (StoreItem) obj;
-//                    Tracker.getInstance().trackActionForCallStore(storeItem.storeNumber); // analytics
-//                    dialStorePhone(storeItem);
-//                }
+                obj = view.getTag();
+                if (obj instanceof StoreItem) {
+                    StoreItem storeItem = (StoreItem) obj;
+                    Tracker.getInstance().trackActionForCallStore(storeItem.storeNumber); // analytics
+                    dialStorePhone(storeItem);
+                }
                 break;
             case R.id.weekly_ad_link:
             case R.id.weekly_ad_link2:
