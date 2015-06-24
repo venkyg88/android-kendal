@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import com.crittercism.app.Crittercism;
 import com.google.android.gms.common.ConnectionResult;
@@ -145,7 +146,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         googleMap.setMyLocationEnabled(true);
         UiSettings settings = googleMap.getUiSettings();
-        settings.setMyLocationButtonEnabled(true);
+        settings.setMyLocationButtonEnabled(false);
         settings.setMapToolbarEnabled(false);
 
         // Set listeners
@@ -170,12 +171,12 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
 
     private CharSequence getHint() {
         Resources res = getActivity().getResources();
-        SpannableStringBuilder sb = new SpannableStringBuilder("   ");
+        SpannableStringBuilder sb = new SpannableStringBuilder(" ");
         sb.append(res.getString(R.string.store_search_hint));
-        Drawable icon = res.getDrawable(R.drawable.ic_search_black);
-        int size = (int) (searchText.getTextSize()*1.25);
-        icon.setBounds(0, 0, size, size);
-        sb.setSpan(new ImageSpan(icon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        Drawable icon = res.getDrawable(R.drawable.ic_search_black);
+//        int size = (int) (searchText.getTextSize()*1.25);
+//        icon.setBounds(0, 0, size, size);
+//        sb.setSpan(new ImageSpan(icon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return(sb);
     }
 
@@ -280,6 +281,12 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
             CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, width, height, 0);
             googleMap.moveCamera(update);
         }
+    }
+
+    private void panMap(double latitude, double longitude) {
+        LatLng latLng = new LatLng(latitude, longitude);
+        CameraUpdate update = CameraUpdateFactory.newLatLng(latLng);
+        googleMap.animateCamera(update);
     }
 
     // Retrofit callbacks & processing
@@ -572,14 +579,10 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                 if (obj instanceof StoreItem) {
                     StoreItem storeItem = (StoreItem) obj;
                     if (mode==Mode.MULTIPLE) {
-                        // TODO This needs to be thought through, RP
-                        onMarkerClick(storeItem.marker);
-                        location = new Location("Nowhere");
-                        location.setLatitude(storeItem.latitude);
-                        location.setLongitude(storeItem.longitude);
-                        scaleMap();
+                        selectMarker(storeItem.marker);
+                        showSingle(storeItem);
+                        panMap(storeItem.latitude, storeItem.longitude);
                     }
-                    showDetails(storeItem);
                 }
                 break;
             case R.id.call_store:

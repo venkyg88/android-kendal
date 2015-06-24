@@ -28,10 +28,12 @@
                 style="@style/StoreItem"/>
             <TextView
                 android:id="@+id/weekly_ad_link"
-                style="@style/StoreItem"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
                 android:paddingTop="@dimen/margin_16dp"
                 android:text="@string/weekly_ad_title"
                 android:textStyle="bold"
+                android:textSize="@dimen/fontsize_16sp"
                 android:textColor="@color/staples_red"/>
         </LinearLayout>
         <LinearLayout
@@ -41,7 +43,7 @@
             <TextView
                 android:id="@+id/distance"
                 style="@style/StoreItem"
-                android:layout_gravity="right"/>
+                android:gravity="right"/>
             <TextView
                 android:id="@+id/open_time"
                 style="@style/StoreItem"
@@ -68,6 +70,11 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/div_line"
+        android:background="@color/staples_dark_gray"
+        android:layout_marginTop="@dimen/verticalspacing_8dp"/>
     <LinearLayout
         android:id="@+id/store_detail_layout"
         android:layout_width="match_parent"
