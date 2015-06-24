@@ -99,8 +99,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             } else {
                 loginText.setVisibility(View.VISIBLE);
                 rewardText.setVisibility(View.GONE);
-                String loginMessage = MessageFormat.format(getString(R.string.welcome_format), member.getUserName());
-                loginText.setText(loginMessage);
+                String text = member.getWelcomeMessage();
+                if (text==null || text.isEmpty()) {
+                    text = member.getUserName();
+                }
+                text = MessageFormat.format(getString(R.string.welcome_format), text);
+                loginText.setText(text);
             }
         }
         // Not Logged In

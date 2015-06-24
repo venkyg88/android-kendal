@@ -182,21 +182,20 @@
         android:paddingLeft="@dimen/margin_16dp"
         android:paddingRight="@dimen/margin_16dp"
         android:paddingTop="@dimen/verticalspacing_8dp"
-		android:visibility="visible"
-	>
+		android:visibility="visible">
         <TextView
-			android:id="@+id/oversized_shipping_label"
+			android:id="@+id/heavyweight_shipping_label"
             android:layout_alignParentLeft="true"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
 			android:paddingTop="0dp"
-			android:text="@string/oversized_shipping_fee"
+			android:text="@string/heavyweight_warning"
             android:textColor="@color/staples_black"
             android:textSize="@dimen/fontsize_14sp"
 			android:visibility="gone"/>
         <TextView
-			android:id="@+id/oversized_shipping"
-            android:layout_alignBaseline="@id/oversized_shipping_label"
+			android:id="@+id/heavyweight_shipping"
+            android:layout_alignBaseline="@id/heavyweight_shipping_label"
             android:layout_alignParentRight="true"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
@@ -206,7 +205,7 @@
 		<TextView
 			android:id="@+id/cart_shipping_label"
 			android:layout_alignParentLeft="true"
-			android:layout_below="@id/oversized_shipping_label"
+			android:layout_below="@id/heavyweight_shipping_label"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:paddingTop="@dimen/margin_16dp"

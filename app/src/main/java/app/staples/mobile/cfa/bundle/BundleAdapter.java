@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +41,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         private TextView title;
         private RatingStars ratingStars;
         private PriceSticker priceSticker;
-        private TextView overweight;
+        private TextView heavyweight;
         private TextView addon;
         private TextView rebateNote;
         private TextView rebateText;
@@ -55,7 +54,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             title = (TextView) view.findViewById(R.id.title);
             ratingStars = (RatingStars) view.findViewById(R.id.rating);
             priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
-            overweight = (TextView) view.findViewById(R.id.overweight);
+            heavyweight = (TextView) view.findViewById(R.id.heavyweight);
             addon = (TextView) view.findViewById(R.id.addon);
             rebateNote = (TextView) view.findViewById(R.id.rebate_note);
             rebateText = (TextView)view.findViewById(R.id.rebate_text);
@@ -162,7 +161,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             vh.rebateText.setVisibility(View.GONE);
         }
         vh.addon.setVisibility((item.isAddOnItem) ? View.VISIBLE : View.GONE);
-        vh.overweight.setVisibility((item.isHeavyWeight) ? View.VISIBLE : View.GONE);
+        vh.heavyweight.setVisibility((item.isHeavyWeight) ? View.VISIBLE : View.GONE);
         if (item.busy) {
             vh.action.setVisibility(View.GONE);
             vh.whirlie.setVisibility(View.VISIBLE);

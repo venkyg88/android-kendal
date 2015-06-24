@@ -219,7 +219,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         CartItemViewHolder(View convertView) {
             imageView = (ImageView) convertView.findViewById(R.id.cartitem_image);
             titleTextView = (TextView) convertView.findViewById(R.id.cartitem_title);
-            overweightWarning = (TextView) convertView.findViewById(R.id.overweight);
+            overweightWarning = (TextView) convertView.findViewById(R.id.heavyweight);
             addOnWarning = (TextView) convertView.findViewById(R.id.addon);
             priceSticker = (PriceSticker) convertView.findViewById(R.id.cartitem_price);
             rebateNote = (TextView)convertView.findViewById(R.id.rebate_note);

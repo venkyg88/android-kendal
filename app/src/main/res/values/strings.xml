@@ -240,12 +240,11 @@
     <string name="details_no_reviews">No Reviews</string>
 
     <!--Shipping Logic-->
-    <string name="overweight">OVERSIZED</string>
-    <string name="oversized_shipping_fee">Oversized shipping fee</string>
+    <string name="heavyweight">HEAVYWEIGHT</string>
+    <string name="heavyweight_warning">Additional shipping fees apply</string>
     <string name="minimum_all_caps">MINIMUM</string>
-    <string name="add_on">$25 MINIMUM</string>
-    <string name="overweight_warning">Additional shipping fees apply</string>
-    <string name="add_on_warming">$25 minimum to ship</string>
+    <string name="addon">$25 MINIMUM</string>
+    <string name="addon_warning">$25 minimum to ship</string>
 
     <!-- Availability -->
     <string name="avail_nothing">Product not found</string>

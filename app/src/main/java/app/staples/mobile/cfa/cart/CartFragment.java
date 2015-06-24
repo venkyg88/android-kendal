@@ -53,8 +53,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
     private TextView cartSubtotal;
     private View freeShippingLayout;
     private TextView freeShippingMsg;
-    private TextView oversizedShipping;
-    private TextView oversizedShippingLabel;
+    private TextView heavyweightShipping;
+    private TextView heavyweightShippingLabel;
     private TextView cartShipping;
     private TextView couponsRewardsLabel;
     private TextView couponsRewardsValue;
@@ -97,8 +97,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
         couponsRewardsLayout = view.findViewById(R.id.coupons_rewards_layout);
         couponsRewardsLabel = (TextView) view.findViewById(R.id.coupons_rewards_label);
         couponsRewardsValue = (TextView) view.findViewById(R.id.coupons_rewards_value);
-        oversizedShipping = (TextView) view.findViewById(R.id.oversized_shipping);
-        oversizedShippingLabel = (TextView) view.findViewById(R.id.oversized_shipping_label);
+        heavyweightShipping = (TextView) view.findViewById(R.id.heavyweight_shipping);
+        heavyweightShippingLabel = (TextView) view.findViewById(R.id.heavyweight_shipping_label);
         cartShipping = (TextView) view.findViewById(R.id.cart_shipping);
         cartSubtotal = (TextView) view.findViewById(R.id.cart_subtotal);
         cartShippingLayout = view.findViewById(R.id.cart_shipping_layout);
@@ -250,13 +250,13 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
             // set text of shipping, and subtotal
             if (totalHandlingCost > 0) {
                 String totalHandlingCostStr = Float.toString(totalHandlingCost);
-                oversizedShipping.setText(CheckoutFragment.formatShippingCharge(totalHandlingCostStr, currencyFormat));
-                oversizedShipping.setTextColor(blackText);
-                oversizedShippingLabel.setVisibility(View.VISIBLE);
-                oversizedShipping.setVisibility(View.VISIBLE);
+                heavyweightShipping.setText(CheckoutFragment.formatShippingCharge(totalHandlingCostStr, currencyFormat));
+                heavyweightShipping.setTextColor(blackText);
+                heavyweightShippingLabel.setVisibility(View.VISIBLE);
+                heavyweightShipping.setVisibility(View.VISIBLE);
             } else {
-                oversizedShippingLabel.setVisibility(View.GONE);
-                oversizedShipping.setVisibility(View.GONE);
+                heavyweightShippingLabel.setVisibility(View.GONE);
+                heavyweightShipping.setVisibility(View.GONE);
             }
 
             cartShipping.setText(CheckoutFragment.formatShippingCharge(shipping, currencyFormat));

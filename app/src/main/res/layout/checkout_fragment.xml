@@ -31,8 +31,7 @@
             android:layout_alignParentLeft="true"
             android:text="@string/item_subtotal"
             android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_14sp"
-            />
+            android:textSize="@dimen/fontsize_14sp"/>
 
         <TextView
             android:id="@+id/checkout_item_subtotal"
@@ -41,46 +40,42 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_14sp"
-            />
+            android:textSize="@dimen/fontsize_14sp"/>
 
 		<!-- total handling cost/overweight shipping -->
 		<TextView
-			android:id="@+id/oversized_shipping_label"
+			android:id="@+id/heavyweight_shipping_label"
 			android:layout_alignParentLeft="true"
 			android:layout_below="@id/checkout_item_subtotal"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
             android:paddingTop="@dimen/action_bar_half_margin"
-			android:text="@string/oversized_shipping_fee"
+			android:text="@string/heavyweight_warning"
 			android:textColor="@color/staples_black"
             android:textSize="@dimen/fontsize_14sp"
-            android:visibility="gone"
-		/>
+            android:visibility="gone"/>
 		<TextView
-			android:id="@+id/oversized_shipping"
-			android:layout_alignBaseline="@id/oversized_shipping_label"
+			android:id="@+id/heavyweight_shipping"
+			android:layout_alignBaseline="@id/heavyweight_shipping_label"
 			android:layout_alignParentRight="true"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
             android:paddingTop="@dimen/action_bar_half_margin"
 			android:textColor="@color/staples_black"
             android:textSize="@dimen/fontsize_14sp"
-            android:visibility="gone"
-		/>
+            android:visibility="gone"/>
 
 		<!-- shipping charge -->
 		<TextView
 			android:id="@+id/checkout_shipping_label"
 			android:layout_alignParentLeft="true"
-			android:layout_below="@id/oversized_shipping_label"
+			android:layout_below="@id/heavyweight_shipping_label"
 			android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/action_bar_half_margin"
 			android:text="@string/shipping"
 			android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_14sp"
-			/>
+            android:textSize="@dimen/fontsize_14sp"/>
 		<TextView
 			android:id="@+id/checkout_shipping"
 			android:layout_alignParentRight="true"
@@ -89,8 +84,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/action_bar_half_margin"
 			android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_14sp"
-			/>
+            android:textSize="@dimen/fontsize_14sp"/>
 
         <!--tax-->
         <TextView
@@ -102,8 +96,7 @@
             android:paddingTop="@dimen/action_bar_half_margin"
             android:text="@string/tax"
 			android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_14sp"
-			/>
+            android:textSize="@dimen/fontsize_14sp"/>
 
         <TextView
             android:id="@+id/checkout_tax"
@@ -113,8 +106,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/action_bar_half_margin"
 			android:textColor="@color/staples_black"
-            android:textSize="@dimen/fontsize_14sp"
-			/>
+            android:textSize="@dimen/fontsize_14sp"/>
 
         <!-- submission button -->
         <android.support.v7.widget.CardView
@@ -136,8 +128,7 @@
                 android:paddingLeft="@dimen/cartmath_half_margin"
                 android:text="@string/submit_order"
                 android:textSize="@dimen/fontsize_18sp"
-                android:textColor="@color/staples_white"
-                />
+                android:textColor="@color/staples_white"/>
             <TextView
                 android:id="@+id/checkout_order_total"
                 android:layout_width="wrap_content"
@@ -145,8 +136,7 @@
                 android:paddingRight="@dimen/cartmath_half_margin"
                 android:layout_gravity="right|center_vertical"
                 android:textSize="@dimen/fontsize_18sp"
-                android:textColor="@color/staples_white"
-                />
+                android:textColor="@color/staples_white"/>
 
         </android.support.v7.widget.CardView>
     </RelativeLayout>
