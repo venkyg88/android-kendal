@@ -24,9 +24,6 @@
                 android:id="@+id/street"
                 style="@style/StoreItem"/>
             <TextView
-                android:id="@+id/store_number"
-                style="@style/StoreItem"/>
-            <TextView
                 android:id="@+id/weekly_ad_link"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
@@ -73,8 +70,7 @@
     <View
         android:layout_width="fill_parent"
         android:layout_height="@dimen/div_line"
-        android:background="@color/staples_dark_gray"
-        android:layout_marginTop="@dimen/verticalspacing_8dp"/>
+        android:background="@color/staples_dark_gray"/>
     <LinearLayout
         android:id="@+id/store_detail_layout"
         android:layout_width="match_parent"
@@ -84,22 +80,42 @@
         <!--store hours-->
         <TextView
             style="@style/GraySubheading"
-            android:layout_marginTop="1dp"
-            android:paddingTop="8dp"
+            android:paddingTop="@dimen/margin_16dp"
             android:paddingLeft="@dimen/margin_16dp"
             android:text="@string/store_hours"
+            android:textSize="@dimen/fontsize_12sp"
             android:background="@color/staples_white"/>
         <TextView
             android:id="@+id/store_schedule"
             style="@style/StoreItem"
             android:paddingLeft="@dimen/margin_16dp"
-            android:paddingBottom="8dp"
+            android:paddingBottom="@dimen/margin_16dp"
             android:background="@color/staples_white"/>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/div_line"
+            android:background="@color/staples_dark_gray"/>
+        <TextView
+            style="@style/GraySubheading"
+            android:paddingTop="@dimen/margin_16dp"
+            android:paddingLeft="@dimen/margin_16dp"
+            android:text="@string/store_num"
+            android:textSize="@dimen/fontsize_12sp"
+            android:background="@color/staples_white"/>
+        <TextView
+            android:id="@+id/store_number"
+            style="@style/StoreItem"
+            android:paddingLeft="@dimen/margin_16dp"
+            android:paddingBottom="@dimen/margin_16dp"
+            android:background="@color/staples_white"/>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/div_line"
+            android:background="@color/staples_dark_gray"/>
         <!--store features-->
         <TextView
             style="@style/GraySubheading"
-            android:layout_marginTop="1dp"
-            android:paddingTop="8dp"
+            android:paddingTop="@dimen/margin_16dp"
             android:paddingLeft="@dimen/margin_16dp"
             android:text="@string/store_features"
             android:background="@color/staples_white"/>

@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
@@ -17,10 +18,14 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
 import com.google.android.gms.common.ConnectionResult;
@@ -61,7 +66,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class StoreFragment extends Fragment implements Callback<StoreQuery>,
-        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, View.OnClickListener, PlaceFieldView.OnPlaceDoneListener {
+        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, View.OnClickListener, PlaceFieldView.OnPlaceDoneListener, PlaceFieldView.OnPlaceStartListener {
     private static final String TAG = StoreFragment.class.getSimpleName();
 
     private enum Mode {
@@ -74,6 +79,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     private static double maxViewAngle = 360.0/(2.0*Math.PI*EARTHRADIUS) * 100.0; // 100 km
 
     private View mapLayout;
+    private ViewGroup listLayout;
     private MapView mapView;
     private GoogleMap googleMap;
     private PlaceFieldView searchText;
@@ -87,6 +93,9 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     private Location location;
     private StoreAdapter.ViewHolder singleVh;
     private Mode mode;
+
+    private ImageButton optionButton;
+    private View locationButton;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -107,6 +116,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
             view.setTag(this);
 
             mapLayout = view.findViewById(R.id.map_layout);
+            listLayout = (ViewGroup)view.findViewById(R.id.list_layout);
             mapView = (MapView) view.findViewById(R.id.map);
             mapView.onCreate(bundle);
             mapView.getMapAsync(this);
@@ -130,10 +140,13 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         searchText.setHint(getHint());
         searchText.selectMode(true);
         searchText.setOnPlaceDoneListener(this);
+        searchText.setOnPlaceStartListener(this);
 
-        view.findViewById(R.id.goto_here).setOnClickListener(this);
-        View optionButton = view.findViewById(R.id.view_list);
+        optionButton = (ImageButton)view.findViewById(R.id.view_list);
         optionButton.setOnClickListener(this);
+
+        locationButton = (ImageButton)view.findViewById(R.id.goto_here);
+        locationButton.setOnClickListener(this);
 
         return (view);
     }
@@ -309,8 +322,14 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
             }
         }
 
+        optionButton.setVisibility(View.VISIBLE);
         location = null;
         Access.getInstance().getChannelApi(false).storeLocations(address, this);
+    }
+
+    @Override
+    public void onPlaceStart() {
+        optionButton.setVisibility(View.GONE);
     }
 
     private void gotoHere() {
@@ -474,7 +493,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
 
     @Override
     public void onMapClick(LatLng latLng) {
-        if (mode==Mode.DETAILS) {
+        if (mode==Mode.DETAILS || mode==Mode.MULTIPLE) {
             showSingle(null);
         }
     }
@@ -489,9 +508,12 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         if (mapLayout!=null) {
             mapLayout.setVisibility(View.VISIBLE);
         }
+        listLayout.setVisibility(View.GONE);
         list.setVisibility(View.GONE);
         singleVh.itemView.setVisibility(View.VISIBLE);
         adapter.onBindViewHolder(singleVh, item, false);
+        locationButton.setVisibility(View.VISIBLE);
+        optionButton.setVisibility(View.VISIBLE);
 
         mode = Mode.SINGLE;
     }
@@ -504,20 +526,32 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         if (mapLayout!=null) {
             mapLayout.setVisibility(View.VISIBLE);
         }
+
+        optionButton.setVisibility(View.GONE);
         list.setVisibility(View.GONE);
         singleVh.itemView.setVisibility(View.VISIBLE);
         adapter.onBindViewHolder(singleVh, item, true);
+        locationButton.setVisibility(View.GONE);
 
         mode = Mode.DETAILS;
         Tracker.getInstance().trackStateForStoreDetail();
     }
 
     private void showMultiple() {
-        if (mapLayout!=null) {
-            mapLayout.setVisibility(View.GONE);
-        }
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int height = size.y;
+
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) listLayout.getLayoutParams();
+        params.height = (3 * height/4);
+        listLayout.setLayoutParams(params);
+
+        optionButton.setVisibility(View.GONE);
+        listLayout.setVisibility(View.VISIBLE);
         list.setVisibility(View.VISIBLE);
         singleVh.itemView.setVisibility(View.GONE);
+        locationButton.setVisibility(View.GONE);
 
         mode = Mode.MULTIPLE;
         Tracker.getInstance().trackStateForStoreResults();
@@ -578,10 +612,15 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                 obj = view.getTag();
                 if (obj instanceof StoreItem) {
                     StoreItem storeItem = (StoreItem) obj;
-                    if (mode==Mode.MULTIPLE) {
-                        selectMarker(storeItem.marker);
-                        showSingle(storeItem);
-                        panMap(storeItem.latitude, storeItem.longitude);
+                    switch(mode) {
+                        case SINGLE:
+                            showDetails(storeItem);
+                            break;
+                        case MULTIPLE:
+                            selectMarker(storeItem.marker);
+                            showSingle(storeItem);
+                            panMap(storeItem.latitude, storeItem.longitude);
+                            break;
                     }
                 }
                 break;

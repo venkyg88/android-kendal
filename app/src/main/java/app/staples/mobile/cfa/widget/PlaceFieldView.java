@@ -38,6 +38,10 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
         public void onPlaceDone(Place place);
     }
 
+    public interface OnPlaceStartListener {
+        public void onPlaceStart();
+    }
+
     public static class Place {
         public String streetAddress;
         public String city;
@@ -64,6 +68,7 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
     private ArrayAdapter<Item> adapter;
     private boolean autoMode;
     private OnPlaceDoneListener listener;
+    private OnPlaceStartListener listener2;
     private StartSuggest startSuggest;
     private String searchTypes;
     private String manualEntry;
@@ -126,6 +131,8 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
         this.listener = listener;
     }
 
+    public void setOnPlaceStartListener(OnPlaceStartListener listener2) { this.listener2 = listener2; }
+
     // Listeners
 
     @Override
@@ -140,6 +147,7 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
             if (address.length() >= 3)
                 postDelayed(startSuggest, KEYDELAY);
         }
+        if (listener2 != null) listener2.onPlaceStart();
     }
 
     @Override

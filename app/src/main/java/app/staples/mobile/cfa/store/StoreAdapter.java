@@ -130,7 +130,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
 
         // Set detail content
         if (fullDetail) {
-            vh.storeNumber.setText("Store # " + item.storeNumber);
+            vh.storeNumber.setText("#" + item.storeNumber);
             Context context = vh.itemView.getContext();
             String schedule = TimeSpan.formatSchedule(context, item.getSpans());
             SpannableString span = new SpannableString(schedule);

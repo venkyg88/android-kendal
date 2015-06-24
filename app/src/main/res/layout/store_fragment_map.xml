@@ -54,11 +54,18 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="@dimen/margin_16dp"/>
     </RelativeLayout>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/list"
+    <LinearLayout
+        android:id="@+id/list_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/staples_white"
-        android:visibility="gone"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/staples_white"
+            android:visibility="gone"/>
+    </LinearLayout>
     <!-- Single StoreItem gets inserted here -->
 </app.staples.mobile.cfa.widget.AnimatorLayout>
