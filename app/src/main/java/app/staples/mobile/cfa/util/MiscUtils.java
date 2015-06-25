@@ -2,6 +2,7 @@ package app.staples.mobile.cfa.util;
 
 import android.text.Html;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -13,6 +14,7 @@ public class MiscUtils {
     private static final String TAG = MiscUtils.class.getSimpleName();
 
     private static DecimalFormat currencyFormat;
+    private static DecimalFormat integerCurrencyFormat;
 
     public static DecimalFormat getCurrencyFormat() {
         if (currencyFormat == null) {
@@ -28,8 +30,20 @@ public class MiscUtils {
             // Do not use debit notation
             currencyFormat.setNegativePrefix("-"+currencyFormat.getPositivePrefix());
             currencyFormat.setNegativeSuffix(currencyFormat.getPositiveSuffix());
+
+            // Round from the middle
+            currencyFormat.setRoundingMode(RoundingMode.HALF_UP);
         }
         return currencyFormat;
+    }
+
+    public static DecimalFormat getIntegerCurrencyFormat() {
+        if (integerCurrencyFormat==null) {
+            integerCurrencyFormat = (DecimalFormat) getCurrencyFormat().clone();
+            integerCurrencyFormat.setMinimumFractionDigits(0);
+            integerCurrencyFormat.setMaximumFractionDigits(0);
+        }
+        return(integerCurrencyFormat);
     }
 
     public static String cleanupHtml(String text) {

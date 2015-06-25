@@ -10,7 +10,9 @@ import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -28,10 +30,20 @@ import retrofit.client.Response;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, emulateSdk = 21, qualifiers = "port")
 public class CartModelTest {
-
     private EasyOpenApi easyOpenApi;
     private boolean success;
     private boolean failure;
+
+    @Before
+    public void setUp() {
+        Utility.setUp();
+        Utility.waitForMcs();
+    }
+
+    @After
+    public void tearDown() {
+        Utility.tearDown();
+    }
 
     @Test
     public void testCartCanBeViewed() throws InterruptedException {
@@ -42,7 +54,6 @@ public class CartModelTest {
         success = false;
         failure = false;
 
-        Log.d("TIME",""+System.currentTimeMillis());
         easyOpenApi.viewCart(0, 50,
                 new Callback<CartContents>() {
                     @Override
@@ -50,7 +61,7 @@ public class CartModelTest {
                         success = true;
 
                         List<Cart> cartItems = cartContents.getCart();
-                        if (cartItems.size() == 0) {
+                        if (cartItems==null || cartItems.size()==0) {
                             System.err.println("Empty Cart");
                             return;
                         }
@@ -59,7 +70,6 @@ public class CartModelTest {
                         for(Product item : products) {
                             System.out.println("Product:" + item.getProductName() + ", qty: " + item.getQuantity());
                         }
-
                     }
 
                     @Override

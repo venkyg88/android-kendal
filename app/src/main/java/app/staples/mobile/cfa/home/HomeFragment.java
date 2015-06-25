@@ -94,7 +94,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             if (rewards != 0) {
                 loginText.setVisibility(View.GONE);
                 rewardText.setVisibility(View.VISIBLE);
-                String rewardsMessage = MiscUtils.getCurrencyFormat().getPositivePrefix() + (int) rewards + " " + getString(R.string.rewards);
+                String rewardsMessage = MiscUtils.getIntegerCurrencyFormat().format(rewards) + " " + getString(R.string.rewards);
                 rewardText.setText(rewardsMessage);
             } else {
                 loginText.setVisibility(View.VISIBLE);

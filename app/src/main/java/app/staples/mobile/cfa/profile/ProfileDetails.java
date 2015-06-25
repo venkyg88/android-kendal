@@ -78,7 +78,7 @@ public class ProfileDetails implements Callback<MemberDetail> {
         }
 
         this.callback = callback;
-        this.timeRefreshRequested = new Date().getTime(); // record when refresh request made to correctly handle simultaneous requests
+        this.timeRefreshRequested = System.currentTimeMillis(); // record when refresh request made to correctly handle simultaneous requests
 
         easyOpenApi = access.getEasyOpenApi(true);
         easyOpenApi.getMemberProfile(new Callback<MemberDetail>() {

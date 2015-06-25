@@ -362,7 +362,7 @@ public class MainActivity extends Activity
 
     public void ensureActiveSession() {
         // if interval has passed since last check
-        final long currentTime = new Date().getTime();
+        final long currentTime = System.currentTimeMillis();
         if (currentTime > timeOfLastSessionCheck + CONNECTIVITY_CHECK_INTERVAL) {
             // update time of last check even though the check may not succeed. in reality, onResume
             // can get called repeatedly in succession and we don't want to ensure active session repeatedly.

@@ -4,6 +4,7 @@ import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.inventory.StoreInventory;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,11 +12,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowLog;
-import org.robolectric.util.ActivityController;
 
 import app.staples.BuildConfig;
-import app.staples.mobile.cfa.MainActivity;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -23,36 +21,23 @@ import retrofit.client.Response;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, emulateSdk = 21, qualifiers = "port")
 public class InventoryModelTest {
-    private ActivityController controller;
-    private MainActivity activity;
     private EasyOpenApi easyOpenApi;
-    private EasyOpenApi mockEasyOpenApi;
-
     private boolean success;
     private boolean failure;
 
     @Before
     public void setUp() {
-        // Redirect logcat to stdout logfile
-        ShadowLog.stream = System.out;
+        Utility.setUp();
+        Utility.waitForMcs();
+    }
 
-        // Create activity controller
-        controller = Robolectric.buildActivity(MainActivity.class);
-        Assert.assertNotNull("Robolectric controller should not be null", controller);
-
-        // Create activity
-        controller.create();
-        controller.start();
-        controller.visible();
-        activity = (MainActivity) controller.get();
-
-        // Check for success
-        Assert.assertNotNull("Activity should exist", activity);
-
+    @After
+    public void tearDown() {
+        Utility.tearDown();
     }
 
     @Test
-    public void inventoryModelIsCreatedWithLiveCall() throws InterruptedException{
+    public void inventoryModelIsCreatedWithLiveCall() throws InterruptedException {
         if (!Utility.doLiveCalls) return;
 
         easyOpenApi = Access.getInstance().getEasyOpenApi(false);
@@ -82,15 +67,16 @@ public class InventoryModelTest {
         Assert.assertFalse("Model creation should not have failed", failure);
         Assert.assertTrue("Model creation should have succeeded", success);
     }
-    @Test
-    public void inventoryModelIsCreatedWithMockCall() throws InterruptedException{
 
-        mockEasyOpenApi = Access.getInstance().getMockEasyOpenApi(activity);
+    @Test
+    public void inventoryModelIsCreatedWithMockCall() throws InterruptedException {
+        easyOpenApi = Access.getInstance().getMockEasyOpenApi(Utility.activity);
+        Assert.assertNotNull("Should have gotten mockEasyOpenApi", easyOpenApi);
         success = false;
         failure = false;
 
         //Parameters to the mock API don't matter since it reads from a json file anyway
-        mockEasyOpenApi.getStoreInventory(null, null, null, null, new Callback<StoreInventory>() {
+        easyOpenApi.getStoreInventory(null, null, null, null, new Callback<StoreInventory>() {
             @Override
             public void success(StoreInventory storeInventory, Response response) {
                 success = true;
