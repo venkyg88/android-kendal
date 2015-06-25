@@ -3,21 +3,31 @@ package app.staples.mobile.cfa.util;
 import android.text.Html;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class MiscUtils {
+    private static final String TAG = MiscUtils.class.getSimpleName();
+
     private static DecimalFormat currencyFormat;
 
     public static DecimalFormat getCurrencyFormat() {
         if (currencyFormat == null) {
-            // set up currency format to use minus sign for negative amounts (needed for coupons)
             currencyFormat = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.US);
-            String symbol = currencyFormat.getCurrency().getSymbol();
-            currencyFormat.setNegativePrefix("-"+symbol);
-            currencyFormat.setNegativeSuffix("");
+
+            // Use decimal and group separators from user's locale
+            DecimalFormatSymbols currencySymbols = currencyFormat.getDecimalFormatSymbols();
+            DecimalFormatSymbols userSymbols = new DecimalFormatSymbols();
+            currencySymbols.setMonetaryDecimalSeparator(userSymbols.getMonetaryDecimalSeparator());
+            currencySymbols.setGroupingSeparator(userSymbols.getGroupingSeparator());
+            currencyFormat.setDecimalFormatSymbols(currencySymbols);
+
+            // Do not use debit notation
+            currencyFormat.setNegativePrefix("-"+currencyFormat.getPositivePrefix());
+            currencyFormat.setNegativeSuffix(currencyFormat.getPositiveSuffix());
         }
         return currencyFormat;
     }

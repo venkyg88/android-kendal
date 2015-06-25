@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.View;
 
 import app.staples.R;
+import app.staples.mobile.cfa.util.MiscUtils;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.Locale;
 public class PriceSticker extends View {
     private static final String TAG = PriceSticker.class.getSimpleName();
 
-    private static final NumberFormat format = NumberFormat.getCurrencyInstance(Locale.US);
+    private NumberFormat format;
 
     private Paint majorPaint;
     private Paint wasPaint;
@@ -57,6 +58,8 @@ public class PriceSticker extends View {
 
     public PriceSticker(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
+        format = MiscUtils.getCurrencyFormat();
 
         // Preset default attributes
         int majorTextSize = 20;

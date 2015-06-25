@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
@@ -17,11 +18,14 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.util.Log;
-import android.util.TypedValue;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
 import com.google.android.gms.common.ConnectionResult;
@@ -32,6 +36,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -61,14 +66,20 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class StoreFragment extends Fragment implements Callback<StoreQuery>,
-        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, View.OnClickListener, PlaceFieldView.OnPlaceDoneListener {
+        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, View.OnClickListener, PlaceFieldView.OnPlaceDoneListener, PlaceFieldView.OnPlaceStartListener {
     private static final String TAG = StoreFragment.class.getSimpleName();
+
+    private enum Mode {
+        SINGLE, DETAILS, MULTIPLE;
+    }
 
     private static int FITSTORES = 5; // Number of stores to fit in initial view
     private static double EARTHRADIUS = 6371.0; // kilometers
     private static double minViewAngle = 360.0/(2.0*Math.PI*EARTHRADIUS) * 5.0; // 5 km
     private static double maxViewAngle = 360.0/(2.0*Math.PI*EARTHRADIUS) * 100.0; // 100 km
 
+    private View mapLayout;
+    private ViewGroup listLayout;
     private MapView mapView;
     private GoogleMap googleMap;
     private PlaceFieldView searchText;
@@ -80,8 +91,11 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     private Marker hotMarker;
 
     private Location location;
+    private StoreAdapter.ViewHolder singleVh;
+    private Mode mode;
 
-    private int singleHeight;
+    private ImageButton optionButton;
+    private View locationButton;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -94,13 +108,15 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Crittercism.leaveBreadcrumb("StoreFragment:onCreateView(): Displaying the Store screen.");
-        View view;
+        ViewGroup view;
 
         // Supports Google Play Services?
         if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity())==ConnectionResult.SUCCESS) {
-            view = inflater.inflate(R.layout.store_fragment_map, container, false);
+            view = (ViewGroup) inflater.inflate(R.layout.store_fragment_map, container, false);
             view.setTag(this);
 
+            mapLayout = view.findViewById(R.id.map_layout);
+            listLayout = (ViewGroup)view.findViewById(R.id.list_layout);
             mapView = (MapView) view.findViewById(R.id.map);
             mapView.onCreate(bundle);
             mapView.getMapAsync(this);
@@ -108,7 +124,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
 
         // No Google Play Services
         else {
-            view = inflater.inflate(R.layout.store_fragment_nomap, container, false);
+            view = (ViewGroup) inflater.inflate(R.layout.store_fragment_nomap, container, false);
             view.setTag(this);
         }
 
@@ -116,15 +132,21 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         adapter.setOnClickListener(this);
-        adapter.setSingleMode(mapView != null);
-        adapter.setFullStoreDetail(false); // initially only summary store info is displayed
+
+        singleVh = adapter.onCreateViewHolder(view, 0);
+        view.addView(singleVh.itemView);
 
         searchText = (PlaceFieldView) view.findViewById(R.id.store_search);
         searchText.setHint(getHint());
         searchText.selectMode(true);
         searchText.setOnPlaceDoneListener(this);
+        searchText.setOnPlaceStartListener(this);
 
-        view.findViewById(R.id.store_here).setOnClickListener(this);
+        optionButton = (ImageButton)view.findViewById(R.id.view_list);
+        optionButton.setOnClickListener(this);
+
+        locationButton = (ImageButton)view.findViewById(R.id.goto_here);
+        locationButton.setOnClickListener(this);
 
         return (view);
     }
@@ -132,9 +154,13 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
+
+        // Set options
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         googleMap.setMyLocationEnabled(true);
-        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+        UiSettings settings = googleMap.getUiSettings();
+        settings.setMyLocationButtonEnabled(false);
+        settings.setMapToolbarEnabled(false);
 
         // Set listeners
         googleMap.setOnMarkerClickListener(this);
@@ -149,22 +175,21 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     }
 
     private void applyState() {
-        if (adapter.getBackingCount()>0 && googleMap!=null) {
+        if (adapter.getItemCount()>0 && googleMap!=null) {
             addMarkers();
             scaleMap();
-            adapter.setSingleMode(true);
-            adapter.setSingleIndex(0);
+            showSingle(adapter.getItem(0));
         }
     }
 
     private CharSequence getHint() {
         Resources res = getActivity().getResources();
-        SpannableStringBuilder sb = new SpannableStringBuilder("   ");
+        SpannableStringBuilder sb = new SpannableStringBuilder(" ");
         sb.append(res.getString(R.string.store_search_hint));
-        Drawable icon = res.getDrawable(R.drawable.ic_search_black);
-        int size = (int) (searchText.getTextSize()*1.25);
-        icon.setBounds(0, 0, size, size);
-        sb.setSpan(new ImageSpan(icon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        Drawable icon = res.getDrawable(R.drawable.ic_search_black);
+//        int size = (int) (searchText.getTextSize()*1.25);
+//        icon.setBounds(0, 0, size, size);
+//        sb.setSpan(new ImageSpan(icon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return(sb);
     }
 
@@ -173,9 +198,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         int icon;
         super.onResume();
         if (mapView!=null) mapView.onResume();
-        if (adapter.isSingleMode()) icon = R.drawable.ic_view_list_black;
-        else icon = R.drawable.ic_map_black;
-        ActionBar.getInstance().setConfig(ActionBar.Config.STORE, icon, this);
+        ActionBar.getInstance().setConfig(ActionBar.Config.STORE);
         Tracker.getInstance().trackStateForStoreFinder(); // Analytics
     }
 
@@ -197,29 +220,6 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         if (mapView!=null) mapView.onLowMemory();
     }
 
-    private void addMarkers() {
-        googleMap.clear();
-        int n = adapter.getBackingCount();
-        for(int i=0;i<n;i++) {
-            StoreItem item = adapter.getBackingItem(i);
-            MarkerOptions options = new MarkerOptions();
-            options.position(new LatLng(item.latitude, item.longitude));
-            if (i==0) {
-                // Add hot marker
-                options.icon(hotIcon);
-                options.anchor(0.5f, 1.0f);
-            } else {
-                // Add cold marker
-                options.icon(coldIcon);
-                options.anchor(0.5f, 0.5f);
-            }
-            item.marker = googleMap.addMarker(options);
-            if (i==0) {
-                hotMarker = item.marker;
-            }
-        }
-    }
-
     // Map bounds and scaling
 
     private LatLngBounds makeBounds(double centerLat, double centerLng, double deltaLat, double deltaLng) {
@@ -228,7 +228,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         deltaLng *= 1.1;
 
         // Clip deltas to min and max
-        double cos = Math.cos(Math.PI/180.0*centerLat);
+        double cos = Math.cos(Math.PI / 180.0 * centerLat);
         deltaLat = Math.max(deltaLat, minViewAngle);
         deltaLng = Math.max(deltaLng, minViewAngle/cos);
         deltaLat = Math.min(deltaLat, maxViewAngle);
@@ -248,9 +248,9 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         double deltaLng = 0.0;
 
         // Get bounds of first N stores
-        int n = Math.min(adapter.getBackingCount(), FITSTORES);
+        int n = Math.min(adapter.getItemCount(), FITSTORES);
         for(int i=0;i<n;i++) {
-            StoreItem item = adapter.getBackingItem(i);
+            StoreItem item = adapter.getItem(i);
             deltaLat = Math.max(deltaLat, Math.abs(item.latitude-centerLat));
             deltaLng = Math.max(deltaLng, Math.abs(item.longitude-centerLng));
         }
@@ -266,9 +266,9 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         double maxLng = -180.0;
 
         // Get bounds of first N stores
-        int n = Math.min(adapter.getBackingCount(), FITSTORES);
+        int n = Math.min(adapter.getItemCount(), FITSTORES);
         for(int i=0;i<n;i++) {
-            StoreItem item = adapter.getBackingItem(i);
+            StoreItem item = adapter.getItem(i);
             minLat = Math.min(minLat, item.latitude);
             minLng = Math.min(minLng, item.longitude);
             maxLat = Math.max(maxLat, item.latitude);
@@ -296,6 +296,12 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         }
     }
 
+    private void panMap(double latitude, double longitude) {
+        LatLng latLng = new LatLng(latitude, longitude);
+        CameraUpdate update = CameraUpdateFactory.newLatLng(latLng);
+        googleMap.animateCamera(update);
+    }
+
     // Retrofit callbacks & processing
 
     @Override
@@ -316,8 +322,14 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
             }
         }
 
+        optionButton.setVisibility(View.VISIBLE);
         location = null;
         Access.getInstance().getChannelApi(false).storeLocations(address, this);
+    }
+
+    @Override
+    public void onPlaceStart() {
+        optionButton.setVisibility(View.GONE);
     }
 
     private void gotoHere() {
@@ -365,7 +377,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         }
 
         adapter.notifyDataSetChanged();
-        return(adapter.getBackingCount());
+        return(adapter.getItemCount());
     }
 
     // This is also used by LocationFinder to get nearby store
@@ -436,6 +448,29 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
 
     // Markers and list items
 
+    private void addMarkers() {
+        googleMap.clear();
+        int n = adapter.getItemCount();
+        for(int i=0;i<n;i++) {
+            StoreItem item = adapter.getItem(i);
+            MarkerOptions options = new MarkerOptions();
+            options.position(new LatLng(item.latitude, item.longitude));
+            if (i==0) {
+                // Add hot marker
+                options.icon(hotIcon);
+                options.anchor(0.5f, 1.0f);
+            } else {
+                // Add cold marker
+                options.icon(coldIcon);
+                options.anchor(0.5f, 0.5f);
+            }
+            item.marker = googleMap.addMarker(options);
+            if (i==0) {
+                hotMarker = item.marker;
+            }
+        }
+    }
+
     private void selectMarker(Marker marker) {
         if (hotMarker!=null) {
             hotMarker.setIcon(coldIcon);
@@ -450,68 +485,76 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     @Override
     public boolean onMarkerClick(Marker marker) {
         selectMarker(marker);
-        if (adapter.isSingleMode()) {
-            int index = adapter.findPositionByMarker(hotMarker);
-            if (index>=0) {
-                adapter.setSingleIndex(index);
-                adapter.notifyDataSetChanged();
-            }
-        }
+        int index = adapter.findPositionByMarker(hotMarker);
+        StoreItem item = adapter.getItem(index);
+        showSingle(item);
         return(false);
     }
 
     @Override
     public void onMapClick(LatLng latLng) {
-        // if in store detail mode, exit detail mode and restore map
-        if (adapter.isFullStoreDetail()) {
-
-            if (mapView != null) {
-                // resize map
-                mapView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
-                float newListHeightPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
-                list.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                        Math.round(newListHeightPx)));
-            }
-
-            adapter.setFullStoreDetail(false);
-            adapter.notifyDataSetChanged();
+        if (mode==Mode.DETAILS || mode==Mode.MULTIPLE) {
+            showSingle(null);
         }
     }
 
-    private void toggleView() {
+    // Mode methods
 
-        // if showing single store (with map if available), toggle to list view
-        if (adapter.isSingleMode()) {
-            ActionBar.getInstance().setConfig(ActionBar.Config.STORE, R.drawable.ic_map_black, this);
-            if (mapView != null) {
-                mapView.setVisibility(View.GONE);
-            }
-            ViewGroup.LayoutParams params = list.getLayoutParams();
-            singleHeight = params.height;
-            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-            adapter.setSingleMode(false);
-            adapter.setFullStoreDetail(false);
-            adapter.notifyDataSetChanged();
-            list.scrollToPosition(adapter.getSingleIndex());
-            list.requestLayout();
-            Tracker.getInstance().trackStateForStoreResults(); // Analytics
+    private void showSingle(StoreItem item) {
+        if (item==null) {
+            item = (StoreItem) singleVh.itemView.getTag();
         }
 
-        // else if showing list of stores, then toggle to single mode
-        else {
-            ActionBar.getInstance().setConfig(ActionBar.Config.STORE, R.drawable.ic_view_list_black, this);
-            if (mapView != null) {
-                mapView.setVisibility(View.VISIBLE);
-            } else {
-                adapter.setFullStoreDetail(true);
-            }
-            ViewGroup.LayoutParams params = list.getLayoutParams();
-            params.height = singleHeight;
-            adapter.setSingleMode(true);
-            adapter.notifyDataSetChanged();
-            list.requestLayout();
-            Tracker.getInstance().trackStateForStoreDetail(); // Analytics
+        if (mapLayout!=null) {
+            mapLayout.setVisibility(View.VISIBLE);
         }
+        listLayout.setVisibility(View.GONE);
+        list.setVisibility(View.GONE);
+        singleVh.itemView.setVisibility(View.VISIBLE);
+        adapter.onBindViewHolder(singleVh, item, false);
+        locationButton.setVisibility(View.VISIBLE);
+        optionButton.setVisibility(View.VISIBLE);
+
+        mode = Mode.SINGLE;
+    }
+
+    private void showDetails(StoreItem item) {
+        if (item==null) {
+            item = (StoreItem) singleVh.itemView.getTag();
+        }
+
+        if (mapLayout!=null) {
+            mapLayout.setVisibility(View.VISIBLE);
+        }
+
+        optionButton.setVisibility(View.GONE);
+        list.setVisibility(View.GONE);
+        singleVh.itemView.setVisibility(View.VISIBLE);
+        adapter.onBindViewHolder(singleVh, item, true);
+        locationButton.setVisibility(View.GONE);
+
+        mode = Mode.DETAILS;
+        Tracker.getInstance().trackStateForStoreDetail();
+    }
+
+    private void showMultiple() {
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int height = size.y;
+
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) listLayout.getLayoutParams();
+        params.height = (3 * height/4);
+        listLayout.setLayoutParams(params);
+
+        optionButton.setVisibility(View.GONE);
+        listLayout.setVisibility(View.VISIBLE);
+        list.setVisibility(View.VISIBLE);
+        singleVh.itemView.setVisibility(View.GONE);
+        locationButton.setVisibility(View.GONE);
+
+        mode = Mode.MULTIPLE;
+        Tracker.getInstance().trackStateForStoreResults();
     }
 
     // Intent actions
@@ -559,50 +602,29 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     public void onClick(View view) {
         Object obj;
         switch(view.getId()) {
-            case R.id.option_icon:
-                toggleView();
+            case R.id.view_list:
+                showMultiple();
                 break;
-            case R.id.store_here:
+            case R.id.goto_here:
                 gotoHere();
                 break;
             case R.id.store_item:
-                if (!adapter.isFullStoreDetail()) {
-                    adapter.setFullStoreDetail(true);
-
-                    // if not in single mode already, switch to it
-                    if (!adapter.isSingleMode()) {
-                        toggleView();
-                    }
-
-                    Tracker.getInstance().trackStateForStoreDetail(); // Analytics
-
-                    obj = view.getTag();
-                    if (obj instanceof StoreItem) {
-                        StoreItem storeItem = (StoreItem) obj;
-
-                        if (mapView != null) {
-                            // resize map
-                            list.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
-                            float newMapHeightPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 144, getResources().getDisplayMetrics());
-                            mapView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                                    Math.round(newMapHeightPx)));
-
-                            // fake a marker click to get the right store and to refresh view taking into account full store detail flag
-                            Marker marker = storeItem.marker;
-                            onMarkerClick(marker);
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-                        } else {
-                            int index = adapter.findPositionByItem(storeItem);
-                            if (index >= 0) {
-                                adapter.setSingleIndex(index);
-                                adapter.notifyDataSetChanged();
-                            }
-                        }
+                obj = view.getTag();
+                if (obj instanceof StoreItem) {
+                    StoreItem storeItem = (StoreItem) obj;
+                    switch(mode) {
+                        case SINGLE:
+                            showDetails(storeItem);
+                            break;
+                        case MULTIPLE:
+                            selectMarker(storeItem.marker);
+                            showSingle(storeItem);
+                            panMap(storeItem.latitude, storeItem.longitude);
+                            break;
                     }
                 }
                 break;
             case R.id.call_store:
-            case R.id.call_store2:
                 obj = view.getTag();
                 if (obj instanceof StoreItem) {
                     StoreItem storeItem = (StoreItem) obj;
@@ -611,11 +633,10 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                 }
                 break;
             case R.id.weekly_ad_link:
-            case R.id.weekly_ad_link2:
                 obj = view.getTag();
                 if (obj instanceof StoreItem) {
                     StoreItem storeItem = (StoreItem) obj;
-                    Tracker.getInstance().trackActionForStoreLocatorWeeklyAd(storeItem.storeNumber); // analytics
+                    Tracker.getInstance().trackActionForStoreLocatorWeeklyAd(storeItem.storeNumber);
                     ((MainActivity)getActivity()).selectWeeklyAd(storeItem.storeNumber);
                 }
                 break;
@@ -623,7 +644,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                 obj = view.getTag();
                 if (obj instanceof StoreItem) {
                     StoreItem storeItem = (StoreItem) obj;
-                    Tracker.getInstance().trackActionForStoreDirections(storeItem.storeNumber); // analytics
+                    Tracker.getInstance().trackActionForStoreDirections(storeItem.storeNumber);
                     getStoreDirections(storeItem);
                 }
                 break;

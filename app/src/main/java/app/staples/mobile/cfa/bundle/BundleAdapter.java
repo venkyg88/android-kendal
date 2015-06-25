@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 import app.staples.R;
 import app.staples.mobile.cfa.IdentifierType;
@@ -34,8 +32,6 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
 
     private static final String SCENE7SIGNATURE = "/s7/is/";
 
-    private static final NumberFormat format = NumberFormat.getCurrencyInstance(Locale.US);
-
     public interface OnFetchMoreData {
         void onFetchMoreData();
     }
@@ -45,7 +41,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         private TextView title;
         private RatingStars ratingStars;
         private PriceSticker priceSticker;
-        private TextView overweight;
+        private TextView heavyweight;
         private TextView addon;
         private TextView rebateNote;
         private TextView rebateText;
@@ -58,7 +54,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             title = (TextView) view.findViewById(R.id.title);
             ratingStars = (RatingStars) view.findViewById(R.id.rating);
             priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
-            overweight = (TextView) view.findViewById(R.id.overweight);
+            heavyweight = (TextView) view.findViewById(R.id.heavyweight);
             addon = (TextView) view.findViewById(R.id.addon);
             rebateNote = (TextView) view.findViewById(R.id.rebate_note);
             rebateText = (TextView)view.findViewById(R.id.rebate_text);
@@ -78,6 +74,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
     private int imageWidth;
     private int imageHeight;
     private Drawable noPhoto;
+    private NumberFormat format;
 
     public BundleAdapter(Context context) {
         this.context = context;
@@ -88,6 +85,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         imageWidth = res.getDimensionPixelSize(R.dimen.image_square_size);
         imageHeight = res.getDimensionPixelSize(R.dimen.image_square_size);
         noPhoto = res.getDrawable(R.drawable.no_photo);
+        format = MiscUtils.getCurrencyFormat();
     }
 
     public void setOnClickListener(View.OnClickListener listener) {
@@ -163,7 +161,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             vh.rebateText.setVisibility(View.GONE);
         }
         vh.addon.setVisibility((item.isAddOnItem) ? View.VISIBLE : View.GONE);
-        vh.overweight.setVisibility((item.isOverSized) ? View.VISIBLE : View.GONE);
+        vh.heavyweight.setVisibility((item.isHeavyWeight) ? View.VISIBLE : View.GONE);
         if (item.busy) {
             vh.action.setVisibility(View.GONE);
             vh.whirlie.setVisibility(View.VISIBLE);
@@ -195,15 +193,16 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             item.setImageUrl(product.getImage());
             item.customerRating = product.getCustomerReviewRating();
             item.customerCount = product.getCustomerReviewCount();
+            item.isAddOnItem = MiscUtils.parseBoolean(product.getAddOnSku(), false);
+            item.isHeavyWeight = MiscUtils.parseBoolean(product.getHeavyWeightSku(), false);
 
             List<Pricing> pricings = product.getPricing();
-            if (pricings!=null) {
+            if (pricings!=null && pricings.size()>0) {
                 item.setPrice(pricings);
                 Pricing pricing = pricings.get(0);
                 if (pricing != null) {
                     item.setRebatePrice(pricing.getDiscount());
-                    item.isAddOnItem = !TextUtils.isEmpty(pricing.getAddOnItem());
-                    item.isOverSized = !TextUtils.isEmpty(pricing.getOverSizeItem());
+                    item.heavyWeightShippingCharge = pricing.getHeavyWeightShipCharge();
                 }
             }
             array.add(item);

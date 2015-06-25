@@ -37,25 +37,25 @@
 
 		<!-- Shipping Logic -->
         <TextView
-            android:id="@+id/overweight"
+            android:id="@+id/heavyweight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/cartitem_title"
             android:textSize="@dimen/fontsize_12sp"
             android:paddingLeft="@dimen/left_margin"
             android:paddingRight="@dimen/right_margin"
-            android:text="@string/overweight"
+            android:text="@string/heavyweight"
             android:textColor="@color/staples_white"
             android:background="@color/staples_green"/>
         <TextView
             android:id="@+id/addon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/overweight"
+            android:layout_below="@id/heavyweight"
             android:textSize="@dimen/fontsize_12sp"
             android:paddingLeft="@dimen/left_margin"
             android:paddingRight="@dimen/right_margin"
-            android:text="@string/add_on"
+            android:text="@string/addon"
             android:textColor="@color/staples_white"
             android:background="@color/staples_green"/>
 

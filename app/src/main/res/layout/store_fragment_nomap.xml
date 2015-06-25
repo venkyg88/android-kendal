@@ -24,7 +24,7 @@
             app:searchTypes="(regions)"
             app:manualPrompt="@string/input_manually_allcaps"/>
         <ImageView
-            android:id="@+id/store_here"
+            android:id="@+id/goto_here"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingRight="6dp"

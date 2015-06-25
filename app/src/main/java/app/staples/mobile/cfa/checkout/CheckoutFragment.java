@@ -46,8 +46,8 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
     private ViewGroup checkoutEntryLayout;
     private TextView itemSubtotalVw;
 //    private TextView couponsRewardsVw;
-    private TextView oversizedShippingVw;
-    private TextView oversizedShippingLabelVw;
+    private TextView heavyweightShipping;
+    private TextView heavyweightShippingLabel;
     private TextView shippingChargeVw;
     private TextView shippingChargeLabelVw;
     private TextView taxLabelVw;
@@ -88,8 +88,8 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         itemSubtotalVw = (TextView) view.findViewById(R.id.checkout_item_subtotal);
 //        couponsRewardsVw = (TextView) view.findViewById(R.id.checkout_coupons_rewards);
 
-        oversizedShippingVw = (TextView) view.findViewById(R.id.oversized_shipping);
-        oversizedShippingLabelVw = (TextView) view.findViewById(R.id.oversized_shipping_label);
+        heavyweightShipping = (TextView) view.findViewById(R.id.heavyweight_shipping);
+        heavyweightShippingLabel = (TextView) view.findViewById(R.id.heavyweight_shipping_label);
 
         shippingChargeVw = (TextView) view.findViewById(R.id.checkout_shipping);
         shippingChargeLabelVw = (TextView) view.findViewById(R.id.checkout_shipping_label);
@@ -105,7 +105,6 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
         submissionLayout.setOnClickListener(this);
 
         disableCheckoutButton(true);
-
 
 //        couponsRewardsAmount = CartApiManager.getCouponsRewardsAdjustedAmount();
         itemSubtotal = CartApiManager.getSubTotal();
@@ -298,7 +297,7 @@ public abstract class CheckoutFragment extends Fragment implements View.OnClickL
 
         DecimalFormat currencyFormat = MiscUtils.getCurrencyFormat();
         String totalHandlingCostStr = currencyFormat.format(totalHandlingCost);
-        oversizedShippingVw.setText(totalHandlingCostStr);
+        heavyweightShipping.setText(totalHandlingCostStr);
 
         shippingChargeVw.setText(formatShippingCharge(shippingCharge, currencyFormat));
         shippingChargeVw.setTextColor("Free".equals(shippingCharge) ? greenText : blackText);

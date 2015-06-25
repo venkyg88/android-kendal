@@ -22,6 +22,7 @@ public class DualHintEdit extends EditText implements TextWatcher {
     private TextPaint dualPaint;
     private int dualSize;
     private int dualGap;
+    private String dualHint;
     private int dualX;
     private int dualY;
     private OnUpdatedTextListener listener;
@@ -45,9 +46,13 @@ public class DualHintEdit extends EditText implements TextWatcher {
 
     private void init(Context context, AttributeSet attrs) {
         // Preset default attributes
-        Typeface dualTypeface = getTypeface();
+        CharSequence hint = getHint();
+        if (hint!=null) {
+            dualHint = getHint().toString();
+        }
         dualSize = (int) (0.75f*getTextSize());
-        dualGap = 0;
+        dualGap = (dualSize+2)/4;
+        Typeface dualTypeface = getTypeface();
         int dualColor = context.getResources().getColor(R.color.staples_dark_gray);
 
         // Get styled attributes
@@ -56,18 +61,26 @@ public class DualHintEdit extends EditText implements TextWatcher {
         for(int i=0;i<n;i++) {
             int index = a.getIndex(i);
             switch(index) {
-                case R.styleable.DualHintEdit_textDualSize:
+                case R.styleable.DualHintEdit_dualHint:
+                    dualHint = a.getString(index);
+                    break;
+                case R.styleable.DualHintEdit_dualSize:
                     dualSize = a.getDimensionPixelSize(index, dualSize);
                     break;
-                case R.styleable.DualHintEdit_textDualGap:
+                case R.styleable.DualHintEdit_dualGap:
                     dualGap = a.getDimensionPixelSize(index, dualGap);
                     break;
-                case R.styleable.DualHintEdit_textDualColor:
+                case R.styleable.DualHintEdit_dualColor:
                     dualColor = a.getInt(index, dualColor);
                     break;
             }
         }
         a.recycle();
+
+        // Cleanup text
+        if (dualHint!=null && dualHint.isEmpty()) {
+            dualHint = null;
+        }
 
         // Set paint
         dualPaint = new TextPaint();
@@ -114,9 +127,8 @@ public class DualHintEdit extends EditText implements TextWatcher {
         super.onDraw(canvas);
         CharSequence text = getText();
         if (text!=null && text.length()>0) {
-            CharSequence hint = getHint();
-            if (hint!=null) {
-                canvas.drawText(hint, 0, hint.length(), dualX, dualY, dualPaint);
+            if (dualHint!=null) {
+                canvas.drawText(dualHint, 0, dualHint.length(), dualX, dualY, dualPaint);
             }
         }
     }

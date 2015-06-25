@@ -10,9 +10,10 @@
         <attr name="minGridWidth" format="dimension"/>
     </declare-styleable>
     <declare-styleable name="DualHintEdit">
-        <attr name="textDualSize" format="dimension"/>
-        <attr name="textDualGap" format="dimension"/>
-        <attr name="textDualColor" format="color"/>
+        <attr name="dualHint" format="string"/>
+        <attr name="dualSize" format="dimension"/>
+        <attr name="dualGap" format="dimension"/>
+        <attr name="dualColor" format="color"/>
     </declare-styleable>
     <declare-styleable name="PagerStripe">
         <attr name="stripeThickness" format="dimension"/>
