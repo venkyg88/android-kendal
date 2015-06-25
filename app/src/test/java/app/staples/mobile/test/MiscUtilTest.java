@@ -3,12 +3,36 @@ package app.staples.mobile.test;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 
 import app.staples.mobile.cfa.util.MiscUtils;
 
 public class MiscUtilTest {
+
+    // Currency formatting
+
+    @Test
+    public void testCurrencyFormatting() {
+        DecimalFormat format = MiscUtils.getCurrencyFormat();
+
+        Assert.assertEquals("$9.99", format.format(9.9945));
+        Assert.assertEquals("$10.00", format.format(9.9955));
+        Assert.assertEquals("$1,234,567.89", format.format(1234567.89));
+    }
+
+    @Test
+    public void testIntegerCurrencyFormatting() {
+        DecimalFormat format = MiscUtils.getIntegerCurrencyFormat();
+
+        Assert.assertEquals("$9", format.format(9.45));
+        Assert.assertEquals("$10", format.format(9.55));
+        Assert.assertEquals("$1,234,568", format.format(1234567.89));
+    }
+
+    // Multi strings
+
     @Test
     public void testListToMultiString() {
         List<String> list;
@@ -47,6 +71,8 @@ public class MiscUtilTest {
         Assert.assertEquals("bananas", list.get(1));
         Assert.assertEquals("cantaloupes", list.get(2));
     }
+
+    // JSON boolean parsing
 
     @Test
     public void testParseBoolean() {
