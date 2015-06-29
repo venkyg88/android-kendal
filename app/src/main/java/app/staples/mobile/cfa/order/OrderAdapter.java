@@ -81,14 +81,18 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         OrderShipmentListItem order = array.get(position);
         OrderStatus orderStatus = order.getOrderStatus();
         Shipment shipment = order.getShipment();
+        if (shipment==null) return;
+        List<ShipmentSKU> shipmentSkus = shipment.getShipmentSku();
 
         Resources r = activity.getResources();
 
         // determine item qty of shipment
         int totalItemQtyOfShipment = 0;
-        for (ShipmentSKU shipmentSku : shipment.getShipmentSku()) {
-            int qtyOrdered = (int)Double.parseDouble(shipmentSku.getQtyOrdered()); // using parseDouble since quantity string is "1.0"
-            totalItemQtyOfShipment += qtyOrdered;
+        if (shipmentSkus!=null) {
+            for(ShipmentSKU shipmentSku : shipmentSkus) {
+                int qtyOrdered = (int) Double.parseDouble(shipmentSku.getQtyOrdered()); // using parseDouble since quantity string is "1.0"
+                totalItemQtyOfShipment += qtyOrdered;
+            }
         }
 
         if (orderStatus == null) {
@@ -102,9 +106,11 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
                 vh.orderTotalTV.setText(null);
             } else {
                 float shipmentTotal = 0.0f;
-                for(ShipmentSKU shipmentSku : shipment.getShipmentSku()) {
-                    if(shipmentSku != null) {
-                        shipmentTotal += Float.parseFloat(shipmentSku.getLineTotal());
+                if (shipmentSkus!=null) {
+                    for(ShipmentSKU shipmentSku : shipmentSkus) {
+                        if (shipmentSku != null) {
+                            shipmentTotal += Float.parseFloat(shipmentSku.getLineTotal());
+                        }
                     }
                 }
                 vh.orderTotalTV.setText(MiscUtils.getCurrencyFormat().format(shipmentTotal));

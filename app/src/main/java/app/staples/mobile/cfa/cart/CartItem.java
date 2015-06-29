@@ -22,7 +22,7 @@ public class CartItem {
     // Constructor
     public CartItem(Product product) {
         this.product = product;
-        this.proposedQty = product.getQuantity();
+        proposedQty = product.getQuantity();
 
         // parse out lead time info ("3 Business Days" or "3 - 5 Business Days")
         String leadTimeDesc = product.getLeadTimeDescription();
@@ -93,8 +93,9 @@ public class CartItem {
         float rebate = 0;
         Pricing pricing = getPricing();
         if (pricing != null) {
-            if (pricing.getDiscount() != null) {
-                for (Discount discount : pricing.getDiscount()) {
+            List<Discount> discounts = pricing.getDiscount();
+            if (discounts!=null) {
+                for(Discount discount : discounts) {
                     if ("rebate".equals(discount.getName()) && discount.getAmount() != 0) {
                         rebate += discount.getAmount();
                     }

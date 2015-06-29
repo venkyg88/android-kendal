@@ -7,16 +7,13 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -24,8 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
 import com.google.android.gms.common.ConnectionResult;
@@ -380,6 +375,21 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         return(adapter.getItemCount());
     }
 
+    private static String formatStoreFeatures(List<StoreFeature> features) {
+        if (features==null) return(null);
+        StringBuilder sb = new StringBuilder();
+        for(StoreFeature feature : features) {
+            String name = feature.getName();
+            if (!TextUtils.isEmpty(name)) {
+                if (sb.length()>0) {
+                    sb.append("\n");
+                }
+                sb.append(feature.getName());
+            }
+        }
+        return(sb.toString());
+    }
+
     // This is also used by LocationFinder to get nearby store
     public static StoreItem processStoreData(StoreData storeData) {
         if (storeData==null) return(null);
@@ -399,18 +409,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         item.latitude = lat;
         item.longitude = lng;
         item.distance = storeData.getDis();
-
-        // Store features
-        StringBuilder featuresBuf = new StringBuilder();
-        for (StoreFeature feature : obj.getStoreFeatures()) {
-            if (!TextUtils.isEmpty(feature.getName())) {
-                if (featuresBuf.length() > 0) {
-                    featuresBuf.append("\n");
-                }
-                featuresBuf.append(feature.getName());
-            }
-        }
-        item.storeFeatures = featuresBuf.toString();
+        item.storeFeatures = formatStoreFeatures(obj.getStoreFeatures());
 
         // Get store address
         StoreAddress storeAddress = obj.getStoreAddress();
