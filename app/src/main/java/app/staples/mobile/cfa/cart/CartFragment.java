@@ -440,15 +440,18 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
             // add line to add a coupon
             couponItems.add(new CouponItem(CouponItem.TYPE_COUPON_TO_ADD, null, null));
             // add list of applied cart-level coupons
-            if (cart != null && cart.getCoupon() != null && cart.getCoupon().size() > 0) {
-                for (Coupon coupon : cart.getCoupon()) {
-                    if (!CartApiManager.isAssocCoupon(coupon)) {
-                        // coupon may or may not have a matching reward
-                        Reward reward = ProfileDetails.findMatchingReward(profileRewards, coupon.getCode());
-                        if (reward != null) {
-                            profileRewards.remove(reward); // remove the applied rewards from the list
+            if (cart!=null) {
+                List<Coupon> coupons = cart.getCoupon();
+                if (coupons!=null) {
+                    for(Coupon coupon : coupons) {
+                        if (!CartApiManager.isAssocCoupon(coupon)) {
+                            // coupon may or may not have a matching reward
+                            Reward reward = ProfileDetails.findMatchingReward(profileRewards, coupon.getCode());
+                            if (reward != null) {
+                                profileRewards.remove(reward); // remove the applied rewards from the list
+                            }
+                            couponItems.add(new CouponItem(CouponItem.TYPE_APPLIED_COUPON, coupon, reward));
                         }
-                        couponItems.add(new CouponItem(CouponItem.TYPE_APPLIED_COUPON, coupon, reward));
                     }
                 }
             }
@@ -537,7 +540,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                 public void onAnimationUpdate(ValueAnimator animation) {
                     LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) couponListVw.getLayoutParams();
                     layoutParams.weight = (float) animation.getAnimatedValue();
-                    couponListVw.setLayoutParams(layoutParams);
                 }
             });
             valueAnimator.addListener(new Animator.AnimatorListener() {
