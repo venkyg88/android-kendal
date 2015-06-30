@@ -23,6 +23,7 @@
     <dimen name="margin_24dp">24dp</dimen>     <!--part of style guide-->
     <dimen name="margin_72dp">72dp</dimen>     <!--part of style guide-->
 
+    <dimen name="radio_padding">26dp</dimen> <!-- Overriden for v17 -->
     <dimen name="cartmath_half_margin">8dp</dimen>
     <dimen name="action_bar_half_margin">8dp</dimen>
     <dimen name="action_bar_quarter_margin">4dp</dimen>
