@@ -256,7 +256,6 @@ public class ProfileDetails implements Callback<MemberDetail> {
 
     /** extracts list of rewards from profile */
     public static List<Reward> getAllProfileRewards() {
-
         List<Reward> profileRewards = new ArrayList<Reward>();
         Member member = ProfileDetails.getMember();
         if (member != null) {

@@ -83,10 +83,13 @@ public class CartApiManager {
     }
 
     public static Product getCartProduct(String sku) {
-        if (cart != null) {
-            for (Product product : cart.getProduct()) {
-                if (product.getSku().equals(sku)) {
-                    return product;
+        if (cart!=null) {
+            List<Product> products = cart.getProduct();
+            if (products!=null) {
+                for(Product product : products) {
+                    if (sku.equals(product.getSku())) {
+                        return product;
+                    }
                 }
             }
         }
@@ -250,10 +253,13 @@ public class CartApiManager {
         return getAssocCoupon(ASSOCIATE_REWARDS_STAPLES_DISCOUNT_CODE);
     }
     private static Coupon getAssocCoupon(String couponCode) {
-        if (cart != null && cart.getCoupon() != null) {
-            for (Coupon coupon : cart.getCoupon()) {
-                if (isAssocCoupon(coupon, couponCode)) {
-                    return coupon;
+        if (cart!=null) {
+            List<Coupon> coupons = cart.getCoupon();
+            if (coupons!=null) {
+                for(Coupon coupon : coupons) {
+                    if (isAssocCoupon(coupon, couponCode)) {
+                        return coupon;
+                    }
                 }
             }
         }
@@ -291,15 +297,17 @@ public class CartApiManager {
     private static void doctorUpAssociateRewardCoupons() {
         Coupon assocRewardsCoupon = null;
         Coupon assocRewardsStaplesCoupon = null;
-        if (cart != null) {
-            if (cart.getCoupon() != null) {
+        if (cart!=null) {
+            List<Coupon> coupons = cart.getCoupon();
+            if (coupons!=null) {
                 // consolidate cart-level associate coupons
-                assocRewardsCoupon = consolidateAssociateCoupon(assocRewardsCoupon, cart.getCoupon(), ASSOCIATE_REWARDS_DISCOUNT_CODE);
-                assocRewardsStaplesCoupon = consolidateAssociateCoupon(assocRewardsStaplesCoupon, cart.getCoupon(), ASSOCIATE_REWARDS_STAPLES_DISCOUNT_CODE);
+                assocRewardsCoupon = consolidateAssociateCoupon(assocRewardsCoupon, coupons, ASSOCIATE_REWARDS_DISCOUNT_CODE);
+                assocRewardsStaplesCoupon = consolidateAssociateCoupon(assocRewardsStaplesCoupon, coupons, ASSOCIATE_REWARDS_STAPLES_DISCOUNT_CODE);
             }
             // consolidate product-level associate coupons
-            if (cart.getProduct() != null) {
-                for (Product product : cart.getProduct()) {
+            List<Product> products = cart.getProduct();
+            if (products!=null) {
+                for(Product product : products) {
                     if (product.getCoupon() != null) {
                         assocRewardsCoupon = consolidateAssociateCoupon(assocRewardsCoupon, product.getCoupon(), ASSOCIATE_REWARDS_DISCOUNT_CODE);
                         assocRewardsStaplesCoupon = consolidateAssociateCoupon(assocRewardsStaplesCoupon, product.getCoupon(), ASSOCIATE_REWARDS_STAPLES_DISCOUNT_CODE);
@@ -320,17 +328,19 @@ public class CartApiManager {
         }
     }
 
-
-
     /** amongst the sku-level coupons, get the ones that were manually added */
     public static List<Coupon> getManualSkuLevelCoupons() {
         List<Coupon> coupons = new ArrayList<Coupon>();
-        if (cart != null) {
-            for (Product product : cart.getProduct()) {
-                if (product.getCoupon() != null) {
-                    for (Coupon coupon : product.getCoupon()) {
-                        if (manuallyAddedCouponCodes.contains(coupon.getCode())) {
-                            coupons.add(coupon);
+        if (cart!=null) {
+            List<Product> products = cart.getProduct();
+            if (products!=null) {
+                for(Product product : products) {
+                    List<Coupon> productCoupons = product.getCoupon();
+                    if (productCoupons!=null) {
+                        for(Coupon coupon : productCoupons) {
+                            if (manuallyAddedCouponCodes.contains(coupon.getCode())) {
+                                coupons.add(coupon);
+                            }
                         }
                     }
                 }
@@ -343,17 +353,22 @@ public class CartApiManager {
     public static float getCouponsRewardsAdjustedAmount() {
         float totalAdjustedAmount = 0;
         // cart-level coupons & rewards
-        if (cart != null && cart.getCoupon() != null) {
-            for (Coupon coupon : cart.getCoupon()) {
-                if (!isAssocCoupon(coupon)) {
-                    totalAdjustedAmount += coupon.getAdjustedAmount();
+        if (cart!=null) {
+            List<Coupon> coupons = cart.getCoupon();
+            if (coupons!=null) {
+                for(Coupon coupon : coupons) {
+                    if (!isAssocCoupon(coupon)) {
+                        totalAdjustedAmount += coupon.getAdjustedAmount();
+                    }
                 }
             }
         }
         // sku-level
-        List<Coupon> manualSkuLevelCoupons = getManualSkuLevelCoupons();
-        for (Coupon coupon : manualSkuLevelCoupons) {
-            totalAdjustedAmount += coupon.getAdjustedAmount();
+        List<Coupon> coupons = getManualSkuLevelCoupons();
+        if (coupons!=null) {
+            for(Coupon coupon : coupons) {
+                totalAdjustedAmount += coupon.getAdjustedAmount();
+            }
         }
         return totalAdjustedAmount;
     }
@@ -362,24 +377,27 @@ public class CartApiManager {
         int overallMinDays = -1;
         int overallMaxDays = -1;
         if (cart != null) {
-            for (Product product : cart.getProduct()) {
-                int minDays = 0;
-                int maxDays = 0;
-                String leadTimeDesc = product.getLeadTimeDescription();
-                int indexOfDash = leadTimeDesc.indexOf(" - ");
-                int indexOfText = leadTimeDesc.indexOf(" Business");
-                if (indexOfDash > 0) {
-                    minDays = Integer.parseInt(leadTimeDesc.substring(0, indexOfDash));
-                    maxDays = Integer.parseInt(leadTimeDesc.substring(indexOfDash+3, indexOfText));
-                } else {
-                    minDays = Integer.parseInt(leadTimeDesc.substring(0, indexOfText));
-                    maxDays = minDays;
-                }
-                if (overallMinDays == -1 || minDays < overallMinDays) {
-                    overallMinDays = minDays;
-                }
-                if (maxDays > overallMaxDays) {
-                    overallMaxDays = maxDays;
+            List<Product> products = cart.getProduct();
+            if (products!=null) {
+                for(Product product : products) {
+                    int minDays = 0;
+                    int maxDays = 0;
+                    String leadTimeDesc = product.getLeadTimeDescription();
+                    int indexOfDash = leadTimeDesc.indexOf(" - ");
+                    int indexOfText = leadTimeDesc.indexOf(" Business");
+                    if (indexOfDash > 0) {
+                        minDays = Integer.parseInt(leadTimeDesc.substring(0, indexOfDash));
+                        maxDays = Integer.parseInt(leadTimeDesc.substring(indexOfDash + 3, indexOfText));
+                    } else {
+                        minDays = Integer.parseInt(leadTimeDesc.substring(0, indexOfText));
+                        maxDays = minDays;
+                    }
+                    if (overallMinDays == -1 || minDays < overallMinDays) {
+                        overallMinDays = minDays;
+                    }
+                    if (maxDays > overallMaxDays) {
+                        overallMaxDays = maxDays;
+                    }
                 }
             }
         }

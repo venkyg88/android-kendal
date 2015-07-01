@@ -25,6 +25,7 @@ import com.staples.mobile.common.analytics.Tracker;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import app.staples.R;
 import app.staples.mobile.cfa.MainActivity;
@@ -163,9 +164,18 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
 
                 // determine item qty of shipment
                 int totalItemQtyOfShipment = 0;
-                for (ShipmentSKU shipmentSku : orderStatus.getShipment().get(0).getShipmentSku()) {
-                    int qtyOrdered = (int)Double.parseDouble(shipmentSku.getQtyOrdered()); // using parseDouble since quantity string is "1.0"
-                    totalItemQtyOfShipment += qtyOrdered;
+                List<Shipment> shipments = orderStatus.getShipment();
+                if (shipments!=null && shipments.size()>0) {
+                    Shipment shipment = shipments.get(0);
+                    if (shipment!=null) {
+                        List<ShipmentSKU> shipmentSkus = shipment.getShipmentSku();
+                        if (shipmentSkus!=null) {
+                            for(ShipmentSKU shipmentSku : shipmentSkus) {
+                                int qtyOrdered = (int) Double.parseDouble(shipmentSku.getQtyOrdered()); // using parseDouble since quantity string is "1.0"
+                                totalItemQtyOfShipment += qtyOrdered;
+                            }
+                        }
+                    }
                 }
 
                 orderQty.setText(r.getQuantityString(R.plurals.cart_qty, totalItemQtyOfShipment, totalItemQtyOfShipment));

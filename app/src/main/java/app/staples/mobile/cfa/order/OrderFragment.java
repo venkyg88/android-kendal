@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.crittercism.app.Crittercism;
@@ -32,7 +31,6 @@ import com.staples.mobile.common.analytics.Tracker;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -51,12 +49,13 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
     private static final String TAG = OrderFragment.class.getSimpleName();
 
     private static final int REFRESHDELAY = 5*60*1000; // 5 minutes
+    private static final long ONEYEAR = (4*365+1)*24*60*60*1000/4;
 
     private RecyclerView list;
     private LinearLayoutWithOverlay overlayableLayout;
     private OrderAdapter adapter;
     private TextView orderErrorTV;
-    private LinearLayout trackingLayout;
+    private View trackingLayout;
     private Animation bottomSheetSlideUpAnimation;
     private Animation bottomSheetSlideDownAnimation;
     private ArrayList<OrderShipmentListItem> orderShipmentListItems;
@@ -93,7 +92,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
         });
 
         // setup tracking bottom sheet
-        trackingLayout = (LinearLayout)view.findViewById(R.id.tracking_layout);
+        trackingLayout = view.findViewById(R.id.tracking_layout);
         bottomSheetSlideUpAnimation = AnimationUtils.loadAnimation(activity, R.anim.bottomsheet_slide_up);
         bottomSheetSlideDownAnimation = AnimationUtils.loadAnimation(activity, R.anim.bottomsheet_slide_down);
         bottomSheetSlideUpAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -209,8 +208,9 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
                             carrierVw.setText(res.getString(R.string.carrier) + ": " + cartonWithSku.getCarrierCode());
                             trackingNumberVw.setText(res.getString(R.string.tracking_number) + " " + cartonWithSku.getTrackingNumber());
                             SimpleDateFormat dateFormatter = new SimpleDateFormat("M/d/yy h:mm aa");
-                            if (cartonWithSku.getScanData() != null) {
-                                for(ScanData scanData : cartonWithSku.getScanData()) {
+                            List<ScanData> scanDatas = cartonWithSku.getScanData();
+                            if (scanDatas!=null) {
+                                for(ScanData scanData : scanDatas) {
                                     Date date = OrderShipmentListItem.parseDate(scanData.getScanDateAndTime());
                                     if (scanBuf.length() > 0) {
                                         scanBuf.append("\n");
@@ -264,20 +264,21 @@ public class OrderFragment extends Fragment implements View.OnClickListener, Cal
 
         orderStatusDetailCallback = new OrderStatusDetailCallback(); // only need to create one instance of the item detail callback
         numOrdersToRetrieve = 0;
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR)-2); // 2 years ago
-        long ageLimit = calendar.getTimeInMillis();
-        for (OrderHistory order : orderDetail.getOrderHistory()) {
-            Date orderDate = OrderShipmentListItem.parseDate(order.getOrderDate());
-            // when orders are beyond a certain age limit, quit retrieving
-            if (orderDate.getTime() < ageLimit) {
-                break;
+        long ageLimit = System.currentTimeMillis()-2*ONEYEAR;
+        List<OrderHistory> orders = orderDetail.getOrderHistory();
+        if (orders!=null) {
+            for(OrderHistory order : orders) {
+                Date orderDate = OrderShipmentListItem.parseDate(order.getOrderDate());
+                // when orders are beyond a certain age limit, quit retrieving
+                if (orderDate.getTime() < ageLimit) {
+                    break;
+                }
+                EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
+                easyOpenApi.getMemberOrderStatus(order.getOrderNumber(), orderStatusDetailCallback);
+                numOrdersToRetrieve++;
             }
-
-            EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(true);
-            easyOpenApi.getMemberOrderStatus(order.getOrderNumber(), orderStatusDetailCallback);
-            numOrdersToRetrieve++;
         }
+
         if (numOrdersToRetrieve == 0) {
             orderErrorTV.setVisibility(View.VISIBLE);
             list.setVisibility(View.GONE);
