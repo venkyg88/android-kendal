@@ -255,7 +255,7 @@
     <string name="avail_outofstock">Sorry, this item is out of stock</string>
 
     <!-- Store locator -->
-    <string name="store_search_hint">Search Zip, City or Street</string>
+    <string name="store_search_hint">City, State, Zip</string>
     <string name="no_stores_title">No Results</string>
     <string name="no_stores_message">We were unable to find any stores near the location you provided.</string>
     <string name="no_stores_ok">OK</string>

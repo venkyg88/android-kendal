@@ -22,6 +22,8 @@
     <declare-styleable name="PlacesFieldView">
         <attr name="searchTypes" format="string"/>
         <attr name="manualPrompt" format="string"/>
+        <attr name="android:dropDownWidth"/>
+        <attr name="android:dropDownHorizontalOffset"/>
     </declare-styleable>
     <declare-styleable name="PriceSticker">
         <attr name="majorTextSize" format="dimension"/>

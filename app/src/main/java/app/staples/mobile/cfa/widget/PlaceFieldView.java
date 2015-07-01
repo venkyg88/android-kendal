@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -89,11 +90,9 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
     }
 
     private void init(Context context, AttributeSet attrs) {
-        // Add popup & adapter
-        popup = new ListPopupWindow(context);
-        adapter = new ArrayAdapter<Item>(context, R.layout.place_suggest_item);
-        popup.setAdapter(adapter);
-        popup.setAnchorView(this);
+        // Default attributes
+        int width = ViewGroup.LayoutParams.WRAP_CONTENT;
+        int offset = 0;
 
         // Get styled attributes
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PlacesFieldView);
@@ -107,11 +106,23 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
                 case R.styleable.PlacesFieldView_manualPrompt:
                     manualEntry = a.getString(index);
                     break;
+                case R.styleable.PlacesFieldView_android_dropDownWidth:
+                    width = a.getLayoutDimension(index, width);
+                    break;
+                case R.styleable.PlacesFieldView_android_dropDownHorizontalOffset:
+                    offset = a.getDimensionPixelSize(index, offset);
+                    break;
             }
         }
         a.recycle();
 
-        manualEntry = context.getResources().getString(R.string.input_manually_allcaps);
+        // Add popup & adapter
+        popup = new ListPopupWindow(context);
+        popup.setAnchorView(this);
+        popup.setWidth(width);
+        popup.setHorizontalOffset(offset);
+        adapter = new ArrayAdapter<Item>(context, R.layout.place_suggest_item);
+        popup.setAdapter(adapter);
 
         // Tasks
         startSuggest = new StartSuggest();
@@ -213,8 +224,10 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
                 Item item = new Item(prediction.getDescription(), prediction.getPlaceId());
                 adapter.add(item);
             }
-            Item item = new Item(manualEntry, null);
-            adapter.add(item);
+            if (manualEntry!=null) {
+                Item item = new Item(manualEntry, null);
+                adapter.add(item);
+            }
             adapter.notifyDataSetChanged();
             popup.show();
         }
