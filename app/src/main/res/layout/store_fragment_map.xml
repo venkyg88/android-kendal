@@ -47,6 +47,14 @@
                 android:paddingRight="@dimen/margin_16dp"
                 android:background="@color/staples_white"
                 android:src="@drawable/ic_view_list_black"/>
+            <ImageButton
+                android:id="@+id/view_map"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingRight="@dimen/margin_16dp"
+                android:background="@color/staples_white"
+                android:visibility="gone"
+                android:src="@drawable/ic_map_black"/>
         </LinearLayout>
         <ImageButton
             android:id="@+id/goto_here"
@@ -63,9 +71,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:visibility="gone">
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="3dp"
+            android:background="@color/staples_dark_gray"/>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list"
-            android:elevation="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/staples_white"

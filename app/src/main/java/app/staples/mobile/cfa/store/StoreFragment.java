@@ -95,6 +95,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     private Mode mode;
 
     private ImageButton optionButton;
+    private ImageButton mapButton;
     private View locationButton;
 
     @Override
@@ -144,6 +145,9 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
 
         optionButton = (ImageButton)view.findViewById(R.id.view_list);
         optionButton.setOnClickListener(this);
+
+        mapButton = (ImageButton)view.findViewById(R.id.view_map);
+        mapButton.setOnClickListener(this);
 
         locationButton = (ImageButton)view.findViewById(R.id.goto_here);
         locationButton.setOnClickListener(this);
@@ -514,6 +518,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         adapter.onBindViewHolder(singleVh, item, false);
         locationButton.setVisibility(View.VISIBLE);
         optionButton.setVisibility(View.VISIBLE);
+        mapButton.setVisibility(View.GONE);
 
         mode = Mode.SINGLE;
     }
@@ -548,6 +553,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         listLayout.setLayoutParams(params);
 
         optionButton.setVisibility(View.GONE);
+        mapButton.setVisibility(View.VISIBLE);
         listLayout.setVisibility(View.VISIBLE);
         list.setVisibility(View.VISIBLE);
         singleVh.itemView.setVisibility(View.GONE);
@@ -607,6 +613,9 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                 break;
             case R.id.goto_here:
                 gotoHere();
+                break;
+            case R.id.view_map:
+                showSingle(null);
                 break;
             case R.id.store_item:
                 obj = view.getTag();
