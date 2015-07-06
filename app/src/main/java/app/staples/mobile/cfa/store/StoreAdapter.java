@@ -117,11 +117,6 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         vh.directions.setTag(item);
         vh.weeklyAd.setTag(item);
 
-        // Show or hide content depending on whether full details
-        int visibility = fullDetail ? View.VISIBLE : View.GONE;
-        vh.storeNumber.setVisibility(visibility);
-        vh.storeDetailLayout.setVisibility(visibility);
-
         // Set content
         vh.city.setText(item.city);
         vh.street.setText(item.streetAddress1);
@@ -130,6 +125,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
 
         // Set detail content
         if (fullDetail) {
+            vh.storeDetailLayout.setVisibility(View.VISIBLE);
             vh.storeNumber.setText("#" + item.storeNumber);
             Context context = vh.itemView.getContext();
             String schedule = TimeSpan.formatSchedule(context, item.getSpans());
@@ -138,6 +134,8 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
             span.setSpan(new TabStopSpan.Standard(x), 0, span.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             vh.storeSchedule.setText(span);
             vh.storeFeatures.setText(item.storeFeatures);
+        } else {
+            vh.storeDetailLayout.setVisibility(View.GONE);
         }
     }
 

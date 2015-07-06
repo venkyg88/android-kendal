@@ -35,12 +35,9 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
 
     private static final int KEYDELAY = 250; // milliseconds
 
-    public interface OnPlaceDoneListener {
-        public void onPlaceDone(Place place);
-    }
-
-    public interface OnPlaceStartListener {
-        public void onPlaceStart();
+    public interface PlaceFieldWatcher {
+        void onPlaceFieldStart();
+        void onPlaceFieldDone(Place place);
     }
 
     public static class Place {
@@ -68,8 +65,7 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
     private ListPopupWindow popup;
     private ArrayAdapter<Item> adapter;
     private boolean autoMode;
-    private OnPlaceDoneListener listener;
-    private OnPlaceStartListener listener2;
+    private PlaceFieldWatcher watcher;
     private StartSuggest startSuggest;
     private String searchTypes;
     private String manualEntry;
@@ -138,11 +134,9 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
         this.autoMode = autoMode;
     }
 
-    public void setOnPlaceDoneListener(OnPlaceDoneListener listener) {
-        this.listener = listener;
+    public void setPlaceFieldWatcher(PlaceFieldWatcher watcher) {
+        this.watcher = watcher;
     }
-
-    public void setOnPlaceStartListener(OnPlaceStartListener listener2) { this.listener2 = listener2; }
 
     // Listeners
 
@@ -158,7 +152,7 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
             if (address.length() >= 3)
                 postDelayed(startSuggest, KEYDELAY);
         }
-        if (listener2 != null) listener2.onPlaceStart();
+        if (watcher != null) watcher.onPlaceFieldStart();
     }
 
     @Override
@@ -192,7 +186,7 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
             popup.dismiss();
             if (item == null && adapter.getCount() > 0) item = adapter.getItem(0);
             if (item == null || item.placeId == null) {
-                if (listener != null) listener.onPlaceDone(null);
+                if (watcher != null) watcher.onPlaceFieldDone(null);
             } else {
                 GoogleApi googleApi = Access.getInstance().getGoogleApi();
                 googleApi.getPlaceDetails(item.placeId, this);
@@ -234,8 +228,9 @@ public class PlaceFieldView extends DualHintEdit implements TextWatcher, TextVie
 
         else if (obj instanceof Details) {
             Place place = parseDetails((Details) obj);
-            if (place!=null && listener!=null)
-                listener.onPlaceDone(place);
+            if (place!=null && watcher !=null) {
+                watcher.onPlaceFieldDone(place);
+            }
         }
     }
 

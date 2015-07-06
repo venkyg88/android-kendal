@@ -5,21 +5,19 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Point;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.crittercism.app.Crittercism;
@@ -61,7 +59,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class StoreFragment extends Fragment implements Callback<StoreQuery>,
-        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, View.OnClickListener, PlaceFieldView.OnPlaceDoneListener, PlaceFieldView.OnPlaceStartListener {
+        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, View.OnClickListener, PlaceFieldView.PlaceFieldWatcher {
     private static final String TAG = StoreFragment.class.getSimpleName();
 
     private enum Mode {
@@ -89,8 +87,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     private StoreAdapter.ViewHolder singleVh;
     private Mode mode;
 
-    private ImageButton optionButton;
-    private ImageButton mapButton;
+    private ImageView modeButton;
     private View locationButton;
 
     @Override
@@ -133,19 +130,16 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         view.addView(singleVh.itemView);
 
         searchText = (PlaceFieldView) view.findViewById(R.id.store_search);
-        searchText.setHint(getHint());
         searchText.selectMode(true);
-        searchText.setOnPlaceDoneListener(this);
-        searchText.setOnPlaceStartListener(this);
+        searchText.setPlaceFieldWatcher(this);
 
-        optionButton = (ImageButton)view.findViewById(R.id.view_list);
-        optionButton.setOnClickListener(this);
+        modeButton = (ImageView) view.findViewById(R.id.view_mode);
+        modeButton.setOnClickListener(this);
 
-        mapButton = (ImageButton)view.findViewById(R.id.view_map);
-        mapButton.setOnClickListener(this);
-
-        locationButton = (ImageButton)view.findViewById(R.id.goto_here);
-        locationButton.setOnClickListener(this);
+        locationButton = view.findViewById(R.id.goto_here);
+        if (locationButton!=null) {
+            locationButton.setOnClickListener(this);
+        }
 
         return (view);
     }
@@ -181,20 +175,8 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         }
     }
 
-    private CharSequence getHint() {
-        Resources res = getActivity().getResources();
-        SpannableStringBuilder sb = new SpannableStringBuilder(" ");
-        sb.append(res.getString(R.string.store_search_hint));
-//        Drawable icon = res.getDrawable(R.drawable.ic_search_black);
-//        int size = (int) (searchText.getTextSize()*1.25);
-//        icon.setBounds(0, 0, size, size);
-//        sb.setSpan(new ImageSpan(icon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return(sb);
-    }
-
     @Override
     public void onResume() {
-        int icon;
         super.onResume();
         if (mapView!=null) mapView.onResume();
         ActionBar.getInstance().setConfig(ActionBar.Config.STORE);
@@ -304,7 +286,12 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     // Retrofit callbacks & processing
 
     @Override
-    public void onPlaceDone(PlaceFieldView.Place place) {
+    public void onPlaceFieldStart() {
+        modeButton.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onPlaceFieldDone(PlaceFieldView.Place place) {
         // Hide keyboard
         MainActivity activity = (MainActivity) getActivity();
         activity.hideSoftKeyboard();
@@ -321,14 +308,9 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
             }
         }
 
-        optionButton.setVisibility(View.VISIBLE);
+        modeButton.setVisibility(View.VISIBLE);
         location = null;
         Access.getInstance().getChannelApi(false).storeLocations(address, this);
-    }
-
-    @Override
-    public void onPlaceStart() {
-        optionButton.setVisibility(View.GONE);
     }
 
     private void gotoHere() {
@@ -511,13 +493,13 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         if (mapLayout!=null) {
             mapLayout.setVisibility(View.VISIBLE);
         }
+
         listLayout.setVisibility(View.GONE);
-        list.setVisibility(View.GONE);
         singleVh.itemView.setVisibility(View.VISIBLE);
         adapter.onBindViewHolder(singleVh, item, false);
+        modeButton.setImageResource(R.drawable.ic_view_list_black);
+        modeButton.setVisibility(View.VISIBLE);
         locationButton.setVisibility(View.VISIBLE);
-        optionButton.setVisibility(View.VISIBLE);
-        mapButton.setVisibility(View.GONE);
 
         mode = Mode.SINGLE;
     }
@@ -531,10 +513,10 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
             mapLayout.setVisibility(View.VISIBLE);
         }
 
-        optionButton.setVisibility(View.GONE);
-        list.setVisibility(View.GONE);
+        listLayout.setVisibility(View.GONE);
         singleVh.itemView.setVisibility(View.VISIBLE);
         adapter.onBindViewHolder(singleVh, item, true);
+        modeButton.setVisibility(View.GONE);
         locationButton.setVisibility(View.GONE);
 
         mode = Mode.DETAILS;
@@ -551,11 +533,11 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
         params.height = (3 * height/4);
         listLayout.setLayoutParams(params);
 
-        optionButton.setVisibility(View.GONE);
-        mapButton.setVisibility(View.VISIBLE);
         listLayout.setVisibility(View.VISIBLE);
         list.setVisibility(View.VISIBLE);
         singleVh.itemView.setVisibility(View.GONE);
+        modeButton.setImageResource(R.drawable.ic_map_black);
+        modeButton.setVisibility(View.VISIBLE);
         locationButton.setVisibility(View.GONE);
 
         mode = Mode.MULTIPLE;
@@ -607,14 +589,18 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     public void onClick(View view) {
         Object obj;
         switch(view.getId()) {
-            case R.id.view_list:
-                showMultiple();
+            case R.id.view_mode:
+                switch(mode) {
+                    case SINGLE:
+                        showMultiple();
+                        break;
+                    case MULTIPLE:
+                        showSingle(null);
+                        break;
+                }
                 break;
             case R.id.goto_here:
                 gotoHere();
-                break;
-            case R.id.view_map:
-                showSingle(null);
                 break;
             case R.id.store_item:
                 obj = view.getTag();

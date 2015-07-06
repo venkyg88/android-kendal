@@ -11,6 +11,7 @@ import com.staples.mobile.common.access.easyopen.model.cart.CartContents;
 import com.staples.mobile.common.access.easyopen.model.cart.CartUpdate;
 import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
 import com.staples.mobile.common.access.easyopen.model.cart.DeleteFromCart;
+import com.staples.mobile.common.access.easyopen.model.cart.ItemsAdded;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderItem;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
 import com.staples.mobile.common.access.easyopen.model.cart.TypedJsonString;
@@ -111,7 +112,8 @@ public class CartApiManager {
             @Override
             public void success(CartUpdate cartUpdate, Response response) {
                 // if a successful insert, refill cart
-                if (cartUpdate.getItemsAdded().size() > 0) {
+                List<ItemsAdded> items = cartUpdate.getItemsAdded();
+                if (items!=null && items.size()>0) {
                     loadCart(cartRefreshCallback);
                 } else {
                     // sometimes error message can come in success message

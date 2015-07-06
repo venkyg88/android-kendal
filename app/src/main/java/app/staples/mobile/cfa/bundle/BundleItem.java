@@ -90,15 +90,16 @@ public class BundleItem {
                 wasPrice = pricing.getListPrice();
                 unit = pricing.getUnitOfMeasure();
                 List<Discount> discounts = pricing.getDiscount();
-                if (discounts != null)
-                    for (Discount discount : discounts) {
+                if (discounts != null) {
+                    for(Discount discount : discounts) {
                         if (discount.getName().equals("rebate")) {
-                            if(discount.getAmount() != 0.0f) {
+                            if (discount.getAmount() != 0.0f) {
                                 this.finalPrice += discount.getAmount();
                                 rebateIndicator = "*";
                             }
                         }
                     }
+                }
             }
         }
         return(this.finalPrice);
@@ -106,14 +107,13 @@ public class BundleItem {
 
     public Float setRebatePrice(List<Discount> discounts) {
         if (discounts == null) return (null);
-            for (Discount discount : discounts) {
-                if (discount.getName().equals("rebate")) {
-                    if(discount.getAmount() != 0.0f) {
-                        this.rebatePrice = discount.getAmount();
-                    }
-
+        for (Discount discount : discounts) {
+            if (discount.getName().equals("rebate")) {
+                if(discount.getAmount() != 0.0f) {
+                    this.rebatePrice = discount.getAmount();
                 }
             }
+        }
         return (this.rebatePrice);
     }
 

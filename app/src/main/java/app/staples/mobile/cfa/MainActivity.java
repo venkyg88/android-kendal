@@ -562,7 +562,7 @@ public class MainActivity extends Activity
             Tracker.getInstance().setZipCode("02139");
 
             // initialize location finder (this will update zip code if possible)
-            LocationFinder.getInstance(this);
+            LocationFinder.getInstance(this).connect();
 
             // initialize Kount fraud detection
             KountManager.getInstance(this);

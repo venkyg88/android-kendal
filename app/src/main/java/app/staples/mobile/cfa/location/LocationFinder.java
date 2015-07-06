@@ -74,7 +74,9 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
         this.context = context;
         geocoder = new Geocoder(context);
         loadRecentLocation();
+    }
 
+    public boolean connect() {
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
         switch(status) {
             case ConnectionResult.SUCCESS:
@@ -85,11 +87,11 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
                 client = builder.build();
                 startTime = System.currentTimeMillis();
                 client.connect();
-                break;
+                return(true);
             default:
                 String msg = "Google Play Services: "+GooglePlayServicesUtil.getErrorString(status);
                 Log.d(TAG, msg);
-                break;
+                return(false);
         }
     }
 
@@ -111,7 +113,7 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
         return(nearbyStore);
     }
 
-    public StoreItem getPreferredStoreStore() {
+    public StoreItem getPreferredStore() {
         return(preferredStore);
     }
 
@@ -123,10 +125,16 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
         Log.d(TAG, msg);
         connected = true;
 
+        // Resolve actual location to postal code
         Location latest = LocationServices.FusedLocationApi.getLastLocation(client);
-        if (latest!=null && latest!=location) {
+        if (latest!=null) {
             location = latest;
             new Resolver().start();
+        }
+
+        // Get nearest store based on saved postal code
+        else {
+            Access.getInstance().getChannelApi(false).storeLocations(postalCode, LocationFinder.this);
         }
     }
 
