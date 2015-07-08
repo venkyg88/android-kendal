@@ -31,8 +31,6 @@ public class IndicatorBlock extends View {
     private float cornerRadius;
     private int spacingGap;
 
-    private int flags = -1; // TODO Hacked
-
     public IndicatorBlock(Context context) {
         this(context, null, 0);
     }
@@ -89,6 +87,7 @@ public class IndicatorBlock extends View {
 
     public void reset() {
         array.clear();
+        setVisibility(GONE);
         requestLayout();
     }
 
@@ -111,23 +110,27 @@ public class IndicatorBlock extends View {
         }
         item.color = res.getInteger(colorId);
         array.add(item);
+        setVisibility(VISIBLE);
         requestLayout();
     }
 
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
         int width = 0;
+        int height = 0;
         for(Indicator item : array) {
             if (width>0) width += spacingGap;
             width += textPaint.measureText(item.text)+getPaddingLeft()+getPaddingRight();
         }
-        int height = (int) textPaint.getTextSize()+getPaddingTop()+getPaddingBottom();
+        if (width>0) {
+            height = (int) textPaint.getTextSize() + getPaddingTop() + getPaddingBottom();
+        }
         setMeasuredDimension(resolveSize(width, widthSpec), resolveSize(height, heightSpec));
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (flags==0) return;
+        if (array.size()==0) return;
         rect.top = 0;
         rect.bottom = textPaint.getTextSize()+getPaddingTop()+getPaddingBottom();
         rect.left = 0;

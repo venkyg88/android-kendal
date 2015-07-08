@@ -9,6 +9,7 @@ import java.util.List;
 
 import app.staples.R;
 import app.staples.mobile.cfa.IdentifierType;
+import app.staples.mobile.cfa.util.MiscUtils;
 
 public class BundleItem {
     public enum SortType {
@@ -56,11 +57,11 @@ public class BundleItem {
     public float customerRating;
     public int customerCount;
     public boolean isAddOnItem;
-    public boolean isHeavyWeight;
-    public float heavyWeightShippingCharge;
+    public float extraShippingCharge;
     public float rebatePrice;
-    public String rebateIndicator;
     public boolean busy;
+
+    public BundleItem() {}
 
     public BundleItem(int index, String title, String identifier) {
         this.index = index;
@@ -81,40 +82,28 @@ public class BundleItem {
         return(null);
     }
 
-    public Float setPrice(List<Pricing> pricings) {
-        if (pricings==null) return(null);
-        for(Pricing pricing : pricings) {
-            float finalPrice = pricing.getFinalPrice();
-            if (finalPrice>0.0f) {
-                this.finalPrice = finalPrice;
-                wasPrice = pricing.getListPrice();
-                unit = pricing.getUnitOfMeasure();
-                List<Discount> discounts = pricing.getDiscount();
-                if (discounts != null) {
-                    for(Discount discount : discounts) {
-                        if (discount.getName().equals("rebate")) {
-                            if (discount.getAmount() != 0.0f) {
-                                this.finalPrice += discount.getAmount();
-                                rebateIndicator = "*";
-                            }
-                        }
+    public void processPricing(Pricing pricing) {
+        if (pricing==null) return;
+
+        finalPrice = pricing.getFinalPrice();
+        wasPrice = pricing.getListPrice();
+        unit = pricing.getUnitOfMeasure();
+
+        List<Discount> discounts = pricing.getDiscount();
+        if (discounts!=null) {
+            for(Discount discount : discounts) {
+                if (discount.getName().equals("rebate")) {
+                    float amount = discount.getAmount();
+                    if (amount > rebatePrice) {
+                        rebatePrice = amount;
                     }
                 }
             }
         }
-        return(this.finalPrice);
-    }
 
-    public Float setRebatePrice(List<Discount> discounts) {
-        if (discounts == null) return (null);
-        for (Discount discount : discounts) {
-            if (discount.getName().equals("rebate")) {
-                if(discount.getAmount() != 0.0f) {
-                    this.rebatePrice = discount.getAmount();
-                }
-            }
-        }
-        return (this.rebatePrice);
+        float oversize = pricing.getOverSizeItem();
+        float heavy = pricing.getHeavyWeightShipCharge();
+        extraShippingCharge = Math.max(oversize, heavy);
     }
 
     // Sorting comparators

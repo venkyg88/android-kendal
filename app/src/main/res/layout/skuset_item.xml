@@ -26,5 +26,9 @@
             android:id="@+id/rating"
             style="@style/SmallRatingStars"
             android:layout_marginTop="@dimen/elevation_high"/>
+        <app.staples.mobile.cfa.widget.IndicatorBlock
+            android:id="@+id/indicators"
+            style="@style/IndicatorBlock"
+            android:layout_marginTop="@dimen/elevation_high"/>
     </LinearLayout>
 </LinearLayout>

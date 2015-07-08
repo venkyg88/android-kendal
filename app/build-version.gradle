@@ -48,7 +48,7 @@ Properties readVersion() {
     if(!version['currentName']) version['currentName'] = "undef"
     if(!version['currentCode']) version['currentCode'] = "undef"
     if(!version['major']) version['major'] = "4"
-    if(!version['minor']) version['minor'] = "1"
+    if(!version['minor']) version['minor'] = "2"
     if(!version['patch']) version['patch'] = "0"
     if(!version['build']) version['build'] = "0"
     return version

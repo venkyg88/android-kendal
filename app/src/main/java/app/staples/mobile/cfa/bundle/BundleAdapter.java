@@ -148,23 +148,24 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         // Set content
         vh.title.setText(item.title);
         vh.ratingStars.setRating(item.customerRating, item.customerCount);
-        vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, item.rebateIndicator);
-        if(item.rebateIndicator!=null) {
+        if(item.rebatePrice>0.0f) {
+            vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, "*");
             vh.rebateNote.setVisibility(View.VISIBLE);
         } else {
+            vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, null);
             vh.rebateNote.setVisibility(View.GONE);
         }
 
         // Set indicators
         vh.indicators.reset();
-        if (item.rebateIndicator!=null) {
+        if (item.rebatePrice>0.0f) {
             vh.indicators.addPricedIndicator(item.rebatePrice, R.string.indicator_rebate, R.color.staples_red);
         }
         if (item.isAddOnItem) {
-            vh.indicators.addPricedIndicator(25.0f, R.string.indicator_minimum, R.color.staples_blue);
+            vh.indicators.addPricedIndicator(25.0f, R.string.indicator_minimum, R.color.staples_blue); // TODO Hard-coded
         }
-        if (item.isHeavyWeight) {
-            vh.indicators.addPricedIndicator(item.heavyWeightShippingCharge, R.string.indicator_oversized, R.color.staples_blue);
+        if (item.extraShippingCharge>0.0f) {
+            vh.indicators.addPricedIndicator(item.extraShippingCharge, R.string.indicator_oversized, R.color.staples_blue);
         }
 
         if (item.busy) {
@@ -190,28 +191,27 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         array.clear();
     }
 
-    public void fill(List<Product> products) {
-        if (products==null) return;
+    public int fill(List<Product> products) {
+        if (products==null) return(0);
+        int count = 0;
         for (Product product : products) {
             String name = MiscUtils.cleanupHtml(product.getProductName());
-            BundleItem item = new BundleItem(array.size(), name, product.getSku());
+            BundleItem item = new BundleItem(count, name, product.getSku());
             item.setImageUrl(product.getImage());
+
             item.customerRating = product.getCustomerReviewRating();
             item.customerCount = product.getCustomerReviewCount();
             item.isAddOnItem = MiscUtils.parseBoolean(product.getAddOnSku(), false);
-            item.isHeavyWeight = MiscUtils.parseBoolean(product.getHeavyWeightSku(), false);
 
             List<Pricing> pricings = product.getPricing();
             if (pricings!=null && pricings.size()>0) {
-                item.setPrice(pricings);
-                Pricing pricing = pricings.get(0);
-                if (pricing != null) {
-                    item.setRebatePrice(pricing.getDiscount());
-                    item.heavyWeightShippingCharge = pricing.getHeavyWeightShipCharge();
-                }
+                item.processPricing(pricings.get(0));
             }
+
             array.add(item);
+            count++;
         }
+        return(count);
     }
 
     public void sort(Comparator<BundleItem> comparator) {

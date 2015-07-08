@@ -41,12 +41,14 @@ import java.util.List;
 import app.staples.R;
 import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.apptentive.ApptentiveSdk;
+import app.staples.mobile.cfa.bundle.BundleItem;
 import app.staples.mobile.cfa.cart.CartApiManager;
 import app.staples.mobile.cfa.feed.PersistentSizedArrayList;
 import app.staples.mobile.cfa.feed.PersonalFeedSingleton;
 import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.DataWrapper;
+import app.staples.mobile.cfa.widget.IndicatorBlock;
 import app.staples.mobile.cfa.widget.PagerStripe;
 import app.staples.mobile.cfa.widget.PriceSticker;
 import app.staples.mobile.cfa.widget.QuantityEditor;
@@ -532,22 +534,6 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
         }
     }
 
-    private float findRebate(Pricing pricing) {
-        if (pricing==null) return(0.0f);
-        List<Discount> discounts = pricing.getDiscount();
-        if (discounts==null) return(0.0f);
-
-        float rebate = 0.0f;
-        for(Discount discount : discounts) {
-            String name = discount.getName();
-            if ("rebate".equals(name)) {
-                float amount = discount.getAmount();
-                if (amount > rebate) rebate = amount;
-            }
-        }
-        return(rebate);
-    }
-
     private void applyProduct(final Product product) {
         final MainActivity activity = (MainActivity) getActivity();
         if (activity==null) return;
@@ -648,37 +634,30 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
             summary.findViewById(R.id.accessory_layout).setVisibility(View.GONE);
         }
 
-        // check if the product is an add-on product
-        if (MiscUtils.parseBoolean(product.getAddOnSku(), false)) {
-            summary.findViewById(R.id.add_on_layout).setVisibility(View.VISIBLE);
-        }
-
-        // check if the product is an overweight product, example sku:650465
-        if (MiscUtils.parseBoolean(product.getHeavyWeightSku(), false)) {
-            if (product.getPricing()!=null){
-                summary.findViewById(R.id.overweight_warning).setVisibility(View.VISIBLE);
-                float heavyWeightShipCharge = product.getPricing().get(0).getHeavyWeightShipCharge();
-            }
-        }
-
-        // check if the product has discount
+        // Get pricing
         List<Pricing> pricings = product.getPricing();
         if (pricings!=null && pricings.size()>0) {
             Pricing pricing = pricings.get(0);
-            PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
-            float rebate = findRebate(pricing);
-            if (rebate>0.0f) {
-                summary.findViewById(R.id.rebate_layout).setVisibility(View.VISIBLE);
-                TextView rebateText = (TextView) summary.findViewById(R.id.rebate_text);
-                String text = String.format("$%.2f %s", rebate, res.getString(R.string.rebate));
-                rebateText.setText(text);
+            BundleItem item = new BundleItem();
+            item.processPricing(pricing);
 
-                float finalPrice = pricing.getFinalPrice();
-                float wasPrice = pricing.getListPrice();
-                String unit = pricing.getUnitOfMeasure();
-                priceSticker.setPricing(finalPrice + rebate, wasPrice, unit, "*");
+            // Add indicators
+            IndicatorBlock indicators = (IndicatorBlock) summary.findViewById(R.id.indicators);
+            indicators.reset();
+            if (item.rebatePrice>0.0f) {
+                indicators.addPricedIndicator(item.rebatePrice, R.string.indicator_rebate, R.color.staples_red);
+            }
+            if (MiscUtils.parseBoolean(product.getAddOnSku(), false)) {
+                indicators.addPricedIndicator(25.0f, R.string.indicator_minimum, R.color.staples_blue);
+            }
+            if (item.extraShippingCharge>0.0f) {
+                indicators.addPricedIndicator(item.extraShippingCharge, R.string.indicator_oversized, R.color.staples_blue);
+            }
+
+            PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
+            if (item.rebatePrice>0.0f) {
+                priceSticker.setPricing(item.finalPrice + item.rebatePrice, item.wasPrice, item.unit, "*");
             } else {
-                summary.findViewById(R.id.rebate_layout).setVisibility(View.GONE);
                 priceSticker.setPricing(pricing);
             }
         }
