@@ -15,6 +15,12 @@
         <attr name="dualGap" format="dimension"/>
         <attr name="dualColor" format="color"/>
     </declare-styleable>
+    <declare-styleable name="IndicatorBlock">
+        <attr name="android:textSize"/>
+        <attr name="android:textColor"/>
+        <attr name="cornerRadius" format="dimension"/>
+        <attr name="spacingGap" format="dimension"/>
+    </declare-styleable>
     <declare-styleable name="PagerStripe">
         <attr name="stripeThickness" format="dimension"/>
         <attr name="android:textSize"/>

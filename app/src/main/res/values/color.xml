@@ -9,6 +9,7 @@
     <color name="staples_middle_gray">#dddddd</color>       <!--part of style guide "Middle Gray"-->
     <color name="staples_dark_gray">#999999</color>         <!--part of style guide "Dark Gray"-->
     <color name="staples_green">#6fab04</color>             <!--part of style guide "Success Green"-->
+    <color name="staples_blue">#0000ff</color>              <!-- not part of anything -->
     <color name="staples_black">#333333</color>             <!--part of style guide "Primary Text Color"-->
 
 	<color name="text_orange_light">#FFA080</color>

@@ -19,7 +19,7 @@ import com.staples.mobile.common.access.easyopen.model.member.UpdateAddress;
 import app.staples.R;
 import app.staples.mobile.cfa.profile.UsState;
 
-public class AddressBlock extends LinearLayout implements TextView.OnEditorActionListener, PlaceFieldView.OnPlaceDoneListener {
+public class AddressBlock extends LinearLayout implements TextView.OnEditorActionListener, PlaceFieldView.PlaceFieldWatcher {
     private static final String TAG = AddressBlock.class.getSimpleName();
 
     private static final int[] addressFields = {R.id.firstName, R.id.lastName, R.id.phoneNumber, R.id.emailAddr,
@@ -52,7 +52,7 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
         if (!showEmail) findViewById(R.id.emailAddr).setVisibility(GONE);
 
         placeFieldView = (PlaceFieldView) findViewById(R.id.address);
-        placeFieldView.setOnPlaceDoneListener(this);
+        placeFieldView.setPlaceFieldWatcher(this);
 
         for(int id : addressFields) {
             ((EditText) findViewById(id)).setOnEditorActionListener(this);
@@ -275,7 +275,10 @@ public class AddressBlock extends LinearLayout implements TextView.OnEditorActio
     }
 
     @Override
-    public void onPlaceDone(PlaceFieldView.Place place) {
+    public void onPlaceFieldStart() {}
+
+    @Override
+    public void onPlaceFieldDone(PlaceFieldView.Place place) {
         selectMode(false);
         if (place!=null) {
             injectField(R.id.address, place.streetAddress);

@@ -199,9 +199,7 @@ public class RatingStars extends View {
         String text = getText();
         if (text!=null) width += config.textPaint.measureText(text, 0, text.length());
         int height = getPaddingTop()+config.starHeight+getPaddingBottom();
-        width = resolveSize(width, widthSpec);
-        height = resolveSize(height, heightSpec);
-        setMeasuredDimension(width, height);
+        setMeasuredDimension(resolveSize(width, widthSpec), resolveSize(height, heightSpec));
     }
 
     @Override

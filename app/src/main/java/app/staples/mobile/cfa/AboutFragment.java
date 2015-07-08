@@ -200,7 +200,7 @@ public class AboutFragment extends Fragment {
         int hours = minutes/60;
         minutes -= 60*hours;
         int days = hours/24;
-        hours -= 24*hours;
+        hours -= 24*days;
 
         // Format fields
         StringBuilder sb = new StringBuilder();

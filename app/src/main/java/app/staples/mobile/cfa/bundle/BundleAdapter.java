@@ -24,6 +24,7 @@ import app.staples.R;
 import app.staples.mobile.cfa.IdentifierType;
 import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.widget.DataWrapper;
+import app.staples.mobile.cfa.widget.IndicatorBlock;
 import app.staples.mobile.cfa.widget.PriceSticker;
 import app.staples.mobile.cfa.widget.RatingStars;
 
@@ -41,10 +42,8 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         private TextView title;
         private RatingStars ratingStars;
         private PriceSticker priceSticker;
-        private TextView heavyweight;
-        private TextView addon;
+        private IndicatorBlock indicators;
         private TextView rebateNote;
-        private TextView rebateText;
         private ImageView action;
         private View whirlie;
 
@@ -54,10 +53,8 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             title = (TextView) view.findViewById(R.id.title);
             ratingStars = (RatingStars) view.findViewById(R.id.rating);
             priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
-            heavyweight = (TextView) view.findViewById(R.id.heavyweight);
-            addon = (TextView) view.findViewById(R.id.addon);
+            indicators = (IndicatorBlock) view.findViewById(R.id.indicators);
             rebateNote = (TextView) view.findViewById(R.id.rebate_note);
-            rebateText = (TextView)view.findViewById(R.id.rebate_text);
             action = (ImageView) view.findViewById(R.id.bundle_action);
             whirlie = view.findViewById(R.id.bundle_whirlie);
         }
@@ -154,14 +151,22 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, item.rebateIndicator);
         if(item.rebateIndicator!=null) {
             vh.rebateNote.setVisibility(View.VISIBLE);
-            vh.rebateText.setVisibility(View.VISIBLE);
-            vh.rebateText.setText(format.format(item.rebatePrice) + " Rebate");
         } else {
             vh.rebateNote.setVisibility(View.GONE);
-            vh.rebateText.setVisibility(View.GONE);
         }
-        vh.addon.setVisibility((item.isAddOnItem) ? View.VISIBLE : View.GONE);
-        vh.heavyweight.setVisibility((item.isHeavyWeight) ? View.VISIBLE : View.GONE);
+
+        // Set indicators
+        vh.indicators.reset();
+        if (item.rebateIndicator!=null) {
+            vh.indicators.addPricedIndicator(item.rebatePrice, R.string.indicator_rebate, R.color.staples_red);
+        }
+        if (item.isAddOnItem) {
+            vh.indicators.addPricedIndicator(25.0f, R.string.indicator_minimum, R.color.staples_blue);
+        }
+        if (item.isHeavyWeight) {
+            vh.indicators.addPricedIndicator(item.heavyWeightShippingCharge, R.string.indicator_oversized, R.color.staples_blue);
+        }
+
         if (item.busy) {
             vh.action.setVisibility(View.GONE);
             vh.whirlie.setVisibility(View.VISIBLE);
@@ -170,7 +175,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
             vh.whirlie.setVisibility(View.GONE);
         }
 
-        if (item.type== IdentifierType.SKUSET) vh.action.setImageResource(R.drawable.ic_more_vert_black);
+        if (item.type==IdentifierType.SKUSET) vh.action.setImageResource(R.drawable.ic_more_vert_black);
         else vh.action.setImageResource(R.drawable.ic_add_black);
 
         // Need to get more data?

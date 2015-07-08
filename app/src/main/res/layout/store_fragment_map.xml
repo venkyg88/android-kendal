@@ -17,13 +17,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="@dimen/action_bar_half_margin"
-            android:layout_alignParentTop="true">
+            android:layout_margin="@dimen/action_bar_half_margin"
+            android:paddingLeft="@dimen/margin_16dp"
+            android:paddingRight="@dimen/margin_16dp"
+            android:layout_alignParentTop="true"
+            android:background="@color/staples_white">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:paddingLeft="@dimen/margin_16dp"
-                android:background="@color/staples_white"
                 android:src="@drawable/ic_search_black"/>
             <app.staples.mobile.cfa.widget.PlaceFieldView
                 android:id="@+id/store_search"
@@ -31,30 +32,19 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="6dp"
-                android:background="@color/staples_white"
                 android:inputType="textPostalAddress"
                 android:imeOptions="actionSearch"
                 android:singleLine="true"
                 app:searchTypes="(regions)"
                 app:manualPrompt="@string/input_manually_allcaps"
+                android:hint="@string/store_search_hint"
                 app:dualHint=""
                 android:dropDownWidth="match_parent"
                 android:dropDownHorizontalOffset="@dimen/search_negative_horizontal_offset" />
-            <ImageButton
-                android:id="@+id/view_list"
+            <ImageView
+                android:id="@+id/view_mode"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:paddingRight="@dimen/margin_16dp"
-                android:background="@color/staples_white"
-                android:src="@drawable/ic_view_list_black"/>
-            <ImageButton
-                android:id="@+id/view_map"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:paddingRight="@dimen/margin_16dp"
-                android:background="@color/staples_white"
-                android:visibility="gone"
-                android:src="@drawable/ic_map_black"/>
+                android:layout_height="match_parent"/>
         </LinearLayout>
         <ImageButton
             android:id="@+id/goto_here"
