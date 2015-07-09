@@ -147,7 +147,8 @@ public class CartApiManager {
             @Override
             public void success(CartUpdate cartUpdate, Response response) {
                 // if a successful update, refill cart
-                if (cartUpdate.getItemsAdded().size() > 0) {
+                List<ItemsAdded> items = cartUpdate.getItemsAdded();
+                if (items!=null && items.size()>0) {
                     loadCart(cartRefreshCallback);
                 } else {
                     // sometimes error message can come in success message
