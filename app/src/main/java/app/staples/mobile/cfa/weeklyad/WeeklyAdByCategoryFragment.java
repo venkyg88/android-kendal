@@ -127,16 +127,18 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
                     Content content = weeklyAdStore.getContent();
                     if (content != null) {
                         Collection collection = content.getCollection();
-                        List<Data> datas = collection.getData();
-                        if (datas != null && datas.size() > 0) {
-                            Data data = datas.get(0);
-                            storeId = String.valueOf(data.getStoreid());
-                            address = data.getAddress1();
-                            city = data.getCity();
-                            storeInfoVw.setText(address + "\n" + city);
-                            getWeeklyAdData();
-                            getWeeklyAdDates();
-                            return;
+                        if (collection!=null) {
+                            List<Data> datas = collection.getData();
+                            if (datas != null && datas.size() > 0) {
+                                Data data = datas.get(0);
+                                storeId = String.valueOf(data.getStoreid());
+                                address = data.getAddress1();
+                                city = data.getCity();
+                                storeInfoVw.setText(address + "\n" + city);
+                                getWeeklyAdData();
+                                getWeeklyAdDates();
+                                return;
+                            }
                         }
                     }
                 }
