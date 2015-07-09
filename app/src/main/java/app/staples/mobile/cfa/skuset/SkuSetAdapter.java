@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
 import app.staples.R;
 import app.staples.mobile.cfa.bundle.BundleItem;
 import app.staples.mobile.cfa.util.MiscUtils;
+import app.staples.mobile.cfa.widget.IndicatorBlock;
 import app.staples.mobile.cfa.widget.PriceSticker;
 import app.staples.mobile.cfa.widget.RatingStars;
 
@@ -29,6 +31,7 @@ public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder
         private TextView title;
         private PriceSticker priceSticker;
         private RatingStars ratingStars;
+        private IndicatorBlock indicators;
 
         private ViewHolder(View view) {
             super(view);
@@ -36,6 +39,7 @@ public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder
             title = (TextView) view.findViewById(R.id.title);
             priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
             ratingStars = (RatingStars) view.findViewById(R.id.rating);
+            indicators = (IndicatorBlock) view.findViewById(R.id.indicators);
         }
     }
 
@@ -82,8 +86,24 @@ public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder
         if (item.imageUrl == null) vh.image.setImageDrawable(noPhoto);
         else picasso.load(item.imageUrl).error(noPhoto).into(vh.image);
         vh.title.setText(item.title);
-        vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, item.rebateIndicator);
+        if (item.rebatePrice>0.0f) {
+            vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, "*");
+        } else {
+            vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, null);
+        }
         vh.ratingStars.setRating(item.customerRating, item.customerCount);
+
+        // Set indicators
+        vh.indicators.reset();
+        if (item.rebatePrice>0.0f) {
+            vh.indicators.addPricedIndicator(item.rebatePrice, R.string.indicator_rebate, R.color.staples_red);
+        }
+        if (item.isAddOnItem) {
+            vh.indicators.addPricedIndicator(25.0f, R.string.indicator_minimum, R.color.staples_blue); // TODO Hard-coded
+        }
+        if (item.extraShippingCharge>0.0f) {
+            vh.indicators.addPricedIndicator(item.extraShippingCharge, R.string.indicator_oversized, R.color.staples_blue);
+        }
     }
 
     public int fill(List<Product> products) {
@@ -91,9 +111,14 @@ public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder
         int count = 0;
         for (Product product : products) {
             String name = MiscUtils.cleanupHtml(product.getProductName());
-            BundleItem item = new BundleItem(products.size(), name, product.getSku());
-            item.setPrice(product.getPricing());
+            BundleItem item = new BundleItem(count, name, product.getSku());
             item.setImageUrl(product.getImage());
+
+            List<Pricing> pricings = product.getPricing();
+            if (pricings!=null && pricings.size()>0) {
+                item.processPricing(pricings.get(0));
+            }
+
             array.add(item);
             count++;
         }

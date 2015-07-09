@@ -84,80 +84,19 @@
                     android:paddingTop="@dimen/action_bar_quarter_margin"/>
             </LinearLayout>
 
-            <!-- Sku Rebate -->
-            <LinearLayout
-                android:id="@+id/rebate_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="@dimen/sku_padding_10"
-                    android:textSize="@dimen/fontsize_10sp"
-                    android:text="@string/rebate_text"
-                    android:textColor="@color/staples_dark_gray"/>
-                <TextView
-                    android:id="@+id/rebate_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/sku_padding_10"
-                    android:paddingTop="@dimen/action_bar_quarter_margin"
-                    android:paddingLeft="@dimen/left_margin"
-                    android:paddingRight="@dimen/right_margin"
-                    android:paddingBottom="@dimen/action_bar_quarter_margin"
-                    android:textColor="@color/staples_white"
-                    android:background="@drawable/rounded_corner_red"/>
-            </LinearLayout>
-
-            <!-- Shipping Logic Info -->
-            <TextView
-                android:id="@+id/overweight_warning"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/fontsize_16sp"
-                android:text="@string/heavyweight_warning"
-                android:layout_marginLeft="@dimen/sku_padding_10"
-                android:layout_marginRight="@dimen/sku_padding_10"
-                android:visibility="gone"/>
-            <LinearLayout
-                android:id="@+id/add_on_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="gone">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/sku_padding_10"
-                    android:paddingLeft="@dimen/elevation_high"
-                    android:paddingRight="@dimen/elevation_high"
-                    android:paddingTop="@dimen/sku_padding_2"
-                    android:paddingBottom="@dimen/sku_padding_2"
-                    android:gravity="left"
-                    android:textSize="@dimen/fontsize_16sp"
-                    android:text="@string/addon"
-                    android:textColor="@color/staples_white"
-                    android:background="@drawable/rounded_corner_green"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/sku_padding_10"
-                    android:textSize="@dimen/fontsize_16sp"
-                    android:gravity="center_vertical|left"
-                    android:text="@string/addon_warning"
-                    android:paddingLeft="@dimen/sku_padding_5"
-                    android:paddingTop="@dimen/sku_padding_2"
-                    android:paddingBottom="@dimen/sku_padding_2"/>
-            </LinearLayout>
+            <!-- Indicators -->
+            <app.staples.mobile.cfa.widget.IndicatorBlock
+                android:id="@+id/indicators"
+                style="@style/IndicatorBlock"
+                android:layout_marginTop="@dimen/action_bar_half_margin"
+                android:layout_marginLeft="@dimen/sku_padding_10"/>
 
             <!-- Description -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="@dimen/sku_padding_10"
+                android:layout_marginTop="@dimen/action_bar_half_margin"
                 android:background="@drawable/sku_round_layout">
                 <TextView
                     style="@style/SkuSummaryHeader"
