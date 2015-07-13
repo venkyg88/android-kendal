@@ -18,6 +18,7 @@
 -	ic_expand_more_black		32	32	#333333	material/navigation/ic_expand_more_48px
 -	ic_home_black			32	32	#333333	staples/home
 -	ic_info_black			32	32	#333333	material/action/ic_info_48px
+-	ic_info_outline_blue_18dp	18	18	#0092db	material/action/ic_info_outline_48px
 -	ic_map_black			32	32	#333333	material/maps/ic_map_48px
 -	ic_menu_black			32	32	#333333	material/navigation/ic_menu_48px
 -	ic_more_vert_black		32	32	#333333	material/navigation/ic_more_vert_48px

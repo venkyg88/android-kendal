@@ -159,13 +159,17 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         // Set indicators
         vh.indicators.reset();
         if (item.rebatePrice>0.0f) {
-            vh.indicators.addPricedIndicator(item.rebatePrice, R.string.indicator_rebate, R.color.staples_red);
+            vh.indicators.addPricedIndicator(item.rebatePrice, R.string.indicator_rebate, R.color.staples_red, 0);
         }
         if (item.isAddOnItem) {
-            vh.indicators.addPricedIndicator(25.0f, R.string.indicator_minimum, R.color.staples_blue); // TODO Hard-coded
+            vh.indicators.addPricedIndicator(25.0f, R.string.indicator_minimum, R.color.staples_blue, R.layout.explain_minimum); // TODO Hard-coded
         }
         if (item.extraShippingCharge>0.0f) {
-            vh.indicators.addPricedIndicator(item.extraShippingCharge, R.string.indicator_oversized, R.color.staples_blue);
+            vh.indicators.addPricedIndicator(item.extraShippingCharge, R.string.indicator_oversized, R.color.staples_blue, R.layout.explain_oversized);
+        }
+        if (vh.indicators.isInfoAvailable()) {
+            vh.indicators.addIcon(R.drawable.ic_info_outline_blue_18dp);
+            vh.indicators.enableExplainDialog();
         }
 
         if (item.busy) {
