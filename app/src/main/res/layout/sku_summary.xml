@@ -293,11 +293,10 @@
                 android:id="@+id/quantity"
                 style="@style/QtyEditorStyle"
                 android:layout_width="@dimen/sku_add_cart_editor_width"
-                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:visibility="gone"
+                android:textSize="@dimen/fontsize_18sp"
                 app:maxQuantity="10"
-                app:popupWidth="120dp"/>
+                android:visibility="gone"/>
             <Button
                 android:id="@+id/add_to_cart"
                 android:layout_width="match_parent"

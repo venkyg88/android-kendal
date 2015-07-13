@@ -18,6 +18,7 @@ import java.util.List;
 
 import app.staples.R;
 import app.staples.mobile.cfa.util.MiscUtils;
+import app.staples.mobile.cfa.widget.IndicatorBlock;
 import app.staples.mobile.cfa.widget.PriceSticker;
 import app.staples.mobile.cfa.widget.QuantityEditor;
 
@@ -92,12 +93,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             }
         }
 
-        DecimalFormat currencyFormat = MiscUtils.getCurrencyFormat();
-        float amountToReachToCheckoutAddOnItems = cart.getAmountToReachToCheckoutAddOnItems();
-        String amountToReachToCheckoutAddOnItemsStr = currencyFormat.format(amountToReachToCheckoutAddOnItems);
-
-        String minimum = context.getResources().getString(R.string.minimum_all_caps);
-        String addOnMinimum = amountToReachToCheckoutAddOnItemsStr + " " + minimum;
+// TODO Why is this here?
+//        DecimalFormat currencyFormat = MiscUtils.getCurrencyFormat();
+//        float amountToReachToCheckoutAddOnItems = cart.getAmountToReachToCheckoutAddOnItems();
+//        String amountToReachToCheckoutAddOnItemsStr = currencyFormat.format(amountToReachToCheckoutAddOnItems);
 
         // for each cart item
         for (int i = 0; i < groupSize; i++) {
@@ -118,7 +117,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
             // Set price
             float rebate = cartItem.getRebate();
-            boolean rebatePresent = (rebate != 0);
             float wasPrice = cartItem.getListPrice();
             // if no list price, use final price as the was price. this handles the case when qty>1
             // and also when there's an employee discount
@@ -126,21 +124,17 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                 wasPrice = cartItem.getFinalPrice();
             }
             ciVh.priceSticker.setPricing(cartItem.getTotalOrderItemPrice(), wasPrice,
-                    cartItem.getPriceUnitOfMeasure(), rebatePresent? "*":null);
-            if (rebatePresent) {
+                    cartItem.getPriceUnitOfMeasure(), rebate>0f ? "*" : null);
+            if (rebate>0f) {
                 ciVh.rebateNote.setVisibility(View.VISIBLE);
-                ciVh.rebateText.setVisibility(View.VISIBLE);
-                ciVh.rebateText.setText(currencyFormat.format(rebate) + " Rebate");
             } else {
                 ciVh.rebateNote.setVisibility(View.GONE);
-                ciVh.rebateText.setVisibility(View.GONE);
             }
 
             ciVh.imageView.setTag(cartItem);
             ciVh.titleTextView.setTag(cartItem);
             ciVh.qtyWidget.setTag(cartItem);
             ciVh.deleteButton.setTag(cartItem);
-//        ciVh.updateButton.setTag(cartItem);
 
             // associate qty widget with cart item
             cartItem.setQtyWidget(ciVh.qtyWidget);
@@ -150,32 +144,27 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             ciVh.deleteButton.setOnClickListener(onClickListener);
             ciVh.imageView.setOnClickListener(onClickListener);
             ciVh.titleTextView.setOnClickListener(onClickListener);
-//        ciVh.updateButton.setOnClickListener(qtyUpdateButtonListener);
 
             // set quantity (AFTER listeners set up above)
             ciVh.qtyWidget.setQuantity(cartItem.getProposedQty());
 
             // set visibility of update button
-//        ciVh.updateButton.setVisibility(cartItem.isProposedQtyDifferent()? View.VISIBLE : View.GONE);
             ciVh.qtyWidget.setError(cartItem.isProposedQtyDifferent() ? "Update failed" : null);
+
+            // Set indicators
+            ciVh.indicators.reset();
+            if (rebate>0f) {
+                ciVh.indicators.addPricedIndicator(rebate, R.string.indicator_rebate, R.color.staples_red, 0);
+            }
+            if (cartItem.isHeavyWeightSKU()) {
+                ciVh.indicators.addIndicator(R.string.indicator_oversized, R.color.staples_blue, 0);
+            }
+            if (cartItem.isAddOnSKU()) {
+                ciVh.indicators.addPricedIndicator(25.0f, R.string.indicator_minimum, R.color.staples_blue, 0);
+            }
 
             // set visibility of horizontal rule
             ciVh.horizontalRule.setVisibility((i < groupSize-1)? View.VISIBLE : View.GONE);
-
-            boolean isHeavyWeightSKU = cartItem.isHeavyWeightSKU();
-            if (isHeavyWeightSKU) {
-                ciVh.overweightWarning.setVisibility(View.VISIBLE);
-            } else {
-                ciVh.overweightWarning.setVisibility(View.GONE);
-            }
-
-            boolean isAddOnSKU = cartItem.isAddOnSKU();
-            if (isAddOnSKU) {
-                ciVh.addOnWarning.setText(addOnMinimum);
-                ciVh.addOnWarning.setVisibility(View.VISIBLE);
-            } else {
-                ciVh.addOnWarning.setVisibility(View.GONE);
-            }
         }
     }
 
@@ -207,26 +196,20 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         ImageView imageView;
         TextView titleTextView;
         PriceSticker priceSticker;
-        TextView rebateNote;
-        TextView rebateText;
+        View rebateNote;
+        IndicatorBlock indicators;
         QuantityEditor qtyWidget;
         View deleteButton;
-//        Button updateButton;
         View horizontalRule;
-        TextView overweightWarning;
-        TextView addOnWarning;
 
         CartItemViewHolder(View convertView) {
             imageView = (ImageView) convertView.findViewById(R.id.cartitem_image);
             titleTextView = (TextView) convertView.findViewById(R.id.cartitem_title);
-            overweightWarning = (TextView) convertView.findViewById(R.id.heavyweight);
-            addOnWarning = (TextView) convertView.findViewById(R.id.addon);
             priceSticker = (PriceSticker) convertView.findViewById(R.id.cartitem_price);
-            rebateNote = (TextView)convertView.findViewById(R.id.rebate_note);
-            rebateText = (TextView)convertView.findViewById(R.id.rebate_text);
+            rebateNote = convertView.findViewById(R.id.rebate_note);
+            indicators = (IndicatorBlock) convertView.findViewById(R.id.indicators);
             qtyWidget = (QuantityEditor) convertView.findViewById(R.id.cartitem_qty);
             deleteButton = convertView.findViewById(R.id.cartitem_delete);
-//            updateButton = (Button) convertView.findViewById(R.id.cartitem_update);
             horizontalRule = convertView.findViewById(R.id.cart_item_horizontal_rule);
         }
     }

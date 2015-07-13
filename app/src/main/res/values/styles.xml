@@ -251,16 +251,18 @@
     </style>
 
     <style name="QtyEditorStyle">
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:inputType">number</item>
         <item name="android:imeOptions">actionDone</item>
         <item name="android:singleLine">true</item>
         <item name="android:hint">1</item>
         <item name="android:maxLength">3</item>
         <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/staples_black</item>
         <item name="android:textColorHint">@color/staples_black</item>
-        <item name="android:textSize">@dimen/fontsize_18sp</item>
         <item name="android:drawableRight">@drawable/ic_arrow_drop_down</item>
         <item name="android:background">@drawable/bottom_frame</item>
+        <item name="popupWidth">120dp</item>
     </style>
 
     <style name="OrderButtonStyle">
