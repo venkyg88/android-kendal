@@ -239,16 +239,12 @@
     <string name="stars_no_reviews">no reviews</string>
     <string name="details_no_reviews">No Reviews</string>
 
-    <!-- (old) Shipping Logic-->
-    <string name="heavyweight">HEAVYWEIGHT</string>
+    <!-- Shipping Logic-->
     <string name="heavyweight_warning">Additional shipping fees apply</string>
-    <string name="minimum_all_caps">MINIMUM</string>
-    <string name="addon">$25 MINIMUM</string>
-    <string name="addon_warning">$25 minimum to ship</string>
 
     <!-- Indicators -->
-    <string name="indicator_rebate">REBATE</string>
-    <string name="indicator_minimum">MINIMUM</string>
+    <string name="indicator_rebate">{0} REBATE</string>
+    <string name="indicator_minimum">{0} MINIMUM</string>
     <string name="indicator_oversized">OVERSIZED</string>
 
     <!-- Availability -->

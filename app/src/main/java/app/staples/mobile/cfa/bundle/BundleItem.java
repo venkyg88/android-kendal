@@ -56,9 +56,9 @@ public class BundleItem {
     public String unit;
     public float customerRating;
     public int customerCount;
-    public boolean isAddOnItem;
-    public float extraShippingCharge;
     public float rebatePrice;
+    public float addOnBasketPrice;
+    public float extraShippingCharge;
     public boolean busy;
 
     public BundleItem() {}
@@ -85,10 +85,12 @@ public class BundleItem {
     public void processPricing(Pricing pricing) {
         if (pricing==null) return;
 
+        // Basic prices
         finalPrice = pricing.getFinalPrice();
         wasPrice = pricing.getListPrice();
         unit = pricing.getUnitOfMeasure();
 
+        // Rebates
         List<Discount> discounts = pricing.getDiscount();
         if (discounts!=null) {
             for(Discount discount : discounts) {
@@ -101,9 +103,15 @@ public class BundleItem {
             }
         }
 
-        float oversize = pricing.getOverSizeItem();
-        float heavy = pricing.getHeavyWeightShipCharge();
-        extraShippingCharge = Math.max(oversize, heavy);
+        // Add-on
+        float basket = pricing.getAddOnBasketSize(); // Product
+        float addOn = pricing.getAddOnItem();        // Search
+        addOnBasketPrice = Math.max(basket, addOn);
+
+        // Oversize
+        float heavy = pricing.getHeavyWeightShipCharge(); // Product
+        float oversize = pricing.getOverSizeItem();       // Search
+        extraShippingCharge = Math.max(heavy, oversize);
     }
 
     // Sorting comparators

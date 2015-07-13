@@ -28,11 +28,11 @@ public class IndicatorBlock extends View implements View.OnClickListener {
     private static final String TAG = IndicatorBlock.class.getSimpleName();
 
     private class Indicator {
+        private float price;
         private String text;
         private int color;
         private Bitmap icon;
         private int explainId;
-        private float price;
     }
 
     private ArrayList<Indicator> array;
@@ -112,20 +112,24 @@ public class IndicatorBlock extends View implements View.OnClickListener {
         setOnClickListener(null);
     }
 
-    public void addPricedIndicator(Float price, int textId, int colorId, int explainId) {
-        Resources res = getResources();
+    public void addIndicator(int textId, int colorId, int explainId) {
         Indicator item = new Indicator();
-        if (price!=null) {
-            StringBuilder sb = new StringBuilder();
-            DecimalFormat format = MiscUtils.getIntegerCurrencyFormat();
-            sb.append(format.format(price));
-            sb.append(" ");
-            sb.append(res.getString(textId));
-            item.text = sb.toString();
-            item.price = price;
-        } else {
-            item.text = res.getString(textId);
-        }
+        Resources res = getResources();
+        item.text = res.getString(textId);
+        item.color = res.getInteger(colorId);
+        item.explainId = explainId;
+        array.add(item);
+        setVisibility(VISIBLE);
+        requestLayout();
+    }
+
+    public void addPricedIndicator(float price, int textId, int colorId, int explainId) {
+        Indicator item = new Indicator();
+        item.price = price;
+        Resources res = getResources();
+        String text = res.getString(textId);
+        DecimalFormat format = MiscUtils.getIntegerCurrencyFormat();
+        item.text = MessageFormat.format(text, format.format(price));
         item.color = res.getInteger(colorId);
         item.explainId = explainId;
         array.add(item);
@@ -194,7 +198,9 @@ public class IndicatorBlock extends View implements View.OnClickListener {
         int n = group.getChildCount();
         for(int i=0;i<n;i++) {
             View child = group.getChildAt(i);
-            if (child instanceof TextView) {
+            if (child instanceof ViewGroup) {
+                rewriteMessages((ViewGroup) child, price);
+            } else if (child instanceof TextView) {
                 String text = ((TextView) child).getText().toString();
                 text = MessageFormat.format(text, format.format(price));
                 ((TextView) child).setText(text);
