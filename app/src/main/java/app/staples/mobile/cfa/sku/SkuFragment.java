@@ -647,8 +647,8 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
             if (item.rebatePrice>0.0f) {
                 indicators.addPricedIndicator(item.rebatePrice, R.string.indicator_rebate, R.color.staples_red, 0);
             }
-            if (MiscUtils.parseBoolean(product.getAddOnSku(), false)) {
-                indicators.addPricedIndicator(25.0f, R.string.indicator_minimum, R.color.staples_blue, R.layout.explain_minimum); // TODO Hard-coded
+            if (item.addOnBasketPrice>0.0f) {
+                indicators.addPricedIndicator(item.addOnBasketPrice, R.string.indicator_minimum, R.color.staples_blue, R.layout.explain_minimum);
             }
             if (item.extraShippingCharge>0.0f) {
                 indicators.addPricedIndicator(item.extraShippingCharge, R.string.indicator_oversized, R.color.staples_blue, R.layout.explain_oversized);

@@ -161,8 +161,8 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         if (item.rebatePrice>0.0f) {
             vh.indicators.addPricedIndicator(item.rebatePrice, R.string.indicator_rebate, R.color.staples_red, 0);
         }
-        if (item.isAddOnItem) {
-            vh.indicators.addPricedIndicator(25.0f, R.string.indicator_minimum, R.color.staples_blue, R.layout.explain_minimum); // TODO Hard-coded
+        if (item.addOnBasketPrice>0.0f) {
+            vh.indicators.addPricedIndicator(item.addOnBasketPrice, R.string.indicator_minimum, R.color.staples_blue, R.layout.explain_minimum);
         }
         if (item.extraShippingCharge>0.0f) {
             vh.indicators.addPricedIndicator(item.extraShippingCharge, R.string.indicator_oversized, R.color.staples_blue, R.layout.explain_oversized);
@@ -205,7 +205,6 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
 
             item.customerRating = product.getCustomerReviewRating();
             item.customerCount = product.getCustomerReviewCount();
-            item.isAddOnItem = MiscUtils.parseBoolean(product.getAddOnSku(), false);
 
             List<Pricing> pricings = product.getPricing();
             if (pricings!=null && pricings.size()>0) {
