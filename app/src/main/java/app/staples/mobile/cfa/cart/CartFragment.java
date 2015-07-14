@@ -43,7 +43,6 @@ import app.staples.mobile.cfa.widget.QuantityEditor;
 
 /** fragment to manage display and update of shopping cart */
 public class CartFragment extends Fragment implements View.OnClickListener, QuantityEditor.OnQtyChangeListener, CartApiManager.CartRefreshCallback {
-
     private static final String TAG = CartFragment.class.getSimpleName();
 
     // saving around Activity object since getActivity() returns null after user navigates away from
@@ -69,6 +68,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
     private View couponsRewardsLayout;
     private int greenText;
     private int blackText;
+    private int blueText;
+    private View actionCheckout;
 
     // cart object - make these static so they're not lost on device rotation
     private static List<CartItem> cartListItems;
@@ -103,10 +104,12 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
         cartSubtotal = (TextView) view.findViewById(R.id.cart_subtotal);
         cartShippingLayout = view.findViewById(R.id.cart_shipping_layout);
         cartActionLayout = view.findViewById(R.id.cart_action_layout);
+        actionCheckout = view.findViewById(R.id.action_checkout);
 
         Resources r = getResources();
         greenText = r.getColor(R.color.staples_green);
         blackText = r.getColor(R.color.staples_black);
+        blueText = r.getColor(R.color.staples_blue);
 
         // Initialize coupon listview
         couponListVw = (RecyclerView) view.findViewById(R.id.coupon_list);
@@ -224,23 +227,33 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
 
             // set text of free shipping msg
             if (totalItemCount > 0) {
-                if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !ProfileDetails.isRewardsMember()) {
+                if(cart.getAmountToReachToCheckoutAddOnItems() > 0.0) {
+                    // minimum $25 total
+                    String freeShippingMsg = String.format(r.getString(R.string.minimum_shipping_msg),
+                            currencyFormat.format(cart.getAmountToReachToCheckoutAddOnItems()));
+                    this.freeShippingLayout.setVisibility(View.VISIBLE);
+                    this.freeShippingMsg.setText(freeShippingMsg);
+                    this.freeShippingMsg.setTextColor(blueText);
+                    actionCheckout.setEnabled(false);
+                    actionCheckout.setBackgroundColor(getResources().getColor(R.color.staples_dark_gray));
+                }
+                else if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !ProfileDetails.isRewardsMember()) {
                     // need to spend more to qualify for free shipping
                     freeShippingLayout.setVisibility(View.VISIBLE);
                     freeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
                             currencyFormat.format(freeShippingThreshold), currencyFormat.format(freeShippingThreshold - subtotal)));
+                    this.freeShippingMsg.setTextColor(greenText);
+                    actionCheckout.setEnabled(true);
+                    actionCheckout.setBackgroundColor(getResources().getColor(R.color.staples_red));
                 } else {
                     // qualifies for free shipping
                     String freeShippingMsg = r.getString(R.string.free_shipping_msg2);
                     if (!freeShippingMsg.equals(this.freeShippingMsg.getText().toString())) {
                         this.freeShippingLayout.setVisibility(View.VISIBLE);
                         this.freeShippingMsg.setText(freeShippingMsg);
-//                        // hide after a delay
-//                        freeShippingMsg.postDelayed(new Runnable() {
-//                            @Override public void run() {
-//                                freeShippingMsg.setVisibility(View.GONE);
-//                            }
-//                        }, 3000);
+                        this.freeShippingMsg.setTextColor(greenText);
+                        actionCheckout.setEnabled(true);
+                        actionCheckout.setBackgroundColor(getResources().getColor(R.color.staples_red));
                     }
                 }
             } else {
@@ -254,6 +267,13 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                 heavyweightShipping.setTextColor(blackText);
                 heavyweightShippingLabel.setVisibility(View.VISIBLE);
                 heavyweightShipping.setVisibility(View.VISIBLE);
+
+                // additional shipping fee
+                String freeShippingMsg = String.format(r.getString(R.string.oversized_shipping_msg),
+                        currencyFormat.format(totalHandlingCost));
+                this.freeShippingLayout.setVisibility(View.VISIBLE);
+                this.freeShippingMsg.setText(freeShippingMsg);
+                this.freeShippingMsg.setTextColor(blueText);
             } else {
                 heavyweightShippingLabel.setVisibility(View.GONE);
                 heavyweightShipping.setVisibility(View.GONE);
@@ -321,11 +341,13 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                     @Override public void onCartRefreshComplete(String errMsg) {
                         Tracker.getInstance().trackActionForRemoveFromCart(cartItem.getSku());
                         CartFragment.this.onCartRefreshComplete(errMsg);
+//                        updateCartFields();
                     }
                 });
             } else {
                 Tracker.getInstance().trackActionForUpdateQtyFromCart(cartItem.getSku());
                 CartApiManager.updateItemQty(cartItem.getOrderItemId(), cartItem.getSku(), cartItem.getProposedQty(), this);
+//                updateCartFields();
             }
         }
     }

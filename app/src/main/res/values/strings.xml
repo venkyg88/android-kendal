@@ -85,6 +85,8 @@
     <string name="update_button">Update</string>
     <string name="free_shipping_msg1">Free shipping when you spend %1$s - only %2$s to go!</string>
     <string name="free_shipping_msg2">You qualify for FREE SHIPPING!</string>
+    <string name="oversized_shipping_msg">An additional shipping fee of %s has been added to the cart</string>
+    <string name="minimum_shipping_msg">You need to add %s or more to your order to ship this item</string>
     <string name="cart_updated_msg">Cart is updated</string>
     <string name="shipping">Shipping</string>
     <string name="expected_delivery">Expected Delivery:</string>
@@ -246,6 +248,8 @@
     <string name="indicator_rebate">{0} REBATE</string>
     <string name="indicator_minimum">{0} MINIMUM</string>
     <string name="indicator_oversized">OVERSIZED</string>
+    <string name="indicator_minimum_message">Ships with any qualifying order over %s</string>
+    <string name="indicator_oversized_message">An additional shipping fee of %s per item will be added to the cart</string>
 
     <!-- Availability -->
     <string name="avail_nothing">Product not found</string>

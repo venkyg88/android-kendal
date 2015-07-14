@@ -220,16 +220,32 @@ public class IndicatorBlock extends View implements View.OnClickListener {
         popup.findViewById(R.id.dismiss).setOnClickListener(this);
         popup.setCanceledOnTouchOutside(true);
 
-        // Add individual items
-        ViewGroup frame = (ViewGroup) popup.findViewById(R.id.frame);
-        LayoutInflater inflater = (LayoutInflater) frame.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for(Indicator item : array) {
             if (item.explainId>0) {
-                ViewGroup child = (ViewGroup) inflater.inflate(item.explainId, frame, false);
-                rewriteMessages(child, item.price);
-                frame.addView(child);
+                DecimalFormat currencyFormat = MiscUtils.getCurrencyFormat();
+                ((TextView)popup.findViewById(R.id.title)).setText(item.text);
+                if(item.text.contains("MINIMUM")) {
+                    ((TextView)popup.findViewById(R.id.description)).setText(String.format(getResources().getString(R.string.indicator_minimum_message),
+                            currencyFormat.format(item.price)));
+                }
+                if(item.text.contains("OVERSIZED")) {
+                    ((TextView)popup.findViewById(R.id.description)).setText(String.format(getResources().getString(R.string.indicator_oversized_message),
+                            currencyFormat.format(item.price)));
+                }
             }
         }
+
+//        // Add individual items
+//        ViewGroup frame = (ViewGroup) popup.findViewById(R.id.frame);
+//        LayoutInflater inflater = (LayoutInflater) frame.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        for(Indicator item : array) {
+//            if (item.explainId>0) {
+//                ViewGroup child = (ViewGroup) inflater.inflate(item.explainId, frame, false);
+//                child.setPadding(16, 16, 16, 32);
+//                rewriteMessages(child, item.price);
+//                frame.addView(child);
+//            }
+//        }
 
         popup.show();
     }

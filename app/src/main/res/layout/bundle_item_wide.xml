@@ -49,12 +49,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right|bottom"
-        android:padding="@dimen/margin_16dp"/>
+        android:padding="@dimen/action_bar_half_margin"/>
     <ProgressBar
         android:id="@+id/bundle_whirlie"
         android:layout_width="@dimen/progress_bar_width"
         android:layout_height="wrap_content"
         android:layout_gravity="right|bottom"
-        android:padding="@dimen/margin_16dp"
+        android:padding="@dimen/action_bar_half_margin"
         android:visibility="gone"/>
 </FrameLayout>
