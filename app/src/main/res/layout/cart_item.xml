@@ -32,12 +32,12 @@
             <app.staples.mobile.cfa.widget.PriceSticker
                 android:id="@+id/cartitem_price"
                 style="@style/SmallPriceSticker"
-                android:layout_marginTop="@dimen/margin_16dp"/>
+                android:layout_marginTop="@dimen/action_bar_half_margin"/>
             <TextView
                 android:id="@+id/rebate_note"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_16dp"
+                android:layout_marginTop="@dimen/action_bar_half_margin"
                 android:textSize="@dimen/fontsize_10sp"
                 android:text="@string/rebate_text"
                 android:textColor="@color/staples_dark_gray"
@@ -45,7 +45,7 @@
             <app.staples.mobile.cfa.widget.IndicatorBlock
                 android:id="@+id/indicators"
                 style="@style/IndicatorBlock"
-                android:layout_marginTop="@dimen/margin_16dp"/>
+                android:layout_marginTop="@dimen/action_bar_half_margin"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

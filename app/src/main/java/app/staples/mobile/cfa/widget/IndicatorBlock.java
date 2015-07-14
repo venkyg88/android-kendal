@@ -92,7 +92,7 @@ public class IndicatorBlock extends View implements View.OnClickListener {
 
         textPaint = new Paint();
         textPaint.setAntiAlias(true);
-        textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         textPaint.setTextSize(textSize);
         textPaint.setColor(textColor);
     }

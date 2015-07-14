@@ -18,6 +18,7 @@
     <declare-styleable name="IndicatorBlock">
         <attr name="android:textSize"/>
         <attr name="android:textColor"/>
+        <attr name="android:textStyle"/>
         <attr name="cornerRadius" format="dimension"/>
         <attr name="spacingGap" format="dimension"/>
     </declare-styleable>

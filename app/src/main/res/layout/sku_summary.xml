@@ -89,6 +89,7 @@
                 android:id="@+id/indicators"
                 style="@style/IndicatorBlock"
                 android:layout_marginTop="@dimen/action_bar_half_margin"
+                android:layout_marginBottom="@dimen/action_bar_half_margin"
                 android:layout_marginLeft="@dimen/sku_padding_10"/>
 
             <!-- Description -->
