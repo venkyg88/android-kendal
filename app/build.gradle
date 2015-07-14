@@ -87,19 +87,19 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:22.0.0'
-    compile 'com.android.support:cardview-v7:22.0.0'
-    compile 'com.android.support:recyclerview-v7:22.0.0'
+    compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.android.support:cardview-v7:22.2.0'
+    compile 'com.android.support:recyclerview-v7:22.2.0'
     compile 'com.squareup.okhttp:okhttp:2.2.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.2.0'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.5.0'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.squareup.retrofit:converter-jackson:1.9.0'
     compile 'com.squareup.picasso:picasso:2.4.0'
-    compile 'com.google.android.gms:play-services-gcm:7.0.0'
-    compile 'com.google.android.gms:play-services-location:7.0.0'
-    compile 'com.google.android.gms:play-services-maps:7.0.0'
-    compile 'com.google.android.gms:play-services-wallet:7.0.0'
+    compile 'com.google.android.gms:play-services-gcm:7.5.0'
+    compile 'com.google.android.gms:play-services-location:7.5.0'
+    compile 'com.google.android.gms:play-services-maps:7.5.0'
+    compile 'com.google.android.gms:play-services-wallet:7.5.0'
     compile 'com.crittercism:crittercism-android-agent:5.0.4'
     compile 'com.apptentive:apptentive-android:1.7.3@aar'
     compile(name: 'urbanairship-lib-5.1.5', ext: 'aar')
