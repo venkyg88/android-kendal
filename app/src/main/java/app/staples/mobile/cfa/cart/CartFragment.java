@@ -234,8 +234,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                     this.freeShippingLayout.setVisibility(View.VISIBLE);
                     this.freeShippingMsg.setText(freeShippingMsg);
                     this.freeShippingMsg.setTextColor(blueText);
+                    actionCheckout.setEnabled(false);
                     actionCheckout.setBackgroundColor(getResources().getColor(R.color.staples_dark_gray));
-                    actionCheckout.setTag(cart);
                 }
                 else if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !ProfileDetails.isRewardsMember()) {
                     // need to spend more to qualify for free shipping
@@ -243,6 +243,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                     freeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
                             currencyFormat.format(freeShippingThreshold), currencyFormat.format(freeShippingThreshold - subtotal)));
                     this.freeShippingMsg.setTextColor(greenText);
+                    actionCheckout.setEnabled(true);
+                    actionCheckout.setBackgroundColor(getResources().getColor(R.color.staples_red));
                 } else {
                     // qualifies for free shipping
                     String freeShippingMsg = r.getString(R.string.free_shipping_msg2);
@@ -250,6 +252,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                         this.freeShippingLayout.setVisibility(View.VISIBLE);
                         this.freeShippingMsg.setText(freeShippingMsg);
                         this.freeShippingMsg.setTextColor(greenText);
+                        actionCheckout.setEnabled(true);
+                        actionCheckout.setBackgroundColor(getResources().getColor(R.color.staples_red));
                     }
                 }
             } else {
@@ -337,11 +341,13 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                     @Override public void onCartRefreshComplete(String errMsg) {
                         Tracker.getInstance().trackActionForRemoveFromCart(cartItem.getSku());
                         CartFragment.this.onCartRefreshComplete(errMsg);
+//                        updateCartFields();
                     }
                 });
             } else {
                 Tracker.getInstance().trackActionForUpdateQtyFromCart(cartItem.getSku());
                 CartApiManager.updateItemQty(cartItem.getOrderItemId(), cartItem.getSku(), cartItem.getProposedQty(), this);
+//                updateCartFields();
             }
         }
     }
@@ -679,11 +685,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                 }
                 break;
             case R.id.action_checkout:
-                tag = view.getTag();
-                if (tag instanceof Cart) {
-                } else {
-                    activity.selectOrderCheckout();
-                }
+                activity.selectOrderCheckout();
                 break;
             case R.id.action_android_pay:
                 // TODO Need to implement Android Pay
