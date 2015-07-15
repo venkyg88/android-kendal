@@ -24,6 +24,16 @@ import java.util.ArrayList;
 import app.staples.R;
 import app.staples.mobile.cfa.util.MiscUtils;
 
+/**
+ * <b>XML attributes</b>
+ * android:textStyle
+ * android:textSize
+ * android:textColor
+ * cornerRadius
+ * spacingGap
+ *
+ * String templates use {0} for integer prices and {1} for fractional prices
+ */
 public class IndicatorBlock extends View implements View.OnClickListener {
     private static final String TAG = IndicatorBlock.class.getSimpleName();
 
@@ -58,6 +68,7 @@ public class IndicatorBlock extends View implements View.OnClickListener {
         rect = new RectF();
 
         // Set default values
+        int textStyle = Typeface.NORMAL;
         int textSize = 10;
         int textColor = 0xff000000;
         cornerRadius = 0f;
@@ -69,6 +80,9 @@ public class IndicatorBlock extends View implements View.OnClickListener {
         for(int i=0;i<n;i++) {
             int index = a.getIndex(i);
             switch(index) {
+                case R.styleable.IndicatorBlock_android_textStyle:
+                    textStyle = a.getInt(index, textStyle);
+                    break;
                 case R.styleable.IndicatorBlock_android_textSize:
                     textSize = a.getDimensionPixelSize(index, textSize);
                     break;
@@ -92,7 +106,7 @@ public class IndicatorBlock extends View implements View.OnClickListener {
 
         textPaint = new Paint();
         textPaint.setAntiAlias(true);
-        textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, textStyle));
         textPaint.setTextSize(textSize);
         textPaint.setColor(textColor);
     }
@@ -193,16 +207,15 @@ public class IndicatorBlock extends View implements View.OnClickListener {
         }
     }
 
-    private void rewriteMessages(ViewGroup group, float price) {
-        DecimalFormat format = MiscUtils.getIntegerCurrencyFormat();
+    private void rewriteMessages(ViewGroup group, String arg0, String arg1) {
         int n = group.getChildCount();
         for(int i=0;i<n;i++) {
             View child = group.getChildAt(i);
             if (child instanceof ViewGroup) {
-                rewriteMessages((ViewGroup) child, price);
+                rewriteMessages((ViewGroup) child, arg0, arg1);
             } else if (child instanceof TextView) {
                 String text = ((TextView) child).getText().toString();
-                text = MessageFormat.format(text, format.format(price));
+                text = MessageFormat.format(text, arg0, arg1);
                 ((TextView) child).setText(text);
             }
         }
@@ -220,32 +233,20 @@ public class IndicatorBlock extends View implements View.OnClickListener {
         popup.findViewById(R.id.dismiss).setOnClickListener(this);
         popup.setCanceledOnTouchOutside(true);
 
+        // Add individual items
+        DecimalFormat format0 = MiscUtils.getIntegerCurrencyFormat();
+        DecimalFormat format1 = MiscUtils.getCurrencyFormat();
+        ViewGroup frame = (ViewGroup) popup.findViewById(R.id.frame);
+        LayoutInflater inflater = (LayoutInflater) frame.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for(Indicator item : array) {
             if (item.explainId>0) {
-                DecimalFormat currencyFormat = MiscUtils.getCurrencyFormat();
-                ((TextView)popup.findViewById(R.id.title)).setText(item.text);
-                if(item.text.contains("MINIMUM")) {
-                    ((TextView)popup.findViewById(R.id.description)).setText(String.format(getResources().getString(R.string.indicator_minimum_message),
-                            currencyFormat.format(item.price)));
-                }
-                if(item.text.contains("OVERSIZED")) {
-                    ((TextView)popup.findViewById(R.id.description)).setText(String.format(getResources().getString(R.string.indicator_oversized_message),
-                            currencyFormat.format(item.price)));
-                }
+                ViewGroup child = (ViewGroup) inflater.inflate(item.explainId, frame, false);
+                String arg0 = format0.format(item.price);
+                String arg1 = format1.format(item.price);
+                rewriteMessages(child, arg0, arg1);
+                frame.addView(child);
             }
         }
-
-//        // Add individual items
-//        ViewGroup frame = (ViewGroup) popup.findViewById(R.id.frame);
-//        LayoutInflater inflater = (LayoutInflater) frame.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        for(Indicator item : array) {
-//            if (item.explainId>0) {
-//                ViewGroup child = (ViewGroup) inflater.inflate(item.explainId, frame, false);
-//                child.setPadding(16, 16, 16, 32);
-//                rewriteMessages(child, item.price);
-//                frame.addView(child);
-//            }
-//        }
 
         popup.show();
     }

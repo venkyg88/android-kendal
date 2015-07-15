@@ -75,6 +75,8 @@
     <dimen name="margin_32dp">32dp</dimen>
     <dimen name="fontsize_32sp">32sp</dimen>
 
+    <dimen name="explain_dialog_width">275dp</dimen>
+
     <dimen name="div_line">1px</dimen>
 
     <dimen name="barcode_height">96dp</dimen>

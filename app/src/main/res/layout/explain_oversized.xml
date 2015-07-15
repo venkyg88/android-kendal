@@ -2,9 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="{0} OVERSIZED\nExtra fee of {0} applies"/>
+        android:paddingTop="@dimen/margin_16dp"
+        android:textSize="@dimen/fontsize_16sp"
+        android:textColor="@color/staples_black"
+        android:text="@string/indicator_oversized"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/margin_16dp"
+        android:textSize="@dimen/fontsize_12sp"
+        android:textColor="@color/staples_black"
+        android:text="@string/explain_oversized"/>
 </LinearLayout>

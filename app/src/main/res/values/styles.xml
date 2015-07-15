@@ -183,6 +183,7 @@
         <item name="android:padding">4dp</item>
         <item name="cornerRadius">3dp</item>
         <item name="spacingGap">8dp</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/fontsize_10sp</item>
         <item name="android:textColor">@color/staples_white</item>
     </style>
