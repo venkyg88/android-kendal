@@ -309,4 +309,35 @@
         <item name="android:textColor">@color/staples_black</item>
     </style>
 
+    <style name="AlertDialogStyle">
+        <item name="android:layout_width">275dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+    </style>
+    <style name="AlertTitleStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/fontsize_16sp</item>
+        <item name="android:textColor">@color/staples_black</item>
+    </style>
+    <style name="AlertMessageStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:textSize">@dimen/fontsize_12sp</item>
+        <item name="android:textColor">@color/staples_black</item>
+    </style>
+    <style name="AlertDismissStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_gravity">right</item>
+        <item name="android:textSize">@dimen/fontsize_16sp</item>
+        <item name="android:textColor">@color/staples_blue</item>
+        <item name="android:text">@string/okay_btn</item>
+    </style>
 </resources>

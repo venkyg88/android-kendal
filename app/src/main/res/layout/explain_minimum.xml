@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/margin_16dp"
-        android:textSize="@dimen/fontsize_16sp"
-        android:textColor="@color/staples_black"
+        style="@style/AlertTitleStyle"
+        android:layout_marginTop="@dimen/margin_16dp"
         android:text="@string/indicator_minimum"/>
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/margin_16dp"
-        android:textSize="@dimen/fontsize_12sp"
-        android:textColor="@color/staples_black"
+        style="@style/AlertMessageStyle"
         android:text="@string/explain_minimum"/>
 </LinearLayout>
