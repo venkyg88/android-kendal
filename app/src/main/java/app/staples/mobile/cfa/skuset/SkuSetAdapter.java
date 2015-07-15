@@ -87,7 +87,7 @@ public class SkuSetAdapter extends RecyclerView.Adapter<SkuSetAdapter.ViewHolder
         else picasso.load(item.imageUrl).error(noPhoto).into(vh.image);
         vh.title.setText(item.title);
         if (item.rebatePrice>0.0f) {
-            vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, "*");
+            vh.priceSticker.setPricing(item.finalPrice+item.rebatePrice, item.wasPrice, item.unit, "*");
         } else {
             vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, null);
         }

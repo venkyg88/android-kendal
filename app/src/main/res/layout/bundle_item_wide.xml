@@ -25,23 +25,22 @@
             <app.staples.mobile.cfa.widget.PriceSticker
                 android:id="@+id/pricing"
                 style="@style/SmallPriceSticker"
-                android:layout_marginTop="@dimen/elevation_high"/>
-            <app.staples.mobile.cfa.widget.RatingStars
-                android:id="@+id/rating"
-                style="@style/SmallRatingStars"
-                android:layout_marginTop="@dimen/elevation_high"/>
-            <app.staples.mobile.cfa.widget.IndicatorBlock
-                android:id="@+id/indicators"
-                style="@style/IndicatorBlock"
-                android:layout_marginTop="@dimen/margin_16dp"/>
+                android:layout_marginTop="@dimen/verticalspacing_8dp"/>
             <TextView
                 android:id="@+id/rebate_note"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/elevation_high"
                 android:textSize="@dimen/fontsize_10sp"
                 android:text="@string/rebate_text"
                 android:textColor="@color/staples_dark_gray"/>
+            <app.staples.mobile.cfa.widget.RatingStars
+                android:id="@+id/rating"
+                style="@style/SmallRatingStars"
+                android:layout_marginTop="@dimen/verticalspacing_8dp"/>
+            <app.staples.mobile.cfa.widget.IndicatorBlock
+                android:id="@+id/indicators"
+                style="@style/IndicatorBlock"
+                android:layout_marginTop="@dimen/verticalspacing_8dp"/>
         </LinearLayout>
     </LinearLayout>
     <ImageView
