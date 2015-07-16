@@ -149,7 +149,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.ViewHolder
         vh.title.setText(item.title);
         vh.ratingStars.setRating(item.customerRating, item.customerCount);
         if(item.rebatePrice>0.0f) {
-            vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, "*");
+            vh.priceSticker.setPricing(item.finalPrice+item.rebatePrice, item.wasPrice, item.unit, "*");
             vh.rebateNote.setVisibility(View.VISIBLE);
         } else {
             vh.priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, null);

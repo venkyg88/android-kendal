@@ -660,9 +660,9 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
 
             PriceSticker priceSticker = (PriceSticker) summary.findViewById(R.id.pricing);
             if (item.rebatePrice>0.0f) {
-                priceSticker.setPricing(item.finalPrice + item.rebatePrice, item.wasPrice, item.unit, "*");
+                priceSticker.setPricing(item.finalPrice+item.rebatePrice, item.wasPrice, item.unit, "*");
             } else {
-                priceSticker.setPricing(pricing);
+                priceSticker.setPricing(item.finalPrice, item.wasPrice, item.unit, null);
             }
         }
 

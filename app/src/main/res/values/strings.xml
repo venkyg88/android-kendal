@@ -248,8 +248,8 @@
     <string name="indicator_rebate">{0} REBATE</string>
     <string name="indicator_minimum">{0} MINIMUM</string>
     <string name="indicator_oversized">OVERSIZED</string>
-    <string name="indicator_minimum_message">Ships with any qualifying order over %s</string>
-    <string name="indicator_oversized_message">An additional shipping fee of %s per item will be added to the cart</string>
+    <string name="explain_minimum">Ships with any qualifying order over {1}</string>
+    <string name="explain_oversized">An additional shipping fee of {1} per item will be added to the cart</string>
 
     <!-- Availability -->
     <string name="avail_nothing">Product not found</string>

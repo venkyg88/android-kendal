@@ -14,9 +14,11 @@
     <dimen name="fontsize_30sp">30sp</dimen>   <!--part of style guide-->
     <dimen name="fontsize_34sp">34sp</dimen>   <!--part of style guide-->
 
+    <dimen name="verticalspacing_4dp">4dp</dimen>     <!--part of style guide-->
     <dimen name="verticalspacing_8dp">8dp</dimen>     <!--part of style guide-->
-    <dimen name="verticalspacing_24dp">24dp</dimen>   <!--part of style guide-->
+    <dimen name="verticalspacing_12dp">12dp</dimen>   <!--part of style guide-->
     <dimen name="verticalspacing_16dp">16dp</dimen>   <!--part of style guide-->
+    <dimen name="verticalspacing_24dp">24dp</dimen>   <!--part of style guide-->
     <dimen name="verticalspacing_48dp">48dp</dimen>   <!--part of style guide-->
     <dimen name="verticalspacing_56dp">56dp</dimen>   <!--part of style guide-->
     <dimen name="margin_16dp">16dp</dimen>     <!--part of style guide-->
@@ -74,6 +76,8 @@
     <dimen name="progress_bar_width">36dp</dimen>
     <dimen name="margin_32dp">32dp</dimen>
     <dimen name="fontsize_32sp">32sp</dimen>
+
+    <dimen name="explain_dialog_width">275dp</dimen>
 
     <dimen name="div_line">1px</dimen>
 

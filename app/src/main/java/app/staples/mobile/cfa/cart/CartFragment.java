@@ -1,6 +1,5 @@
 package app.staples.mobile.cfa.cart;
 
-import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.Fragment;
 import android.content.res.Resources;
@@ -11,7 +10,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -64,12 +62,12 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
     private View cartActionLayout;
     private CartAdapter cartAdapter;
     private RecyclerView cartListVw;
-    private LinearLayoutManager cartListLayoutMgr;
     private View couponsRewardsLayout;
     private int greenText;
     private int blackText;
     private int blueText;
     private View actionCheckout;
+    private boolean couponsExpanded;
 
     // cart object - make these static so they're not lost on device rotation
     private static List<CartItem> cartListItems;
@@ -77,8 +75,8 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
 
     private float couponsRewardsAmount;
 
-    CouponWeightAnimator couponUpAnimator;
-    CouponWeightAnimator couponDownAnimator;
+    CouponAnimator couponExpandAnimator;
+    CouponAnimator couponCollapseAnimator;
 //    Animation mathStoryFadeInAnimation;
 //    Animation mathStoryFadeOutAnimation;
 //    FadeInOutListener mathStoryFadeInAnimationListener;
@@ -116,10 +114,11 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
         couponAdapter = new CouponAdapter(this);
         couponListVw.setAdapter(couponAdapter);
         couponListVw.setLayoutManager(new LinearLayoutManager(activity));
+        couponsExpanded = false;
 
         // set up coupons & rewards panel animation
-        couponUpAnimator = new CouponWeightAnimator(true);
-        couponDownAnimator = new CouponWeightAnimator(false);
+        couponExpandAnimator = new CouponAnimator(true);
+        couponCollapseAnimator = new CouponAnimator(false);
 
 //        // set up fade in/out animations
 //        mathStoryFadeInAnimation = AnimationUtils.loadAnimation(activity, R.anim.fade_in);
@@ -139,8 +138,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
             }
         });
         cartListVw = (RecyclerView) view.findViewById(R.id.cart_list);
-        cartListLayoutMgr = new LinearLayoutManager(activity);
-        cartListVw.setLayoutManager(cartListLayoutMgr);
+        cartListVw.setLayoutManager(new LinearLayoutManager(activity));
         cartListVw.setAdapter(cartAdapter);
 //        cartListVw.setOnScrollListener(new RecyclerView.OnScrollListener() {
 //            @Override
@@ -308,10 +306,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
 //        return false;
 //    }
 
-    private boolean couponsExpanded() {
-        return (((LinearLayout.LayoutParams)couponListVw.getLayoutParams()).weight > 0);
-    }
-
     private boolean validateFields(String rewardsNumber, String phoneNumber) {
         if(TextUtils.isEmpty(rewardsNumber) || TextUtils.isEmpty(phoneNumber)) {
             return false;
@@ -325,7 +319,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
         }
         return phoneNumber;
     }
-
 
     /** returns current list of cart items */
     public static List<CartItem> getListItems() {
@@ -442,11 +435,10 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
             DecimalFormat currencyFormat = MiscUtils.getCurrencyFormat();
 
             // set text of coupons
-            boolean couponsShowing = couponsExpanded();
             couponsRewardsValue.setText(currencyFormat.format(couponsRewardsAmount));
-            boolean showCouponsAmount = (couponsRewardsAmount != 0 || couponsShowing);
+            boolean showCouponsAmount = (couponsRewardsAmount != 0 || couponsExpanded);
             couponsRewardsValue.setVisibility(showCouponsAmount ? View.VISIBLE : View.GONE);
-            couponsRewardsLabel.setCompoundDrawablesWithIntrinsicBounds(couponsShowing? R.drawable.ic_remove_green : R.drawable.ic_add_green,0,0,0);
+            couponsRewardsLabel.setCompoundDrawablesWithIntrinsicBounds(couponsExpanded ? R.drawable.ic_remove_green : R.drawable.ic_add_green,0,0,0);
 
             // update coupon list
             List<Reward> profileRewards = ProfileDetails.getAllProfileRewards();
@@ -536,51 +528,46 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
 //        @Override public void onAnimationRepeat(Animation animation) { }
 //    }
 
-    class CouponWeightAnimator {
-        ValueAnimator valueAnimator;
-        float maxWeight = 999;
+    private class CouponAnimator {
+        private ValueAnimator valueAnimator;
 
-        public CouponWeightAnimator(final boolean up) {
-            valueAnimator = ValueAnimator.ofFloat(0, maxWeight);
+        private CouponAnimator(final boolean expand) {
+            valueAnimator = ValueAnimator.ofFloat(0f, 1f);
             valueAnimator.setDuration(500);
-            valueAnimator.setInterpolator(new DecelerateInterpolator() {
-                @Override
-                public float getInterpolation(float input) {
-                    input = super.getInterpolation(input);
-                    // need a weight ratio that corresponds to the animation fraction
-                    // The cart item list has weight=1 so, input = w/(w+1), so w = (input/(1-input))
-                    if (!up) { input = 1 - input; } // if going down reverse it
-                    float weightRatio = 1;
-                    if (input < 1) {
-                        weightRatio = (input / (1 - input)) / maxWeight;
-                    }
-                    return weightRatio;
-                }
-            });
             valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) couponListVw.getLayoutParams();
-                    layoutParams.weight = (float) animation.getAnimatedValue();
+                    LinearLayout.LayoutParams params;
+                    float ratio = animation.getAnimatedFraction();
+                    params = (LinearLayout.LayoutParams) cartListVw.getLayoutParams();
+                    params.weight = !expand ? ratio : (1f-ratio);
+                    params = (LinearLayout.LayoutParams) couponListVw.getLayoutParams();
+                    params.weight = expand ? ratio : (1f-ratio);
+                    cartListVw.requestLayout();
+                    couponListVw.requestLayout();
                 }
             });
-            valueAnimator.addListener(new Animator.AnimatorListener() {
-                @Override public void onAnimationStart(Animator animation) {
-                    // update these at beginning of animation while it's moving fast rather than when it's coasting to a finish at the end
-                    boolean showCouponsAmount = (couponsRewardsAmount != 0 || up);
-                    couponsRewardsValue.setVisibility(showCouponsAmount? View.VISIBLE : View.GONE);
-                    couponsRewardsLabel.setCompoundDrawablesWithIntrinsicBounds(up? R.drawable.ic_remove_green : R.drawable.ic_add_green,0,0,0);
-                }
-                @Override public void onAnimationEnd(Animator animation) { }
-                @Override public void onAnimationCancel(Animator animation) { }
-                @Override public void onAnimationRepeat(Animator animation) { }
-            });
-
         }
 
-        public void start() {
+        private void start() {
             valueAnimator.start();
         }
+    }
+
+    private void toggleCouponLayout() {
+        if (couponsExpanded) {
+            couponCollapseAnimator.start();
+            couponsExpanded = false;
+        } else {
+            couponExpandAnimator.start();
+            couponsExpanded = true;
+            Tracker.getInstance().trackStateForCartCoupons(); // analytics
+        }
+
+        couponsRewardsLabel.setCompoundDrawablesWithIntrinsicBounds(couponsExpanded ? R.drawable.ic_remove_green : R.drawable.ic_add_green,0,0,0);
+
+        boolean showCouponsAmount = (couponsRewardsAmount != 0 || couponsExpanded);
+        couponsRewardsValue.setVisibility(showCouponsAmount ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -609,12 +596,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                 }
                 break;
             case R.id.coupons_rewards_layout:
-                if (!couponsExpanded()) {
-                    couponUpAnimator.start();
-                    Tracker.getInstance().trackStateForCartCoupons(); // analytics
-                } else {
-                    couponDownAnimator.start();
-                }
+                toggleCouponLayout();
                 break;
             case R.id.coupon_add_button:
                 tag = view.getTag();
