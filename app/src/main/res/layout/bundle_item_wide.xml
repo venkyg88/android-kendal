@@ -8,11 +8,14 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="horizontal"
-        android:padding="@dimen/margin_16dp">
+        android:paddingLeft="@dimen/margin_16dp"
+        android:paddingRight="@dimen/margin_16dp"
+        android:paddingTop="@dimen/verticalspacing_12dp">
         <ImageView
             android:id="@+id/image"
             android:layout_width="@dimen/image_square_size"
-            android:layout_height="@dimen/image_square_size"/>
+            android:layout_height="@dimen/image_square_size"
+            android:layout_marginTop="@dimen/verticalspacing_4dp"/>
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -36,7 +39,7 @@
             <app.staples.mobile.cfa.widget.RatingStars
                 android:id="@+id/rating"
                 style="@style/SmallRatingStars"
-                android:layout_marginTop="@dimen/verticalspacing_8dp"/>
+                android:layout_marginTop="@dimen/verticalspacing_4dp"/>
             <app.staples.mobile.cfa.widget.IndicatorBlock
                 android:id="@+id/indicators"
                 style="@style/IndicatorBlock"
