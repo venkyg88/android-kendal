@@ -307,7 +307,7 @@
                 android:textSize="@dimen/fontsize_18sp"
                 android:text="@string/add_to_cart"
                 android:layout_marginLeft="@dimen/margin_16dp"
-                android:background="@drawable/add_to_cart"
+                android:background="@drawable/proceed_button"
                 android:textColor="@color/staples_white"/>
             <TextView
                 android:id="@+id/footer_msg"

@@ -233,7 +233,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                     this.freeShippingMsg.setText(freeShippingMsg);
                     this.freeShippingMsg.setTextColor(blueText);
                     actionCheckout.setEnabled(false);
-                    actionCheckout.setBackgroundColor(getResources().getColor(R.color.staples_dark_gray));
                 }
                 else if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !ProfileDetails.isRewardsMember()) {
                     // need to spend more to qualify for free shipping
@@ -242,7 +241,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                             currencyFormat.format(freeShippingThreshold), currencyFormat.format(freeShippingThreshold - subtotal)));
                     this.freeShippingMsg.setTextColor(greenText);
                     actionCheckout.setEnabled(true);
-                    actionCheckout.setBackgroundColor(getResources().getColor(R.color.staples_red));
                 } else {
                     // qualifies for free shipping
                     String freeShippingMsg = r.getString(R.string.free_shipping_msg2);
@@ -251,7 +249,6 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                         this.freeShippingMsg.setText(freeShippingMsg);
                         this.freeShippingMsg.setTextColor(greenText);
                         actionCheckout.setEnabled(true);
-                        actionCheckout.setBackgroundColor(getResources().getColor(R.color.staples_red));
                     }
                 }
             } else {

@@ -255,7 +255,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/rounded_corner_red"
+            android:background="@drawable/proceed_button"
             android:text="@string/proceed_to_checkout"
             android:textSize="@dimen/fontsize_18sp"
             android:textColor="@color/staples_white"/>
@@ -265,7 +265,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_marginLeft="@dimen/margin_16dp"
-            android:background="@drawable/rounded_corner_red"
+            android:background="@drawable/proceed_button"
             android:text="@string/pay_with_android"
             android:textSize="@dimen/fontsize_18sp"
             android:textColor="@color/staples_white"
