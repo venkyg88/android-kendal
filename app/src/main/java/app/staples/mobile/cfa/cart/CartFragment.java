@@ -48,7 +48,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
     private MainActivity activity;
 
     private TextView cartSubtotal;
-    private View freeShippingLayout;
+//    private View freeShippingLayout;
     private TextView freeShippingMsg;
     private TextView heavyweightShipping;
     private TextView heavyweightShippingLabel;
@@ -91,7 +91,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
         View view = inflater.inflate(R.layout.cart_fragment, container, false);
 
         emptyCartLayout = view.findViewById(R.id.empty_cart_layout);
-        freeShippingLayout = view.findViewById(R.id.free_shipping_layout);
+//        freeShippingLayout = view.findViewById(R.id.free_shipping_layout);
         freeShippingMsg = (TextView) view.findViewById(R.id.free_shipping_msg);
         couponsRewardsLayout = view.findViewById(R.id.coupons_rewards_layout);
         couponsRewardsLabel = (TextView) view.findViewById(R.id.coupons_rewards_label);
@@ -229,14 +229,14 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                     // minimum $25 total
                     String freeShippingMsg = String.format(r.getString(R.string.minimum_shipping_msg),
                             currencyFormat.format(cart.getAmountToReachToCheckoutAddOnItems()));
-                    this.freeShippingLayout.setVisibility(View.VISIBLE);
+                    this.freeShippingMsg.setVisibility(View.VISIBLE);
                     this.freeShippingMsg.setText(freeShippingMsg);
                     this.freeShippingMsg.setTextColor(blueText);
                     actionCheckout.setEnabled(false);
                 }
                 else if (freeShippingThreshold > subtotal && !"Free".equals(shipping) && !ProfileDetails.isRewardsMember()) {
                     // need to spend more to qualify for free shipping
-                    freeShippingLayout.setVisibility(View.VISIBLE);
+                    freeShippingMsg.setVisibility(View.VISIBLE);
                     freeShippingMsg.setText(String.format(r.getString(R.string.free_shipping_msg1),
                             currencyFormat.format(freeShippingThreshold), currencyFormat.format(freeShippingThreshold - subtotal)));
                     this.freeShippingMsg.setTextColor(greenText);
@@ -245,14 +245,14 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                     // qualifies for free shipping
                     String freeShippingMsg = r.getString(R.string.free_shipping_msg2);
                     if (!freeShippingMsg.equals(this.freeShippingMsg.getText().toString())) {
-                        this.freeShippingLayout.setVisibility(View.VISIBLE);
+                        this.freeShippingMsg.setVisibility(View.VISIBLE);
                         this.freeShippingMsg.setText(freeShippingMsg);
                         this.freeShippingMsg.setTextColor(greenText);
                         actionCheckout.setEnabled(true);
                     }
                 }
             } else {
-                freeShippingLayout.setVisibility(View.GONE);
+                freeShippingMsg.setVisibility(View.GONE);
             }
 
             // set text of shipping, and subtotal
@@ -266,7 +266,7 @@ public class CartFragment extends Fragment implements View.OnClickListener, Quan
                 // additional shipping fee
                 String freeShippingMsg = String.format(r.getString(R.string.oversized_shipping_msg),
                         currencyFormat.format(totalHandlingCost));
-                this.freeShippingLayout.setVisibility(View.VISIBLE);
+                this.freeShippingMsg.setVisibility(View.VISIBLE);
                 this.freeShippingMsg.setText(freeShippingMsg);
                 this.freeShippingMsg.setTextColor(blueText);
             } else {

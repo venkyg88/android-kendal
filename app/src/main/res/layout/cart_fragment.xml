@@ -11,18 +11,18 @@
     android:background="@color/staples_off_white"
     android:orientation="vertical">
 
-    <!--free shipping message-->
-    <android.support.v7.widget.CardView
-        android:id="@+id/free_shipping_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="@dimen/verticalspacing_8dp"
-        android:layout_marginBottom="0dp"
-        card_view:cardCornerRadius="2dp"
-        card_view:cardElevation="2dp"
-        android:background="@color/staples_light_gray">
+    <!--&lt;!&ndash;free shipping message&ndash;&gt;-->
+    <!--<android.support.v7.widget.CardView-->
+        <!--android:id="@+id/free_shipping_layout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginLeft="8dp"-->
+        <!--android:layout_marginRight="8dp"-->
+        <!--android:layout_marginTop="@dimen/verticalspacing_8dp"-->
+        <!--android:layout_marginBottom="0dp"-->
+        <!--card_view:cardCornerRadius="2dp"-->
+        <!--card_view:cardElevation="2dp"-->
+        <!--android:background="@color/staples_light_gray">-->
         <TextView
             android:id="@+id/free_shipping_msg"
             android:layout_width="match_parent"
@@ -31,7 +31,7 @@
             android:padding="@dimen/action_bar_half_margin"
             android:textColor="@color/staples_green"
             android:textSize="@dimen/fontsize_14sp"/>
-    </android.support.v7.widget.CardView>
+    <!--</android.support.v7.widget.CardView>-->
 
     <!--empty cart messages-->
     <LinearLayout
