@@ -42,6 +42,7 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
     private static final String TAG = WeeklyAdByCategoryFragment.class.getSimpleName();
 
     private static final String ARG_STORENO = "storeNo";
+    private static final String ARG_STOREID = "storeId";
 
     private static final String DEFAULT_STORE_NO = "0349";
 
@@ -55,9 +56,10 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
     private WeeklyAdByCategoryAdapter adapter;
     private List<Data> weeklyAdItems;
 
-    public void setArguments(String storeNo /*, String city, String address*/) {
+    public void setArguments(String storeNo, String storeId /*, String city, String address*/) {
         Bundle args = new Bundle();
         args.putString(ARG_STORENO, storeNo);
+        args.putString(ARG_STOREID, storeId);
         setArguments(args);
     }
 
@@ -69,6 +71,7 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
         Bundle args = getArguments();
         if (args != null) {  // note that there will likely be a title arg even when no storeNo, so storeNo may still be null when args is not
             storeNo = args.getString(ARG_STORENO);
+            storeId = args.getString(ARG_STOREID);
         }
 
         View view = inflater.inflate(R.layout.weekly_ad_category, container, false);
@@ -85,22 +88,25 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
 
         view.findViewById(R.id.change_store).setOnClickListener(this);
 
-        // if store info avail
-        if (!TextUtils.isEmpty(storeNo)) {
-            getWeeklyAdStoreAndData();
-        } else {
-            // otherwise get store info from postal code
-            LocationFinder finder = LocationFinder.getInstance(activity);
-            String postalCode = finder.getPostalCode();
-            if (!TextUtils.isEmpty(postalCode)) {
-                activity.showProgressIndicator();
-                Access.getInstance().getChannelApi(false).storeLocations(postalCode, new StoreInfoCallback());
-            } else {
-                storeNo = DEFAULT_STORE_NO;
+        if(!TextUtils.isEmpty(storeId)){
+            getWeeklyAdData();
+        } else{
+            // if store info avail
+            if (!TextUtils.isEmpty(storeNo)) {
                 getWeeklyAdStoreAndData();
+            } else {
+                // otherwise get store info from postal code
+                LocationFinder finder = LocationFinder.getInstance(activity);
+                String postalCode = finder.getPostalCode();
+                if (!TextUtils.isEmpty(postalCode)) {
+                    activity.showProgressIndicator();
+                    Access.getInstance().getChannelApi(false).storeLocations(postalCode, new StoreInfoCallback());
+                } else {
+                    storeNo = DEFAULT_STORE_NO;
+                    getWeeklyAdStoreAndData();
+                }
             }
         }
-
         return view;
     }
 

@@ -631,7 +631,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
                 if (obj instanceof StoreItem) {
                     StoreItem storeItem = (StoreItem) obj;
                     Tracker.getInstance().trackActionForStoreLocatorWeeklyAd(storeItem.storeNumber);
-                    ((MainActivity)getActivity()).selectWeeklyAd(storeItem.storeNumber);
+                    ((MainActivity)getActivity()).selectWeeklyAd(storeItem.storeNumber, null);
                 }
                 break;
             case R.id.directions:

@@ -49,6 +49,27 @@
                 <action android:name="app.staples.mobile.cfa.OPEN_SEARCH"/>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+
+            <!-- deep linking for mobile and weeklyad-->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="http" android:host="m.staples.com" android:pathPattern="/.*/product.*"/>
+            </intent-filter>
+            <intent-filter>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="http" android:host="m.staples.com" android:pathPattern="/.*/cat.*"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="http" android:host="weeklyad.staples.com" android:pathPrefix="/StaplesSD"/>
+            </intent-filter>
+
         </activity>
         <activity android:name="com.apptentive.android.sdk.ViewActivity"
                   android:theme="@style/Apptentive.Theme.Transparent"/>
