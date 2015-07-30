@@ -139,6 +139,7 @@ public class MainActivity extends Activity
     private static final int MATCH_CATEGORY = 3;
     private static final int MATCH_SEARCH   = 4;
     private static final int MATCH_PRODUCT  = 5;
+    private static final int MATCH_LANDING  = 6;
     private static final int MATCH_WEEKLYAD = 7;
 
     static {
@@ -147,6 +148,8 @@ public class MainActivity extends Activity
         uriMatcher.addURI(AUTHORITY, "cfa/sku/*",      MATCH_SKU);
         uriMatcher.addURI(AUTHORITY, "cfa/category/*", MATCH_CATEGORY);
         uriMatcher.addURI(AUTHORITY, "cfa/search/*",   MATCH_SEARCH);
+
+        uriMatcher.addURI(AUTHORITY, "/",  MATCH_LANDING);
         uriMatcher.addURI(MOBILE_AUTHORITY, "*/*", MATCH_PRODUCT);
         uriMatcher.addURI(WEEKLYAD_AUTHORITY, "/StaplesSD/*",     MATCH_WEEKLYAD);
     }
@@ -255,6 +258,9 @@ public class MainActivity extends Activity
                     String bundleId = result.substring(result.lastIndexOf("_")+1);
                     selectBundle("Category", bundleId);
                 }
+                return(true);
+            case MATCH_LANDING:
+                selectDrawerItem(homeDrawerItem, Transition.NONE);
                 return(true);
             case MATCH_WEEKLYAD:
                 String storeId = uri.getQueryParameter("storeid");
