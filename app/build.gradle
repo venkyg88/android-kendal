@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 apply from: 'build-version.gradle'
 
-
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.0"
@@ -9,8 +8,7 @@ android {
     defaultConfig {
         applicationId 'app.staples'
         versionCode calculateVersionCode()
-        versionName calculateVersionName()+"-"+getKickoff()+"-"+getEnv()
-        println "***** INFO   code"+defaultConfig.versionCode + "     name: "+ versionName
+        ext.kickoff = getKickoff()
     }
 
     signingConfigs {
@@ -24,7 +22,7 @@ android {
 
     productFlavors {
         dev {
-            versionName   calculateVersionName()+"-"+getKickoff()+"-"+getEnv()
+            versionName calculateVersionName()+"-"+defaultConfig.ext.kickoff+"-"+getEnv()
             buildTypes {
                 debug {
                     minifyEnabled false
@@ -32,7 +30,7 @@ android {
             }
         }
         qa {
-            versionName   calculateVersionName()+"-"+getKickoff()+"-"+"qa"
+            versionName calculateVersionName()+"-"+defaultConfig.ext.kickoff+"-"+"qa"
             buildTypes {
                 debug {
                     minifyEnabled false
@@ -41,7 +39,7 @@ android {
         }
         preprod {
             buildTypes {
-                versionName   calculateVersionName()+"-"+getKickoff()+"-"+"preprod"
+                versionName calculateVersionName()+"-"+defaultConfig.ext.kickoff+"-"+"preprod"
                 debug {
                     minifyEnabled false
                 }
@@ -49,14 +47,12 @@ android {
         }
         prod {
             buildTypes {
-                //versionName   calculateVersionName()+"-"+getKickoff()
-                versionName   calculateVersionName()
+                versionName calculateVersionName()
                 debug {
                     minifyEnabled false
                 }
                 release {
                     minifyEnabled true
-                    //shrinkResources true
                     proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
                     signingConfig signingConfigs.release
                 }
@@ -102,7 +98,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-wallet:7.5.0'
     compile 'com.crittercism:crittercism-android-agent:5.0.4'
     compile 'com.apptentive:apptentive-android:1.7.3@aar'
-    compile(name: 'urbanairship-lib-5.1.5', ext: 'aar')
 
     testCompile 'org.hamcrest:hamcrest-integration:1.1'
     testCompile 'org.hamcrest:hamcrest-core:1.1'

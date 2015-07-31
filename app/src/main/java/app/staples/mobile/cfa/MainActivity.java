@@ -38,11 +38,8 @@ import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
 import com.staples.mobile.common.analytics.Tracker;
-import com.urbanairship.UAirship;
-import com.urbanairship.push.PushManager;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import app.staples.R;
 import app.staples.mobile.cfa.UpgradeManager.UPGRADE_STATUS;
@@ -59,7 +56,6 @@ import app.staples.mobile.cfa.kount.KountManager;
 import app.staples.mobile.cfa.location.LocationFinder;
 import app.staples.mobile.cfa.login.LoginFragment;
 import app.staples.mobile.cfa.login.LoginHelper;
-import app.staples.mobile.cfa.notify.NotifyReceiver;
 import app.staples.mobile.cfa.profile.AddressFragment;
 import app.staples.mobile.cfa.profile.AddressListFragment;
 import app.staples.mobile.cfa.profile.CreditCardFragment;
@@ -82,7 +78,7 @@ import retrofit.client.Response;
 
 public class MainActivity extends Activity
                           implements View.OnClickListener, AdapterView.OnItemClickListener,
-        LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback, UAirship.OnReadyCallback {
+        LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final boolean LOGGING = false;
 
@@ -194,18 +190,7 @@ public class MainActivity extends Activity
         Config.setContext(this);
         Tracker.getInstance().initialize(Tracker.AppType.CFA);
 
-
-        // Support for Urban Airship
-//        AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(this); TODO Enable Urban Airship when we're ready
-//        UAirship.takeOff(getApplication(), options, this);
-
         networkConnectivityBroadCastReceiver = new NetworkConnectivityBroadCastReceiver();
-    }
-
-    public void onAirshipReady(UAirship airship) {
-        PushManager manager = airship.getPushManager();
-        manager.setNotificationFactory(new NotifyReceiver.CustomNotificationFactory(this));
-        manager.setUserNotificationsEnabled(true);
     }
 
     // Intent handling for notifications & deep links
