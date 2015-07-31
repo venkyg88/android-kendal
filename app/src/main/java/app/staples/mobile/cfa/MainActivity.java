@@ -130,12 +130,17 @@ public class MainActivity extends Activity
 
     public static final String SCHEME    = "http";
     public static final String AUTHORITY = "staples.com";
+    public static final String MOBILE_AUTHORITY = "m.staples.com";
+    public static final String WEEKLYAD_AUTHORITY = "weeklyad.staples.com";
 
     private static final UriMatcher uriMatcher;
     private static final int MATCH_HOME     = 1;
     private static final int MATCH_SKU      = 2;
     private static final int MATCH_CATEGORY = 3;
     private static final int MATCH_SEARCH   = 4;
+    private static final int MATCH_PRODUCT  = 5;
+    private static final int MATCH_LANDING  = 6;
+    private static final int MATCH_WEEKLYAD = 7;
 
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -143,6 +148,10 @@ public class MainActivity extends Activity
         uriMatcher.addURI(AUTHORITY, "cfa/sku/*",      MATCH_SKU);
         uriMatcher.addURI(AUTHORITY, "cfa/category/*", MATCH_CATEGORY);
         uriMatcher.addURI(AUTHORITY, "cfa/search/*",   MATCH_SEARCH);
+
+        uriMatcher.addURI(AUTHORITY, "/",  MATCH_LANDING);
+        uriMatcher.addURI(MOBILE_AUTHORITY, "*/*", MATCH_PRODUCT);
+        uriMatcher.addURI(WEEKLYAD_AUTHORITY, "/StaplesSD/*",     MATCH_WEEKLYAD);
     }
 
     private DrawerLayout drawerLayout;
@@ -238,6 +247,26 @@ public class MainActivity extends Activity
             case MATCH_SEARCH:
                 String keyword = uri.getPathSegments().get(2);
                 selectSearch("Search", keyword);
+                return(true);
+            case MATCH_PRODUCT:
+                String result = uri.getLastPathSegment();
+                if(result.contains("product")) {
+                    String productId = result.substring(result.lastIndexOf("_")+1);
+                    selectSkuItem("Product item", productId, false);
+                }
+                if(result.contains("cat")) {
+                    String bundleId = result.substring(result.lastIndexOf("_")+1);
+                    selectBundle("Category", bundleId);
+                }
+                return(true);
+            case MATCH_LANDING:
+                selectDrawerItem(homeDrawerItem, Transition.NONE);
+                return(true);
+            case MATCH_WEEKLYAD:
+                String storeId = uri.getQueryParameter("storeid");
+                if(storeId != null) {
+                    selectWeeklyAd(null, storeId);
+                }
                 return(true);
         }
         return(false);
@@ -932,12 +961,12 @@ public class MainActivity extends Activity
         return(selectFragment(DrawerItem.SKU, fragment, Transition.RIGHT));
     }
 
-    public boolean selectWeeklyAd(String storeNo) {
+    public boolean selectWeeklyAd(String storeNo, String storeId) {
         Crittercism.leaveBreadcrumb("MainActivity:selectWeeklyAd(): Selecting a weekly ad with store number."
-            + " storeNo[" + storeNo + "]"
+                        + " storeNo[" + storeNo + "]"
         );
         WeeklyAdByCategoryFragment fragment = new WeeklyAdByCategoryFragment();
-        fragment.setArguments(storeNo);
+        fragment.setArguments(storeNo, storeId);
         return(selectFragment(DrawerItem.WEEKLY, fragment, Transition.RIGHT));
     }
 
