@@ -2,12 +2,10 @@ package app.staples.mobile.cfa.login;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
-import app.staples.mobile.cfa.MainActivity;
-import com.staples.mobile.common.analytics.Tracker;
-import app.staples.mobile.cfa.profile.ProfileDetails;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
@@ -16,11 +14,13 @@ import com.staples.mobile.common.access.easyopen.model.login.RegisteredUserLogin
 import com.staples.mobile.common.access.easyopen.model.login.TokenObject;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
-import com.staples.mobile.common.device.DeviceInfo;
+import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.List;
 import java.util.Vector;
 
+import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.profile.ProfileDetails;
 import retrofit.Callback;
 import retrofit.ResponseCallback;
 import retrofit.RetrofitError;
@@ -393,13 +393,12 @@ public class LoginHelper {
     }
 
     private String getEncryptionKey() {
-        DeviceInfo deviceInfo = new DeviceInfo(activity.getResources());
-        StringBuilder b = new StringBuilder();
-        b.append(deviceInfo.getBrand())
-            .append(deviceInfo.getDevice())
-            .append(deviceInfo.getModel())
-            .append(deviceInfo.getSerialNumber())
-            .append(activity.getApplication().getPackageName());
-        return b.toString();
+        StringBuilder sb = new StringBuilder();
+        sb.append(Build.BRAND);
+        sb.append(Build.DEVICE);
+        sb.append(Build.MODEL);
+        sb.append(Build.SERIAL);
+        sb.append(activity.getApplication().getPackageName());
+        return sb.toString();
     }
 }
