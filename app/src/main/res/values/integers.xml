@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="screenOrientation">7</integer><!-- sensorPortrait -->
+    <integer name="fragmentTransitionTime">400</integer>
 </resources>

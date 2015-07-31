@@ -6,5 +6,5 @@
         android:valueFrom="-1"
         android:valueTo="0"
         android:interpolator="@android:anim/decelerate_interpolator"
-        android:duration="@android:integer/config_mediumAnimTime"/>
+        android:duration="@integer/fragmentTransitionTime"/>
 </set>
