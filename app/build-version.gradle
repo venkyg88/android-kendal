@@ -18,18 +18,18 @@ ext {
         def vCode = (10000000*major) + (100000*minor) + (10000*patch) + build as int
         return vCode
     }
+    
     getKickoff = {
-        println "kickoff:" +System.env.kickoff
-        java.text.SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        //get current date time with Date()
-        Date date = new Date();
-        String now = dateFormat.format(date);
-        return ( System.env.kickoff == null ) ? now  : System.env.kickoff
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        String now = dateFormat.format(System.currentTimeMillis());
+        println("Kickoff: "+now);
+	    return(now);
     }
+
     getEnv =  {
         if (System.env.environment == null) {
-            return "developer_" + System.getenv("USER");
-        }else {}
+            return System.getenv("USER");
+        } else {}
        return System.env.environment;
     }
 }
@@ -53,5 +53,3 @@ Properties readVersion() {
     if(!version['build']) version['build'] = "0"
     return version
 }
-
-

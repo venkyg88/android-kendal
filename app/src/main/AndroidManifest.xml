@@ -5,23 +5,18 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <!-- This is will enhance the device ID for Kount -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
-    <!-- For Urban Airship TODO Enable Urban Airship when we're ready
-    <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <permission android:name="${applicationId}.permission.UA_DATA" android:protectionLevel="signature" />
-    <uses-permission android:name="${applicationId}.permission.UA_DATA" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
-    <permission android:name="${applicationId}.permission.C2D_MESSAGE" android:protectionLevel="signature"/>
-    <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE"/>
-    TODO End of Urban Airship comment -->
-    <supports-screens android:largeScreens="true"
-                      android:normalScreens="true"
-                      android:smallScreens="true"
-                      android:anyDensity="true"/>
+    <permission android:name="app.staples.gcm.permission.C2D_MESSAGE" android:protectionLevel="signature"/>
+    <uses-permission android:name="app.staples.gcm.permission.C2D_MESSAGE"/>
+    <supports-screens
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true"
+        android:anyDensity="true"/>
     <application
         android:allowBackup="true"
         android:label="@string/app_name"
@@ -37,92 +32,43 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- Deep linking using CFA schema -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="http" android:host="staples.com" android:pathPrefix="/cfa"/>
             </intent-filter>
-            <intent-filter>
-                <action android:name="app.staples.mobile.cfa.OPEN_SKU"/>
-                <action android:name="app.staples.mobile.cfa.OPEN_CATEGORY"/>
-                <action android:name="app.staples.mobile.cfa.OPEN_SEARCH"/>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-
-            <!-- deep linking for mobile and weeklyad-->
+            <!-- Deep linking for mobile and weeklyad -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="http" android:host="m.staples.com" android:pathPrefix="/"/>
                 <data android:scheme="http" android:host="m.staples.com" android:pathPattern="/.*/product.*"/>
-                <data android:scheme="http" android:host="m.staples.com" android:pathPattern="/.*/cat_BI.+"/>
-                <data android:scheme="http" android:host="m.staples.com" android:pathPattern="/.*/cat_CL.+"/>
+                <data android:scheme="http" android:host="m.staples.com" android:pathPattern="/.*/cat_BI.*"/>
+                <data android:scheme="http" android:host="m.staples.com" android:pathPattern="/.*/cat_CL.*"/>
                 <data android:scheme="http" android:host="weeklyad.staples.com" android:pathPrefix="/StaplesSD"/>
             </intent-filter>
-            <!-- **********************************************-->
-
         </activity>
         <activity android:name="com.apptentive.android.sdk.ViewActivity"
                   android:theme="@style/Apptentive.Theme.Transparent"/>
-        <!-- Support for Adobe Omniture Analytic -->
-        <receiver android:name="app.staples.mobile.cfa.analytics.GPBroadcastReceiver" android:exported="true">
-            <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER" />
-            </intent-filter>
-        </receiver>
-        <!-- Support for Urban Airship TODO Enable Urban Airship when we're ready
-        <receiver android:name=".notify.NotifyReceiver"
-                  android:exported="false">
-            <intent-filter>
-                <action android:name="com.urbanairship.push.CHANNEL_UPDATED"/>
-                <action android:name="com.urbanairship.push.OPENED"/>
-                <action android:name="com.urbanairship.push.RECEIVED"/>
-                <category android:name="${applicationId}"/>
-            </intent-filter>
-        </receiver>
-        <activity android:name="com.urbanairship.CoreActivity"/>
-        <activity android:name="com.urbanairship.actions.ActionActivity"/>
-        <activity
-            android:name="com.urbanairship.actions.LandingPageActivity"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.urbanairship.actions.SHOW_LANDING_PAGE_INTENT_ACTION" />
-                <data android:scheme="http"/>
-                <data android:scheme="https"/>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-		<activity android:name="com.apptentive.android.sdk.ViewActivity" android:theme="@style/Apptentive.Theme.Transparent"/>
-        <receiver android:name="com.urbanairship.CoreReceiver"
-                  android:exported="false">
-            <intent-filter android:priority="-999">
-                <action android:name="com.urbanairship.push.OPENED"/>
-                <category android:name="${applicationId}"/>
-            </intent-filter>
-        </receiver>
+        <!-- Support for Leanplum -->
         <receiver
-            android:name="com.urbanairship.push.GCMPushReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
+            android:name="com.leanplum.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
-                <category android:name="${applicationId}"/>
+                <category android:name="app.staples.gcm"/>
             </intent-filter>
         </receiver>
-        <service android:name="com.urbanairship.push.PushService" android:label="Push Notification Service"/>
-        <service android:name="com.urbanairship.richpush.RichPushUpdateService" android:label="Rich Push Update Service"/>
-        <service android:name="com.urbanairship.actions.ActionService" android:label="Action Service"/>
-        <service android:name="com.urbanairship.analytics.EventService" android:label="Event Service"/>
-        <service android:name="com.urbanairship.location.LocationService" android:label="Segments Service"/>
-        <provider
-            android:name="com.urbanairship.UrbanAirshipProvider"
-            android:authorities="${applicationId}.urbanairship.provider"
-            android:permission="${applicationId}.permission.UA_DATA"
-            android:exported="true"
-            android:multiprocess="true"/>
-        TODO End of Urban Airship comment -->
+        <service android:name="com.leanplum.LeanplumPushService"/>
+        <!-- Support for Adobe Omniture Analytic -->
+        <receiver android:name="app.staples.mobile.cfa.analytics.GPBroadcastReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER"/>
+            </intent-filter>
+        </receiver>
         <!-- Support for Google Play Services -->
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
         <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBeINK9pcpeVzrzHp9dxprm5XwuvXeCV9g"/>

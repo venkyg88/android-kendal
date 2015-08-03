@@ -12,8 +12,6 @@ import android.widget.EditText;
 
 import com.crittercism.app.Crittercism;
 import com.staples.mobile.common.analytics.Tracker;
-import com.urbanairship.UAirship;
-import com.urbanairship.push.PushManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,7 +38,6 @@ public class NotifyPrefsFragment extends Fragment implements CompoundButton.OnCh
         // TODO Hardwired tags should come from MVS
         adapter.addTagItem("promotions", "Promotions");
 
-        getTags();
         adapter.setOnCheckedChangedListener(this);
 
         return (view);
@@ -53,35 +50,12 @@ public class NotifyPrefsFragment extends Fragment implements CompoundButton.OnCh
         Tracker.getInstance().trackStateForNotifPreferences(); // analytics
     }
 
-    private void getTags() {
-        PushManager manager = UAirship.shared().getPushManager();
-        Set<String> set = manager.getTags();
-        int n = adapter.getItemCount();
-        for(int i = 0; i < n; i++) {
-            TagItemAdapter.Item item = adapter.getItem(i);
-            item.enable = (set.contains(item.tag));
-        }
-    }
-
-    private void setTags() {
-        HashSet<String> tags = new HashSet<String>();
-        int n = adapter.getItemCount();
-        for(int i = 0; i < n; i++) {
-            TagItemAdapter.Item item = adapter.getItem(i);
-            if (item.enable) tags.add(item.tag);
-        }
-        PushManager manager = UAirship.shared().getPushManager();
-        manager.setTags(tags);
-    }
-
     @Override
     public void onCheckedChanged(CompoundButton button, boolean isChecked) {
         Object obj = button.getTag();
         if (obj instanceof TagItemAdapter.Item) {
             TagItemAdapter.Item item = (TagItemAdapter.Item) obj;
             item.enable = isChecked;
-
-            setTags();
         }
     }
 }
