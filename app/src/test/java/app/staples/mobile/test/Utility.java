@@ -61,8 +61,8 @@ public class Utility {
                 Thread.sleep(1000);
             } catch(Exception e) {
             }
-            Robolectric.flushBackgroundScheduler();
-            Robolectric.flushForegroundScheduler();
+            Robolectric.flushBackgroundThreadScheduler();
+            Robolectric.flushForegroundThreadScheduler();
         }
         if (i<0) Assert.fail("Timeout waiting for MCS");
 
@@ -70,8 +70,8 @@ public class Utility {
         try {
             Thread.sleep(5000);
         } catch(Exception e) {}
-        Robolectric.flushBackgroundScheduler();
-        Robolectric.flushForegroundScheduler();
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
     }
 
     public static void tearDown() {

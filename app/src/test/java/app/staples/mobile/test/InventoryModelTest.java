@@ -19,7 +19,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 @RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class, emulateSdk = 21, qualifiers = "port")
+@Config(constants = BuildConfig.class, sdk = 21, qualifiers = "port")
 public class InventoryModelTest {
     private EasyOpenApi easyOpenApi;
     private boolean success;
@@ -61,8 +61,8 @@ public class InventoryModelTest {
         );
 
         Thread.sleep(10000);
-        Robolectric.flushBackgroundScheduler();
-        Robolectric.flushForegroundScheduler();
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
 
         Assert.assertFalse("Model creation should not have failed", failure);
         Assert.assertTrue("Model creation should have succeeded", success);
@@ -90,8 +90,8 @@ public class InventoryModelTest {
         });
 
         Thread.sleep(5000);
-        Robolectric.flushBackgroundScheduler();
-        Robolectric.flushForegroundScheduler();
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
 
         Assert.assertFalse("Model creation should not have failed", failure);
         Assert.assertTrue("Model creation should have succeeded", success);

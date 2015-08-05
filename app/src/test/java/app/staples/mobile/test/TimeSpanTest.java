@@ -15,7 +15,7 @@ import app.staples.BuildConfig;
 import app.staples.mobile.cfa.store.TimeSpan;
 
 @RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class, emulateSdk = 21, qualifiers = "port")
+@Config(constants = BuildConfig.class, sdk = 21, qualifiers = "port")
 public class TimeSpanTest {
     private static final int ONEWEEK = 7*24*60*60*1000;
     private static final int ONEDAY = 24*60*60*1000;

@@ -28,7 +28,7 @@ import retrofit.client.Response;
 
 //These are tested against LIVE sapi calls
 @RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class, emulateSdk = 21, qualifiers = "port")
+@Config(constants = BuildConfig.class, sdk = 21, qualifiers = "port")
 public class CartModelTest {
     private EasyOpenApi easyOpenApi;
     private boolean success;
@@ -80,8 +80,8 @@ public class CartModelTest {
                 });
 
         Thread.sleep(10000);
-        Robolectric.flushBackgroundScheduler();
-        Robolectric.flushForegroundScheduler();
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
 
         Assert.assertFalse("Api call should not have failed", failure);
         Assert.assertTrue("Api call should have succeeded", success);
@@ -117,8 +117,8 @@ public class CartModelTest {
                 });
 
         Thread.sleep(10000);
-        Robolectric.flushBackgroundScheduler();
-        Robolectric.flushForegroundScheduler();
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
 
         Assert.assertFalse("Api call should not have failed", failure);
         Assert.assertTrue("Api call should have succeeded", success);
