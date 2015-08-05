@@ -17,7 +17,7 @@ import app.staples.BuildConfig;
 import app.staples.mobile.cfa.MainActivity;
 
 @RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class, emulateSdk = 21, qualifiers = "port")
+@Config(constants = BuildConfig.class, sdk = 21, qualifiers = "port")
 public class IntentTest {
     private static final String TAG = IntentTest.class.getSimpleName();
 
@@ -32,10 +32,10 @@ public class IntentTest {
     }
 
     private Example[] examples = {
-        new Example("http://staples.com/cfa/sku/1234555",     "MATCH_SKU"),
-        new Example("http://staples.com/cfa/sku/1234555/",    "MATCH_SKU"),
-        new Example("http://staples.com/cfa/sku/1234555/cow", null),
-        new Example("foo://bogus",                            null)
+        new Example("http://staples.com/cfa/sku/123455",     "MATCH_SKU"),
+        new Example("http://staples.com/cfa/sku/123455/",    "MATCH_SKU"),
+        new Example("http://staples.com/cfa/sku/123455/cow", null),
+        new Example("foo://bogus",                           null)
     };
 
     @Before
@@ -78,7 +78,6 @@ public class IntentTest {
     @Test
     public void testIntents() {
         UriMatcher uriMatcher = getUriMatcher();
-
         for (Example example : examples) {
             Uri uri = Uri.parse(example.input);
             int expected = getConstant(example.result);

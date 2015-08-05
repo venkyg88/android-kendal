@@ -15,7 +15,7 @@ import app.staples.R;
 import app.staples.mobile.cfa.DrawerAdapter;
 
 @RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class, emulateSdk = 21, qualifiers = "land")
+@Config(constants = BuildConfig.class, sdk = 21, qualifiers = "land")
 public class LandscapeActivityTest {
     private static final String TAG = LandscapeActivityTest.class.getSimpleName();
 
