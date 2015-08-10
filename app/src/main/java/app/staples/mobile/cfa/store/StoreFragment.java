@@ -294,6 +294,7 @@ public class StoreFragment extends Fragment implements Callback<StoreQuery>,
     public void onPlaceFieldDone(PlaceFieldView.Place place) {
         // Hide keyboard
         MainActivity activity = (MainActivity) getActivity();
+        if (activity==null) return;
         activity.hideSoftKeyboard();
 
         // Get, then clear control

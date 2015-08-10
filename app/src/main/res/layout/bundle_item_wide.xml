@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/fontsize_10sp"
-                android:text="@string/rebate_text"
+                android:text="@string/rebate_note"
                 android:textColor="@color/staples_dark_gray"/>
             <app.staples.mobile.cfa.widget.RatingStars
                 android:id="@+id/rating"

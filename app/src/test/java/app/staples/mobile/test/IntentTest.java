@@ -32,10 +32,38 @@ public class IntentTest {
     }
 
     private Example[] examples = {
-        new Example("http://staples.com/cfa/sku/123455",     "MATCH_SKU"),
-        new Example("http://staples.com/cfa/sku/123455/",    "MATCH_SKU"),
-        new Example("http://staples.com/cfa/sku/123455/cow", null),
-        new Example("foo://bogus",                           null)
+        // CFA scheme
+        new Example("http://staples.com",                                             null),
+        new Example("http://staples.com/",                                            null),
+        new Example("http://staples.com/cfa",                                         null),
+        new Example("http://staples.com/cfa/",                                        null),
+        new Example("http://staples.com/cfa/home",                                    "MATCH_CFA_HOME"),
+        new Example("http://staples.com/cfa/home/",                                   "MATCH_CFA_HOME"),
+        new Example("http://staples.com/cfa/home/cow",                                null),
+        new Example("http://staples.com/cfa/sku",                                     null),
+        new Example("http://staples.com/cfa/sku/",                                    null),
+        new Example("http://staples.com/cfa/sku/123455",                              "MATCH_CFA_SKU"),
+        new Example("http://staples.com/cfa/sku/123455/",                             "MATCH_CFA_SKU"),
+        new Example("http://staples.com/cfa/sku/123455/cow",                          null),
+        new Example("http://staples.com/cfa/category/BI739472",                       "MATCH_CFA_CATEGORY"),
+        new Example("http://staples.com/cfa/category/BI739472/",                      "MATCH_CFA_CATEGORY"),
+        new Example("http://staples.com/cfa/category/BI739472/cow",                   null),
+        new Example("http://staples.com/cfa/category/CL90000",                        "MATCH_CFA_CATEGORY"),
+        new Example("http://staples.com/cfa/category/CL90000/",                       "MATCH_CFA_CATEGORY"),
+        new Example("http://staples.com/cfa/category/CL90000/cow",                    null),
+        new Example("http://staples.com/cfa/search/cat",                              "MATCH_CFA_SEARCH"),
+        new Example("http://staples.com/cfa/search/cat/",                             "MATCH_CFA_SEARCH"),
+        new Example("http://staples.com/cfa/search/cat/cow",                          null),
+        // Mobile web
+        new Example("http://m.staples.com",                                           "MATCH_MWEB_HOME"),
+        new Example("http://m.staples.com/",                                          "MATCH_MWEB_HOME"),
+        new Example("http://m.staples.com/moo",                                       null),
+        new Example("http://m.staples.com/moo/cow",                                   "MATCH_MWEB_LINK"),
+        new Example("http://m.staples.com/moo/brown/cow",                             null),
+        // Weekly ad
+        new Example("http://weeklyad.staples.com/StaplesSD/WeeklyAd?storeid=2478536", "MATCH_WEEKLYAD"),
+        // Errors
+        new Example("foo://bogus",                                                    null)
     };
 
     @Before
@@ -70,7 +98,7 @@ public class IntentTest {
             field.setAccessible(true);
             value = field.getInt(null);
         } catch(Exception e) {
-            Assert.fail("Can't access constant");
+            Assert.fail("Can't access constant "+name);
         }
         return(value);
     }
@@ -82,7 +110,7 @@ public class IntentTest {
             Uri uri = Uri.parse(example.input);
             int expected = getConstant(example.result);
             int actual = uriMatcher.match(uri);
-            Assert.assertEquals(example.input+" did not match correctly", expected, actual);
+            Assert.assertEquals(example.input+" did not match", expected, actual);
         }
     }
 }

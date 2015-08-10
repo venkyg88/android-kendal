@@ -44,10 +44,10 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="http" android:host="m.staples.com" android:pathPattern="/.*/product.*"/>
+                <data android:scheme="http" android:host="m.staples.com" android:pathPattern="/.*/product_.*"/>
                 <data android:scheme="http" android:host="m.staples.com" android:pathPattern="/.*/cat_BI.*"/>
                 <data android:scheme="http" android:host="m.staples.com" android:pathPattern="/.*/cat_CL.*"/>
-                <data android:scheme="http" android:host="weeklyad.staples.com" android:pathPrefix="/StaplesSD"/>
+                <data android:scheme="http" android:host="weeklyad.staples.com" android:pathPrefix="/StaplesSD/WeeklyAd"/>
             </intent-filter>
         </activity>
         <activity android:name="com.apptentive.android.sdk.ViewActivity"

@@ -2,15 +2,13 @@
 <app.staples.mobile.cfa.widget.AnimatorFrame xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <ListView
+        android:id="@+id/profile_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/profile_list_view"
         android:paddingBottom="@dimen/verticalspacing_24dp"
         android:clipToPadding="false"
         android:background="@color/staples_off_white"/>
-
     <ImageButton
         android:id="@+id/listAddButton"
         style="@style/RoundButton"

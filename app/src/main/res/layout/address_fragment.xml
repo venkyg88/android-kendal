@@ -4,12 +4,11 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
     android:paddingLeft="@dimen/margin_16dp"
-    android:paddingRight="@dimen/margin_16dp">
-
+    android:paddingRight="@dimen/margin_16dp"
+    android:background="@color/staples_white">
     <include
         android:id="@+id/shipping_address"
         layout="@layout/address_block" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

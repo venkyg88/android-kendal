@@ -6,11 +6,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.crittercism.app.Crittercism;
 import com.staples.mobile.common.access.easyopen.model.member.Address;
+import com.staples.mobile.common.access.easyopen.model.member.Member;
 
 import java.util.List;
 
@@ -20,30 +20,25 @@ import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.widget.ActionBar;
 
 public class AddressListFragment extends Fragment implements View.OnClickListener {
-    private static final String TAG = "Address List Fragment";
-    ListView listview;
-    ImageButton addButton;
-    List<Address> addressList;
-    Activity activity;
+    private static final String TAG = AddressListFragment.class.getSimpleName();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Crittercism.leaveBreadcrumb("AddressListFragment:onCreateView(): Displaying the Address List screen.");
-        activity = getActivity();
-
         View view = inflater.inflate(R.layout.profile_list_fragment, container, false);
-        listview = (ListView) view.findViewById(R.id.profile_list_view);
-        listview.setDivider(null);
-        listview.setDividerHeight(0);
-        addButton =(ImageButton) view.findViewById(R.id.listAddButton);
-        addButton.setOnClickListener(this);
-        addressList = ProfileDetails.getMember().getAddress();
 
-        final AddressArrayAdapter adapter = new AddressArrayAdapter(activity,
-                addressList, ProfileDetails.currentAddressId);
-        listview.setAdapter(adapter);
-        registerForContextMenu(listview);
+        Member member = ProfileDetails.getMember();
+        if (member != null) {
+            List<Address> addressList = ProfileDetails.getMember().getAddress();
+            if (addressList != null) {
+                AddressArrayAdapter adapter = new AddressArrayAdapter(getActivity(), addressList, ProfileDetails.currentAddressId);
+                ListView listview = (ListView) view.findViewById(R.id.profile_list_view);
+                listview.setAdapter(adapter);
+//                registerForContextMenu(listview);
+            }
+        }
 
+        view.findViewById(R.id.listAddButton).setOnClickListener(this);
         return (view);
     }
 
@@ -55,6 +50,7 @@ public class AddressListFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onClick(View view) {
+        Activity activity = getActivity();
         Fragment shippingFragment = Fragment.instantiate(activity, AddressFragment.class.getName());
         ((MainActivity) activity).selectFragment(DrawerItem.ADDRESS, shippingFragment, MainActivity.Transition.RIGHT);
     }

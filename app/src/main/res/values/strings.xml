@@ -43,7 +43,7 @@
     <string name="sort_price_descending">Price</string>
     <string name="sort_title_ascending">Name A–Z</string>
     <string name="sort_title_descending">Name Z–A</string>
-    <string name="rebate_text">*Price before rebate</string>
+    <string name="rebate_note">*Price before rebate</string>
     <string name="expired_notice">This promotion has expired.\n\nCheck out some of our other great offers or search for whatever you may need.</string>
     <string name="expired_ok">OK</string>
     <string name="search_results_not_found_header">Your search for \"{0}\" \ndid not match any products</string>
@@ -286,6 +286,11 @@
         <item quantity="one">1 deal</item>
         <item quantity="other">%d deals</item>
     </plurals>
+
+    <!-- Notification preferences -->
+    <string name="notify_marketing">Marketing</string>
+    <string name="notify_orders">Orders</string>
+    <string name="notify_rewards">Rewards</string>
 
     <!-- Browse -->
     <string name="external_title">External Link</string>
