@@ -2,16 +2,19 @@ package app.staples.mobile.cfa;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.graphics.Typeface;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -27,14 +30,15 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.staples.mobile.common.analytics.Tracker;
 
+import java.security.MessageDigest;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import app.staples.R;
 import app.staples.mobile.cfa.location.LocationFinder;
 import app.staples.mobile.cfa.widget.ActionBar;
-import app.staples.R;
 
 public class AboutFragment extends Fragment {
     private static final String TAG = AboutFragment.class.getSimpleName();
@@ -56,6 +60,7 @@ public class AboutFragment extends Fragment {
         dateFormat = new SimpleDateFormat(("yyyy-MM-dd HH:mm"));
         coordFormat = new DecimalFormat("0.0000");
 
+        addIdRows(inflater, table);
         addRow(inflater, table, "Android API version", Integer.toString(Build.VERSION.SDK_INT));
         addDisplayRows(inflater, table);
         addPackageRows(inflater, table);
@@ -99,6 +104,35 @@ public class AboutFragment extends Fragment {
             default:
                 return(null);
         }
+    }
+
+    private void addIdRows(LayoutInflater inflater, TableLayout table) {
+        // Android id
+        ContentResolver cr = getActivity().getContentResolver();
+        String id = Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
+        addRow(inflater, table, "Android Id", id);
+
+        // WiFi MAC
+        WifiManager wifi = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+        if (wifi==null) return;
+        WifiInfo info = wifi.getConnectionInfo();
+        if (info==null) return;
+        String mac = info.getMacAddress();
+        if (mac==null || mac.length()==0) return;
+        addRow(inflater, table, "MAC address", mac);
+
+        // Hashed MAC
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            digest.update(mac.getBytes());
+            byte[] bytes = digest.digest();
+            int n = bytes.length;
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < n; i++) {
+                sb.append(Integer.toHexString(bytes[i] & 0xff));
+            }
+            addRow(inflater, table, "Hashed MAC", sb.toString());
+        } catch(Exception e) {}
     }
 
     private String formatOrientation(int value) {

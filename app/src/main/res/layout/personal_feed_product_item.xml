@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="@dimen/action_bar_quarter_margin"
                 android:textSize="@dimen/fontsize_10sp"
-                android:text="@string/rebate_text"
+                android:text="@string/rebate_note"
                 android:textColor="@color/staples_dark_gray"/>
             <TextView
                 android:id="@+id/rebate_text"

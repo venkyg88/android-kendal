@@ -12,8 +12,8 @@ import app.staples.R;
 
 import java.util.ArrayList;
 
-public class TagItemAdapter extends RecyclerView.Adapter<TagItemAdapter.ViewHolder> {
-    private static final String TAG = TagItemAdapter.class.getSimpleName();
+public class NotifyPrefsAdapter extends RecyclerView.Adapter<NotifyPrefsAdapter.ViewHolder> {
+    private static final String TAG = NotifyPrefsAdapter.class.getSimpleName();
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView title;
@@ -26,26 +26,16 @@ public class TagItemAdapter extends RecyclerView.Adapter<TagItemAdapter.ViewHold
         }
     }
 
-    public static class Item {
-        public String tag;
-        public String title;
-        public boolean enable;
-        
-        public Item(String tag, String title) {
-            this.tag = tag;
-            this.title = title;
-        }
-    }
-
-    private Context context;
     private LayoutInflater inflater;
-    private ArrayList<Item> array;
+    private ArrayList<NotifyPreferences.Item> array;
     private CompoundButton.OnCheckedChangeListener listener;
 
-    public TagItemAdapter(Context context) {
-        this.context = context;
+    public NotifyPrefsAdapter(Context context) {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        array = new ArrayList<Item>();
+    }
+
+    public void setArray(ArrayList<NotifyPreferences.Item> array) {
+        this.array = array;
     }
 
     public void setOnCheckedChangedListener(CompoundButton.OnCheckedChangeListener listener) {
@@ -54,32 +44,28 @@ public class TagItemAdapter extends RecyclerView.Adapter<TagItemAdapter.ViewHold
 
     @Override
     public int getItemCount() {
+        if (array==null) return(0);
         return(array.size());
     }
 
-    public Item getItem(int position) {
+    public NotifyPreferences.Item getItem(int position) {
         return(array.get(position));
-    }
-
-    public Item addTagItem(String tag, String title) {
-        Item item = new Item(tag, title);
-        array.add(item);
-        return(item);
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int type) {
         View view = inflater.inflate(R.layout.notify_prefs_item, parent, false);
         ViewHolder vh = new ViewHolder(view);
-        vh.enable.setOnCheckedChangeListener(listener);
         return(vh);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder vh, int position) {
-        Item item = array.get(position);
-        vh.enable.setTag(item);
+        NotifyPreferences.Item item = array.get(position);
         vh.title.setText(item.title);
+        vh.enable.setTag(item);
+        vh.enable.setOnCheckedChangeListener(null);
         vh.enable.setChecked(item.enable);
+        vh.enable.setOnCheckedChangeListener(listener);
     }
 }

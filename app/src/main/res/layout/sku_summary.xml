@@ -83,6 +83,14 @@
                     android:layout_marginRight="@dimen/sku_padding_10"
                     android:paddingTop="@dimen/action_bar_quarter_margin"/>
             </LinearLayout>
+            <TextView
+                android:id="@+id/rebate_note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sku_padding_10"
+                android:textSize="@dimen/fontsize_10sp"
+                android:text="@string/rebate_note"
+                android:textColor="@color/staples_dark_gray"/>
 
             <!-- Indicators -->
             <app.staples.mobile.cfa.widget.IndicatorBlock

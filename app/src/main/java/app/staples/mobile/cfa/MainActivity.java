@@ -1,6 +1,5 @@
 package app.staples.mobile.cfa;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -10,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
@@ -17,6 +17,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
@@ -31,6 +32,11 @@ import android.widget.TextView;
 import com.adobe.mobile.Config;
 import com.apptentive.android.sdk.Apptentive;
 import com.crittercism.app.Crittercism;
+import com.leanplum.Leanplum;
+import com.leanplum.LeanplumActivityHelper;
+import com.leanplum.LeanplumPushNotificationCustomizer;
+import com.leanplum.LeanplumPushService;
+import com.leanplum.activities.LeanplumActivity;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
@@ -56,6 +62,8 @@ import app.staples.mobile.cfa.kount.KountManager;
 import app.staples.mobile.cfa.location.LocationFinder;
 import app.staples.mobile.cfa.login.LoginFragment;
 import app.staples.mobile.cfa.login.LoginHelper;
+import app.staples.mobile.cfa.notify.NotifyPreferences;
+import app.staples.mobile.cfa.notify.NotifyPrefsFragment;
 import app.staples.mobile.cfa.profile.AddressFragment;
 import app.staples.mobile.cfa.profile.AddressListFragment;
 import app.staples.mobile.cfa.profile.CreditCardFragment;
@@ -76,7 +84,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class MainActivity extends Activity
+public class MainActivity extends LeanplumActivity
                           implements View.OnClickListener, AdapterView.OnItemClickListener,
         LoginHelper.OnLoginCompleteListener, AppConfigurator.AppConfiguratorCallback {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -86,7 +94,7 @@ public class MainActivity extends Activity
 
     private static final int CONNECTIVITY_CHECK_INTERVAL = 300000; // in milliseconds (e.g. 300000=5min)
 
-    private static class QueuedTransaction { // TODO This is only public for test!
+    private static class QueuedTransaction {
         enum Type {POPONE, POPNAME, POPALL, PUSH};
 
         private Type type;
@@ -125,29 +133,30 @@ public class MainActivity extends Activity
     }
 
     public static final String SCHEME    = "http";
-    public static final String AUTHORITY = "staples.com";
-    public static final String MOBILE_AUTHORITY = "m.staples.com";
-    public static final String WEEKLYAD_AUTHORITY = "weeklyad.staples.com";
+    public static final String CFA_AUTHORITY = "staples.com";
+    public static final String MWEB_AUTHORITY = "m.staples.com";
+    public static final String WAD_AUTHORITY = "weeklyad.staples.com";
 
     private static final UriMatcher uriMatcher;
-    private static final int MATCH_HOME     = 1;
-    private static final int MATCH_SKU      = 2;
-    private static final int MATCH_CATEGORY = 3;
-    private static final int MATCH_SEARCH   = 4;
-    private static final int MATCH_PRODUCT  = 5;
-    private static final int MATCH_LANDING  = 6;
-    private static final int MATCH_WEEKLYAD = 7;
+    private static final int MATCH_CFA_HOME     = 1;
+    private static final int MATCH_CFA_SKU      = 2;
+    private static final int MATCH_CFA_CATEGORY = 3;
+    private static final int MATCH_CFA_SEARCH   = 4;
+    private static final int MATCH_MWEB_HOME    = 5;
+    private static final int MATCH_MWEB_LINK    = 6;
+    private static final int MATCH_WEEKLYAD     = 7;
 
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(AUTHORITY, "cfa/home",       MATCH_HOME);
-        uriMatcher.addURI(AUTHORITY, "cfa/sku/*",      MATCH_SKU);
-        uriMatcher.addURI(AUTHORITY, "cfa/category/*", MATCH_CATEGORY);
-        uriMatcher.addURI(AUTHORITY, "cfa/search/*",   MATCH_SEARCH);
+        uriMatcher.addURI(CFA_AUTHORITY, "cfa/home",            MATCH_CFA_HOME);
+        uriMatcher.addURI(CFA_AUTHORITY, "cfa/sku/*",           MATCH_CFA_SKU);
+        uriMatcher.addURI(CFA_AUTHORITY, "cfa/category/*",      MATCH_CFA_CATEGORY);
+        uriMatcher.addURI(CFA_AUTHORITY, "cfa/search/*",        MATCH_CFA_SEARCH);
 
-        uriMatcher.addURI(AUTHORITY, "/",  MATCH_LANDING);
-        uriMatcher.addURI(MOBILE_AUTHORITY, "*/*", MATCH_PRODUCT);
-        uriMatcher.addURI(WEEKLYAD_AUTHORITY, "/StaplesSD/*",     MATCH_WEEKLYAD);
+        uriMatcher.addURI(MWEB_AUTHORITY, null,                 MATCH_MWEB_HOME);
+        uriMatcher.addURI(MWEB_AUTHORITY, "*/*",                MATCH_MWEB_LINK);
+
+        uriMatcher.addURI(WAD_AUTHORITY,  "StaplesSD/WeeklyAd", MATCH_WEEKLYAD);
     }
 
     private DrawerLayout drawerLayout;
@@ -176,12 +185,15 @@ public class MainActivity extends Activity
         try {
             Crittercism.initialize(getApplicationContext(), FlavorSpecific.CRITTERCISM_ID);
             Crittercism.leaveBreadcrumb("MainActivty:onCreate(): Crittercism initialized.");
-        } catch (Exception exception) {}
+        } catch(Exception exception) {}
 
         // DebugUtil.setStrictMode();
 
         //noinspection ResourceType
         setRequestedOrientation(getResources().getInteger(R.integer.screenOrientation));
+
+        killLeanplum(); // TODO This is a hack to make sure that the app re-registers (despite having registered on a Leanplum APPID that may exist no more). This is only until we settle on a permanent APPID.
+        initLeanplum();
 
         prepareMainScreen();
         queuedTransactions = new ArrayList<QueuedTransaction>();
@@ -191,6 +203,39 @@ public class MainActivity extends Activity
         Tracker.getInstance().initialize(Tracker.AppType.CFA);
 
         networkConnectivityBroadCastReceiver = new NetworkConnectivityBroadCastReceiver();
+    }
+
+    private void killLeanplum() {
+        SharedPreferences prefs = getSharedPreferences("__leanplum_push__", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+//        editor.remove("registration_id");
+//        editor.remove("appVersion");
+        editor.commit();
+    }
+
+    private void initLeanplum() {
+        // Renate-Current
+        String SENDERID = "1045169046549";
+        String LEANPLUM_APPID = "app_ITT9bMu6SaE4iKlJLDWNQASoW8MJdHSAH4PzwjUE7t8";
+        String LEANPLUM_CLIENTID = "dev_6p0K9yUtXJh2otch8MPzxHoXrui9AWkBtibhz0Uh7Vw";
+
+        Leanplum.setApplicationContext(getApplicationContext());
+        LeanplumActivityHelper.enableLifecycleCallbacks(getApplication());
+        Leanplum.setAppIdForDevelopmentMode(LEANPLUM_APPID, LEANPLUM_CLIENTID);
+        String id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        Leanplum.setDeviceId(id);
+        LeanplumPushService.setGcmSenderId(SENDERID);
+        LeanplumPushNotificationCustomizer customizer = new LeanplumPushNotificationCustomizer() {
+            @Override
+            public void customize(NotificationCompat.Builder builder, Bundle bundle) {
+                builder.setSmallIcon(R.drawable.ic_notification);
+                builder.setColor(0xffcc0000);
+            }
+        };
+        LeanplumPushService.setCustomizer(customizer);
+        Leanplum.enableVerboseLoggingInDevelopmentMode();
+        Leanplum.start(this, id, NotifyPreferences.getInstance().getUserAttributes());
     }
 
     // Intent handling for notifications & deep links
@@ -218,41 +263,39 @@ public class MainActivity extends Activity
 
         int match = uriMatcher.match(uri);
         switch(match) {
-            case MATCH_HOME:
+            case MATCH_CFA_HOME:
+            case MATCH_MWEB_HOME:
                 selectDrawerItem(homeDrawerItem, Transition.NONE);
                 return(true);
-            case MATCH_SKU:
+            case MATCH_CFA_SKU:
                 String sku = uri.getPathSegments().get(2);
                 selectSkuItem("Product item", sku, false);
                 return(true);
-            case MATCH_CATEGORY:
+            case MATCH_CFA_CATEGORY:
                 String identifier = uri.getPathSegments().get(2);
                 selectBundle("Category", identifier);
                 return(true);
-            case MATCH_SEARCH:
+            case MATCH_CFA_SEARCH:
                 String keyword = uri.getPathSegments().get(2);
                 selectSearch("Search", keyword);
                 return(true);
-            case MATCH_PRODUCT:
-                String result = uri.getLastPathSegment();
-                if(result.contains("product")) {
-                    String productId = result.substring(result.lastIndexOf("_")+1);
-                    selectSkuItem("Product item", productId, false);
+            case MATCH_MWEB_LINK:
+                String link = uri.getPathSegments().get(1);
+                if (link.startsWith("product_")) {
+                    selectSkuItem("Product item", link.substring(8), false);
+                    return(true);
+                } else if (link.startsWith("cat_BI") || link.startsWith("cat_CL")) {
+                    selectBundle("Category", link.substring(4));
+                    return(true);
                 }
-                if(result.contains("cat")) {
-                    String bundleId = result.substring(result.lastIndexOf("_")+1);
-                    selectBundle("Category", bundleId);
-                }
-                return(true);
-            case MATCH_LANDING:
-                selectDrawerItem(homeDrawerItem, Transition.NONE);
-                return(true);
+                break;
             case MATCH_WEEKLYAD:
                 String storeId = uri.getQueryParameter("storeid");
                 if(storeId != null) {
                     selectWeeklyAd(null, storeId);
+                    return(true);
                 }
-                return(true);
+                break;
         }
         return(false);
     }
@@ -330,7 +373,8 @@ public class MainActivity extends Activity
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.error_network_connectivity);
         builder.setPositiveButton(R.string.network_settings, new DialogInterface.OnClickListener() {
-            @Override public void onClick(DialogInterface dialog, int which) {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
                 // if wifi-only device, go to wifi settings, otherwise go to more general wireless settings
                 ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
                 NetworkInfo networkInfoMobile = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
@@ -438,7 +482,8 @@ public class MainActivity extends Activity
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(msg);
         builder.setPositiveButton(R.string.okay_btn, new DialogInterface.OnClickListener() {
-            @Override public void onClick(DialogInterface dialog, int which) {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
                 if (fatal) {
                     MainActivity.this.finish();
                 }
