@@ -157,7 +157,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                 ciVh.indicators.addPricedIndicator(rebate, R.string.indicator_rebate, R.color.staples_red, 0);
             }
             if (cartItem.isHeavyWeightSKU()) {
-                ciVh.indicators.addIndicator(R.string.indicator_oversized, R.color.staples_blue, 0);
+                ciVh.indicators.addIndicator(14.99f, R.string.indicator_oversized, R.color.staples_blue, 0);
             }
             if (cartItem.isAddOnSKU()) {
                 ciVh.indicators.addPricedIndicator(25.0f, R.string.indicator_minimum, R.color.staples_blue, 0);
