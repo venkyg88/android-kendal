@@ -245,35 +245,6 @@ public class IndicatorBlock extends View implements View.OnClickListener {
         });
         AlertDialog dialog = builder.create();
         dialog.show();
-
-
-//        // Create dialog and set window options
-//        popup = new Dialog(getContext());
-//        Window window = popup.getWindow();
-//        window.requestFeature(Window.FEATURE_NO_TITLE);
-//        window.setBackgroundDrawableResource(R.drawable.dialog_frame);
-//
-//        // Configure frame
-//        popup.setContentView(R.layout.explain_dialog);
-//        popup.findViewById(R.id.dismiss).setOnClickListener(this);
-//        popup.setCanceledOnTouchOutside(true);
-//
-//        // Add individual items
-//        DecimalFormat format0 = MiscUtils.getIntegerCurrencyFormat();
-//        DecimalFormat format1 = MiscUtils.getCurrencyFormat();
-//        ViewGroup frame = (ViewGroup) popup.findViewById(R.id.frame);
-//        LayoutInflater inflater = (LayoutInflater) frame.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        for(Indicator item : array) {
-//            if (item.explainId>0) {
-//                ViewGroup child = (ViewGroup) inflater.inflate(item.explainId, frame, false);
-//                String arg0 = format0.format(item.price);
-//                String arg1 = format1.format(item.price);
-//                rewriteMessages(child, arg0, arg1);
-//                frame.addView(child);
-//            }
-//        }
-//
-//        popup.show();
     }
 
     @Override
@@ -283,12 +254,5 @@ public class IndicatorBlock extends View implements View.OnClickListener {
             return;
         }
 
-//        switch(view.getId()) {
-//            case R.id.dismiss:
-//                if (popup!=null) {
-//                    popup.dismiss();
-//                }
-//                break;
-//        }
     }
 }
