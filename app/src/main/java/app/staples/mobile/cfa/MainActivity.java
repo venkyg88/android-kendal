@@ -235,7 +235,10 @@ public class MainActivity extends LeanplumActivity
         };
         LeanplumPushService.setCustomizer(customizer);
         Leanplum.enableVerboseLoggingInDevelopmentMode();
-        Leanplum.start(this, id, NotifyPreferences.getInstance().getUserAttributes());
+
+        NotifyPreferences prefs = NotifyPreferences.getInstance();
+        prefs.loadPreferences(this);
+        Leanplum.start(this, id, prefs.getUserAttributes());
     }
 
     // Intent handling for notifications & deep links

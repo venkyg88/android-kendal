@@ -106,11 +106,33 @@ public class AboutFragment extends Fragment {
         }
     }
 
+    private String getAirWatchId(Context context) {
+        String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        MessageDigest digest;
+        try {
+            digest = MessageDigest.getInstance("MD5");
+        } catch(Exception e) {
+            return (null);
+        }
+
+        digest.update(androidId.getBytes());
+        byte[] bytes = digest.digest();
+        StringBuilder sb = new StringBuilder();
+        for(byte x : bytes) {
+            sb.append(String.format("%02X", x));
+        }
+        return (sb.toString());
+    }
+
     private void addIdRows(LayoutInflater inflater, TableLayout table) {
         // Android id
         ContentResolver cr = getActivity().getContentResolver();
         String id = Settings.Secure.getString(cr, Settings.Secure.ANDROID_ID);
         addRow(inflater, table, "Android Id", id);
+
+        // AirWatch id
+        addRow(inflater, table, "AirWatch Id", getAirWatchId(getActivity()));
 
         // WiFi MAC
         WifiManager wifi = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
@@ -126,12 +148,12 @@ public class AboutFragment extends Fragment {
             MessageDigest digest = MessageDigest.getInstance("MD5");
             digest.update(mac.getBytes());
             byte[] bytes = digest.digest();
-            int n = bytes.length;
             StringBuilder sb = new StringBuilder();
-            for(int i = 0; i < n; i++) {
-                sb.append(Integer.toHexString(bytes[i] & 0xff));
+            for(byte x : bytes) {
+                sb.append(Integer.toHexString(x&0xff));
             }
             addRow(inflater, table, "Hashed MAC", sb.toString());
+
         } catch(Exception e) {}
     }
 
@@ -160,8 +182,8 @@ public class AboutFragment extends Fragment {
 
     private void addPackageRows(LayoutInflater inflater, TableLayout table) {
         Activity activity = getActivity();
-        String name = activity.getPackageName();
         PackageManager manager = activity.getPackageManager();
+        String name = activity.getPackageName();
 
         try {
             PackageInfo packInfo = manager.getPackageInfo(name, 0);
