@@ -20,27 +20,17 @@ import app.staples.mobile.cfa.widget.ActionBar;
 public class NotifyPrefsFragment extends Fragment implements CompoundButton.OnCheckedChangeListener {
     private static final String TAG = NotifyPrefsFragment.class.getSimpleName();
 
-    private NotifyPrefsAdapter adapter;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Crittercism.leaveBreadcrumb("NotifyPrefsFragment:onCreateView(): Displaying the Notification Preferences screen.");
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.notify_prefs_fragment, container, false);
 
         RecyclerView list = (RecyclerView) view.findViewById(R.id.list);
-        adapter = new NotifyPrefsAdapter(getActivity());
+        NotifyPrefsAdapter adapter = new NotifyPrefsAdapter(getActivity());
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        // TODO This should come from the MCS and it should be in MainActivity
         NotifyPreferences prefs = NotifyPreferences.getInstance();
-        if (prefs.getArray().size()==0) {
-            prefs.addItem("marketing", R.string.notify_marketing);
-            prefs.addItem("orders", R.string.notify_orders);
-            prefs.addItem("rewards", R.string.notify_rewards);
-            prefs.loadPreferences(getActivity());
-        }
-
         adapter.setArray(prefs.getArray());
         adapter.setOnCheckedChangedListener(this);
 

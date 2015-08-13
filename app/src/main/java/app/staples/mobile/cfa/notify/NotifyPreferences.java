@@ -13,6 +13,7 @@ import com.staples.mobile.common.access.channel.model.notify.Tag;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import app.staples.R;
 import app.staples.mobile.cfa.MainActivity;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -56,6 +57,11 @@ public class NotifyPreferences implements Callback<Preferences> {
 
     private NotifyPreferences() {
         array = new ArrayList<Item>();
+
+        // TODO This should come from the MCS
+        addItem("marketing", R.string.notify_marketing);
+        addItem("orders", R.string.notify_orders);
+        addItem("rewards", R.string.notify_rewards);
     }
 
     public Item addItem(String attribute, int title) {
