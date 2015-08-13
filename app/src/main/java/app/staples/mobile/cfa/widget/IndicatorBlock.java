@@ -1,7 +1,9 @@
 package app.staples.mobile.cfa.widget;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -43,6 +45,7 @@ public class IndicatorBlock extends View implements View.OnClickListener {
         private int color;
         private Bitmap icon;
         private int explainId;
+        private String message;
     }
 
     private ArrayList<Indicator> array;
@@ -126,12 +129,13 @@ public class IndicatorBlock extends View implements View.OnClickListener {
         setOnClickListener(null);
     }
 
-    public void addIndicator(int textId, int colorId, int explainId) {
+    public void addIndicator(float price, int textId, int colorId, int explainId) {
         Indicator item = new Indicator();
         Resources res = getResources();
         item.text = res.getString(textId);
         item.color = res.getInteger(colorId);
         item.explainId = explainId;
+        item.message = getResources().getString(R.string.explain_oversized);
         array.add(item);
         setVisibility(VISIBLE);
         requestLayout();
@@ -146,6 +150,7 @@ public class IndicatorBlock extends View implements View.OnClickListener {
         item.text = MessageFormat.format(text, format.format(price));
         item.color = res.getInteger(colorId);
         item.explainId = explainId;
+        item.message = getResources().getString(R.string.explain_minimum);
         array.add(item);
         setVisibility(VISIBLE);
         requestLayout();
@@ -222,33 +227,24 @@ public class IndicatorBlock extends View implements View.OnClickListener {
     }
 
     private void showExplainDialog() {
-        // Create dialog and set window options
-        popup = new Dialog(getContext());
-        Window window = popup.getWindow();
-        window.requestFeature(Window.FEATURE_NO_TITLE);
-        window.setBackgroundDrawableResource(R.drawable.dialog_frame);
 
-        // Configure frame
-        popup.setContentView(R.layout.explain_dialog);
-        popup.findViewById(R.id.dismiss).setOnClickListener(this);
-        popup.setCanceledOnTouchOutside(true);
-
-        // Add individual items
-        DecimalFormat format0 = MiscUtils.getIntegerCurrencyFormat();
-        DecimalFormat format1 = MiscUtils.getCurrencyFormat();
-        ViewGroup frame = (ViewGroup) popup.findViewById(R.id.frame);
-        LayoutInflater inflater = (LayoutInflater) frame.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        // Making the Dialog more consistent with the rest of the App
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         for(Indicator item : array) {
             if (item.explainId>0) {
-                ViewGroup child = (ViewGroup) inflater.inflate(item.explainId, frame, false);
-                String arg0 = format0.format(item.price);
-                String arg1 = format1.format(item.price);
-                rewriteMessages(child, arg0, arg1);
-                frame.addView(child);
+                builder.setTitle(item.text);
+                builder.setMessage(item.message);
             }
         }
 
-        popup.show();
+        builder.setPositiveButton(R.string.okay_btn, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override
@@ -258,12 +254,5 @@ public class IndicatorBlock extends View implements View.OnClickListener {
             return;
         }
 
-        switch(view.getId()) {
-            case R.id.dismiss:
-                if (popup!=null) {
-                    popup.dismiss();
-                }
-                break;
-        }
     }
 }
