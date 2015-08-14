@@ -17,6 +17,7 @@
 -dontwarn java.nio.**
 -dontwarn org.w3c.dom.bootstrap.**
 -dontwarn org.codehaus.mojo.animal_sniffer.**
+-dontwarn com.leanplum.**
 
 -keep class com.staples.mobile.common.access.** { * ; }
 
