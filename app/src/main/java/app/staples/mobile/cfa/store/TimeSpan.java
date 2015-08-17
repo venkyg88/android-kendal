@@ -2,21 +2,22 @@ package app.staples.mobile.cfa.store;
 
 import android.content.Context;
 
-import com.crittercism.app.Crittercism;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 
 import app.staples.R;
 
 /** This class represents a span of UTC time within a repeating week.
- * The basic unit is milliseconds since midnight at the start of Thursday.
+ *  The basic unit is milliseconds since midnight at the start of Thursday.
  */
 public class TimeSpan implements Comparable<TimeSpan> {
+    public static final String TAG = TimeSpan.class.getSimpleName();
+
     public static final int ONEWEEK = 7*24*60*60*1000;
     public static final int ONEDAY = 24*60*60*1000;
     private static final int QUANTA = 5*60*1000;
@@ -29,8 +30,26 @@ public class TimeSpan implements Comparable<TimeSpan> {
     private static final DateFormat shortDowFormat = new SimpleDateFormat("EEE");
     private static final DateFormat viewTimeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
 
-    // Week starts on Monday local time
-    private static final int origin = 4*ONEDAY-TimeZone.getDefault().getRawOffset();
+    private static int origin;
+
+    static {
+        updateTimeZone();
+    }
+
+    /** Since we are parsing and formatting times without reference to the season
+     *  we must use a timezone with a fixed offset equal to
+     *  the current standard or daylight savings time.
+     */
+    public static void updateTimeZone() {
+        int offset = TimeZone.getDefault().getOffset(System.currentTimeMillis());
+        origin = 4*ONEDAY-offset; // Week starts at 00:00 Monday local time
+
+        TimeZone current = new SimpleTimeZone(offset, "Current");
+        parseTimeFormat.setTimeZone(current);
+        longDowFormat.setTimeZone(current);
+        shortDowFormat.setTimeZone(current);
+        viewTimeFormat.setTimeZone(current);
+    }
 
     private int start;
     private int end;
@@ -69,9 +88,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
         try {
             start += parseTimeFormat.parse(chunks[0]).getTime();
             end += parseTimeFormat.parse(chunks[1]).getTime();
-            if (end<start) end += ONEDAY;
         } catch(Exception e) {
-            Crittercism.logHandledException(e);
             return(null);
         }
 
@@ -112,7 +129,6 @@ public class TimeSpan implements Comparable<TimeSpan> {
     private static int getNormalizedTime(int x) {
         x -= origin;
         if (x<0) x+= ONEWEEK;
-        else if (x>=ONEWEEK) x -= ONEWEEK;
         return(x);
     }
 
@@ -182,7 +198,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
             return(viewTimeFormat.format(time));
         } else {
             return(shortDowFormat.format(time) + " " +
-                   viewTimeFormat.format(time));
+                    viewTimeFormat.format(time));
         }
     }
 
@@ -211,7 +227,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
         // Close extended at least once
         if (close>base) {
             return(context.getResources().getString(R.string.store_open_until) + " " +
-                   formatStatusTime(close, base));
+                    formatStatusTime(close, base));
         }
 
         // Loop for span with shortest time until open
@@ -224,7 +240,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
         // Open in less than one week
         if (until<ONEWEEK) {
             return(context.getResources().getString(R.string.store_open_at) + " " +
-                   formatStatusTime(base+until, base));
+                    formatStatusTime(base+until, base));
         }
 
         return(context.getResources().getString(R.string.store_closed));
@@ -274,7 +290,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
         if (spans == null) return (null);
 
         spans = mergeTimeSpans(spans);
-        
+
         StringBuilder sb = new StringBuilder();
         for(TimeSpan span : spans) {
             if (sb.length()>0) sb.append("\n");
