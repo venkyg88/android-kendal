@@ -41,11 +41,14 @@ import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
+import com.staples.mobile.common.access.easyopen.model.cart.OrderStatus;
+import com.staples.mobile.common.access.easyopen.model.cart.OrderStatusContents;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
 import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import app.staples.R;
 import app.staples.mobile.cfa.UpgradeManager.UPGRADE_STATUS;
@@ -64,6 +67,7 @@ import app.staples.mobile.cfa.login.LoginFragment;
 import app.staples.mobile.cfa.login.LoginHelper;
 import app.staples.mobile.cfa.notify.NotifyPreferences;
 import app.staples.mobile.cfa.notify.NotifyPrefsFragment;
+import app.staples.mobile.cfa.order.OrderReceiptFragment;
 import app.staples.mobile.cfa.profile.AddressFragment;
 import app.staples.mobile.cfa.profile.AddressListFragment;
 import app.staples.mobile.cfa.profile.CreditCardFragment;
@@ -145,6 +149,7 @@ public class MainActivity extends LeanplumActivity
     private static final int MATCH_MWEB_HOME    = 5;
     private static final int MATCH_MWEB_LINK    = 6;
     private static final int MATCH_WEEKLYAD     = 7;
+    private static final int MATCH_CFA_ORDER    = 8;
 
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -152,6 +157,7 @@ public class MainActivity extends LeanplumActivity
         uriMatcher.addURI(CFA_AUTHORITY, "cfa/sku/*",           MATCH_CFA_SKU);
         uriMatcher.addURI(CFA_AUTHORITY, "cfa/category/*",      MATCH_CFA_CATEGORY);
         uriMatcher.addURI(CFA_AUTHORITY, "cfa/search/*",        MATCH_CFA_SEARCH);
+        uriMatcher.addURI(CFA_AUTHORITY, "cfa/order/*",         MATCH_CFA_ORDER);
 
         uriMatcher.addURI(MWEB_AUTHORITY, null,                 MATCH_MWEB_HOME);
         uriMatcher.addURI(MWEB_AUTHORITY, "*/*",                MATCH_MWEB_LINK);
@@ -281,6 +287,10 @@ public class MainActivity extends LeanplumActivity
             case MATCH_CFA_SEARCH:
                 String keyword = uri.getPathSegments().get(2);
                 selectSearch("Search", keyword);
+                return(true);
+            case MATCH_CFA_ORDER:
+                String orderNumber = uri.getPathSegments().get(2);
+                selectOrderDetailFragment(orderNumber);
                 return(true);
             case MATCH_MWEB_LINK:
                 String link = uri.getPathSegments().get(1);
@@ -935,7 +945,6 @@ public class MainActivity extends LeanplumActivity
                                            String deliveryRange, String total) {
         // clear the back stack
         clearBackStack();
-
         // open order confirmation fragment
         Fragment fragment = ConfirmationFragment.newInstance(orderNumber, emailAddress, deliveryRange, total);
         return selectFragment(DrawerItem.CONFIRM, fragment, Transition.RIGHT);
@@ -1070,6 +1079,12 @@ public class MainActivity extends LeanplumActivity
             fragment = Fragment.instantiate(this, CreditCardFragment.class.getName());
         }
         return(selectFragment(DrawerItem.CARD, fragment, Transition.RIGHT));
+    }
+
+    public boolean selectOrderDetailFragment(String orderNumber) {
+        OrderReceiptFragment fragment = new OrderReceiptFragment();
+        fragment.setArguments(orderNumber);
+        return(selectFragment(DrawerItem.ORDERDETAIL, fragment, Transition.RIGHT));
     }
 
     @Override
