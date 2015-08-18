@@ -222,12 +222,6 @@ public class MainActivity extends LeanplumActivity
 
     private void initLeanplum() {
         // Renate-Current
-        if (AppConfigurator.getInstance().getConfigurator() != null) {
-
-            String SENDERID = "1045169046549";
-            String LEANPLUM_APPID = "app_ITT9bMu6SaE4iKlJLDWNQASoW8MJdHSAH4PzwjUE7t8";
-            String LEANPLUM_CLIENTID = "dev_6p0K9yUtXJh2otch8MPzxHoXrui9AWkBtibhz0Uh7Vw";
-        }
         String SENDERID = "1045169046549";
         String LEANPLUM_APPID = "app_ITT9bMu6SaE4iKlJLDWNQASoW8MJdHSAH4PzwjUE7t8";
         String LEANPLUM_CLIENTID = "dev_6p0K9yUtXJh2otch8MPzxHoXrui9AWkBtibhz0Uh7Vw";
