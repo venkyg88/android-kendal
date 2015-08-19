@@ -232,9 +232,6 @@ public class MainActivity extends LeanplumActivity
                 String LEANPLUM_APPID = api.getClientIdentifier();
                 String LEANPLUM_CLIENTID = api.getClientIdentifier2();
 
-//                String LEANPLUM_APPID = "app_ITT9bMu6SaE4iKlJLDWNQASoW8MJdHSAH4PzwjUE7t8";
-//                String LEANPLUM_CLIENTID = "dev_6p0K9yUtXJh2otch8MPzxHoXrui9AWkBtibhz0Uh7Vw";
-
                 Leanplum.setApplicationContext(getApplicationContext());
                 LeanplumActivityHelper.enableLifecycleCallbacks(getApplication());
                 Leanplum.setAppIdForDevelopmentMode(LEANPLUM_APPID, LEANPLUM_CLIENTID);
