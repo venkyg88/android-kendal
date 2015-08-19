@@ -9,6 +9,10 @@ import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.channel.api.ChannelApi;
 import com.staples.mobile.common.access.channel.model.notify.Preferences;
 import com.staples.mobile.common.access.channel.model.notify.Tag;
+import com.staples.mobile.common.access.config.AppConfigurator;
+import com.staples.mobile.common.access.config.model.Configurator;
+import com.staples.mobile.common.access.config.model.Descriptor;
+import com.staples.mobile.common.access.config.model.Holding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,10 +35,10 @@ public class NotifyPreferences implements Callback<Preferences> {
     public static class Item {
         public String attribute;
         public String key;
-        public int title;
+        public String title;
         public boolean enable;
 
-        private Item(String attribute, int title, boolean enable) {
+        private Item(String attribute, String title, boolean enable) {
             this.attribute = attribute;
             key = "notify"+Character.toUpperCase(attribute.charAt(0))+attribute.substring(1);
             this.title = title;
@@ -58,13 +62,29 @@ public class NotifyPreferences implements Callback<Preferences> {
     private NotifyPreferences() {
         array = new ArrayList<Item>();
 
-        // TODO This should come from the MCS
-        addItem("marketing", R.string.notify_marketing);
-        addItem("orders", R.string.notify_orders);
-        addItem("rewards", R.string.notify_rewards);
+        AppConfigurator appConfigurator = AppConfigurator.getInstance();
+        Configurator configurator = appConfigurator.getConfigurator();
+        if(configurator == null) return;
+        if(configurator.getAppContext().getHoldings() == null) {
+            // Placeholder data until MCS 2.0
+            addItem("marketing", "Marketing");
+            addItem("orders", "Orders");
+            addItem("rewards", "Rewards");
+            return;
+        }
+
+        for(Holding holding : configurator.getAppContext().getHoldings()) {
+            if(holding.getName().equals("notifications")) {
+                for(Descriptor descriptor : holding.getDescriptors()) {
+                    if(descriptor.getValue().equals("in")){
+                        addItem(descriptor.getKey(), descriptor.getParticulars().get(0).getValue());
+                    }
+                }
+            }
+        }
     }
 
-    public Item addItem(String attribute, int title) {
+    public Item addItem(String attribute, String title) {
         Item item = new Item(attribute, title, DEFAULTENABLE);
         array.add(item);
         return(item);
