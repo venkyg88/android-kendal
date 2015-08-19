@@ -39,6 +39,8 @@ import com.leanplum.LeanplumPushService;
 import com.leanplum.activities.LeanplumActivity;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.config.AppConfigurator;
+import com.staples.mobile.common.access.config.model.Api;
+import com.staples.mobile.common.access.config.model.Configurator;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.cart.OrderStatus;
@@ -198,9 +200,6 @@ public class MainActivity extends LeanplumActivity
         //noinspection ResourceType
         setRequestedOrientation(getResources().getInteger(R.integer.screenOrientation));
 
-        killLeanplum(); // TODO This is a hack to make sure that the app re-registers (despite having registered on a Leanplum APPID that may exist no more). This is only until we settle on a permanent APPID.
-        initLeanplum();
-
         prepareMainScreen();
         queuedTransactions = new ArrayList<QueuedTransaction>();
 
@@ -221,30 +220,43 @@ public class MainActivity extends LeanplumActivity
     }
 
     private void initLeanplum() {
-        // Renate-Current
-        String SENDERID = "1045169046549";
-        String LEANPLUM_APPID = "app_ITT9bMu6SaE4iKlJLDWNQASoW8MJdHSAH4PzwjUE7t8";
-        String LEANPLUM_CLIENTID = "dev_6p0K9yUtXJh2otch8MPzxHoXrui9AWkBtibhz0Uh7Vw";
+        // Renate-Current=
 
-        Leanplum.setApplicationContext(getApplicationContext());
-        LeanplumActivityHelper.enableLifecycleCallbacks(getApplication());
-        Leanplum.setAppIdForDevelopmentMode(LEANPLUM_APPID, LEANPLUM_CLIENTID);
-        String id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        Leanplum.setDeviceId(id);
-        LeanplumPushService.setGcmSenderId(SENDERID);
-        LeanplumPushNotificationCustomizer customizer = new LeanplumPushNotificationCustomizer() {
-            @Override
-            public void customize(NotificationCompat.Builder builder, Bundle bundle) {
-                builder.setSmallIcon(R.drawable.ic_notification);
-                builder.setColor(0xffcc0000);
+        AppConfigurator appConfigurator = AppConfigurator.getInstance();
+        Configurator configurator = appConfigurator.getConfigurator();
+        if(configurator == null) return;
+
+        for(Api api: configurator.getAppContext().getApi()) {
+            if(api.getName().equals("leanplum")) {
+                String SENDERID = "1045169046549";
+                String LEANPLUM_APPID = api.getClientIdentifier();
+                String LEANPLUM_CLIENTID = api.getClientIdentifier2();
+
+//                String LEANPLUM_APPID = "app_ITT9bMu6SaE4iKlJLDWNQASoW8MJdHSAH4PzwjUE7t8";
+//                String LEANPLUM_CLIENTID = "dev_6p0K9yUtXJh2otch8MPzxHoXrui9AWkBtibhz0Uh7Vw";
+
+                Leanplum.setApplicationContext(getApplicationContext());
+                LeanplumActivityHelper.enableLifecycleCallbacks(getApplication());
+                Leanplum.setAppIdForDevelopmentMode(LEANPLUM_APPID, LEANPLUM_CLIENTID);
+                String id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+                Leanplum.setDeviceId(id);
+                LeanplumPushService.setGcmSenderId(SENDERID);
+                LeanplumPushNotificationCustomizer customizer = new LeanplumPushNotificationCustomizer() {
+                    @Override
+                    public void customize(NotificationCompat.Builder builder, Bundle bundle) {
+                        builder.setSmallIcon(R.drawable.ic_notification);
+                        builder.setColor(0xffcc0000);
+                    }
+                };
+                LeanplumPushService.setCustomizer(customizer);
+                Leanplum.enableVerboseLoggingInDevelopmentMode();
+
+                NotifyPreferences prefs = NotifyPreferences.getInstance();
+                prefs.loadPreferences(this);
+                Leanplum.start(this, id, prefs.getUserAttributes());
             }
-        };
-        LeanplumPushService.setCustomizer(customizer);
-        Leanplum.enableVerboseLoggingInDevelopmentMode();
+        }
 
-        NotifyPreferences prefs = NotifyPreferences.getInstance();
-        prefs.loadPreferences(this);
-        Leanplum.start(this, id, prefs.getUserAttributes());
     }
 
     // Intent handling for notifications & deep links
@@ -651,6 +663,10 @@ public class MainActivity extends LeanplumActivity
                 ((HomeFragment) top).refreshTiles();
             }
         }
+
+        // initializing leanplum after the configurator is loaded
+        killLeanplum(); // TODO This is a hack to make sure that the app re-registers (despite having registered on a Leanplum APPID that may exist no more). This is only until we settle on a permanent APPID.
+        initLeanplum();
     }
 
     public void onNearbyStore() {
