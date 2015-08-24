@@ -65,14 +65,7 @@ public class NotifyPreferences implements Callback<Preferences> {
         AppConfigurator appConfigurator = AppConfigurator.getInstance();
         Configurator configurator = appConfigurator.getConfigurator();
         if(configurator == null) return;
-        if(configurator.getAppContext().getHoldings() == null) {
-            // Placeholder data until MCS 2.0
-            addItem("marketing", "Marketing");
-            addItem("orders", "Orders");
-            addItem("rewards", "Rewards");
-            return;
-        }
-
+        if(configurator.getAppContext().getHoldings() == null) return;
         for(Holding holding : configurator.getAppContext().getHoldings()) {
             if(holding.getName().equals("notifications")) {
                 for(Descriptor descriptor : holding.getDescriptors()) {
