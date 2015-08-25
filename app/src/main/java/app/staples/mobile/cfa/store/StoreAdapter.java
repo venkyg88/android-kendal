@@ -117,10 +117,15 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         vh.directions.setTag(item);
         vh.weeklyAd.setTag(item);
 
-        // Set content
-        vh.city.setText(item.city);
-        vh.street.setText(item.streetAddress1);
+        // Set content and null checks to eliminate crashes
+        if(item.city !=null){
+            vh.city.setText(item.city);
+        }
+        if(item.streetAddress1 != null){
+            vh.street.setText(item.streetAddress1);
+        }
         vh.distance.setText(mileFormat.format(item.distance));
+
         vh.openTime.setText(TimeSpan.formatStatus(vh.itemView.getContext(), item.getSpans(), System.currentTimeMillis()));
 
         // Set detail content
