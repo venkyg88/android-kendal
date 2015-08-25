@@ -223,6 +223,9 @@ public class LoginHelper {
         cachedUsername = username;
         cachedPassword = password;
         RegisteredUserLogin user = new RegisteredUserLogin(username,password);
+        if(easyOpenApi == null){
+            easyOpenApi = Access.getInstance().getEasyOpenApi(true);
+        }
         easyOpenApi.registeredUserLogin(user, new Callback<TokenObject>() {
 
                     @Override
