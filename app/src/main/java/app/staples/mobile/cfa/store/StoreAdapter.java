@@ -124,9 +124,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         if(item.streetAddress1 != null){
             vh.street.setText(item.streetAddress1);
         }
-        if(item.distance != 0.0f){
-            vh.distance.setText(mileFormat.format(item.distance));
-        }
+        vh.distance.setText(mileFormat.format(item.distance));
 
         vh.openTime.setText(TimeSpan.formatStatus(vh.itemView.getContext(), item.getSpans(), System.currentTimeMillis()));
 
