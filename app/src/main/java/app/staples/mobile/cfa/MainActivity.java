@@ -43,14 +43,11 @@ import com.staples.mobile.common.access.config.model.Api;
 import com.staples.mobile.common.access.config.model.Configurator;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.cart.OrderStatus;
-import com.staples.mobile.common.access.easyopen.model.cart.OrderStatusContents;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
 import com.staples.mobile.common.analytics.Tracker;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import app.staples.R;
 import app.staples.mobile.cfa.UpgradeManager.UPGRADE_STATUS;
@@ -68,7 +65,6 @@ import app.staples.mobile.cfa.location.LocationFinder;
 import app.staples.mobile.cfa.login.LoginFragment;
 import app.staples.mobile.cfa.login.LoginHelper;
 import app.staples.mobile.cfa.notify.NotifyPreferences;
-import app.staples.mobile.cfa.notify.NotifyPrefsFragment;
 import app.staples.mobile.cfa.order.OrderReceiptFragment;
 import app.staples.mobile.cfa.profile.AddressFragment;
 import app.staples.mobile.cfa.profile.AddressListFragment;
@@ -193,7 +189,9 @@ public class MainActivity extends LeanplumActivity
         try {
             Crittercism.initialize(getApplicationContext(), FlavorSpecific.CRITTERCISM_ID);
             Crittercism.leaveBreadcrumb("MainActivty:onCreate(): Crittercism initialized.");
-        } catch(Exception exception) {}
+        } catch(Exception e) {
+            Crittercism.logHandledException(e);
+        }
 
         // DebugUtil.setStrictMode();
 
@@ -228,13 +226,20 @@ public class MainActivity extends LeanplumActivity
 
         for(Api api: configurator.getAppContext().getApi()) {
             if(api.getName().equals("leanplum")) {
+                Crittercism.leaveBreadcrumb("MainActivty:initLeanplum(): Initialize Leanplum.");
+
                 String SENDERID = "1045169046549";
                 String LEANPLUM_APPID = api.getClientIdentifier();
                 String LEANPLUM_CLIENTID = api.getClientIdentifier2();
 
                 Leanplum.setApplicationContext(getApplicationContext());
                 LeanplumActivityHelper.enableLifecycleCallbacks(getApplication());
-                Leanplum.setAppIdForDevelopmentMode(LEANPLUM_APPID, LEANPLUM_CLIENTID);
+                //appcontext.dev controls if the app is registered for dev or prod mode. the type of keys are irrelevant. However, use prod keys for prod, etc.
+                if (configurator.getAppContext().isDev()) {
+                    Leanplum.setAppIdForDevelopmentMode(LEANPLUM_APPID, LEANPLUM_CLIENTID);
+                } else {
+                    Leanplum.setAppIdForProductionMode(LEANPLUM_APPID, LEANPLUM_CLIENTID);
+                }
                 String id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
                 Leanplum.setDeviceId(id);
                 LeanplumPushService.setGcmSenderId(SENDERID);
@@ -246,8 +251,9 @@ public class MainActivity extends LeanplumActivity
                     }
                 };
                 LeanplumPushService.setCustomizer(customizer);
-                Leanplum.enableVerboseLoggingInDevelopmentMode();
-
+                if (configurator.getAppContext().isDev()) {
+                    Leanplum.enableVerboseLoggingInDevelopmentMode();
+                }
                 NotifyPreferences prefs = NotifyPreferences.getInstance();
                 prefs.loadPreferences(this);
                 Leanplum.start(this, id, prefs.getUserAttributes());
