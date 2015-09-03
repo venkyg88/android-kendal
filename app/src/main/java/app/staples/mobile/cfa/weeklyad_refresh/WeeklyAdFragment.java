@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -20,21 +21,25 @@ import com.staples.mobile.common.shoplocal.models.DealResults;
 import java.util.List;
 
 import app.staples.R;
+import app.staples.mobile.cfa.widget.HorizontalDivider;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class WeeklyAdFragment extends Fragment {
+public class WeeklyAdFragment extends Fragment implements View.OnClickListener {
 
     private ShopLocalApi shopLocalApi;
     ImageView dealImage;
     TextView dealTitle;
     TextView dealPrice;
     TextView dealExpiry;
+    LinearLayout dealLayout;
 
     private RecyclerView mRecyclerView;
     private WeeklyAdCategoryAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
+    List<DealResults> dealResultsList;
 
 
     @Override
@@ -48,6 +53,8 @@ public class WeeklyAdFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_weekly_ad, container, false);
+        dealLayout = (LinearLayout)rootView.findViewById(R.id.deal_layout);
+        dealLayout.setOnClickListener(this);
         dealImage = (ImageView)rootView.findViewById(R.id.dealImage);
         dealTitle = (TextView)rootView.findViewById(R.id.dealTitle);
         dealPrice = (TextView)rootView.findViewById(R.id.dealPricing);
@@ -57,6 +64,7 @@ public class WeeklyAdFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(new HorizontalDivider(getActivity()));
         mAdapter = new WeeklyAdCategoryAdapter(getActivity());
         mRecyclerView.setAdapter(mAdapter);
         getWeeklyAdDeals();
@@ -70,7 +78,7 @@ public class WeeklyAdFragment extends Fragment {
         shopLocalApi.getDeals("2278492", new Callback<DealList>() {
             @Override
             public void success(DealList dealList, Response response) {
-                List<DealResults> dealResultsList = dealList.getDealResultsList();
+                dealResultsList = dealList.getDealResultsList();
                 int random = (int)(Math.random() * dealResultsList.size());
                 DealResults deal = dealResultsList.get(random);
                 Picasso.with(getActivity())
@@ -106,4 +114,12 @@ public class WeeklyAdFragment extends Fragment {
     }
 
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.deal_layout:
+
+                break;
+        }
+    }
 }

@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.staples.R;
+import app.staples.mobile.cfa.DrawerItem;
+import app.staples.mobile.cfa.MainActivity;
 
 /**
  * Created by Avinash Dodda.
@@ -23,6 +25,8 @@ public class WeeklyAdCategoryAdapter extends RecyclerView.Adapter<WeeklyAdCatego
     private ArrayList<CategoryResults> array;
     private Context context;
     private LayoutInflater inflater;
+    ArrayList<String> categoryTreeIds;
+    ArrayList<String> titles;
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public TextView categoryTitle;
@@ -65,6 +69,8 @@ public class WeeklyAdCategoryAdapter extends RecyclerView.Adapter<WeeklyAdCatego
         this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.array = new ArrayList<CategoryResults>();
+        this.categoryTreeIds = new ArrayList<>();
+        this.titles = new ArrayList<>();
     }
 
     @Override
@@ -74,7 +80,9 @@ public class WeeklyAdCategoryAdapter extends RecyclerView.Adapter<WeeklyAdCatego
         vh.setClickListener(new ViewHolder.ClickListener() {
             @Override
             public void onClick(View v, int position) {
-
+                WeeklyAdListFragment weeklyAdFragment = new WeeklyAdListFragment();
+                weeklyAdFragment.setArguments("2278492", position, categoryTreeIds, titles);
+                ((MainActivity) context).selectFragment(DrawerItem.WEEKLYDETAIL, weeklyAdFragment, MainActivity.Transition.RIGHT);
             }
         });
 
@@ -100,6 +108,10 @@ public class WeeklyAdCategoryAdapter extends RecyclerView.Adapter<WeeklyAdCatego
 
     public void fill(List<CategoryResults> items) {
         array.addAll(items);
+        for (CategoryResults item : items) {
+            categoryTreeIds.add(String.valueOf(item.getId()));
+            titles.add(item.getPreferredDescription());
+        }
         notifyDataSetChanged();
     }
 }

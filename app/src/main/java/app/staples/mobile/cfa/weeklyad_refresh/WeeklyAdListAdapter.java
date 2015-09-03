@@ -1,4 +1,4 @@
-package app.staples.mobile.cfa.weeklyad;
+package app.staples.mobile.cfa.weeklyad_refresh;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
