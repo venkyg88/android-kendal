@@ -20,6 +20,7 @@ import app.staples.mobile.cfa.profile.ProfileFragment;
 import app.staples.mobile.cfa.rewards.RewardsFragment;
 import app.staples.mobile.cfa.store.StoreFragment;
 import app.staples.mobile.cfa.weeklyad.WeeklyAdByCategoryFragment;
+import app.staples.mobile.cfa.weeklyad_refresh.WeeklyAdFragment;
 
 public class DrawerAdapter extends BaseAdapter {
     private static final String TAG = DrawerAdapter.class.getSimpleName();
@@ -121,7 +122,7 @@ public class DrawerAdapter extends BaseAdapter {
         array.add(new DrawerItem(activity, DrawerItem.FEED,    R.drawable.ic_chat_black, R.string.personal_feed_title, PersonalFeedFragment.class));
         array.add(new DrawerItem(activity, DrawerItem.BROWSE,  R.drawable.ic_browse_black, R.string.browse_title, BrowseFragment.class));
         array.add(new DrawerItem(activity, DrawerItem.STORE,   R.drawable.ic_store_locator_black, R.string.store_locator_title, StoreFragment.class));
-        array.add(new DrawerItem(activity, DrawerItem.WEEKLY,  R.drawable.ic_weekly_ad_black, R.string.weekly_ad_title, WeeklyAdByCategoryFragment.class));
+        array.add(new DrawerItem(activity, DrawerItem.WEEKLY,  R.drawable.ic_weekly_ad_black, R.string.weekly_ad_title, WeeklyAdFragment.class));
         array.add(new DrawerItem(activity, DrawerItem.ACCOUNT, R.drawable.ic_account_black, R.string.account_title, ProfileFragment.class, false));
         array.add(new DrawerItem(activity, DrawerItem.REWARDS, R.drawable.ic_rewards_black, R.string.rewards_title, RewardsFragment.class, false)); // set initially disabled
         array.add(new DrawerItem(activity, DrawerItem.ORDERS,  R.drawable.ic_orders_black, R.string.order_title, OrderFragment.class, false)); // set initially disabled

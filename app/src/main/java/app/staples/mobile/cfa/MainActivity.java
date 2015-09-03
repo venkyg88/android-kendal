@@ -80,6 +80,7 @@ import app.staples.mobile.cfa.skuset.SkuSetFragment;
 import app.staples.mobile.cfa.util.MiscUtils;
 import app.staples.mobile.cfa.weeklyad.WeeklyAdByCategoryFragment;
 import app.staples.mobile.cfa.weeklyad.WeeklyAdInStoreFragment;
+import app.staples.mobile.cfa.weeklyad_refresh.WeeklyAdFragment;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.LinearLayoutWithOverlay;
 import retrofit.Callback;
@@ -1026,9 +1027,11 @@ public class MainActivity extends LeanplumActivity
         Crittercism.leaveBreadcrumb("MainActivity:selectWeeklyAd(): Selecting a weekly ad with store number."
                         + " storeNo[" + storeNo + "]"
         );
-        WeeklyAdByCategoryFragment fragment = new WeeklyAdByCategoryFragment();
-        fragment.setArguments(storeNo, storeId);
-        return(selectFragment(DrawerItem.WEEKLY, fragment, Transition.RIGHT));
+        WeeklyAdFragment fragment = new WeeklyAdFragment();
+        return (selectFragment(DrawerItem.WEEKLY, fragment, Transition.RIGHT));
+//        WeeklyAdByCategoryFragment fragment = new WeeklyAdByCategoryFragment();
+//        fragment.setArguments(storeNo, storeId);
+//        return(selectFragment(DrawerItem.WEEKLY, fragment, Transition.RIGHT));
     }
 
     public boolean selectInStoreWeeklyAd(String title, float price, String unit, String literal, String imageUrl, boolean inStoreOnly) {

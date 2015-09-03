@@ -282,6 +282,9 @@
     <!--weekly ad-->
     <string name="change_store">change store</string>
     <string name="each">each</string>
+    <string name="deal_text">Best deal of the week</string>
+    <string name="category_text">Shop now</string>
+    <string name="weekly_ad_search_hint">Search Weekly Ad</string>
     <plurals name="deals">
         <item quantity="one">1 deal</item>
         <item quantity="other">%d deals</item>
@@ -316,5 +319,8 @@
     <string name="error_server_connection">Unable to contact server at this time. Please try again later.</string>
     <string name="error_redirect">Please sign in to local network and then try again.</string>
     <string name="error_no_location_service">Please enable location services to find a store near you.</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
