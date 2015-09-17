@@ -2,6 +2,7 @@ package app.staples.mobile.cfa.weeklyad_refresh;
 
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,6 +18,9 @@ import com.staples.mobile.common.shoplocal.api.ShopLocalApi;
 import com.staples.mobile.common.shoplocal.models.CategoryList;
 import com.staples.mobile.common.shoplocal.models.DealList;
 import com.staples.mobile.common.shoplocal.models.DealResults;
+import com.staples.mobile.common.shoplocal.models.PromotionPagesList;
+import com.staples.mobile.common.shoplocal.models.PromotionPagesResults;
+import com.staples.mobile.common.shoplocal.models.PromotionsList;
 
 import java.util.List;
 
@@ -38,9 +42,12 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener {
     private RecyclerView mRecyclerView;
     private WeeklyAdCategoryAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    ViewPager viewPager;
+    WeeklyAdImageAdapter adapter;
 
     List<DealResults> dealResultsList;
 
+    private static final String STORE_ID = "2278492";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,15 +74,22 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener {
         mRecyclerView.addItemDecoration(new HorizontalDivider(getActivity()));
         mAdapter = new WeeklyAdCategoryAdapter(getActivity());
         mRecyclerView.setAdapter(mAdapter);
+
+        viewPager = (ViewPager) rootView.findViewById(R.id.promotion_images);
+        adapter = new WeeklyAdImageAdapter(getActivity());
+        viewPager.setAdapter(adapter);
+
         getWeeklyAdDeals();
         getWeeklyAdCategories();
+
+        getWeeklyAdPromotions();
 
         return rootView;
     }
 
     private void getWeeklyAdDeals() {
         if(shopLocalApi == null)return;
-        shopLocalApi.getDeals("2278492", new Callback<DealList>() {
+        shopLocalApi.getDeals(STORE_ID, new Callback<DealList>() {
             @Override
             public void success(DealList dealList, Response response) {
                 dealResultsList = dealList.getDealResultsList();
@@ -100,10 +114,39 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener {
 
     private void getWeeklyAdCategories() {
         if(shopLocalApi == null)return;
-        shopLocalApi.getCategories("2278492", new Callback<CategoryList>() {
+        shopLocalApi.getCategories(STORE_ID, new Callback<CategoryList>() {
             @Override
             public void success(CategoryList categoryList, Response response) {
                 mAdapter.fill(categoryList.getCategoryResultsList());
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+
+    private void getWeeklyAdPromotions() {
+        if(shopLocalApi == null)return;
+        shopLocalApi.getPromotions(STORE_ID, new Callback<PromotionsList>() {
+            @Override
+            public void success(PromotionsList promotionsList, Response response) {
+                String promotionCode = promotionsList.getPromotionsResultsList().get(0).getPromotionCode();
+                shopLocalApi.getPromotionPages(STORE_ID, promotionCode, new Callback<PromotionPagesList>() {
+                    @Override
+                    public void success(PromotionPagesList promotionPagesList, Response response) {
+                        for(PromotionPagesResults result: promotionPagesList.getPromotionPagesResultsList()) {
+                            adapter.add(result.getImageLocation());
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+
+                    }
+                });
             }
 
             @Override
