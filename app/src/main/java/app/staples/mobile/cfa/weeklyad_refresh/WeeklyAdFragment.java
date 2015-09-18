@@ -38,6 +38,8 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener {
     TextView dealPrice;
     TextView dealExpiry;
     LinearLayout dealLayout;
+    ImageView promotionsBtn;
+    ImageView categoryBtn;
 
     private RecyclerView mRecyclerView;
     private WeeklyAdCategoryAdapter mAdapter;
@@ -66,6 +68,10 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener {
         dealTitle = (TextView)rootView.findViewById(R.id.dealTitle);
         dealPrice = (TextView)rootView.findViewById(R.id.dealPricing);
         dealExpiry = (TextView)rootView.findViewById(R.id.dealExpiry);
+        promotionsBtn = (ImageView) rootView.findViewById(R.id.goto_here_switch);
+        categoryBtn = (ImageView) rootView.findViewById(R.id.toggle_switch);
+        promotionsBtn.setOnClickListener(this);
+        categoryBtn.setOnClickListener(this);
 
         mRecyclerView = (RecyclerView)rootView.findViewById(R.id.weekly_ad_category_items);
         mRecyclerView.setHasFixedSize(true);
@@ -74,6 +80,9 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener {
         mRecyclerView.addItemDecoration(new HorizontalDivider(getActivity()));
         mAdapter = new WeeklyAdCategoryAdapter(getActivity());
         mRecyclerView.setAdapter(mAdapter);
+
+        dealLayout.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.GONE);
 
         viewPager = (ViewPager) rootView.findViewById(R.id.promotion_images);
         adapter = new WeeklyAdImageAdapter(getActivity());
@@ -162,6 +171,16 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()){
             case R.id.deal_layout:
 
+                break;
+            case R.id.goto_here_switch:
+                viewPager.setVisibility(View.VISIBLE);
+                dealLayout.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.GONE);
+                break;
+            case R.id.toggle_switch:
+                viewPager.setVisibility(View.GONE);
+                dealLayout.setVisibility(View.VISIBLE);
+                mRecyclerView.setVisibility(View.VISIBLE);
                 break;
         }
     }

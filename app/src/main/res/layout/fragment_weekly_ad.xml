@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/search_icon"
             android:hint="@string/weekly_ad_search_hint"/>
-        <ImageButton
+        <ImageView
             android:id="@+id/goto_here_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
             android:background="@color/staples_white"
             android:layout_toLeftOf="@+id/toggle_switch"
             android:src="@drawable/ic_store_locator_black"/>
-        <ImageButton
+        <ImageView
             android:id="@+id/toggle_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

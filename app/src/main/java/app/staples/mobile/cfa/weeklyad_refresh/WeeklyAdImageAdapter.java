@@ -50,7 +50,7 @@ public class WeeklyAdImageAdapter extends PagerAdapter {
 
         item.view = new ImageView(context);
         picasso.load(item.url)
-                .error(R.drawable.no_photo).fit().centerCrop()
+                .error(R.drawable.no_photo)
                 .into(item.view);
 
         container.addView(item.view);
