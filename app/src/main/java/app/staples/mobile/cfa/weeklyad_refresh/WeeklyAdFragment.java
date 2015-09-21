@@ -18,6 +18,8 @@ import com.staples.mobile.common.shoplocal.api.ShopLocalApi;
 import com.staples.mobile.common.shoplocal.models.CategoryList;
 import com.staples.mobile.common.shoplocal.models.DealList;
 import com.staples.mobile.common.shoplocal.models.DealResults;
+import com.staples.mobile.common.shoplocal.models.PromotionPageCategoryList;
+import com.staples.mobile.common.shoplocal.models.PromotionPageCategoryResults;
 import com.staples.mobile.common.shoplocal.models.PromotionPagesList;
 import com.staples.mobile.common.shoplocal.models.PromotionPagesResults;
 import com.staples.mobile.common.shoplocal.models.PromotionsList;
@@ -30,7 +32,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class WeeklyAdFragment extends Fragment implements View.OnClickListener {
+public class WeeklyAdFragment extends Fragment implements View.OnClickListener, ViewPager.OnPageChangeListener {
 
     private ShopLocalApi shopLocalApi;
     ImageView dealImage;
@@ -43,11 +45,13 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener {
 
     private RecyclerView mRecyclerView;
     private WeeklyAdCategoryAdapter mAdapter;
+    private WeeklyAdPromotionsAdapter pAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     ViewPager viewPager;
     WeeklyAdImageAdapter adapter;
 
     List<DealResults> dealResultsList;
+    List<PromotionPagesResults> promotionPagesResults;
 
     private static final String STORE_ID = "2278492";
 
@@ -79,17 +83,17 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new HorizontalDivider(getActivity()));
         mAdapter = new WeeklyAdCategoryAdapter(getActivity());
-        mRecyclerView.setAdapter(mAdapter);
 
         dealLayout.setVisibility(View.GONE);
-        mRecyclerView.setVisibility(View.GONE);
 
         viewPager = (ViewPager) rootView.findViewById(R.id.promotion_images);
         adapter = new WeeklyAdImageAdapter(getActivity());
         viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(this);
+
+        pAdapter = new WeeklyAdPromotionsAdapter(getActivity());
 
         getWeeklyAdDeals();
-        getWeeklyAdCategories();
 
         getWeeklyAdPromotions();
 
@@ -126,6 +130,7 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener {
         shopLocalApi.getCategories(STORE_ID, new Callback<CategoryList>() {
             @Override
             public void success(CategoryList categoryList, Response response) {
+                mRecyclerView.setAdapter(mAdapter);
                 mAdapter.fill(categoryList.getCategoryResultsList());
             }
 
@@ -142,13 +147,15 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener {
             @Override
             public void success(PromotionsList promotionsList, Response response) {
                 String promotionCode = promotionsList.getPromotionsResultsList().get(0).getPromotionCode();
-                shopLocalApi.getPromotionPages(STORE_ID, promotionCode, new Callback<PromotionPagesList>() {
+                shopLocalApi.getPromotionPages(STORE_ID, promotionCode, "1000", new Callback<PromotionPagesList>() {
                     @Override
                     public void success(PromotionPagesList promotionPagesList, Response response) {
-                        for(PromotionPagesResults result: promotionPagesList.getPromotionPagesResultsList()) {
+                        promotionPagesResults = promotionPagesList.getPromotionPagesResultsList();
+                        for (PromotionPagesResults result : promotionPagesList.getPromotionPagesResultsList()) {
                             adapter.add(result.getImageLocation());
                         }
                         adapter.notifyDataSetChanged();
+                        getWeeklyAdPromotionCategories(promotionPagesResults.get(0).getPromotionPageId());
                     }
 
                     @Override
@@ -165,6 +172,23 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    public void getWeeklyAdPromotionCategories(String promotionPageId) {
+        if(shopLocalApi == null)return;
+        shopLocalApi.getPromotionPageListings(STORE_ID, promotionPageId, new Callback<PromotionPageCategoryList>() {
+            @Override
+            public void success(PromotionPageCategoryList promotionPageCategoryList, Response response) {
+                pAdapter.clear();
+                mRecyclerView.setAdapter(pAdapter);
+                pAdapter.fill(promotionPageCategoryList.getPromotionPageCategoryResultsList());
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+            }
+
+        });
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -175,13 +199,27 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener {
             case R.id.goto_here_switch:
                 viewPager.setVisibility(View.VISIBLE);
                 dealLayout.setVisibility(View.GONE);
-                mRecyclerView.setVisibility(View.GONE);
                 break;
             case R.id.toggle_switch:
                 viewPager.setVisibility(View.GONE);
+                getWeeklyAdCategories();
                 dealLayout.setVisibility(View.VISIBLE);
-                mRecyclerView.setVisibility(View.VISIBLE);
                 break;
         }
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        getWeeklyAdPromotionCategories(promotionPagesResults.get(position).getPromotionPageId());
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }

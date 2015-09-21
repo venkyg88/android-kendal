@@ -47,10 +47,10 @@ public class WeeklyAdImageAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         WeeklyAdImageItem item = array.get(position);
-
         item.view = new ImageView(context);
         picasso.load(item.url)
                 .error(R.drawable.no_photo)
+                .fit()
                 .into(item.view);
 
         container.addView(item.view);

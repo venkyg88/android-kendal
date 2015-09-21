@@ -55,7 +55,6 @@
         android:paddingLeft="@dimen/action_bar_half_margin"
         android:paddingRight="@dimen/action_bar_half_margin"
         android:paddingTop="@dimen/action_bar_half_margin"
-        android:paddingBottom="@dimen/action_bar_half_margin"
         android:background="@color/staples_off_white" />
 
     <!-- Best deal of the week layout-->
@@ -130,7 +129,7 @@
         card_view:cardElevation="2dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="@dimen/margin_16dp"
+        android:layout_marginTop="@dimen/action_bar_half_margin"
         card_view:cardBackgroundColor="@color/staples_white">
 
         <!--list of categories-->
