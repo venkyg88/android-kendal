@@ -33,6 +33,17 @@
                 android:layout_height="match_parent"
                 android:background="@color/staples_off_white">
 
+                <android.support.v7.widget.CardView
+                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    card_view:cardCornerRadius="2dp"
+                    card_view:cardElevation="2dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="@dimen/margin_16dp"
+                    card_view:cardBackgroundColor="@color/staples_white">
                 <!--list of ads-->
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/weekly_ad_list_items"
@@ -41,6 +52,7 @@
                     android:paddingBottom="@dimen/verticalspacing_24dp"
                     android:clipToPadding="false"
                     />
+                </android.support.v7.widget.CardView>
 
             </FrameLayout>
 

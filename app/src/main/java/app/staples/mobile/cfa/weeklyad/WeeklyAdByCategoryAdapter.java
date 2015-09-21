@@ -17,6 +17,7 @@ import java.util.List;
 import app.staples.R;
 import app.staples.mobile.cfa.DrawerItem;
 import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.weeklyad_refresh.WeeklyAdListFragment;
 
 public class WeeklyAdByCategoryAdapter extends RecyclerView.Adapter<WeeklyAdByCategoryAdapter.ViewHolder>{
     private ArrayList<Data> array;

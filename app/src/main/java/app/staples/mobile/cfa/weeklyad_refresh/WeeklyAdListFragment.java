@@ -1,4 +1,4 @@
-package app.staples.mobile.cfa.weeklyad;
+package app.staples.mobile.cfa.weeklyad_refresh;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -83,7 +84,7 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
         // set up recycler view
         final RecyclerView list = (RecyclerView) view.findViewById(R.id.weekly_ad_list_items);
         list.setHasFixedSize(true);
-        list.setLayoutManager(new GridLayoutManager(activity, 2));
+        list.setLayoutManager(new LinearLayoutManager(activity));
         list.addItemDecoration(new HorizontalDivider(activity));
         adapter = new WeeklyAdListAdapter(activity);
         adapter.setOnClickListener(this);
