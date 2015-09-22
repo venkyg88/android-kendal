@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import app.staples.R;
 import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.profile.ProfileDetails;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -127,18 +128,26 @@ public class NotifyPreferences implements Callback<Preferences> {
             tags.add(tag);
         }
 
-        // Make body
-        Preferences prefs = new Preferences();
-        prefs.setApplication("staples");
-        prefs.setEmail("Renate.Pyhel@staples.com");
-        prefs.setNotificationType("android");
-        String id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        prefs.setUaChannelId(id);
-        prefs.setTags(tags);
+        if(Access.getInstance().isLoggedIn()) {
+            if(ProfileDetails.getMember() != null) {
+                // Make body
+                Preferences prefs = new Preferences();
+                prefs.setApplication("staples");
+                prefs.setNotificationType("android");
+                prefs.setEmail(ProfileDetails.getMember().getEmailAddress());
+                String id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+                prefs.setUaChannelId(id);
+                prefs.setTags(tags);
 
-        // Upload
-        ChannelApi api = Access.getInstance().getChannelApi(false);
-        api.setNotificationPreferences(prefs, this);
+                // Upload to preference center
+                ChannelApi api = Access.getInstance().getChannelApi(false);
+                api.setNotificationPreferences(prefs, this);
+            }
+            else {
+                // Leave breadcrumb here once we define the platform
+                // Logged in user should have details
+            }
+        }
     }
 
     @Override
