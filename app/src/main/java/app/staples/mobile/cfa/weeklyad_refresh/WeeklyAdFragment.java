@@ -27,6 +27,7 @@ import com.staples.mobile.common.shoplocal.models.PromotionsList;
 import java.util.List;
 
 import app.staples.R;
+import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.widget.HorizontalDivider;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -42,6 +43,7 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
     LinearLayout dealLayout;
     ImageView promotionsBtn;
     ImageView categoryBtn;
+    ImageView storeBtn;
 
     private RecyclerView mRecyclerView;
     private WeeklyAdCategoryAdapter mAdapter;
@@ -72,10 +74,13 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
         dealTitle = (TextView)rootView.findViewById(R.id.dealTitle);
         dealPrice = (TextView)rootView.findViewById(R.id.dealPricing);
         dealExpiry = (TextView)rootView.findViewById(R.id.dealExpiry);
-        promotionsBtn = (ImageView) rootView.findViewById(R.id.goto_here_switch);
-        categoryBtn = (ImageView) rootView.findViewById(R.id.toggle_switch);
+        storeBtn = (ImageView) rootView.findViewById(R.id.goto_here_switch);
+        categoryBtn = (ImageView) rootView.findViewById(R.id.list_switch);
+        promotionsBtn = (ImageView) rootView.findViewById(R.id.promotions_switch);
+
         promotionsBtn.setOnClickListener(this);
         categoryBtn.setOnClickListener(this);
+        storeBtn.setOnClickListener(this);
 
         mRecyclerView = (RecyclerView)rootView.findViewById(R.id.weekly_ad_category_items);
         mRecyclerView.setHasFixedSize(true);
@@ -85,6 +90,7 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
         mAdapter = new WeeklyAdCategoryAdapter(getActivity());
 
         dealLayout.setVisibility(View.GONE);
+        categoryBtn.setVisibility(View.GONE);
 
         viewPager = (ViewPager) rootView.findViewById(R.id.promotion_images);
         adapter = new WeeklyAdImageAdapter(getActivity());
@@ -197,13 +203,22 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
 
                 break;
             case R.id.goto_here_switch:
-                viewPager.setVisibility(View.VISIBLE);
-                dealLayout.setVisibility(View.GONE);
+                MainActivity activity = (MainActivity)getActivity();
+                if(activity == null) return;
+                activity.selectStoreFragment();
                 break;
-            case R.id.toggle_switch:
+            case R.id.list_switch:
                 viewPager.setVisibility(View.GONE);
                 getWeeklyAdCategories();
                 dealLayout.setVisibility(View.VISIBLE);
+                categoryBtn.setVisibility(View.GONE);
+                promotionsBtn.setVisibility(View.VISIBLE);
+                break;
+            case R.id.promotions_switch:
+                viewPager.setVisibility(View.VISIBLE);
+                dealLayout.setVisibility(View.GONE);
+                categoryBtn.setVisibility(View.VISIBLE);
+                promotionsBtn.setVisibility(View.GONE);
                 break;
         }
     }

@@ -35,16 +35,24 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/margin_16dp"
             android:background="@color/staples_white"
-            android:layout_toLeftOf="@+id/toggle_switch"
+            android:layout_toLeftOf="@+id/list_switch"
             android:src="@drawable/ic_store_locator_black"/>
         <ImageView
-            android:id="@+id/toggle_switch"
+            android:id="@+id/list_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/margin_16dp"
             android:background="@color/staples_white"
             android:layout_alignParentRight="true"
             android:src="@drawable/ic_view_list_black"/>
+        <ImageView
+            android:id="@+id/promotions_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/margin_16dp"
+            android:background="@color/staples_white"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_weekly_ad_black"/>
     </RelativeLayout>
 
     <!-- WeeklyAd promotion images-->
