@@ -248,6 +248,7 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
         shopLocalApi.getCategories(storeId, new Callback<CategoryList>() {
             @Override
             public void success(CategoryList categoryList, Response response) {
+                mAdapter.clear();
                 mRecyclerView.setAdapter(mAdapter);
                 mAdapter.fill(categoryList.getCategoryResultsList());
             }
@@ -322,13 +323,14 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
                 ((MainActivity)activity).selectStoreFragment();
                 break;
             case R.id.list_switch:
-                viewPager.setVisibility(View.GONE);
                 getWeeklyAdCategories();
+                viewPager.setVisibility(View.GONE);
                 dealLayout.setVisibility(View.VISIBLE);
                 categoryBtn.setVisibility(View.GONE);
                 promotionsBtn.setVisibility(View.VISIBLE);
                 break;
             case R.id.promotions_switch:
+                mRecyclerView.setAdapter(pAdapter);
                 viewPager.setVisibility(View.VISIBLE);
                 dealLayout.setVisibility(View.GONE);
                 categoryBtn.setVisibility(View.VISIBLE);

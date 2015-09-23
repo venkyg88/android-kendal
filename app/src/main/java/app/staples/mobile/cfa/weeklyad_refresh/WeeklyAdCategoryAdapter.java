@@ -122,4 +122,8 @@ public class WeeklyAdCategoryAdapter extends RecyclerView.Adapter<WeeklyAdCatego
         }
         notifyDataSetChanged();
     }
+
+    public void clear(){
+        array.clear();
+    }
 }
