@@ -343,7 +343,8 @@ public class MainActivity extends LeanplumActivity
 
         // load Configurator
         AppConfigurator appConfigurator = AppConfigurator.getInstance();
-        appConfigurator.loadConfigurator(this, FlavorSpecific.MCS_SERVER, FlavorSpecific.MCS_TAG, this);
+        appConfigurator.loadConfigurator(this, FlavorSpecific.MCS_SERVER, FlavorSpecific.MCS_TAG,
+                FlavorSpecific.MCS_VERSION, this);
 
         registerReceiver(networkConnectivityBroadCastReceiver,
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
