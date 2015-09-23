@@ -53,7 +53,6 @@ public class NotifyPrefsFragment extends Fragment implements CompoundButton.OnCh
 
             Activity activity = getActivity();
             NotifyPreferences prefs = NotifyPreferences.getInstance();
-            prefs.savePreferences(activity); // TODO Should be in MainActivity
             prefs.uploadPreferences(activity);
             Leanplum.setUserAttributes(prefs.getUserAttributes());
         }

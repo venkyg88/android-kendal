@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Vector;
 
 import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.notify.NotifyPreferences;
 import app.staples.mobile.cfa.profile.ProfileDetails;
 import retrofit.Callback;
 import retrofit.ResponseCallback;
@@ -208,6 +209,7 @@ public class LoginHelper {
                 if (callback != null) {
                     callback.onProfileRefresh(member, errMsg);
                 }
+                NotifyPreferences.getInstance().loadPreferences(activity);
             }
         });
     }
@@ -277,7 +279,6 @@ public class LoginHelper {
                         setTokens(tokenObjectReturned.getWCToken(), tokenObjectReturned.getWCTrustedToken(), false);
                         notifyListeners(false, true); // NOT guest login, signing in
                         Tracker.getInstance().setUserType(Tracker.UserType.REGISTERED); // update analytics header info
-
                         loadProfile(callback);
 
                         Log.i(TAG, "Status Code " + code);
