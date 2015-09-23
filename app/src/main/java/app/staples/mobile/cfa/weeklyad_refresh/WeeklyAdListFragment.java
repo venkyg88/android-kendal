@@ -221,7 +221,6 @@ public class WeeklyAdListFragment extends Fragment implements View.OnClickListen
             // if success
             if (errMsg == null) {
                 ActionBar.getInstance().setCartCount(CartApiManager.getCartTotalItems());
-                ((MainActivity) activity).showNotificationBanner(R.string.cart_updated_msg);
                 Tracker.getInstance().trackActionForAddToCartFromWeeklyAd(CartApiManager.getCartProduct(item.identifier), 1);
             } else {
                 // if non-grammatical out-of-stock message from api, provide a nicer message
