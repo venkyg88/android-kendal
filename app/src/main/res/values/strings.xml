@@ -285,6 +285,7 @@
     <string name="deal_text">Best deal of the week</string>
     <string name="category_text">Shop now</string>
     <string name="weekly_ad_search_hint">Search Weekly Ad</string>
+    <string name="weekly_ad_view_more">View all</string>
     <plurals name="deals">
         <item quantity="one">1 deal</item>
         <item quantity="other">%d deals</item>

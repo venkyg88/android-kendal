@@ -27,6 +27,7 @@ public class WeeklyAdCategoryAdapter extends RecyclerView.Adapter<WeeklyAdCatego
     private LayoutInflater inflater;
     ArrayList<String> categoryTreeIds;
     ArrayList<String> titles;
+    private String storeId;
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public TextView categoryTitle;
@@ -80,9 +81,12 @@ public class WeeklyAdCategoryAdapter extends RecyclerView.Adapter<WeeklyAdCatego
         vh.setClickListener(new ViewHolder.ClickListener() {
             @Override
             public void onClick(View v, int position) {
-                WeeklyAdListFragment weeklyAdFragment = new WeeklyAdListFragment();
-                weeklyAdFragment.setArguments("2278492", position, categoryTreeIds, titles);
-                ((MainActivity) context).selectFragment(DrawerItem.WEEKLYDETAIL, weeklyAdFragment, MainActivity.Transition.RIGHT);
+                if(storeId != null) {
+                    WeeklyAdListFragment weeklyAdFragment = new WeeklyAdListFragment();
+                    weeklyAdFragment.setArguments(storeId, position, categoryTreeIds, titles);
+                    ((MainActivity) context).selectFragment(DrawerItem.WEEKLYDETAIL, weeklyAdFragment, MainActivity.Transition.RIGHT);
+                }
+
             }
         });
 
@@ -101,6 +105,10 @@ public class WeeklyAdCategoryAdapter extends RecyclerView.Adapter<WeeklyAdCatego
                 .into(vh.categoryImage);
     }
 
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
+    }
+
     @Override
     public int getItemCount() {
         return array.size();
@@ -113,5 +121,9 @@ public class WeeklyAdCategoryAdapter extends RecyclerView.Adapter<WeeklyAdCatego
             titles.add(item.getPreferredDescription());
         }
         notifyDataSetChanged();
+    }
+
+    public void clear(){
+        array.clear();
     }
 }

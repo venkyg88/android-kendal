@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<app.staples.mobile.cfa.widget.AnimatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,55 +6,49 @@
     android:background="@color/staples_off_white"
     tools:context="app.staples.mobile.cfa.weeklyad_refresh.WeeklyAdFragment">
 
-    <RelativeLayout
+    // Store city and Store locator and Promotion page switcher images
+    <LinearLayout
         android:layout_marginTop="@dimen/action_bar_half_margin"
         android:layout_width="match_parent"
         android:layout_marginLeft="@dimen/action_bar_half_margin"
         android:layout_marginRight="@dimen/action_bar_half_margin"
         android:layout_height="wrap_content"
-        android:background="@color/staples_white">
-        <ImageView
-            android:id="@+id/search_icon"
-            android:padding="@dimen/margin_16dp"
-            android:layout_width="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:src="@drawable/ic_search_black"/>
-        <EditText
-            android:id="@+id/search_box"
-            android:padding="@dimen/margin_16dp"
-            android:singleLine="true"
-            android:imeOptions="actionSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/search_icon"
-            android:hint="@string/weekly_ad_search_hint"/>
+            android:id="@+id/store_name"
+            android:padding="@dimen/action_bar_half_margin"
+            android:textSize="@dimen/fontsize_20sp"
+            android:textStyle="bold"
+            android:layout_weight="1"/>
         <ImageView
             android:id="@+id/goto_here_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/margin_16dp"
-            android:background="@color/staples_white"
-            android:layout_toLeftOf="@+id/toggle_switch"
+            android:padding="@dimen/action_bar_half_margin"
             android:src="@drawable/ic_store_locator_black"/>
         <ImageView
-            android:id="@+id/toggle_switch"
+            android:id="@+id/list_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/margin_16dp"
-            android:background="@color/staples_white"
-            android:layout_alignParentRight="true"
+            android:padding="@dimen/action_bar_half_margin"
             android:src="@drawable/ic_view_list_black"/>
-    </RelativeLayout>
+        <ImageView
+            android:id="@+id/promotions_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/action_bar_half_margin"
+            android:src="@drawable/ic_weekly_ad_black"/>
+    </LinearLayout>
 
     <!-- WeeklyAd promotion images-->
     <android.support.v4.view.ViewPager
         android:id="@+id/promotion_images"
         android:layout_width="match_parent"
-        android:layout_height="320dp"
+        android:layout_height="300dp"
         android:paddingLeft="@dimen/action_bar_half_margin"
         android:paddingRight="@dimen/action_bar_half_margin"
-        android:paddingTop="@dimen/action_bar_half_margin"
         android:background="@color/staples_off_white" />
 
     <!-- Best deal of the week layout-->
@@ -77,7 +71,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/margin_32dp"
-                android:background="@color/staples_black">
+                android:background="@color/staples_red">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -114,6 +108,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingLeft="@dimen/action_bar_half_margin"/>
+                    <Button
+                        android:id="@+id/dealViewAll"
+                        android:layout_width="@dimen/weeklyad_viewall_width"
+                        android:layout_height="@dimen/weeklyad_viewall_height"
+                        android:textSize="@dimen/fontsize_10sp"
+                        android:text="@string/weekly_ad_view_more"
+                        android:background="@color/staples_blue"
+                        android:textColor="@color/staples_white"
+                        android:layout_gravity="right"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -140,4 +143,4 @@
         </android.support.v7.widget.RecyclerView>
     </android.support.v7.widget.CardView>
 
-</LinearLayout>
+</app.staples.mobile.cfa.widget.AnimatorLayout>

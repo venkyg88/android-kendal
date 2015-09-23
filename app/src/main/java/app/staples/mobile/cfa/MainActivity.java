@@ -1029,10 +1029,8 @@ public class MainActivity extends LeanplumActivity
                         + " storeNo[" + storeNo + "]"
         );
         WeeklyAdFragment fragment = new WeeklyAdFragment();
+        fragment.setArguments(storeNo, storeId);
         return (selectFragment(DrawerItem.WEEKLY, fragment, Transition.RIGHT));
-//        WeeklyAdByCategoryFragment fragment = new WeeklyAdByCategoryFragment();
-//        fragment.setArguments(storeNo, storeId);
-//        return(selectFragment(DrawerItem.WEEKLY, fragment, Transition.RIGHT));
     }
 
     public boolean selectInStoreWeeklyAd(String title, float price, String unit, String literal, String imageUrl, boolean inStoreOnly) {

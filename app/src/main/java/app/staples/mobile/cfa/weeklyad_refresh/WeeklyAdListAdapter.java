@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.common.access.easyopen.model.weeklyad.Data;
+import com.staples.mobile.common.shoplocal.models.PromotionPageCategoryResults;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +102,11 @@ public class  WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapt
             vh.pricingUnit.setText(item.unit);
         }
 
+        if(item.finalPrice == 0.0f){
+            vh.priceSticker.setVisibility(View.GONE);
+            vh.pricingUnit.setVisibility(View.GONE);
+        }
+
         if (item.inStoreOnly) {
             vh.availability.setVisibility(View.VISIBLE);
             vh.action.setVisibility(View.GONE);
@@ -151,6 +157,38 @@ public class  WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapt
             item.imageUrl = data.getImage();
             item.inStoreOnly = data.getFineprint().contains("In store only");
             item.buyNow = data.getBuynow();
+            if (item.buyNow!=null && item.buyNow.isEmpty()) item.buyNow = null;
+            array.add(item);
+        }
+        notifyDataSetChanged();
+    }
+
+    public void fillPromotionData(List<PromotionPageCategoryResults> promotionListings){
+        if(promotionListings == null) return;
+        for(PromotionPageCategoryResults data : promotionListings) {
+            Item item = new Item();
+            item.title = data.getTitle();
+            item.description = data.getDescription();
+            if (item.description==null || item.description.isEmpty()) {
+                item.description = item.title;
+            }
+            String sku = data.getSku();
+            if (sku!=null && !sku.isEmpty()) {
+                item.identifier = sku;
+            }
+            String text = data.getFinalPrice();
+            if (text!=null) {
+                try {
+                    item.finalPrice = Float.parseFloat(text.substring(1));
+                    item.unit = each;
+                } catch(NumberFormatException e) {
+                    item.literal = text;
+                }
+
+            }
+            item.imageUrl = data.getImageLocation();
+            item.inStoreOnly = data.getFinePrint().contains("In store only");
+            item.buyNow = data.getBuyNow();
             if (item.buyNow!=null && item.buyNow.isEmpty()) item.buyNow = null;
             array.add(item);
         }
