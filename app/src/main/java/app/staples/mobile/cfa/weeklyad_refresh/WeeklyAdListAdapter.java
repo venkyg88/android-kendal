@@ -180,7 +180,7 @@ public class  WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapt
             String text = data.getFinalPrice();
             if (text!=null) {
                 try {
-                    item.finalPrice = Float.parseFloat(text.substring(1));
+                    item.finalPrice = Float.parseFloat(text);
                     item.unit = each;
                 } catch(NumberFormatException e) {
                     item.literal = text;
@@ -212,7 +212,7 @@ public class  WeeklyAdListAdapter extends RecyclerView.Adapter<WeeklyAdListAdapt
             String text = deal.getFinalPrice();
             if (text!=null) {
                 try {
-                    item.finalPrice = Float.parseFloat(text.substring(1));
+                    item.finalPrice = Float.parseFloat(text);
                     item.unit = each;
                 } catch(NumberFormatException e) {
                     item.literal = text;
