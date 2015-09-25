@@ -117,8 +117,9 @@ public class NotifyPreferences implements Callback<Preferences> {
         ChannelApi channelApi = Access.getInstance().getChannelApi(false);
         if (ProfileDetails.getMember() != null) {
             String userEmail = ProfileDetails.getMember().getEmailAddress();
+            String deviceId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
 
-            channelApi.getNotificationPreferences(userEmail, APPLICATION, NOTIFICATION_TYPE, new Callback<List<Preferences>>() {
+            channelApi.getNotificationPreferences(userEmail, APPLICATION, NOTIFICATION_TYPE, deviceId, new Callback<List<Preferences>>() {
                 @Override
                 public void success(List<Preferences> preferencesList, Response response) {
                     if(preferencesList.size() == 0) {
