@@ -115,6 +115,7 @@ public class WeeklyAdCategoryAdapter extends RecyclerView.Adapter<WeeklyAdCatego
     }
 
     public void fill(List<CategoryResults> items) {
+        if(items == null) return;
         array.addAll(items);
         for (CategoryResults item : items) {
             categoryTreeIds.add(String.valueOf(item.getId()));

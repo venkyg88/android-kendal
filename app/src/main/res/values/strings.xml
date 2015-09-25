@@ -34,6 +34,7 @@
     <string name="search_title">Search</string>
     <string name="search_hint">Search</string>
     <string name="empty">Nothing Found</string>
+    <string name="best_deal_title">Best Deals</string>
 
     <!-- Bundle/class/search -->
     <string name="sort_refine">Refine</string>
