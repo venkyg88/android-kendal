@@ -372,7 +372,7 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
             item.busy = true;
             activity.swallowTouchEvents(true);
 
-            adapter.notifyDataSetChanged();
+            pAdapter.notifyDataSetChanged();
             CartApiManager.addItemToCart(item.identifier, 1, this);
         }
 
@@ -383,7 +383,7 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
 
             ((MainActivity) activity).swallowTouchEvents(false);
             item.busy = false;
-            adapter.notifyDataSetChanged();
+            pAdapter.notifyDataSetChanged();
 
             // if success
             if (errMsg == null) {
