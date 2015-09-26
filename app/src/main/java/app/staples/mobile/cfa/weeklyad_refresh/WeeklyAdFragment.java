@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,9 +43,11 @@ import com.staples.mobile.common.shoplocal.models.PromotionsList;
 import java.util.List;
 
 import app.staples.R;
+import app.staples.mobile.cfa.DrawerItem;
 import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.cart.CartApiManager;
 import app.staples.mobile.cfa.location.LocationFinder;
+import app.staples.mobile.cfa.weeklyad.WeeklyAdInStoreFragment;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.HorizontalDivider;
 import retrofit.Callback;
@@ -63,6 +66,7 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
     ImageView categoryBtn;
     ImageView storeBtn;
     TextView storeNameTv;
+    Button viewAllBtn;
 
     private RecyclerView mRecyclerView;
     private WeeklyAdCategoryAdapter mAdapter;
@@ -118,7 +122,6 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_weekly_ad, container, false);
         dealLayout = (LinearLayout)rootView.findViewById(R.id.deal_layout);
-        dealLayout.setOnClickListener(this);
         dealImage = (ImageView)rootView.findViewById(R.id.dealImage);
         dealTitle = (TextView)rootView.findViewById(R.id.dealTitle);
         dealPrice = (TextView)rootView.findViewById(R.id.dealPricing);
@@ -127,10 +130,12 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
         categoryBtn = (ImageView) rootView.findViewById(R.id.list_switch);
         promotionsBtn = (ImageView) rootView.findViewById(R.id.promotions_switch);
         storeNameTv = (TextView) rootView.findViewById(R.id.store_name);
+        viewAllBtn = (Button) rootView.findViewById(R.id.dealViewAll);
 
         promotionsBtn.setOnClickListener(this);
         categoryBtn.setOnClickListener(this);
         storeBtn.setOnClickListener(this);
+        viewAllBtn.setOnClickListener(this);
 
         mRecyclerView = (RecyclerView)rootView.findViewById(R.id.weekly_ad_category_items);
         mRecyclerView.setHasFixedSize(true);
@@ -220,8 +225,6 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
                                 mAdapter.setStoreId(storeId);
                                 city = data.getCity();
                                 storeNameTv.setText(city);
-
-                                getWeeklyAdDeals();
 
                                 getWeeklyAdPromotions();
                                 return;
@@ -315,26 +318,15 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
         final Resources res = activity.getResources();
         Object tag;
         switch (v.getId()){
-            case R.id.deal_layout:
-
-                break;
             case R.id.goto_here_switch:
                 if(activity == null) return;
                 ((MainActivity)activity).selectStoreFragment();
                 break;
             case R.id.list_switch:
-                getWeeklyAdCategories();
-                viewPager.setVisibility(View.GONE);
-                dealLayout.setVisibility(View.VISIBLE);
-                categoryBtn.setVisibility(View.GONE);
-                promotionsBtn.setVisibility(View.VISIBLE);
+                showCategories();
                 break;
             case R.id.promotions_switch:
-                mRecyclerView.setAdapter(pAdapter);
-                viewPager.setVisibility(View.VISIBLE);
-                dealLayout.setVisibility(View.GONE);
-                categoryBtn.setVisibility(View.VISIBLE);
-                promotionsBtn.setVisibility(View.GONE);
+               showPromotionPages();
                 break;
             case R.id.weekly_ad_list_view: // go to sku page
                 tag = v.getTag();
@@ -361,6 +353,12 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
                     new AddToCart(item);
                 }
                 break;
+            case R.id.dealViewAll: // view all best deals
+                BestDealFragment fragment = new BestDealFragment();
+                fragment.setArguments(storeId);
+                ((MainActivity) getActivity()).selectFragment("", fragment, MainActivity.Transition.RIGHT);
+
+                break;
         }
     }
 
@@ -374,7 +372,7 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
             item.busy = true;
             activity.swallowTouchEvents(true);
 
-            adapter.notifyDataSetChanged();
+            pAdapter.notifyDataSetChanged();
             CartApiManager.addItemToCart(item.identifier, 1, this);
         }
 
@@ -385,7 +383,7 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
 
             ((MainActivity) activity).swallowTouchEvents(false);
             item.busy = false;
-            adapter.notifyDataSetChanged();
+            pAdapter.notifyDataSetChanged();
 
             // if success
             if (errMsg == null) {
@@ -399,6 +397,23 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
                 ((MainActivity) activity).showErrorDialog(errMsg);
             }
         }
+    }
+
+    private void showCategories() {
+        getWeeklyAdDeals();
+        getWeeklyAdCategories();
+        viewPager.setVisibility(View.GONE);
+        dealLayout.setVisibility(View.VISIBLE);
+        categoryBtn.setVisibility(View.GONE);
+        promotionsBtn.setVisibility(View.VISIBLE);
+    }
+
+    private void showPromotionPages() {
+        mRecyclerView.setAdapter(pAdapter);
+        viewPager.setVisibility(View.VISIBLE);
+        dealLayout.setVisibility(View.GONE);
+        categoryBtn.setVisibility(View.VISIBLE);
+        promotionsBtn.setVisibility(View.GONE);
     }
 
     private class StoreInfoCallback implements Callback<StoreQuery> {

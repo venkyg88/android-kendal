@@ -45,7 +45,9 @@ public class ActionBar extends LinearLayout {
         STORE    (true,  false, false, true,  true,  false, true,  false, false, R.string.store_locator_title),
         TERMS    (true,  false, false, false, false, false, false, false, false, R.string.terms_title),
         VIEWCARD (true,  false, false, false, true,  false, true,  false, false, R.string.credit_card_title),
-        WEEKLYAD (true,  false, false, true,  true,  false, true,  false, false, R.string.weekly_ad_title);
+        WEEKLYAD (true,  false, false, true,  true,  false, true,  false, false, R.string.weekly_ad_title),
+        BESTDEAL (true,  false, false, true,  true,  false, true,  false, false, R.string.best_deal_title);
+
 
         private boolean back;
         private boolean drawer;
