@@ -9,9 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:padding="@dimen/margin_16dp"
         android:src="@drawable/splash"
-        android:background="@color/staples_white"/>
+        android:background="@color/staples_black"/>
     <!-- Main screen -->
     <app.staples.mobile.cfa.widget.LinearLayoutWithOverlay
         android:id="@+id/main"
