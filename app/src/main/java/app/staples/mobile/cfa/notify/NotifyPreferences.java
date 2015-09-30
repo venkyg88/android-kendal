@@ -191,6 +191,9 @@ public class NotifyPreferences implements Callback<Preferences> {
                 String id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
                 prefs.setUaChannelId(id);
                 prefs.setTags(tags);
+                if (ProfileDetails.isRewardsMember()) {
+                    prefs.setRewardsNumber(ProfileDetails.getMember().getRewardsNumber());
+                }
 
                 // Upload to preference center
                 ChannelApi api = Access.getInstance().getChannelApi(false);
