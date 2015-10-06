@@ -1,9 +1,9 @@
 package app.staples.mobile.cfa.weeklyad_refresh;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,7 +35,6 @@ import com.staples.mobile.common.shoplocal.models.CategoryList;
 import com.staples.mobile.common.shoplocal.models.DealList;
 import com.staples.mobile.common.shoplocal.models.DealResults;
 import com.staples.mobile.common.shoplocal.models.PromotionPageCategoryList;
-import com.staples.mobile.common.shoplocal.models.PromotionPageCategoryResults;
 import com.staples.mobile.common.shoplocal.models.PromotionPagesList;
 import com.staples.mobile.common.shoplocal.models.PromotionPagesResults;
 import com.staples.mobile.common.shoplocal.models.PromotionsList;
@@ -43,11 +42,9 @@ import com.staples.mobile.common.shoplocal.models.PromotionsList;
 import java.util.List;
 
 import app.staples.R;
-import app.staples.mobile.cfa.DrawerItem;
 import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.cart.CartApiManager;
 import app.staples.mobile.cfa.location.LocationFinder;
-import app.staples.mobile.cfa.weeklyad.WeeklyAdInStoreFragment;
 import app.staples.mobile.cfa.widget.ActionBar;
 import app.staples.mobile.cfa.widget.HorizontalDivider;
 import retrofit.Callback;
@@ -183,7 +180,7 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
             @Override
             public void success(DealList dealList, Response response) {
                 dealResultsList = dealList.getDealResultsList();
-                int random = (int)(Math.random() * dealResultsList.size());
+                int random = (int) (Math.random() * dealResultsList.size());
                 DealResults deal = dealResultsList.get(random);
                 Picasso.with(getActivity())
                         .load(deal.getImageLocation())
@@ -197,6 +194,7 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
 
             @Override
             public void failure(RetrofitError error) {
+                Crittercism.logHandledException(error);
 
             }
         });
@@ -239,8 +237,8 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
             @Override
             public void failure(RetrofitError error) {
                 MainActivity activity = (MainActivity) getActivity();
+                Crittercism.logHandledException(error);
                 if (activity == null) return;
-
                 activity.showErrorDialog(ApiError.getErrorMessage(error));
             }
         });
@@ -258,6 +256,7 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
 
             @Override
             public void failure(RetrofitError error) {
+                Crittercism.logHandledException(error);
 
             }
         });
@@ -282,13 +281,14 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
 
                     @Override
                     public void failure(RetrofitError error) {
-
+                        Crittercism.logHandledException(error);
                     }
                 });
             }
 
             @Override
             public void failure(RetrofitError error) {
+                Crittercism.logHandledException(error);
 
             }
         });
@@ -306,6 +306,7 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
 
             @Override
             public void failure(RetrofitError error) {
+                Crittercism.logHandledException(error);
             }
 
         });
@@ -441,6 +442,7 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
         @Override
         public void failure(RetrofitError retrofitError) {
             MainActivity activity = (MainActivity) getActivity();
+            Crittercism.logHandledException(retrofitError);
             if (activity==null) return;
 
             activity.hideProgressIndicator();
