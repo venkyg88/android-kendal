@@ -20,6 +20,7 @@
 -dontwarn com.leanplum.**
 
 -keep class com.staples.mobile.common.access.** { * ; }
+-keep class com.staples.mobile.common.** { * ; }
 
 -keep class com.squareup.retrofit.** { * ; }
 -keep class com.fasterxml.jackson.** { * ; }
