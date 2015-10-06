@@ -27,7 +27,6 @@ import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.BulletDescription;
 import com.staples.mobile.common.access.easyopen.model.browse.Description;
-import com.staples.mobile.common.access.easyopen.model.browse.Discount;
 import com.staples.mobile.common.access.easyopen.model.browse.Image;
 import com.staples.mobile.common.access.easyopen.model.browse.Pricing;
 import com.staples.mobile.common.access.easyopen.model.browse.Product;
@@ -484,8 +483,8 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
     // Retrofit callbacks
     @Override
     public void success(Object obj, Response response) {
-        Activity activity = getActivity();
-        if (!(activity instanceof MainActivity)) return;
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity==null) return;
 
         if (obj instanceof SkuDetails) {
             SkuDetails details = (SkuDetails) obj;
@@ -503,8 +502,11 @@ public class SkuFragment extends Fragment implements ViewPager.OnPageChangeListe
 
     @Override
     public void failure(RetrofitError retrofitError) {
-        Activity activity = getActivity();
-        if (!(activity instanceof MainActivity)) return;
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity==null) return;
+
+        Crittercism.logHandledException(retrofitError);
+
 
         Type type = retrofitError.getSuccessType();
 

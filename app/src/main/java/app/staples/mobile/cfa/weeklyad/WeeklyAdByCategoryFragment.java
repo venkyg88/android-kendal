@@ -189,6 +189,7 @@ public class WeeklyAdByCategoryFragment extends Fragment implements View.OnClick
                                 dateRangeVw.setText(displayFormat.format(startDate) + " - " + displayFormat.format(endDate));
                             } catch(ParseException e) {
                                 Log.d(TAG, e.getMessage());
+                                Crittercism.logHandledException(e);
                             }
                         }
                     }
