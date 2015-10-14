@@ -79,7 +79,7 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
     private static final String ARG_STORENO = "storeNo";
     private static final String ARG_STOREID = "storeId";
 
-    private static final String DEFAULT_STORE_NO = "0349";
+    private static final int DEFAULT_STORE_NUMBER = 349;
 
     List<DealResults> dealResultsList;
     List<PromotionPagesResults> promotionPagesResults;
@@ -165,8 +165,7 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
                 if (!TextUtils.isEmpty(postalCode)) {
                     Access.getInstance().getChannelApi(false).storeLocations(postalCode, new StoreInfoCallback());
                 } else {
-                    storeNo = DEFAULT_STORE_NO;
-                    getWeeklyAdStoreAndData();
+                    getWeeklyAdStoreAndData();            // will be set to default store
                 }
             }
         }
@@ -204,8 +203,17 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
         MainActivity activity = (MainActivity) getActivity();
         if (activity==null) return;
 
+        int storeNumber;
+        try {
+            storeNumber = Integer.parseInt(storeNo);
+        } catch (Exception e) {
+            storeNumber = DEFAULT_STORE_NUMBER;
+            Crittercism.leaveBreadcrumb("Store number <" + storeNo + "> is not an integer number");
+            Crittercism.logHandledException(e);
+        }
+
         final EasyOpenApi easyOpenApi = Access.getInstance().getEasyOpenApi(false);
-        easyOpenApi.getWeeklyAdStore(Integer.parseInt(storeNo), new Callback<WeeklyAd>() {
+        easyOpenApi.getWeeklyAdStore(storeNumber, new Callback<WeeklyAd>() {
             @Override
             public void success(WeeklyAd weeklyAdStore, Response response) {
                 MainActivity activity = (MainActivity) getActivity();
@@ -430,10 +438,6 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
                 // Get store location
                 Obj storeObj = storeData.get(0).getObj();
                 storeNo = storeObj.getStoreNumber();
-            }
-            // use default if no store result
-            else {
-                storeNo = DEFAULT_STORE_NO;
             }
 
             getWeeklyAdStoreAndData();
