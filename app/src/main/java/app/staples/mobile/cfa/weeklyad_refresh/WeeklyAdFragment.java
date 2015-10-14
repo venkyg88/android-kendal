@@ -79,7 +79,6 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
     private static final String ARG_STORENO = "storeNo";
     private static final String ARG_STOREID = "storeId";
 
-    private static final String DEFAULT_STORE_NO = "0349";
     private static final int DEFAULT_STORE_NUMBER = 349;
 
     List<DealResults> dealResultsList;
@@ -166,8 +165,7 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
                 if (!TextUtils.isEmpty(postalCode)) {
                     Access.getInstance().getChannelApi(false).storeLocations(postalCode, new StoreInfoCallback());
                 } else {
-                    storeNo = DEFAULT_STORE_NO;
-                    getWeeklyAdStoreAndData();
+                    getWeeklyAdStoreAndData();            // will be set to default store
                 }
             }
         }
@@ -440,10 +438,6 @@ public class WeeklyAdFragment extends Fragment implements View.OnClickListener, 
                 // Get store location
                 Obj storeObj = storeData.get(0).getObj();
                 storeNo = storeObj.getStoreNumber();
-            }
-            // use default if no store result
-            else {
-                storeNo = DEFAULT_STORE_NO;
             }
 
             getWeeklyAdStoreAndData();
