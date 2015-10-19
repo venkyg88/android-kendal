@@ -66,42 +66,26 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
         setArguments(args);
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Crittercism.leaveBreadcrumb("OrderReceiptFragment:onCreateView(): Displaying the Order Receipt screen.");
         activity = (MainActivity) getActivity();
-
-        Resources r = getResources();
-
+        orderStatus = null;
         View view = inflater.inflate(R.layout.order_detail_fragment, container, false);
-
-        orderNumber = (TextView)view.findViewById(R.id.orderNumber);
-        orderDate = (TextView)view.findViewById(R.id.orderDate);
-        deliveryDate = (TextView)view.findViewById(R.id.deliveryDateTV);
-        cardImage = (ImageView)view.findViewById(R.id.creditCardImage);
-        cardInfo = (TextView)view.findViewById(R.id.cardInfoTV);
-        orderName = (TextView)view.findViewById(R.id.billingNameTV);
-        billingAddress = (TextView)view.findViewById(R.id.addressTV);
-        orderSubTotal = (TextView)view.findViewById(R.id.orderSubTotalTV);
-        orderCoupons = (TextView)view.findViewById(R.id.couponsTV);
-        orderShipping = (TextView)view.findViewById(R.id.shippingTV);
-        orderTax = (TextView)view.findViewById(R.id.orderTaxTV);
-        orderGrandTotal = (TextView)view.findViewById(R.id.orderGrandTotalTV);
-        orderQty = (TextView)view.findViewById(R.id.order_item_count);
-        orderTotal = (TextView)view.findViewById(R.id.order_total);
-
-        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-
-        final LinearLayout shipmentItem = (LinearLayout)view.findViewById(R.id.sku_item);
 
         Bundle args = getArguments();
         if(args != null) {
             if(args.getString(ORDER_NUMBER) != null) {
                 String orderNumber = args.getString(ORDER_NUMBER);
+                easyOpenApi = Access.getInstance().getEasyOpenApi(true);
                 easyOpenApi.getMemberOrderStatus(orderNumber, new Callback<OrderStatusDetail>() {
                     @Override
                     public void success(OrderStatusDetail orderStatusDetail, Response response) {
                         orderStatus = orderStatusDetail.getOrderStatus().get(0);
+                        if(getView() != null) {
+                            displayOrderReceipt();
+                        }
                     }
 
                     @Override
@@ -109,15 +93,51 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
                         ((MainActivity)getActivity()).showErrorDialog("Cannot fetch order at this time");
                     }
                 });
-            }
-            else {
+            } else {
                 order = (OrderShipmentListItem)args.getSerializable("orderData");
                 if (order != null) {
                     orderStatus = order.getOrderStatus();
+                }
             }
+        }
+        return view;
+    }
+
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(orderStatus != null) {
+            displayOrderReceipt();
+        }
+    }
+
+
+    public void displayOrderReceipt () {
+        Resources r = getResources();
+        View view = getView();
+
+        if (view != null) {
+            orderNumber = (TextView)view.findViewById(R.id.orderNumber);
+            orderDate = (TextView)view.findViewById(R.id.orderDate);
+            deliveryDate = (TextView)view.findViewById(R.id.deliveryDateTV);
+            cardImage = (ImageView)view.findViewById(R.id.creditCardImage);
+            cardInfo = (TextView)view.findViewById(R.id.cardInfoTV);
+            orderName = (TextView)view.findViewById(R.id.billingNameTV);
+            billingAddress = (TextView)view.findViewById(R.id.addressTV);
+            orderSubTotal = (TextView)view.findViewById(R.id.orderSubTotalTV);
+            orderCoupons = (TextView)view.findViewById(R.id.couponsTV);
+            orderShipping = (TextView)view.findViewById(R.id.shippingTV);
+            orderTax = (TextView)view.findViewById(R.id.orderTaxTV);
+            orderGrandTotal = (TextView)view.findViewById(R.id.orderGrandTotalTV);
+            orderQty = (TextView)view.findViewById(R.id.order_item_count);
+            orderTotal = (TextView)view.findViewById(R.id.order_total);
+
+            SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+
+            final LinearLayout shipmentItem = (LinearLayout)view.findViewById(R.id.sku_item);
 
             DecimalFormat currencyFormat = MiscUtils.getCurrencyFormat();
-
             // for each shipment of the order
             for (int i = 0;  i < orderStatus.getShipment().size(); i++) {
                 Shipment shipment = orderStatus.getShipment().get(i);
@@ -130,8 +150,7 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
                 // for each item within the shipment
                 for (int j = 0; j < shipment.getShipmentSku().size(); j++) {
                     ShipmentSKU sku = shipment.getShipmentSku().get(j);
-
-                    View v = inflater.inflate(R.layout.shipment_listitem, shipmentItem, false);
+                    View v = getActivity().getLayoutInflater().inflate(R.layout.shipment_listitem, shipmentItem, false);
                     TextView skuTitle = (TextView) v.findViewById(R.id.shipmentTitle);
                     TextView skuPrice = (TextView) v.findViewById(R.id.shipmentPrice);
                     TextView skuQuantity = (TextView) v.findViewById(R.id.shipmentQty);
@@ -225,10 +244,12 @@ public class OrderReceiptFragment extends Fragment implements View.OnClickListen
             orderShipping.setText(formattedShipping);
             orderTax.setText("$"+orderStatus.getSalesTaxTotal());
             orderGrandTotal.setText("$"+orderStatus.getGrandTotal());
+        } else {
+            Crittercism.leaveBreadcrumb("OrderReceiptFragment:displayOrderReceipt(): Failure to display order receipt");
         }
+
     }
-        return view;
-    }
+
 
     @Override
     public void onResume() {
