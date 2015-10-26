@@ -24,7 +24,7 @@ public class HorizontalDivider extends RecyclerView.ItemDecoration {
         Resources res = context.getResources();
         thick = res.getDimensionPixelSize(R.dimen.horizontal_divider_thickness);
         gap = res.getDimensionPixelOffset(R.dimen.horizontal_divider_gap);
-        int color = res.getColor(R.color.staples_off_white);
+        int color = res.getColor(R.color.staples_dark_gray);
 
         // Divider paint
         paint = new Paint();

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.crittercism.app.Crittercism;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.channel.api.ChannelApi;
 import com.staples.mobile.common.access.channel.model.notify.Preferences;
@@ -16,9 +17,11 @@ import com.staples.mobile.common.access.config.model.Holding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import app.staples.R;
 import app.staples.mobile.cfa.MainActivity;
+import app.staples.mobile.cfa.profile.ProfileDetails;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -27,6 +30,9 @@ public class NotifyPreferences implements Callback<Preferences> {
     private static final String TAG = NotifyPreferences.class.getSimpleName();
 
     private static final boolean DEFAULTENABLE = true;
+
+    private static final String APPLICATION = "staples";
+    private static final String NOTIFICATION_TYPE = "android";
 
     private static NotifyPreferences instance;
 
@@ -87,22 +93,68 @@ public class NotifyPreferences implements Callback<Preferences> {
         return(array);
     }
 
-    // Shared preferences
+    // Shared preferences methods - commented out for now - remove after Nov 2015
 
-    public void loadPreferences(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
-        for(Item item : array) {
-            item.enable = prefs.getBoolean(item.key, DEFAULTENABLE);
-        }
-    }
+//    public void loadPreferences(Context context) {
+//        SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
+//        for(Item item : array) {
+//            item.enable = prefs.getBoolean(item.key, DEFAULTENABLE);
+//        }
+//    }
 
-    public void savePreferences(Context context) {
-        SharedPreferences sharedPrefs = context.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPrefs.edit();
-        for(Item item : array) {
-            editor.putBoolean(item.key, item.enable);
+//    public void savePreferences(Context context) {
+//        SharedPreferences sharedPrefs = context.getSharedPreferences(MainActivity.PREFS_FILENAME, Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPrefs.edit();
+//        for(Item item : array) {
+//            editor.putBoolean(item.key, item.enable);
+//        }
+//        editor.apply();
+//    }
+
+    // Preference Center
+
+    public void loadPreferences(final Context context) {
+        ChannelApi channelApi = Access.getInstance().getChannelApi(false);
+        if (ProfileDetails.getMember() != null) {
+            String userEmail = ProfileDetails.getMember().getEmailAddress();
+            String deviceId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+            channelApi.getNotificationPreferences(userEmail, APPLICATION, NOTIFICATION_TYPE, deviceId, new Callback<List<Preferences>>() {
+                @Override
+                public void success(List<Preferences> preferencesList, Response response) {
+                    if(preferencesList.size() == 0) {
+                        uploadPreferences(context);                       // new user - preference center doesn't have a record
+                    } else {
+                        int updatesReceived = 0;
+                        Preferences preferences = preferencesList.get(0); // call returns only one notificationType (android)
+                        if(preferences != null) {
+                            List<Tag> tags = preferences.getTags();       // get tags from pref center
+                            for(Tag tag : tags) {
+                                if(tag != null) {
+                                    for(Item item : array) {              // loop through switches provisioned on MCS
+                                        if(item.attribute.equals(tag.getTag())) {
+                                            item.enable = tag.isEnable();
+                                            updatesReceived++;
+                                        }
+                                    }
+                                }
+
+                            }
+                            if(updatesReceived < array.size()) {
+                                uploadPreferences(context);                // upload new tag(s)
+                            }
+                        }
+
+                    }
+
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Crittercism.leaveBreadcrumb("NotifyPreferences:loadPreferences(): Error when trying to get user preferences.");
+                }
+            });
         }
-        editor.apply();
     }
 
     // Leanplum
@@ -118,27 +170,39 @@ public class NotifyPreferences implements Callback<Preferences> {
     // Channel API
 
     public void uploadPreferences(Context context) {
-        // Collect tags
-        ArrayList<Tag> tags = new ArrayList<Tag>();
-        for(Item item : array) {
-            Tag tag = new Tag();
-            tag.setTag(item.attribute);
-            tag.setEnable(item.enable);
-            tags.add(tag);
+        if(!Access.getInstance().isGuestLogin()) {
+            // Preference Center requires user information
+
+            // Collect tags
+            ArrayList<Tag> tags = new ArrayList<Tag>();
+            for(Item item : array) {
+                Tag tag = new Tag();
+                tag.setTag(item.attribute);
+                tag.setEnable(item.enable);
+                tags.add(tag);
+            }
+
+            if(ProfileDetails.getMember() != null) {
+                // Make body
+                Preferences prefs = new Preferences();
+                prefs.setApplication(APPLICATION);
+                prefs.setNotificationType(NOTIFICATION_TYPE);
+                prefs.setEmail(ProfileDetails.getMember().getEmailAddress());
+                String id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+                prefs.setUaChannelId(id);
+                prefs.setTags(tags);
+                if (ProfileDetails.isRewardsMember()) {
+                    prefs.setRewardsNumber(ProfileDetails.getMember().getRewardsNumber());
+                }
+
+                // Upload to preference center
+                ChannelApi api = Access.getInstance().getChannelApi(false);
+                api.setNotificationPreferences(prefs, this);
+            } else {
+                // Logged in user should have profile with details
+                Crittercism.leaveBreadcrumb("NotifyPreferences:uploadPreferences(): User is logged in but profile doesn't have details");
+            }
         }
-
-        // Make body
-        Preferences prefs = new Preferences();
-        prefs.setApplication("staples");
-        prefs.setEmail("Renate.Pyhel@staples.com");
-        prefs.setNotificationType("android");
-        String id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        prefs.setUaChannelId(id);
-        prefs.setTags(tags);
-
-        // Upload
-        ChannelApi api = Access.getInstance().getChannelApi(false);
-        api.setNotificationPreferences(prefs, this);
     }
 
     @Override

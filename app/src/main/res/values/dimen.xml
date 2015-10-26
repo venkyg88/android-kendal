@@ -49,7 +49,7 @@
     <dimen name="weekly_ad_category_item_image_width">100dp</dimen>
     <dimen name="weekly_ad_category_item_image_height">100dp</dimen>
     <dimen name="personal_feed_item_image_width">120dp</dimen>
-    <dimen name="personal_feed_item_image_height">120dp</dimen>
+    <dimen name="personal_feed_item_image_height">120dp</dimen>\
     <dimen name="personal_feed_arrow">28dp</dimen>
 
     <!--SKU-->
@@ -89,6 +89,9 @@
 
     <dimen name="rewards_card_height">196dp</dimen>
     <dimen name="rewards_card_width">320dp</dimen>
+
+    <dimen name="weeklyad_viewall_height">30dp</dimen>
+    <dimen name="weeklyad_viewall_width">70dp</dimen>
 
     <!--Home screen-->
     <dimen name="home_store_wrapper_padding">8dp</dimen>

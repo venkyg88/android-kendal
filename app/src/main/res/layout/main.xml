@@ -6,12 +6,12 @@
     <!-- Splash screen -->
     <ImageView
         android:id="@+id/splash"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:padding="@dimen/margin_16dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
         android:src="@drawable/splash"
-        android:background="@color/staples_white"/>
+        android:background="@color/staples_black"/>
     <!-- Main screen -->
     <app.staples.mobile.cfa.widget.LinearLayoutWithOverlay
         android:id="@+id/main"
