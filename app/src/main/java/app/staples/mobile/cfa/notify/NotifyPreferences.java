@@ -36,7 +36,7 @@ public class NotifyPreferences implements Callback<Preferences> {
 
     private static NotifyPreferences instance;
 
-    private ArrayList<Item> array;
+    private ArrayList<Item> mcsNotificationPrefs;
 
     public static class Item {
         public String attribute;
@@ -66,7 +66,7 @@ public class NotifyPreferences implements Callback<Preferences> {
     // Basic array stuff
 
     private NotifyPreferences() {
-        array = new ArrayList<Item>();
+        mcsNotificationPrefs = new ArrayList<Item>();
 
         AppConfigurator appConfigurator = AppConfigurator.getInstance();
         Configurator configurator = appConfigurator.getConfigurator();
@@ -85,12 +85,12 @@ public class NotifyPreferences implements Callback<Preferences> {
 
     public Item addItem(String attribute, String title) {
         Item item = new Item(attribute, title, DEFAULTENABLE);
-        array.add(item);
+        mcsNotificationPrefs.add(item);
         return(item);
     }
 
     public ArrayList<Item> getArray() {
-        return(array);
+        return(mcsNotificationPrefs);
     }
 
     // Shared preferences methods - commented out for now - remove after Nov 2015
@@ -131,7 +131,7 @@ public class NotifyPreferences implements Callback<Preferences> {
                             List<Tag> tags = preferences.getTags();       // get tags from pref center
                             for(Tag tag : tags) {
                                 if(tag != null) {
-                                    for(Item item : array) {              // loop through switches provisioned on MCS
+                                    for(Item item : mcsNotificationPrefs) {              // loop through switches provisioned on MCS
                                         if(item.attribute.equals(tag.getTag())) {
                                             item.enable = tag.isEnable();
                                             updatesReceived++;
@@ -143,8 +143,8 @@ public class NotifyPreferences implements Callback<Preferences> {
                             // if number of switches on pref center is different from the ones in MCS, refresh
                             // if we didn't receive update for all MCS tags, refresh
                             // if user has a rewards number that is not uploaded yet, refresh
-                            if( tags.size()    != array.size() ||
-                                updatesReceived < array.size() ||
+                            if( tags.size()    != mcsNotificationPrefs.size() ||
+                                updatesReceived < mcsNotificationPrefs.size() ||
                                 (ProfileDetails.isRewardsMember() && !(ProfileDetails.getMember().getRewardsNumber().equals(preferences.getRewardsNumber()))) ) {
                                 uploadPreferences(context);
                             }
@@ -164,7 +164,7 @@ public class NotifyPreferences implements Callback<Preferences> {
 
     public HashMap<String, Object> getUserAttributes() {
         HashMap<String, Object> map = new HashMap<String, Object>();
-        for(Item item : array) {
+        for(Item item : mcsNotificationPrefs) {
             map.put(item.attribute, item.enable);
         }
         return(map);
@@ -178,7 +178,7 @@ public class NotifyPreferences implements Callback<Preferences> {
 
             // Collect tags
             ArrayList<Tag> tags = new ArrayList<Tag>();
-            for(Item item : array) {
+            for(Item item : mcsNotificationPrefs) {
                 Tag tag = new Tag();
                 tag.setTag(item.attribute);
                 tag.setEnable(item.enable);
