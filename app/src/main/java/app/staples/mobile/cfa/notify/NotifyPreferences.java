@@ -138,15 +138,18 @@ public class NotifyPreferences implements Callback<Preferences> {
                                         }
                                     }
                                 }
-
                             }
-                            if(updatesReceived < array.size()) {
-                                uploadPreferences(context);                // upload new tag(s)
+
+                            // if number of switches on pref center is different from the ones in MCS, refresh
+                            // if we didn't receive update for all MCS tags, refresh
+                            // if user has a rewards number that is not uploaded yet, refresh
+                            if( tags.size()    != array.size() ||
+                                updatesReceived < array.size() ||
+                                (ProfileDetails.isRewardsMember() && !(ProfileDetails.getMember().getRewardsNumber().equals(preferences.getRewardsNumber()))) ) {
+                                uploadPreferences(context);
                             }
                         }
-
                     }
-
                 }
 
                 @Override
