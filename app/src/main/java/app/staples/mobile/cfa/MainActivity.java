@@ -38,14 +38,14 @@ import com.leanplum.LeanplumPushNotificationCustomizer;
 import com.leanplum.LeanplumPushService;
 import com.leanplum.activities.LeanplumActivity;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.config.AppConfigurator;
-import com.staples.mobile.common.access.config.model.Api;
-import com.staples.mobile.common.access.config.model.Configurator;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.access.easyopen.model.member.MemberDetail;
 import com.staples.mobile.common.analytics.Tracker;
+import com.staples.mobile.configurator.AppConfigurator;
+import com.staples.mobile.configurator.model.Api;
+import com.staples.mobile.configurator.model.Configurator;
 
 import java.util.ArrayList;
 

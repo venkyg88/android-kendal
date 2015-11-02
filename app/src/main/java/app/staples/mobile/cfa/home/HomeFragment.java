@@ -13,13 +13,13 @@ import android.widget.TextView;
 import com.crittercism.app.Crittercism;
 import com.squareup.picasso.Picasso;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.config.AppConfigurator;
-import com.staples.mobile.common.access.config.model.Area;
-import com.staples.mobile.common.access.config.model.Configurator;
-import com.staples.mobile.common.access.config.model.Item;
-import com.staples.mobile.common.access.config.model.Screen;
 import com.staples.mobile.common.access.easyopen.model.member.Member;
 import com.staples.mobile.common.analytics.Tracker;
+import com.staples.mobile.configurator.AppConfigurator;
+import com.staples.mobile.configurator.model.Area;
+import com.staples.mobile.configurator.model.Configurator;
+import com.staples.mobile.configurator.model.Item;
+import com.staples.mobile.configurator.model.Screen;
 
 import java.text.MessageFormat;
 import java.util.List;

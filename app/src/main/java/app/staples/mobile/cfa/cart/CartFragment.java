@@ -15,15 +15,15 @@ import android.widget.TextView;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.crittercism.app.Crittercism;
-import com.staples.mobile.common.access.config.AppConfigurator;
-import com.staples.mobile.common.access.config.model.AppContext;
-import com.staples.mobile.common.access.config.model.Configurator;
-import com.staples.mobile.common.access.config.model.Promotions;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.access.easyopen.model.cart.Coupon;
 import com.staples.mobile.common.access.easyopen.model.cart.Product;
 import com.staples.mobile.common.access.easyopen.model.member.Reward;
 import com.staples.mobile.common.analytics.Tracker;
+import com.staples.mobile.configurator.AppConfigurator;
+import com.staples.mobile.configurator.model.AppContext;
+import com.staples.mobile.configurator.model.Configurator;
+import com.staples.mobile.configurator.model.Promotions;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

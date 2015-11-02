@@ -8,11 +8,11 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.crittercism.app.Crittercism;
-import com.staples.mobile.common.access.config.AppConfigurator;
-import com.staples.mobile.common.access.config.model.Configurator;
-import com.staples.mobile.common.access.config.model.Force;
-import com.staples.mobile.common.access.config.model.Suggest;
-import com.staples.mobile.common.access.config.model.Update;
+import com.staples.mobile.configurator.AppConfigurator;
+import com.staples.mobile.configurator.model.Configurator;
+import com.staples.mobile.configurator.model.Force;
+import com.staples.mobile.configurator.model.Suggest;
+import com.staples.mobile.configurator.model.Update;
 
 public class UpgradeManager {
     private static final String TAG = UpgradeManager.class.getSimpleName();
