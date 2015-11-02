@@ -1,7 +1,6 @@
 package app.staples.mobile.cfa.notify;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -10,17 +9,15 @@ import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.channel.api.ChannelApi;
 import com.staples.mobile.common.access.channel.model.notify.Preferences;
 import com.staples.mobile.common.access.channel.model.notify.Tag;
-import com.staples.mobile.common.access.config.AppConfigurator;
-import com.staples.mobile.common.access.config.model.Configurator;
-import com.staples.mobile.common.access.config.model.Descriptor;
-import com.staples.mobile.common.access.config.model.Holding;
+import com.staples.mobile.configurator.AppConfigurator;
+import com.staples.mobile.configurator.model.Configurator;
+import com.staples.mobile.configurator.model.Descriptor;
+import com.staples.mobile.configurator.model.Holding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import app.staples.R;
-import app.staples.mobile.cfa.MainActivity;
 import app.staples.mobile.cfa.profile.ProfileDetails;
 import retrofit.Callback;
 import retrofit.RetrofitError;

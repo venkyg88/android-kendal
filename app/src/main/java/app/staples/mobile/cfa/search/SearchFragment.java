@@ -14,12 +14,12 @@ import android.widget.TextView;
 import com.apptentive.android.sdk.Apptentive;
 import com.crittercism.app.Crittercism;
 import com.staples.mobile.common.access.Access;
-import com.staples.mobile.common.access.config.AppConfigurator;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
 import com.staples.mobile.common.access.easyopen.model.browse.Search;
 import com.staples.mobile.common.access.easyopen.model.browse.SearchResult;
 import com.staples.mobile.common.access.easyopen2.api.EasyOpenApi2;
 import com.staples.mobile.common.analytics.Tracker;
+import com.staples.mobile.configurator.AppConfigurator;
 
 import java.text.MessageFormat;
 import java.util.Comparator;

@@ -123,7 +123,8 @@ dependencies {
         exclude module: 'wagon-provider-api'
     }
 
-    compile project(':..:android-common:common')
+    compile 'com.staples.mobile.common:common:2.0.+'
+    compile 'com.staples.mobile.configurator:configurator:0.1.+'
 }
 
 task showTest {
