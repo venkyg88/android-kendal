@@ -990,7 +990,6 @@ public class MainActivity extends LeanplumActivity
             + " identifier[" + identifier + "]"
             + " title[" + title + "]"
         );
-        Toast.makeText(this,"title: "+ title + "identifier "+ identifier,Toast.LENGTH_LONG).show();
         if(title.equals("Daily Deals"))
         {
             DailyDealsFragment fragment = new DailyDealsFragment();
