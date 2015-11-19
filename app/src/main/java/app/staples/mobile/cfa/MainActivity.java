@@ -1002,10 +1002,7 @@ public class MainActivity extends LeanplumActivity
             fragment.setArguments(title, identifier);
             return(selectFragment(DrawerItem.BUNDLE, fragment, Transition.RIGHT));
         }
-
     }
-
-    //if Daily Deals
 
     public boolean selectSearch(String title, String keyword) {
         Crittercism.leaveBreadcrumb("MainActivity:selectSearch(): Searching by keyword."
