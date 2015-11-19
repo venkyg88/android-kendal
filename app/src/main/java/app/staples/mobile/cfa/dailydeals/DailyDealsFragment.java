@@ -1,6 +1,5 @@
 package app.staples.mobile.cfa.dailydeals;
 
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -36,15 +35,12 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class DailyDealsFragment extends Fragment implements Callback<Browse> ,DailyDealsAdapter.OnFetchMoreData,View.OnClickListener,DialogInterface.OnDismissListener{
 
     private static final String TAG = DailyDealsFragment.class.getSimpleName();
 
     private final static int MAXFETCH = 50;
-    private final static int zipcode = 01702; //TODO
+    private final static int zipcode = 01702;
     private Dialog popup;
     private static final String TITLE = "title";
     private static final String IDENTIFIER = "identifier";
@@ -125,8 +121,7 @@ public class DailyDealsFragment extends Fragment implements Callback<Browse> ,Da
     }
 
     @Override
-    public void success(Browse browse, Response response)
-    {
+    public void success(Browse browse, Response response) {
         Activity activity = getActivity();
         if (!(activity instanceof MainActivity))
             return;
@@ -137,12 +132,12 @@ public class DailyDealsFragment extends Fragment implements Callback<Browse> ,Da
             state = DataWrapper.State.DONE;
         applyState(null);
 
-    //    Tracker.getInstance().trackStateForClass(count, browse, Tracker.ViewType.GRID, fetchSort.stringParam); // Analytics TODO
+        // TODO: Confirmation on this.
+        // Tracker.getInstance().trackStateForClass(count, browse, Tracker.ViewType.GRID, fetchSort.stringParam);
     }
 
     @Override
     public void failure(RetrofitError retrofitError) {
-
         Activity activity = getActivity();
         if (!(activity instanceof MainActivity)) return;
 
@@ -154,7 +149,6 @@ public class DailyDealsFragment extends Fragment implements Callback<Browse> ,Da
     }
 
     private int processBrowse(com.staples.mobile.common.access.easyopen.model.dailydeals.Browse browse) {
-
         if (browse==null)
             return(0);
 
@@ -163,24 +157,34 @@ public class DailyDealsFragment extends Fragment implements Callback<Browse> ,Da
         if (categories==null || categories.size()==0)
             return(0);
 
-        Categories category = categories.get(1);
+        Categories category = null;
+        for (int i = 0; i < categories.size(); i++) {
+            category = categories.get(i);
+
+            int rank = category.getRank();
+
+            if (rank == 1)
+                break;
+        }
+
         if (category==null)
             return(0);
 
         complete = (category.getTotalRecords() <= page*MAXFETCH);
-        // Create adaptor
+
+        // Create adapter
         if (adapter==null) {
             adapter = new DailyDealsAdapter(getActivity());
             adapter.setOnClickListener(this);
         }
         // Add straight products
-        adapter.fill(category.getProducts(),identifier);
+        adapter.fill(category.getProducts(), identifier);
 
         adapter.notifyDataSetChanged();
 
         int count = adapter.getItemCount();
 
-       if (!complete && count>=MAXFETCH)
+        if (!complete && count>=MAXFETCH)
             adapter.setOnFetchMoreData(this, count-LOOKAHEAD);
 
         return(count);
@@ -245,7 +249,6 @@ public class DailyDealsFragment extends Fragment implements Callback<Browse> ,Da
 
     @Override
     public void onClick(View view) {
-
         Object tag;
         switch(view.getId()) {
             case R.id.bundle_item:

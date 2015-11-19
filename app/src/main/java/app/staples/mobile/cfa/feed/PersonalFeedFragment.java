@@ -27,7 +27,6 @@ import com.staples.mobile.common.access.easyopen.model.browse.SkuDetails;
 import com.staples.mobile.common.access.easyopen.model.cart.Cart;
 import com.staples.mobile.common.analytics.Tracker;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,8 +44,6 @@ import app.staples.mobile.cfa.widget.RatingStars;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-
-
 
 public class PersonalFeedFragment extends Fragment {
     private static final String TAG = PersonalFeedFragment.class.getSimpleName();

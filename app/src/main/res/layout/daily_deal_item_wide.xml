@@ -34,7 +34,6 @@
                 android:id="@+id/rating"
                 style="@style/SmallRatingStars"
                 android:layout_marginTop="@dimen/verticalspacing_4dp"/>
-
         </LinearLayout>
     </LinearLayout>
     <ImageView

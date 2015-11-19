@@ -95,7 +95,7 @@ public class DailyDealsAdapter extends RecyclerView.Adapter<DailyDealsAdapter.Vi
         this.threshold = threshold;
     }
 
-    /** needed for analytics */
+    // Needed for analytics.
     public int getItemPosition(DailyDealsItem item) {
         return array.indexOf(item);
     }
@@ -109,7 +109,6 @@ public class DailyDealsAdapter extends RecyclerView.Adapter<DailyDealsAdapter.Vi
     public int getItemViewType(int position) {
         return(layout);
     }
-
 
     @Override
     public DailyDealsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -134,22 +133,18 @@ public class DailyDealsAdapter extends RecyclerView.Adapter<DailyDealsAdapter.Vi
         String imageUrl= item.details.getProductImage();
         if (imageUrl==null) {
             holder.image.setImageDrawable(noPhoto);
-        }
-        else
-        {
+        } else {
             picasso.load(imageUrl).error(noPhoto).resize(imageWidth, imageHeight).centerInside().into(holder.image);
         }
         holder.title.setText(item.name);
-        holder.ratingStars.setRating(item.details.getRating(), item.details.getNumberOfReviews()); // TODO
+        holder.ratingStars.setRating(item.details.getRating(), item.details.getNumberOfReviews());
 
-        if(item.details.getTotalRebate() > 0.0f)
-        {
+        if(item.details.getTotalRebate() > 0.0f) {
             holder.priceSticker.setPricing(item.details.getFinalPrice() + item.details.getTotalRebate(), item.details.getListPrice(), item.details.getUnitOfMeasure(), null);
-        }
-        else
-        {
+        } else {
             holder.priceSticker.setPricing(item.details.getFinalPrice(), item.details.getListPrice(), item.details.getUnitOfMeasure(), null);
         }
+
         if (item.busy) {
             holder.action.setVisibility(View.GONE);
             holder.whirlie.setVisibility(View.VISIBLE);
