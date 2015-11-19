@@ -98,7 +98,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-wallet:7.5.0'
     compile 'com.crittercism:crittercism-android-agent:5.0.4'
     compile 'com.apptentive:apptentive-android:1.7.3@aar'
-
     testCompile 'org.hamcrest:hamcrest-integration:1.1'
     testCompile 'org.hamcrest:hamcrest-core:1.1'
     testCompile 'org.hamcrest:hamcrest-library:1.1'
@@ -122,8 +121,7 @@ dependencies {
         exclude module: 'wagon-http-lightweight'
         exclude module: 'wagon-provider-api'
     }
-
-    compile 'com.staples.mobile.common:common:2.0.+'
+     compile 'com.staples.mobile.common:common:2.1.1.1'
     compile 'com.staples.mobile.configurator:configurator:0.1.+'
 }
 

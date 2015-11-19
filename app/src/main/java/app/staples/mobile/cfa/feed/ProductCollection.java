@@ -232,8 +232,8 @@ public class ProductCollection {
 
             retrofitError = null;
 
-            recordSetCount = browse.getRecordSetCount();
-            recordSetTotal = browse.getRecordSetTotal();
+            recordSetCount = browse.getRecordSetCount(); //TODO
+            recordSetTotal = browse.getRecordSetTotal(); //TODO categories.getTotalRecords
 
             products = processBrowse(browse);
 
@@ -318,18 +318,18 @@ public class ProductCollection {
 
             while (true) {
 
-                List<Category> categories = browse.getCategory();
+                List<Category> categories = browse.getCategory();  //TODO browse.getCategories()
                 if (categories == null) break; // while (true)
                 if (categories.size() <= 0) break; // while (true)
 
-                Category category = categories.get(0);
+                Category category = categories.get(0);  // TODO NO NEED, WE  DIRECTLY have CATEGORIES INSTEAD OF PROMOcategories
                 if (category == null) break; // while (true)
 
-                List<Category> promoCategories = category.getPromoCategory();
+                List<Category> promoCategories = category.getPromoCategory();  //TODO remove - no promo category, directly products
                 if (promoCategories == null) break; // while (true)
 
                 for (Category promoCategory : promoCategories) {
-                    promoProducts = promoCategory.getProduct();
+                    promoProducts = promoCategory.getProduct(); // TODO categories.getProducts
                     if(promoProducts != null && promoProducts.size() > 0) products.addAll(promoProducts);
                 }
 

@@ -28,6 +28,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.adobe.mobile.Config;
 import com.apptentive.android.sdk.Apptentive;
@@ -59,6 +60,7 @@ import app.staples.mobile.cfa.checkout.CheckoutFragment;
 import app.staples.mobile.cfa.checkout.ConfirmationFragment;
 import app.staples.mobile.cfa.checkout.GuestCheckoutFragment;
 import app.staples.mobile.cfa.checkout.RegisteredCheckoutFragment;
+import app.staples.mobile.cfa.dailydeals.DailyDealsFragment;
 import app.staples.mobile.cfa.home.HomeFragment;
 import app.staples.mobile.cfa.kount.KountManager;
 import app.staples.mobile.cfa.location.LocationFinder;
@@ -988,10 +990,23 @@ public class MainActivity extends LeanplumActivity
             + " identifier[" + identifier + "]"
             + " title[" + title + "]"
         );
-        BundleFragment fragment = new BundleFragment();
-        fragment.setArguments(title, identifier);
-        return(selectFragment(DrawerItem.BUNDLE, fragment, Transition.RIGHT));
+        Toast.makeText(this,"title: "+ title + "identifier "+ identifier,Toast.LENGTH_LONG).show();
+        if(title.equals("Daily Deals"))
+        {
+            DailyDealsFragment fragment = new DailyDealsFragment();
+            fragment.setArguments(title, identifier);//TODO "BI739844"
+            return(selectFragment(DrawerItem.BUNDLE, fragment, Transition.RIGHT));
+        }
+        else
+        {
+            BundleFragment fragment = new BundleFragment();
+            fragment.setArguments(title, identifier);
+            return(selectFragment(DrawerItem.BUNDLE, fragment, Transition.RIGHT));
+        }
+
     }
+
+    //if Daily Deals
 
     public boolean selectSearch(String title, String keyword) {
         Crittercism.leaveBreadcrumb("MainActivity:selectSearch(): Searching by keyword."
