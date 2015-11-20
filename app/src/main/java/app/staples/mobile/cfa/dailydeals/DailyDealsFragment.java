@@ -49,7 +49,7 @@ public class DailyDealsFragment extends Fragment implements Callback<Browse> ,Da
     private RecyclerView list;
     private DailyDealsAdapter adapter;
     private DataWrapper.State state;
-    private int page = 1;
+    private int offset;
     private String title;
     private String identifier;
     private boolean complete;
@@ -71,7 +71,7 @@ public class DailyDealsFragment extends Fragment implements Callback<Browse> ,Da
             title = args.getString(TITLE);
             identifier = args.getString(IDENTIFIER);
         }
-        page = 1;
+        offset = 0;
         query();
         state = DataWrapper.State.LOADING;
     }
@@ -110,14 +110,14 @@ public class DailyDealsFragment extends Fragment implements Callback<Browse> ,Da
 
     @Override
     public void onFetchMoreData() {
-        page++;
+        offset++;
         query();
     }
 
     private void query() {
         Access access = Access.getInstance();
         EasyOpenApi easyOpenApi = access.getEasyOpenApi(false); // not secure
-        easyOpenApi.getDailyDeals(identifier, zipcode, page, MAXFETCH, this);
+        easyOpenApi.getDailyDeals(identifier, zipcode, offset, MAXFETCH, this);
     }
 
     @Override
@@ -142,7 +142,7 @@ public class DailyDealsFragment extends Fragment implements Callback<Browse> ,Da
         if (!(activity instanceof MainActivity)) return;
 
         String msg = ApiError.getErrorMessage(retrofitError);
-        Log.d(TAG, msg);
+        Crittercism.leaveBreadcrumb("DailyDealsFragment:failure(): RetrofitError: " + msg);
         state = DataWrapper.State.EMPTY;
         applyState(null);
         showPopup();
@@ -170,7 +170,7 @@ public class DailyDealsFragment extends Fragment implements Callback<Browse> ,Da
         if (category==null)
             return(0);
 
-        complete = (category.getTotalRecords() <= page*MAXFETCH);
+        complete = (category.getTotalRecords() <= offset*MAXFETCH);
 
         // Create adapter
         if (adapter==null) {

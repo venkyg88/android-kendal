@@ -24,9 +24,6 @@ import app.staples.mobile.cfa.widget.DataWrapper;
 import app.staples.mobile.cfa.widget.PriceSticker;
 import app.staples.mobile.cfa.widget.RatingStars;
 
-/**
- * Created by Hardik Patel on 17/11/15.
- */
 public class DailyDealsAdapter extends RecyclerView.Adapter<DailyDealsAdapter.ViewHolder> implements DataWrapper.Layoutable {
 
     private static final String TAG = DailyDealsAdapter.class.getSimpleName();

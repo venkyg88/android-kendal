@@ -4,9 +4,6 @@ import com.staples.mobile.common.access.easyopen.model.dailydeals.Details;
 
 import app.staples.mobile.cfa.util.MiscUtils;
 
-/**
- * Created by Hardik Patel on 17/11/15.
- */
 public class DailyDealsItem {
 
     public String name;
