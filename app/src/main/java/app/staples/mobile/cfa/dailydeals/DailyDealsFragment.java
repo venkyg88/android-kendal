@@ -141,8 +141,7 @@ public class DailyDealsFragment extends Fragment implements Callback<Browse> ,Da
         Activity activity = getActivity();
         if (!(activity instanceof MainActivity)) return;
 
-        String msg = ApiError.getErrorMessage(retrofitError);
-        Crittercism.leaveBreadcrumb("DailyDealsFragment:failure(): RetrofitError: " + msg);
+        Crittercism.logHandledException(retrofitError);
         state = DataWrapper.State.EMPTY;
         applyState(null);
         showPopup();
