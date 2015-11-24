@@ -140,6 +140,7 @@ public class DailyDealsFragment extends Fragment implements Callback<Browse> ,Da
         Activity activity = getActivity();
         if (!(activity instanceof MainActivity)) return;
 
+        Crittercism.logHandledException(retrofitError);
         String msg = ApiError.getErrorMessage(retrofitError);
         Log.d(TAG, msg);
         state = DataWrapper.State.EMPTY;
