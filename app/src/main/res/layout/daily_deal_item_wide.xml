@@ -25,11 +25,16 @@
             <TextView
                 android:id="@+id/title"
                 style="@style/SmallProductTitle"/>
+            <TextView
+                android:id="@+id/deal_promo_message"
+                style="@style/SmallPriceSticker"
+                android:layout_marginTop="@dimen/verticalspacing_8dp"
+                android:textColor="@color/staples_red" />
             <app.staples.mobile.cfa.widget.PriceSticker
                 android:id="@+id/pricing"
                 style="@style/SmallPriceSticker"
-                android:layout_marginTop="@dimen/verticalspacing_8dp"/>
-
+                android:layout_marginTop="@dimen/verticalspacing_8dp"
+                android:visibility="gone"/>
             <app.staples.mobile.cfa.widget.RatingStars
                 android:id="@+id/rating"
                 style="@style/SmallRatingStars"

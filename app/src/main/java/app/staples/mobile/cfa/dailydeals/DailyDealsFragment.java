@@ -17,7 +17,6 @@ import com.crittercism.app.Crittercism;
 import com.staples.mobile.common.access.Access;
 import com.staples.mobile.common.access.easyopen.api.EasyOpenApi;
 import com.staples.mobile.common.access.easyopen.model.ApiError;
-import com.staples.mobile.common.access.easyopen.model.browse.Category;
 import com.staples.mobile.common.access.easyopen.model.dailydeals.Browse;
 import com.staples.mobile.common.access.easyopen.model.dailydeals.Categories;
 import com.staples.mobile.common.analytics.Tracker;
@@ -141,7 +140,8 @@ public class DailyDealsFragment extends Fragment implements Callback<Browse> ,Da
         Activity activity = getActivity();
         if (!(activity instanceof MainActivity)) return;
 
-        Crittercism.logHandledException(retrofitError);
+        String msg = ApiError.getErrorMessage(retrofitError);
+        Log.d(TAG, msg);
         state = DataWrapper.State.EMPTY;
         applyState(null);
         showPopup();

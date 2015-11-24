@@ -2,8 +2,6 @@ package app.staples.mobile.cfa.dailydeals;
 
 import com.staples.mobile.common.access.easyopen.model.dailydeals.Details;
 
-import app.staples.mobile.cfa.util.MiscUtils;
-
 public class DailyDealsItem {
 
     public String name;

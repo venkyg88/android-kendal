@@ -35,6 +35,7 @@ public class DailyDealsAdapter extends RecyclerView.Adapter<DailyDealsAdapter.Vi
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView image;
         private TextView title;
+        private TextView promoMessage;
         private RatingStars ratingStars;
         private PriceSticker priceSticker;
         private ImageView action;
@@ -44,6 +45,7 @@ public class DailyDealsAdapter extends RecyclerView.Adapter<DailyDealsAdapter.Vi
             super(view);
             image = (ImageView) view.findViewById(R.id.image);
             title = (TextView) view.findViewById(R.id.title);
+            promoMessage = (TextView) view.findViewById(R.id.deal_promo_message);
             ratingStars = (RatingStars) view.findViewById(R.id.rating);
             priceSticker = (PriceSticker) view.findViewById(R.id.pricing);
             action = (ImageView) view.findViewById(R.id.bundle_action);
@@ -136,9 +138,14 @@ public class DailyDealsAdapter extends RecyclerView.Adapter<DailyDealsAdapter.Vi
         holder.title.setText(item.name);
         holder.ratingStars.setRating(item.details.getRating(), item.details.getNumberOfReviews());
 
-        if(item.details.getTotalRebate() > 0.0f) {
-            holder.priceSticker.setPricing(item.details.getFinalPrice() + item.details.getTotalRebate(), item.details.getListPrice(), item.details.getUnitOfMeasure(), null);
-        } else {
+        if(null != item.details.getDealPromoMessage()) {
+            holder.priceSticker.setVisibility(View.GONE);
+            holder.promoMessage.setVisibility(View.VISIBLE);
+            holder.promoMessage.setText(item.details.getDealPromoMessage());
+        }
+        else {
+            holder.priceSticker.setVisibility(View.VISIBLE);
+            holder.promoMessage.setVisibility(View.GONE);
             holder.priceSticker.setPricing(item.details.getFinalPrice(), item.details.getListPrice(), item.details.getUnitOfMeasure(), null);
         }
 
