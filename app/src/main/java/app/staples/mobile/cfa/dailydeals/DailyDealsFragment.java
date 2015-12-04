@@ -109,7 +109,7 @@ public class DailyDealsFragment extends Fragment implements Callback<Browse> ,Da
 
     @Override
     public void onFetchMoreData() {
-        offset++;
+        offset+=MAXFETCH;
         query();
     }
 
