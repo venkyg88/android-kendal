@@ -136,7 +136,7 @@ public class DailyDealsAdapter extends RecyclerView.Adapter<DailyDealsAdapter.Vi
             picasso.load(imageUrl).error(noPhoto).resize(imageWidth, imageHeight).centerInside().into(holder.image);
         }
         holder.title.setText(item.name);
-        holder.ratingStars.setRating(item.details.getRating(), item.details.getNumberOfReviews());
+        holder.ratingStars.setRating((float)item.details.getRating()/10, item.details.getNumberOfReviews());
 
         if(null != item.details.getDealPromoMessage()) {
             holder.priceSticker.setVisibility(View.GONE);
