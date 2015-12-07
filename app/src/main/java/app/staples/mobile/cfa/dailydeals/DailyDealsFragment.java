@@ -170,8 +170,7 @@ public class DailyDealsFragment extends Fragment implements Callback<Browse> ,Da
         if (category==null)
             return(0);
 
-        complete = (category.getTotalRecords() <= offset*MAXFETCH);
-
+        complete = (category.getTotalRecords() <= offset+MAXFETCH);
         // Create adapter
         if (adapter==null) {
             adapter = new DailyDealsAdapter(getActivity());
@@ -183,8 +182,7 @@ public class DailyDealsFragment extends Fragment implements Callback<Browse> ,Da
         adapter.notifyDataSetChanged();
 
         int count = adapter.getItemCount();
-
-        if (!complete && count>=MAXFETCH)
+        if (!complete && count>=(MAXFETCH-1))
             adapter.setOnFetchMoreData(this, count-LOOKAHEAD);
 
         return(count);
