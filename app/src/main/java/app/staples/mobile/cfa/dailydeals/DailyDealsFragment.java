@@ -182,9 +182,9 @@ public class DailyDealsFragment extends Fragment implements Callback<Browse> ,Da
         adapter.notifyDataSetChanged();
 
         int count = adapter.getItemCount();
-        if (!complete && count>=(MAXFETCH-1)) {
-            adapter.setOnFetchMoreData(this, count - LOOKAHEAD);
-        }
+        if (!complete && count>=(MAXFETCH-1))
+            adapter.setOnFetchMoreData(this, count-LOOKAHEAD);
+
         return(count);
     }
 
