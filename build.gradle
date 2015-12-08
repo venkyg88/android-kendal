@@ -15,6 +15,7 @@ allprojects {
         flatDir {
             dirs 'libs'
         }
+        mavenLocal()
         maven {
             url 'http://10.4.128.12:8081/artifactory/libs-release/'
         }
