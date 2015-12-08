@@ -59,6 +59,7 @@ import app.staples.mobile.cfa.checkout.CheckoutFragment;
 import app.staples.mobile.cfa.checkout.ConfirmationFragment;
 import app.staples.mobile.cfa.checkout.GuestCheckoutFragment;
 import app.staples.mobile.cfa.checkout.RegisteredCheckoutFragment;
+import app.staples.mobile.cfa.dailydeals.DailyDealsFragment;
 import app.staples.mobile.cfa.home.HomeFragment;
 import app.staples.mobile.cfa.kount.KountManager;
 import app.staples.mobile.cfa.location.LocationFinder;
@@ -988,9 +989,18 @@ public class MainActivity extends LeanplumActivity
             + " identifier[" + identifier + "]"
             + " title[" + title + "]"
         );
-        BundleFragment fragment = new BundleFragment();
-        fragment.setArguments(title, identifier);
-        return(selectFragment(DrawerItem.BUNDLE, fragment, Transition.RIGHT));
+        if(title.equals("Daily Deals"))
+        {
+            DailyDealsFragment fragment = new DailyDealsFragment();
+            fragment.setArguments(title, identifier);//TODO "BI739844"
+            return(selectFragment(DrawerItem.BUNDLE, fragment, Transition.RIGHT));
+        }
+        else
+        {
+            BundleFragment fragment = new BundleFragment();
+            fragment.setArguments(title, identifier);
+            return(selectFragment(DrawerItem.BUNDLE, fragment, Transition.RIGHT));
+        }
     }
 
     public boolean selectSearch(String title, String keyword) {
