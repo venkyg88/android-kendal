@@ -21,6 +21,9 @@
 
 -keep class com.staples.mobile.common.access.** { * ; }
 -keep class com.staples.mobile.common.** { * ; }
+-keep class com.staples.mobile.configurator.access.** { * ; }
+-keep class com.staples.mobile.configurator.** { * ; }
+
 
 -keep class com.squareup.retrofit.** { * ; }
 -keep class com.fasterxml.jackson.** { * ; }
